@@ -1,0 +1,29 @@
+{
+  "name": "rorua/m2-smile-tracker",
+  "type": "magento2-module",
+  "description": "Provides Smile Tracker module for Magento 2.",
+  "homepage": "https://git.smile.fr/rorua/m2-smile-tracker",
+  "keywords": [
+    "magento2",
+    "core",
+    "setup"
+  ],
+  "require": {
+    "magento/magento-composer-installer": "*"
+  },
+  "license": "AFL-3.0",
+  "authors": [
+    {
+      "name": "Romain Ruaud",
+      "email": "romain.ruaud@smile.fr"
+    }
+  ],
+  "extra": {
+    "map": [
+      [
+        "src/*",
+        "Smile/Tracker"
+      ]
+    ]
+  }
+}

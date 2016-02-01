@@ -1,0 +1,28 @@
+<?php
+/**
+ * Page variables tracking template
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_Tracker
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+?>
+<?php /** @var $this Smile\Tracker\Block\Variables\AbstractBlock **/ ?>
+<?php $variables = $this->getVariables(); ?>
+
+<?php if (!empty($variables)) : ?>
+    <script type="text/javascript">
+    <!--
+    <?php foreach ($variables as $varName => $value) : ?>
+        smileTracker.addPageVar('<?php echo $this->getEscaper()->escapeJsQuote($varName)?>', '<?php echo $this->getEscaper()->escapeJsQuote($value)?>')
+    <?php endforeach; ?>
+    //-->
+    </script>
+<?php endif; ?>

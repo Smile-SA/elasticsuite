@@ -1,0 +1,26 @@
+<?php
+/**
+ * Session variables tracking template
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_Tracker
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */?>
+<?php $variables = $this->getVariables(); ?>
+
+<?php if (!empty($variables)): ?>
+    <script type="text/javascript">
+    <!--
+    <?php foreach ($variables as $varName => $value) : ?>
+        smileTracker.addSessionVar('<?php echo Mage::helper('core')->jsQuoteEscape($varName)?>', '<?php echo Mage::helper('core')->jsQuoteEscape($value)?>')
+    <?php endforeach; ?>
+    //-->
+    </script>
+<?php endif; ?>

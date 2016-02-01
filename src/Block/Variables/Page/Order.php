@@ -1,0 +1,103 @@
+<?php
+/**
+ * _______________________________
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile________________
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+namespace Smile\Tracker\Block\Variables\Page;
+use Magento\Framework\View\Element\Template;
+
+/**
+ * Class Base
+ *
+ * @package   Smile\Tracker\Block\Variables\Page
+ * @copyright 2016 Smile
+ */
+class Order extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
+{
+    /**
+     * Checkout session
+     *
+     * @var \Magento\Checkout\Model\Session
+     */
+    protected $_checkoutSession;
+
+    /**
+     * Set the default template for page variable blocks
+     *
+     * @param Template\Context                    $context         The template context
+     * @param \Magento\Framework\Json\Helper\Data $jsonHelper      The Magento's JSON Helper
+     * @param \Smile\Tracker\Helper\Data          $trackerHelper   The Smile_Tracker helper
+     * @param \Magento\Framework\Registry         $registry        Magento Core Registry
+     * @param \Magento\Checkout\Model\Session     $checkoutSession The checkout session
+     * @param array                               $data            The block data
+     *
+     * @return Order
+     */
+    public function __construct(
+        Template\Context $context,
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \Smile\Tracker\Helper\Data $trackerHelper,
+        \Magento\Framework\Registry $registry,
+        \Magento\Checkout\Model\Session $checkoutSession,
+        array $data = []
+    ) {
+        $this->_checkoutSession = $checkoutSession;
+        parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
+    }
+
+    /**
+     * Return order and it's item related variables
+     *
+     * @return array
+     */
+    public function getVariables()
+    {
+        $variables = array();
+
+        $order = $order = $this->_checkoutSession->getLastRealOrder();
+
+        if ($order) {
+            $variables['order.id'] = $order->getIncrementId();
+            $variables['order.subtotal'] = $order->getBaseSubtotalInclTax();
+            $variables['order.discount_total'] = $order->getDiscountAmount();
+            $variables['order.shipping_total'] = $order->getShippingAmount();
+            $variables['order.grand_total'] = $order->getBaseGrandTotal();
+            $variables['order.shipping_method'] = $order->getShippingMethod();
+            $variables['order.payment_method'] = $order->getPayment()->getMethod();
+            $variables['order.salesrules'] = $order->getAppliedRuleIds();
+
+            foreach ($order->getAllItems() as $item) {
+                if (!$item->isDummy()) {
+                    $itemId = $item->getId();
+                    $prefix = "order.items.$itemId";
+                    $variables[$prefix . '.sku'] = $item->getSku();
+                    $variables[$prefix . '.product_id'] = $item->getProductId();
+                    $variables[$prefix . '.qty'] = $item->getQtyOrdered();
+                    $variables[$prefix . '.price'] = $item->getBasePrice();
+                    $variables[$prefix . '.row_total'] = $item->getRowTotal();
+                    $variables[$prefix . '.label'] = $item->getName();
+                    $variables[$prefix . '.salesrules'] = $item->getAppliedRuleIds();
+
+                    if ($product = $item->getProduct()) {
+                        $categoriesId = $product->getCategoryIds();
+                        if (count($categoriesId)) {
+                            $variables[$prefix . '.category_ids'] = implode(",", $categoriesId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $variables;
+    }
+}
