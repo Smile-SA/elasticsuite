@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Schema for DI configuration
+ *
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="indices">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:any processContents="lax" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

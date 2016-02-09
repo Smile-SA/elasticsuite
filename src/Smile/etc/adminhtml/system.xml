@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteCore admin configuration UI fields.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        
+        <tab id="smile_elasticsuite" translate="label" sortOrder="210">
+            <label>Smile ElasticSuite</label>
+        </tab>
+        
+        <section id="smile_elasticsuite_core_base_settings" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Base settings</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_base_settings</resource>
+            
+            <group id="es_client" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>ElaticSearch Client</label>
+                <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>ElasticSearch severs list</label>
+                    <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
+                </field>
+                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable debug mode</label>
+                    <comment>When enabled the module will produce logs through Magento logging system.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="connection_timeout" translate="label" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Server connection timeout</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
+            
+            <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Indices settings</label>
+                <field id="alias" translate="label" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Indices alias name</label>
+                </field>
+                <field id="indices_pattern" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Indices name pattern</label>
+                </field>
+                <field id="number_of_shards" translate="label" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Number of shards per index</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="number_of_replicas" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Number of replicas per index</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

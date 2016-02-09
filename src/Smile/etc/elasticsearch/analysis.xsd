@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Schema for DI configuration
+ *
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="analysis">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="char_filters" type="charFiltersDefinition"/>
+                <xs:element name="filters" type="filtersDefinition" />
+                <xs:element name="analyzers" type="analyzersDefinition"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="charFiltersDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                Char filters declaration root node
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="char_filter" type="charFilterDefinition" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="charFilterDefinition">
+        <xs:annotation>
+            <xs:documentation>Char filter definition node</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any processContents="lax" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="filtersDefinition">
+        <xs:annotation>
+            <xs:documentation>Filters declaration root node</xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="filter" type="filterDefinition" />
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="filterDefinition">
+        <xs:annotation>
+            <xs:documentation>Filter definition node</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any processContents="lax" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="analyzersDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                Analyzers declaration root node
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="analyzer" type="analyzerDefinition" />
+            </xs:choice>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="analyzerDefinition">
+        <xs:annotation>
+            <xs:documentation>Filter definition node</xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="char_filters" type="analyzerCharFilters" />
+            <xs:element name="filters" type="analyzerFilters" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="tokenizer" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="analyzerCharFilters">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="char_filter" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="ref" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="analyzerFilters">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="filter" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="ref" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+</xs:schema>

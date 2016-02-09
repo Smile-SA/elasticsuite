@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * Smile_ElasticSuiteCore dependency injection.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    
+    <!-- Client config and factory DI -->
+    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface"  
+                type="Smile\ElasticSuiteCore\Client\ClientFactory" />
+    
+    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface"  
+                type="Smile\ElasticSuiteCore\Helper\ClientConfiguration" />
+    
+    <!-- Indices namespace related DI -->
+    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexInterface"
+                type="Smile\ElasticSuiteCore\Index\Index" />
+    
+    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface"
+                type="Smile\ElasticSuiteCore\Index\IndexSettings" />
+    
+    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface"
+                type="Smile\ElasticSuiteCore\Index\IndexOperation" />
+    
+    <preference for="Smile\ElasticSuiteCore\Api\Index\TypeInterface"
+                type="Smile\ElasticSuiteCore\Index\Type" />
+                
+    <preference for="Smile\ElasticSuiteCore\Api\Index\MappingInterface"
+                type="Smile\ElasticSuiteCore\Index\Mapping" />
+                
+    <virtualType name="ElasticSearchAnalysisConfigReader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="fileName" xsi:type="string">elasticsearch/analysis.xml</argument>
+            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Index\Analysis\Config\Converter</argument>
+            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Index\Analysis\Config\SchemaLocator</argument>
+            <argument name="idAttributes" xsi:type="array">
+                <item name="/analysis/char_filters/char_filter" xsi:type="array">
+                    <item name="nameAttr" xsi:type="string">name</item>
+                    <item name="languageAttr" xsi:type="string">language</item>
+                </item>
+                <item name="/analysis/filters/filter" xsi:type="array">
+                    <item name="nameAttr" xsi:type="string">name</item>
+                    <item name="languageAttr" xsi:type="string">language</item>
+                </item>
+                <item name="/analysis/analyzers/analyzer" xsi:type="array">
+                    <item name="nameAttr" xsi:type="string">name</item>
+                    <item name="languageAttr" xsi:type="string">language</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <type name="Smile\ElasticSuiteCore\Index\Analysis\Config">
+        <arguments>
+            <argument name="reader" xsi:type="object">ElasticSearchAnalysisConfigReader</argument>
+        </arguments>
+    </type>
+    
+    <virtualType name="ElasticSearchIndicesConfigReader" type="Magento\Framework\Config\Reader\Filesystem">
+        <arguments>
+            <argument name="fileName" xsi:type="string">elasticsearch/indices.xml</argument>
+            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Index\Indices\Config\Converter</argument>
+            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Index\Indices\Config\SchemaLocator</argument>
+            <argument name="idAttributes" xsi:type="array">
+                <item name="/indices/index" xsi:type="string">name</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <type name="Smile\ElasticSuiteCore\Index\Indices\Config">
+        <arguments>
+            <argument name="reader" xsi:type="object">ElasticSearchIndicesConfigReader</argument>
+        </arguments>
+    </type>
+    
+</config>

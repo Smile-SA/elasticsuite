@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- 
+/**
+ * Smile_ElasticSuiteCore default configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <smile_elasticsuite_core_base_settings>
+            <es_client>
+                <enable_debug_mode>0</enable_debug_mode>
+                <servers>localhost:9200</servers>
+                <connection_timeout>1</connection_timeout>
+                <timeout>30</timeout>
+            </es_client>
+            <indices_settings>
+                <alias>magento2</alias>
+                <indices_pattern>{{YYYYMMdd}}_{{HHmmss}}</indices_pattern>
+                <number_of_shards>1</number_of_shards>
+                <number_of_replicas>0</number_of_replicas>
+                <batch_indexing_size>100</batch_indexing_size>
+            </indices_settings>
+        </smile_elasticsuite_core_base_settings>
+    </default>
+</config>
