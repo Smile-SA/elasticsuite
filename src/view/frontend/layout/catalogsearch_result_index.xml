@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_Tracker
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -18,7 +18,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 
     <referenceBlock name="before.body.end">
-        <block class="Smile\Tracker\Block\Variables\Page\Search" name="smile.tracker.page.search" />
+        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Search" name="smile.tracker.page.search" />
     </referenceBlock>
 
 </page>

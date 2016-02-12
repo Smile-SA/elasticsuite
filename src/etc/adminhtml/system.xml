@@ -8,7 +8,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_Tracker
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -16,13 +16,13 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <tab id="smile_tracker" translate="label" sortOrder="10000">
+        <tab id="smile_elasticsuite_tracker" translate="label" sortOrder="10000">
             <label>Tracking</label>
         </tab>
-        <section id="smile_tracker" translate="label" type="text" sortOrder="910" showInDefault="1" showInWebsite="0" showInStore="0">
+        <section id="smile_elasticsuite_tracker" translate="label" type="text" sortOrder="910" showInDefault="1" showInWebsite="0" showInStore="0">
             <label>Tracking</label>
-            <tab>smile_tracker</tab>
-            <resource>Magento_Backend::smile_tracker</resource>
+            <tab>smile_elasticsuite_tracker</tab>
+            <resource>Magento_Backend::smile_elasticsuite_tracker</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Global Configuration</label>
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">

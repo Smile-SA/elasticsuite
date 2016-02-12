@@ -13,16 +13,16 @@
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
-namespace Smile\Tracker\Block\Variables\Page;
+namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
 use Magento\Framework\View\Element\Template;
 
 /**
  * Class Base
  *
- * @package   Smile\Tracker\Block\Variables\Page
+ * @package   Smile\ElasticSuiteTracker\Block\Variables\Page
  * @copyright 2016 Smile
  */
-class Search extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
+class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
 {
     /**
      * Catalog layer
@@ -41,20 +41,20 @@ class Search extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
     /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                      $context           The template context
-     * @param \Magento\Framework\Json\Helper\Data   $jsonHelper        The Magento's JSON Helper
-     * @param \Smile\Tracker\Helper\Data            $trackerHelper     The Smile_Tracker helper
-     * @param \Magento\Framework\Registry           $registry          Magento Core Registry
-     * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver     The Magento layer resolver
-     * @param \Magento\CatalogSearch\Helper\Data    $catalogSearchData The Catalogsearch data
-     * @param array                                 $data              The block data
+     * @param Template\Context                       $context           The template context
+     * @param \Magento\Framework\Json\Helper\Data    $jsonHelper        The Magento's JSON Helper
+     * @param \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper     The Smile Tracker helper
+     * @param \Magento\Framework\Registry            $registry          Magento Core Registry
+     * @param \Magento\Catalog\Model\Layer\Resolver  $layerResolver     The Magento layer resolver
+     * @param \Magento\CatalogSearch\Helper\Data     $catalogSearchData The Catalogsearch data
+     * @param array                                  $data              The block data
      *
      * @return Search
      */
     public function __construct(
         Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\Tracker\Helper\Data $trackerHelper,
+        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         \Magento\CatalogSearch\Helper\Data $catalogSearchData,
