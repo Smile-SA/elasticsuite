@@ -13,4 +13,14 @@ interface TypeInterface
      * @return \Smile\ElasticSuiteCore\Api\Index\MappingInterface
      */
     public function getMapping();
+
+    /**
+     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     */
+    public function getDatasources();
+
+    /**
+     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     */
+    public function getDatasource($name);
 }
