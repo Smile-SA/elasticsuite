@@ -20,8 +20,11 @@
     }
   ],
   "extra": {
-    "map": [
-      ["src/*", "Smile/ElasticSuiteCatalog"]
+      "map": [
+        [
+          "src/*",
+          "Smile/ElasticSuiteCatalog"
+        ]
     ]
   }
 }
