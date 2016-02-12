@@ -40,50 +40,11 @@
                 
     <preference for="Smile\ElasticSuiteCore\Api\Index\MappingInterface"
                 type="Smile\ElasticSuiteCore\Index\Mapping" />
-                
-    <virtualType name="ElasticSearchAnalysisConfigReader" type="Magento\Framework\Config\Reader\Filesystem">
-        <arguments>
-            <argument name="fileName" xsi:type="string">elasticsearch/analysis.xml</argument>
-            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Index\Analysis\Config\Converter</argument>
-            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Index\Analysis\Config\SchemaLocator</argument>
-            <argument name="idAttributes" xsi:type="array">
-                <item name="/analysis/char_filters/char_filter" xsi:type="array">
-                    <item name="nameAttr" xsi:type="string">name</item>
-                    <item name="languageAttr" xsi:type="string">language</item>
-                </item>
-                <item name="/analysis/filters/filter" xsi:type="array">
-                    <item name="nameAttr" xsi:type="string">name</item>
-                    <item name="languageAttr" xsi:type="string">language</item>
-                </item>
-                <item name="/analysis/analyzers/analyzer" xsi:type="array">
-                    <item name="nameAttr" xsi:type="string">name</item>
-                    <item name="languageAttr" xsi:type="string">language</item>
-                </item>
-            </argument>
-        </arguments>
-    </virtualType>
     
-    <type name="Smile\ElasticSuiteCore\Index\Analysis\Config">
-        <arguments>
-            <argument name="reader" xsi:type="object">ElasticSearchAnalysisConfigReader</argument>
-        </arguments>
-    </type>
+    <preference for="Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface"
+                type="Smile\ElasticSuiteCore\Index\Mapping\Field" />
     
-    <virtualType name="ElasticSearchIndicesConfigReader" type="Magento\Framework\Config\Reader\Filesystem">
-        <arguments>
-            <argument name="fileName" xsi:type="string">elasticsearch/indices.xml</argument>
-            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Index\Indices\Config\Converter</argument>
-            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Index\Indices\Config\SchemaLocator</argument>
-            <argument name="idAttributes" xsi:type="array">
-                <item name="/indices/index" xsi:type="string">name</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    
-    <type name="Smile\ElasticSuiteCore\Index\Indices\Config">
-        <arguments>
-            <argument name="reader" xsi:type="object">ElasticSearchIndicesConfigReader</argument>
-        </arguments>
-    </type>
-    
+    <preference for="Smile\ElasticSuiteCore\Api\Index\BulkInterface"
+                type="Smile\ElasticSuiteCore\Index\Bulk" />
+
 </config>
