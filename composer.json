@@ -1,5 +1,5 @@
 {
-  "name": "smile-sa/module-elasticsuite-core",
+  "name": "smile-sa/elasticsuite-full",
   "type": "magento2-module",
   "description": "Core fondation of Smile ElasticSuite",
   "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-core",
@@ -8,6 +8,16 @@
     "core",
     "setup"
   ],
+  "repositories": [
+     {
+         "type": "vcs",
+         "url": "git@git.smile.fr:magento-es/module-elasticsuite-core.git"
+     },
+     {
+       "type": "vcs",
+       "url": "git@git.smile.fr:magento-es/module-elasticsuite-catalog.git"
+     }
+   ],
   "require": {
       "smile-sa/module-elasticsuite-core": "self.version",
       "smile-sa/module-elasticsuite-catalog": "self.version"
