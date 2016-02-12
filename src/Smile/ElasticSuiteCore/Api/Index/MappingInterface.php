@@ -22,6 +22,11 @@ interface MappingInterface
 
 
     /**
+     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
+     */
+    public function getFields();
+
+    /**
      * @return array
      */
     public function asArray();

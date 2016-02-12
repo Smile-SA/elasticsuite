@@ -3,20 +3,32 @@
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
 class Mapping implements MappingInterface
 {
+    private $dateFormats = [\Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT, \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT];
+
     private $defaultFields = [
         self::DEFAULT_SEARCH_FIELD       => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]],
         self::DEFAULT_SPELLING_FIELD     => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]],
         self::DEFAULT_AUTOCOMPLETE_FIELD => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE, self::ANALYZER_EDGE_NGRAM]],
     ];
 
-    private $fieldDescriptions;
+    private $fields;
 
-    public function __construct($fieldDescriptions)
+    public function __construct(array $staticFields = [], $dynamicFieldProviders = [])
     {
-        $this->fieldDescriptions = $fieldDescriptions;
+        $this->fields = $staticFields + $this->getDynamicFields($dynamicFieldProviders);
+    }
+
+    private function getDynamicFields($dynamicFieldProviders)
+    {
+        $fields = [];
+        foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
+            $fields += $dynamicFieldProvider->getFields();
+        }
+        return $fields;
     }
 
     public function asArray()
@@ -30,81 +42,97 @@ class Mapping implements MappingInterface
         $properties = [];
 
         foreach ($this->defaultFields as $currentFieldName => $fieldConfig) {
-            $properties[$currentFieldName] = $this->getStringFieldMapping($currentFieldName, $fieldConfig['analyzers']);
+            $analyzers = $fieldConfig['analyzers'];
+            $properties[$currentFieldName] = $this->getPropertyMapping($currentFieldName, 'string', $analyzers);
         }
 
-        foreach ($this->fieldDescriptions as $currentFieldName => $fieldConfig) {
-            $properties[$currentFieldName] = $this->getPropertyFromFieldDescription($currentFieldName, $fieldConfig);
+        foreach ($this->getFields() as $currentField) {
+            if ($currentField->isNested()) {
+                $nestedRoot = $currentField->getNestedPath();
+                $subFieldName = str_replace($nestedRoot . '.', '', $currentField->getName());
+                $properties[$nestedRoot]['type'] = FieldInterface::FIELD_TYPE_NESTED;
+                $properties[$nestedRoot]['properties'][$subFieldName] = $this->getPropertyFromField($currentField);
+            } else {
+                $properties[$currentField->getName()] = $this->getPropertyFromField($currentField);
+            }
         }
 
         return $properties;
     }
 
-    private function getStringFieldMapping($fieldName, $analyzers)
+    /**
+     * (non-PHPdoc)
+     * @see \Smile\ElasticSuiteCore\Api\Index\MappingInterface::getFields()
+     */
+    public function getFields()
     {
-        $fieldMapping = ['type' => 'multi_field'];
+        return $this->fields;
+    }
 
-        foreach ($analyzers as $currentAnalyzer) {
+    private function getPropertyMapping($propertyName, $type, $analyzers = [self::ANALYZER_STANDARD], $copyTo = [])
+    {
+        $fieldMapping = ['type' => $type];
 
-            $currentFieldName = $currentAnalyzer == self::ANALYZER_STANDARD ? $fieldName : $currentAnalyzer;
-            $subField = ['type'  => 'string', 'store' => false];
+        if ($type == "string") {
+            if (count($analyzers) > 1) {
+                $fieldMapping = ['type' => 'multi_field'];
 
-            if ($currentAnalyzer == self::ANALYZER_UNTOUCHED) {
-                $subField['index']     = 'not_analyzed';
-                $subField['fieldData'] = ['format' => 'doc_values'];
+                foreach ($analyzers as $currentAnalyzer) {
+
+                    $currentFieldName = $currentAnalyzer == self::ANALYZER_STANDARD ? $propertyName : $currentAnalyzer;
+                    $subField = ['type'  => 'string', 'store' => false];
+
+                    if ($currentAnalyzer == self::ANALYZER_UNTOUCHED) {
+                        $subField['index']     = 'not_analyzed';
+                        $subField['fieldData'] = ['format' => 'doc_values'];
+                    } else {
+                        $subField['analyzer']  = $currentAnalyzer;
+                    }
+
+                    if ($currentFieldName == $propertyName && !empty($copyTo)) {
+                        $subField['copy_to'] = $copyTo;
+                    }
+
+                    $fieldMapping['fields'][$currentFieldName] = $subField;
+                }
             } else {
-                $subField['analyzer']  = $currentAnalyzer;
-                $subField['fieldData'] = ['format' => 'disabled'];
+                $analyzer = current($analyzers);
+                if ($analyzer == self::ANALYZER_UNTOUCHED) {
+                    $fieldMapping['index'] = 'not_analyzed';
+                } else {
+                    $fieldMapping['analyzer'] = $analyzer;
+                }
             }
-
-            $fieldMapping['fields'][$currentFieldName] = $subField;
-        }
-
-        if (count($fieldMapping['fields']) == 1) {
-            $fieldMapping = current($fieldMapping['fields']);
+        } else if ($type == "date") {
+            $fieldMapping['format'] = implode('||', $this->dateFormats);
         }
 
         return $fieldMapping;
     }
 
-    private function getPropertyFromFieldDescription($fieldName, $fieldDescription)
+    private function getPropertyFromField(FieldInterface $field)
     {
-        $property = ['type' => $fieldDescription['type']];
+        $analyzers = [];
+        $copyTo    = [];
 
-        if ($fieldDescription['type'] == 'string') {
-            $analyzers = [self::ANALYZER_STANDARD];
-            $copyTo    = [];
+        if ($field->getType() == "string") {
+            $analyzers = [self::ANALYZER_UNTOUCHED];
 
-            if ($fieldDescription['is_searchable']) {
-                $analyzers += [self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE];
-                $copyTo[]   = self::DEFAULT_SEARCH_FIELD;
+            if ($field->isSearchable()) {
+                $analyzers = array_merge($analyzers, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]);
+                $copyTo[]  = self::DEFAULT_SEARCH_FIELD;
 
-                if ($fieldDescription['used_in_spellcheck']) {
+                if ($field->isUsedInSpellcheck()) {
                     $copyTo[] = self::DEFAULT_SPELLING_FIELD;
                 }
 
-                if ($fieldDescription['used_in_autocomplete']) {
+                if ($field->isUsedInAutocomplete()) {
                     $analyzers[] = self::ANALYZER_EDGE_NGRAM;
-                    $copyTo[] = self::DEFAULT_AUTOCOMPLETE_FIELD;
+                    $copyTo[] = self::DEFAULT_SPELLING_FIELD;
                 }
             }
-
-            if ($fieldDescription['is_filterable'] || $fieldDescription['is_filterable']) {
-                $analyzers[] = self::ANALYZER_UNTOUCHED;
-            }
-
-            $property = $this->getStringFieldMapping($fieldName, $analyzers);
-
-            if ($property['type'] == 'multi_field') {
-                $property['fields'][$fieldName]['copy_to'] = $copyTo;
-            } else {
-                $property['copy_to'] = $copyTo;
-            }
-
-        } else {
-            $property['fieldData'] = ['format' => 'doc_values', 'store' => false];
         }
 
-        return $property;
+        return $this->getPropertyMapping($field->getName(), $field->getType(), $analyzers, $copyTo);
     }
 }
