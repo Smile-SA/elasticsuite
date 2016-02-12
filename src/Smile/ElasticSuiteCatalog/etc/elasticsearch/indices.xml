@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
+
+    <index identifier="catalog_product">
+        <type name="product">
+            <datasources>
+                <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
+                <datasource name="categories">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
+                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes</datasource>
+            </datasources>
+            <mapping>
+                <!-- Static fields handled by the base indexer (not datasource) -->
+                <field name="entity_id" type="integer" />
+                <field name="attribute_set_id" type="integer" />
+                <field name="has_options" type="boolean" />
+                <field name="required_options" type="boolean" />
+                <field name="created_at" type="date" />
+                <field name="updated_at" type="date" />
+                <field name="type_id" type="string">
+                    <isSearchable>0</isSearchable>
+                </field>
+                <field name="sku" type="string">
+                    <isSearchable>0</isSearchable>
+                </field>
+
+                <!-- Static fields handled by the "prices" datasource -->
+                <field name="price.price" type="double" nestedPath="price"/>
+                <field name="price.original_price" type="double" nestedPath="price"/>
+                <field name="price.is_discount" type="boolean" nestedPath="price"/>
+                <field name="price.customer_group_id" type="integer" nestedPath="price"/>
+                
+                <!-- Static fields handled by the "prices" datasource -->
+                <field name="category.category_id" type="integer" nestedPath="category"/>
+                <field name="category.position" type="integer" nestedPath="category"/>
+                <field name="category.is_parent" type="boolean" nestedPath="category"/>
+                
+            </mapping>
+        </type>
+    </index>
+
+</indices>
