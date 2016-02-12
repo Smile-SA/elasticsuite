@@ -2,7 +2,7 @@
 
 namespace Smile\ElasticSuiteCore\Index\Analysis;
 
-use Magento\Framework\Config\Reader\Filesystem;
+use Smile\ElasticSuiteCore\Index\Analysis\Config\Reader;
 use Magento\Framework\Config\CacheInterface;
 
 class Config extends \Magento\Framework\Config\Data
@@ -15,7 +15,7 @@ class Config extends \Magento\Framework\Config\Data
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param string $cacheId
      */
-    public function __construct(Filesystem $reader, CacheInterface $cache, $cacheId = self::CACHE_ID) {
+    public function __construct(Reader $reader, CacheInterface $cache, $cacheId = self::CACHE_ID) {
         parent::__construct($reader, $cache, $cacheId);
     }
 
