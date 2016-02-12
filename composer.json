@@ -1,0 +1,22 @@
+{
+  "name": "smile-sa/module-elasticsuite-core",
+  "type": "magento2-module",
+  "description": "Core fondation of Smile ElasticSuite",
+  "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-core",
+  "keywords": [
+    "magento2",
+    "core",
+    "setup"
+  ],
+  "require": {
+      "smile-sa/module-elasticsuite-core": "self.version",
+      "smile-sa/module-elasticsuite-catalog": "self.version"
+  },
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Aurélien FOUCRET",
+      "email": "aurelien.foucret@smile.fr"
+    }
+  ]
+}
