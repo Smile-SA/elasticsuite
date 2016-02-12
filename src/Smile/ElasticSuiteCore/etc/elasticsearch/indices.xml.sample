@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/analysis.xsd">
+    <!-- <index identifier="catalog_product">
+        <type name="product">
+            <dataproviders>
+                <dataprovider name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes</dataprovider>
+            </dataproviders>
+            <mapping>
+                <field name="entity_id" type="integer" />
+                <field name="attribute_set_id" type="integer" />
+                <field name="type_id" type="string" />
+                <field name="sku" type="string" />
+                <field name="has_options" type="boolean" />
+                <field name="required_options" type="boolean" />
+                <field name="created_at" type="date" />
+                <field name="updated_at" type="date" />
+            </mapping>
+        </type>
+    </index>
+    -->
+</indices>
