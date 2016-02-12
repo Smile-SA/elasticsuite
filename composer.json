@@ -1,7 +1,7 @@
 {
   "name": "smile-sa/elasticsuite-full",
   "type": "magento2-module",
-  "description": "Core fondation of Smile ElasticSuite",
+  "description": "Core foundation of Smile ElasticSuite",
   "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-core",
   "keywords": [
     "magento2",
