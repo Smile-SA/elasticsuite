@@ -6,6 +6,7 @@ use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticSuiteCore\Index\Analysis\Config as AnalysisConfig;
 use Smile\ElasticSuiteCore\Index\Indices\Config as IndicesConfig;
+use Magento\Framework\ObjectManagerInterface;
 
 class IndexSettings implements IndexSettingsInterface
 {
@@ -42,9 +43,9 @@ class IndexSettings implements IndexSettingsInterface
     protected $indicesConfig;
 
     public function __construct(
-        IndexSettingsHelper $indexSettingHelper,
-        IndicesConfig $indicesConfig,
-        AnalysisConfig $analysisConfig
+        IndexSettingsHelper    $indexSettingHelper,
+        IndicesConfig          $indicesConfig,
+        AnalysisConfig         $analysisConfig
     ) {
         $this->helper         = $indexSettingHelper;
         $this->analysisConfig = $analysisConfig;
@@ -105,4 +106,12 @@ class IndexSettings implements IndexSettingsInterface
         return $this->indicesConfig->get();
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface::getBatchIndexingSize()
+     */
+    public function getBatchIndexingSize()
+    {
+        return $this->helper->getBatchIndexingSize();
+    }
 }

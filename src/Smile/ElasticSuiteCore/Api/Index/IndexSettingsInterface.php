@@ -18,17 +18,22 @@ interface IndexSettingsInterface
     public function getAnalysisSettings($store);
 
     /**
-     * return arra[]
+     * @return arra[]
      */
     public function getCreateIndexSettings();
 
     /**
-     * return array[]
+     * @return array[]
      */
     public function getInstallIndexSettings();
 
     /**
-     * return array[]
+     * @return array[]
      */
     public function getIndicesConfig();
+
+    /**
+     * @return int
+     */
+    public function getBatchIndexingSize();
 }
