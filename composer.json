@@ -9,7 +9,11 @@
     "setup"
   ],
   "require": {
-    "magento/magento-composer-installer": "*"
+    "magento/framework": "*",
+    "magento/module-store": "*",
+    "magento/module-store": "*",
+    "magento/magento-composer-installer": "*",
+    "elasticsearch/elasticsearch": "2.1.*"
   },
   "license": "OSL-3.0",
   "authors": [
