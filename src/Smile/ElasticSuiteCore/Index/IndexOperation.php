@@ -7,6 +7,7 @@ use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
+use Smile\ElasticSuiteCore\Api\Index\BulkInterface;
 
 class IndexOperation implements IndexOperationInterface
 {
@@ -68,7 +69,7 @@ class IndexOperation implements IndexOperationInterface
     public function indexExists($indexIdentifier, $store)
     {
         $exists = true;
-        if (!isset($this->indices[$indexIdentifier])) {
+        if (!isset($this->indicesByIdentifier[$indexIdentifier])) {
             $indexName = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
             $exists = $this->client->indices()->exists(['index' => $indexName]);
         }
@@ -82,14 +83,14 @@ class IndexOperation implements IndexOperationInterface
     public function getIndexByName($indexIdentifier, $store)
     {
         $indexAlias = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
-        if (!isset($this->indices[$indexAlias])) {
+        if (!isset($this->indicesByIdentifier[$indexAlias])) {
             if ($this->indexExists($indexIdentifier, $store)) {
                 $this->initIndex($indexIdentifier, $store, true);
             } else {
                 throw new \LogicException("{$indexIdentifier} index does not exist yet. Make sure evything is reindexed");
             }
         }
-        return $this->indices[$indexAlias];
+        return $this->indicesByIdentifier[$indexAlias];
     }
 
     /**
@@ -107,6 +108,7 @@ class IndexOperation implements IndexOperationInterface
         }
 
         $this->client->indices()->create(['index' => $index->getName(), 'body' => $indexSettings]);
+
         return $index;
     }
 
@@ -116,14 +118,16 @@ class IndexOperation implements IndexOperationInterface
      */
     public function installIndex(IndexInterface $index, $store)
     {
-        $indexIdentifier = $index->getIdentifier();
-        $indexName       = $index->getName();
-        $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
+        if ($index->needInstall()) {
+            $indexIdentifier = $index->getIdentifier();
+            $indexName       = $index->getName();
+            $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
-        $this->client->indices()->optimize(['index' => $indexName]);
-        $this->client->indices()->putSettings(['index' => $indexName, 'body' => $this->indexSettings->getInstallIndexSettings()]);
+            $this->client->indices()->optimize(['index' => $indexName]);
+            $this->client->indices()->putSettings(['index' => $indexName, 'body' => $this->indexSettings->getInstallIndexSettings()]);
 
-        $this->proceedIndexInstall($indexName, $indexAlias);
+            $this->proceedIndexInstall($indexName, $indexAlias);
+        }
 
         return $index;
     }
@@ -136,13 +140,13 @@ class IndexOperation implements IndexOperationInterface
         try {
             $oldIndices = $this->client->indices()->getMapping(['index' => $indexAlias]);
         } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
-            $oldIndices = array();
+            $oldIndices = [];
         }
 
         foreach (array_keys($oldIndices) as $oldIndexName) {
             if ($oldIndexName != $indexName) {
                 $deletedIndices[] = $oldIndexName;
-                $aliasActions[] = ['remove' => ['index' => $oldIndexName, 'alias' => $indexAlias]];
+                $aliasActions[]   = ['remove' => ['index' => $oldIndexName, 'alias' => $indexAlias]];
             }
         }
 
@@ -161,16 +165,23 @@ class IndexOperation implements IndexOperationInterface
      */
     public function createBulk()
     {
-        // @todo
+        return $this->objectManager->create('Smile\ElasticSuiteCore\Api\Index\BulkInterface');
     }
 
     /**
      * (non-PHPdoc)
      * @see \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface::executeBulk()
      */
-    public function executeBulk($refreshIndex = true)
+    public function executeBulk(BulkInterface $bulk, $refreshIndex = true)
     {
-        // @todo
+        $bulkParams = ['body' => $bulk->getOperations()];
+        $bulkResponse = $this->client->bulk($bulkParams);
+        //@todo Parse bulk response and report errors in logs
+    }
+
+    public function getBatchIndexingSize()
+    {
+        return $this->indexSettings->getBatchIndexingSize();
     }
 
     /**
@@ -191,47 +202,26 @@ class IndexOperation implements IndexOperationInterface
         if (isset($indicesConfiguration[$indexIdentifier])) {
 
             $indexName = $indexSettings->createIndexNameFromIdentifier($indexIdentifier, $store);
+            $createIndexParams = ['identifier' => $indexIdentifier, 'name' => $indexName];
 
             $allowedFields = false;
             if ($existingIndex) {
                 $indexName     = $indexAlias;
                 //$allowedFields = $this->loadCurrentMapping($indexName);
+            } else {
+               $createIndexParams['needInstall'] = true;
             }
 
-            $indexTypes = [];
+            $createIndexParams['types'] = $indicesConfiguration[$indexIdentifier]['types'];
 
-            foreach ($indicesConfiguration[$indexIdentifier]['types'] as $typeName => $typeConfig) {
-                $indexTypes[] = $this->initType($typeName, $typeConfig, $allowedFields);
-            }
+            $index = $this->objectManager->create('\Smile\ElasticSuiteCore\Api\Index\IndexInterface', $createIndexParams);
 
-            $index = $this->objectManager->create(
-                '\Smile\ElasticSuiteCore\Api\Index\IndexInterface',
-                ['identifier' => $indexIdentifier, 'name' => $indexName, 'types' => $indexTypes]
-            );
-
-            $this->indices[$indexAlias] = $index;
+            $this->indicesByIdentifier[$indexAlias] = $index;
 
         } else {
             throw new \LogicException("No index found with identifier {$indexIdentifier} into mapping.xml");
         }
 
-        return $this->indices[$indexAlias];
-    }
-
-    private function initType($typeName, $typeConfig, $allowedFields)
-    {
-        $fieldDescriptions = $typeConfig['mapping']['fields'];
-
-        $typeMapping = $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\Index\MappingInterface',
-            ['fieldDescriptions' => $fieldDescriptions]
-        );
-
-        $currentType = $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\Index\TypeInterface',
-            ['name' => $typeName, 'mapping' => $typeMapping]
-        );
-
-        return $type = $currentType;
+        return $this->indicesByIdentifier[$indexAlias];
     }
 }
