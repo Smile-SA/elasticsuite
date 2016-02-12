@@ -2,6 +2,9 @@
 
 namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 
+use Magento\Framework\ObjectManagerInterface;
+use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {
     const ROOT_NODE_NAME          = 'indices';
@@ -9,15 +12,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const TYPE_NODE_TYPE          = 'type';
     const MAPPING_NODE_TYPE       = 'mapping';
     const MAPPING_FIELD_NODE_TYPE = 'field';
-
-    private $defaultFieldConfig = [
-        'is_searchable'           => false,
-        'used_in_spellcheck'      => false,
-        'used_in_autocomplete'    => false,
-        'search_weight'           => 1,
-        'is_filterable'           => false,
-        'is_filterable_in_search' => false,
-    ];
+    const DATASOURCES_PATH        = 'datasources/datasource';
 
     /**
      * Convert dom node tree to array
@@ -48,8 +43,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         $xpath->query($typesSearchPath, $indexRootNode);
 
         foreach ($xpath->query($typesSearchPath, $indexRootNode) as $typeNode) {
-            $typeName = $typeNode->getAttribute('name');
-            $indexConfig['types'][$typeName] = $this->parseTypeConfig($xpath, $typeNode);
+            $typeParams = $this->parseTypeConfig($xpath, $typeNode);
+            $indexConfig['types'][$typeNode->getAttribute('name')] = $typeParams;
         }
 
         return $indexConfig;
@@ -57,9 +52,17 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
     private function parseTypeConfig($xpath, $typeRootNode)
     {
-        return [
-            'mapping' => ['fields' => $this->parseMappingFields($xpath, $typeRootNode)]
-        ];
+        $staticFields  = $this->parseMappingFields($xpath, $typeRootNode);
+        $datasources = $this->parseDatasources($xpath, $typeRootNode);
+
+        $dynamicFieldProviders = array_filter(
+            $datasources,
+            function($datasource) { return $datasource instanceof DynamicFieldProviderInterface; }
+        );
+
+        $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $datasources];
+
+        return ['mapping' => $mappingParams, 'datasources' => $datasources];
     }
 
     private function parseMappingFields($xpath, $typeRootNode)
@@ -67,21 +70,34 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         $fields = [];
         $fieldSearchPath = sprintf('%s/%s', self::MAPPING_NODE_TYPE, self::MAPPING_FIELD_NODE_TYPE);
 
-        foreach ($xpath->query($fieldSearchPath, $typeRootNode) as $fieldNode) {
-            $fieldName = $fieldNode->getAttribute('name');
-            $fields[$fieldName] = ['type' => $fieldNode->getAttribute('type')] + $this->defaultFieldConfig;
-
-            foreach ($fieldNode->childNodes as $childNode) {
-                if ($childNode instanceof \DOMElement) {
-                    if ($childNode->tagName == 'search_weight') {
-                        $fields[$fieldName][$childNode->tagName] = (int) $childNode->nodeValue;
-                    } else {
-                        $fields[$fieldName][$childNode->tagName] = (bool) $childNode->nodeValue;
-                    }
-                }
-            }
+        foreach ($xpath->query($fieldSearchPath, $typeRootNode) as $fieldName => $fieldNode) {
+            $fields[$fieldNode->getAttribute('name')] = $this->createMappingField($fieldNode);
         }
 
         return $fields;
+    }
+
+    private function parseDatasources($xpath, $typeRootNode)
+    {
+        $datasources = [];
+        foreach ($xpath->query(self::DATASOURCES_PATH , $typeRootNode) as $datasourceNode) {
+            $datasources[$datasourceNode->getAttribute('name')] = $datasourceNode->nodeValue;
+        }
+        return $datasources;
+    }
+
+    private function createMappingField($fieldNode)
+    {
+        $fieldParam = ['type' => $fieldNode->getAttribute('type')];
+        if ($fieldNode->hasAttribute('nestedPath')) {
+            $fieldParam['nestedPath'] = $fieldNode->getAttribute('nestedPath');
+        }
+        foreach ($fieldNode->childNodes as $childNode) {
+            if ($childNode instanceof \DOMElement) {
+                $fieldParam[$childNode->tagName] = $childNode->nodeValue;
+            }
+        }
+
+        return $fieldParam;
     }
 }
