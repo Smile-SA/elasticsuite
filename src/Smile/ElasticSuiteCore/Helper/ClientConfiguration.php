@@ -24,7 +24,7 @@ use Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface;
 /**
  * Smile_ElasticSuiteCore search engine client configuration configuration default implementation.
  */
-class ClientConfiguration extends ConfigurationAbstract implements ClientConfigurationInterface
+class ClientConfiguration extends AbstractConfiguration implements ClientConfigurationInterface
 {
     /**
      * Location of ElasticSearch client configuration.
@@ -72,45 +72,4 @@ class ClientConfiguration extends ConfigurationAbstract implements ClientConfigu
     {
         return (int) $this->getElasticsearchClientConfigParam('connection_timeout');
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getIndexAliasName()
-    {
-        return $this->getElasticsearchClientConfigParam('alias');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getIndicesNamePattern()
-    {
-        return $this->getElasticsearchClientConfigParam('indices_pattern');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getNumberOfShards()
-    {
-        return max(1, (int) $this->getElasticsearchClientConfigParam('number_of_shards'));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getNumberOfReplicas()
-    {
-        return (int) $this->getElasticsearchClientConfigParam('number_of_replicas');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getBatchIndexingSize()
-    {
-        return max(1, (int) $this->getElasticsearchClientConfigParam('batch_indexing_size'));
-    }
-
 }

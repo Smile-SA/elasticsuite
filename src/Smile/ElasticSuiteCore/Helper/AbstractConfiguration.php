@@ -29,7 +29,7 @@ use Magento\Store\Model\StoreManager;
  * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-abstract class ConfigurationAbstract extends AbstractHelper
+abstract class AbstractConfiguration extends AbstractHelper
 {
     /**
      * @var Magento\Store\Model\StoreManagerInterface

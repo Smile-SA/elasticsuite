@@ -26,7 +26,7 @@ use Magento\Store\Model\ScopeInterface;
 /**
  * Smile_ElasticSuiteCore search engine client configuration configuration default implementation.
  */
-class IndexSettings extends ConfigurationAbstract
+class IndexSettings extends AbstractConfiguration
 {
     /**
      *
@@ -94,7 +94,7 @@ class IndexSettings extends ConfigurationAbstract
     public function getLanguageCode($store)
     {
         $store = $this->getStore($store);
-        list($languageCode, $countryCode) = explode('_', $this->getLocaleCode($store));
+        $languageCode = current(explode('_', $this->getLocaleCode($store)));
         return $languageCode;
 
     }
@@ -112,7 +112,7 @@ class IndexSettings extends ConfigurationAbstract
         $currentDate      = new \Zend_Date;
 
         // Parse pattern to extract datetime tokens
-        $matches = array();
+        $matches = [];
         preg_match_all('/{{([\w]*)}}/', $indiceNameSuffix, $matches);
 
         foreach (array_combine($matches[0], $matches[1]) as $k => $v) {
@@ -149,5 +149,10 @@ class IndexSettings extends ConfigurationAbstract
     public function getNumberOfReplicas()
     {
         return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
+    }
+
+    public function getBatchIndexingSize()
+    {
+        return (int) $this->getIndicesSettingsConfigParam('batch_indexing_size');
     }
 }
