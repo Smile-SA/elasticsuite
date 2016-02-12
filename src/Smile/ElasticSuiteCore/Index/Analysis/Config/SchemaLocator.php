@@ -1,9 +1,18 @@
 <?php
 /**
- * Email templates config schema locator
  *
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
