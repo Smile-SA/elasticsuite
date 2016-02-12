@@ -40,14 +40,18 @@ interface IndexOperationInterface
     public function installIndex(IndexInterface $index, $store);
 
     /**
-     * @return ?????
+     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface
      */
     public function createBulk();
-
 
     /**
      * @return ?????
      */
-    public function executeBulk($refreshIndex = true);
+    public function executeBulk(BulkInterface $bulk, $refreshIndex = true);
+
+    /**
+     * @return int
+     */
+    public function getBatchIndexingSize();
 
 }
