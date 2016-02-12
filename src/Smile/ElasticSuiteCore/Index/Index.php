@@ -29,17 +29,20 @@ class Index implements IndexInterface
      */
     private $types;
 
+    private $needInstall;
+
     /**
      *
      * @param string $identifier Index real name.
      * @param string $name       Index real name.
      * @param array  $aliases    Index current aliases.
      */
-    public function __construct($identifier, $name, array $types)
+    public function __construct($identifier, $name, array $types, $needInstall = false)
     {
         $this->identifier = $identifier;
         $this->name  = $name;
         $this->types = $types;
+        $this->needInstall = $needInstall;
     }
 
     /**
@@ -69,4 +72,13 @@ class Index implements IndexInterface
         return $this->types;
     }
 
+    public function getType($typeName)
+    {
+        return $this->types[$typeName];
+    }
+
+    public function needInstall()
+    {
+        return $this->needInstall;
+    }
 }

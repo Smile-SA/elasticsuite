@@ -19,4 +19,18 @@ interface IndexInterface
      */
     public function getTypes();
 
+    /**
+     *
+     * @param strinh $typeName
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\TypeInterface
+     */
+    public function getType($typeName);
+
+
+    /**
+     * @return bool
+     */
+    public function needInstall();
+
 }
