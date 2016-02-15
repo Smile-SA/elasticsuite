@@ -1,5 +1,5 @@
 {
-  "name": "smile-sa/m2-smile-tracker",
+  "name": "smile-sa/module-elasticsuite-tracker",
   "type": "magento2-module",
   "description": "Provides Smile Tracker module for Magento 2.",
   "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-tracker",
