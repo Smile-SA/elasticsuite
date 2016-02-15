@@ -22,12 +22,12 @@
       "email": "aurelien.foucret@smile.fr"
     }
   ],
-  "extra": {
-    "map": [
-      [
-        "src/*",
-        "Smile/ElasticSuiteCore"
-      ]
-    ]
+  "autoload": {
+    "files": [
+      "src/registration.php"
+    ],
+    "psr-4": {
+      "Smile\\ElasticSuiteCore\\": "src"
+    }
   }
 }
