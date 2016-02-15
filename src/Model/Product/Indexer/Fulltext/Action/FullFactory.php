@@ -44,8 +44,7 @@ class FullFactory extends DefaultFactory
         ScopeConfigInterface $scopeConfig,
         $configPath = EngineInterface::CONFIG_ENGINE_PATH,
         $fullActionPool = []
-    )
-    {
+    ) {
         $this->objectManager  = $objectManager;
         $this->scopeConfig    = $scopeConfig;
         $this->configPath     = $configPath;

@@ -6,7 +6,6 @@ use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ProductAttributes as ResourceModel;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Index\Mapping\FieldFactory;
 use Smile\ElasticSuiteCatalog\Helper\ProductAttribute as ProductAttributeHelper;
 
@@ -74,8 +73,7 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
         FieldFactory $fieldFactory,
         ProductAttributeHelper $attributeHelper,
         array $authorizedBackendModels = []
-    )
-    {
+    ) {
         $this->resourceModel   = $resourceModel;
         $this->attributeHelper = $attributeHelper;
         $this->fieldFactory    = $fieldFactory;
@@ -180,7 +178,8 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
             foreach ($attributesData as $row) {
                 $productId = (int) $row['entity_id'];
                 $attribute = $this->attributesById[$row['attribute_id']];
-                $indexData[$productId] += $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                $indexValues = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                $indexData[$productId] += $indexValues;
             }
         }
 
@@ -192,14 +191,14 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
             foreach ($attributesData as $row) {
                 $attribute  = $this->attributesById[$row['attribute_id']];
                 $childId    = (int) $row['entity_id'];
-                $indexValue = null;
+                $indexValues = null;
                 foreach ($parentIdsByChildrenId[$childId] as $parentId) {
                     $canIndex = $this->canAddAttributeAsChild($attribute, $indexData[$parentId]['type_id']);
                     if ($canIndex) {
-                        if ($indexValue === null) {
-                            $indexValue = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                        if ($indexValues === null) {
+                            $indexValues = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
                         }
-                        $indexData[$parentId] = array_merge_recursive($indexData[$parentId], $indexValue);
+                        $indexData[$parentId] = array_merge_recursive($indexData[$parentId], $indexValues);
                     }
                 }
             }

@@ -21,7 +21,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as A
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Magento\ConfigurableProduct\Controller\Adminhtml\Product\Attribute\GetAttributes;
 
 /**
  *
@@ -55,8 +54,11 @@ class ProductAttribute extends Mapping
      * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeCollectionFactory
      * @param \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory                $attributeFactory
      */
-    public function __construct(Context $context, AttributeCollectionFactory $attributeCollectionFactory, AttributeFactory $attributeFactory)
-    {
+    public function __construct(
+        Context $context,
+        AttributeCollectionFactory $attributeCollectionFactory,
+        AttributeFactory $attributeFactory
+    ) {
         parent::__construct($context);
         $this->attributeFactory           = $attributeFactory;
         $this->attributeCollectionFactory = $attributeCollectionFactory;
@@ -127,7 +129,7 @@ class ProductAttribute extends Mapping
         $attributeCode = $attribute->getAttributeCode();
         $values = [];
 
-        $simpleValueMapper = function($value) use ($attribute) {
+        $simpleValueMapper = function ($value) use ($attribute) {
             return $this->prepareSimpleIndexAttributeValue($attribute, $value);
         };
 
@@ -160,7 +162,7 @@ class ProductAttribute extends Mapping
     {
         if ($attribute->getBackendType() == 'decimal') {
             $value = floatval($value);
-        } else if ($attribute->getBackendType() == 'int') {
+        } elseif ($attribute->getBackendType() == 'int') {
             $value = intval($value);
         }
         return $value;
@@ -177,7 +179,7 @@ class ProductAttribute extends Mapping
      */
     public function getIndexOptionsText(ProductAttributeInterface $attribute, $storeId, array $optionIds)
     {
-        $mapper = function($optionId) use($attribute, $storeId) {
+        $mapper = function ($optionId) use ($attribute, $storeId) {
             return $this->getIndexOptionText($attribute, $storeId, $optionId);
         };
         $optionValues = array_map($mapper, $optionIds);

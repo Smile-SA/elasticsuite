@@ -3,7 +3,6 @@
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\AbstractIndexer;
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as AttributeCollection;
 
 class CategoryData extends AbstractIndexer
 {
@@ -12,7 +11,8 @@ class CategoryData extends AbstractIndexer
      * @param int   $storeId
      * @param array $productIds
      */
-    public function loadCategoryData($storeId, $productIds) {
+    public function loadCategoryData($storeId, $productIds)
+    {
 
         $select = $this->getConnection()->select()
             ->from(['cpi' => $this->getTable('catalog_category_product_index')])

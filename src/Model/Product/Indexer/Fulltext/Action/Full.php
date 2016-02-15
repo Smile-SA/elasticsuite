@@ -4,8 +4,6 @@ namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Action;
 
 
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as ResourceModel;
-use Magento\Framework\App\ResourceConnection;
-use Magento\Store\Model\StoreManagerInterface;
 
 class Full
 {
@@ -38,7 +36,7 @@ class Full
                 yield $lastProductId => $productData;
             }
 
-        } while(!empty($products));
+        } while (!empty($products));
     }
 
     /**

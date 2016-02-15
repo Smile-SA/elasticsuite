@@ -54,13 +54,15 @@ class Full extends AbstractIndexer
     private function addIsVisibleInStoreFilter($select, $storeId)
     {
         $rootCategoryId = $this->getRootCategoryId($storeId);
+        $indexTable = $this->getTable('catalog_category_product_index');
 
         $visibilityJoinCond = $this->getConnection()->quoteInto(
-            'visibility.product_id = e.entity_id AND visibility.store_id = ?', $storeId
+            'visibility.product_id = e.entity_id AND visibility.store_id = ?',
+            $storeId
         );
 
         $select->useStraightJoin(true)
-            ->join(['visibility' => $this->getTable('catalog_category_product_index')], $visibilityJoinCond, ['visibility'])
+            ->join(['visibility' => $indexTable], $visibilityJoinCond, ['visibility'])
             ->where('visibility.category_id = ?', $rootCategoryId);
 
         return $this;

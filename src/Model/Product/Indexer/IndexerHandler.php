@@ -7,7 +7,8 @@ use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
-class IndexerHandler implements IndexerInterface {
+class IndexerHandler implements IndexerInterface
+{
 
     const INDEX_NAME = 'catalog_product';
     const TYPE_NAME  = 'product';

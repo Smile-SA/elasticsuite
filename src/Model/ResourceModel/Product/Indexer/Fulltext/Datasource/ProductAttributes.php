@@ -44,8 +44,11 @@ class ProductAttributes extends AbstractIndexer
     /**
      * @param ResourceConnection $resource
      */
-    public function __construct(ResourceConnection $resource, StoreManagerInterface $storeManager, ProductType $catalogProductType)
-    {
+    public function __construct(
+        ResourceConnection $resource,
+        StoreManagerInterface $storeManager,
+        ProductType $catalogProductType
+    ) {
         parent::__construct($resource, $storeManager);
         $this->catalogProductType = $catalogProductType;
     }
@@ -94,7 +97,10 @@ class ProductAttributes extends AbstractIndexer
              't_store.store_id= ?',
         ];
 
-        $joinStoreValuesCondition = $this->connection->quoteInto(implode(' AND ', $joinStoreValuesConditionClauses), $storeId);
+        $joinStoreValuesCondition = $this->connection->quoteInto(
+            implode(' AND ', $joinStoreValuesConditionClauses),
+            $storeId
+        );
 
         $select->from(['t_default' => $tableName], ['entity_id', 'attribute_id'])
             ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
@@ -116,20 +122,20 @@ class ProductAttributes extends AbstractIndexer
 
         foreach ($this->catalogProductType->getCompositeTypes() as $productTypeId) {
             $typeInstance = $this->getProductTypeInstance($productTypeId);
-            $relationInfo = $typeInstance->getRelationInfo();
+            $relation = $typeInstance->getRelationInfo();
 
-            if ($relationInfo->getTable() && $relationInfo->getParentFieldName() && $relationInfo->getChildFieldName()) {
+            if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
 
-                $relationTable   = $this->getTable($relationInfo->getTable());
-                $parentFieldName = $relationInfo->getParentFieldName();
-                $childFieldName  = $relationInfo->getChildFieldName();
+                $relationTable   = $this->getTable($relation->getTable());
+                $parentFieldName = $relation->getParentFieldName();
+                $childFieldName  = $relation->getChildFieldName();
 
                 $select = $this->getConnection()->select()
                     ->from(['main' => $relationTable], [$parentFieldName, $childFieldName])
                     ->where("main.{$parentFieldName} in (?)", $productIds);
 
-                if (!is_null($relationInfo->getWhere())) {
-                    $select->where($relationInfo->getWhere());
+                if (!is_null($relation->getWhere())) {
+                    $select->where($relation->getWhere());
                 }
 
                 $data = $this->getConnection()->fetchAll($select);

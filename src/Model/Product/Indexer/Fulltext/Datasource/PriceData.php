@@ -31,8 +31,17 @@ class PriceData implements DatasourceInterface
         $priceData = $this->resourceModel->loadPriceData($storeId, array_keys($indexData));
         foreach ($priceData as $priceDataRow) {
             $productId  = (int) $priceDataRow['entity_id'];
-            $originalPrice = $priceDataRow['price'] !== null ? $priceDataRow['price'] : $priceDataRow['min_price'];
-            $finalPrice    = $priceDataRow['final_price'] !== null ? $priceDataRow['final_price'] : $priceDataRow['min_price'];
+
+            $originalPrice = $priceDataRow['price'];
+            if ($originalPrice === null) {
+                $originalPrice = $priceDataRow['min_price'];
+            }
+
+            $finalPrice = $priceDataRow['final_price'];
+            if ($finalPrice === null) {
+                $finalPrice = $priceDataRow['min_price'];
+            }
+
             $indexData[$productId]['price'][] = [
                 'price'             => $finalPrice,
                 'original_price'    => $originalPrice,
