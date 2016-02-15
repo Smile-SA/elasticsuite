@@ -13,12 +13,12 @@
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
-namespace Smile\Tracker\Block;
+namespace Smile\ElasticSuiteTracker\Block;
 
 /**
  * Class Config
  *
- * @package   Smile\Tracker\Block\
+ * @package   Smile\ElasticSuiteTracker\Block\
  * @copyright 2016 Smile
  */
 class Config extends \Magento\Framework\View\Element\Template
@@ -50,7 +50,7 @@ class Config extends \Magento\Framework\View\Element\Template
      * @param \Magento\Framework\View\Element\Template\Context   $context       App context
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig   The Magento configuration
      * @param \Magento\Framework\Json\Helper\Data                $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\Tracker\Helper\Data                         $trackerHelper The Smile_Tracker helper
+     * @param \Smile\ElasticSuiteTracker\Helper\Data             $trackerHelper The Smile Tracker helper
      * @param array                                              $data          additional datas
      *
      * @return Config
@@ -59,7 +59,7 @@ class Config extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\Tracker\Helper\Data $trackerHelper,
+        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);

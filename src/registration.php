@@ -8,14 +8,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_Tracker
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Smile_Tracker',
+    'Smile_ElasticSuiteTracker',
     __DIR__
 );
 

@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_Tracker
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -17,13 +17,13 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <link src="Smile_Tracker::js/tracking.js" type="text/javascript"/>
+        <link src="Smile_ElasticSuiteTracker::js/tracking.js" type="text/javascript"/>
     </head>
     <referenceBlock name="head.additional">
-        <block template="config.phtml" class="Smile\Tracker\Block\Config" name="smile.tracker.config" />
+        <block template="config.phtml" class="Smile\ElasticSuiteTracker\Block\Config" name="smile.tracker.config" />
     </referenceBlock>
     <referenceBlock name="before.body.end">
-        <block class="Smile\Tracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
-        <block class="Smile\Tracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
+        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
+        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
     </referenceBlock>
 </page>

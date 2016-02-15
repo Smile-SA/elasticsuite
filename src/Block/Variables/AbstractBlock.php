@@ -13,12 +13,12 @@
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
-namespace Smile\Tracker\Block\Variables;
+namespace Smile\ElasticSuiteTracker\Block\Variables;
 
 /**
  * Class AbstractBlock
  *
- * @package   Smile\Tracker\Block\Variables
+ * @package   Smile\ElasticSuiteTracker\Block\Variables
  * @copyright 2016 Smile
  */
 class AbstractBlock extends \Magento\Framework\View\Element\Template
@@ -49,7 +49,7 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
      *
      * @param \Magento\Framework\View\Element\Template\Context $context       App context
      * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\Tracker\Helper\Data                       $trackerHelper The Smile_Tracker helper
+     * @param \Smile\ElasticSuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
      * @param \Magento\Framework\Registry                      $registry      The Magento registry
      * @param array                                            $data          additional datas
      *
@@ -58,7 +58,7 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\Tracker\Helper\Data $trackerHelper,
+        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         array $data = []
     ) {

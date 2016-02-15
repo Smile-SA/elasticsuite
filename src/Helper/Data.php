@@ -13,13 +13,13 @@
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
-namespace Smile\Tracker\Helper;
+namespace Smile\ElasticSuiteTracker\Helper;
 use Magento\Framework\App\Helper;
 
 /**
  * Smile Tracker helper
  *
- * @package   Smile\Tracker\Helper\
+ * @package   Smile\ElasticSuiteTracker\Helper\
  * @copyright 2016 Smile
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
@@ -28,19 +28,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * Module status configuration path
      * @var string
      */
-    const CONFIG_IS_ENABLED_XPATH = 'smile_tracker/general/enabled';
+    const CONFIG_IS_ENABLED_XPATH = 'smile_elasticsuite_tracker/general/enabled';
 
     /**
      * Tracking URL configuration path
      * @var string
      */
-    const CONFIG_BASE_URL_XPATH   = 'smile_tracker/general/base_url';
+    const CONFIG_BASE_URL_XPATH   = 'smile_elasticsuite_tracker/general/base_url';
 
     /**
      * Coookie configuration configuration path
      * @var string
      */
-    const CONFIG_COOKIE           = 'smile_tracker/session';
+    const CONFIG_COOKIE           = 'smile_elasticsuite_tracker/session';
 
     /**
      * Magento Configuration
@@ -104,7 +104,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$result) {
 
             $params = ['_secure' => $this->_getRequest()->isSecure()];
-            return $this->_assetRepository->getUrlWithParams("Smile_Tracker::hit.png", $params);
+            return $this->_assetRepository->getUrlWithParams("Smile_ElasticSuiteTracker::hit.png", $params);
         }
 
         return $result;

@@ -13,17 +13,17 @@
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
-namespace Smile\Tracker\Block\Variables\Page;
+namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
 use Magento\Framework\App\Cache\Type;
 use Magento\Framework\View\Element\Template;
 
 /**
  * Class Base
  *
- * @package   Smile\Tracker\Block\Variables\Page
+ * @package   Smile\ElasticSuiteTracker\Block\Variables\Page
  * @copyright 2016 Smile
  */
-class Base extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
+class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
 {
     /**
      * @var \Magento\Framework\View\Layout\PageType\Config The page type configuration
@@ -35,7 +35,7 @@ class Base extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
      *
      * @param Template\Context                               $context        The template context
      * @param \Magento\Framework\Json\Helper\Data            $jsonHelper     The Magento's JSON Helper
-     * @param \Smile\Tracker\Helper\Data                     $trackerHelper  The Smile_Tracker helper
+     * @param \Smile\ElasticSuiteTracker\Helper\Data         $trackerHelper  The Smile Tracker helper
      * @param \Magento\Framework\Registry                    $registry       Magento Core Registry
      * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig The page type configuration
      * @param array                                          $data           The block data
@@ -45,7 +45,7 @@ class Base extends \Smile\Tracker\Block\Variables\Page\AbstractBlock
     public function __construct(
         Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\Tracker\Helper\Data $trackerHelper,
+        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
         array $data = []

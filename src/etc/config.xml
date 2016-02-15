@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_Tracker
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -17,7 +17,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <smile_tracker>
+        <smile_elasticsuite_tracker>
             <general>
                 <enabled>1</enabled>
             </general>
@@ -37,6 +37,6 @@
                     <city />
                 </customer_address_attributes>
             </session>
-        </smile_tracker>
+        </smile_elasticsuite_tracker>
     </default>
 </config>
