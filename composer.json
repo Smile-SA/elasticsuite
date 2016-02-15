@@ -20,12 +20,12 @@
       "email": "romain.ruaud@smile.fr"
     }
   ],
-  "extra": {
-    "map": [
-      [
-        "src/*",
-        "Smile/ElasticSuiteTracker"
-      ]
-    ]
+  "autoload": {
+    "files": [
+      "src/registration.php"
+    ],
+    "psr-4": {
+      "Smile\\ElasticSuiteTracker\\": "src"
+    }
   }
 }
