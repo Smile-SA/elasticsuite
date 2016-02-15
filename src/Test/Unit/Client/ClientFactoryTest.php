@@ -16,7 +16,10 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $om = new ObjectManager($this);
-        $this->clientFactory = $om->getObject('Smile\ElasticSuiteCore\Client\ClientFactory', [new ClientConfiguration(), new Logger()]);
+        $this->clientFactory = $om->getObject(
+            'Smile\ElasticSuiteCore\Client\ClientFactory',
+            [new ClientConfiguration(), new Logger()]
+        );
     }
 
     public function testReturnType()

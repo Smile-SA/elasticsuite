@@ -16,9 +16,6 @@
  */
 namespace Smile\ElasticSuiteCore\Helper;
 
-use Magento\Framework\App\Helper\AbstractHelper;
-use Psr\Log\LoggerInterface;
-use Magento\Framework\App\Helper\Context;
 use Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface;
 
 /**
@@ -50,7 +47,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      * @inheritdoc
      * @see \Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface::getServerList()
      */
-    function getServerList()
+    public function getServerList()
     {
         return explode(',', $this->getElasticsearchClientConfigParam('servers'));
     }

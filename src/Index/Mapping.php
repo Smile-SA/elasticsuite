@@ -21,12 +21,27 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
 class Mapping implements MappingInterface
 {
-    private $dateFormats = [\Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT, \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT];
+    private $dateFormats = [
+        \Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT,
+        \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT
+    ];
 
     private $defaultFields = [
-        self::DEFAULT_SEARCH_FIELD       => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]],
-        self::DEFAULT_SPELLING_FIELD     => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]],
-        self::DEFAULT_AUTOCOMPLETE_FIELD => ['analyzers' => [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE, self::ANALYZER_EDGE_NGRAM]],
+        self::DEFAULT_SEARCH_FIELD => [
+            'analyzers' => [
+                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE
+            ]
+        ],
+        self::DEFAULT_SPELLING_FIELD => [
+            'analyzers' => [
+                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE
+            ]
+        ],
+        self::DEFAULT_AUTOCOMPLETE_FIELD => [
+            'analyzers' => [
+                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE, self::ANALYZER_EDGE_NGRAM
+            ]
+        ],
     ];
 
     private $fields;
@@ -117,7 +132,7 @@ class Mapping implements MappingInterface
                     $fieldMapping['analyzer'] = $analyzer;
                 }
             }
-        } else if ($type == "date") {
+        } elseif ($type == "date") {
             $fieldMapping['format'] = implode('||', $this->dateFormats);
         }
 
@@ -133,7 +148,10 @@ class Mapping implements MappingInterface
             $analyzers = [self::ANALYZER_UNTOUCHED];
 
             if ($field->isSearchable()) {
-                $analyzers = array_merge($analyzers, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]);
+                $analyzers = array_merge(
+                    $analyzers,
+                    [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]
+                );
                 $copyTo[]  = self::DEFAULT_SEARCH_FIELD;
 
                 if ($field->isUsedInSpellcheck()) {

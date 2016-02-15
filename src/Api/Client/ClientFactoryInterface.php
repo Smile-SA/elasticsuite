@@ -21,13 +21,12 @@ namespace Smile\ElasticSuiteCore\Api\Client;
  *
  * @api
  */
-interface ClientFactoryInterface {
-
+interface ClientFactoryInterface
+{
     /**
      * Create an ES client
      *
      * @return Elasticsearch\Client
      */
     public function createClient();
-
 }

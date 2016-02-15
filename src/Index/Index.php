@@ -17,7 +17,6 @@
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 
 class Index implements IndexInterface

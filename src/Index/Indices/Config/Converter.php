@@ -16,7 +16,6 @@
  */
 namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 
-use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
 class Converter implements \Magento\Framework\Config\ConverterInterface
@@ -71,7 +70,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         $dynamicFieldProviders = array_filter(
             $datasources,
-            function($datasource) { return $datasource instanceof DynamicFieldProviderInterface; }
+            function ($datasource) {
+                return $datasource instanceof DynamicFieldProviderInterface;
+            }
         );
 
         $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $datasources];
@@ -94,7 +95,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     private function parseDatasources($xpath, $typeRootNode)
     {
         $datasources = [];
-        foreach ($xpath->query(self::DATASOURCES_PATH , $typeRootNode) as $datasourceNode) {
+        foreach ($xpath->query(self::DATASOURCES_PATH, $typeRootNode) as $datasourceNode) {
             $datasources[$datasourceNode->getAttribute('name')] = $datasourceNode->nodeValue;
         }
         return $datasources;

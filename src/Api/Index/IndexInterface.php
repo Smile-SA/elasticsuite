@@ -46,5 +46,4 @@ interface IndexInterface
      * @return bool
      */
     public function needInstall();
-
 }

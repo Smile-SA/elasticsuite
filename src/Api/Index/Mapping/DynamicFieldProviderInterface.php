@@ -16,8 +16,7 @@
  */
 namespace Smile\ElasticSuiteCore\Api\Index\Mapping;
 
-interface DynamicFieldProviderInterface {
-
+interface DynamicFieldProviderInterface
+{
     public function getFields();
-
 }

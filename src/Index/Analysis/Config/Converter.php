@@ -16,7 +16,6 @@
  */
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
-use Magento\GoogleAdwords\Model\Config\Source\Language;
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {
     const ROOT_NODE_NAME = 'analysis';
@@ -67,7 +66,12 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
     private function getLanguageConfiguration($xpath, $language, $defaultConfig)
     {
-        $languageCharFilters = $this->parseFilters($xpath, self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE, $language);
+        $languageCharFilters = $this->parseFilters(
+            $xpath,
+            self::CHAR_FILTER_TYPE_ROOT_NODE,
+            self::CHAR_FILTER_TYPE_NODE,
+            $language
+        );
         $charFilters         = array_merge($defaultConfig[self::CHAR_FILTER_TYPE_ROOT_NODE], $languageCharFilters);
 
         $languageFilters = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE, $language);
@@ -88,8 +92,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     {
         $languages = [];
 
-        foreach ($xpath->query('//*[@language]') as $currentNode)
-        {
+        foreach ($xpath->query('//*[@language]') as $currentNode) {
             $languages[] = $currentNode->getAttribute('language');
         }
 
@@ -123,7 +126,15 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         if ($language != 'default') {
             $languagePath .= " or @language='{$language}'";
         }
-        $searchPath = sprintf("/%s/%s/%s[%s]", self::ROOT_NODE_NAME, self::ANALYZER_TYPE_ROOT_NODE, self::ANALYZER_TYPE_NODE, $languagePath);
+
+        $searchPath = sprintf(
+            '/%s/%s/%s[%s]',
+            self::ROOT_NODE_NAME,
+            self::ANALYZER_TYPE_ROOT_NODE,
+            self::ANALYZER_TYPE_NODE,
+            $languagePath
+        );
+
         $analyzerNodes = $xpath->query($searchPath);
 
         foreach ($analyzerNodes as $analyzerNode) {
@@ -133,12 +144,18 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
             $filterPath = sprintf('%s/%s', self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
             $analyzer[self::FILTER_TYPE_ROOT_NODE] = $this->getFilterByRef(
-                $xpath, $analyzerNode, $filterPath, $availableFilters
+                $xpath,
+                $analyzerNode,
+                $filterPath,
+                $availableFilters
             );
 
             $charFilterPath = sprintf('%s/%s', self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
             $analyzer[self::CHAR_FILTER_TYPE_ROOT_NODE] = $this->getFilterByRef(
-                $xpath, $analyzerNode, $charFilterPath, $availableCharFilters
+                $xpath,
+                $analyzerNode,
+                $charFilterPath,
+                $availableCharFilters
             );
 
             $analyzers[$analyzerName] = $analyzer;

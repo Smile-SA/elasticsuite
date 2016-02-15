@@ -18,8 +18,8 @@ namespace Smile\ElasticSuiteCore\Index\Mapping;
 
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
-class Field implements FieldInterface {
-
+class Field implements FieldInterface
+{
     private $name;
     private $type;
     private $isSearchable;
@@ -40,8 +40,7 @@ class Field implements FieldInterface {
         $isUsedInAutocomplete = false,
         $searchWeight = 1,
         $nestedPath = false
-    )
-    {
+    ) {
         $this->name = (string) $name;
         $this->type = (string) $type;
         $this->isSearchable = (bool) $isSearchable;

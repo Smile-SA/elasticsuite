@@ -54,8 +54,7 @@ class IndexOperation implements IndexOperationInterface
         ObjectManagerInterface $objectManager,
         ClientFactoryInterface $clientFactory,
         IndexSettingsInterface $indexSettings
-    )
-    {
+    ) {
         $this->objectManager        = $objectManager;
         $this->client               = $clientFactory->createClient();
         $this->indexSettings        = $indexSettings;
@@ -70,7 +69,7 @@ class IndexOperation implements IndexOperationInterface
     {
         try {
             $isAvailable = $this->client->ping();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             $isAvailable = false;
         }
         return $isAvailable;
@@ -101,7 +100,9 @@ class IndexOperation implements IndexOperationInterface
             if ($this->indexExists($indexIdentifier, $store)) {
                 $this->initIndex($indexIdentifier, $store, true);
             } else {
-                throw new \LogicException("{$indexIdentifier} index does not exist yet. Make sure evything is reindexed");
+                throw new \LogicException(
+                    "{$indexIdentifier} index does not exist yet. Make sure evything is reindexed"
+                );
             }
         }
         return $this->indicesByIdentifier[$indexAlias];
@@ -138,7 +139,9 @@ class IndexOperation implements IndexOperationInterface
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
             $this->client->indices()->optimize(['index' => $indexName]);
-            $this->client->indices()->putSettings(['index' => $indexName, 'body' => $this->indexSettings->getInstallIndexSettings()]);
+            $this->client->indices()->putSettings(
+                ['index' => $indexName, 'body' => $this->indexSettings->getInstallIndexSettings()]
+            );
 
             $this->proceedIndexInstall($indexName, $indexAlias);
         }
@@ -219,16 +222,20 @@ class IndexOperation implements IndexOperationInterface
             $createIndexParams = ['identifier' => $indexIdentifier, 'name' => $indexName];
 
             $allowedFields = false;
+
             if ($existingIndex) {
                 $indexName     = $indexAlias;
                 //$allowedFields = $this->loadCurrentMapping($indexName);
             } else {
-               $createIndexParams['needInstall'] = true;
+                $createIndexParams['needInstall'] = true;
             }
 
             $createIndexParams['types'] = $indicesConfiguration[$indexIdentifier]['types'];
 
-            $index = $this->objectManager->create('\Smile\ElasticSuiteCore\Api\Index\IndexInterface', $createIndexParams);
+            $index = $this->objectManager->create(
+                '\Smile\ElasticSuiteCore\Api\Index\IndexInterface',
+                $createIndexParams
+            );
 
             $this->indicesByIdentifier[$indexAlias] = $index;
 

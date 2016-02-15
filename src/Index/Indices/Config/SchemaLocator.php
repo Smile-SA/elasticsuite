@@ -26,14 +26,15 @@ class SchemaLocator implements SchemaLocatorInterface
      *
      * @var string
      */
-    private $_schema;
+    private $schema;
 
     /**
      * @param \Magento\Framework\Module\Dir\Reader $moduleReader
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $this->_schema = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore') . '/elasticsearch/indices.xsd';
+        $moduleDir = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $this->schema = $moduleDir . '/elasticsearch/indices.xsd';
     }
 
     /**
@@ -41,7 +42,7 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function getSchema()
     {
-        return $this->_schema;
+        return $this->schema;
     }
 
     /**
@@ -49,6 +50,6 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function getPerFileSchema()
     {
-        return $this->_schema;
+        return $this->schema;
     }
 }

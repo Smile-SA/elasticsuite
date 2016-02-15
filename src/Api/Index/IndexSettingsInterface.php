@@ -18,7 +18,6 @@ namespace Smile\ElasticSuiteCore\Api\Index;
 
 interface IndexSettingsInterface
 {
-
     /**
      * @return string
      */

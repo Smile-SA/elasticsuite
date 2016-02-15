@@ -22,7 +22,6 @@ class Mapping extends AbstractHelper
 {
     const OPTION_TEXT_PREFIX = 'option_text';
 
-
     /**
      *
      * @param string $fieldName

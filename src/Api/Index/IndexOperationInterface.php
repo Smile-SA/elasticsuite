@@ -67,5 +67,4 @@ interface IndexOperationInterface
      * @return int
      */
     public function getBatchIndexingSize();
-
 }

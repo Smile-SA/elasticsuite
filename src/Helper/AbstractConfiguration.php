@@ -17,10 +17,8 @@
 namespace Smile\ElasticSuiteCore\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\App\Helper\Context;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Store\Model\StoreManager;
 
 /**
  * Smile_ElasticSuiteCore search engine configuration default implementation.
@@ -61,5 +59,4 @@ abstract class AbstractConfiguration extends AbstractHelper
         $path = self::BASE_CONFIG_XML_PREFIX . '/' . $configField;
         return $this->scopeConfig->getValue($path);
     }
-
 }

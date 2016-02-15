@@ -40,7 +40,12 @@ class Config extends \Magento\Framework\Config\Data
      * @param \Magento\Framework\Config\CacheInterface $cache
      * @param string $cacheId
      */
-    public function __construct(Reader $reader, CacheInterface $cache, ObjectManagerInterface $objectManager, $cacheId = self::CACHE_ID) {
+    public function __construct(
+        Reader $reader,
+        CacheInterface $cache,
+        ObjectManagerInterface $objectManager,
+        $cacheId = self::CACHE_ID
+    ) {
         $this->objectManager = $objectManager;
         $this->initFactories();
         parent::__construct($reader, $cache, $cacheId);
@@ -58,9 +63,17 @@ class Config extends \Magento\Framework\Config\Data
 
     private function initFactories()
     {
-        $this->typeFactory = $this->objectManager->get('Smile\ElasticSuiteCore\Api\Index\TypeInterfaceFactory');
-        $this->mappingFactory = $this->objectManager->get('Smile\ElasticSuiteCore\Api\Index\MappingInterfaceFactory');
-        $this->mappingFieldFactory = $this->objectManager->get('Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterfaceFactory');
+        $this->typeFactory = $this->objectManager->get(
+            'Smile\ElasticSuiteCore\Api\Index\TypeInterfaceFactory'
+        );
+
+        $this->mappingFactory = $this->objectManager->get(
+            'Smile\ElasticSuiteCore\Api\Index\MappingInterfaceFactory'
+        );
+
+        $this->mappingFieldFactory = $this->objectManager->get(
+            'Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterfaceFactory'
+        );
     }
 
     /**
@@ -69,8 +82,8 @@ class Config extends \Magento\Framework\Config\Data
      *
      * @return array
      */
-    private function initIndexConfig($indexConfigData) {
-
+    private function initIndexConfig($indexConfigData)
+    {
         $types       = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
@@ -102,7 +115,6 @@ class Config extends \Magento\Framework\Config\Data
 
     private function isDynamicFieldsProvider($datasource)
     {
-        return $datasource instanceOf DynamicFieldProviderInterface;
+        return $datasource instanceof DynamicFieldProviderInterface;
     }
-
 }

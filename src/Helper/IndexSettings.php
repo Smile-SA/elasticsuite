@@ -16,13 +16,10 @@
  */
 namespace Smile\ElasticSuiteCore\Helper;
 
-use Magento\Framework\App\Helper\AbstractHelper;
-use Psr\Log\LoggerInterface;
-use Magento\Framework\App\Helper\Context;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Magento\Store\Api\Data\StoreInterface;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Store\Model\ScopeInterface;
+
 /**
  * Smile_ElasticSuiteCore search engine client configuration configuration default implementation.
  */

@@ -20,7 +20,6 @@ use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticSuiteCore\Index\Analysis\Config as AnalysisConfig;
 use Smile\ElasticSuiteCore\Index\Indices\Config as IndicesConfig;
-use Magento\Framework\ObjectManagerInterface;
 
 class IndexSettings implements IndexSettingsInterface
 {
