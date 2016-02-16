@@ -210,14 +210,13 @@ class IndexOperation implements IndexOperationInterface
         $indexSettings    = $this->indexSettings;
         $indexAlias       = $indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
         $indexName        = $indexSettings->createIndexNameFromIdentifier($indexIdentifier, $store);
-        $indexNeedInstall = !$existingIndex;
+        $needInstall      = !$existingIndex;
 
         if ($existingIndex) {
-            $indexName     = $indexAlias;
-            $createIndexParams['needInstall'] = true;
+            $indexName = $indexAlias;
         }
 
-        $createIndexParams = ['identifier' => $indexIdentifier, 'name' => $indexName, 'needInstall' => true];
+        $createIndexParams = ['identifier' => $indexIdentifier, 'name' => $indexName, 'needInstall' => $needInstall];
 
         $createIndexParams['types'] = $this->indicesConfiguration[$indexIdentifier]['types'];
 
