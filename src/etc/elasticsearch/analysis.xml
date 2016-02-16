@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /**
- *
+ * Smile_ElasticSuiteCore default analysis configuration.
  *
  * DISCLAIMER
  *
@@ -9,8 +9,8 @@
  * versions in the future.
  *
  *
- * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0

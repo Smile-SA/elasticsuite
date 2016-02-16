@@ -38,8 +38,9 @@ class IndexSettings extends AbstractConfiguration
     const LOCALE_CODE_CONFIG_XML_PATH = 'general/locale/code';
 
     /**
+     * Return the locale code (eg.: "en_US") for a store.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
      *
      * @return string
      */
@@ -53,8 +54,9 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Return the locale code (eg.: "en") for a store.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
      *
      * @return string
      */
@@ -68,27 +70,30 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Create a new index for an identifier (eg. catalog_product) by store including current date.
      *
-     *
-     * @param string                                                $indexIdentifier
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
+     * @param string                                                $indexIdentifier Index identifier.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
      *
      * @return string
      */
     public function createIndexNameFromIdentifier($indexIdentifier, $store)
     {
-        // Generate the suffix of the index name from the current date
-        // e.g : Default pattern "{{YYYYMMdd}}_{{HHmmss}}" is converted to "20160221-123421"
+        /*
+         * Generate the suffix of the index name from the current date.
+         * e.g : Default pattern "{{YYYYMMdd}}_{{HHmmss}}" is converted to "20160221-123421".
+         */
+
         $indiceNameSuffix = $this->getIndicesSettingsConfigParam('indices_pattern');
 
         $currentDate      = new \Zend_Date();
 
-        // Parse pattern to extract datetime tokens
+        // Parse pattern to extract datetime tokens.
         $matches = [];
         preg_match_all('/{{([\w]*)}}/', $indiceNameSuffix, $matches);
 
         foreach (array_combine($matches[0], $matches[1]) as $k => $v) {
-            // Replace tokens (UTC date used)
+            // Replace tokens (UTC date used).
             $indiceNameSuffix = str_replace($k, $currentDate->toString($v), $indiceNameSuffix);
         }
 
@@ -96,10 +101,10 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Returns the index alias for an identifier (eg. catalog_product) by store.
      *
-     *
-     * @param string                                                $indexIdentifier
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
+     * @param string                                                $indexIdentifier An index identifier.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
      *
      * @return string
      */
@@ -111,6 +116,7 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Get number of shards from the configuration.
      *
      * @return integer
      */
@@ -120,7 +126,8 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
-     *
+     * Get number of replicas from the configuration.
+
      * @return integer
      */
     public function getNumberOfReplicas()
@@ -129,6 +136,7 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Get number the batch indexing size from the configuration.
      *
      * @return integer
      */
@@ -140,7 +148,7 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Read config under the path smile_elasticsuite_core_base_settings/indices_settings.
      *
-     * @param string $configField
+     * @param string $configField Configuration field name.
      *
      * @return mixed
      */
@@ -152,6 +160,7 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Get the index alias from the configurarion.
      *
      * @return string
      */
@@ -161,8 +170,9 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Retrieve the store code from object or store id.
      *
-     * @param \Magento\Store\Api\Data\StoreInterface $store
+     * @param \Magento\Store\Api\Data\StoreInterface|integer $store The store or it's id.
      *
      * @return string
      */
@@ -172,8 +182,9 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Ensure store is an object or load it from it's id / identifier.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store identifier or id.
      *
      * @return \Magento\Store\Api\Data\StoreInterface
      */

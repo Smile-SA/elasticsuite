@@ -59,9 +59,9 @@ class IndexOperation implements IndexOperationInterface
     /**
      * Instanciate the index operation manager.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager
-     * @param \Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface $clientFactory
-     * @param \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface  $indexSettings
+     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager Object manager.
+     * @param \Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface $clientFactory ES client factory.
+     * @param \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface  $indexSettings ES settings
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -173,9 +173,14 @@ class IndexOperation implements IndexOperationInterface
     public function executeBulk(BulkInterface $bulk, $refreshIndex = true)
     {
         $bulkParams = ['body' => $bulk->getOperations()];
+
+        if ($refreshIndex == true) {
+            $bulkParams['refresh'] = true;
+        }
+
         $bulkResponse = $this->client->bulk($bulkParams);
 
-        /** @todo Parse bulk response and report errors in logs*/
+        /** @todo : Parse bulk response and report errors in logs */
 
         return $this;
     }
@@ -190,16 +195,16 @@ class IndexOperation implements IndexOperationInterface
 
     /**
      *
-     * @param string                                                $indexIdentifier
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store
-     * @param boolean                                               $existingIndex
+     * @param string                                                $indexIdentifier An index indentifier.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
+     * @param boolean                                               $existingIndex   Is the index already existing.
      *
      * @return \Smile\ElasticSuiteCore\Api\Index\IndexInterface;
      */
     private function initIndex($indexIdentifier, $store, $existingIndex)
     {
         if (!isset($this->indicesConfiguration[$indexIdentifier])) {
-            throw new \LogicException("No index found with identifier {$indexIdentifier} into mapping.xml");
+            throw new \LogicException("No index found with identifier {$indexIdentifier} into indices.xml");
         }
 
         $indexSettings    = $this->indexSettings;
@@ -258,8 +263,7 @@ class IndexOperation implements IndexOperationInterface
         $this->client->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
 
         foreach ($deletedIndices as $deletedIndex) {
-            // @todo : Dispatch event
-            // Mage::dispatchEvent('smile_elasticsearch_index_delete_before', array('index_name' => $index));
+            /** @todo : Dispatch event */
             $this->client->indices()->delete(['index' => $deletedIndex]);
         }
     }

@@ -48,8 +48,8 @@ class Config extends \Magento\Framework\Config\Data
     /**
      * Return analysis config by language.
      *
-     * @param string $language
-     * @param mixed  $default
+     * @param string $language A language code (eg: en, fr, ...).
+     * @param mixed  $default  Default value if no config is found.
      *
      * @return mixed
      */

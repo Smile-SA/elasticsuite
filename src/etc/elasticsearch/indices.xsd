@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- *
+ * Smile_ElasticSuiteCore indices configuration validation.
  *
  * DISCLAIMER
  *
@@ -9,13 +9,13 @@
  * versions in the future.
  *
  *
- * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
--->
+ -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="indices">

@@ -35,8 +35,8 @@ abstract class AbstractConfiguration extends AbstractHelper
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Helper\Context      $context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Magento\Framework\App\Helper\Context      $context      Helper context.
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager Store manager.
      */
     public function __construct(Context $context, StoreManagerInterface $storeManager)
     {
@@ -54,7 +54,7 @@ abstract class AbstractConfiguration extends AbstractHelper
     /**
      * Read a configuration param under the BASE_CONFIG_XML_PREFIX ('smile_elasticsuite_core_base_settings').
      *
-     * @param string $configField
+     * @param string $configField Configuration field name.
      *
      * @return mixed
      */

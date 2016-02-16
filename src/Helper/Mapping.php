@@ -33,7 +33,7 @@ class Mapping extends AbstractHelper
     /**
      * Transform a field name into it's option value field form.
      *
-     * @param string $fieldName
+     * @param string $fieldName The field name to be converted.
      *
      * @return string
      */
