@@ -49,7 +49,6 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         foreach ($xpath->query($indexSearchPath) as $indexNode) {
             $indexIdentifier = $indexNode->getAttribute('identifier');
             $indices[$indexIdentifier] = $this->parseIndexConfig($xpath, $indexNode);
-
         }
 
         return $indices;

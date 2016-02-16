@@ -125,7 +125,6 @@ class Config extends \Magento\Framework\Config\Data
         $types = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
-
             $datasources  = [];
             $staticFields = [];
 
