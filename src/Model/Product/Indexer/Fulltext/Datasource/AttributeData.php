@@ -125,7 +125,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
             $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
             foreach ($attributesData as $row) {
-
                 $productId = (int) $row['entity_id'];
                 $attribute = $this->attributesById[$row['attribute_id']];
 

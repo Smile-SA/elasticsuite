@@ -60,7 +60,6 @@ class Full
                 $lastProductId = (int) $productData['entity_id'];
                 yield $lastProductId => $productData;
             }
-
         } while (!empty($products));
     }
 

@@ -72,7 +72,6 @@ class IndexerHandler implements IndexerInterface
             $type  = $index->getType(self::TYPE_NAME);
 
             foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {
-
                 foreach ($type->getDatasources() as $datasource) {
                     $batchDocuments = $datasource->addData($storeId, $batchDocuments);
                 }

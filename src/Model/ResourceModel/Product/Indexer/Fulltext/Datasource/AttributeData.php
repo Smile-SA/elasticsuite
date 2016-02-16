@@ -154,7 +154,6 @@ class AttributeData extends AbstractIndexer
             $relation = $typeInstance->getRelationInfo();
 
             if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
-
                 $relationTable   = $this->getTable($relation->getTable());
                 $parentFieldName = $relation->getParentFieldName();
                 $childFieldName  = $relation->getChildFieldName();
