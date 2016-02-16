@@ -66,7 +66,7 @@ interface FieldInterface
     public function isUsedInAutocomplete();
 
     /**
-     * @return boolean
+     * @return integer
      */
     public function getSearchWeight();
 
