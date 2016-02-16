@@ -83,6 +83,8 @@ class Field implements FieldInterface
      * @param boolean $isUsedInAutocomplete Is the field used in autocomplete.
      * @param integer $searchWeight         Field weight in search operation.
      * @param string  $nestedPath           If the field is nested, the nested path have to be provided here.
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct(
         $name,
@@ -95,15 +97,15 @@ class Field implements FieldInterface
         $searchWeight = 1,
         $nestedPath = false
     ) {
-        $this->name = (string) $name;
-        $this->type = (string) $type;
-        $this->isSearchable = (bool) $isSearchable;
-        $this->isFilterable = (bool) $isFilterable;
+        $this->name                 = (string) $name;
+        $this->type                 = (string) $type;
+        $this->isSearchable         = (bool) $isSearchable;
+        $this->isFilterable         = (bool) $isFilterable;
         $this->isFilterableInSearch = (bool) $isFilterableInSearch;
-        $this->isUsedInSpellcheck = (bool) $isUsedInSpellcheck;
+        $this->isUsedInSpellcheck   = (bool) $isUsedInSpellcheck;
         $this->isUsedInAutocomplete = (bool) $isUsedInAutocomplete;
-        $this->searchWeight = (int) $searchWeight;
-        $this->nestedPath = $nestedPath;
+        $this->searchWeight         = (int) $searchWeight;
+        $this->nestedPath           = $nestedPath;
     }
 
     /**

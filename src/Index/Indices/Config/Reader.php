@@ -17,6 +17,8 @@ namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 /**
  * Validate, read and convert elasticsearch indices configuration files.
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -27,6 +29,8 @@ use Magento\Framework\Config\ValidationStateInterface;
 
 /**
  * Elasticsearch indices configuration files reader.
+ *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore

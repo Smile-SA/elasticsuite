@@ -58,6 +58,8 @@ class ClientFactory implements ClientFactoryInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function createClient()
     {

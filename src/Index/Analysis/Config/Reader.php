@@ -21,6 +21,8 @@ use Magento\Framework\Config\ValidationStateInterface;
 /**
  * Validate, read and convert elasticsearch indices analysis files.
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
