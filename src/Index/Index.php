@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,11 +11,21 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 
+/**
+ * Default implementation for ES indices (Smile\ElasticSuiteCore\Api\Index\IndexInterface).
+ *
+ *
+ *
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Index implements IndexInterface
 {
     /**
@@ -42,25 +49,31 @@ class Index implements IndexInterface
      */
     private $types;
 
+    /**
+     * Indicates if index is installed.
+     *
+     * @var boolean
+     */
     private $needInstall;
 
     /**
+     * Instanciate a new index.
      *
-     * @param string $identifier Index real name.
-     * @param string $name       Index real name.
-     * @param array  $aliases    Index current aliases.
+     * @param string                                            $identifier  Index real name.
+     * @param string                                            $name        Index real name.
+     * @param \Smile\ElasticSuiteCore\Api\Index\TypeInterface[] $types       Index current aliases.
+     * @param boolean                                           $needInstall Indicates if the index needs to be installed.
      */
     public function __construct($identifier, $name, array $types, $needInstall = false)
     {
-        $this->identifier = $identifier;
-        $this->name  = $name;
-        $this->types = $types;
+        $this->identifier  = $identifier;
+        $this->name        = $name;
+        $this->types       = $types;
         $this->needInstall = $needInstall;
     }
 
     /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexInterface::getIdentifier()
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
@@ -68,8 +81,7 @@ class Index implements IndexInterface
     }
 
     /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexInterface::getName()
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -77,19 +89,24 @@ class Index implements IndexInterface
     }
 
     /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexInterface::getTypes()
+     * {@inheritdoc}
      */
     public function getTypes()
     {
         return $this->types;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getType($typeName)
     {
         return $this->types[$typeName];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function needInstall()
     {
         return $this->needInstall;

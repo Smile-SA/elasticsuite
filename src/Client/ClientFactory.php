@@ -1,19 +1,17 @@
 <?php
 /**
- * ElasticSearch client factory default implementation.
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- *
- * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Client;
 
 use Psr\Log\LoggerInterface;
@@ -59,7 +57,7 @@ class ClientFactory implements ClientFactoryInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function createClient()
     {

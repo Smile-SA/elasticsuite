@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,6 +11,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
@@ -21,9 +19,18 @@ use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticSuiteCore\Index\Analysis\Config as AnalysisConfig;
 use Smile\ElasticSuiteCore\Index\Indices\Config as IndicesConfig;
 
+/**
+ * This class provides an access to most index settings :
+ *   - analysis
+ *   - indices by identifier and related configuration
+ *   - ...
+ *
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class IndexSettings implements IndexSettingsInterface
 {
-
     /**
      * @var string
      */
@@ -35,7 +42,7 @@ class IndexSettings implements IndexSettingsInterface
     const DIFF_REINDEX_REFRESH_INTERVAL = '1s';
 
     /**
-     * @var int
+     * @var integer
      */
     const MERGE_FACTOR = 20;
 
@@ -55,6 +62,13 @@ class IndexSettings implements IndexSettingsInterface
      */
     protected $indicesConfig;
 
+    /**
+     * Constructor.
+     *
+     * @param \Smile\ElasticSuiteCore\Helper\IndexSettings  $indexSettingHelper Index settings helper.
+     * @param \Smile\ElasticSuiteCore\Index\Indices\Config  $indicesConfig      Indices configuration.
+     * @param \Smile\ElasticSuiteCore\Index\Analysis\Config $analysisConfig     Analysis configuration.
+     */
     public function __construct(
         IndexSettingsHelper    $indexSettingHelper,
         IndicesConfig          $indicesConfig,
@@ -66,27 +80,33 @@ class IndexSettings implements IndexSettingsInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getIndexAliasFromIdentifier($indexIdentifier, $store)
     {
         return $this->helper->getIndexAliasFromIdentifier($indexIdentifier, $store);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function createIndexNameFromIdentifier($indexIdentifier, $store)
     {
         return $this->helper->createIndexNameFromIdentifier($indexIdentifier, $store);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAnalysisSettings($store)
     {
         $language = $this->helper->getLanguageCode($store);
+
         return $this->analysisConfig->get($language);
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface::getCreateIndexSettings()
+     * {@inheritDoc}
      */
     public function getCreateIndexSettings()
     {
@@ -101,8 +121,7 @@ class IndexSettings implements IndexSettingsInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface::getInstallIndexSettings()
+     * {@inheritDoc}
      */
     public function getInstallIndexSettings()
     {
@@ -114,14 +133,16 @@ class IndexSettings implements IndexSettingsInterface
         return $settings;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getIndicesConfig()
     {
         return $this->indicesConfig->get();
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface::getBatchIndexingSize()
+     * {@inheritDoc}
      */
     public function getBatchIndexingSize()
     {

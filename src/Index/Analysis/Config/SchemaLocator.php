@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,11 +11,19 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
 
+/**
+ * Locate schema validation for elasticsearch analysis configuration files.
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class SchemaLocator implements SchemaLocatorInterface
 {
     /**
@@ -29,7 +34,9 @@ class SchemaLocator implements SchemaLocatorInterface
     private $schema;
 
     /**
-     * @param \Magento\Framework\Module\Dir\Reader $moduleReader
+     * Constructor.
+     *
+     * @param \Magento\Framework\Module\Dir\Reader $moduleReader Module directory reader.
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {

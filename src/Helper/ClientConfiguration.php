@@ -1,25 +1,27 @@
 <?php
 /**
- * Smile_ElasticSuiteCore search engine configuration default implementation.
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- *
- * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Helper;
 
 use Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface;
 
 /**
  * Smile_ElasticSuiteCore search engine client configuration configuration default implementation.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ClientConfiguration extends AbstractConfiguration implements ClientConfigurationInterface
 {
@@ -31,21 +33,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     const ES_CLIENT_CONFIG_XML_PREFIX = 'es_client';
 
     /**
-     * Read a configuration param under the SEARCH_CONFIG_XML_PREFIX ('catalog/search/elasticsearch_').
-     *
-     * @param string $configField
-     *
-     * @return mixed
-     */
-    private function getElasticsearchClientConfigParam($configField)
-    {
-        $path = self::ES_CLIENT_CONFIG_XML_PREFIX . '/' . $configField;
-        return $this->getElasticSuiteConfigParam($path);
-    }
-
-    /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface::getServerList()
+     * {@inheritdoc}
      */
     public function getServerList()
     {
@@ -53,8 +41,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     }
 
     /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface::isDebugModeEnabled()
+     * {@inheritdoc}
      */
     public function isDebugModeEnabled()
     {
@@ -62,11 +49,24 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     }
 
     /**
-     * @inheritdoc
-     * @see \Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface::getConnectionTimeout()
+     * {@inheritdoc}
      */
     public function getConnectionTimeout()
     {
         return (int) $this->getElasticsearchClientConfigParam('connection_timeout');
+    }
+
+    /**
+     * Read config under the path smile_elasticsuite_core_base_settings/es_client.
+     *
+     * @param string $configField Field name.
+     *
+     * @return mixed
+     */
+    private function getElasticsearchClientConfigParam($configField)
+    {
+        $path = self::ES_CLIENT_CONFIG_XML_PREFIX . '/' . $configField;
+
+        return $this->getElasticSuiteConfigParam($path);
     }
 }

@@ -1,19 +1,17 @@
 <?php
 /**
- * Smile_ElasticSuiteCore search engine configuration default implementation.
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- *
- * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_ElasticSuite
+ * @package   Smile\ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
@@ -34,6 +32,12 @@ abstract class AbstractConfiguration extends AbstractHelper
      */
     protected $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Framework\App\Helper\Context      $context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     */
     public function __construct(Context $context, StoreManagerInterface $storeManager)
     {
         $this->storeManager = $storeManager;
@@ -48,7 +52,7 @@ abstract class AbstractConfiguration extends AbstractHelper
     const BASE_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings';
 
     /**
-     * Read a configuration param under the BASE_CONFIG_XML_PREFIX ('smile_elasticsuite_core_base_settings/').
+     * Read a configuration param under the BASE_CONFIG_XML_PREFIX ('smile_elasticsuite_core_base_settings').
      *
      * @param string $configField
      *
@@ -57,6 +61,7 @@ abstract class AbstractConfiguration extends AbstractHelper
     protected function getElasticSuiteConfigParam($configField)
     {
         $path = self::BASE_CONFIG_XML_PREFIX . '/' . $configField;
+
         return $this->scopeConfig->getValue($path);
     }
 }

@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,22 +11,32 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
 
+/**
+ * Locate schema validation for elasticsearch indices configuration files.
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class SchemaLocator implements SchemaLocatorInterface
 {
     /**
-     * Path to corresponding XSD file with validation rules for both individual and merged configs
+     * Path to corresponding XSD file with validation rules for both individual and merged configs.
      *
      * @var string
      */
     private $schema;
 
     /**
-     * @param \Magento\Framework\Module\Dir\Reader $moduleReader
+     * Constructor.
+     *
+     * @param \Magento\Framework\Module\Dir\Reader $moduleReader Module directory reader.
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {

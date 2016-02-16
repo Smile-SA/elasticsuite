@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,25 +11,31 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
+/**
+ * Convert analysis configuration XML file.
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {
-    const ROOT_NODE_NAME = 'analysis';
-
+    const ROOT_NODE_NAME             = 'analysis';
     const CHAR_FILTER_TYPE_ROOT_NODE = 'char_filters';
-    const CHAR_FILTER_TYPE_NODE = 'char_filter';
-
-    const FILTER_TYPE_ROOT_NODE = 'filters';
-    const FILTER_TYPE_NODE = 'filter';
-
-    const ANALYZER_TYPE_ROOT_NODE = 'analyzers';
-    const ANALYZER_TYPE_NODE = 'analyzer';
+    const CHAR_FILTER_TYPE_NODE      = 'char_filter';
+    const FILTER_TYPE_ROOT_NODE      = 'filters';
+    const FILTER_TYPE_NODE           = 'filter';
+    const ANALYZER_TYPE_ROOT_NODE    = 'analyzers';
+    const ANALYZER_TYPE_NODE         = 'analyzer';
 
     /**
-     * Convert dom node tree to array
+     * Convert dom node tree to array.
      *
-     * @param mixed $source
+     * @param mixed $source Configuration XML source.
+     *
      * @return array
      */
     public function convert($source)
@@ -49,7 +52,14 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $configuration;
     }
 
-    private function getDefaultConfiguration($xpath)
+    /**
+     * Return default configuration available for all languages.
+     *
+     * @param \DOMXPath $xpath XPath access to the document parsed.
+     *
+     * @return array
+     */
+    private function getDefaultConfiguration(\DOMXPath $xpath)
     {
         $charFilters = $this->parseFilters($xpath, self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
         $filters     = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
@@ -64,7 +74,16 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $defaultConfiguration;
     }
 
-    private function getLanguageConfiguration($xpath, $language, $defaultConfig)
+    /**
+     * Return configuration for a given language.
+     *
+     * @param \DOMXPath $xpath         XPath access to the document parsed.
+     * @param string    $language      Current language.
+     * @param array     $defaultConfig Default configuration available for all languages.
+     *
+     * @return array
+     */
+    private function getLanguageConfiguration(\DOMXPath $xpath, $language, array $defaultConfig)
     {
         $languageCharFilters = $this->parseFilters(
             $xpath,
@@ -72,12 +91,17 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::CHAR_FILTER_TYPE_NODE,
             $language
         );
-        $charFilters         = array_merge($defaultConfig[self::CHAR_FILTER_TYPE_ROOT_NODE], $languageCharFilters);
+        $charFilters = array_merge($defaultConfig[self::CHAR_FILTER_TYPE_ROOT_NODE], $languageCharFilters);
 
-        $languageFilters = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE, $language);
-        $filters         =  array_merge($defaultConfig[self::FILTER_TYPE_ROOT_NODE], $languageFilters);
+        $languageFilters = $this->parseFilters(
+            $xpath,
+            self::FILTER_TYPE_ROOT_NODE,
+            self::FILTER_TYPE_NODE,
+            $language
+        );
+        $filters = array_merge($defaultConfig[self::FILTER_TYPE_ROOT_NODE], $languageFilters);
 
-        $analyzers   = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language);
+        $analyzers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language);
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_ROOT_NODE => $charFilters,
@@ -88,7 +112,14 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $defaultConfiguration;
     }
 
-    private function getAllLanguages($xpath)
+    /**
+     * Parse languages available in the document.
+     *
+     * @param \DOMXPath $xpath XPath access to the document parsed.
+     *
+     * @return array
+     */
+    private function getAllLanguages(\DOMXPath $xpath)
     {
         $languages = [];
 
@@ -99,10 +130,20 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return array_unique($languages);
     }
 
-    private function parseFilters($xpath, $rootNodeName, $nodeName, $language = 'default')
+    /**
+     * Filters parser by language.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param string    $rootNodeName Parsing root node.
+     * @param string    $nodeName     Name of the nodes look up.
+     * @param string    $language     Language searched.
+     *
+     * @return array
+     */
+    private function parseFilters(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = 'default')
     {
         $filters = [];
-        $languagePath = "[@language='${language}']";
+        $languagePath = sprintf("[@language='%s']", $language);
         $searchPath   = sprintf("/%s/%s/%s%s", self::ROOT_NODE_NAME, $rootNodeName, $nodeName, $languagePath);
         $filterNodes = $xpath->query($searchPath);
         foreach ($filterNodes as $filterNode) {
@@ -110,19 +151,35 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $filter     = ['type' => $filterNode->getAttribute('type')];
             foreach ($filterNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMElement) {
-                    $value = $childNode->nodeValue;
                     $filter[$childNode->tagName] = $childNode->nodeValue;
                 }
             }
             $filters[$filterName] = $filter;
         }
+
         return $filters;
     }
 
-    private function parseAnalyzers(\DOMXPath $xpath, $availableCharFilters, $availableFilters, $language = 'default')
-    {
+    /**
+     * Analyzers parser by language.
+     *
+     * @param \DOMXPath $xpath                XPath access to the document parsed.
+     * @param array     $availableCharFilters List of available char filters.
+     * @param array     $availableFilters     List of available filters.
+     * @param string    $language             Language searched.
+     *
+     * @return array
+     */
+    private function parseAnalyzers(
+        \DOMXPath $xpath,
+        array $availableCharFilters,
+        array $availableFilters,
+        $language = 'default'
+    ) {
         $analyzers = [];
+
         $languagePath = "@language='default'";
+
         if ($language != 'default') {
             $languagePath .= " or @language='{$language}'";
         }
@@ -143,7 +200,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $analyzers[$analyzerName] = $analyzer;
 
             $filterPath = sprintf('%s/%s', self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
-            $analyzer[self::FILTER_TYPE_ROOT_NODE] = $this->getFilterByRef(
+            $analyzer[self::FILTER_TYPE_ROOT_NODE] = $this->getFiltersByRef(
                 $xpath,
                 $analyzerNode,
                 $filterPath,
@@ -151,7 +208,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             );
 
             $charFilterPath = sprintf('%s/%s', self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
-            $analyzer[self::CHAR_FILTER_TYPE_ROOT_NODE] = $this->getFilterByRef(
+            $analyzer[self::CHAR_FILTER_TYPE_ROOT_NODE] = $this->getFiltersByRef(
                 $xpath,
                 $analyzerNode,
                 $charFilterPath,
@@ -163,17 +220,28 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         return $analyzers;
     }
-
-    private function getFilterByRef($xpath, $rootNode, $searchPath, $availableFilters)
+    /**
+     * Return all filters under a root node filtered by an array of available filters.
+     *
+     * @param \DOMXPath $xpath            XPath access to the document parsed.
+     * @param \DomNode  $rootNode         Search root node.
+     * @param string    $searchPath       Filters search path.
+     * @param array     $availableFilters List of available filters.
+     *
+     * @return array
+     */
+    private function getFiltersByRef(\DOMXPath $xpath, \DomNode $rootNode, $searchPath, array $availableFilters)
     {
-        $filters = [];
+        $filters     = [];
         $filterNodes = $xpath->query($searchPath, $rootNode);
+
         foreach ($filterNodes as $filterNode) {
             $filterName = $filterNode->getAttribute('ref');
             if (in_array($filterName, $availableFilters)) {
                 $filters[] = $filterName;
             }
         }
+
         return $filters;
     }
 }

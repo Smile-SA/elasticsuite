@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,6 +11,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index\Indices;
 
 use Smile\ElasticSuiteCore\Index\Indices\Config\Reader;
@@ -21,24 +19,58 @@ use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
+/**
+ * ElasticSuite indices configuration;
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Config extends \Magento\Framework\Config\Data
 {
-    /** Cache ID for Search Request*/
+    /**
+     * Cache ID for indices configuration.
+     *
+     * @var string
+     */
     const CACHE_ID = 'indices_config';
 
     /**
+     * Object manager.
+     *
      * @var \Magento\Framework\ObjectManagerInterface;
      */
     private $objectManager;
 
+    /**
+     * Factory used to build mapping types.
+     *
+     * @var \Smile\ElasticSuiteCore\Api\Index\TypeInterfaceFactory
+     */
     private $typeFactory;
+
+    /**
+     * Factory used to build mappings.
+     *
+     * @var \Smile\ElasticSuiteCore\Api\Index\MappingInterfaceFactory
+     */
     private $mappingFactory;
+
+    /**
+     * Factory used to build mapping fields.
+     *
+     * @var \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterfaceFactory
+     */
     private $mappingFieldFactory;
 
     /**
-     * @param \Magento\Framework\Search\Request\Config\FilesystemReader $reader
-     * @param \Magento\Framework\Config\CacheInterface $cache
-     * @param string $cacheId
+     * Instanciate config.
+     *
+     * @param \Smile\ElasticSuiteCore\Index\Indices\Config\Reader $reader        Config file reader.
+     * @param \Magento\Framework\Config\CacheInterface            $cache         Cache instance.
+     * @param \Magento\Framework\ObjectManagerInterface           $objectManager Object manager (used to instanciate
+     *                                                                           several factories)
+     * @param string                                              $cacheId       Default config cache id.
      */
     public function __construct(
         Reader $reader,
@@ -52,7 +84,8 @@ class Config extends \Magento\Framework\Config\Data
     }
 
     /**
-     * Initialise data for configuration
+     * Init data for configuration.
+     *
      * @return void
      */
     protected function initData()
@@ -61,6 +94,11 @@ class Config extends \Magento\Framework\Config\Data
         $this->_data = array_map([$this, 'initIndexConfig'], $this->_data);
     }
 
+    /**
+     * Init factories used by the configuration to build types, mappings and fields objects.
+     *
+     * @return void
+     */
     private function initFactories()
     {
         $this->typeFactory = $this->objectManager->get(
@@ -77,14 +115,15 @@ class Config extends \Magento\Framework\Config\Data
     }
 
     /**
+     * Init type, mapping, and fields from a index configuration array.
      *
-     * @param array
+     * @param array $indexConfigData Processed index configuration.
      *
      * @return array
      */
-    private function initIndexConfig($indexConfigData)
+    private function initIndexConfig(array $indexConfigData)
     {
-        $types       = [];
+        $types = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
 
@@ -113,6 +152,13 @@ class Config extends \Magento\Framework\Config\Data
         return ['types' => $types];
     }
 
+    /**
+     * Check if a datasource can be used as a dynamic fields provider.
+     *
+     * @param mixed $datasource Datasource to be checked.
+     *
+     * @return boolean
+     */
     private function isDynamicFieldsProvider($datasource)
     {
         return $datasource instanceof DynamicFieldProviderInterface;

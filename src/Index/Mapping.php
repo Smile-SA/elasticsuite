@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,58 +11,90 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
+/**
+ * Default implementation for ES mappings (Smile\ElasticSuiteCore\Api\Index\MappingInterface).
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Mapping implements MappingInterface
 {
-    private $dateFormats = [
-        \Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT,
-        \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT
-    ];
+    /**
+     * List of fields for the current mapping.
+     *
+     * @var \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
+     */
+    private $fields;
 
+    /**
+     * List of default fields and associated analyzers.
+     *
+     * @var array
+     */
     private $defaultFields = [
         self::DEFAULT_SEARCH_FIELD => [
             'analyzers' => [
-                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE
-            ]
+                self::ANALYZER_STANDARD,
+                self::ANALYZER_WHITESPACE,
+                self::ANALYZER_SHINGLE,
+            ],
         ],
         self::DEFAULT_SPELLING_FIELD => [
             'analyzers' => [
-                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE
-            ]
+                self::ANALYZER_STANDARD,
+                self::ANALYZER_WHITESPACE,
+                self::ANALYZER_SHINGLE,
+            ],
         ],
         self::DEFAULT_AUTOCOMPLETE_FIELD => [
             'analyzers' => [
-                self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE, self::ANALYZER_EDGE_NGRAM
-            ]
+                self::ANALYZER_STANDARD,
+                self::ANALYZER_WHITESPACE,
+                self::ANALYZER_SHINGLE,
+                self::ANALYZER_EDGE_NGRAM,
+            ],
         ],
     ];
 
-    private $fields;
+    /**
+     * Date formats used by the indices.
+     *
+     * @var array
+     */
+    private $dateFormats = [
+        \Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT,
+        \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT,
+    ];
 
-    public function __construct(array $staticFields = [], $dynamicFieldProviders = [])
+    /**
+     * Instanciate a new mapping.
+     *
+     * @param FieldInterface[]                $staticFields          List of static fields.
+     * @param DynamicFieldProviderInterface[] $dynamicFieldProviders Dynamic fields providers.
+     */
+    public function __construct(array $staticFields = [], array $dynamicFieldProviders = [])
     {
         $this->fields = $staticFields + $this->getDynamicFields($dynamicFieldProviders);
     }
 
-    private function getDynamicFields($dynamicFieldProviders)
-    {
-        $fields = [];
-        foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
-            $fields += $dynamicFieldProvider->getFields();
-        }
-        return $fields;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public function asArray()
     {
-        $mappingArray = ['_all' => ['enabled' => false], 'properties' => $this->getProperties()];
-        return $mappingArray;
+        return ['_all' => ['enabled' => false], 'properties' => $this->getProperties()];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getProperties()
     {
         $properties = [];
@@ -90,16 +119,46 @@ class Mapping implements MappingInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\MappingInterface::getFields()
+     * {@inheritDoc}
      */
     public function getFields()
     {
         return $this->fields;
     }
 
-    private function getPropertyMapping($propertyName, $type, $analyzers = [self::ANALYZER_STANDARD], $copyTo = [])
+    /**
+     * Retrieve the fields provided by differents providers.
+     *
+     * @param DynamicFieldProviderInterface[] $dynamicFieldProviders List of dynamic fields providers
+     *
+     * @return array
+     */
+    private function getDynamicFields(array $dynamicFieldProviders)
     {
+        $fields = [];
+        foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
+            $fields += $dynamicFieldProvider->getFields();
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Build a mapping property from it's name, type and analyzers (for string values).
+     *
+     * @param string $propertyName Name of the property field.
+     * @param string $type         ES field type.
+     * @param array  $analyzers    For string properties, list of analyzers.
+     * @param array  $copyTo       Copy the properties to another or several ones.
+     *
+     * @return array
+     */
+    private function getPropertyMapping(
+        $propertyName,
+        $type,
+        array $analyzers = [self::ANALYZER_STANDARD],
+        array  $copyTo = []
+    ) {
         $fieldMapping = ['type' => $type];
 
         if ($type == "string") {
@@ -107,7 +166,6 @@ class Mapping implements MappingInterface
                 $fieldMapping = ['type' => 'multi_field'];
 
                 foreach ($analyzers as $currentAnalyzer) {
-
                     $currentFieldName = $currentAnalyzer == self::ANALYZER_STANDARD ? $propertyName : $currentAnalyzer;
                     $subField = ['type'  => 'string', 'store' => false];
 
@@ -139,6 +197,13 @@ class Mapping implements MappingInterface
         return $fieldMapping;
     }
 
+    /**
+     * Convert a FieldInterface object to a ES mapping property.
+     *
+     * @param \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface $field Transformed field.
+     *
+     * @return array
+     */
     private function getPropertyFromField(FieldInterface $field)
     {
         $analyzers = [];
@@ -148,10 +213,8 @@ class Mapping implements MappingInterface
             $analyzers = [self::ANALYZER_UNTOUCHED];
 
             if ($field->isSearchable()) {
-                $analyzers = array_merge(
-                    $analyzers,
-                    [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE]
-                );
+                $searchAnalyzers = [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE];
+                $analyzers = array_merge($analyzers, $searchAnalyzers);
                 $copyTo[]  = self::DEFAULT_SEARCH_FIELD;
 
                 if ($field->isUsedInSpellcheck()) {

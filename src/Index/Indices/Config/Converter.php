@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,10 +11,18 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
+/**
+ * Convert indices configuration XML file.
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Converter implements \Magento\Framework\Config\ConverterInterface
 {
     const ROOT_NODE_NAME          = 'indices';
@@ -30,7 +35,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     /**
      * Convert dom node tree to array
      *
-     * @param mixed $source
+     * @param mixed $source Configuration XML source.
+     *
      * @return array
      */
     public function convert($source)
@@ -49,7 +55,15 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $indices;
     }
 
-    private function parseIndexConfig($xpath, $indexRootNode)
+    /**
+     * Parse index node configuration.
+     *
+     * @param \DOMXPath $xpath         XPath access to the document parsed.
+     * @param \DOMNode  $indexRootNode Index node to be parsed.
+     *
+     * @return array
+     */
+    private function parseIndexConfig(\DOMXPath $xpath, \DOMNode $indexRootNode)
     {
         $indexConfig = ['types' => []];
         $typesSearchPath = sprintf('%s', self::TYPE_NODE_TYPE);
@@ -63,7 +77,15 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $indexConfig;
     }
 
-    private function parseTypeConfig($xpath, $typeRootNode)
+    /**
+     * Parse type node configuration.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param \DOMNode  $typeRootNode Type node to be parsed.
+     *
+     * @return array
+     */
+    private function parseTypeConfig(\DOMXPath $xpath, \DOMNode $typeRootNode)
     {
         $staticFields  = $this->parseMappingFields($xpath, $typeRootNode);
         $datasources = $this->parseDatasources($xpath, $typeRootNode);
@@ -75,38 +97,65 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             }
         );
 
-        $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $datasources];
+        $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $dynamicFieldProviders];
 
         return ['mapping' => $mappingParams, 'datasources' => $datasources];
     }
 
-    private function parseMappingFields($xpath, $typeRootNode)
+    /**
+     * Parse type fields from type node configuration.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param \DOMNode  $typeRootNode Type node to be parsed.
+     *
+     * @return array
+     */
+    private function parseMappingFields(\DOMXPath $xpath, \DOMNode $typeRootNode)
     {
         $fields = [];
         $fieldSearchPath = sprintf('%s/%s', self::MAPPING_NODE_TYPE, self::MAPPING_FIELD_NODE_TYPE);
 
-        foreach ($xpath->query($fieldSearchPath, $typeRootNode) as $fieldName => $fieldNode) {
+        foreach ($xpath->query($fieldSearchPath, $typeRootNode) as $fieldNode) {
             $fields[$fieldNode->getAttribute('name')] = $this->createMappingField($fieldNode);
         }
 
         return $fields;
     }
 
-    private function parseDatasources($xpath, $typeRootNode)
+    /**
+     * Parse datasources from type node configuration.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param \DOMNode  $typeRootNode Type node to be parsed.
+     *
+     * @return array
+     */
+    private function parseDatasources(\DOMXPath $xpath, \DOMNode $typeRootNode)
     {
         $datasources = [];
+
         foreach ($xpath->query(self::DATASOURCES_PATH, $typeRootNode) as $datasourceNode) {
             $datasources[$datasourceNode->getAttribute('name')] = $datasourceNode->nodeValue;
         }
+
         return $datasources;
     }
 
-    private function createMappingField($fieldNode)
+    /**
+     * Parse field configuration params.
+     *
+     * @param \DOMNode $fieldNode Field node to be parsed.
+     *
+     * @return array
+     */
+    private function createMappingField(\DOMNode $fieldNode)
     {
         $fieldParam = ['type' => $fieldNode->getAttribute('type')];
+
         if ($fieldNode->hasAttribute('nestedPath')) {
             $fieldParam['nestedPath'] = $fieldNode->getAttribute('nestedPath');
         }
+
         foreach ($fieldNode->childNodes as $childNode) {
             if ($childNode instanceof \DOMElement) {
                 $fieldParam[$childNode->tagName] = $childNode->nodeValue;

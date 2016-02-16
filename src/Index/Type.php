@@ -1,12 +1,9 @@
 <?php
 /**
- *
- *
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile_ElasticSuite
  * @package   Smile\ElasticSuiteCore
@@ -14,11 +11,19 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCore\Index;
 
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 
+/**
+ * Default implementation for ES document types (Smile\ElasticSuiteCore\Api\Index\TypeInterface).
+ *
+ * @category Smile_ElasticSuite
+ * @package  Smile\ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Type implements TypeInterface
 {
     /**
@@ -35,15 +40,21 @@ class Type implements TypeInterface
      */
     private $mapping;
 
+    /**
+     * Type datasources.
+     *
+     * @var \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     */
     private $datasources;
 
     /**
+     * Type construcor.
      *
-     * @param string           $name    Type name
-     * @param IndexInterface   $index   Type index
-     * @param MappingInterface $mapping Type mappinng
+     * @param string                                                  $name        Name of the type.
+     * @param MappingInterface                                        $mapping     Mapping of the type.
+     * @param \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[] $datasources Datasources of the type.
      */
-    public function __construct($name, MappingInterface $mapping, array $datasources)
+    public function __construct($name, MappingInterface $mapping, array $datasources = [])
     {
         $this->name    = $name;
         $this->mapping = $mapping;
@@ -51,8 +62,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\TypeInterface::getName()
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -60,17 +70,7 @@ class Type implements TypeInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\TypeInterface::getIndex()
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\TypeInterface::getMapping()
+     * {@inheritdoc}
      */
     public function getMapping()
     {
@@ -78,17 +78,16 @@ class Type implements TypeInterface
     }
 
     /**
-     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     * {@inheritdoc}
      */
     public function getDatasources()
     {
         return $this->datasources;
     }
 
-
     /**
-     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
-    */
+     * {@inheritdoc}
+     */
     public function getDatasource($name)
     {
         return $this->datasources[$name];
