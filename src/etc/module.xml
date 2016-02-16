@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCore module loading configuration.
+ * Smile_ElasticSuiteCatalog module loading configuration.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0

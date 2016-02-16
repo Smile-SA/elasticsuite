@@ -1,14 +1,30 @@
 <?xml version="1.0"?>
-
+<!--
+/**
+ * Smile_ElasticSuiteCatalog indices configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
 
     <index identifier="catalog_product">
         <type name="product">
             <datasources>
                 <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
                 <datasource name="categories">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
-                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes</datasource>
+                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->

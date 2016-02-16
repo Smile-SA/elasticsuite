@@ -1,7 +1,5 @@
 <?php
 /**
- * Smile_ElasticSuiteCatatalog module registration
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
@@ -9,11 +7,12 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
     'Smile_ElasticSuiteCatalog',

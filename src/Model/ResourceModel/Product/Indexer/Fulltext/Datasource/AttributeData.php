@@ -1,4 +1,16 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
@@ -8,7 +20,14 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection as AttributeCollection;
 use Magento\Catalog\Model\Product\Type as ProductType;
 
-class ProductAttributes extends AbstractIndexer
+/**
+ * Attributes datasource resource model.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class AttributeData extends AbstractIndexer
 {
 
     /**
@@ -29,8 +48,7 @@ class ProductAttributes extends AbstractIndexer
     private $productEmulators = [];
 
     /**
-     *
-     * @var unknown
+     * @var array
      */
     private $indexedAttributesConditions = [
         'is_searchable'                 => ['operator' => '=', 'value' => 1],
@@ -38,11 +56,15 @@ class ProductAttributes extends AbstractIndexer
         'is_filterable'                 => ['operator' => '>', 'value' => 0],
         'is_filterable_in_search'       => ['operator' => '=', 'value' => 1],
         'used_for_sort_by'              => ['operator' => '=', 'value' => 1],
-        'used_for_sort_by'              => ['operator' => '=', 'value' => 1]
+        'used_for_sort_by'              => ['operator' => '=', 'value' => 1],
     ];
 
     /**
-     * @param ResourceConnection $resource
+     * Constructor.
+     *
+     * @param ResourceConnection    $resource           Database adpater.
+     * @param StoreManagerInterface $storeManager       Store manager.
+     * @param ProductType           $catalogProductType Product type.
      */
     public function __construct(
         ResourceConnection $resource,
@@ -54,8 +76,9 @@ class ProductAttributes extends AbstractIndexer
     }
 
     /**
+     * Allow to filter an attribute collection on attributes that are indexed into the search engine.
      *
-     * @param AttributeCollection $attributeCollection
+     * @param AttributeCollection $attributeCollection Attribute collection (not loaded).
      *
      * @return AttributeCollection
      */
@@ -79,11 +102,12 @@ class ProductAttributes extends AbstractIndexer
     }
 
     /**
+     * Load attribute data for a list of product ids.
      *
-     * @param int    $storeId
-     * @param array  $productIds
-     * @param string $tableName
-     * @param array  $attributeIds
+     * @param int    $storeId      Store id.
+     * @param array  $productIds   Product ids.
+     * @param string $tableName    Attribute table.
+     * @param array  $attributeIds Attribute ids to get loaded.
      *
      * @return array
      */
@@ -113,8 +137,13 @@ class ProductAttributes extends AbstractIndexer
     }
 
     /**
+     * Retrieve list of children ids for a product list.
      *
-     * @param array $productIds
+     * Warning the result use children ids as a key and list of parents as value
+     *
+     * @param array $productIds List of parent product ids.
+     *
+     * @return array
      */
     public function loadChildrenIds($productIds)
     {
@@ -134,7 +163,7 @@ class ProductAttributes extends AbstractIndexer
                     ->from(['main' => $relationTable], [$parentFieldName, $childFieldName])
                     ->where("main.{$parentFieldName} in (?)", $productIds);
 
-                if (!is_null($relation->getWhere())) {
+                if ($relation->getWhere() != null) {
                     $select->where($relation->getWhere());
                 }
 
@@ -153,9 +182,10 @@ class ProductAttributes extends AbstractIndexer
 
 
     /**
-     * Retrieve Product Emulator (Magento Object)
+     * Retrieve Product Emulator (Magento Object) by type identifier.
      *
-     * @param   string $typeId
+     * @param string $typeId Type identifier.
+     *
      * @return \Magento\Framework\DataObject
      */
     protected function getProductEmulator($typeId)
@@ -165,13 +195,15 @@ class ProductAttributes extends AbstractIndexer
             $productEmulator->setTypeId($typeId);
             $this->productEmulators[$typeId] = $productEmulator;
         }
+
         return $this->productEmulators[$typeId];
     }
 
     /**
-     * Retrieve Product Type Instance
+     * Retrieve product type instance from identifier.
      *
-     * @param string $typeId
+     * @param string $typeId Type identifier.
+     *
      * @return \Magento\Catalog\Model\Product\Type\AbstractType
      */
     protected function getProductTypeInstance($typeId)
@@ -181,6 +213,7 @@ class ProductAttributes extends AbstractIndexer
 
             $this->productTypes[$typeId] = $this->catalogProductType->factory($productEmulator);
         }
+
         return $this->productTypes[$typeId];
     }
 }

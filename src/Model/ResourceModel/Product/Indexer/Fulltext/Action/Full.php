@@ -1,21 +1,41 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action;
 
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\AbstractIndexer;
 
+/**
+ * ElasticSearch product full indexer resource model.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Full extends AbstractIndexer
 {
     /**
+     * Load a bulk of product data.
      *
-     * @param int $storeId
-     * @param string $productIds
-     * @param int $lastProductId
-     * @param int $limit
+     * @param int     $storeId    Store id.
+     * @param string  $productIds Product ids filter.
+     * @param integer $fromId     Load product with id greater than.
+     * @param integer $limit      Number of product to get loaded.
      *
      * @return array
      */
-    public function getSearchableProducts($storeId, $productIds = null, $lastProductId = 0, $limit = 100)
+    public function getSearchableProducts($storeId, $productIds = null, $fromId = 0, $limit = 100)
     {
         $select = $this->getConnection()->select()
             ->from(['e' => $this->getTable('catalog_product_entity')]);
@@ -26,7 +46,7 @@ class Full extends AbstractIndexer
             $select->where('e.entity_id IN (?)', $productIds);
         }
 
-        $select->where('e.entity_id > ?', $lastProductId)
+        $select->where('e.entity_id > ?', $fromId)
             ->limit($limit)
             ->order('e.entity_id');
 
@@ -36,18 +56,17 @@ class Full extends AbstractIndexer
     /**
      * Filter the select to append only product visible into the catalog or search into the index.
      *
-     * Note : Magento put only enabled products that have the following visibility into the catalog_category_product_index table :
+     * Note : Magento put only enabled products that have the following
+     *        visibility into the catalog_category_product_index table :
      *         - visible in catalog
      *         - visible in search
      *         - visible in catalog & search
      *
-     *        So joining on the root category will filter only products that have to be indexed and you don't need to put any
-     *        additional filter on the visibility field.
+     *        So joining on the root category will filter only products that have to be indexed
+     *        and you don't need to put any additional filter on the visibility field.
      *
-     * @todo : Dynamic root category id by store.
-     *
-     * @param \Zend_Db_Select $select Product select to be filtered.
-     * @param int $storeId Store Id
+     * @param \Zend_Db_Select $select  Product select to be filtered.
+     * @param integer         $storeId Store Id
      *
      * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full Self Reference
      */

@@ -1,4 +1,16 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Action;
 
@@ -8,6 +20,13 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\CatalogSearch\Model\ResourceModel\EngineInterface;
 use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\FullFactory as DefaultFactory;
 
+/**
+ * Custom factory written to be able to load different indexers depending of the configured search enginge.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class FullFactory extends DefaultFactory
 {
 
@@ -34,10 +53,10 @@ class FullFactory extends DefaultFactory
 
     /**
      *
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
-     * @param \Magento\Framework\ObjectManagerInterface $scopeConfig
-     * @param string                                    $configPath
-     * @param array                                     $fullActionPool
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager  Object manager.
+     * @param \Magento\Framework\ObjectManagerInterface $scopeConfig    Configuration.
+     * @param string                                    $configPath     Search engine config path.
+     * @param array                                     $fullActionPool List of indexers class by engine.
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -52,8 +71,9 @@ class FullFactory extends DefaultFactory
     }
 
     /**
+     * Create an indexer using the right class depending of the configuration.
      *
-     * @param array $data
+     * @param array $data Data passed to the indexer while it is instantiated.
      *
      * @return mixed
      */

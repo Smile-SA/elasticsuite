@@ -1,10 +1,28 @@
 <?php
-
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * This class provides a lot of util methods used by product indexer related resource models.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class AbstractIndexer
 {
     /**
@@ -23,7 +41,10 @@ class AbstractIndexer
     protected $storeManager;
 
     /**
-     * @param ResourceConnection $resource
+     * Constructor.
+     *
+     * @param ResourceConnection    $resource     Database adpater.
+     * @param StoreManagerInterface $storeManager Store manager.
      */
     public function __construct(ResourceConnection $resource, StoreManagerInterface $storeManager)
     {
@@ -32,7 +53,11 @@ class AbstractIndexer
         $this->storeManager = $storeManager;
     }
 
+
     /**
+     * Get table name using the adapter.
+     *
+     * @param string $tableName Table name.
      *
      * @return string
      */
@@ -42,6 +67,7 @@ class AbstractIndexer
     }
 
     /**
+     * Return database connection.
      *
      * @return \Magento\Framework\DB\Adapter\AdapterInterface
      */
@@ -51,8 +77,9 @@ class AbstractIndexer
     }
 
     /**
+     * Get store by id.
      *
-     * @param int $storeId
+     * @param integer $storeId Store id.
      *
      * @return \Magento\Store\Api\Data\StoreInterface
      */
@@ -62,10 +89,11 @@ class AbstractIndexer
     }
 
     /**
+     * Retrieve store root category id.
      *
-     * @param \Magento\Store\Api\Data\StoreInterface|int|string $store
+     * @param \Magento\Store\Api\Data\StoreInterface|int|string $store Store id.
      *
-     * @return int
+     * @return integer
      */
     protected function getRootCategoryId($store)
     {

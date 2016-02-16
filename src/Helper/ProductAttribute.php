@@ -1,18 +1,17 @@
 <?php
 /**
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCatalog\Helper;
 
 use Smile\ElasticSuiteCore\Helper\Mapping;
@@ -24,7 +23,9 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  *
- *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ProductAttribute extends Mapping
 {
@@ -50,9 +51,9 @@ class ProductAttribute extends Mapping
 
     /**
      *
-     * @param \Magento\Framework\App\Helper\Context                                    $context
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeCollectionFactory
-     * @param \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory                $attributeFactory
+     * @param Context                    $context                    Helper context.
+     * @param AttributeCollectionFactory $attributeCollectionFactory Factory used to create attribute collections.
+     * @param AttributeFactory           $attributeFactory           Factory used to create attributes.
      */
     public function __construct(
         Context $context,
@@ -65,6 +66,7 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Retrieve a new product attribute collection.
      *
      * @return Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
      */
@@ -74,8 +76,9 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Parse attribute to get mapping field creation parameters.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
+     * @param ProductAttributeInterface $attribute Product attribute.
      *
      * @return array
      */
@@ -92,8 +95,9 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Get mapping field type for an attribute.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
+     * @param ProductAttributeInterface $attribute Product attribute.
      *
      * @return string
      */
@@ -117,10 +121,19 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Parse attribute raw value (as saved in the database) to prepare the indexed value.
      *
-     * @param ProductAttributeInterface $attribute
-     * @param unknown $storeId
-     * @param mixed $value
+     * For attribute using options the option value is also added to the result which contains two keys :
+     *   - one is "attribute_code" and contained the option id(s)
+     *   - the other one is "option_text_attribute_code" and contained option value(s)
+     *
+     * All value are transformed into arays to have a more simple management of
+     * multivalued attributes merging on composite products).
+     * ES doesn't care of having array of int when it an int is required.
+     *
+     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param integer                   $storeId   Store id.
+     * @param mixed                     $value     Raw value to be parsed.
      *
      * @return array
      */
@@ -152,28 +165,12 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Transform an array of options ids into an arrays of option values for attribute that uses a source.
+     * Values are localized for a store id.
      *
-     * @param ProductAttributeInterface $attribute
-     * @param unknown $storeId
-     * @param unknown $value
-     * @return number
-     */
-    private function prepareSimpleIndexAttributeValue(ProductAttributeInterface $attribute, $value)
-    {
-        if ($attribute->getBackendType() == 'decimal') {
-            $value = floatval($value);
-        } elseif ($attribute->getBackendType() == 'int') {
-            $value = intval($value);
-        }
-        return $value;
-    }
-
-
-    /**
-     *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
-     * @param int                                                 $storeId
-     * @param array                                               $optionIds
+     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param integer                   $storeId   Store id
+     * @param array                     $optionIds Array of options ids.
      *
      * @return array
      */
@@ -183,16 +180,19 @@ class ProductAttribute extends Mapping
             return $this->getIndexOptionText($attribute, $storeId, $optionId);
         };
         $optionValues = array_map($mapper, $optionIds);
+
         return $optionValues;
     }
 
     /**
+     * Transform an options id into an array of option value for attribute that uses a source.
+     * Value islocalized for a store id.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute
-     * @param int                                                 $storeId
-     * @param int                                                 $optionId
+     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param integer                   $storeId   Store id.
+     * @param string|integer            $optionId  Option id.
      *
-     * @return string|bool
+     * @return string|boolean
      */
     public function getIndexOptionText(ProductAttributeInterface $attribute, $storeId, $optionId)
     {
@@ -216,9 +216,30 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * Ensure types of numerical values is correct before indexing.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface|int $attribute
-     * @param int                           $storeId
+     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param mixed                     $value     Raw value.
+     *
+     * @return mixed
+     */
+    private function prepareSimpleIndexAttributeValue(ProductAttributeInterface $attribute, $value)
+    {
+        if ($attribute->getBackendType() == 'decimal') {
+            $value = floatval($value);
+        } elseif ($attribute->getBackendType() == 'int') {
+            $value = intval($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Load the localized version of an attribute.
+     * This code uses a local cache to ensure correct performance during indexing.
+     *
+     * @param ProductAttributeInterface|int $attribute Product attribute.
+     * @param integer                       $storeId   Store id.
      *
      * @return \Magento\Catalog\Api\Data\ProductAttributeInterface
      */
@@ -242,10 +263,11 @@ class ProductAttribute extends Mapping
     }
 
     /**
+     * This util method is used to ensure the attribute is an integer and uses it's id if it is an object.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface|int $attribute
+     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface|integer $attribute Product attribute.
      *
-     * @return \Magento\Catalog\Api\Data\ProductAttributeInterface
+     * @return integer
      */
     private function getAttributeId($attribute)
     {

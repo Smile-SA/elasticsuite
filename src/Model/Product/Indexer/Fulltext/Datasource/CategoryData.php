@@ -1,10 +1,29 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData as ResourceModel;
 
+/**
+ * Datasource used to append categories data to product during indexing.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class CategoryData implements DatasourceInterface
 {
     /**
@@ -13,8 +32,9 @@ class CategoryData implements DatasourceInterface
     private $resourceModel;
 
     /**
+     * Constructor.
      *
-     * @param \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData $resourceModel
+     * @param ResourceModel $resourceModel Resource model.
      */
     public function __construct(ResourceModel $resourceModel)
     {
@@ -22,9 +42,9 @@ class CategoryData implements DatasourceInterface
     }
 
     /**
-     * @inheritdoc
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface::addData()
+     * Add categories data to the index data.
+     *
+     * {@inheritdoc}
      */
     public function addData($storeId, array $indexData)
     {

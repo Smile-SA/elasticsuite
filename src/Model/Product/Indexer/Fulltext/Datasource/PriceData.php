@@ -1,10 +1,29 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 
+/**
+ * Datasource used to append prices data to product during indexing.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class PriceData implements DatasourceInterface
 {
     /**
@@ -13,8 +32,9 @@ class PriceData implements DatasourceInterface
     private $resourceModel;
 
     /**
+     * Constructor.
      *
-     * @param \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData $resourceModel
+     * @param ResourceModel $resourceModel Resource model
      */
     public function __construct(ResourceModel $resourceModel)
     {
@@ -22,9 +42,9 @@ class PriceData implements DatasourceInterface
     }
 
     /**
-     * @inheritdoc
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface::addData()
+     * Add price data to the index data.
+     *
+     * {@inheritdoc}
      */
     public function addData($storeId, array $indexData)
     {
@@ -49,8 +69,6 @@ class PriceData implements DatasourceInterface
                 'customer_group_id' => $priceDataRow['customer_group_id'],
             ];
         }
-
-        //var_dump($indexData);
 
         return $indexData;
     }

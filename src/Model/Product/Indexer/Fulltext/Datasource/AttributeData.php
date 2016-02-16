@@ -1,15 +1,35 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ProductAttributes as ResourceModel;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as ResourceModel;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Smile\ElasticSuiteCore\Index\Mapping\FieldFactory;
 use Smile\ElasticSuiteCatalog\Helper\ProductAttribute as ProductAttributeHelper;
 
-class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInterface
+/**
+ * Datasource used to index product attributes.
+ * This class is also used to generate attribute mapping since it implements DynamicFieldProviderInterface.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class AttributeData implements DatasourceInterface, DynamicFieldProviderInterface
 {
     /**
      * @var \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ProductAttributes
@@ -37,11 +57,6 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     private $attributeIdsByTable = [];
 
     /**
-     * @var array
-     */
-    private $optionTextCache = [];
-
-    /**
      * @var \Smile\ElasticSuiteCatalog\Helper\ProductAttribute
      */
     private $attributeHelper;
@@ -54,19 +69,21 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
         'Magento\Eav\Model\Entity\Attribute\Backend\Datetime',
         'Magento\Catalog\Model\Attribute\Backend\Startdate',
         'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
-        'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend'
-    ];
-
-    private $forbidenChildrenAttributeCode = [
-        'visibility', 'status', 'price', 'tax_class_id'
+        'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend',
     ];
 
     /**
+     * @var array
+     */
+    private $forbidenChildrenAttributeCode = ['visibility', 'status', 'price', 'tax_class_id'];
+
+    /**
+     * Constructor
      *
-     * @param ResourceModel          $resourceModel
-     * @param FieldFactory           $fieldFactory
-     * @param ProductAttributeHelper $attributeHelper
-     * @param array                  $authorizedBackendModels
+     * @param ResourceModel          $resourceModel           Resource model.
+     * @param FieldFactory           $fieldFactory            Mapping field factory.
+     * @param ProductAttributeHelper $attributeHelper         Attribute helper.
+     * @param array                  $authorizedBackendModels List of indexed backend models.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -87,6 +104,72 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     }
 
     /**
+     * List of fields generated from the attributes list.
+     * This list is used to generate the catalog_product ES mapping.
+     *
+     * {@inheritdoc}
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addData($storeId, array $indexData)
+    {
+        $productIds   = array_keys($indexData);
+        $attributeIds = array_keys($this->attributesById);
+
+        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
+            $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
+            foreach ($attributesData as $row) {
+
+                $productId = (int) $row['entity_id'];
+                $attribute = $this->attributesById[$row['attribute_id']];
+
+                $indexValues = $this->attributeHelper->prepareIndexValue(
+                    $attribute,
+                    $storeId,
+                    $row['value']
+                );
+
+                $indexData[$productId] += $indexValues;
+            }
+        }
+
+        $parentIdsByChildrenId = $this->resourceModel->loadChildrenIds($productIds);
+        $allChildrenIds = array_keys($parentIdsByChildrenId);
+
+        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
+            $attributesData = $this->loadAttributesRawData($storeId, $allChildrenIds, $backendTable, $attributeIds);
+            foreach ($attributesData as $row) {
+                $attribute  = $this->attributesById[$row['attribute_id']];
+                $childId    = (int) $row['entity_id'];
+                $indexValues = null;
+                foreach ($parentIdsByChildrenId[$childId] as $parentId) {
+                    $canIndex = $this->canAddAttributeAsChild($attribute, $indexData[$parentId]['type_id']);
+                    if ($canIndex) {
+                        if ($indexValues === null) {
+                            $indexValues = $this->attributeHelper->prepareIndexValue(
+                                $attribute,
+                                $storeId,
+                                $row['value']
+                            );
+                        }
+                        $indexData[$parentId] = array_merge_recursive($indexData[$parentId], $indexValues);
+                    }
+                }
+            }
+        }
+
+        return $indexData;
+    }
+
+
+    /**
+     * Init attributes used into ES.
      *
      * @return \Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes
      */
@@ -109,8 +192,9 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     }
 
     /**
+     * Check if an attribute can be indexed.
      *
-     * @param ProductAttributeInterface $attribute
+     * @param ProductAttributeInterface $attribute Product attribute.
      *
      * @return boolean
      */
@@ -126,8 +210,9 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     }
 
     /**
+     * Create a mapping field from an attribute.
      *
-     * @param ProductAttributeInterface $attribute
+     * @param ProductAttributeInterface $attribute Product attribute.
      *
      * @return \Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes
      */
@@ -144,7 +229,7 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
         }
 
         $fieldOptions = array_merge(
-            ['name' => $fieldName, 'type'=> $fieldType],
+            ['name' => $fieldName, 'type' => $fieldType],
             $this->attributeHelper->getMappingFieldOptions($attribute)
         );
 
@@ -154,66 +239,20 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     }
 
     /**
-     * @inheritdoc
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface::getFields()
+     * Check if an attribute can be indexed when used as a children/
+     *
+     * @param ProductAttributeInterface $attribute    Product attribute.
+     * @param string                    $parentTypeId Parent product type id.
+     *
+     * @return boolean
      */
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    /**
-     * @inheritdoc
-     * (non-PHPdoc)
-     * @see \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface::addData()
-     */
-    public function addData($storeId, array $indexData)
-    {
-        $productIds   = array_keys($indexData);
-        $attributeIds = array_keys($this->attributesById);
-
-        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
-            $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
-            foreach ($attributesData as $row) {
-                $productId = (int) $row['entity_id'];
-                $attribute = $this->attributesById[$row['attribute_id']];
-                $indexValues = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
-                $indexData[$productId] += $indexValues;
-            }
-        }
-
-        $parentIdsByChildrenId = $this->resourceModel->loadChildrenIds($productIds);
-        $allChildrenIds = array_keys($parentIdsByChildrenId);
-
-        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
-            $attributesData = $this->loadAttributesRawData($storeId, $allChildrenIds, $backendTable, $attributeIds);
-            foreach ($attributesData as $row) {
-                $attribute  = $this->attributesById[$row['attribute_id']];
-                $childId    = (int) $row['entity_id'];
-                $indexValues = null;
-                foreach ($parentIdsByChildrenId[$childId] as $parentId) {
-                    $canIndex = $this->canAddAttributeAsChild($attribute, $indexData[$parentId]['type_id']);
-                    if ($canIndex) {
-                        if ($indexValues === null) {
-                            $indexValues = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
-                        }
-                        $indexData[$parentId] = array_merge_recursive($indexData[$parentId], $indexValues);
-                    }
-                }
-            }
-        }
-
-        return $indexData;
-    }
-
     private function canAddAttributeAsChild(ProductAttributeInterface $attribute, $parentTypeId)
     {
         $canUseAsChild = !in_array($attribute->getAttributeCode(), $this->forbidenChildrenAttributeCode);
 
         if ($parentTypeId == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
             if (!$attribute->getIsConfigurable()) {
-                // @todo : implements
+                /** @todo : implements children attribute selection for configurables products */
                 $canUseAsChild = false;
             }
         }
@@ -222,10 +261,12 @@ class ProductAttributes implements DatasourceInterface, DynamicFieldProviderInte
     }
 
     /**
-     * @param int    $storeId
-     * @param array  $productIds
-     * @param string $tableName
-     * @param array  $attributeIds
+     * Load attribute data from the database.
+     *
+     * @param integer $storeId      Store id.
+     * @param array   $productIds   Product ids.
+     * @param string  $tableName    Attribute table name.
+     * @param array   $attributeIds Loaded attribute ids.
      *
      * @return array
      */
