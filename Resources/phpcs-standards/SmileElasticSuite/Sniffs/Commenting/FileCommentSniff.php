@@ -16,60 +16,65 @@ class SmileElasticSuite_Sniffs_Commenting_FileCommentSniff extends PEAR_Sniffs_C
      * @var array
      */
     protected $tags = array(
-        'category' => array(
+        '@category' => array(
             'required' => true,
             'allow_multiple' => false,
             'order_text' => 'precedes @package',
         ),
-        'package' => array(
+        '@package' => array(
             'required' => true,
             'allow_multiple' => false,
             'order_text' => 'follows @category',
         ),
-        'subpackage' => array(
+        '@subpackage' => array(
             'required' => false,
             'allow_multiple' => false,
             'order_text' => 'follows @package',
         ),
-        'author' => array(
+        '@author' => array(
             'required' => true,
             'allow_multiple' => true,
             'order_text' => 'follows @subpackage (if used) or @package',
         ),
-        'copyright' => array(
+        '@copyright' => array(
             'required' => true,
             'allow_multiple' => true,
             'order_text' => 'follows @author',
         ), // Copyright made required
-        'license' => array(
+        '@license' => array(
             'required' => false,
             'allow_multiple' => false,
             'order_text' => 'follows @copyright (if used) or @author',
         ), // License made optional
-        'version' => array(
+        '@version' => array(
             'required' => false,
             'allow_multiple' => false,
             'order_text' => 'follows @license',
         ),
-        'link' => array(
+        '@link' => array(
             'required' => false,
             'allow_multiple' => true,
             'order_text' => 'follows @version',
         ), // Link made optional
-        'see' => array(
+        '@see' => array(
             'required' => false,
             'allow_multiple' => true,
             'order_text' => 'follows @link',
         ),
-        'since' => array(
+        '@since' => array(
             'required' => false,
             'allow_multiple' => false,
             'order_text' => 'follows @see (if used) or @link',
         ),
-        'deprecated' => array(
+        '@deprecated' => array(
             'required' => false,
             'allow_multiple' => false,
             'order_text' => 'follows @since (if used) or @see (if used) or @link',
         ),
     );
+
+    protected function processVersion(PHP_CodeSniffer_File $phpcsFile, array $tags)
+    {
+        return;
+    }
 }

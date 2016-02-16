@@ -16,57 +16,57 @@ class SmileElasticSuite_Sniffs_Commenting_ClassCommentSniff extends PEAR_Sniffs_
      * @var array
      */
     protected $tags = array(
-        'category'   => array(
+        '@category'   => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'precedes @package',
         ),
-        'package'    => array(
+        '@package'    => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @category',
         ),
-        'subpackage' => array(
+        '@subpackage' => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @package',
         ),
-        'author'     => array(
+        '@author'     => array(
             'required'       => false,
             'allow_multiple' => true,
             'order_text'     => 'follows @subpackage (if used) or @package',
         ),
-        'copyright'  => array(
+        '@copyright'  => array(
             'required'       => false,
             'allow_multiple' => true,
             'order_text'     => 'follows @author',
         ),
-        'license'    => array(
+        '@license'    => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @copyright (if used) or @author',
         ),
-        'version'    => array(
+        '@version'    => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @license',
         ),
-        'link'       => array(
+        '@link'       => array(
             'required'       => false,
             'allow_multiple' => true,
             'order_text'     => 'follows @version',
         ),
-        'see'        => array(
+        '@see'        => array(
             'required'       => false,
             'allow_multiple' => true,
             'order_text'     => 'follows @link',
         ),
-        'since'      => array(
+        '@since'      => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @see (if used) or @link',
         ),
-        'deprecated' => array(
+        '@deprecated' => array(
             'required'       => false,
             'allow_multiple' => false,
             'order_text'     => 'follows @since (if used) or @see (if used) or @link',
