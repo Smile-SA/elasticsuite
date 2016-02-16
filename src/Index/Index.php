@@ -57,11 +57,10 @@ class Index implements IndexInterface
     /**
      * Instanciate a new index.
      *
-     * @param string                                            $identifier  Index real name.
-     * @param string                                            $name        Index real name.
-     * @param \Smile\ElasticSuiteCore\Api\Index\TypeInterface[] $types       Index current aliases.
-     * @param boolean                                           $needInstall Indicates if the index needs
-     *                                                                       to be installed.
+     * @param string          $identifier  Index real name.
+     * @param string          $name        Index real name.
+     * @param TypeInterface[] $types       Index current types.
+     * @param boolean         $needInstall Indicates if the index needs to be installed.
      */
     public function __construct($identifier, $name, array $types, $needInstall = false)
     {

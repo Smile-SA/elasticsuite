@@ -65,9 +65,9 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticSuiteCore\Helper\IndexSettings  $indexSettingHelper Index settings helper.
-     * @param \Smile\ElasticSuiteCore\Index\Indices\Config  $indicesConfig      Indices configuration.
-     * @param \Smile\ElasticSuiteCore\Index\Analysis\Config $analysisConfig     Analysis configuration.
+     * @param IndexSettingsHelper $indexSettingHelper Index settings helper.
+     * @param IndicesConfig       $indicesConfig      Indices configuration.
+     * @param AnalysisConfig      $analysisConfig     Analysis configuration.
      */
     public function __construct(
         IndexSettingsHelper    $indexSettingHelper,

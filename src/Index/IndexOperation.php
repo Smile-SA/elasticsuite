@@ -22,7 +22,7 @@ use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\BulkInterface;
 
 /**
- * Default implementation of operation on indices (\Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;).
+ * Default implementation of operation on indices (\Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface).
  *
  *
  * @category  Smile_ElasticSuite
@@ -59,9 +59,9 @@ class IndexOperation implements IndexOperationInterface
     /**
      * Instanciate the index operation manager.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager Object manager.
-     * @param \Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface $clientFactory ES client factory.
-     * @param \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface  $indexSettings ES settings
+     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param ClientFactoryInterface $clientFactory ES client factory.
+     * @param IndexSettingsInterface $indexSettings ES settings
      */
     public function __construct(
         ObjectManagerInterface $objectManager,

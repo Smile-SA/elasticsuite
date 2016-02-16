@@ -200,7 +200,7 @@ class Mapping implements MappingInterface
     /**
      * Convert a FieldInterface object to a ES mapping property.
      *
-     * @param \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface $field Transformed field.
+     * @param FieldInterface $field Transformed field.
      *
      * @return array
      */

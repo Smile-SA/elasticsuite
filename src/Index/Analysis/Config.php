@@ -36,9 +36,9 @@ class Config extends \Magento\Framework\Config\Data
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\Search\Request\Config\FilesystemReader $reader  Config file reader.
-     * @param \Magento\Framework\Config\CacheInterface                  $cache   Cache instance.
-     * @param string                                                    $cacheId Default config cache id.
+     * @param Reader         $reader  Config file reader.
+     * @param CacheInterface $cache   Cache instance.
+     * @param string         $cacheId Default config cache id.
      */
     public function __construct(Reader $reader, CacheInterface $cache, $cacheId = self::CACHE_ID)
     {

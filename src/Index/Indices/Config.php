@@ -66,11 +66,10 @@ class Config extends \Magento\Framework\Config\Data
     /**
      * Instanciate config.
      *
-     * @param \Smile\ElasticSuiteCore\Index\Indices\Config\Reader $reader        Config file reader.
-     * @param \Magento\Framework\Config\CacheInterface            $cache         Cache instance.
-     * @param \Magento\Framework\ObjectManagerInterface           $objectManager Object manager (used to instanciate
-     *                                                                           several factories)
-     * @param string                                              $cacheId       Default config cache id.
+     * @param Reader                 $reader        Config file reader.
+     * @param CacheInterface         $cache         Cache instance.
+     * @param ObjectManagerInterface $objectManager Object manager (used to instanciate several factories)
+     * @param string                 $cacheId       Default config cache id.
      */
     public function __construct(
         Reader $reader,

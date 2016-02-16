@@ -28,15 +28,15 @@ use Magento\Store\Model\StoreManagerInterface;
 abstract class AbstractConfiguration extends AbstractHelper
 {
     /**
-     * @var Magento\Store\Model\StoreManagerInterface
+     * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $storeManager;
 
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Helper\Context      $context      Helper context.
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager Store manager.
+     * @param Context               $context      Helper context.
+     * @param StoreManagerInterface $storeManager Store manager.
      */
     public function __construct(Context $context, StoreManagerInterface $storeManager)
     {
