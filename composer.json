@@ -1,32 +1,21 @@
 {
-  "name": "smile-sa/elasticsuite-full",
-  "type": "magento2-module",
-  "description": "Core foundation of Smile ElasticSuite",
-  "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-core",
-  "keywords": [
-    "magento2",
-    "core",
-    "setup"
-  ],
-  "repositories": [
-     {
-         "type": "vcs",
-         "url": "git@git.smile.fr:magento-es/module-elasticsuite-core.git"
-     },
-     {
-       "type": "vcs",
-       "url": "git@git.smile.fr:magento-es/module-elasticsuite-catalog.git"
-     }
-   ],
-  "require": {
-      "smile-sa/module-elasticsuite-core": "self.version",
-      "smile-sa/module-elasticsuite-catalog": "self.version"
-  },
-  "license": "OSL-3.0",
-  "authors": [
-    {
-      "name": "Aurélien FOUCRET",
-      "email": "aurelien.foucret@smile.fr"
+    "name" : "smile-sa/elasticsuite-full",
+    "type" : "magento2-module",
+    "license" : "OSL-3.0",
+    "authors" : [{
+            "name" : "Aurélien FOUCRET",
+            "email" : "aurelien.foucret@smile.fr"
+        }
+    ],
+    "description" : "Core foundation of Smile ElasticSuite",
+    "homepage" : "https://git.smile.fr/magento-es/module-elasticsuite-core",
+    "keywords" : [
+        "magento2",
+        "core",
+        "setup"
+    ],
+    "require" : {
+        "smile-sa/module-elasticsuite-core" : "self.version",
+        "smile-sa/module-elasticsuite-catalog" : "self.version"
     }
-  ]
 }
