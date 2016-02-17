@@ -45,6 +45,7 @@ class Reader extends Filesystem
      */
     const FILENAME = 'elasticsearch/indices.xml';
 
+    // @codingStandardsIgnoreStart
     /**
      * List of attributes by XPath used as ids during the file merge process.
      *
@@ -55,6 +56,7 @@ class Reader extends Filesystem
         '/indices/index/type'               => 'name',
         '/indices/index/type/mapping/field' => 'name',
     ];
+    // @codingStandardsIgnoreEnd
 
     /**
      * {@inheritdoc}
