@@ -90,13 +90,15 @@ class AttributeData extends AbstractIndexer
             if ($condition['operator'] == 'IN' || is_array($condition['value'])) {
                 $conditionString = sprintf('%s %s (?)', $fieldName, $condition['operator']);
                 $conditions[] = $this->connection->quoteInto($conditionString, $condition['value']);
-            } else {
+            } elseif (!is_array($condition['value'])) {
                 $conditions[] = sprintf('%s %s %s', $fieldName, $condition['operator'], $condition['value']);
             }
         }
 
-        $select = $attributeCollection->getSelect();
-        $select->where(implode(' OR ', $conditions));
+        if (!empty($conditions)) {
+            $select = $attributeCollection->getSelect();
+            $select->where(implode(' OR ', $conditions));
+        }
 
         return $attributeCollection;
     }
