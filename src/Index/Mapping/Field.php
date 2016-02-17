@@ -66,13 +66,13 @@ class Field implements FieldInterface
     /**
      * Constructor.
      *
-     * @param string $name        Field name.
-     * @param string $type        Field type.
-     * @param string $nestedPath  Path for nested fields. False by default and for non-nested fields.
-     * @param array  $fieldConfig Field configuration (see self::$config declaration for
-     *                            available values and default values).
+     * @param string      $name        Field name.
+     * @param string      $type        Field type.
+     * @param null|string $nestedPath  Path for nested fields. null by default and for non-nested fields.
+     * @param array       $fieldConfig Field configuration (see self::$config declaration for
+     *                                 available values and default values).
      */
-    public function __construct($name, $type = 'string', $nestedPath = false, $fieldConfig = [])
+    public function __construct($name, $type = 'string', $nestedPath = null, $fieldConfig = [])
     {
         $this->name       = (string) $name;
         $this->type       = (string) $type;
@@ -173,7 +173,7 @@ class Field implements FieldInterface
      */
     public function getNestedFieldName()
     {
-        $nestedFieldName = false;
+        $nestedFieldName = null;
 
         if ($this->isNested()) {
             $nestedPrefix = $this->getNestedPath() . '.';

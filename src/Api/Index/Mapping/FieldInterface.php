@@ -117,12 +117,17 @@ interface FieldInterface
     public function isNested();
 
     /**
+     * Returns nested path for the field (Example : "category" for "category.position").
+     *
      * @return string
      */
     public function getNestedPath();
 
     /**
-     * @return string;
+     * Get nested field name (Example: "position" for "category.position").
+     * Returns null for non nested fields.
+     *
+     * @return string|null
      */
     public function getNestedFieldName();
 
