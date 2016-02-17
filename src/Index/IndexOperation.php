@@ -170,13 +170,9 @@ class IndexOperation implements IndexOperationInterface
     /**
      * {@inheritDoc}
      */
-    public function executeBulk(BulkInterface $bulk, $refreshIndex = true)
+    public function executeBulk(BulkInterface $bulk)
     {
         $bulkParams = ['body' => $bulk->getOperations()];
-
-        if ($refreshIndex == true) {
-            $bulkParams['refresh'] = true;
-        }
 
         $bulkResponse = $this->client->bulk($bulkParams);
 
@@ -184,6 +180,18 @@ class IndexOperation implements IndexOperationInterface
 
         return $this;
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function refreshIndex(IndexInterface $index)
+    {
+        $this->client->indices()->refresh(['index' => $index->getName()]);
+
+        return $this;
+    }
+
 
     /**
      * {@inheritDoc}

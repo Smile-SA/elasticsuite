@@ -82,13 +82,20 @@ interface IndexOperationInterface
     /**
      * Execute a bulk.
      *
-     * @param \Smile\ElasticSuiteCore\Api\Index\BulkInterface $bulk         Bulk to be executed.
-     * @param boolean                                         $refreshIndex Force index to be refreshed
-     *                                                                      after bulk execution.
+     * @param \Smile\ElasticSuiteCore\Api\Index\BulkInterface $bulk Bulk to be executed.
      *
      * @return \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
      */
-    public function executeBulk(BulkInterface $bulk, $refreshIndex = true);
+    public function executeBulk(BulkInterface $bulk);
+
+    /**
+     * Refresh an index (should be called after indexing operations to ensure data are available for search).
+     *
+     * @param IndexInterface $index Index
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
+     */
+    public function refreshIndex(IndexInterface $index);
 
     /**
      * Returns batch indexing size.
