@@ -85,10 +85,11 @@ class ProductAttribute extends Mapping
     public function getMappingFieldOptions(ProductAttributeInterface $attribute)
     {
         $options = [
-            'isSearchable'         => $attribute->getIsSearchable(),
-            'isFilterable'         => $attribute->getIsFilterable(),
-            'isFilterableInSearch' => $attribute->getIsFilterable(),
-            'searchWeight'         => $attribute->getSearchWeight(),
+            'is_searchable'           => $attribute->getIsSearchable(),
+            'is_filterable'           => $attribute->getIsFilterable(),
+            'is_filterable_in_search' => $attribute->getIsFilterable(),
+            'search_weight'           => $attribute->getSearchWeight(),
+            'is_used_for_sort_by'     => $attribute->getUsedForSortBy(),
         ];
 
         return $options;

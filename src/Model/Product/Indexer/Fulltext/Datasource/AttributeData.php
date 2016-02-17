@@ -227,10 +227,8 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
             $fieldType = 'string';
         }
 
-        $fieldOptions = array_merge(
-            ['name' => $fieldName, 'type' => $fieldType],
-            $this->attributeHelper->getMappingFieldOptions($attribute)
-        );
+        $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
+        $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
 
         $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
 
