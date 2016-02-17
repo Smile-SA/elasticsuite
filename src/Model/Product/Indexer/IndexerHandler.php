@@ -79,6 +79,8 @@ class IndexerHandler implements IndexerInterface
                 $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
                 $this->indexOperation->executeBulk($bulk);
             }
+
+            $this->indexOperation->refreshIndex($index);
             $this->indexOperation->installIndex($index, $storeId);
         }
 
