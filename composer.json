@@ -1,30 +1,29 @@
 {
-  "name": "smile-sa/module-elasticsuite-catalog",
-  "type": "magento2-module",
-  "description": "Catalog base features of Smile ElasticSuite",
-  "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-catalog",
-  "keywords": [
-    "magento2",
-    "core",
-    "setup"
-  ],
-  "require": {
-    "magento/magento-composer-installer": "*",
-    "smile-sa/module-elasticsuite-core": "self.version"
-  },
-  "license": "OSL-3.0",
-  "authors": [
-    {
-      "name": "Aurélien FOUCRET",
-      "email": "aurelien.foucret@smile.fr"
-    }
-  ],
-  "autoload": {
-    "files": [
-      "src/registration.php"
+    "name" : "smile-sa/module-elasticsuite-catalog",
+    "type" : "magento2-module",
+    "license" : "OSL-3.0",
+    "authors" : [{
+            "name" : "Aurélien FOUCRET",
+            "email" : "aurelien.foucret@smile.fr"
+        }
     ],
-    "psr-4": {
-      "Smile\\ElasticSuiteCatalog\\": "src"
+    "description" : "Catalog base features of Smile ElasticSuite",
+    "homepage" : "https://git.smile.fr/magento-es/module-elasticsuite-catalog",
+    "keywords" : [
+        "magento2",
+        "core",
+        "setup"
+    ],
+    "require" : {
+        "magento/magento-composer-installer" : "*",
+        "smile-sa/module-elasticsuite-core" : "self.version"
+    },
+    "autoload" : {
+        "files" : [
+            "src/registration.php"
+        ],
+        "psr-4" : {
+            "Smile\\ElasticSuiteCatalog\\" : "src"
+        }
     }
-  }
 }
