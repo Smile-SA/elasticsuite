@@ -84,6 +84,11 @@ interface FieldInterface
     public function isFilterableInSearch();
 
     /**
+     * Is the attribute used in sorting.
+     */
+    public function isUsedForSortBy();
+
+    /**
      * Is the field used by the spellchecker.
      *
      * @return boolean

@@ -19,8 +19,6 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 /**
  * Default implementation for ES mapping field (Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface).
  *
- * @todo : sortable fields ???
- *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -40,36 +38,6 @@ class Field implements FieldInterface
     /**
      * @var boolean
      */
-    private $isSearchable;
-
-    /**
-     * @var boolean
-     */
-    private $isFilterable;
-
-    /**
-     * @var boolean
-     */
-    private $isFilterableInSearch;
-
-    /**
-     * @var boolean
-     */
-    private $isUsedInSpellcheck;
-
-    /**
-     * @var boolean
-     */
-    private $isUsedInAutocomplete;
-
-    /**
-     * @var boolean
-     */
-    private $searchWeight;
-
-    /**
-     * @var boolean
-     */
     private $nestedPath;
 
     /**
@@ -83,40 +51,33 @@ class Field implements FieldInterface
     ];
 
     /**
-     * Instanciate a new field.
-     *
-     * @param string  $name                 Field name.
-     * @param string  $type                 Field type.
-     * @param boolean $isSearchable         Is the field searchable.
-     * @param boolean $isFilterable         Is the field filterabe in navigation.
-     * @param boolean $isFilterableInSearch Is the field filterabe in search.
-     * @param boolean $isUsedInSpellcheck   Is the field used by the spellchecker.
-     * @param boolean $isUsedInAutocomplete Is the field used in autocomplete.
-     * @param integer $searchWeight         Field weight in search operation.
-     * @param string  $nestedPath           If the field is nested, the nested path have to be provided here.
-     *
-     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @var array
      */
-    public function __construct(
-        $name,
-        $type = 'string',
-        $isSearchable = false,
-        $isFilterable = false,
-        $isFilterableInSearch = false,
-        $isUsedInSpellcheck = false,
-        $isUsedInAutocomplete = false,
-        $searchWeight = 1,
-        $nestedPath = false
-    ) {
-        $this->name                 = (string) $name;
-        $this->type                 = (string) $type;
-        $this->isSearchable         = (bool) $isSearchable;
-        $this->isFilterable         = (bool) $isFilterable;
-        $this->isFilterableInSearch = (bool) $isFilterableInSearch;
-        $this->isUsedInSpellcheck   = (bool) $isUsedInSpellcheck;
-        $this->isUsedInAutocomplete = (bool) $isUsedInAutocomplete;
-        $this->searchWeight         = (int) $searchWeight;
-        $this->nestedPath           = $nestedPath;
+    private $config = [
+        'is_searchable'           => false,
+        'is_filterable'           => false,
+        'is_filterable_in_search' => false,
+        'is_used_for_sort_by'     => false,
+        'is_used_in_spellcheck'   => false,
+        'is_used_in_autocomplete' => false,
+        'search_weight'           => 1,
+    ];
+
+    /**
+     * Constructor.
+     *
+     * @param string $name        Field name.
+     * @param string $type        Field type.
+     * @param string $nestedPath  Path for nested fields. False by default and for non-nested fields.
+     * @param array  $fieldConfig Field configuration (see self::$config declaration for
+     *                            available values and default values).
+     */
+    public function __construct($name, $type = 'string', $nestedPath = false, $fieldConfig = [])
+    {
+        $this->name       = (string) $name;
+        $this->type       = (string) $type;
+        $this->config     = $fieldConfig + $this->config;
+        $this->nestedPath = $nestedPath;
     }
 
     /**
@@ -140,7 +101,7 @@ class Field implements FieldInterface
      */
     public function isSearchable()
     {
-        return $this->isSearchable;
+        return (bool) $this->config['is_searchable'];
     }
 
     /**
@@ -148,7 +109,7 @@ class Field implements FieldInterface
      */
     public function isFilterable()
     {
-        return $this->isFilterable;
+        return (bool) $this->config['is_filterable'];
     }
 
     /**
@@ -156,7 +117,15 @@ class Field implements FieldInterface
      */
     public function isFilterableInSearch()
     {
-        return $this->isFilterableInSearch;
+        return (bool) $this->config['is_filterable_in_search'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsedForSortBy()
+    {
+        return (bool) $this->config['is_used_for_sort_by'];
     }
 
     /**
@@ -164,7 +133,7 @@ class Field implements FieldInterface
      */
     public function isUsedInSpellcheck()
     {
-        return $this->isUsedInSpellcheck;
+        return (bool) $this->config['is_used_in_spellcheck'];
     }
 
     /**
@@ -172,7 +141,7 @@ class Field implements FieldInterface
      */
     public function isUsedInAutocomplete()
     {
-        return $this->isUsedInAutocomplete;
+        return (bool) $this->config['is_used_in_autocomplete'];
     }
 
     /**
@@ -180,7 +149,7 @@ class Field implements FieldInterface
      */
     public function getSearchWeight()
     {
-        return $this->getSearchWeight();
+        return (int) $this->config['search_weight'];
     }
 
     /**
@@ -288,6 +257,10 @@ class Field implements FieldInterface
         if ($this->isFilterable() || $this->isFilterableInSearch()  || empty($analyzers)) {
             // For filterable fields or fields without analyzer : append the untouched analyzer.
             $analyzers[] = self::ANALYZER_UNTOUCHED;
+        }
+
+        if ($this->isUsedForSortBy()) {
+            $analyzers[] = self::ANALYZER_SORTABLE;
         }
 
         return $analyzers;
