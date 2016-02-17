@@ -27,13 +27,6 @@ interface MappingInterface
     const DEFAULT_SPELLING_FIELD     = 'spelling';
     const DEFAULT_AUTOCOMPLETE_FIELD = 'autocomplete';
 
-    const ANALYZER_STANDARD   = 'standard';
-    const ANALYZER_WHITESPACE = 'whitespace';
-    const ANALYZER_SHINGLE    = 'shingle';
-    const ANALYZER_SORTABLE   = 'sortable';
-    const ANALYZER_EDGE_NGRAM = 'edge_ngram_front';
-    const ANALYZER_UNTOUCHED  = 'untouched';
-
     /**
      * List of the properties of the mapping.
      *

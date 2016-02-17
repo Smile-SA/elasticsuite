@@ -38,39 +38,34 @@ class Mapping implements MappingInterface
      *
      * @var array
      */
-    private $defaultFields = [
-        self::DEFAULT_SEARCH_FIELD => [
-            'analyzers' => [
-                self::ANALYZER_STANDARD,
-                self::ANALYZER_WHITESPACE,
-                self::ANALYZER_SHINGLE,
-            ],
+    private $defaultMappingFields = [
+        self::DEFAULT_SEARCH_FIELD       => [
+            FieldInterface::ANALYZER_STANDARD,
+            FieldInterface::ANALYZER_WHITESPACE,
+            FieldInterface::ANALYZER_SHINGLE,
         ],
-        self::DEFAULT_SPELLING_FIELD => [
-            'analyzers' => [
-                self::ANALYZER_STANDARD,
-                self::ANALYZER_WHITESPACE,
-                self::ANALYZER_SHINGLE,
-            ],
+        self::DEFAULT_SPELLING_FIELD     => [
+            FieldInterface::ANALYZER_STANDARD,
+            FieldInterface::ANALYZER_WHITESPACE,
+            FieldInterface::ANALYZER_SHINGLE,
         ],
         self::DEFAULT_AUTOCOMPLETE_FIELD => [
-            'analyzers' => [
-                self::ANALYZER_STANDARD,
-                self::ANALYZER_WHITESPACE,
-                self::ANALYZER_SHINGLE,
-                self::ANALYZER_EDGE_NGRAM,
-            ],
+            FieldInterface::ANALYZER_STANDARD,
+            FieldInterface::ANALYZER_WHITESPACE,
+            FieldInterface::ANALYZER_SHINGLE,
+            FieldInterface::ANALYZER_EDGE_NGRAM,
         ],
     ];
 
     /**
-     * Date formats used by the indices.
+     * List of target field for copy to by field configuration.
      *
      * @var array
      */
-    private $dateFormats = [
-        \Magento\Framework\Stdlib\DateTime::DATETIME_INTERNAL_FORMAT,
-        \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT,
+    private $copyFieldMap = [
+        'isSearchable'         => self::DEFAULT_SEARCH_FIELD,
+        'isUsedInSpellcheck'   => self::DEFAULT_SPELLING_FIELD,
+        'isUsedInAutocomplete' => self::DEFAULT_AUTOCOMPLETE_FIELD,
     ];
 
     /**
@@ -99,20 +94,12 @@ class Mapping implements MappingInterface
     {
         $properties = [];
 
-        foreach ($this->defaultFields as $currentFieldName => $fieldConfig) {
-            $analyzers = $fieldConfig['analyzers'];
-            $properties[$currentFieldName] = $this->getPropertyMapping($currentFieldName, 'string', $analyzers);
+        foreach ($this->defaultMappingFields as $fieldName => $analyzers) {
+            $properties = $this->addProperty($properties, $fieldName, FieldInterface::FIELD_TYPE_STRING, $analyzers);
         }
 
         foreach ($this->getFields() as $currentField) {
-            if ($currentField->isNested()) {
-                $nestedRoot = $currentField->getNestedPath();
-                $subFieldName = str_replace($nestedRoot . '.', '', $currentField->getName());
-                $properties[$nestedRoot]['type'] = FieldInterface::FIELD_TYPE_NESTED;
-                $properties[$nestedRoot]['properties'][$subFieldName] = $this->getPropertyFromField($currentField);
-            } else {
-                $properties[$currentField->getName()] = $this->getPropertyFromField($currentField);
-            }
+            $properties = $this->addField($properties, $currentField);
         }
 
         return $properties;
@@ -144,90 +131,112 @@ class Mapping implements MappingInterface
     }
 
     /**
-     * Build a mapping property from it's name, type and analyzers (for string values).
+     * Append a new properties into a properties list and returned the updated map.
      *
-     * @param string $propertyName Name of the property field.
-     * @param string $type         ES field type.
-     * @param array  $analyzers    For string properties, list of analyzers.
-     * @param array  $copyTo       Copy the properties to another or several ones.
+     * @param array  $properties   Initial properties list.
+     * @param string $propertyName New property name.
+     * @param string $propertyType New property type.
+     * @param array  $analyzers    Property analyzers.
      *
      * @return array
      */
-    private function getPropertyMapping(
-        $propertyName,
-        $type,
-        array $analyzers = [self::ANALYZER_STANDARD],
-        array  $copyTo = []
-    ) {
-        $fieldMapping = ['type' => $type];
+    private function addProperty(array $properties, $propertyName, $propertyType, $analyzers = [])
+    {
+        $property = ['type' => FieldInterface::FIELD_TYPE_MULTI];
 
-        if ($type == "string") {
-            if (count($analyzers) > 1) {
-                $fieldMapping = ['type' => 'multi_field'];
-
-                foreach ($analyzers as $currentAnalyzer) {
-                    $currentFieldName = $currentAnalyzer == self::ANALYZER_STANDARD ? $propertyName : $currentAnalyzer;
-                    $subField = ['type'  => 'string', 'store' => false];
-
-                    if ($currentAnalyzer == self::ANALYZER_UNTOUCHED) {
-                        $subField['index']     = 'not_analyzed';
-                        $subField['fieldData'] = ['format' => 'doc_values'];
-                    } else {
-                        $subField['analyzer']  = $currentAnalyzer;
-                    }
-
-                    if ($currentFieldName == $propertyName && !empty($copyTo)) {
-                        $subField['copy_to'] = $copyTo;
-                    }
-
-                    $fieldMapping['fields'][$currentFieldName] = $subField;
-                }
-            } else {
-                $analyzer = current($analyzers);
-                if ($analyzer == self::ANALYZER_UNTOUCHED) {
-                    $fieldMapping['index'] = 'not_analyzed';
-                } else {
-                    $fieldMapping['analyzer'] = $analyzer;
-                }
-            }
-        } elseif ($type == "date") {
-            $fieldMapping['format'] = implode('||', $this->dateFormats);
+        foreach ($analyzers as $analyzer) {
+            $subFieldName = $analyzer == FieldInterface::ANALYZER_STANDARD ? $propertyName : $analyzer;
+            $property['fields'][$subFieldName] = ['type' => $propertyType, 'analyzer' => $analyzer];
         }
 
-        return $fieldMapping;
+        $properties[$propertyName] = $property;
+
+        return $properties;
     }
 
     /**
-     * Convert a FieldInterface object to a ES mapping property.
+     * Append a field to a mapping properties list.
+     * The field is append and the new properties list is returned.
      *
-     * @param FieldInterface $field Transformed field.
+     * @param array          $properties Initial properties map.
+     * @param FieldInterface $field      Field to be added.
      *
      * @return array
      */
-    private function getPropertyFromField(FieldInterface $field)
+    private function addField(array $properties, FieldInterface $field)
     {
-        $analyzers = [];
-        $copyTo    = [];
+        $fieldName = $field->getName();
+        $fieldRoot = &$properties;
 
-        if ($field->getType() == "string") {
-            $analyzers = [self::ANALYZER_UNTOUCHED];
+        // Read property config from the field.
+        $property = $field->getMappingPropertyConfig();
 
-            if ($field->isSearchable()) {
-                $searchAnalyzers = [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE];
-                $analyzers = array_merge($analyzers, $searchAnalyzers);
-                $copyTo[]  = self::DEFAULT_SEARCH_FIELD;
+        if ($field->isNested()) {
+            /*
+             * Nested field management :
+             *
+             * For nested field we need to
+             *   - change the insertion root to the parent field.
+             *   - create the parent field with type nested if not yet exists.
+             *   - using the suffix name of the field instead of the name including nested path.
+             *
+             * Ex: "price.is_discount" field has to be inserted with name "is_discount" into the "price" field.
+             *
+             */
+            $nestedPath = $field->getNestedPath();
 
-                if ($field->isUsedInSpellcheck()) {
-                    $copyTo[] = self::DEFAULT_SPELLING_FIELD;
-                }
+            if (!isset($properties[$nestedPath])) {
+                $properties[$nestedPath] = ['type' => FieldInterface::FIELD_TYPE_NESTED, 'properties' => []];
+            }
 
-                if ($field->isUsedInAutocomplete()) {
-                    $analyzers[] = self::ANALYZER_EDGE_NGRAM;
-                    $copyTo[] = self::DEFAULT_SPELLING_FIELD;
-                }
+            $fieldRoot = &$properties[$nestedPath]['properties'];
+            $fieldName = $field->getNestedFieldName();
+        }
+
+        /*
+         * Retrieving location where the property has to be copied to.
+         * Ex : searchable fields are copied to default "search" field.
+         */
+        $copyToProperties = $this->getFieldCopyToProperties($field);
+
+        if (!empty($copyToProperties)) {
+            // For normal fields, copy_to is append at the property root.
+            $copyToRoot = &$property;
+            if ($property['type'] == FieldInterface::FIELD_TYPE_MULTI) {
+                /*
+                 * For field with type "multi_field", the copy_to has to be added in the
+                 * default subfield.
+                 * This is changing the root.
+                 */
+                $copyToRoot = &$property['fields'][$fieldName];
+            }
+
+            $copyToRoot['copy_to'] = $copyToProperties;
+        }
+
+        $fieldRoot[$fieldName] = $property;
+
+        return $properties;
+    }
+
+    /**
+     * Get the list of default fields where the current field must be copied.
+     * Example : searchable fields are copied into the default "search" field.
+     *
+     * @param FieldInterface $field Field to be checked.
+     *
+     * @return array
+     */
+    private function getFieldCopyToProperties(FieldInterface $field)
+    {
+        $copyTo = [];
+
+        foreach ($this->copyFieldMap as $method => $targetField) {
+            if ($field->$method()) {
+                $copyTo[] = $targetField;
             }
         }
 
-        return $this->getPropertyMapping($field->getName(), $field->getType(), $analyzers, $copyTo);
+        return $copyTo;
     }
 }
