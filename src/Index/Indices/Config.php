@@ -124,7 +124,6 @@ class Config extends \Magento\Framework\Config\Data
      */
     private function initIndexConfig(array $indexConfigData)
     {
-        var_dump('ICI');
         $types = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {

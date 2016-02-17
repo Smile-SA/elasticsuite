@@ -12,9 +12,9 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticSuiteCore\Index\Bulk;
 
-use Smile\ElasticSuiteCore\Api\Index\BulkInterface;
+use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 
@@ -25,7 +25,7 @@ use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Bulk implements BulkInterface
+class BulkRequest implements BulkRequestInterface
 {
     /**
      * Bulk operation stack.

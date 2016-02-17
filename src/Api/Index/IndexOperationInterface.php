@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticSuiteCore\Api\Index;
 
+use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface;
+
 /**
  * Operation on indices (create, get, install, indexing).
  *
@@ -75,18 +77,18 @@ interface IndexOperationInterface
     /**
      * Create a new empty bulk.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function createBulk();
 
     /**
-     * Execute a bulk.
+     * Execute a bulk and return the execution response.
      *
-     * @param \Smile\ElasticSuiteCore\Api\Index\BulkInterface $bulk Bulk to be executed.
+     * @param \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface $bulk Bulk to be executed.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface
      */
-    public function executeBulk(BulkInterface $bulk);
+    public function executeBulk(BulkRequestInterface $bulk);
 
     /**
      * Refresh an index (should be called after indexing operations to ensure data are available for search).

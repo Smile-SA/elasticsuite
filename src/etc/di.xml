@@ -43,8 +43,11 @@
     
     <preference for="Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface"
                 type="Smile\ElasticSuiteCore\Index\Mapping\Field" />
-    
-    <preference for="Smile\ElasticSuiteCore\Api\Index\BulkInterface"
-                type="Smile\ElasticSuiteCore\Index\Bulk" />
+                
+    <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface"
+                type="Smile\ElasticSuiteCore\Index\Bulk\BulkRequest" />
+                
+    <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
+                type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
 
 </config>

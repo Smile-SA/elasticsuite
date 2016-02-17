@@ -12,18 +12,20 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index;
+namespace Smile\ElasticSuiteCore\Api\Index\Bulk;
+
+use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 
 /**
- * Bulk operation representation interface.
+ * Bulk request representation interface.
  *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-interface BulkInterface
+interface BulkRequestInterface
 {
-
     /**
      * Indicates if the current bulk contains operation.
      *
