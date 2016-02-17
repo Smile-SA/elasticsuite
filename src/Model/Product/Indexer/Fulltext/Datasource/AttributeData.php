@@ -64,7 +64,7 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
     /**
      * @var array
      */
-    private $authorizedBackendModels = [
+    private $indexedBackendModels = [
         'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
         'Magento\Eav\Model\Entity\Attribute\Backend\Datetime',
         'Magento\Catalog\Model\Attribute\Backend\Startdate',
@@ -80,24 +80,24 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
     /**
      * Constructor
      *
-     * @param ResourceModel          $resourceModel           Resource model.
-     * @param FieldFactory           $fieldFactory            Mapping field factory.
-     * @param ProductAttributeHelper $attributeHelper         Attribute helper.
-     * @param array                  $authorizedBackendModels List of indexed backend models.
+     * @param ResourceModel          $resourceModel        Resource model.
+     * @param FieldFactory           $fieldFactory         Mapping field factory.
+     * @param ProductAttributeHelper $attributeHelper      Attribute helper.
+     * @param array                  $indexedBackendModels List of indexed backend models added to the default list.
      */
     public function __construct(
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         ProductAttributeHelper $attributeHelper,
-        array $authorizedBackendModels = []
+        array $indexedBackendModels = []
     ) {
         $this->resourceModel   = $resourceModel;
         $this->attributeHelper = $attributeHelper;
         $this->fieldFactory    = $fieldFactory;
 
-        if (is_array($authorizedBackendModels) && !empty($authorizedBackendModels)) {
-            $authorizedBackendModels = array_values($authorizedBackendModels);
-            $this->authorizedBackendModels = array_merge($authorizedBackendModels, $this->authorizedBackendModels);
+        if (is_array($indexedBackendModels) && !empty($indexedBackendModels)) {
+            $indexedBackendModels = array_values($indexedBackendModels);
+            $this->indexedBackendModels = array_merge($indexedBackendModels, $this->indexedBackendModels);
         }
 
         $this->initAttributes();
@@ -202,7 +202,7 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         $canIndex = $attribute->getBackendType() != 'static';
 
         if ($canIndex && $attribute->getBackendModel()) {
-            $canIndex = in_array($attribute->getBackendModel(), $this->authorizedBackendModels);
+            $canIndex = in_array($attribute->getBackendModel(), $this->indexedBackendModels);
         }
 
         return $canIndex;
