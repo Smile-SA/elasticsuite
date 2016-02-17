@@ -66,7 +66,6 @@ class IndexerHandler implements IndexerInterface
     public function saveIndex($dimensions, \Traversable $documents)
     {
         foreach ($dimensions as $dimension) {
-
             $storeId = $dimension->getValue();
             $index = $this->indexOperation->getIndexByName(self::INDEX_NAME, $storeId);
             $type  = $index->getType(self::TYPE_NAME);
@@ -93,7 +92,16 @@ class IndexerHandler implements IndexerInterface
     public function deleteIndex($dimensions, \Traversable $documents)
     {
         foreach ($dimensions as $dimension) {
-            // $this->indexOperation->createIndex(self::INDEX_NAME, $dimension->getValue());
+            $storeId = $dimension->getValue();
+            $index = $this->indexOperation->getIndexByName(self::INDEX_NAME, $storeId);
+            $type  = $index->getType(self::TYPE_NAME);
+
+            foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {
+                $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $type, $batchDocuments);
+                $this->indexOperation->executeBulk($bulk);
+            }
+
+            $this->indexOperation->refreshIndex($index);
         }
 
         return $this;
