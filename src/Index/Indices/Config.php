@@ -22,6 +22,8 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 /**
  * ElasticSuite indices configuration;
  *
+ * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+ *
  * @category Smile_ElasticSuite
  * @package  Smile\ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -122,6 +124,7 @@ class Config extends \Magento\Framework\Config\Data
      */
     private function initIndexConfig(array $indexConfigData)
     {
+        var_dump('ICI');
         $types = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
