@@ -149,7 +149,9 @@ class Config extends \Magento\Framework\Config\Data
             );
         }
 
-        return ['types' => $types];
+        $defaultSearchType = $indexConfigData['defaultSearchType'];
+
+        return ['types' => $types, 'defaultSearchType' => $defaultSearchType];
     }
 
     /**

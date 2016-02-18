@@ -55,19 +55,26 @@ class Index implements IndexInterface
     private $needInstall;
 
     /**
+     * @var string
+     */
+    private $defaultSearchType;
+
+    /**
      * Instanciate a new index.
      *
-     * @param string          $identifier  Index real name.
-     * @param string          $name        Index real name.
-     * @param TypeInterface[] $types       Index current types.
-     * @param boolean         $needInstall Indicates if the index needs to be installed.
+     * @param string          $identifier        Index real name.
+     * @param string          $name              Index real name.
+     * @param TypeInterface[] $types             Index current types.
+     * @param string          $defaultSearchType Default type used in searches.
+     * @param boolean         $needInstall       Indicates if the index needs to be installed.
      */
-    public function __construct($identifier, $name, array $types, $needInstall = false)
+    public function __construct($identifier, $name, array $types, $defaultSearchType, $needInstall = false)
     {
         $this->identifier  = $identifier;
         $this->name        = $name;
         $this->types       = $types;
         $this->needInstall = $needInstall;
+        $this->searchType  = $defaultSearchType;
     }
 
     /**
@@ -108,5 +115,13 @@ class Index implements IndexInterface
     public function needInstall()
     {
         return $this->needInstall;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultSearchType()
+    {
+        return $this->getType($this->defaultSearchType);
     }
 }

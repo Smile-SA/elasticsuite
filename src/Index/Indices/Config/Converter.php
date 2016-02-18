@@ -73,6 +73,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $indexConfig['types'][$typeNode->getAttribute('name')] = $typeParams;
         }
 
+        $indexConfig['defaultSearchType'] = $indexRootNode->getAttribute('defaultSearchType');
+
         return $indexConfig;
     }
 

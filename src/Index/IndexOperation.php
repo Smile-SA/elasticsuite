@@ -267,7 +267,7 @@ class IndexOperation implements IndexOperationInterface
 
         $createIndexParams = ['identifier' => $indexIdentifier, 'name' => $indexName, 'needInstall' => $needInstall];
 
-        $createIndexParams['types'] = $this->indicesConfiguration[$indexIdentifier]['types'];
+        $createIndexParams += $this->indicesConfiguration[$indexIdentifier];
 
         $index = $this->objectManager->create('\Smile\ElasticSuiteCore\Api\Index\IndexInterface', $createIndexParams);
 

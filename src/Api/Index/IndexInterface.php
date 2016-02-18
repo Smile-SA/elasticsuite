@@ -57,6 +57,13 @@ interface IndexInterface
      */
     public function getType($typeName);
 
+    /**
+     * Each index has a default type that can be used to search.
+     * This method returns this default type.
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\TypeInterface
+     */
+    public function getDefaultSearchType();
 
     /**
      * Indicates if the index needs to be installed.
