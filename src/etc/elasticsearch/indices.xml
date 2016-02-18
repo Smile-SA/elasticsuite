@@ -19,7 +19,7 @@
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
 
-    <index identifier="catalog_product">
+    <index identifier="catalogsearch_fulltext" defaultSearchType="product">
         <type name="product">
             <datasources>
                 <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>

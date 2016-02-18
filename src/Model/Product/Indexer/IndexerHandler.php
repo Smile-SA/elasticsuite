@@ -29,7 +29,7 @@ use Magento\Framework\Indexer\SaveHandler\Batch;
 class IndexerHandler implements IndexerInterface
 {
 
-    const INDEX_NAME = 'catalog_product';
+    const INDEX_NAME = 'catalogsearch_fulltext';
     const TYPE_NAME  = 'product';
 
     /**
