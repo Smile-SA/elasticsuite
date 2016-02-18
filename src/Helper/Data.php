@@ -1,26 +1,26 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Helper;
+
 use Magento\Framework\App\Helper;
 
 /**
  * Smile Tracker helper
  *
- * @package   Smile\ElasticSuiteTracker\Helper\
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -47,21 +47,21 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $_scopeConfig;
+    protected $scopeConfig;
 
     /**
      * Magento Store Manager
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $_storeManager;
+    private $storeManager;
 
     /**
      * Magento assets repository
      *
      * @var \Magento\Framework\View\Asset\Repository
      */
-    protected $_assetRepository;
+    private $assetRepository;
 
     /**
      * PHP Constructor
@@ -77,8 +77,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\View\Asset\Repository $assetRepository
     ) {
-        $this->_storeManager    = $storeManager;
-        $this->_assetRepository = $assetRepository;
+        $this->storeManager    = $storeManager;
+        $this->assetRepository = $assetRepository;
         parent::__construct($context);
     }
 
@@ -102,9 +102,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $result = $this->scopeConfig->getValue(self::CONFIG_BASE_URL_XPATH);
 
         if (!$result) {
-
             $params = ['_secure' => $this->_getRequest()->isSecure()];
-            return $this->_assetRepository->getUrlWithParams("Smile_ElasticSuiteTracker::hit.png", $params);
+
+            return $this->assetRepository->getUrlWithParams("Smile_ElasticSuiteTracker::hit.png", $params);
         }
 
         return $result;
@@ -127,6 +127,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getStoreId()
     {
-        return $this->_storeManager->getStore()->getId();
+        return $this->storeManager->getStore()->getId();
     }
 }

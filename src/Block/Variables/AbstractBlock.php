@@ -1,25 +1,24 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables;
 
 /**
- * Class AbstractBlock
+ * Abstract block for tracker, inherited by all other blocks
  *
- * @package   Smile\ElasticSuiteTracker\Block\Variables
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AbstractBlock extends \Magento\Framework\View\Element\Template
 {
@@ -28,21 +27,21 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
      *
      * @var \Magento\Framework\Json\Helper\Data
      */
-    protected $_jsonHelper;
+    protected $jsonHelper;
 
     /**
      * Generic tracker helper
      *
-     * @var \Smile\Tracker\Helper\Data
+     * @var \Smile\ElasticSuiteTracker\Helper\Data
      */
-    protected $_trackerHelper;
+    protected $trackerHelper;
 
     /**
      * Magento Core registry
      *
      * @var \Magento\Framework\Registry
      */
-    protected $_registry;
+    protected $registry;
 
     /**
      * PHP Constructor
@@ -64,9 +63,9 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->_jsonHelper    = $jsonHelper;
-        $this->_trackerHelper = $trackerHelper;
-        $this->_registry      = $registry;
+        $this->jsonHelper    = $jsonHelper;
+        $this->trackerHelper = $trackerHelper;
+        $this->registry      = $registry;
     }
 
 
@@ -75,18 +74,8 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
      *
      * @return \Magento\Framework\Json\Helper\Data
      */
-    public function getJsonHelper()
+    protected function getJsonHelper()
     {
-        return $this->_jsonHelper;
-    }
-
-    /**
-     * Retrieve the string escaper
-     *
-     * @return \Magento\Framework\Escaper
-     */
-    public function getEscaper()
-    {
-        return $this->_escaper;
+        return $this->jsonHelper;
     }
 }

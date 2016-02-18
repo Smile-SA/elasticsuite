@@ -11,17 +11,17 @@
  * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 ?>
-<?php /** @var $this Smile\ElasticSuiteTracker\Block\Variables\AbstractBlock **/ ?>
-<?php $variables = $this->getVariables(); ?>
+<?php /** @var $block Smile\ElasticSuiteTracker\Block\Variables\AbstractBlock **/ ?>
+<?php $variables = $block->getVariables(); ?>
 
 <?php if (!empty($variables)) : ?>
     <script type="text/javascript">
     <!--
     <?php foreach ($variables as $varName => $value) : ?>
-        smileTracker.addPageVar('<?php echo $this->getEscaper()->escapeJsQuote($varName)?>', '<?php echo $this->getEscaper()->escapeJsQuote($value)?>')
+        smileTracker.addPageVar('<?php echo $this->escapeJsQuote($varName)?>', '<?php echo $this->escapeJsQuote($value)?>')
     <?php endforeach; ?>
     //-->
     </script>

@@ -1,34 +1,34 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+
 use Magento\Framework\App\Cache\Type;
 use Magento\Framework\View\Element\Template;
 
 /**
- * Class Base
+ * Base variables block for page tracking, exposes all base tracking variables
  *
- * @package   Smile\ElasticSuiteTracker\Block\Variables\Page
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
 {
     /**
      * @var \Magento\Framework\View\Layout\PageType\Config The page type configuration
      */
-    protected $_pageTypeConfig;
+    private $pageTypeConfig;
 
     /**
      * Set the default template for page variable blocks
@@ -50,7 +50,8 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
         array $data = []
     ) {
-        $this->_pageTypeConfig = $pageTypeConfig;
+        $this->pageTypeConfig = $pageTypeConfig;
+
         return parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 
@@ -71,10 +72,10 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      */
     public function getPageTypeInformations()
     {
-        return array(
+        return [
             'type.identifier' => $this->getPageTypeIdentifier(),
             'type.label'      => stripslashes($this->getPageTypeLabel()),
-        );
+        ];
     }
 
     /**
@@ -85,6 +86,7 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
     public function getPageTypeIdentifier()
     {
         $request = $this->getRequest();
+
         return $request->getModuleName() . '_' . $request->getControllerName() . '_' . $request->getActionName();
     }
 
@@ -96,10 +98,9 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
     public function getPageTypeLabel()
     {
         if (!$this->getData('page_type_label')) {
-
             $label             = '';
             $identifier        = $this->getPageTypeIdentifier();
-            $labelByIdentifier = $this->_getPageTypeLabelMap();
+            $labelByIdentifier = $this->getPageTypeLabelMap();
 
             if (isset($labelByIdentifier[$identifier])) {
                 $label = $labelByIdentifier[$identifier];
@@ -116,16 +117,15 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      *
      * @return array
      */
-    protected function _getPageTypeLabelMap()
+    private function getPageTypeLabelMap()
     {
-        $labelByIdentifier = array();
+        $labelByIdentifier = [];
 
-        $pageTypes = $this->_pageTypeConfig->getPageTypes();
+        $pageTypes = $this->pageTypeConfig->getPageTypes();
         foreach ($pageTypes as $identifier => $pageType) {
             $labelByIdentifier[$identifier] = $pageType['label'];
         }
 
         return $labelByIdentifier;
     }
-
 }
