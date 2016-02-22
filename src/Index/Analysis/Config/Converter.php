@@ -66,9 +66,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         $analyzers   = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters));
 
         $defaultConfiguration = [
-            self::CHAR_FILTER_TYPE_ROOT_NODE => $charFilters,
-            self::FILTER_TYPE_ROOT_NODE      => $filters,
-            self::ANALYZER_TYPE_NODE         => $analyzers,
+            self::CHAR_FILTER_TYPE_NODE => $charFilters,
+            self::FILTER_TYPE_NODE      => $filters,
+            self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
 
         return $defaultConfiguration;
@@ -91,7 +91,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::CHAR_FILTER_TYPE_NODE,
             $language
         );
-        $charFilters = array_merge($defaultConfig[self::CHAR_FILTER_TYPE_ROOT_NODE], $languageCharFilters);
+        $charFilters = array_merge($defaultConfig[self::CHAR_FILTER_TYPE_NODE], $languageCharFilters);
 
         $languageFilters = $this->parseFilters(
             $xpath,
@@ -99,14 +99,14 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::FILTER_TYPE_NODE,
             $language
         );
-        $filters = array_merge($defaultConfig[self::FILTER_TYPE_ROOT_NODE], $languageFilters);
+        $filters = array_merge($defaultConfig[self::FILTER_TYPE_NODE], $languageFilters);
 
         $analyzers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language);
 
         $defaultConfiguration = [
-            self::CHAR_FILTER_TYPE_ROOT_NODE => $charFilters,
-            self::FILTER_TYPE_ROOT_NODE      => $filters,
-            self::ANALYZER_TYPE_NODE         => $analyzers,
+            self::CHAR_FILTER_TYPE_NODE => $charFilters,
+            self::FILTER_TYPE_NODE      => $filters,
+            self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
 
         return $defaultConfiguration;
@@ -196,11 +196,11 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         foreach ($analyzerNodes as $analyzerNode) {
             $analyzerName = $analyzerNode->getAttribute('name');
-            $analyzer = ['tokenizer' => $analyzerNode->getAttribute('tokenizer')];
+            $analyzer = ['tokenizer' => $analyzerNode->getAttribute('tokenizer'), 'type' => 'custom'];
             $analyzers[$analyzerName] = $analyzer;
 
             $filterPath = sprintf('%s/%s', self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
-            $analyzer[self::FILTER_TYPE_ROOT_NODE] = $this->getFiltersByRef(
+            $analyzer[self::FILTER_TYPE_NODE] = $this->getFiltersByRef(
                 $xpath,
                 $analyzerNode,
                 $filterPath,
@@ -208,7 +208,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             );
 
             $charFilterPath = sprintf('%s/%s', self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
-            $analyzer[self::CHAR_FILTER_TYPE_ROOT_NODE] = $this->getFiltersByRef(
+            $analyzer[self::CHAR_FILTER_TYPE_NODE] = $this->getFiltersByRef(
                 $xpath,
                 $analyzerNode,
                 $charFilterPath,
