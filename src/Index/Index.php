@@ -70,11 +70,11 @@ class Index implements IndexInterface
      */
     public function __construct($identifier, $name, array $types, $defaultSearchType, $needInstall = false)
     {
-        $this->identifier  = $identifier;
-        $this->name        = $name;
-        $this->types       = $types;
-        $this->needInstall = $needInstall;
-        $this->searchType  = $defaultSearchType;
+        $this->identifier         = $identifier;
+        $this->name               = $name;
+        $this->types              = $types;
+        $this->needInstall        = $needInstall;
+        $this->defaultSearchType  = $defaultSearchType;
     }
 
     /**
