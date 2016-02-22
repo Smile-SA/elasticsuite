@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Smile_ElasticSuiteCore indices configuration validation.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="requests">
+        <xs:complexType>
+            <xs:sequence maxOccurs="unbounded" minOccurs="1">
+                <xs:element name="request" type="request"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="request">
+        
+        <xs:choice maxOccurs="unbounded">
+            
+            <xs:element maxOccurs="1" minOccurs="1" name="dimensions" type="dimensions" />
+            <xs:element maxOccurs="1" minOccurs="0" name="query" type="queryReference" />
+            <xs:element maxOccurs="1" minOccurs="0" name="filter" type="queryReference" />
+            <xs:element maxOccurs="1" minOccurs="1" name="from" type="xs:integer" />
+            <xs:element maxOccurs="1" minOccurs="1" name="size" type="xs:integer" />
+            
+            <xs:element maxOccurs="1" minOccurs="1" name="queries" type="queryList">
+                <xs:key name="queryName">
+                  <xs:selector xpath="query" />
+                  <xs:field xpath="@name" />
+                </xs:key>
+            </xs:element>
+
+            <xs:element maxOccurs="1" minOccurs="1" name="aggregations" type="aggregations">
+                <xs:key name="aggregationName">
+                  <xs:selector xpath="query" />
+                  <xs:field xpath="@name" />
+                </xs:key>
+            </xs:element>
+            
+        </xs:choice>
+        
+        <xs:attribute type="xs:string" name="name" use="required" />
+        <xs:attribute type="xs:string" name="index" use="required" />
+        <xs:attribute type="xs:string" name="type" use="required" />
+        
+    </xs:complexType>
+
+    <!-- Dimension related types definition -->
+
+    <xs:complexType name="dimensions">
+        <xs:sequence>
+            <xs:element type="dimension" name="dimension" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dimension">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required" />
+                <xs:attribute type="xs:string" name="value" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Queries types related definition -->
+    
+    <xs:complexType name="queryList">
+        <xs:sequence>
+          <xs:element name="query" maxOccurs="unbounded" minOccurs="1" type="baseQuery" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="baseQuery" abstract="true">
+        <xs:attribute type="xs:string" name="name" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="queryReference">
+        <xs:attribute type="xs:string" name="reference" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="boolQueryClause">
+        <xs:complexContent>
+            <xs:extension base="queryReference">
+                <xs:attribute type="xs:string" name="clause" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="boolQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:sequence maxOccurs="unbounded" minOccurs="1">
+                    <xs:element name="query" type="boolQueryClause" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="filteredQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:choice maxOccurs="2" minOccurs="1" >
+                    <xs:element name="query" type="queryReference" maxOccurs="1"/>
+                    <xs:element name="filter" type="queryReference" maxOccurs="1"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="nestedQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:choice maxOccurs="1" minOccurs="1" >
+                    <xs:element name="query" type="queryReference" />
+                </xs:choice>
+                <xs:attribute type="xs:string" name="path" use="required" />
+                <xs:attribute type="xs:string" name="scoreMode" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="termsQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:string" name="values" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="matchQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:string" name="queryText" use="required" />
+                <xs:attribute type="xs:string" name="minumunShouldMatch" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="termQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:string" name="value" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="rangeQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:string" name="from" use="required" />
+                <xs:attribute type="xs:string" name="to" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="fulltextQuery">
+        <xs:complexContent>
+            <xs:extension base="baseQuery">
+                <xs:attribute type="xs:string" name="queryText" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Aggregations, buckets and metrics definitions -->
+    
+    <xs:complexType name="aggregations">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="bucket" maxOccurs="unbounded" minOccurs="1" type="baseBucket" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="baseBucket" abstract="true">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="metrics" type="metrics" /> 
+        </xs:choice>
+        <xs:attribute type="xs:string" name="name" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="termBucket">
+        <xs:complexContent>
+            <xs:extension base="baseBucket">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:integer" name="size" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="dynamicBucket">
+        <xs:complexContent>
+            <xs:extension base="baseBucket">
+                <xs:attribute type="xs:string" name="field" use="required" />
+                <xs:attribute type="xs:string" name="method" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+     
+    <xs:complexType name="metrics">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="metric" maxOccurs="unbounded" minOccurs="1" type="metric" />
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="metric">
+        <xs:attribute name="name" use="required" type="xs:string"  />
+        <xs:attribute name="field" use="required" type="xs:string" />
+        <xs:attribute name="type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="min" />
+                    <xs:enumeration value="max" />
+                    <xs:enumeration value="sum" />
+                    <xs:enumeration value="avg" />
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+</xs:schema>
