@@ -1,0 +1,208 @@
+<?php
+/**
+ * Scope switcher template
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+?>
+<?php /** @var $block Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Scope\Switcher */ ?>
+<?php if ($block->getContainers()) : ?>
+    <?php $containers = $block->getContainers(); ?>
+    <div class="store-switcher store-view">
+        <span class="store-switcher-label"><?php echo __('View:') ?></span>
+        <div class="actions dropdown closable">
+            <input type="hidden" name="container_switcher" id="container_switcher"
+                   data-role="container-id" data-param="<?php echo $block->getContainerVarName() ?>"
+                   value="<?php echo $block->escapeHtml($block->getWebsiteId()) ?>"
+                   onchange="switchScope(this);"<?php echo $block->getUiId()?> />
+            <input type="hidden" name="store_switcher" id="store_switcher"
+                   data-role="store-view-id" data-param="<?php echo $block->getStoreVarName() ?>"
+                   value="<?php echo $block->escapeHtml($block->getStoreId()) ?>"
+                   onchange="switchScope(this);"<?php echo $block->getUiId()?> />
+            <button
+                type="button"
+                class="admin__action-dropdown"
+                data-mage-init='{"dropdown":{}}'
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                id="store-change-button">
+                <?php echo $block->getCurrentSelectionName() ?>
+            </button>
+            <ul class="dropdown-menu" data-role="stores-list">
+            <?php if ($block->hasDefaultOption()) : ?>
+                <?php $isDisabledStore = !($block->getDefaultSelectionName() != $block->getCurrentSelectionName()) ;?>
+                <li class="store-switcher-all <?php if ($isDisabledStore) :?>
+                    <?php echo "disabled"; ?>
+                <?php endif;?>
+                <?php if (!$block->hasScopeSelected()) :?>
+                    <?php echo "current";?>
+                <?php endif;?>">
+                    <?php if ($block->getDefaultSelectionName() != $block->getCurrentSelectionName()) :?>
+                        <a data-role="store-view-id" data-value="" href="#">
+                            <?php echo $block->getDefaultSelectionName() ?>
+                        </a>
+                    <?php else :?>
+                        <span><?php echo $block->getDefaultSelectionName() ?></span>
+                    <?php endif; ?>
+                </li>
+            <?php endif; ?>
+            <?php foreach ($containers as $container) : ?>
+                <?php $showContainer = false; ?>
+                <?php foreach ($block->getStores() as $store) : ?>
+                    <?php if ($showContainer == false) : ?>
+                        <?php $showContainer = true; ?>
+                        <?php
+                            $canSelectContainer = (
+                                $block->isContainerSwitchEnabled()
+                                && ($block->getStoreId() || (!$block->isContainerSelected($container)))
+                            );
+                        ?>
+                        <?php $isDisabledContainer = (!$block->isContainerSwitchEnabled() && !$canSelectContainer) ;?>
+                        <li class="store-switcher-container <?php if ($isDisabledContainer) : ?>
+                            <?php echo "disabled"; ?>
+                        <?php endif; ?>
+                        <?php if ($block->isContainerSelected($container)) : ?>
+                            <?php echo "current";?>
+                        <?php endif;?>">
+                            <?php if ($canSelectContainer) : ?>
+                                <a data-role="container-id"
+                                   data-value="<?php echo $block->escapeHtml($block->getContainerName($container)) ?>"
+                                   href="#">
+                                    <?php echo $block->escapeHtml($block->getContainerLabel($container)) ?>
+                                </a>
+                            <?php else : ?>
+                                <span><?php echo $block->escapeHtml($block->getContainerLabel($container)) ?></span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php $isDisabled = (
+                        !$block->isStoreSwitchEnabled()
+                        && ($block->isStoreSelected($store) && $block->isContainerSelected($container))
+                    );
+                    ?>
+
+                    <li class="store-switcher-store-view <?php if ($isDisabled) : ?>
+                        <?php echo "disabled"; ?>
+                    <?php endif; ?>
+                    <?php if ($block->isStoreSelected($store) && $block->isContainerSelected($container)) : ?>
+                        <?php echo "current";?>
+                    <?php endif;?>">
+                        <?php if ($block->isStoreSwitchEnabled()
+                         && ! ($block->isStoreSelected($store) && $block->isContainerSelected($container))) :?>
+                            <a data-role="store-view-id"
+                                data-value="<?php echo $block->escapeHtml($store->getId()) ?>"
+                                data-container="<?php echo $block->escapeHtml($block->getContainerName($container)) ?>"
+                                href="#">
+                                <?php echo $block->escapeHtml($store->getName()) ?>
+                            </a>
+                        <?php else : ?>
+                            <span><?php echo $block->escapeHtml($store->getName()) ?></span>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        require([
+            'jquery',
+            'Magento_Ui/js/modal/confirm'
+        ], function(jQuery, confirm){
+
+            (function($) {
+                var $storesList = $('[data-role=stores-list]');
+                $storesList.on('click', '[data-value]', function(event) {
+                    var val = $(event.target).data('value');
+                    var role = $(event.target).data('role');
+                    var container = $(event.target).data('container');
+                    var switcher = $('[data-role='+role+']');
+
+                    event.preventDefault();
+
+                    if (((typeof container) != 'undefined') && (container != ""))  {
+                        switcher.switchParams = 'container/' + container + '/';
+                        switcher.data("switch-params", 'container/' + container + '/');
+                        var containerSwitcher = $('[data-role=container]');
+                    }
+
+                    if (((typeof containerSwitcher) != 'undefined'))  {
+                        if (!containerSwitcher.val() || container != containerSwitcher.val()) {
+                            switcher.val(val).trigger('change'); // Set the value & trigger event
+                        }
+                    } else if (!switcher.val() || val != switcher.val()) {
+                        switcher.val(val).trigger('change'); // Set the value & trigger event
+                    }
+
+                });
+            })(jQuery);
+
+            var scopeSwitcherHandler;
+
+            function switchScope(obj) {
+                var switcher = jQuery(obj);
+                var scopeId = switcher.val();
+                var scopeParams = '';
+                if (scopeId) {
+                    scopeParams = switcher.data('param') + '/' + scopeId + '/';
+                }
+
+                if (obj.switchParams) {
+                    scopeParams += obj.switchParams;
+                }
+
+                if (switcher.data('switch-params')) {
+                    scopeParams += switcher.data('switch-params');
+                }
+
+                if ((typeof scopeSwitcherHandler) != 'undefined') {
+                    var switcherParams = {
+                        scopeId: scopeId,
+                        scopeParams: scopeParams,
+                        useConfirm: <?php echo (int) $block->getUseConfirm() ?>
+                    };
+                    scopeSwitcherHandler(switcherParams);
+                } else {
+
+                    <?php if ($block->getUseConfirm()) : ?>
+
+                    confirm({
+                        content:  "<?php echo __('Please confirm scope switching. All data that hasn\'t been saved will be lost.') ?>",
+                        actions: {
+                            confirm: function() {
+                                reload();
+                            },
+                            cancel: function() {
+                                obj.value = '<?php echo $block->escapeHtml($block->getStoreId()) ?>';
+                            }
+                        }
+                    });
+
+                    <?php else : ?>
+                    reload();
+                    <?php endif; ?>
+                }
+
+                function reload() {
+                    var url = '<?php echo $block->getSwitchUrl() ?>' + scopeParams;
+                    setLocation(url);
+                }
+            }
+
+            window.scopeSwitcherHandler = scopeSwitcherHandler;
+            window.switchScope = switchScope;
+
+        });
+    </script>
+<?php endif; ?>
