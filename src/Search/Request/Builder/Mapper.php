@@ -100,10 +100,10 @@ class Mapper
         $filter = null;
 
         if (isset($this->requestData['filter'])) {
-            $query = $this->buildQuery($this->requestData['filter']);
+            $filter = $this->buildQuery($this->requestData['filter']);
         }
 
-        return $query;
+        return $filter;
     }
 
     /**
@@ -145,41 +145,84 @@ class Mapper
         }
 
         if ($queryType == QueryInterface::TYPE_BOOL) {
-            $queryParams = ['name' => $query['name'], 'boost' => self::DEFAULT_BOOST];
-
-            foreach ($query['queries'] as $clause => $clauseQueries) {
-                foreach ($clauseQueries as $childrenQuery) {
-                    $children = $this->buildQuery($childrenQuery);
-                    if ($children) {
-                        $queryParams[$clause][] = $children;
-                    }
-                }
-            }
+            $queryParams = $this->buildBoolQueryParams($query);
         } elseif ($queryType == QueryInterface::TYPE_FILTER) {
-            $isValid = false;
-
-            if (isset($queryParams['filter']) && $queryParams['filter']) {
-                $isValid = true;
-                $queryParams['filter'] = $this->buildQuery($queryParams['filter']);
-            }
-
-            if (isset($queryParams['query']) && $queryParams['query']) {
-                $isValid = true;
-                $queryParams['query'] = $this->buildQuery($queryParams['query']);
-            }
-
-            if ($isValid == false) {
-                $queryParams = [];
-            }
+            $queryParams = $this->buildFilteredQueryParams($query);
         } elseif ($queryType == QueryInterface::TYPE_NESTED) {
-            if (isset($queryParams['query']) && $queryParams['query']) {
-                $queryParams['query'] = $this->buildQuery($queryParams['query']);
-            } else {
-                $queryParams = [];
-            }
+            $queryParams = $this->buildNestedQueryParams($query);
         }
 
         return $this->createQuery($queryClass, $queryParams);
+    }
+
+    /**
+     * Convert a bool query array into a bool QueryInterface constructor params.
+     *
+     * @param array $query Bool query array.
+     *
+     * @return array
+     */
+    private function buildBoolQueryParams(array $query)
+    {
+        $queryParams = ['name' => $query['name'], 'boost' => self::DEFAULT_BOOST];
+
+        foreach ($query['queries'] as $clause => $clauseQueries) {
+            foreach ($clauseQueries as $childrenQuery) {
+                $children = $this->buildQuery($childrenQuery);
+                if ($children) {
+                    $queryParams[$clause][] = $children;
+                }
+            }
+        }
+
+        return $queryParams;
+    }
+
+    /**
+     * Convert a filtered query array into a filtered QueryInterface constructor params.
+     *
+     * @param array $query Bool query array.
+     *
+     * @return array
+     */
+    private function buildFilteredQueryParams(array $query)
+    {
+        $queryParams = $query;
+        $isValid     = false;
+
+        if (isset($queryParams['filter']) && $queryParams['filter']) {
+            $isValid = true;
+            $queryParams['filter'] = $this->buildQuery($queryParams['filter']);
+        }
+
+        if (isset($queryParams['query']) && $queryParams['query']) {
+            $isValid = true;
+            $queryParams['query'] = $this->buildQuery($queryParams['query']);
+        }
+
+        if ($isValid == false) {
+            $queryParams = [];
+        }
+
+        return $queryParams;
+    }
+
+    /**
+     * Convert a nested query array into a nested QueryInterface constructor params.
+     *
+     * @param array $query Bool query array.
+     *
+     * @return array
+     */
+    private function buildNestedQueryParams(array $query)
+    {
+        $queryParams = [];
+
+        if (isset($query['query']) && $query['query']) {
+            $queryParams = array_merge($query, ['query' => $this->buildQuery($query['query'])]);
+        };
+
+        return $queryParams;
     }
 
     /**

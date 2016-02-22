@@ -19,9 +19,6 @@ use Magento\Framework\Search\Request\Binder;
 use Smile\ElasticSuiteCore\Search\Request\Config;
 use Smile\ElasticSuiteCore\Search\Request\Builder\Cleaner;
 use Magento\Framework\Search\SearchEngineInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Bool;
 use Magento\Framework\Search\Response\Bucket;
 use Magento\Framework\Search\Request\BucketInterface;
@@ -40,11 +37,6 @@ class Builder
      * @var ObjectManagerInterface
      */
     private $objectManager;
-
-    /**
-     * @var IndexSettingsInterface
-     */
-    private $indexSettings;
 
     /**
      * @var Config
@@ -74,20 +66,17 @@ class Builder
      *
      * @param ObjectManagerInterface $objectManager Object manager.
      * @param Config                 $config        Search requests configuration.
-     * @param IndexSettingsInterface $indexSettings Index settings.
      * @param Binder                 $binder        Binder.
      * @param Cleaner                $cleaner       Cleaner.
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         Config $config,
-        IndexSettingsInterface $indexSettings,
         Binder $binder,
         Cleaner $cleaner
     ) {
         $this->objectManager = $objectManager;
         $this->config        = $config;
-        $this->indexSettings = $indexSettings;
         $this->binder        = $binder;
         $this->cleaner       = $cleaner;
     }
@@ -205,144 +194,6 @@ class Builder
 
         if ($data === null) {
             throw new \InvalidArgumentException("Request name '{$requestName}' doesn't exist.");
-        }
-
-        $data = $this->addTypeConfig($data['index'], $data['type'], $data);
-
-        return $data;
-    }
-
-    /**
-     * Load the configuration for an index / type couple and add the new field to the current configuration.
-     *
-     * @param string $index Index name.
-     * @param string $type  Type name.
-     * @param array  $data  Current configuration data
-     *
-     * @return array
-     */
-    private function addTypeConfig($index, $type, $data)
-    {
-        $indexConfig = $this->indexSettings->getIndicesConfig();
-
-        if (isset($indexConfig[$index]) && isset($indexConfig[$index]['types'][$type])) {
-            $mapping = $indexConfig[$index]['types'][$type]->getMapping();
-            $filtersByType = [];
-
-            foreach ($mapping->getFields() as $mappingField) {
-                if ($mappingField->isFilterable()) {
-                    $filterQuery = $this->getFilterQueryFromField($mappingField);
-                    $filterQueryName = $filterQuery['name'];
-
-                    $data['queries'][$filterQueryName] = $filterQuery;
-
-                    $filterType = 'query';
-
-                    if ($mappingField->isFacet($data['name'])) {
-                        $filterType = 'filter';
-                        $aggregation = $this->getAggregationsFromField($mappingField);
-                        $data['aggregations'][$aggregation['name']] = $aggregation;
-                    }
-
-                    $filtersByType[$filterType][] = $filterQuery;
-                }
-            }
-
-            $data = $this->addTypeFilters($filtersByType, $data);
-        }
-
-        return $data;
-    }
-
-    /**
-     * Retrieve filter query configuration for a field of the mapping.
-     *
-     * @param FieldInterface $field Field.
-     *
-     * @return array
-     */
-    private function getFilterQueryFromField(FieldInterface $field)
-    {
-        $fieldName       = $field->getName();
-        $filterName      = $fieldName . '_filter';
-        $filterType      = QueryInterface::TYPE_TERMS;
-        $filterBindField = 'values';
-        $filterBindValue = sprintf('$%s$', $fieldName);
-
-        $filterQuery = [
-            'name'           => $filterName,
-            'field'          => $fieldName,
-            'type'           => $filterType,
-            $filterBindField => $filterBindValue,
-        ];
-
-        return $filterQuery;
-    }
-
-    /**
-     * Retrieve aggregation configuration for a field of the mapping.
-     *
-     * @param FieldInterface $field Field.
-     *
-     * @return array
-     */
-    private function getAggregationsFromField(FieldInterface $field)
-    {
-        $fieldName       = $field->getName();
-        $aggregationName = $fieldName . '_bucket';
-        $aggregationType = BucketInterface::TYPE_TERM;
-
-        $aggregation = [
-            'name'  => $aggregationName,
-            'field' => $fieldName,
-            'type'  => $aggregationType,
-        ];
-
-        return $aggregation;
-    }
-
-    /**
-     * Append new filters into the configuration.
-     *
-     * @param string $filtersByType Filter to be added by type (query or filter).
-     * @param array  $data          Base data where filters have to be append.
-     *
-     * @return array
-     */
-    private function addTypeFilters($filtersByType, $data)
-    {
-        $defaultAddClause = Bool::QUERY_CONDITION_MUST;
-
-        foreach ($filtersByType as $type => $filterQueries) {
-            if (!isset($data[$type])) {
-                $queryReferenceName = 'type_automatic_'. $type .'filtered';
-            }
-
-            $queryReferenceName = $data[$type]['reference'];
-
-            if (!isset($data['queries'][$queryReferenceName])) {
-                $data['queries'][$queryReferenceName] = [
-                    'name' => $queryReferenceName,
-                    'type' => QueryInterface::TYPE_BOOL,
-                ];
-            } elseif ($data['queries'][$queryReferenceName]['type'] != QueryInterface::TYPE_BOOL) {
-                $oldReferenceName   = $queryReferenceName;
-                $queryReferenceName = 'type_automatic_'. $type .'filtered';
-                $data['queries'][$queryReferenceName] = [
-                    'name' => $queryReferenceName,
-                    'type' => QueryInterface::TYPE_BOOL,
-                    'query' => [['clause' => $defaultAddClause, 'reference' => $oldReferenceName]],
-                ];
-            }
-
-            foreach ($filterQueries as $filterQuery) {
-                $data['queries'][$queryReferenceName]['query'][] = [
-                    'clause'    => $defaultAddClause,
-                    'reference' => $filterQuery['name'],
-                ];
-            }
-
-            $data[$type] = ['reference' => $queryReferenceName];
         }
 
         return $data;
