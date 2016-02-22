@@ -232,7 +232,7 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         if ($attribute->usesSource()) {
             $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
             $fieldConfig['is_searchable'] = false;
-            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' =>$fieldConfig];
+            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
             $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
             $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
             $fieldType = 'string';

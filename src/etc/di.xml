@@ -8,7 +8,6 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- *
  * @category  Smile
  * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -69,13 +68,22 @@
             </argument>
         </arguments>
     </type>
-    
-    <type name="Magento\Search\Model\AdapterFactory">
-        <arguments>
-            <argument name="adapters" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Magento\Framework\Search\Adapter\Mysql\Adapter</item>
-            </argument>
-        </arguments>
-    </type>
+   
+    <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection"
+                type="Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection" />
 
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory" 
+                 type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection" 
+                 type="Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+        </arguments>
+    </virtualType>
+    
 </config>
