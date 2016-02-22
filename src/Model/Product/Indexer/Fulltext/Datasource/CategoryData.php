@@ -52,7 +52,7 @@ class CategoryData implements DatasourceInterface
 
         foreach ($categoryData as $categoryDataRow) {
             $productId = (int) $categoryDataRow['product_id'];
-            $indexData[$productId]['categories'][] = [
+            $indexData[$productId]['category'][] = [
                 'category_id' => $categoryDataRow['category_id'],
                 'is_parent'   => $categoryDataRow['is_parent'],
                 'position'    => $categoryDataRow['position'],
