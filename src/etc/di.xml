@@ -49,5 +49,13 @@
                 
     <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
                 type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
+                
+    <type name="Magento\Search\Model\AdapterFactory">
+        <arguments>
+            <argument name="adapters" xsi:type="array">
+                <item name="elasticsuite" xsi:type="string">Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Adapter</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>
