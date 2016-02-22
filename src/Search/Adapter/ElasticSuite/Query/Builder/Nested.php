@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,15 +15,26 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder;
 
 use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\BuilderInterface;
 
-class Nested extends AbstractBuilder
+/**
+ * Build an ES nested query.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Nested extends AbstractComplexBuilder implements BuilderInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function buildQuery(QueryInterface $query)
     {
         $searchQuery = [
             'path'       => $query->getPath(),
             'score_mode' => $query->getScoreMode(),
-            'query'      => $this->builder->buildQuery($query->getQuery()),
+            'query'      => $this->parentBuilder->buildQuery($query->getQuery()),
         ];
 
         return ['nested' => $searchQuery];

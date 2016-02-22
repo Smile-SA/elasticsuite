@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -16,9 +16,6 @@ namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite;
 
 use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\RequestInterface;
-use Magento\Framework\Api\Search\Document;
-use Magento\Framework\Search\Adapter\Mysql\DocumentFactory;
-use Magento\Framework\Search\Response\Aggregation;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponseFactory;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticSuiteCore\Index\IndexOperation;
@@ -27,24 +24,29 @@ use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder as QueryBuilder;
 
-
 /**
  * ElasticSuite Search Adapter.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Adapter implements AdapterInterface
 {
+    /**
+     * @var QueryResponseFactory
+     */
     private $responseFactory;
+
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Index\IndexOperation
+     * @var IndexOperation
      */
     private $indexManager;
-
 
     /**
      * @var \Elasticsearch\Client
@@ -59,21 +61,24 @@ class Adapter implements AdapterInterface
     /**
      * Constructor.
      *
-     *
+     * @param QueryResponseFactory   $responseFactory Search response factory.
+     * @param IndexOperation         $indexManager    ES index manager.
+     * @param QueryBuilder           $queryBuilder    Adapter query builder
+     * @param ClientFactoryInterface $clientFactory   ES client factory.
+     * @param LoggerInterface        $logger          Logger
      */
     public function __construct(
         QueryResponseFactory $responseFactory,
-        LoggerInterface $logger,
         IndexOperation $indexManager,
+        QueryBuilder $queryBuilder,
         ClientFactoryInterface $clientFactory,
-        QueryBuilder $queryBuilder
+        LoggerInterface $logger
     ) {
-
         $this->responseFactory = $responseFactory;
-        $this->logger = $logger;
-        $this->indexManager = $indexManager;
-        $this->client = $clientFactory->createClient();
-        $this->queryBuilder = $queryBuilder;
+        $this->logger          = $logger;
+        $this->indexManager    = $indexManager;
+        $this->client          = $clientFactory->createClient();
+        $this->queryBuilder    = $queryBuilder;
     }
 
     /**
@@ -81,29 +86,33 @@ class Adapter implements AdapterInterface
      */
     public function query(RequestInterface $request)
     {
-        \Magento\Framework\Profiler::start('ES:' . __METHOD__, ['group' => 'ES', 'method' => __METHOD__]);
-
         try {
             $index = $this->getIndex($request);
             $type  = $index->getType($request->getType());
             $searchQuery = $this->buildSearchQuery($request);
-            $searchQuery = $this->addPagination($request, $searchQuery);
             $searchResponse = $this->doSearch($index, $type, $searchQuery);
         } catch (\Exception $e) {
             $searchResponse = [];
             $this->logger->error($e->getMessage());
         }
 
-        \Magento\Framework\Profiler::stop('ES:' . __METHOD__);
-
         return $this->responseFactory->create(['searchResponse' => $searchResponse]);
     }
 
+    /**
+     * Build an ES search query from RequestInterface request.
+     *
+     * @param RequestInterface $request Search request to be mapped.
+     *
+     * @return array
+     */
     private function buildSearchQuery($request)
     {
         $query = [
             'query'  => $this->queryBuilder->buildQuery($request->getQuery()),
             'filter' => $this->queryBuilder->buildQuery($request->getFilter()),
+            'from'   => $request->getFrom(),
+            'size'   => $request->getSize(),
         ];
 
         foreach ($request->getAggregation() as $currentAggregation) {
@@ -113,24 +122,36 @@ class Adapter implements AdapterInterface
             ];
         }
 
-        //var_dump($query['aggregations']);
-
         return $query;
     }
-    private function addPagination(RequestInterface $request, $searchQuery)
-    {
-        $searchQuery['size'] = $request->getSize();
-        $searchQuery['from'] = $request->getFrom();
 
-        return $searchQuery;
-    }
-
-    private function doSearch(IndexInterface $index, TypeInterface $type, $query)
+    /**
+     * Execute the search with ES.
+     *
+     * @param IndexInterface $index Index.
+     * @param TypeInterface  $type  Document type.
+     * @param array          $query Search query.
+     *
+     * @return array
+     */
+    private function doSearch(IndexInterface $index, TypeInterface $type, array $query)
     {
-        $request = ['index' => $index->getName(), 'type' => $type->getName(), 'body' => $query];
+        $request = [
+            'index' => $index->getName(),
+            'type'  => $type->getName(),
+            'body'  => $query,
+        ];
+
         return $this->client->search($request);
     }
 
+    /**
+     * Retrive the index for the current request.
+     *
+     * @param RequestInterface $request Request.
+     *
+     * @return IndexInterface
+     */
     private function getIndex(RequestInterface $request)
     {
         $indexIdentifier = $request->getIndex();

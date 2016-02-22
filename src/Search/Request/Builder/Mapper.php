@@ -1,4 +1,16 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCore\Search\Request\Builder;
 
@@ -6,14 +18,33 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\ObjectManagerInterface;
 
+/**
+ * Map an array to a request object.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Mapper
 {
+    /**
+     * @var integer
+     */
     const DEFAULT_BOOST = 1;
 
+    /**
+     * @var array
+     */
     private $requestData;
+
+    /**
+     * @var ObjectManagerInterface
+     */
     private $objectManager;
 
-
+    /**
+     * @var array
+     */
     private $queryFactories = [
         QueryInterface::TYPE_BOOL   => 'Magento\Framework\Search\Request\Query\BoolExpression',
         QueryInterface::TYPE_FILTER => 'Smile\ElasticSuiteCore\Search\Request\Query\Filtered',
@@ -24,17 +55,30 @@ class Mapper
         QueryInterface::TYPE_RANGE  => 'Smile\ElasticSuiteCore\Search\Request\Query\Range',
     ];
 
+    /**
+     * @var array
+     */
     private $aggregationFactories = [
         BucketInterface::TYPE_TERM => 'Magento\Framework\Search\Request\Aggregation\TermBucket',
-        //QueryInterface::TYPE_FILTER => 'Smile\ElasticSuiteCore\Search\Request\Query\Filtered'
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param array                  $requestData   Request to be mapped.
+     */
     public function __construct(ObjectManagerInterface $objectManager, array $requestData)
     {
         $this->requestData   = $requestData;
         $this->objectManager = $objectManager;
     }
 
+    /**
+     * Returns the root query of the request.
+     *
+     * @return QueryInterface
+     */
     public function getRootQuery()
     {
         $query = null;
@@ -46,6 +90,11 @@ class Mapper
         return $query;
     }
 
+    /**
+     * Returns the root filter of the request.
+     *
+     * @return QueryInterface
+     */
     public function getRootFilter()
     {
         $filter = null;
@@ -57,6 +106,11 @@ class Mapper
         return $query;
     }
 
+    /**
+     * Returns bucket of the request.
+     *
+     * @return BucketInterface[]
+     */
     public function getAggregations()
     {
         $aggregations = [];
@@ -73,7 +127,14 @@ class Mapper
         return $aggregations;
     }
 
-    private function buildQuery($query)
+    /**
+     * Transform a query array to a QueryInterface object.
+     *
+     * @param array $query Query array.
+     *
+     * @return QueryInterface
+     */
+    private function buildQuery(array $query)
     {
         $queryParams = $query;
         $queryClass  = false;
@@ -110,7 +171,6 @@ class Mapper
             if ($isValid == false) {
                 $queryParams = [];
             }
-
         } elseif ($queryType == QueryInterface::TYPE_NESTED) {
             if (isset($queryParams['query']) && $queryParams['query']) {
                 $queryParams['query'] = $this->buildQuery($queryParams['query']);
@@ -122,12 +182,23 @@ class Mapper
         return $this->createQuery($queryClass, $queryParams);
     }
 
-
-    private function buildAggregation($aggregation)
+    /**
+     * Transform an aggregation array to a BucketInterface object.
+     *
+     * @param array $aggregation Aggregation definition array.
+     *
+     * @return BucketInterface
+     */
+    private function buildAggregation(array $aggregation)
     {
         $aggregationParams = $aggregation;
         $aggregationType = $aggregation['type'];
-        $aggregationClass = isset($this->aggregationFactories[$aggregationType]) ? $this->aggregationFactories[$aggregationType] : null;
+
+        $aggregationClass = null;
+
+        if (isset($this->aggregationFactories[$aggregationType])) {
+            $aggregationClass = $this->aggregationFactories[$aggregationType];
+        }
 
         $aggregation = null;
 
@@ -141,11 +212,21 @@ class Mapper
         return $aggregation;
     }
 
-    private function createQuery($queryClass, $queryParams) {
+    /**
+     * Instanciate a new query.
+     *
+     * @param string $queryClass  Class of the query.
+     * @param array  $queryParams Params passed to the query constructor.
+     *
+     * @return QueryInterface
+     */
+    private function createQuery($queryClass, $queryParams)
+    {
         $query = null;
         if ($queryClass && !empty($queryParams)) {
             $query = $this->objectManager->create($queryClass, $queryParams);
         }
+
         return $query;
     }
 }

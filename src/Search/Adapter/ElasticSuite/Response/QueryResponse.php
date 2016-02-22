@@ -1,4 +1,16 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
@@ -9,6 +21,13 @@ use Magento\Framework\Search\ResponseInterface;
 use Magento\Framework\Search\Adapter\Mysql\DocumentFactory;
 use Magento\Framework\Search\Adapter\Mysql\AggregationFactory;
 
+/**
+ * ElasticSuite search adapter response.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
 {
     /**
@@ -30,6 +49,13 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
      */
     protected $aggregations;
 
+    /**
+     * Constructor
+     *
+     * @param DocumentFactory    $documentFactory    Document factory (@todo replace with non MySQL implemenation).
+     * @param AggregationFactory $aggregationFactory Aggregation factory (@todo replace with non MySQL implemenation)..
+     * @param array              $searchResponse     Engine raw response.
+     */
     public function __construct(
         DocumentFactory $documentFactory,
         AggregationFactory $aggregationFactory,
@@ -39,22 +65,39 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
         $this->prepareAggregations($searchResponse, $aggregationFactory);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function count()
     {
         return $this->count;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getIterator()
     {
         return new \ArrayIterator($this->documents);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAggregations()
     {
         return $this->aggregations;
     }
 
-    private function prepareAggregations($searchResponse, $aggregationFactory)
+    /**
+     * Build buckets from raw search response.
+     *
+     * @param array              $searchResponse     Engine raw search response.
+     * @param AggregationFactory $aggregationFactory Aggregation factory.
+     *
+     * @return void
+     */
+    private function prepareAggregations($searchResponse, AggregationFactory $aggregationFactory)
     {
         $buckets = [];
 
@@ -64,7 +107,7 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
                     foreach ($aggregation['buckets'] as $currentBuket) {
                         $buckets[$bucketName][$currentBuket['key']] = [
                             'value' => $currentBuket['key'],
-                            'count' => $currentBuket['doc_count']
+                            'count' => $currentBuket['doc_count'],
                         ];
                     }
                 }
@@ -74,7 +117,14 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
         $this->aggregations = $aggregationFactory->create($buckets);
     }
 
-
+    /**
+     * Build document list from the engine raw search response.
+     *
+     * @param array           $searchResponse  Engine raw search response.
+     * @param DocumentFactory $documentFactory Document factory
+     *
+     * @return void
+     */
     private function prepareDocuments($searchResponse, $documentFactory)
     {
         $this->documents = [];
@@ -85,7 +135,8 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
             foreach ($hits as $hit) {
                 $documentIdField = ['name' => 'entity_id', 'value' => $hit['_id']];
                 $scoreField      = ['name' => 'score'    , 'value' => $hit['_score']];
-                $this->documents[] =  $documentFactory->create([$documentIdField, $scoreField]);
+
+                $this->documents[] = $documentFactory->create([$documentIdField, $scoreField]);
             }
 
             $this->count = $searchResponse['hits']['total'];

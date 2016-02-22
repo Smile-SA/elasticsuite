@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -17,20 +17,41 @@ namespace Smile\ElasticSuiteCore\Search;
 use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Magento\Framework\Search\Request\QueryInterface;
 
+/**
+ * Default implementation of ElasticSuite search request.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Request extends \Magento\Framework\Search\Request implements RequestInterface
 {
+    /**
+     * @var string
+     */
     private $type;
+
+    /**
+     * @var SortOrderInterface
+     */
     private $sortOrder;
+
+    /**
+     * @var QueryInterface
+     */
     private $filter;
 
     /**
-     * @param string $name
-     * @param string $indexName
-     * @param QueryInterface $query
-     * @param int|null $from
-     * @param int|null $size
-     * @param Dimension[] $dimensions
-     * @param RequestBucketInterface[] $buckets
+     * @param string                   $name       Search request name.
+     * @param string                   $indexName  Index name.
+     * @param string                   $type       Searched document type.
+     * @param QueryInterface           $query      Search query.
+     * @param QueryInterface           $filter     Search filter.
+     * @param SortOrderInterface       $sortOrder  Sort order specification.
+     * @param int|null                 $from       Pagination from clause.
+     * @param int|null                 $size       Pagination page size clause.
+     * @param Dimension[]              $dimensions Searched store.
+     * @param RequestBucketInterface[] $buckets    Search request aggregations definition.
      */
     public function __construct(
         $name,
@@ -50,16 +71,25 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $this->sortOrder = $sortOrder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getFilter()
     {
         return $this->filter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getSortOrder()
     {
         return $this->sortOrder;

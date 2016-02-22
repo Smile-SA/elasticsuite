@@ -1,15 +1,30 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCore\Search\Request\Builder;
 
-
-use Magento\Framework\Exception\StateException;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
+/**
+ * Util used by the builder to clean search query arrays.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Cleaner
 {
-
-
     /**
      * @var array
      */
@@ -20,12 +35,16 @@ class Cleaner
      */
     private $mappedQueries;
 
+    /**
+     * @var array
+     */
     private $mappedAggregations;
 
     /**
-     * Clean not binder queries and filters.
+     * Clean not binded queries and filters.
      *
-     * @param array $requestData
+     * @param array $requestData Data to be cleansed.
+     *
      * @return array
      */
     public function clean(array $requestData)
@@ -39,11 +58,6 @@ class Cleaner
         $requestData['filter'] = $this->deferenceQueryField($requestData, 'filter');
         $requestData['aggregations'] = $this->mappedAggregations;
 
-        /*$this->cleanQuery($requestData['query']);
-        $this->cleanAggregations();
-        $requestData = $this->requestData;
-        $this->clear();*/
-
         return $requestData;
     }
 
@@ -55,14 +69,25 @@ class Cleaner
     private function clear()
     {
         $this->mappedQueries = [];
-        $this->requestData = [];
+        $this->requestData   = [];
     }
 
+    /**
+     * Construct the mapped queries array :
+     * - Keep only fully binded queries
+     * - Build query hiearchy for complex queries (bool, filtered or nested)
+     *
+     * @return void
+     */
     private function mapQueries()
     {
         // We just want queries without any placeholders left.
         $this->mappedQueries = array_filter($this->requestData['queries'], [$this, 'isFullyBinded']);
 
+        /*
+         * Dereference complex queries (bool, filtered and nested) to build children queries
+         * before the parent one.
+         */
         foreach ($this->mappedQueries as &$query) {
             if ($query['type'] == QueryInterface::TYPE_BOOL) {
                 $query['queries'] = $this->dereferenceBoolQueries($query);
@@ -79,12 +104,26 @@ class Cleaner
         }
     }
 
+    /**
+     * Only keep fully binded aggregations
+     *
+     * @todo Complex aggregations handling and dereferecing
+     *
+     * @return void
+     */
     private function mapAggregations()
     {
         $this->mappedAggregations = array_filter($this->requestData['aggregations'], [$this, 'isFullyBinded']);
     }
 
-    private function &dereferenceBoolQueries($boolQuery)
+    /**
+     * Unreference all clauses of a bool query.
+     *
+     * @param array $boolQuery Bool query configuration array.
+     *
+     * @return array
+     */
+    private function &dereferenceBoolQueries(array $boolQuery)
     {
         $queries = [];
 
@@ -99,7 +138,18 @@ class Cleaner
         return $queries;
     }
 
-    private function &deferenceQueryField($query, $field)
+    /**
+     * Dereference a query from a parent document.
+     *
+     * This methods return null if the query can not be dereferenced (non existing field
+     * or query not mapped as root query).
+     *
+     * @param array  $query Parent query description array.
+     * @param string $field Field containing the referenced query.
+     *
+     * @return array|null
+     */
+    private function &deferenceQueryField(array $query, $field)
     {
         $dereferencedQuery = null;
         if (isset($query[$field])) {
@@ -113,10 +163,21 @@ class Cleaner
                 $dereferencedQuery = &$this->dereferenceQuery($referenceQuery);
             }
         }
+
         return $dereferencedQuery;
     }
 
-    private function &dereferenceQuery($query)
+    /**
+     * Try to dereference a query.
+     *
+     * This methods return null if the query can not be dereferenced (query not mapped
+     * as root query).
+     *
+     * @param array $query Query reference array.
+     *
+     * @return array|null
+     */
+    private function &dereferenceQuery(array $query)
     {
         $dereferencedQuery = null;
 
@@ -127,7 +188,14 @@ class Cleaner
         return $dereferencedQuery;
     }
 
-    private function isFullyBinded($data)
+    /**
+     * Check recursivelly if an array contains unbinded variables.
+     *
+     * @param array $data Data to be checked.
+     *
+     * @return boolean
+     */
+    private function isFullyBinded(array $data)
     {
         $isFullyBinded = true;
 
@@ -135,7 +203,7 @@ class Cleaner
             if ($isFullyBinded) {
                 if (is_array($value)) {
                     $isFullyBinded = $isFullyBinded && $this->isFullyBinded($value);
-                } else if (preg_match('/^\$(.+)\$$/si', $value)) {
+                } elseif (preg_match('/^\$(.+)\$$/si', $value)) {
                     $isFullyBinded = false;
                 }
             }

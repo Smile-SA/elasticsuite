@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,9 +15,20 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder;
 
 use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\BuilderInterface;
 
-class Terms extends AbstractBuilder
+/**
+ * Build an ES nested query.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Terms implements BuilderInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function buildQuery(QueryInterface $query)
     {
         return ['terms' => [$query->getField() => $query->getValues()]];

@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,26 +15,53 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder;
 
 use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\BuilderInterface;
 
-class BoolExpression extends AbstractBuilder
+/**
+ * Build an ES bool query.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Bool extends AbstractComplexBuilder implements BuilderInterface
 {
     const QUERY_CONDITION_MUST   = 'must';
     const QUERY_CONDITION_NOT    = 'must_not';
     const QUERY_CONDITION_SHOULD = 'should';
 
+    /**
+     * {@inheritDoc}
+     */
     public function buildQuery(QueryInterface $query)
     {
         $searchQuery = [];
-        $clauses = [self::QUERY_CONDITION_MUST, self::QUERY_CONDITION_NOT, self::QUERY_CONDITION_SHOULD];
+
+        $clauses = [
+            self::QUERY_CONDITION_MUST,
+            self::QUERY_CONDITION_NOT,
+            self::QUERY_CONDITION_SHOULD,
+        ];
 
         foreach ($clauses as $clause) {
-            $queries = array_map([$this->builder, 'buildQuery'], $this->getQueryClause($query, $clause));
+            $queries = array_map(
+                [$this->parentBuilder, 'buildQuery'],
+                $this->getQueryClause($query, $clause)
+            );
             $searchQuery[$clause] = array_filter($queries);
         }
 
         return ['bool' => $searchQuery];
     }
 
+    /**
+     * Return the list of queries associated to a clause.
+     *
+     * @param QueryInterface $query  Bool query.
+     * @param string         $clause Current clause (must, should, must_not).
+     *
+     * @return string
+     */
     private function getQueryClause($query, $clause)
     {
         $queries = $query->getMust();

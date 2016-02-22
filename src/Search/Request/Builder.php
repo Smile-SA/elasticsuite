@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -22,10 +22,18 @@ use Magento\Framework\Search\SearchEngineInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\BoolExpression;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Bool;
 use Magento\Framework\Search\Response\Bucket;
 use Magento\Framework\Search\Request\BucketInterface;
+use Smile\ElasticSuiteCore\Search\RequestInterface;
 
+/**
+ * ElasticSuite search requests builder.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Builder
 {
     /**
@@ -64,10 +72,11 @@ class Builder
     /**
      * Request Builder constructor
      *
-     * @param ObjectManagerInterface $objectManager
-     * @param Config $config
-     * @param Binder $binder
-     * @param Cleaner $cleaner
+     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param Config                 $config        Search requests configuration.
+     * @param IndexSettingsInterface $indexSettings Index settings.
+     * @param Binder                 $binder        Binder.
+     * @param Cleaner                $cleaner       Cleaner.
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -77,72 +86,82 @@ class Builder
         Cleaner $cleaner
     ) {
         $this->objectManager = $objectManager;
-        $this->config = $config;
+        $this->config        = $config;
         $this->indexSettings = $indexSettings;
-        $this->binder = $binder;
-        $this->cleaner = $cleaner;
+        $this->binder        = $binder;
+        $this->cleaner       = $cleaner;
     }
 
 
     /**
      * Set request name
      *
-     * @param string $requestName
-     * @return $this
+     * @param string $requestName Request name.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
     public function setRequestName($requestName)
     {
         $this->data['requestName'] = $requestName;
+
         return $this;
     }
 
     /**
-     * Set size
+     * Set page size for the request.
      *
-     * @param int $size
-     * @return $this
+     * @param int $size Page size.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
     public function setSize($size)
     {
         $this->data['size'] = $size;
+
         return $this;
     }
 
     /**
-     * Set from
+     * Set the search pagination offset.
      *
-     * @param int $from
-     * @return $this
+     * @param int $from Pagination offset
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
     public function setFrom($from)
     {
         $this->data['from'] = $from;
+
         return $this;
     }
 
     /**
      * Bind dimension data by name
      *
-     * @param string $name
-     * @param string $value
-     * @return $this
+     * @param string $name  Dimension name.
+     * @param string $value Dimension value.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
     public function bindDimension($name, $value)
     {
         $this->data['dimensions'][$name] = $value;
+
         return $this;
     }
 
     /**
      * Bind data to placeholder
      *
-     * @param string $placeholder
-     * @param mixed $value
-     * @return $this
+     * @param string $placeholder Placeholder name.
+     * @param mixed  $value       Binded value.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
     public function bind($placeholder, $value)
     {
         $this->data['placeholder']['$' . $placeholder . '$'] = $value;
+
         return $this;
     }
 
@@ -153,13 +172,11 @@ class Builder
      */
     public function create()
     {
-        \Magento\Framework\Profiler::start('ES:' . __METHOD__, ['group' => 'ES', 'method' => __METHOD__]);
         if (!isset($this->data['requestName'])) {
             throw new \InvalidArgumentException("Request name not defined.");
         }
         $requestName = $this->data['requestName'];
 
-        /** @var array $data */
         $data = $this->getConfig($requestName);
 
         // Binder hopes to find a filters field into the array.
@@ -170,11 +187,18 @@ class Builder
         $data = $this->cleaner->clean($data);
         $data = $this->convert($data);
 
-        \Magento\Framework\Profiler::stop('ES:' . __METHOD__);
-
         return $data;
     }
 
+    /**
+     * Load configuration for a request by name and returns it as an array.
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @param string $requestName Request name.
+     *
+     * @return array
+     */
     protected function getConfig($requestName)
     {
         $data = $this->config->get($requestName);
@@ -188,23 +212,25 @@ class Builder
         return $data;
     }
 
+    /**
+     * Load the configuration for an index / type couple and add the new field to the current configuration.
+     *
+     * @param string $index Index name.
+     * @param string $type  Type name.
+     * @param array  $data  Current configuration data
+     *
+     * @return array
+     */
     private function addTypeConfig($index, $type, $data)
     {
         $indexConfig = $this->indexSettings->getIndicesConfig();
 
         if (isset($indexConfig[$index]) && isset($indexConfig[$index]['types'][$type])) {
-
-            /**
-             * @var MappingInterface
-             */
             $mapping = $indexConfig[$index]['types'][$type]->getMapping();
-
             $filtersByType = [];
 
-            foreach ($mapping->getFields() as $mappingField)
-            {
+            foreach ($mapping->getFields() as $mappingField) {
                 if ($mappingField->isFilterable()) {
-
                     $filterQuery = $this->getFilterQueryFromField($mappingField);
                     $filterQueryName = $filterQuery['name'];
 
@@ -228,6 +254,13 @@ class Builder
         return $data;
     }
 
+    /**
+     * Retrieve filter query configuration for a field of the mapping.
+     *
+     * @param FieldInterface $field Field.
+     *
+     * @return array
+     */
     private function getFilterQueryFromField(FieldInterface $field)
     {
         $fieldName       = $field->getName();
@@ -246,6 +279,13 @@ class Builder
         return $filterQuery;
     }
 
+    /**
+     * Retrieve aggregation configuration for a field of the mapping.
+     *
+     * @param FieldInterface $field Field.
+     *
+     * @return array
+     */
     private function getAggregationsFromField(FieldInterface $field)
     {
         $fieldName       = $field->getName();
@@ -255,18 +295,25 @@ class Builder
         $aggregation = [
             'name'  => $aggregationName,
             'field' => $fieldName,
-            'type'  => $aggregationType
+            'type'  => $aggregationType,
         ];
 
         return $aggregation;
     }
 
+    /**
+     * Append new filters into the configuration.
+     *
+     * @param string $filtersByType Filter to be added by type (query or filter).
+     * @param array  $data          Base data where filters have to be append.
+     *
+     * @return array
+     */
     private function addTypeFilters($filtersByType, $data)
     {
-        $defaultAddClause = BoolExpression::QUERY_CONDITION_MUST;
+        $defaultAddClause = Bool::QUERY_CONDITION_MUST;
 
         foreach ($filtersByType as $type => $filterQueries) {
-
             if (!isset($data[$type])) {
                 $queryReferenceName = 'type_automatic_'. $type .'filtered';
             }
@@ -276,7 +323,7 @@ class Builder
             if (!isset($data['queries'][$queryReferenceName])) {
                 $data['queries'][$queryReferenceName] = [
                     'name' => $queryReferenceName,
-                    'type' => QueryInterface::TYPE_BOOL
+                    'type' => QueryInterface::TYPE_BOOL,
                 ];
             } elseif ($data['queries'][$queryReferenceName]['type'] != QueryInterface::TYPE_BOOL) {
                 $oldReferenceName   = $queryReferenceName;
@@ -302,9 +349,10 @@ class Builder
     }
 
     /**
-     * Convert array to Request instance
+     * Convert array to RequestInterface instance.
      *
-     * @param array $data
+     * @param array $data Converted data.
+     *
      * @return RequestInterface
      */
     private function convert($data)
@@ -329,19 +377,23 @@ class Builder
     }
 
     /**
-     * @param array $dimensionsData
+     * Bind dimension data to the built query.
+     *
+     * @param array $dimensionsData Binded data.
+     *
      * @return array
      */
     private function buildDimensions(array $dimensionsData)
     {
         $dimensions = [];
+
         foreach ($dimensionsData as $dimensionData) {
             $dimensions[$dimensionData['name']] = $this->objectManager->create(
                 'Magento\Framework\Search\Request\Dimension',
                 $dimensionData
-                );
+            );
         }
+
         return $dimensions;
     }
-
 }

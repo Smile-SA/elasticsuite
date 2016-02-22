@@ -1,23 +1,68 @@
 <?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticSuiteCore\Search\Request\Query;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
+/**
+ * Match query definition implementation.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Match implements QueryInterface
 {
+    /**
+     * @var string
+     */
     const DEFAULT_MINIMUM_SHOULD_MATCH = "100%";
 
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @var integer
+     */
     private $boost;
 
+    /**
+     * @var string
+     */
     private $queryText;
 
+    /**
+     * @var string
+     */
     private $field;
 
+    /**
+     * @var string
+     */
     private $minimumShouldMatch;
 
+    /**
+     *
+     * @param string  $name               Query name.
+     * @param string  $queryText          Matched text.
+     * @param string  $field              Query field.
+     * @param string  $minimumShouldMatch Minimum should match for the match query.
+     * @param integer $boost              Query boost.
+     */
     public function __construct(
         $name,
         $queryText,
@@ -25,38 +70,62 @@ class Match implements QueryInterface
         $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
-        $this->name = $name;
-        $this->queryText = $queryText;
-        $this->field = $field;
+        $this->name               = $name;
+        $this->queryText          = $queryText;
+        $this->field              = $field;
         $this->minimumShouldMatch = $minimumShouldMatch;
-        $this->boost = $boost;
+        $this->boost              = $boost;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getBoost()
     {
         return $this->boost;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getType()
     {
         return QueryInterface::TYPE_MATCH;
     }
 
+    /**
+     * Query match text.
+     *
+     * @return string
+     */
     public function getQueryText()
     {
         return $this->queryText;
     }
 
+    /**
+     * Query field.
+     *
+     * @return string
+     */
     public function getField()
     {
         return $this->field;
     }
 
+    /**
+     * Minimum should match for the match query.
+     *
+     * @return string
+     */
     public function getMinimumShouldMatch()
     {
         return $this->minimumShouldMatch;

@@ -14,6 +14,13 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
+/**
+ * Define new usable bucket types in ElasticSuite.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterface
 {
     const TYPE_HISTOGRAM      = 'histogramBucket';

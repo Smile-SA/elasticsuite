@@ -28,7 +28,6 @@ class SchemaLocator implements SchemaLocatorInterface
 {
     const SCHEMA_FILE = 'elasticsuite_search_request.xsd';
 
-
     /**
      * Path to corresponding XSD file with validation rules for both individual and merged configs.
      *

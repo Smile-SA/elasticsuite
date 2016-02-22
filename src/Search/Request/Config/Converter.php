@@ -16,13 +16,20 @@ namespace Smile\ElasticSuiteCore\Search\Request\Config;
 
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
-
+/**
+ * ElasticSuite search requests XML converter.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class Converter extends \Magento\Framework\Search\Request\Config\Converter
 {
-/**
+    /**
      * Convert config.
      *
-     * @param \DOMDocument $source
+     * @param \DOMDocument $source XML file read.
+     *
      * @return array
      */
     public function convert($source)
@@ -37,7 +44,7 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
             $simpleXmlNode = simplexml_import_dom($requestNode);
             /** @var \DOMElement $requestNode */
             $name = $requestNode->getAttribute('name');
-            $request = $this->mergeAttributes((array)$simpleXmlNode);
+            $request = $this->mergeAttributes((array) $simpleXmlNode);
             $request['dimensions'] = $this->convertNodes($simpleXmlNode->dimensions, 'name');
             $request['queries'] = $this->convertNodes($simpleXmlNode->queries, 'name');
             $request['query'] = $this->mergeAttributes((array) $simpleXmlNode->query, 'query');
@@ -50,13 +57,14 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
     }
 
     /**
-     * This method clean the comments of an XML document.
+     * This method remove all comments of an XML document.
      *
-     * @param \DOMDocument $source
+     * @param \DOMDocument $source Document to be cleansed.
      *
      * @return \DOMDocument
      */
-    private function stripComments(\DOMDocument $source) {
+    private function stripComments(\DOMDocument $source)
+    {
         $xpath = new \DOMXPath($source);
 
         foreach ($xpath->query('//comment()') as $commentNode) {

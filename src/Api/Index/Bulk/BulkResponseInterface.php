@@ -65,5 +65,4 @@ interface BulkResponseInterface
      * @return array
      */
     public function aggregateErrorsByReason();
-
 }

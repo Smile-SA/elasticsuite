@@ -14,20 +14,23 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
+/**
+ * Define new usable query types in ElasticSuite.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 interface QueryInterface extends \Magento\Framework\Search\Request\QueryInterface
 {
     const DEFAULT_BOOST_VALUE = 1;
 
-    const TYPE_NESTED       = 'nestedQuery'; //@todo
-    const TYPE_RANGE        = 'rangeQuery';  //@todo
+    const TYPE_NESTED       = 'nestedQuery';
+    const TYPE_RANGE        = 'rangeQuery';
     const TYPE_TERM         = 'termQuery';
     const TYPE_TERMS        = 'termsQuery';
     const TYPE_MULTIMATCH   = 'multiMatchQuery';
     const TYPE_COMMON       = 'commonQuery';
     const TYPE_FULLTEXT     = 'fulltextQuery';
     const TYPE_AUTOCOMPLETE = 'autocompleteQuery';
-
-    /*const TYPE_MATCH = 'matchQuery'; //@todo
-    const TYPE_BOOL = 'boolQuery';
-    const TYPE_FILTER = 'filteredQuery';*/
 }
