@@ -55,8 +55,8 @@ class Field implements FieldInterface
      */
     private $config = [
         'is_searchable'           => false,
-        'is_filterable'           => false,
-        'is_filterable_in_search' => false,
+        'is_filterable'           => true,
+        'is_facet'                => [],
         'is_used_for_sort_by'     => false,
         'is_used_in_spellcheck'   => false,
         'is_used_in_autocomplete' => false,
@@ -115,9 +115,9 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isFilterableInSearch()
+    public function isFacet($requestName)
     {
-        return (bool) $this->config['is_filterable_in_search'];
+        return (bool) in_array($requestName, $this->config['is_facet']);
     }
 
     /**
@@ -254,7 +254,7 @@ class Field implements FieldInterface
             }
         }
 
-        if ($this->isFilterable() || $this->isFilterableInSearch()  || empty($analyzers)) {
+        if ($this->isFilterable() || empty($analyzers)) {
             // For filterable fields or fields without analyzer : append the untouched analyzer.
             $analyzers[] = self::ANALYZER_UNTOUCHED;
         }

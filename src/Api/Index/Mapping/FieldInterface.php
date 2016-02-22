@@ -76,12 +76,7 @@ interface FieldInterface
      */
     public function isFilterable();
 
-    /**
-     * Is the field filterable in search.
-     *
-     * @return boolean
-     */
-    public function isFilterableInSearch();
+    public function isFacet($requestName);
 
     /**
      * Is the attribute used in sorting.
