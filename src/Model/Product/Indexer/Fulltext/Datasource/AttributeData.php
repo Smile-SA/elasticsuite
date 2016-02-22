@@ -174,6 +174,11 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
      */
     private function initAttributes()
     {
+        \Magento\Framework\Profiler::start(
+            'ES:' . __METHOD__,
+            ['group' => 'ES', 'method' => __METHOD__]
+        );
+
         $attributeCollection = $this->attributeHelper->getAttibuteCollection();
         $this->resourceModel->addIndexedFilterToAttributeCollection($attributeCollection);
 
@@ -186,6 +191,8 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
                 $this->initField($attribute);
             }
         }
+
+        \Magento\Framework\Profiler::stop('ES:' . __METHOD__);
 
         return $this;
     }
@@ -220,14 +227,20 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         $fieldName = $attribute->getAttributeCode();
         $fieldType = $this->attributeHelper->getFieldType($attribute);
 
+        $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
+
         if ($attribute->usesSource()) {
-            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'isSearchable' => false];
+            $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
+            $fieldConfig['is_searchable'] = false;
+            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' =>$fieldConfig];
             $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
             $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
             $fieldType = 'string';
+
+            $fieldConfig['is_filterable'] = false;
+            $fieldConfig['is_searchable'] = true;
         }
 
-        $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
         $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
 
         $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);

@@ -86,11 +86,23 @@ class ProductAttribute extends Mapping
     {
         $options = [
             'is_searchable'           => $attribute->getIsSearchable(),
-            'is_filterable'           => $attribute->getIsFilterable(),
-            'is_filterable_in_search' => $attribute->getIsFilterable(),
+            'is_filterable'           => $attribute->getIsFilterable() || $attribute->getIsFilterableInSearch(),
+            'is_facet'                => [],
             'search_weight'           => $attribute->getSearchWeight(),
             'is_used_for_sort_by'     => $attribute->getUsedForSortBy(),
         ];
+
+        if (!$options['is_filterable'] && $attribute->getBackendType() != 'string') {
+            $options['is_filterable'] = true;
+        }
+
+        if ($attribute->getIsFilterable()) {
+            $options['is_facet'][] = 'catalog_view_container';
+        }
+
+        if ($attribute->getIsFilterableInSearch()) {
+            $options['is_facet'][] = 'quick_search_container';
+        }
 
         return $options;
     }
