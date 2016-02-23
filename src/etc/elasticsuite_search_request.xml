@@ -39,16 +39,29 @@
             <query xsi:type="nestedQuery" name="price_nested_filter" path="price">
                 <query reference="price_filter" />
             </query> 
+            <query xsi:type="boolQuery" name="price_filter_conditions">
+                <query clause="must" reference="price_customer_group" />
+                <query clause="must" reference="price_filter" />
+            </query> 
+            <query xsi:type="termsQuery" name="price_customer_group_filter" field="price.customer_group_id" values="$customer_group_id$" />
             <query xsi:type="rangeQuery" name="price_filter" field="price.price" from="$price.from$" to="$price.to$" />
             
             <query xsi:type="termsQuery" name="visibility_filter" field="visibility" values="$visibility$"/>
             
         </queries>
+        <sortOrders>
+            <sortOrder xsi:type="standardSortOrder" name="relevance" field="_score" direction="$sortOrder.direction$" />
+            <sortOrder xsi:type="nestedSortOrder" name="position" field="category.position" nestedPath="category" direction="$sortOrder.direction$">
+                <nestedFilter reference="category_id_filter" />
+            </sortOrder>
+            <sortOrder xsi:type="nestedSortOrder" name="price" field="price.price" nestedPath="price" direction="$sortOrder.direction$">
+                <nestedFilter reference="price_customer_group_filter" />
+            </sortOrder>
+        </sortOrders>
         <aggregations>
             <bucket name="price_bucket" field="price" xsi:type="dynamicBucket" method="$price_dynamic_algorithm$" />
             <bucket name="category_bucket" field="category_ids" xsi:type="termBucket" size="10"/>
         </aggregations>
-
     </request>
     
     <request name="advanced_search_container" index="catalog_product" type="product">
@@ -89,10 +102,24 @@
             <query xsi:type="nestedQuery" name="price_nested_filter" path="price">
                 <query reference="price_filter" />
             </query> 
+            <query xsi:type="boolQuery" name="price_filter_conditions">
+                <query clause="must" reference="price_customer_group" />
+                <query clause="must" reference="price_filter" />
+            </query> 
+            <query xsi:type="termsQuery" name="price_customer_group_filter" field="price.customer_group_id" values="$customer_group_id$" />
             <query xsi:type="rangeQuery" name="price_filter" field="price.price" from="$price.from$" to="$price.to$" />
             
             <query xsi:type="termsQuery" name="visibility_filter" field="visibility" values="$visibility$"/>
         </queries>
+        <sortOrders>
+            <sortOrder xsi:type="standardSortOrder" name="relevance" field="_score" direction="$sortOrder.direction$" />
+            <sortOrder xsi:type="nestedSortOrder" name="position" field="category.position" nestedPath="category" direction="$sortOrder.direction$">
+                <nestedFilter reference="category_id_filter" />
+            </sortOrder>
+            <sortOrder xsi:type="nestedSortOrder" name="price" field="price.price" nestedPath="price" direction="$sortOrder.direction$">
+                <nestedFilter reference="price_customer_group_filter" />
+            </sortOrder>
+        </sortOrders>
         <aggregations>
             <bucket name="price_bucket" field="price" xsi:type="dynamicBucket" method="$price_dynamic_algorithm$" />
             <bucket name="category_bucket" field="category_ids" xsi:type="termBucket" size="10"/>

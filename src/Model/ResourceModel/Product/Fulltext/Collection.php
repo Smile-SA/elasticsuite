@@ -148,6 +148,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
+    public function setOrder($attribute, $dir = Select::SQL_DESC)
+    {
+        $this->_orders[$attribute] = $dir;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function addFieldToFilter($field, $condition = null)
     {
         if ($this->queryResponse !== null) {
@@ -179,29 +189,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $this->queryText = trim($this->queryText . ' ' . $query);
 
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setOrder($attribute, $dir = Select::SQL_DESC)
-    {
-        $this->order = ['field' => $attribute, 'dir' => $dir];
-        if ($attribute != 'relevance') {
-            parent::setOrder($attribute, $dir);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Does nothing but required for compatibility with other engines.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
-     */
-    public function setGeneralDefaultQuery()
-    {
         return $this;
     }
 
@@ -294,8 +281,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _renderOrders()
     {
-        // TODO : re-render sort orders through the request builder.
-        parent::_renderOrders();
+        if (!$this->_isOrdersRendered) {
+            foreach ($this->_orders as $attribute => $direction) {
+                $this->requestBuilder->bindSortOrder($attribute, $direction);
+            }
+
+            $this->_isOrdersRendered = true;
+        }
 
         return $this;
     }
@@ -332,6 +324,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         // Bind the current store.
         $this->requestBuilder->bindDimension('scope', $this->getStoreId());
 
+        // Bind the current customer group id.
+        $this->requestBuilder->bind('customer_group_id', $this->_productLimitationFilters['customer_group_id']);
+
         // For fulltext search : set the query text.
         if ($this->queryText) {
             $this->requestBuilder->bind('search_term', $this->queryText);
@@ -351,6 +346,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $curPage  = max(1, $this->_curPage);
         $this->requestBuilder->setSize($pageSize);
         $this->requestBuilder->setFrom($pageSize * ($curPage - 1));
+
+        // Setup sort orders.
+        $this->_renderOrders();
 
         return $this->requestBuilder->create();
     }
