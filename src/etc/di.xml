@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /**
  * Smile_ElasticSuiteCore dependency injection configuration.
  *
@@ -17,36 +17,36 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    
+
     <!-- Client config and factory DI -->
-    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface"  
+    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface"
                 type="Smile\ElasticSuiteCore\Client\ClientFactory" />
-    
-    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface"  
+
+    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface"
                 type="Smile\ElasticSuiteCore\Helper\ClientConfiguration" />
-    
+
     <!-- Indices namespace related DI -->
     <preference for="Smile\ElasticSuiteCore\Api\Index\IndexInterface"
                 type="Smile\ElasticSuiteCore\Index\Index" />
-    
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface"
                 type="Smile\ElasticSuiteCore\Index\IndexSettings" />
-    
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface"
                 type="Smile\ElasticSuiteCore\Index\IndexOperation" />
-    
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\TypeInterface"
                 type="Smile\ElasticSuiteCore\Index\Type" />
-                
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\MappingInterface"
                 type="Smile\ElasticSuiteCore\Index\Mapping" />
-    
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface"
                 type="Smile\ElasticSuiteCore\Index\Mapping\Field" />
-                
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface"
                 type="Smile\ElasticSuiteCore\Index\Bulk\BulkRequest" />
-                
+
     <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
                 type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
 
@@ -57,20 +57,23 @@
             </argument>
         </arguments>
     </type>
-    
+
     <preference for="Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface"
                 type="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Spellchecker" />
-    
+
     <virtualType name="Magento\Framework\Search\EsHitMetadata" type="Magento\Framework\Search\EntityMetadata">
         <arguments>
             <argument name="entityId" xsi:type="string">_id</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\DocumentFactory">
         <arguments>
             <argument name="entityMetadata" xsi:type="object">Magento\Framework\Search\EsHitMetadata</argument>
         </arguments>
     </type>
-    
+
+
+    <preference for="Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface"
+                type="Smile\ElasticSuiteCore\Search\Request\Config" />
 </config>

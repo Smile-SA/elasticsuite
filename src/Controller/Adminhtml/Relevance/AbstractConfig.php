@@ -1,0 +1,82 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuite________
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
+
+use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
+use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+/**
+ * _________________________________________________
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuite______________
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ */
+abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
+{
+    /**
+     * @var \Magento\Config\Model\Config\Structure
+     */
+    protected $configStructure;
+
+    /**
+     * @var ConfigSectionChecker
+     */
+    protected $sectionChecker;
+
+    protected $requestConfiguration;
+
+    /**
+     * @param \Magento\Backend\App\Action\Context $context
+     * @param \Magento\Config\Model\Config\Structure $configStructure
+     * @param ConfigSectionChecker $sectionChecker
+     */
+    public function __construct(
+        \Magento\Backend\App\Action\Context $context,
+        \Magento\Config\Model\Config\Structure $configStructure,
+        ConfigSectionChecker $sectionChecker,
+        RequestContainerInterface $requestConfig
+    ) {
+        parent::__construct($context);
+        $this->configStructure = $configStructure;
+        $this->sectionChecker = $sectionChecker;
+        $this->requestConfiguration = $requestConfig;
+    }
+
+    /**
+     * Check if current section is found and is allowed
+     *
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @return \Magento\Framework\App\ResponseInterface
+     */
+    public function dispatch(\Magento\Framework\App\RequestInterface $request)
+    {
+        if (!$request->getParam('section')) {
+            $request->setParam('section', $this->configStructure->getFirstSection()->getId());
+        }
+        return parent::dispatch($request);
+    }
+
+    /**
+     * Check is allow modify system configuration
+     *
+     * @return bool
+     */
+    protected function _isAllowed()
+    {
+        $sectionId = $this->_request->getParam('section');
+        return $this->_authorization->isAllowed('Magento_Config::config')
+        || $this->configStructure->getElement($sectionId)->isAllowed();
+    }
+}
