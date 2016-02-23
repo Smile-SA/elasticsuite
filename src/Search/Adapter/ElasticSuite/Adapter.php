@@ -22,8 +22,8 @@ use Smile\ElasticSuiteCore\Index\IndexOperation;
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder as QueryBuilder;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\SortOrder\Builder as SortOrderBuilder;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\SortOrder\Builder as SortOrderBuilder;
 
 /**
  * ElasticSuite Search Adapter.

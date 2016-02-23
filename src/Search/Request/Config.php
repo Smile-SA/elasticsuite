@@ -19,7 +19,7 @@ use Magento\Framework\Config\CacheInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Bool;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool;
 
 /**
  * ElasticSuite Search requests configuration.

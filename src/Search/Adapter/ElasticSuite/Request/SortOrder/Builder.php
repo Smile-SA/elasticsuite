@@ -12,11 +12,11 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\SortOrder;
+namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\SortOrder;
 
 use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder as QueryBuilder;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder as QueryBuilder;
 
 /**
  * Build ElasticSearch sort orders from search request specification interface.

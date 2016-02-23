@@ -12,27 +12,32 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query;
+namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
 use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
 /**
- * Build ElasticSearch queries from search request QueryInterface queries.
+ * Complex builder are able to used the global builder to build subqueries.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-interface BuilderInterface
+abstract class AbstractComplexBuilder
 {
     /**
-     * Build the ES query from a Query
-     *
-     * @todo : more strict typing of $query.
-     *
-     * @param QueryInterface $query Query to be built.
-     *
-     * @return array
+     * @var Builder
      */
-    public function buildQuery(QueryInterface $query);
+    protected $parentBuilder;
+
+    /**
+     * Constructor.
+     *
+     * @param Builder $builder Parent builder used to build subqueries.
+     */
+    public function __construct(Builder $builder)
+    {
+        $this->parentBuilder = $builder;
+    }
 }

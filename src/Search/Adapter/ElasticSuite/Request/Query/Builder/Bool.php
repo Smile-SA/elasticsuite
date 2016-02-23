@@ -12,10 +12,10 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder;
+namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
 use Magento\Framework\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\BuilderInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
  * Build an ES bool query.

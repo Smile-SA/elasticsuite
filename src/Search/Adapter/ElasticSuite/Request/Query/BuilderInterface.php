@@ -12,25 +12,27 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder;
+namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query;
 
 use Magento\Framework\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\BuilderInterface;
 
 /**
- * Build an ES nested query.
+ * Build ElasticSearch queries from search request QueryInterface queries.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Terms implements BuilderInterface
+interface BuilderInterface
 {
     /**
-     * {@inheritDoc}
+     * Build the ES query from a Query
+     *
+     * @todo : more strict typing of $query.
+     *
+     * @param QueryInterface $query Query to be built.
+     *
+     * @return array
      */
-    public function buildQuery(QueryInterface $query)
-    {
-        return ['terms' => [$query->getField() => $query->getValues()]];
-    }
+    public function buildQuery(QueryInterface $query);
 }

@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query;
+namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Magento\Framework\ObjectManagerInterface;
@@ -30,12 +30,12 @@ class Builder implements BuilderInterface
      * @var array
      */
     private $queryBuilderClasses = [
-        QueryInterface::TYPE_BOOL   => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Bool',
-        QueryInterface::TYPE_FILTER => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Filtered',
-        QueryInterface::TYPE_NESTED => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Nested',
-        QueryInterface::TYPE_TERMS  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Terms',
-        QueryInterface::TYPE_RANGE  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Range',
-        QueryInterface::TYPE_MATCH  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Match',
+        QueryInterface::TYPE_BOOL   => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool',
+        QueryInterface::TYPE_FILTER => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Filtered',
+        QueryInterface::TYPE_NESTED => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Nested',
+        QueryInterface::TYPE_TERMS  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Terms',
+        QueryInterface::TYPE_RANGE  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Range',
+        QueryInterface::TYPE_MATCH  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Match',
     ];
 
     /**
