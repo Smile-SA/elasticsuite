@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCore\Search\Request\Builder;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\ObjectManagerInterface;
 
@@ -53,6 +54,14 @@ class Mapper
         QueryInterface::TYPE_MATCH  => 'Smile\ElasticSuiteCore\Search\Request\Query\Match',
         QueryInterface::TYPE_TERMS  => 'Smile\ElasticSuiteCore\Search\Request\Query\Terms',
         QueryInterface::TYPE_RANGE  => 'Smile\ElasticSuiteCore\Search\Request\Query\Range',
+    ];
+
+    /**
+     * @var array
+     */
+    private $sortOrderFactories = [
+        SortOrderInterface::TYPE_STANDARD => 'Smile\ElasticSuiteCore\Search\Request\SortOrder\Standard',
+        SortOrderInterface::TYPE_NESTED   => 'Smile\ElasticSuiteCore\Search\Request\SortOrder\Nested',
     ];
 
     /**
@@ -125,6 +134,36 @@ class Mapper
         }
 
         return $aggregations;
+    }
+
+    /**
+     * Build the sort orders clause of the query from the request data array.
+     *
+     * @return SortOrderInterface[]
+     */
+    public function getSortOrders()
+    {
+        $sortOrders = [];
+
+        foreach ($this->requestData['sortOrders'] as $currentSortOrder) {
+            if (isset($currentSortOrder['type']) && isset($this->sortOrderFactories[$currentSortOrder['type']])) {
+                $sortOrderClass = $this->sortOrderFactories[$currentSortOrder['type']];
+
+                if ($currentSortOrder['type'] == SortOrderInterface::TYPE_NESTED) {
+                    $currentSortOrder['nestedFilter'] = $this->buildQuery($currentSortOrder['nestedFilter']);
+
+                    if ($currentSortOrder['nestedFilter'] == null) {
+                        $sortOrderClass = null;
+                    }
+                }
+
+                if ($sortOrderClass !== null) {
+                    $sortOrders[] = $this->objectManager->create($sortOrderClass, $currentSortOrder);
+                }
+            }
+        }
+
+        return $sortOrders;
     }
 
     /**

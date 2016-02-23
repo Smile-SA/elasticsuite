@@ -25,6 +25,29 @@ use Magento\Framework\Search\Request\FilterInterface;
  */
 interface SortOrderInterface
 {
+    const SORT_ASC  = 'asc';
+    const SORT_DESC = 'desc';
+
+    const TYPE_STANDARD = 'standardSortOrder';
+    const TYPE_NESTED   = 'nestedSortOrder';
+
+    const SCORE_MODE_MIN = 'min';
+    const SCORE_MODE_MAX = 'max';
+    const SCORE_MODE_SUM = 'sum';
+    const SCORE_MODE_AVG = 'avg';
+    const SCORE_MODE_MED = 'median';
+
+    const DEFAULT_SORT_NAME     = 'relevance';
+    const DEFAULT_SORT_FIELD     = '_score';
+    const DEFAULT_SORT_DIRECTION = self::SORT_DESC;
+
+    /**
+     * Sort order name.
+     *
+     * @return strin
+     */
+    public function getName();
+
     /**
      * Field used for sort.
      *
@@ -38,4 +61,11 @@ interface SortOrderInterface
      * @return string
      */
     public function getDirection();
+
+    /**
+     * Sort order type.
+     *
+     * @return string
+     */
+    public function getType();
 }

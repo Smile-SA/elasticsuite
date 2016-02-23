@@ -89,7 +89,7 @@ class Config extends \Magento\Framework\Config\Data
      *
      * @return array
      */
-    private function addTypeConfig($mapping, $data)
+    private function addTypeConfig(MappingInterface $mapping, $data)
     {
         foreach ($mapping->getFields() as $mappingField) {
             if ($mappingField->isFilterable()) {
@@ -107,6 +107,11 @@ class Config extends \Magento\Framework\Config\Data
                 }
 
                 $filtersByType[$filterType][] = $filterQuery;
+
+                if ($mappingField->isUsedForSortBy()) {
+                    $sortOrder = $this->getSortOrderFromField($mappingField);
+                    $data['sortOrders'][$sortOrder['name']] = $sortOrder;
+                }
             }
         }
 
@@ -158,6 +163,23 @@ class Config extends \Magento\Framework\Config\Data
         ];
 
         return $aggregation;
+    }
+
+    /**
+     * Retrieve sort order configuration for a field of the mapping.
+     *
+     * @param FieldInterface $field Sortable field.
+     *
+     * @return array
+     */
+    private function getSortOrderFromField(FieldInterface $field)
+    {
+        $fieldName     = $field->getName() . '.' .FieldInterface::ANALYZER_SORTABLE;
+        $sortOrderName = $field->getName();
+        $direction     = '$sortOrder.direction$';
+        $sortOrderType = SortOrderInterface::TYPE_STANDARD;
+
+        return ['name' => $sortOrderName, 'field' => $fieldName, 'direction' => $direction, 'type' => $sortOrderType];
     }
 
     /**

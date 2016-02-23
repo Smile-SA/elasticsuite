@@ -23,6 +23,7 @@ use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder as QueryBuilder;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\SortOrder\Builder as SortOrderBuilder;
 
 /**
  * ElasticSuite Search Adapter.
@@ -59,26 +60,34 @@ class Adapter implements AdapterInterface
     private $queryBuilder;
 
     /**
+     * @var SortOrderBuilder
+     */
+    private $sortOrderBuilder;
+
+    /**
      * Constructor.
      *
-     * @param QueryResponseFactory   $responseFactory Search response factory.
-     * @param IndexOperation         $indexManager    ES index manager.
-     * @param QueryBuilder           $queryBuilder    Adapter query builder
-     * @param ClientFactoryInterface $clientFactory   ES client factory.
-     * @param LoggerInterface        $logger          Logger
+     * @param QueryResponseFactory   $responseFactory  Search response factory.
+     * @param IndexOperation         $indexManager     ES index manager.
+     * @param QueryBuilder           $queryBuilder     Adapter query builder
+     * @param SortOrderBuilder       $sortOrderBuilder Adapter sort orders builder
+     * @param ClientFactoryInterface $clientFactory    ES client factory.
+     * @param LoggerInterface        $logger           Logger
      */
     public function __construct(
         QueryResponseFactory $responseFactory,
         IndexOperation $indexManager,
         QueryBuilder $queryBuilder,
+        SortOrderBuilder $sortOrderBuilder,
         ClientFactoryInterface $clientFactory,
         LoggerInterface $logger
     ) {
         $this->responseFactory = $responseFactory;
-        $this->logger          = $logger;
-        $this->indexManager    = $indexManager;
-        $this->client          = $clientFactory->createClient();
-        $this->queryBuilder    = $queryBuilder;
+        $this->logger           = $logger;
+        $this->indexManager     = $indexManager;
+        $this->client           = $clientFactory->createClient();
+        $this->queryBuilder     = $queryBuilder;
+        $this->sortOrderBuilder = $sortOrderBuilder;
     }
 
     /**
@@ -106,11 +115,12 @@ class Adapter implements AdapterInterface
      *
      * @return array
      */
-    private function buildSearchQuery($request)
+    private function buildSearchQuery(RequestInterface $request)
     {
         $query = [
             'query'  => $this->queryBuilder->buildQuery($request->getQuery()),
             'filter' => $this->queryBuilder->buildQuery($request->getFilter()),
+            'sort'   => $this->sortOrderBuilder->buildSortOrders($request->getSortOrders()),
             'from'   => $request->getFrom(),
             'size'   => $request->getSize(),
         ];

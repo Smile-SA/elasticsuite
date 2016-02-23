@@ -52,8 +52,9 @@ class Builder
      * @var array
      */
     private $data = [
-        'dimensions' => [],
+        'dimensions'  => [],
         'placeholder' => [],
+        'sortOrders'  => [],
     ];
 
     /**
@@ -140,6 +141,21 @@ class Builder
     }
 
     /**
+     * Add a new sort order to the request.
+     *
+     * @param string $name      Sort order name (reference to a sort order declared into the configuration).
+     * @param string $direction Sort order direction.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
+     */
+    public function bindSortOrder($name, $direction)
+    {
+        $this->data['sortOrders'][$name] = strtolower($direction);
+
+        return $this;
+    }
+
+    /**
      * Bind data to placeholder
      *
      * @param string $placeholder Placeholder name.
@@ -168,10 +184,11 @@ class Builder
 
         $data = $this->getConfig($requestName);
 
+        $data = $this->prepareSortOrders($data);
+
         // Binder hopes to find a filters field into the array.
         // We put this even if it does not make sense for our builder.
         $data['filters'] = [];
-
         $data = $this->binder->bind($data, $this->data);
         $data = $this->cleaner->clean($data);
         $data = $this->convert($data);
@@ -221,6 +238,7 @@ class Builder
             'query'      => $mapper->getRootQuery(),
             'filter'     => $mapper->getRootFilter(),
             'buckets'    => $mapper->getAggregations(),
+            'sortOrders' => $mapper->getSortOrders(),
             'dimensions' => $this->buildDimensions(isset($data['dimensions']) ? $data['dimensions'] : []),
         ];
 
@@ -246,5 +264,46 @@ class Builder
         }
 
         return $dimensions;
+    }
+
+    /**
+     * Prepare the search request config data to applied binded sort orders.
+     *
+     * @param array $data Request config data.
+     *
+     * @return array
+     */
+    private function prepareSortOrders($data)
+    {
+        $sortOrders           = [];
+        $hasDefaultSortOrder  = false;
+        $defaultSortOrderName = SortOrderInterface::DEFAULT_SORT_NAME;
+
+        foreach ($this->data['sortOrders'] as $sortOrderName => $direction) {
+            if (isset($data['sortOrders']) && isset($data['sortOrders'][$sortOrderName])) {
+                $sortOrder = $data['sortOrders'][$sortOrderName];
+
+                $sortOrder['direction'] = $direction;
+
+                $sortOrders[] = $sortOrder;
+
+                if ($sortOrderName == $defaultSortOrderName) {
+                    $hasDefaultSortOrder = true;
+                }
+            }
+        }
+
+        if (!$hasDefaultSortOrder && isset($data['sortOrders']) && isset($data['sortOrders'][$defaultSortOrderName])) {
+            $sortOrders[] = [
+                'type'      => SortOrderInterface::TYPE_STANDARD,
+                'name'      => $defaultSortOrderName,
+                'field'     => SortOrderInterface::DEFAULT_SORT_FIELD,
+                'direction' => SortOrderInterface::DEFAULT_SORT_DIRECTION,
+            ];
+        }
+
+        $data['sortOrders'] = $sortOrders;
+
+        return $data;
     }
 }

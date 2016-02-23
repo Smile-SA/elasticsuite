@@ -45,11 +45,14 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
             /** @var \DOMElement $requestNode */
             $name = $requestNode->getAttribute('name');
             $request = $this->mergeAttributes((array) $simpleXmlNode);
-            $request['dimensions'] = $this->convertNodes($simpleXmlNode->dimensions, 'name');
-            $request['queries'] = $this->convertNodes($simpleXmlNode->queries, 'name');
-            $request['query'] = $this->mergeAttributes((array) $simpleXmlNode->query, 'query');
-            $request['filter'] = $this->mergeAttributes((array) $simpleXmlNode->filter, 'query');
+
+            $request['dimensions']   = $this->convertNodes($simpleXmlNode->dimensions, 'name');
+            $request['queries']      = $this->convertNodes($simpleXmlNode->queries, 'name');
+            $request['sortOrders']   = $this->convertNodes($simpleXmlNode->sortOrders, 'name');
+            $request['query']        = $this->mergeAttributes((array) $simpleXmlNode->query, 'reference');
+            $request['filter']       = $this->mergeAttributes((array) $simpleXmlNode->filter, 'reference');
             $request['aggregations'] = $this->convertNodes($simpleXmlNode->aggregations, 'name');
+
             $requests[$name] = $request;
         }
 

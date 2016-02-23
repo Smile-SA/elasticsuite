@@ -51,7 +51,7 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
     /**
      * Request sort order.
      *
-     * @return SortOrderInterface
+     * @return SortOrderInterface[]
      */
-    public function getSortOrder();
+    public function getSortOrders();
 }

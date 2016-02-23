@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCore\Search\Request\Builder;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Util used by the builder to clean search query arrays.
@@ -41,6 +42,11 @@ class Cleaner
     private $mappedAggregations;
 
     /**
+     * @var array
+     */
+    private $mappedSortOrders;
+
+    /**
      * Clean not binded queries and filters.
      *
      * @param array $requestData Data to be cleansed.
@@ -51,12 +57,15 @@ class Cleaner
     {
         $this->clear();
         $this->requestData = $requestData;
+
         $this->mapQueries();
         $this->mapAggregations();
+        $this->mapSortOrders();
 
-        $requestData['query']  = $this->deferenceQueryField($requestData, 'query');
-        $requestData['filter'] = $this->deferenceQueryField($requestData, 'filter');
+        $requestData['query']        = &$this->deferenceQueryField($requestData, 'query');
+        $requestData['filter']       = &$this->deferenceQueryField($requestData, 'filter');
         $requestData['aggregations'] = $this->mappedAggregations;
+        $requestData['sortOrders']   = $this->mappedSortOrders;
 
         return $requestData;
     }
@@ -117,6 +126,36 @@ class Cleaner
     }
 
     /**
+     /**
+     * Construct the mapped sort orders array :
+     * - Keep only fully binded sort orders.
+     * - Dereference queries used in sort orders.
+     *
+     * @return void
+     */
+    private function mapSortOrders()
+    {
+
+        $this->mappedSortOrders = [];
+
+        $sortOrders = array_filter($this->requestData['sortOrders'], [$this, 'isFullyBinded']);
+
+        foreach ($sortOrders as $sortOrder) {
+            if ($sortOrder['type'] == SortOrderInterface::TYPE_NESTED) {
+                $sortOrder['nestedFilter'] = &$this->deferenceQueryField($sortOrder, 'nestedFilter');
+
+                if ($sortOrder['nestedFilter'] == null) {
+                    $sortOrder = null;
+                }
+            }
+
+            if ($sortOrder != null) {
+                $this->mappedSortOrders[] = $sortOrder;
+            }
+        }
+    }
+
+    /**
      * Unreference all clauses of a bool query.
      *
      * @param array $boolQuery Bool query configuration array.
@@ -152,6 +191,7 @@ class Cleaner
     private function &deferenceQueryField(array $query, $field)
     {
         $dereferencedQuery = null;
+
         if (isset($query[$field])) {
             $referenceQuery = $query[$field];
 

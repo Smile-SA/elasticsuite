@@ -45,7 +45,14 @@
 
             <xs:element maxOccurs="1" minOccurs="1" name="aggregations" type="aggregations">
                 <xs:key name="aggregationName">
-                  <xs:selector xpath="query" />
+                  <xs:selector xpath="aggregation" />
+                  <xs:field xpath="@name" />
+                </xs:key>
+            </xs:element>
+            
+            <xs:element maxOccurs="1" minOccurs="1" name="sortOrders" type="sortOrders">
+                <xs:key name="sortOrerName">
+                  <xs:selector xpath="sortOrder" />
                   <xs:field xpath="@name" />
                 </xs:key>
             </xs:element>
@@ -174,6 +181,39 @@
         <xs:complexContent>
             <xs:extension base="baseQuery">
                 <xs:attribute type="xs:string" name="queryText" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Sort orders definitions -->
+    <xs:complexType name="sortOrders">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="sortOrder" maxOccurs="unbounded" minOccurs="1" type="baseSortOrder" />
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="baseSortOrder" abstract="true">
+        <xs:attribute type="xs:string" name="name" use="required" />
+        <xs:attribute type="xs:string" name="field" use="required" />
+        <xs:attribute type="xs:string" name="direction" use="required" />
+    </xs:complexType>
+
+
+    <xs:complexType name="standardSortOrder">
+        <xs:complexContent>
+            <xs:extension base="baseSortOrder">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="nestedSortOrder">
+        <xs:complexContent>
+            <xs:extension base="baseSortOrder">
+                <xs:choice maxOccurs="1" minOccurs="1" >
+                    <xs:element name="nestedFilter" type="queryReference" />
+                </xs:choice>
+                <xs:attribute type="xs:string" name="nestedPath" use="required"  />
+                <xs:attribute type="xs:string" name="scoreMode" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

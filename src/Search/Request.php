@@ -34,7 +34,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     /**
      * @var SortOrderInterface
      */
-    private $sortOrder;
+    private $sortOrders;
 
     /**
      * @var QueryInterface
@@ -47,7 +47,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @param string                   $type       Searched document type.
      * @param QueryInterface           $query      Search query.
      * @param QueryInterface           $filter     Search filter.
-     * @param SortOrderInterface       $sortOrder  Sort order specification.
+     * @param SortOrderInterface[]     $sortOrders Sort orders specification.
      * @param int|null                 $from       Pagination from clause.
      * @param int|null                 $size       Pagination page size clause.
      * @param Dimension[]              $dimensions Searched store.
@@ -59,7 +59,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $type,
         QueryInterface $query,
         QueryInterface $filter,
-        SortOrderInterface $sortOrder = null,
+        array $sortOrders = null,
         $from = null,
         $size = null,
         array $dimensions = [],
@@ -68,7 +68,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
         $this->type = $type;
         $this->filter = $filter;
-        $this->sortOrder = $sortOrder;
+        $this->sortOrders = $sortOrders;
     }
 
     /**
@@ -90,8 +90,8 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     /**
      * {@inheritDoc}
      */
-    public function getSortOrder()
+    public function getSortOrders()
     {
-        return $this->sortOrder;
+        return $this->sortOrders;
     }
 }
