@@ -1,26 +1,26 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+
 use Magento\Framework\View\Element\Template;
 
 /**
- * Class Base
+ * CMS Pages variables block for page tracking, exposes all CMS pages tracking variables
  *
- * @package   Smile\ElasticSuiteTracker\Block\Variables\Page
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Cms extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
 {
@@ -29,7 +29,7 @@ class Cms extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      *
      * @var \Magento\Cms\Model\Page
      */
-    protected $_page;
+    private $page;
 
     /**
      * Set the default template for page variable blocks
@@ -51,7 +51,7 @@ class Cms extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
         \Magento\Cms\Model\Page $page,
         array $data = []
     ) {
-        $this->_page = $page;
+        $this->page = $page;
 
         parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
@@ -63,11 +63,11 @@ class Cms extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      */
     public function getVariables()
     {
-        $variables = array();
+        $variables = [];
 
-        if ($this->_page->getId()) {
-            $variables['cms.identifier'] = $this->_page->getIdentifier();
-            $variables['cms.title']      = $this->_page->getTitle();
+        if ($this->page->getId()) {
+            $variables['cms.identifier'] = $this->page->getIdentifier();
+            $variables['cms.title']      = $this->page->getTitle();
         }
 
         return $variables;

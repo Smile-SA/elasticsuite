@@ -1,26 +1,25 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
 use Magento\Framework\View\Element\Template;
 
 /**
- * Class Base
+ * Search variables block for page tracking, exposes all search related tracking variables
  *
- * @package   Smile\ElasticSuiteTracker\Block\Variables\Page
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
 {
@@ -29,14 +28,14 @@ class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlo
      *
      * @var \Magento\Catalog\Model\Layer
      */
-    protected $_catalogLayer;
+    private $catalogLayer;
 
     /**
      * Catalog search data
      *
      * @var \Magento\CatalogSearch\Helper\Data
      */
-    protected $_catalogSearchData;
+    private $catalogSearchData;
 
     /**
      * Set the default template for page variable blocks
@@ -60,8 +59,8 @@ class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlo
         \Magento\CatalogSearch\Helper\Data $catalogSearchData,
         array $data = []
     ) {
-        $this->_catalogLayer      = $layerResolver->get();
-        $this->_catalogSearchData = $catalogSearchData;
+        $this->catalogLayer      = $layerResolver->get();
+        $this->catalogSearchData = $catalogSearchData;
         parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 
@@ -72,15 +71,13 @@ class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlo
      */
     public function getVariables()
     {
-        $variables = array(
-            'search.query' => $this->_catalogSearchData->getEscapedQueryText()
-        );
+        $variables = ['search.query' => $this->catalogSearchData->getEscapedQueryText()];
 
         // @TODO The isSpellchecked() method does not exists on native M2
-        if ($layer = $this->_catalogLayer) {
+        /*if ($layer = $this->catalogLayer) {
             $productCollection = $layer->getProductCollection();
-            $variables['search.is_spellchecked'] = (bool) false /*$productCollection->isSpellchecked()*/;
-        }
+            $variables['search.is_spellchecked'] = $productCollection->isSpellchecked();
+        }*/
 
         return $variables;
     }

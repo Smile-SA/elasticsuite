@@ -1,25 +1,24 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block;
 
 /**
- * Class Config
+ * Configuration block for tracker
  *
- * @package   Smile\ElasticSuiteTracker\Block\
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Config extends \Magento\Framework\View\Element\Template
 {
@@ -28,21 +27,21 @@ class Config extends \Magento\Framework\View\Element\Template
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
-    protected $_scopeConfig;
+    private $scopeConfig;
 
     /**
      * JSON Helper
      *
      * @var \Magento\Framework\Json\Helper\Data
      */
-    protected $_jsonHelper;
+    private $jsonHelper;
 
     /**
      * Generic tracker helper
      *
-     * @var \Smile\Tracker\Helper\Data
+     * @var \Smile\ElasticSuiteTracker\Helper\Data
      */
-    protected $_trackerHelper;
+    private $trackerHelper;
 
     /**
      * PHP Constructor
@@ -64,9 +63,9 @@ class Config extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->_scopeConfig   = $scopeConfig;
-        $this->_jsonHelper    = $jsonHelper;
-        $this->_trackerHelper = $trackerHelper;
+        $this->scopeConfig   = $scopeConfig;
+        $this->jsonHelper    = $jsonHelper;
+        $this->trackerHelper = $trackerHelper;
     }
 
     /**
@@ -76,37 +75,17 @@ class Config extends \Magento\Framework\View\Element\Template
      */
     public function isEnabled()
     {
-        return $this->_trackerHelper->isEnabled();
+        return $this->trackerHelper->isEnabled();
     }
 
     /**
-     * Retrieve beacon Url
+     * Retrieve the Json Helper
      *
-     * @return string
+     * @return \Magento\Framework\Json\Helper\Data
      */
-    public function getBeaconUrl()
+    public function getJsonHelper()
     {
-        return $this->_trackerHelper->getBaseUrl();
-    }
-
-    /**
-     * Return the tracked site id.
-     *
-     * @return string
-     */
-    public function getSiteId()
-    {
-        return 1;
-    }
-
-    /**
-     * Return the tracked store id.
-     *
-     * @return int
-     */
-    public function getStoreId()
-    {
-        return $this->_trackerHelper->getStoreId();
+        return $this->jsonHelper;
     }
 
     /**
@@ -117,37 +96,28 @@ class Config extends \Magento\Framework\View\Element\Template
      */
     public function getCookieConfig()
     {
-        $config = $this->_trackerHelper->getCookieConfig();
+        $config = $this->trackerHelper->getCookieConfig();
+
         return $config;
     }
 
     /**
-     * Retrieve the Json Helper
+     * Retrieve beacon Url
      *
-     * @return \Magento\Framework\Json\Helper\Data
+     * @return string
      */
-    public function getJsonHelper()
+    public function getBeaconUrl()
     {
-        return $this->_jsonHelper;
+        return $this->trackerHelper->getBaseUrl();
     }
 
     /**
-     * Retrieve the configuration reader
+     * Return the tracked store id.
      *
-     * @return \Magento\Framework\App\Config\ScopeConfigInterface
+     * @return int
      */
-    public function getScopeConfig()
+    public function getStoreId()
     {
-        return $this->_scopeConfig;
-    }
-
-    /**
-     * Retrieve the string escaper
-     *
-     * @return \Magento\Framework\Escaper
-     */
-    public function getEscaper()
-    {
-        return $this->_escaper;
+        return $this->trackerHelper->getStoreId();
     }
 }

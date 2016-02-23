@@ -11,22 +11,20 @@
  * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 ?>
-<?php /** @var $this Smile\ElasticSuiteTracker\Block\Config **/ ?>
-<?php $jsonHelper = $this->getJsonHelper(); ?>
-<?php if ($this->isEnabled()) : ?>
+<?php /** @var $block Smile\ElasticSuiteTracker\Block\Config **/ ?>
+<?php $jsonHelper = $block->getJsonHelper(); ?>
+<?php if ($block->isEnabled()) : ?>
 <script type="text/javascript">
 //<![CDATA[
     smileTracker.setConfig({
-        beaconUrl  : '<?php echo $this->escapeJsQuote($this->getBeaconUrl()); ?>',
-        sessionConfig : <?php echo $jsonHelper->jsonEncode($this->getCookieConfig()); ?>
+        beaconUrl  : '<?php echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
+        sessionConfig : <?php echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>
     });
 
-    smileTracker.addPageVar('site_id', '<?php echo $this->escapeJsQuote($this->getSiteId());?>');
-    smileTracker.addPageVar('store_id', '<?php echo $this->escapeJsQuote($this->getStoreId());?>');
+    smileTracker.addPageVar('store_id', '<?php echo $this->escapeJsQuote($block->getStoreId());?>');
 //]]>
-
 </script>
 <?php endif; ?>

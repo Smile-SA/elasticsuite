@@ -1,26 +1,26 @@
 <?php
 /**
- * _______________________________
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile________________
+ * @package   Smile_ElasticSuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
- * @license   Apache License Version 2.0
+ * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+
 use Magento\Framework\View\Element\Template;
 
 /**
- * Class AbstractBlock
+ * Abstract block for page tracking, inherited by all other page tracking blocks
  *
- * @package   Smile\Tracker\Block\Variables\Page
- * @copyright 2016 Smile
+ * @category Smile
+ * @package  Smile_ElasticSuiteTracker
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AbstractBlock extends \Smile\ElasticSuiteTracker\Block\Variables\AbstractBlock
 {
@@ -43,6 +43,7 @@ class AbstractBlock extends \Smile\ElasticSuiteTracker\Block\Variables\AbstractB
         array $data = []
     ) {
         $data['template'] = 'Smile_ElasticSuiteTracker::/variables/page.phtml';
+
         return parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 }
