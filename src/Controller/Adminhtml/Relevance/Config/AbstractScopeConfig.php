@@ -43,11 +43,10 @@ abstract class AbstractScopeConfig extends \Smile\ElasticSuiteCore\Controller\Ad
         \Magento\Backend\App\Action\Context $context,
         \Magento\Config\Model\Config\Structure $configStructure,
         ConfigSectionChecker $sectionChecker,
-        RequestContainerInterface $requestConfig,
         \Magento\Config\Model\Config $backendConfig
     ) {
         $this->backendConfig = $backendConfig;
-        parent::__construct($context, $configStructure, $sectionChecker, $requestConfig);
+        parent::__construct($context, $configStructure, $sectionChecker);
     }
 
     /**

@@ -76,4 +76,18 @@
 
     <preference for="Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface"
                 type="Smile\ElasticSuiteCore\Search\Request\Config" />
+
+    <!-- Relevance configuration related DI -->
+    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config">
+        <arguments>
+            <argument name="configValueFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ValueFactory</argument>
+        </arguments>
+    </type>-->
+
+    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Value">
+        <arguments>
+            <argument name="resource" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data</argument>
+            <argument name="resourceCollection" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\Proxy</argument>
+        </arguments>
+    </type>-->
 </config>

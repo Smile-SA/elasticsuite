@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model;
+namespace Smile\ElasticSuiteCore\Model\Relevance;
 
 
 /**

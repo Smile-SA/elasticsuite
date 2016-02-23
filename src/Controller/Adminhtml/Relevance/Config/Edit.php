@@ -45,11 +45,10 @@ class Edit extends AbstractScopeConfig
         \Magento\Backend\App\Action\Context $context,
         \Magento\Config\Model\Config\Structure $configStructure,
         \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker $sectionChecker,
-        RequestContainerInterface $requestConfig,
-        \Smile\ElasticSuiteCore\Model\Config $backendConfig,
+        \Smile\ElasticSuiteCore\Model\Relevance\Config $backendConfig,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {
-        parent::__construct($context, $configStructure, $sectionChecker, $requestConfig, $backendConfig);
+        parent::__construct($context, $configStructure, $sectionChecker, $backendConfig);
         $this->resultPageFactory = $resultPageFactory;
     }
 

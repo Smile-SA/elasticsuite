@@ -35,8 +35,6 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
      */
     protected $sectionChecker;
 
-    protected $requestConfiguration;
-
     /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Config\Model\Config\Structure $configStructure
@@ -45,13 +43,11 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Config\Model\Config\Structure $configStructure,
-        ConfigSectionChecker $sectionChecker,
-        RequestContainerInterface $requestConfig
+        ConfigSectionChecker $sectionChecker
     ) {
         parent::__construct($context);
         $this->configStructure = $configStructure;
         $this->sectionChecker = $sectionChecker;
-        $this->requestConfiguration = $requestConfig;
     }
 
     /**

@@ -12,9 +12,6 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config;
-
-
 /**
  * _________________________________________________
  *
@@ -22,18 +19,18 @@ namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config;
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Edit extends \Magento\Config\Block\System\Config\Edit
+class Collection
 {
-    const DEFAULT_SECTION_BLOCK = 'Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form';
-
     /**
-     * Retrieve config save url
+     * Define resource model
      *
-     * @return string
+     * @return void
      */
-    public function getSaveUrl()
+    protected function _construct()
     {
-        return $this->getUrl('*/*/save', ['_current' => true]);
+        $this->_init(
+            'Smile\ElasticSuiteCore\Model\Relevance\Config\Value',
+            'Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data'
+        );
     }
 }
-
