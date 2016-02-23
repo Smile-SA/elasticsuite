@@ -18,7 +18,6 @@ use Magento\Framework\Api\Search\AggregationInterfaceFactory;
 use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Search\Document;
 use Magento\Framework\Search\ResponseInterface;
-use Magento\Framework\Search\Adapter\Mysql\DocumentFactory;
 use Magento\Framework\Search\Adapter\Mysql\AggregationFactory;
 
 /**
@@ -52,7 +51,7 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
     /**
      * Constructor
      *
-     * @param DocumentFactory    $documentFactory    Document factory (@todo replace with non MySQL implemenation).
+     * @param DocumentFactory    $documentFactory    Document factory
      * @param AggregationFactory $aggregationFactory Aggregation factory (@todo replace with non MySQL implemenation)..
      * @param array              $searchResponse     Engine raw response.
      */
@@ -97,7 +96,7 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
      *
      * @return void
      */
-    private function prepareAggregations($searchResponse, AggregationFactory $aggregationFactory)
+    private function prepareAggregations(array $searchResponse, AggregationFactory $aggregationFactory)
     {
         $buckets = [];
 
@@ -125,7 +124,7 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
      *
      * @return void
      */
-    private function prepareDocuments($searchResponse, $documentFactory)
+    private function prepareDocuments(array $searchResponse, DocumentFactory $documentFactory)
     {
         $this->documents = [];
 
@@ -133,10 +132,7 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
             $hits = $searchResponse['hits']['hits'];
 
             foreach ($hits as $hit) {
-                $documentIdField = ['name' => 'entity_id', 'value' => $hit['_id']];
-                $scoreField      = ['name' => 'score'    , 'value' => $hit['_score']];
-
-                $this->documents[] = $documentFactory->create([$documentIdField, $scoreField]);
+                $this->documents[] = $documentFactory->create($hit);
             }
 
             $this->count = $searchResponse['hits']['total'];

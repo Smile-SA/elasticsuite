@@ -49,7 +49,7 @@
                 
     <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
                 type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
-                
+
     <type name="Magento\Search\Model\AdapterFactory">
         <arguments>
             <argument name="adapters" xsi:type="array">
@@ -57,5 +57,17 @@
             </argument>
         </arguments>
     </type>
-
+    
+    <virtualType name="Magento\Framework\Search\EsHitMetadata" type="Magento\Framework\Search\EntityMetadata">
+        <arguments>
+            <argument name="entityId" xsi:type="string">_id</argument>
+        </arguments>
+    </virtualType>
+    
+    <type name="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\DocumentFactory">
+        <arguments>
+            <argument name="entityMetadata" xsi:type="object">Magento\Framework\Search\EsHitMetadata</argument>
+        </arguments>
+    </type>
+    
 </config>
