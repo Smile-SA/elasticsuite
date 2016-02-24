@@ -1,12 +1,11 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,36 +13,39 @@
 
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config;
 
+use Magento\Backend\App\Action\Context;
+use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
+use Magento\Config\Model\Config;
+use Magento\Config\Model\Config\Structure;
+use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
 
 /**
- * _________________________________________________
+ * Abstract scoped configuration edition container
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
-use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
-
 abstract class AbstractScopeConfig extends \Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\AbstractConfig
 {
     /**
-     * @var \Magento\Config\Model\Config
+     * @var Config
      */
     protected $backendConfig;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param ConfigSectionChecker $sectionChecker
-     * @param \Magento\Config\Model\Config $backendConfig
+     * Class constructor
+     *
+     * @param Context              $context         Action context
+     * @param Structure            $configStructure Relevance configuration Structure
+     * @param ConfigSectionChecker $sectionChecker  Configuration Section Checker
+     * @param Config               $backendConfig   Configuration model
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Config\Model\Config\Structure $configStructure,
+        Context $context,
+        Structure $configStructure,
         ConfigSectionChecker $sectionChecker,
-        \Magento\Config\Model\Config $backendConfig
+        Config $backendConfig
     ) {
         $this->backendConfig = $backendConfig;
         parent::__construct($context, $configStructure, $sectionChecker);
@@ -52,7 +54,8 @@ abstract class AbstractScopeConfig extends \Smile\ElasticSuiteCore\Controller\Ad
     /**
      * Sets scope for backend config
      *
-     * @param string $sectionId
+     * @param string $sectionId The section being viewed/edited/saved
+     *
      * @return bool
      */
     protected function isSectionAllowed($sectionId)

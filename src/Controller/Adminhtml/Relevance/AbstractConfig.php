@@ -14,20 +14,22 @@
 
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
 
+use Magento\Backend\App\Action\Context;
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Magento\Config\Model\Config\Structure;
+use Magento\Framework\App\RequestInterface;
 
 /**
- * _________________________________________________
+ * Abstract configuration controller
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
 {
     /**
-     * @var \Magento\Config\Model\Config\Structure
+     * @var Structure
      */
     protected $configStructure;
 
@@ -37,13 +39,15 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     protected $sectionChecker;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param ConfigSectionChecker $sectionChecker
+     * Class constructor
+     *
+     * @param Context              $context         Action context
+     * @param Structure            $configStructure Relevance configuration Structure
+     * @param ConfigSectionChecker $sectionChecker  Configuration Section Checker
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Config\Model\Config\Structure $configStructure,
+        Context $context,
+        Structure $configStructure,
         ConfigSectionChecker $sectionChecker
     ) {
         parent::__construct($context);
@@ -54,14 +58,16 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
     /**
      * Check if current section is found and is allowed
      *
-     * @param \Magento\Framework\App\RequestInterface $request
+     * @param RequestInterface $request The current request
+     *
      * @return \Magento\Framework\App\ResponseInterface
      */
-    public function dispatch(\Magento\Framework\App\RequestInterface $request)
+    public function dispatch(RequestInterface $request)
     {
         if (!$request->getParam('section')) {
             $request->setParam('section', $this->configStructure->getFirstSection()->getId());
         }
+
         return parent::dispatch($request);
     }
 
@@ -70,10 +76,13 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
      *
      * @return bool
      */
+    // @codingStandardsIgnoreStart Method is inherited
     protected function _isAllowed()
     {
+        //@codingStandardsIgnoreEnd
         $sectionId = $this->_request->getParam('section');
-        return $this->_authorization->isAllowed('Magento_Config::config')
-        || $this->configStructure->getElement($sectionId)->isAllowed();
+
+        return $this->configStructure->getElement($sectionId)->isAllowed()
+        || $this->_authorization->isAllowed('Magento_Config::config');
     }
 }

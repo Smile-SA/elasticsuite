@@ -1,12 +1,11 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,12 +13,14 @@
 
 namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\Config\Model\Config\Structure;
 
 /**
- * _________________________________________________
+ * Relevance Configuration edit form
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Edit extends \Magento\Backend\Block\Widget
@@ -31,33 +32,37 @@ class Edit extends \Magento\Backend\Block\Widget
      *
      * @var string
      */
-    protected $_formBlockName;
+    protected $formBlockName;
 
     /**
      * Block template File
      *
      * @var string
      */
+    // @codingStandardsIgnoreStart Property is inherited
     protected $_template = 'Magento_Config::system/config/edit.phtml';
+    // @codingStandardsIgnoreEnd
 
     /**
      * Configuration structure
      *
-     * @var \Magento\Config\Model\Config\Structure
+     * @var Structure
      */
-    protected $_configStructure;
+    protected $configStructure;
 
     /**
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param array $data
+     * Class constructor
+     *
+     * @param Context   $context         Application context
+     * @param Structure $configStructure Configuration Structure
+     * @param array     $data            The data
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\Config\Model\Config\Structure $configStructure,
+        Context $context,
+        Structure $configStructure,
         array $data = []
     ) {
-        $this->_configStructure = $configStructure;
+        $this->configStructure = $configStructure;
         parent::__construct($context, $data);
     }
 
@@ -86,13 +91,15 @@ class Edit extends \Magento\Backend\Block\Widget
      *
      * @return \Magento\Framework\View\Element\AbstractBlock
      */
+    // @codingStandardsIgnoreStart Method is inherited
     protected function _prepareLayout()
     {
+        // @codingStandardsIgnoreEnd
         /** @var $section \Magento\Config\Model\Config\Structure\Element\Section */
-        $section = $this->_configStructure->getElement($this->getRequest()->getParam('section'));
-        $this->_formBlockName = $section->getFrontendModel();
-        if (empty($this->_formBlockName)) {
-            $this->_formBlockName = self::DEFAULT_SECTION_BLOCK;
+        $section = $this->configStructure->getElement($this->getRequest()->getParam('section'));
+        $this->formBlockName = $section->getFrontendModel();
+        if (empty($this->formBlockName)) {
+            $this->formBlockName = self::DEFAULT_SECTION_BLOCK;
         }
         $this->setTitle($section->getLabel());
         $this->setHeaderCss($section->getHeaderCss());
@@ -101,16 +108,17 @@ class Edit extends \Magento\Backend\Block\Widget
             'save_button',
             'Magento\Backend\Block\Widget\Button',
             [
-                'id' => 'save',
-                'label' => __('Save Config'),
-                'class' => 'save primary',
+                'id'             => 'save',
+                'label'          => __('Save Config'),
+                'class'          => 'save primary',
                 'data_attribute' => [
                     'mage-init' => ['button' => ['event' => 'save', 'target' => '#config-edit-form']],
-                ]
+                ],
             ]
         );
-        $block = $this->getLayout()->createBlock($this->_formBlockName);
+        $block = $this->getLayout()->createBlock($this->formBlockName);
         $this->setChild('form', $block);
+
         return parent::_prepareLayout();
     }
 }

@@ -6,19 +6,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
+
 use Smile\ElasticSuiteCore\Api\Config\Relevance\FieldInterface;
 
 /**
- * _________________________________________________
+ * Relevance Configuration Field implementation
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Field extends \Magento\Config\Model\Config\Structure\Element\Field implements FieldInterface

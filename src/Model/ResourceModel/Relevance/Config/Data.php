@@ -33,16 +33,4 @@ class Data extends \Magento\Config\Model\ResourceModel\Config\Data
     {
         $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
     }
-
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info('Your text message');
-        $logger->debug("BEFORE SAVE");
-        //$logger->debug(print_r($object->getData(), true));
-        parent::save($object);
-        $logger->debug("AFTER SAVE ");
-    }
 }

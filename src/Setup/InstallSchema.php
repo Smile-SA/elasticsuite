@@ -54,7 +54,7 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'scope',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            8,
+            10,
             ['nullable' => false, 'default' => 'default'],
             'Config Scope'
         )->addColumn(

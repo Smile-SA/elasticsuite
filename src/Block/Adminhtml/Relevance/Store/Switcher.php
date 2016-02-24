@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
@@ -14,16 +13,17 @@
 
 namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Store;
 
+use Magento\Backend\Block\Template;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 
 /**
- * _________________________________________________
+ * Relevance configuration store switcher
  *
  * @category Smile
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Switcher extends \Magento\Backend\Block\Template
+class Switcher extends Template
 {
     /**
      * Name of container variable
@@ -45,7 +45,7 @@ class Switcher extends \Magento\Backend\Block\Template
     protected $storeIds;
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $hasDefaultOption = true;
 
@@ -63,50 +63,31 @@ class Switcher extends \Magento\Backend\Block\Template
      */
     protected $storeFactory;
 
+    /**
+     * @var \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface
+     */
     protected $requestConfiguration;
 
     /**
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Store\Model\ContainerFactory $containerFactory
-     * @param \Magento\Store\Model\GroupFactory $storeGroupFactory
-     * @param \Magento\Store\Model\StoreFactory $storeFactory
-     * @param array $data
+     * Class constructor
+     *
+     * @param \Magento\Backend\Block\Template\Context $context              Application context
+     * @param \Magento\Store\Model\GroupFactory       $storeGroupFactory    Store group factory
+     * @param \Magento\Store\Model\StoreFactory       $storeFactory         Store factory
+     * @param RequestContainerInterface               $requestConfiguration The Search request containers configuration
+     * @param array                                   $data                 The data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        //\Magento\Store\Model\ContainerFactory $containerFactory,
         \Magento\Store\Model\GroupFactory $storeGroupFactory,
         \Magento\Store\Model\StoreFactory $storeFactory,
         RequestContainerInterface $requestConfiguration,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        //$this->containerFactory = $containerFactory;
         $this->requestConfiguration = $requestConfiguration;
         $this->storeGroupFactory = $storeGroupFactory;
         $this->storeFactory = $storeFactory;
-    }
-
-    /**
-     * @return void
-     */
-    protected function _construct()
-    {
-        parent::_construct();
-
-        $this->setUseConfirm(true);
-        $this->setUseAjax(true);
-
-        $this->setShowManageStoresLink(0);
-
-        if (!$this->hasData('switch_containers')) {
-            $this->setSwitchContainers(false);
-        }
-        if (!$this->hasData('switch_store_views')) {
-            $this->setSwitchStoreViews(true);
-        }
-
-        $this->setDefaultSelectionName(__('All Store Views'));
     }
 
     /**
@@ -117,6 +98,7 @@ class Switcher extends \Magento\Backend\Block\Template
     public function getContainers()
     {
         $containers = $this->requestConfiguration->getContainers();
+
         /*if ($containerIds = $this->getContainerIds()) {
             foreach (array_keys($containers) as $containerId) {
                 if (!in_array($containerId, $containerIds)) {
@@ -124,6 +106,7 @@ class Switcher extends \Magento\Backend\Block\Template
                 }
             }
         }*/
+
         return $containers;
     }
 
@@ -134,33 +117,26 @@ class Switcher extends \Magento\Backend\Block\Template
      */
     public function isContainerSwitchEnabled()
     {
-        return (bool)$this->getData('switch_containers');
+        return (bool) $this->getData('switch_containers');
     }
 
     /**
-     * @param string $varName
+     * @param string $varName The var name
+     *
      * @return $this
      */
     public function setContainerVarName($varName)
     {
         $this->setData('container_var_name', $varName);
+
         return $this;
     }
 
     /**
-     * @return string
-     */
-    public function getContainerVarName()
-    {
-        if ($this->hasData('container_var_name')) {
-            return (string)$this->getData('container_var_name');
-        } else {
-            return (string)$this->defaultContainerVar;
-        }
-    }
-
-    /**
-     * @param \Magento\Store\Model\Container $container
+     * Check if container is selected
+     *
+     * @param array $container The container
+     *
      * @return bool
      */
     public function isContainerSelected(array $container)
@@ -169,6 +145,8 @@ class Switcher extends \Magento\Backend\Block\Template
     }
 
     /**
+     * Retrieve container code
+     *
      * @return int|null
      */
     public function getContainerCode()
@@ -176,16 +154,57 @@ class Switcher extends \Magento\Backend\Block\Template
         if (!$this->hasData('container_code')) {
             $this->setData('container_code', (string) $this->getRequest()->getParam($this->getContainerVarName()));
         }
+
         return $this->getData('container_code');
     }
 
-    public function getContainerName($container)
+    /**
+     * Retrieve container var name
+     *
+     * @return string
+     */
+    public function getContainerVarName()
     {
-        return $container["name"];
+        if ($this->hasData('container_var_name')) {
+            return (string) $this->getData('container_var_name');
+        } else {
+            return (string) $this->defaultContainerVar;
+        }
     }
 
     /**
-     * @param \Magento\Store\Model\Group|int $group
+     * Retrieve Store Id
+     *
+     * @return int|null
+     */
+    public function getStoreId()
+    {
+        if (!$this->hasData('store_id')) {
+            $this->setData('store_id', (int) $this->getRequest()->getParam($this->getStoreVarName()));
+        }
+
+        return $this->getData('store_id');
+    }
+
+    /**
+     * Retrieve store var name
+     *
+     * @return mixed|string
+     */
+    public function getStoreVarName()
+    {
+        if ($this->hasData('store_var_name')) {
+            return (string) $this->getData('store_var_name');
+        } else {
+            return (string) $this->defaultStoreVarName;
+        }
+    }
+
+    /**
+     * Retrieve store collection
+     *
+     * @param \Magento\Store\Model\Group|int $group A group or group id
+     *
      * @return \Magento\Store\Model\ResourceModel\Store\Collection
      */
     public function getStoreCollection($group)
@@ -198,7 +217,32 @@ class Switcher extends \Magento\Backend\Block\Template
         if (!empty($_storeIds)) {
             $stores->addIdFilter($_storeIds);
         }
+
         return $stores;
+    }
+
+    /**
+     * Retrieve store ids
+     *
+     * @return array
+     */
+    public function getStoreIds()
+    {
+        return $this->storeIds;
+    }
+
+    /**
+     * Set store ids
+     *
+     * @param array $storeIds The store ids
+     *
+     * @return $this
+     */
+    public function setStoreIds($storeIds)
+    {
+        $this->storeIds = $storeIds;
+
+        return $this;
     }
 
     /**
@@ -222,23 +266,13 @@ class Switcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * @return int|null
-     */
-    public function getStoreId()
-    {
-        if (!$this->hasData('store_id')) {
-            $this->setData('store_id', (int)$this->getRequest()->getParam($this->getStoreVarName()));
-        }
-        return $this->getData('store_id');
-    }
-
-    /**
-     * @param \Magento\Store\Model\Store $store
+     * @param \Magento\Store\Model\Store $store The store
+     *
      * @return bool
      */
     public function isStoreSelected(\Magento\Store\Model\Store $store)
     {
-        return $this->getStoreId() !== null && (int)$this->getStoreId() === (int)$store->getId();
+        return $this->getStoreId() !== null && (int) $this->getStoreId() === (int) $store->getId();
     }
 
     /**
@@ -248,32 +282,24 @@ class Switcher extends \Magento\Backend\Block\Template
      */
     public function isStoreSwitchEnabled()
     {
-        return (bool)$this->getData('switch_store_views');
+        return (bool) $this->getData('switch_store_views');
     }
 
     /**
-     * @param string $varName
+     * @param string $varName The var name
+     *
      * @return $this
      */
     public function setStoreVarName($varName)
     {
         $this->setData('store_var_name', $varName);
+
         return $this;
     }
 
     /**
-     * @return mixed|string
-     */
-    public function getStoreVarName()
-    {
-        if ($this->hasData('store_var_name')) {
-            return (string)$this->getData('store_var_name');
-        } else {
-            return (string)$this->defaultStoreVarName;
-        }
-    }
-
-    /**
+     * Retrieve switch url
+     *
      * @return string
      */
     public function getSwitchUrl()
@@ -281,13 +307,14 @@ class Switcher extends \Magento\Backend\Block\Template
         if ($url = $this->getData('switch_url')) {
             return $url;
         }
+
         return $this->getUrl(
             '*/*/*',
             [
-                '_current' => true,
-                $this->getStoreVarName() => null,
+                '_current'                    => true,
+                $this->getStoreVarName()      => null,
                 $this->getStoreGroupVarName() => null,
-                $this->getContainerVarName() => null,
+                $this->getContainerVarName()  => null,
             ]
         );
     }
@@ -317,22 +344,6 @@ class Switcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * Get current container name
-     *
-     * @return string
-     */
-    public function getCurrentContainerName()
-    {
-        if ($this->getContainerCode() != null) {
-            $container = $this->requestConfiguration->getContainer($this->getContainerCode());
-
-            if ($this->getContainerName($container)) {
-                return $this->getContainerName($container);
-            }
-        }
-    }
-
-    /**
      * Get current store view name
      *
      * @return string
@@ -349,46 +360,38 @@ class Switcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * @param array $storeIds
-     * @return $this
-     */
-    public function setStoreIds($storeIds)
-    {
-        $this->_storeIds = $storeIds;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getStoreIds()
-    {
-        return $this->storeIds;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isShow()
-    {
-        return true;
-    }
-
-    /**
+     * Get current container name
+     *
      * @return string
      */
-    protected function _toHtml()
+    public function getCurrentContainerName()
     {
-        if ($this->isShow()) {
-            return parent::_toHtml();
+        if ($this->getContainerCode() != null) {
+            $container = $this->requestConfiguration->getContainer($this->getContainerCode());
+
+            if ($this->getContainerName($container)) {
+                return $this->getContainerName($container);
+            }
         }
-        return '';
+    }
+
+    /**
+     * Get container name
+     *
+     * @param array $container The container name
+     *
+     * @return mixed
+     */
+    public function getContainerName($container)
+    {
+        return $container["name"];
     }
 
     /**
      * Set/Get whether the switcher should show default option
      *
-     * @param bool $hasDefaultOption
+     * @param bool $hasDefaultOption If witcher has default option
+     *
      * @return bool
      */
     public function hasDefaultOption($hasDefaultOption = null)
@@ -396,6 +399,7 @@ class Switcher extends \Magento\Backend\Block\Template
         if (null !== $hasDefaultOption) {
             $this->_hasDefaultOption = $hasDefaultOption;
         }
+
         return $this->hasDefaultOption;
     }
 
@@ -407,8 +411,59 @@ class Switcher extends \Magento\Backend\Block\Template
     public function isUsingIframe()
     {
         if ($this->hasData('is_using_iframe')) {
-            return (bool)$this->getData('is_using_iframe');
+            return (bool) $this->getData('is_using_iframe');
         }
+
         return false;
+    }
+
+    /**
+     * Check if the block is shown
+     *
+     * @return bool
+     */
+    public function isShow()
+    {
+        return true;
+    }
+
+    /**
+     * Internal constructor
+     *
+     * @return void
+     */
+    // @codingStandardsIgnoreStart Method is inherited
+    protected function _construct()
+    {
+        // @codingStandardsIgnoreEnd
+        parent::_construct();
+
+        $this->setUseConfirm(true);
+        $this->setUseAjax(true);
+
+        $this->setShowManageStoresLink(0);
+
+        if (!$this->hasData('switch_containers')) {
+            $this->setSwitchContainers(false);
+        }
+        if (!$this->hasData('switch_store_views')) {
+            $this->setSwitchStoreViews(true);
+        }
+
+        $this->setDefaultSelectionName(__('All Store Views'));
+    }
+
+    /**
+     * @return string
+     */
+    // @codingStandardsIgnoreStart Method is inherited
+    protected function _toHtml()
+    {
+        // @codingStandardsIgnoreEnd
+        if ($this->isShow()) {
+            return parent::_toHtml();
+        }
+
+        return '';
     }
 }

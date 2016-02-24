@@ -1,12 +1,11 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,36 +13,41 @@
 
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config;
 
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\ForwardFactory;
+use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
+use Magento\Config\Model\Config\Structure;
+use Smile\ElasticSuiteCore\Model\Relevance\Config;
 
 /**
- * _________________________________________________
+ * Index action for relevance configuration
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-
 class Index extends AbstractScopeConfig
 {
     /**
-     * @var \Magento\Backend\Model\View\Result\ForwardFactory
+     * @var ForwardFactory
      */
     protected $resultForwardFactory;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker $sectionChecker
-     * @param \Magento\Config\Model\Config $backendConfig
-     * @param \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
+     * Class constructor
+     *
+     * @param Context              $context              Action context
+     * @param Structure            $configStructure      Relevance configuration Structure
+     * @param ConfigSectionChecker $sectionChecker       Configuration Section Checker
+     * @param Config               $backendConfig        Configuration model
+     * @param ForwardFactory       $resultForwardFactory Magento Forward Factory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Config\Model\Config\Structure $configStructure,
-        \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker $sectionChecker,
-        \Smile\ElasticSuiteCore\Model\Relevance\Config $backendConfig,
-        \Magento\Backend\Model\View\Result\ForwardFactory $resultForwardFactory
+        Context $context,
+        Structure $configStructure,
+        ConfigSectionChecker $sectionChecker,
+        Config $backendConfig,
+        ForwardFactory $resultForwardFactory
     ) {
         parent::__construct($context, $configStructure, $sectionChecker, $backendConfig);
         $this->resultForwardFactory = $resultForwardFactory;
@@ -58,6 +62,7 @@ class Index extends AbstractScopeConfig
     {
         /** @var \Magento\Backend\Model\View\Result\Forward $resultForward */
         $resultForward = $this->resultForwardFactory->create();
+
         return $resultForward->forward('edit');
     }
 }

@@ -12,13 +12,19 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config;
+use Magento\Backend\App\Action\Context;
+use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
+use Magento\Config\Model\Config\Structure;
+use Magento\Framework\Cache\FrontendInterface;
+use Magento\Framework\Stdlib\StringUtils;
 use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\AbstractConfig;
+use Smile\ElasticSuiteCore\Model\Relevance\Config\Factory;
 
 /**
- * _________________________________________________
+ * Save action for relevance configuration
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Save extends AbstractConfig
@@ -28,38 +34,96 @@ class Save extends AbstractConfig
      *
      * @var \Magento\Config\Model\Config\Factory
      */
-    protected $_configFactory;
+    protected $configFactory;
 
     /**
-     * @var \Magento\Framework\Cache\FrontendInterface
+     * @var FrontendInterface
      */
-    protected $_cache;
+    protected $cache;
 
     /**
-     * @var \Magento\Framework\Stdlib\StringUtils
+     * @var StringUtils
      */
     protected $string;
 
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker $sectionChecker
-     * @param \Magento\Config\Model\Config\Factory $configFactory
-     * @param \Magento\Framework\Cache\FrontendInterface $cache
-     * @param \Magento\Framework\Stdlib\StringUtils $string
+     * Class constructor
+     *
+     * @param Context              $context         Action context
+     * @param Structure            $configStructure Relevance configuration Structure
+     * @param ConfigSectionChecker $sectionChecker  Configuration Section Checker
+     * @param Factory              $configFactory   Configuration Factory
+     * @param FrontendInterface    $cache           Cache instance
+     * @param StringUtils          $string          String helper
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Config\Model\Config\Structure $configStructure,
-        \Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker $sectionChecker,
-        \Smile\ElasticSuiteCore\Model\Relevance\Config\Factory $configFactory,
-        \Magento\Framework\Cache\FrontendInterface $cache,
-        \Magento\Framework\Stdlib\StringUtils $string
+        Context $context,
+        Structure $configStructure,
+        ConfigSectionChecker $sectionChecker,
+        Factory $configFactory,
+        FrontendInterface $cache,
+        StringUtils $string
     ) {
         parent::__construct($context, $configStructure, $sectionChecker);
-        $this->_configFactory = $configFactory;
-        $this->_cache = $cache;
+        $this->configFactory = $configFactory;
+        $this->cache = $cache;
         $this->string = $string;
+    }
+
+    /**
+     * Save configuration
+     *
+     * @return \Magento\Backend\Model\View\Result\Redirect
+     */
+    public function execute()
+    {
+        $logger = $this->_objectManager->get('Psr\Log\LoggerInterface');
+        try {
+            $section = $this->getRequest()->getParam('section');
+            $container = $this->getRequest()->getParam('container');
+            $store = $this->getRequest()->getParam('store');
+
+            $configData = [
+                'section' => $section,
+                'container' => $container,
+                'store' => $store,
+                'groups' => $this->getGroupsForSave(),
+            ];
+
+            /** @var \Magento\Config\Model\Config $configModel  */
+            $configModel = $this->configFactory->create(['data' => $configData]);
+            $configModel->save();
+
+            $logger->debug(get_class($configModel));
+            $this->messageManager->addSuccess(__('You saved the configuration.'));
+
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            $logger->critical($e);
+            $messages = explode("\n", $e->getMessage());
+            foreach ($messages as $message) {
+                $this->messageManager->addError($message);
+            }
+        } catch (\Exception $e) {
+            $logger->critical($e);
+            $this->messageManager->addException(
+                $e,
+                __('Something went wrong while saving this configuration:') . ' ' . $e->getMessage()
+            );
+        }
+
+        // @Todo something with this
+        //$this->_saveState($this->getRequest()->getPost('config_state'));
+
+        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultRedirectFactory->create();
+
+        return $resultRedirect->setPath(
+            '*/*/edit',
+            [
+                '_current' => ['section', 'website', 'store'],
+                '_nosid' => true,
+            ]
+        );
     }
 
     /**
@@ -67,7 +131,7 @@ class Save extends AbstractConfig
      *
      * @return array|null
      */
-    protected function _getGroupsForSave()
+    protected function getGroupsForSave()
     {
         $groups = $this->getRequest()->getPost('groups');
         $files = $this->getRequest()->getFiles('groups');
@@ -78,26 +142,28 @@ class Save extends AbstractConfig
              * None of '+=' or 'array_merge_recursive' can do this correct
              */
             foreach ($files as $groupName => $group) {
-                $data = $this->_processNestedGroups($group);
+                $data = $this->processNestedGroups($group);
                 if (!empty($data)) {
                     if (!empty($groups[$groupName])) {
-                        $groups[$groupName] = array_merge_recursive((array)$groups[$groupName], $data);
+                        $groups[$groupName] = array_merge_recursive((array) $groups[$groupName], $data);
                     } else {
                         $groups[$groupName] = $data;
                     }
                 }
             }
         }
+
         return $groups;
     }
 
     /**
      * Process nested groups
      *
-     * @param mixed $group
+     * @param mixed $group The configuration groups
+     *
      * @return array
      */
-    protected function _processNestedGroups($group)
+    protected function processNestedGroups($group)
     {
         $data = [];
 
@@ -111,7 +177,7 @@ class Save extends AbstractConfig
 
         if (isset($group['groups']) && is_array($group['groups'])) {
             foreach ($group['groups'] as $groupName => $groupData) {
-                $nestedGroup = $this->_processNestedGroups($groupData);
+                $nestedGroup = $this->processNestedGroups($groupData);
                 if (!empty($nestedGroup)) {
                     $data['groups'][$groupName] = $nestedGroup;
                 }
@@ -119,80 +185,5 @@ class Save extends AbstractConfig
         }
 
         return $data;
-    }
-
-    /**
-     * Custom save logic for section
-     *
-     * @return void
-     */
-    protected function _saveSection()
-    {
-        $method = '_save' . $this->string->upperCaseWords($this->getRequest()->getParam('section'), '_', '');
-        if (method_exists($this, $method)) {
-            $this->{$method}();
-        }
-    }
-
-    /**
-     * Advanced save procedure
-     *
-     * @return void
-     */
-    protected function _saveAdvanced()
-    {
-        $this->_cache->clean();
-    }
-
-    /**
-     * Save configuration
-     *
-     * @return \Magento\Backend\Model\View\Result\Redirect
-     */
-    public function execute()
-    {
-        try {
-            // custom save logic
-            $this->_saveSection();
-            $section = $this->getRequest()->getParam('section');
-            $container = $this->getRequest()->getParam('container');
-            $store = $this->getRequest()->getParam('store');
-
-            $configData = [
-                'section' => $section,
-                'container' => $container,
-                'store' => $store,
-                'groups' => $this->_getGroupsForSave(),
-            ];
-
-            /** @var \Magento\Config\Model\Config $configModel  */
-            $configModel = $this->_configFactory->create(['data' => $configData]);
-            $configModel->save();
-            $logger = $this->_objectManager->get('Psr\Log\LoggerInterface');
-            $logger->debug(get_class($configModel));
-            $this->messageManager->addSuccess(__('You saved the configuration.'));
-
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $messages = explode("\n", $e->getMessage());
-            foreach ($messages as $message) {
-                $this->messageManager->addError($message);
-            }
-        } catch (\Exception $e) {
-            $this->messageManager->addException(
-                $e,
-                __('Something went wrong while saving this configuration:') . ' ' . $e->getMessage()
-            );
-        }
-
-        //$this->_saveState($this->getRequest()->getPost('config_state'));
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultRedirectFactory->create();
-        return $resultRedirect->setPath(
-            '*/*/edit',
-            [
-                '_current' => ['section', 'website', 'store'],
-                '_nosid' => true
-            ]
-        );
     }
 }

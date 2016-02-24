@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,10 +14,10 @@
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
 
 /**
- * _________________________________________________
+ * Relevance Configuration Factory
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Factory extends \Magento\Config\Model\Config\Factory
@@ -28,7 +28,9 @@ class Factory extends \Magento\Config\Model\Config\Factory
     protected $objectManager;
 
     /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager
+     * Class constructor
+     *
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager The object manager
      */
     public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
     {
@@ -38,8 +40,9 @@ class Factory extends \Magento\Config\Model\Config\Factory
     /**
      * Create new config object
      *
-     * @param array $data
-     * @return \Magento\Config\Model\Config
+     * @param array $data The object data
+     *
+     * @return \Smile\ElasticSuiteCore\Model\Relevance\Config
      */
     public function create(array $data = [])
     {

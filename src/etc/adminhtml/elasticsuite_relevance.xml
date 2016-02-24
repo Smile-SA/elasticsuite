@@ -19,7 +19,7 @@
         <tab id="general" translate="label" sortOrder="100">
             <label>General</label>
         </tab>
-        <section id="smile_elasticsuite_relevancy" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="0">
+        <section id="smile_elasticsuite_relevancy" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
             <tab>general</tab>
             <label>Relevance Configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
@@ -30,7 +30,7 @@
                     <label>Enable Search in categories name</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="category_name_weight" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="category_name_weight" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Category name weight</label>
                     <depends>
                         <field id="enable_search_in_categories_name">1</field>
@@ -44,7 +44,7 @@
                     <label>Enable boost on phrase match</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="phrase_match_boost_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="phrase_match_boost_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phrase match boost value</label>
                     <depends>
                         <field id="enable_phrase_match">1</field>
@@ -55,7 +55,7 @@
 
             <group id="cutoff_frequency_configuration" translate="label" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Cutoff frequency configuration</label>
-                <field id="cutoff_frequency" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="cutoff_frequency" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Cutoff frequency</label>
                     <validate>integer validate-greater-than-zero validate-number validate-number-range number-range-0-1</validate>
                     <comment><![CDATA[A number between 0 and 1. Used as automatic stopwords detection threshold.]]></comment>
@@ -68,7 +68,7 @@
                     <label>Enable fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="fuzziness_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="fuzziness_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness value</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
@@ -76,7 +76,7 @@
                     <validate>integer validate-greater-than-zero validate-number validate-number-range number-range-0-1</validate>
                     <comment><![CDATA[A number between 0 and 1. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="fuzziness_prefix_length" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="fuzziness_prefix_length" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phrase match boost value</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
@@ -84,7 +84,7 @@
                     <validate>validate-digits validate-digits-range validate-zero-or-greater</validate>
                     <comment><![CDATA[A integer between greater or equal than 0. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="fuzziness_max_expansion" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="fuzziness_max_expansion" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phrase match boost value</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
@@ -108,7 +108,7 @@
                         <field id="enable_phonetic_search">1</field>
                     </depends>
                 </field>
-                <field id="phonetic_fuzziness_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="phonetic_fuzziness_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness value</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>
@@ -117,7 +117,7 @@
                     <validate>integer validate-greater-than-zero validate-number validate-number-range number-range-0-1</validate>
                     <comment><![CDATA[A number between 0 and 1. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="phonetic_fuzziness_prefix_length" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="phonetic_fuzziness_prefix_length" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phrase match boost value</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>
@@ -126,7 +126,7 @@
                     <validate>validate-digits validate-digits-range validate-zero-or-greater</validate>
                     <comment><![CDATA[A integer between greater or equal than 0. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="phonetic_fuzziness_max_expansion" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="0">
+                <field id="phonetic_fuzziness_max_expansion" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phrase match boost value</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>

@@ -24,6 +24,8 @@ namespace Smile\ElasticSuiteCore\Api\Config;
 
 interface RequestContainerInterface
 {
+    const SCOPE_CONTAINERS = "containers";
+
     public function getContainers();
 
     public function getContainer($code);
