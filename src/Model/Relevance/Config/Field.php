@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
-
+use Smile\ElasticSuiteCore\Api\Config\Relevance\FieldInterface;
 
 /**
  * _________________________________________________
@@ -21,7 +21,15 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Loader extends \Magento\Config\Model\Config\Loader
+class Field extends \Magento\Config\Model\Config\Structure\Element\Field implements FieldInterface
 {
-
+    /**
+     * Check whether field should be shown in container scope
+     *
+     * @return bool
+     */
+    public function showInContainer()
+    {
+        return isset($this->_data['showInContainer']) && (int) $this->_data['showInContainer'];
+    }
 }

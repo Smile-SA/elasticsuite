@@ -25,46 +25,24 @@ class Form extends \Magento\Config\Block\System\Config\Form
     const SCOPE_CONTAINERS = "containers";
 
     /**
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Magento\Config\Model\Config\Factory $configFactory
-     * @param \Magento\Config\Model\Config\Structure $configStructure
-     * @param \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory
-     * @param \Magento\Config\Block\System\Config\Form\Field\Factory $fieldFactory
-     * @param array $data
+     * Retrieve label for scope
+     *
+     * @param \Magento\Config\Model\Config\Structure\Element\Field $field
+     * @return string
      */
-    public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        \Smile\ElasticSuiteCore\Model\Relevance\Config\Factory $configFactory,
-        \Magento\Config\Model\Config\Structure $configStructure,
-        \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory,
-        \Magento\Config\Block\System\Config\Form\Field\Factory $fieldFactory,
-        array $data = []
-    ) {
-        parent::__construct(
-            $context,
-            $registry,
-            $formFactory,
-            $configFactory,
-            $configStructure,
-            $fieldsetFactory,
-            $fieldFactory,
-            $data
-        );
+    public function getScopeLabel(\Magento\Config\Model\Config\Structure\Element\Field $field)
+    {
+        $showInStore = $field->showInStore();
 
-        $this->_configFactory = $configFactory;
-        $this->_configStructure = $configStructure;
-        $this->_fieldsetFactory = $fieldsetFactory;
-        $this->_fieldFactory = $fieldFactory;
+        $showInContainer = true; //$field->showInContainer();
 
-        $this->_scopeLabels = [
-            self::SCOPE_DEFAULT => __('[GLOBAL]'),
-            self::SCOPE_CONTAINERS => __('[CONTAINER]'),
-            self::SCOPE_STORES => __('[STORE VIEW]'),
-        ];
+        if ($showInStore == 1) {
+            return $this->_scopeLabels[self::SCOPE_STORES];
+        } elseif ($showInContainer == 1) {
+            return $this->_scopeLabels[self::SCOPE_CONTAINERS];
+        }
+
+        return $this->_scopeLabels[self::SCOPE_DEFAULT];
     }
 
     /**
@@ -74,12 +52,18 @@ class Form extends \Magento\Config\Block\System\Config\Form
      */
     protected function _initObjects()
     {
+        $this->_scopeLabels = [
+            self::SCOPE_DEFAULT => __('[GLOBAL]'),
+            self::SCOPE_CONTAINERS => __('[CONTAINER]'),
+            self::SCOPE_STORES => __('[STORE VIEW]'),
+        ];
+
         $this->_configDataObject = $this->_configFactory->create(
             [
                 'data' => [
-                    'section' => $this->getSectionCode(),
+                    'section'   => $this->getSectionCode(),
                     'container' => $this->getContainerCode(),
-                    'store' => $this->getStoreCode(),
+                    'store'     => $this->getStoreCode(),
                 ],
             ]
         );
@@ -87,6 +71,12 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $this->_configData = $this->_configDataObject->load();
         $this->_fieldsetRenderer = $this->_fieldsetFactory->create();
         $this->_fieldRenderer = $this->_fieldFactory->create();
+
+        $this->_logger->debug("COUCOU");
+        $this->_logger->debug(print_r($this->getRequest()->getParams(), true));
+        $this->_logger->debug($this->getSectionCode());
+        $this->_logger->debug($this->getContainerCode());
+        $this->_logger->debug($this->getStoreCode());
 
         return $this;
     }

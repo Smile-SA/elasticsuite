@@ -155,20 +155,23 @@ class Save extends AbstractConfig
             // custom save logic
             $this->_saveSection();
             $section = $this->getRequest()->getParam('section');
-            $website = $this->getRequest()->getParam('website');
+            $container = $this->getRequest()->getParam('container');
             $store = $this->getRequest()->getParam('store');
 
             $configData = [
                 'section' => $section,
-                'website' => $website,
+                'container' => $container,
                 'store' => $store,
                 'groups' => $this->_getGroupsForSave(),
             ];
+
             /** @var \Magento\Config\Model\Config $configModel  */
             $configModel = $this->_configFactory->create(['data' => $configData]);
             $configModel->save();
-
+            $logger = $this->_objectManager->get('Psr\Log\LoggerInterface');
+            $logger->debug(get_class($configModel));
             $this->messageManager->addSuccess(__('You saved the configuration.'));
+
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $messages = explode("\n", $e->getMessage());
             foreach ($messages as $message) {
@@ -181,11 +184,11 @@ class Save extends AbstractConfig
             );
         }
 
-        $this->_saveState($this->getRequest()->getPost('config_state'));
+        //$this->_saveState($this->getRequest()->getPost('config_state'));
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
         return $resultRedirect->setPath(
-            'adminhtml/system_config/edit',
+            '*/*/edit',
             [
                 '_current' => ['section', 'website', 'store'],
                 '_nosid' => true

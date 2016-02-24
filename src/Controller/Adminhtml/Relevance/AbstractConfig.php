@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
 
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+
 /**
  * _________________________________________________
  *

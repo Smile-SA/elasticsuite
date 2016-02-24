@@ -20,7 +20,7 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Factory
+class Factory extends \Magento\Config\Model\Config\Factory
 {
     /**
      * @var \Magento\Framework\ObjectManagerInterface

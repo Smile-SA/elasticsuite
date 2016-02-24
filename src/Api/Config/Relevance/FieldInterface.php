@@ -11,8 +11,8 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
 
+namespace Smile\ElasticSuiteCore\Api\Config\Relevance;
 
 /**
  * _________________________________________________
@@ -21,7 +21,26 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Loader extends \Magento\Config\Model\Config\Loader
+interface FieldInterface
 {
+    /**
+     * Check whether field should be shown in default scope
+     *
+     * @return bool
+     */
+    public function showInDefault();
 
+    /**
+     * Check whether field should be shown in store scope
+     *
+     * @return bool
+     */
+    public function showInStore();
+
+    /**
+     * Check whether field should be shown in container scope
+     *
+     * @return bool
+     */
+    public function showInContainer();
 }

@@ -11,7 +11,8 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance;
+
+namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element;
 
 /**
  * _________________________________________________
@@ -20,15 +21,16 @@ namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance;
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Config extends \Magento\Config\Model\ResourceModel\Config
+class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\FlyweightFactory
 {
     /**
-     * Define main table
+     * Map of flyweight types
      *
-     * @return void
+     * @var array
      */
-    protected function _construct()
-    {
-        $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
-    }
+    protected $_flyweightMap = [
+        'section' => 'Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section',
+        'group'   => 'Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group',
+        'field'   => 'Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Field',
+    ];
 }

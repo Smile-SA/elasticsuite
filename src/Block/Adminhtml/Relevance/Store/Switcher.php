@@ -312,12 +312,6 @@ class Switcher extends \Magento\Backend\Block\Template
                 $name = $this->getDefaultSelectionName();
             }
         }
-        $this->_logger->debug(" STORE AND CONTAINER");
-        $this->_logger->debug($this->getRequest()->getParam($this->getContainerVarName()));
-
-        $this->_logger->debug($this->getContainerCode());
-        $this->_logger->debug($this->getCurrentStoreName());
-        $this->_logger->debug($this->getCurrentContainerName());
 
         return $name;
     }

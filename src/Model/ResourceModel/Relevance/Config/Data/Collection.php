@@ -12,6 +12,8 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
+namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data;
+
 /**
  * _________________________________________________
  *
@@ -19,7 +21,7 @@
  * @package  Smile_ElasticSuite______________
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Collection
+class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collection
 {
     /**
      * Define resource model

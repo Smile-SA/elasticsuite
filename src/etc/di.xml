@@ -78,16 +78,131 @@
                 type="Smile\ElasticSuiteCore\Search\Request\Config" />
 
     <!-- Relevance configuration related DI -->
-    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config">
+
+    <!-- This one is mandatory since no preference for FrontendInterface is declared elsewhere -->
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Save">
+        <arguments>
+            <argument name="cache" xsi:type="object">Magento\Framework\App\Cache\Type\Layout</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Loader">
         <arguments>
             <argument name="configValueFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ValueFactory</argument>
         </arguments>
-    </type>-->
+    </type>
 
-    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Value">
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config">
+        <arguments>
+            <argument name="configValueFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ValueFactory</argument>
+            <argument name="configLoader" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Loader</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure">
+        <arguments>
+            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Value">
         <arguments>
             <argument name="resource" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data</argument>
             <argument name="resourceCollection" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\Proxy</argument>
         </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader" type="Magento\Config\Model\Config\Structure\Reader">
+        <arguments>
+            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\SchemaLocator</argument>
+            <argument name="fileName" xsi:type="string">elasticsuite_relevance.xml</argument>
+        </arguments>
+    </virtualType>
+
+    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader</argument>
+        </arguments>
     </type>-->
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data" type="Magento\Config\Model\Config\Structure\Data">
+        <arguments>
+            <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure" type="Magento\Config\Model\Config\Structure">
+        <arguments>
+            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Edit">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Index">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractConfig">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractScopeConfig">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+        </arguments>
+    </type>
+
+
+
+<!--
+    <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">relevanceConfigStructure</argument>
+            <argument name="configFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Factory</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section" type="Magento\Config\Model\Config\Structure\Element\Section">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group" type="Magento\Config\Model\Config\Structure\Element\Group">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="relevanceConfigStructure" type="Magento\Config\Model\Config\Structure">
+        <arguments>
+            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\FlyweightFactory</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field" type="Magento\Config\Model\Config\Structure\Element\Iterator">
+        <arguments>
+            <argument name="fieldFlyweight" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Field</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group" type="Magento\Config\Model\Config\Structure\Element\Iterator\Group">
+        <arguments>
+            <argument name="element" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group</argument>
+        </arguments>
+    </virtualType>
+-->
+
+
+    <preference for="Magento\Framework\DB\LoggerInterface" type="Magento\Framework\DB\Logger\File"/>
 </config>
