@@ -15,6 +15,7 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 
@@ -48,30 +49,36 @@ class ContainerStore
     protected $containerInterface;
 
     /**
-     * @var DefaultReader
+     * @var Container
      */
     protected $containerReader;
 
     /**
+     * Constructor
+     *
      * @param Initial                   $initialConfig      Initial Configuration
-     * @param ScopePool                 $scopePool          Scoped Configuration reader
      * @param Converter                 $converter          Configuration Converter
      * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
      * @param RequestContainerInterface $containerInterface Request Containers interface
-     * @param ContainerReader           $containerReader    The Container level configuration reader
+     * @param Container                 $containerReader    Parent level configuration reader
+     * @param StoreManagerInterface     $storeManager       Magento Store Manager interface
+     *
+     * @internal param \Magento\Framework\App\Config\ScopePool $scopePool Scoped Configuration reader
      */
     public function __construct(
         Initial $initialConfig,
         Converter $converter,
         ScopedFactory $collectionFactory,
         RequestContainerInterface $containerInterface,
-        Container $containerReader
+        Container $containerReader,
+        StoreManagerInterface $storeManager
     ) {
         $this->initialConfig = $initialConfig;
         $this->converter = $converter;
         $this->collectionFactory = $collectionFactory;
         $this->containerInterface = $containerInterface;
         $this->containerReader = $containerReader;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -88,11 +95,11 @@ class ContainerStore
         $logger->addWriter($writer);
 
         list($containerCode, $storeId) = explode("|", $code);
-        unset($storeId); // @todo refactor this part : use storeId to build store_code
+        $store = $this->storeManager->getStore($storeId);
 
         $config = array_replace_recursive(
             $this->containerReader->read($containerCode),
-            $this->initialConfig->getData("containers|stores|{$code}")
+            $this->initialConfig->getData("containers|stores|{$store->getCode()}")
         );
 
         $collection = $this->collectionFactory->create(
