@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -23,7 +23,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 
 /**
- * _________________________________________________
+ * Relevance Configuration Model
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
@@ -150,6 +150,22 @@ class Config extends \Magento\Config\Model\Config
     }
 
     /**
+     * Return formatted config data for current section
+     *
+     * @param bool $full Simple config structure or not
+     * @return array
+     */
+    protected function _getConfig($full = true)
+    {
+        return $this->_configLoader->getConfigByPath(
+            $this->getSection(),
+            $this->getScope(),
+            $this->getScopeCode(),
+            $full
+        );
+    }
+
+    /**
      * Get scope name and scopeId
      *
      * @todo refactor to scope resolver
@@ -167,23 +183,23 @@ class Config extends \Magento\Config\Model\Config
             $this->setStore('');
         }
 
+        $scope = 'default';
+        $scopeCode = '';
+
         if ($this->getStore()) {
-            $scope = 'stores';
+            $scope = 'containers_stores';
             $store = $this->_storeManager->getStore($this->getStore());
-            $scopeId = (int) $store->getId();
-            $scopeCode = $store->getCode();
+            $scopeCode = $store->getId();
+            if ($this->getContainer() && ($this->getContainer() != "")) {
+                $scopeCode = $this->getContainer() . "|" . $scopeCode;
+            }
         } elseif ($this->getContainer()) {
             $scope = 'containers';
             $container = $this->requestConfiguration->getContainer($this->getContainer());
             $scopeCode = $container['name'];
-            $scopeId = 99; // @todo retrieve a numeric for scopeId
-        } else {
-            $scope = 'default';
-            $scopeId = 0;
-            $scopeCode = '';
         }
+
         $this->setScope($scope);
-        $this->setScopeId($scopeId);
         $this->setScopeCode($scopeCode);
     }
 }

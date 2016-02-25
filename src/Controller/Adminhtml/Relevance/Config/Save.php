@@ -83,6 +83,8 @@ class Save extends AbstractConfig
             $container = $this->getRequest()->getParam('container');
             $store = $this->getRequest()->getParam('store');
 
+            $logger->debug(print_r($this->getRequest()->getParams(), true));
+
             $configData = [
                 'section' => $section,
                 'container' => $container,
@@ -120,7 +122,7 @@ class Save extends AbstractConfig
         return $resultRedirect->setPath(
             '*/*/edit',
             [
-                '_current' => ['section', 'website', 'store'],
+                '_current' => ['section', 'container', 'store'],
                 '_nosid' => true,
             ]
         );

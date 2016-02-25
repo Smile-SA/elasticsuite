@@ -40,11 +40,11 @@
                         } ?>
                     </li>
                 <?php endif; ?>
-                <?php foreach ($containers as $container): ?>
-                    <?php $showWebsite = false; ?>
-                    <?php foreach ($block->getStores() as $store): ?>
-                        <?php if ($showWebsite == false): ?>
-                            <?php $showWebsite = true; ?>
+                <?php foreach ($containers as $container) : ?>
+                    <?php $showContainer = false; ?>
+                    <?php foreach ($block->getStores() as $store) : ?>
+                        <?php if ($showContainer == false) : ?>
+                            <?php $showContainer = true; ?>
                             <li class="store-switcher-container <?php if ( ! ($block->isContainerSwitchEnabled() && ! $block->isContainerSelected($container))) {
                                 echo "disabled";
                             } ?> <?php if ($block->isContainerSelected($container)) {
@@ -63,12 +63,19 @@
                                 } ?>
                             </li>
                         <?php endif; ?>
-                        <li class="store-switcher-store-view <?php if ( ! ($block->isStoreSwitchEnabled() && ! $block->isStoreSelected($store))) {
+
+                        <?php $isDisabled = (
+                            !$block->isStoreSwitchEnabled()
+                            && ($block->isStoreSelected($store) && $block->isContainerSelected($container))
+                        );
+                        ?>
+
+                        <li class="store-switcher-store-view <?php if ($isDisabled) {
                             echo "disabled";
-                        } ?> <?php if ($block->isStoreSelected($store)) {
+                        } ?> <?php if ($block->isStoreSelected($store) && $block->isContainerSelected($container)) {
                             ?> current<?php
                         } ?>">
-                            <?php if ($block->isStoreSwitchEnabled() && ! $block->isStoreSelected($store)) {
+                            <?php if ($block->isStoreSwitchEnabled() && ! ($block->isStoreSelected($store) && $block->isContainerSelected($container))) {
                                 ?>
                                 <a data-role="store-view-id" data-value="<?php echo $block->escapeHtml($store->getId()) ?>" data-container="<?php echo $block->escapeHtml($block->getContainerName($container)) ?>" href="#">
                                     <?php echo $block->escapeHtml($store->getName()) ?>
@@ -106,17 +113,22 @@
                     var container = $(event.target).data('container');
                     var switcher = $('[data-role='+role+']');
 
+                    event.preventDefault();
 
                     if (((typeof container) != 'undefined') && (container != ""))  {
                         switcher.switchParams = 'container/' + container + '/';
                         switcher.data("switch-params", 'container/' + container + '/');
+                        var containerSwitcher = $('[data-role=container]');
                     }
 
-                    event.preventDefault();
-
-                    if (!switcher.val() || val != switcher.val()) {
+                    if (((typeof containerSwitcher) != 'undefined'))  {
+                        if (!containerSwitcher.val() || container != containerSwitcher.val()) {
+                            switcher.val(val).trigger('change'); // Set the value & trigger event
+                        }
+                    } else if (!switcher.val() || val != switcher.val()) {
                         switcher.val(val).trigger('change'); // Set the value & trigger event
                     }
+
                 });
             })(jQuery);
 
@@ -137,7 +149,6 @@
                 if (switcher.data('switch-params')) {
                     scopeParams += switcher.data('switch-params');
                 }
-                console.log(scopeParams);
 
                 if ((typeof scopeSwitcherHandler) != 'undefined') {
                     var switcherParams = {

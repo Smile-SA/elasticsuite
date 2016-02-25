@@ -141,7 +141,13 @@ class Switcher extends Template
      */
     public function isContainerSelected(array $container)
     {
-        return $this->getContainerCode() === $container['name'] && $this->getStoreId() === null;
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->debug("TESTING " . $container['name']);
+        $logger->debug("CURRENT CONTAINER " . $this->getContainerCode());
+
+        return $this->getContainerCode() === $container['name'];
     }
 
     /**

@@ -54,15 +54,15 @@ class InstallSchema implements InstallSchemaInterface
         )->addColumn(
             'scope',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-            10,
+            30,
             ['nullable' => false, 'default' => 'default'],
             'Config Scope'
         )->addColumn(
-            'scope_id',
-            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-            null,
-            ['nullable' => false, 'default' => '0'],
-            'Config Scope Id'
+            'scope_code',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            30,
+            ['nullable' => false, 'default' => 'default'],
+            'Config Scope Code'
         )->addColumn(
             'path',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -81,7 +81,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['scope', 'scope_id', 'path'],
                 \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
             ),
-            ['scope', 'scope_id', 'path'],
+            ['scope', 'scope_code', 'path'],
             ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
         )->setComment(
             'Smile Elastic Suite Relevance Config Data'

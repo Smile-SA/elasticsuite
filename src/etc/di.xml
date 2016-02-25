@@ -138,6 +138,8 @@
             <argument name="readers" xsi:type="array">
                 <item name="container" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container</item>
                 <item name="containers" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container</item>
+                <item name="containers_stores" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore</item>
+                <item name="container_store" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore</item>
             </argument>
         </arguments>
     </virtualType>

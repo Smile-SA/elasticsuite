@@ -12,7 +12,12 @@
  */
 namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\Config\Model\Config\Factory;
+use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
+use Magento\Framework\Data\FormFactory;
+use Magento\Framework\Registry;
 
 /**
  * Relevance configuration edit form
@@ -24,6 +29,48 @@ use Magento\Config\Model\Config\Structure\Element\Field;
 class Form extends \Magento\Config\Block\System\Config\Form
 {
     const SCOPE_CONTAINERS = "containers";
+    const SCOPE_STORE_CONTAINERS = "containers_stores";
+
+    /**
+     * Form constructor.
+     *
+     * @param \Magento\Backend\Block\Template\Context                   $context         Application Context
+     * @param \Magento\Framework\Registry                               $registry        Magento Registry
+     * @param FormFactory                                               $formFactory     Form Factory
+     * @param Factory                                                   $configFactory   Configuration Factory
+     * @param Structure                                                 $configStructure Configuration Structure
+     * @param \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory Fieldset Factory
+     * @param \Magento\Config\Block\System\Config\Form\Field\Factory    $fieldFactory    Field Factory
+     * @param array                                                     $data            Object Data
+     */
+    public function __construct(
+        Context $context,
+        Registry $registry,
+        FormFactory $formFactory,
+        Factory $configFactory,
+        Structure $configStructure,
+        \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory,
+        \Magento\Config\Block\System\Config\Form\Field\Factory $fieldFactory,
+        array $data = []
+    ) {
+
+        parent::__construct(
+            $context,
+            $registry,
+            $formFactory,
+            $configFactory,
+            $configStructure,
+            $fieldsetFactory,
+            $fieldFactory,
+            $data
+        );
+
+        $this->_scopeLabels = [
+            self::SCOPE_DEFAULT          => __('[GLOBAL]'),
+            self::SCOPE_CONTAINERS       => __('[CONTAINER]'),
+            self::SCOPE_STORE_CONTAINERS => __('[CONTAINER - STORE VIEW]'),
+        ];
+    }
 
     /**
      * Retrieve label for scope
@@ -39,7 +86,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $showInContainer = true; // $field->showInContainer();
 
         if ($showInStore == 1) {
-            return $this->_scopeLabels[self::SCOPE_STORES];
+            return $this->_scopeLabels[self::SCOPE_STORE_CONTAINERS];
         } elseif ($showInContainer == 1) {
             return $this->_scopeLabels[self::SCOPE_CONTAINERS];
         }
@@ -66,11 +113,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
     protected function _initObjects()
     {
         // @codingStandardsIgnoreEnd
-        $this->_scopeLabels = [
-            self::SCOPE_DEFAULT    => __('[GLOBAL]'),
-            self::SCOPE_CONTAINERS => __('[CONTAINER]'),
-            self::SCOPE_STORES     => __('[STORE VIEW]'),
-        ];
 
         $this->_configDataObject = $this->_configFactory->create(
             [
