@@ -155,6 +155,7 @@
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data" type="Magento\Config\Model\Config\Structure\Data">
         <arguments>
             <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader</argument>
+            <argument name="cacheId" xsi:type="string">smile_elasticsuite_relevance_configuration_structure</argument>
         </arguments>
     </virtualType>
 
@@ -184,4 +185,10 @@
         </arguments>
     </type>
 
+    <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Tabs" type="Magento\Config\Block\System\Config\Tabs">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
+        </arguments>
+    </virtualType>
 </config>

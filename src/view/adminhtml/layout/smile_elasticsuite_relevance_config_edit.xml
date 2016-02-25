@@ -20,7 +20,7 @@
             </block>
         </referenceContainer>
         <referenceContainer name="left">
-            <block class="Magento\Config\Block\System\Config\Tabs" name="smile.elasticsuite.relevance.config.tabs" before="-"/>
+            <block name="smile.elasticsuite.relevance.config.tabs" class="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Tabs" before="-"/>
         </referenceContainer>
         <referenceContainer name="content">
             <block name="smile.elasticsuite.relevance.config.edit" class="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Edit"/>
