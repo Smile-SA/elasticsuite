@@ -100,18 +100,14 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
-        $logger->info(get_class($this));
-
-        list($containerCode, $storeId) = explode("|", $code);
-        unset($storeId); // @todo refactor this part
 
         $config = array_replace_recursive(
             $this->defaultReader->read(RequestContainerInterface::SCOPE_TYPE_DEFAULT),
-            $this->initialConfig->getData("containers|{$containerCode}")
+            $this->initialConfig->getData("containers|{$code}")
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $containerCode]
+            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
         );
 
         $logger->info("ITS ME THE READER ---> CONTAINER");

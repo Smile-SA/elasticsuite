@@ -87,8 +87,11 @@ class ContainerStore
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
 
+        list($containerCode, $storeId) = explode("|", $code);
+        unset($storeId); // @todo refactor this part : use storeId to build store_code
+
         $config = array_replace_recursive(
-            $this->containerReader->read($code),
+            $this->containerReader->read($containerCode),
             $this->initialConfig->getData("containers|stores|{$code}")
         );
 
