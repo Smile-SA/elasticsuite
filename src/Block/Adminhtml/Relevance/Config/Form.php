@@ -215,7 +215,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $this->_logger->debug("COUCOU");
         $this->_logger->debug(get_class($this->_configDataObject));
         $this->_logger->debug(get_class($this->_configFactory));
-        $this->_logger->debug(print_r($this->_configData, true));
+        //$this->_logger->debug(print_r($this->_configData, true));
 
         return $this;
     }

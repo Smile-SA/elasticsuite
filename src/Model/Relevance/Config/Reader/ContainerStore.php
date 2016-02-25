@@ -97,7 +97,6 @@ class ContainerStore
         );
 
         $logger->info("ITS ME THE READER ---> CONTAINER STORE");
-        $logger->info(get_class($collection));
 
         $dbStoreConfig = [];
         foreach ($collection as $item) {
@@ -107,7 +106,8 @@ class ContainerStore
         $dbStoreConfig = $this->converter->convert($dbStoreConfig);
         $config = array_replace_recursive($config, $dbStoreConfig);
 
-        $logger->info(print_r($config, true));
+        $logger->info(print_r($config['smile_elasticsuite_relevance'], true));
+        $logger->info("THAT WAS THE CONTAINER STORE READER");
 
         return $config;
     }

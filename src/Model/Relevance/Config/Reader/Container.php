@@ -102,16 +102,19 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         $logger->addWriter($writer);
         $logger->info(get_class($this));
 
+        list($containerCode, $storeId) = explode("|", $code);
+        unset($storeId); // @todo refactor this part
+
         $config = array_replace_recursive(
             $this->defaultReader->read(RequestContainerInterface::SCOPE_TYPE_DEFAULT),
-            $this->initialConfig->getData("containers|{$code}")
+            $this->initialConfig->getData("containers|{$containerCode}")
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
+            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $containerCode]
         );
 
-        $logger->info("ITS ME THE READER ---> STORE");
+        $logger->info("ITS ME THE READER ---> CONTAINER");
 
         $dbContainerConfig = [];
         foreach ($collection as $item) {
@@ -123,6 +126,9 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         if (count($dbContainerConfig)) {
             $config = array_replace_recursive($config, $dbContainerConfig);
         }
+
+        $logger->info(print_r($config['smile_elasticsuite_relevance'], true));
+        $logger->info("THAT WAS THE CONTAINER READER");
 
         return $config;
     }

@@ -99,6 +99,9 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
         $dbDefaultConfig = $this->converter->convert($dbDefaultConfig);
         $config = array_replace_recursive($config, $dbDefaultConfig);
 
+        $logger->info(print_r($config['smile_elasticsuite_relevance'], true));
+        $logger->info("THAT WAS THE DEFAULT READER");
+
         return $config;
     }
 }

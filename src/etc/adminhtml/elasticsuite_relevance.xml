@@ -19,7 +19,7 @@
         <tab id="general" translate="label" sortOrder="100">
             <label>General</label>
         </tab>
-        <section id="smile_elasticsuite_relevancy" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+        <section id="smile_elasticsuite_relevance" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
             <tab>general</tab>
             <label>Relevance Configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
