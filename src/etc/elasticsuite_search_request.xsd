@@ -27,15 +27,15 @@
     </xs:element>
 
     <xs:complexType name="request">
-        
+
         <xs:choice maxOccurs="unbounded">
-            
+
             <xs:element maxOccurs="1" minOccurs="1" name="dimensions" type="dimensions" />
             <xs:element maxOccurs="1" minOccurs="0" name="query" type="queryReference" />
             <xs:element maxOccurs="1" minOccurs="0" name="filter" type="queryReference" />
             <xs:element maxOccurs="1" minOccurs="1" name="from" type="xs:integer" />
             <xs:element maxOccurs="1" minOccurs="1" name="size" type="xs:integer" />
-            
+
             <xs:element maxOccurs="1" minOccurs="1" name="queries" type="queryList">
                 <xs:key name="queryName">
                   <xs:selector xpath="query" />
@@ -56,13 +56,14 @@
                   <xs:field xpath="@name" />
                 </xs:key>
             </xs:element>
-            
+
         </xs:choice>
-        
+
         <xs:attribute type="xs:string" name="name" use="required" />
+        <xs:attribute type="xs:string" name="label" use="required" />
         <xs:attribute type="xs:string" name="index" use="required" />
         <xs:attribute type="xs:string" name="type" use="required" />
-        
+
     </xs:complexType>
 
     <!-- Dimension related types definition -->
@@ -83,7 +84,7 @@
     </xs:complexType>
 
     <!-- Queries types related definition -->
-    
+
     <xs:complexType name="queryList">
         <xs:sequence>
           <xs:element name="query" maxOccurs="unbounded" minOccurs="1" type="baseQuery" />
@@ -126,7 +127,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="nestedQuery">
         <xs:complexContent>
             <xs:extension base="baseQuery">
@@ -147,7 +148,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="matchQuery">
         <xs:complexContent>
             <xs:extension base="baseQuery">
@@ -219,7 +220,7 @@
     </xs:complexType>
 
     <!-- Aggregations, buckets and metrics definitions -->
-    
+
     <xs:complexType name="aggregations">
         <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="bucket" maxOccurs="unbounded" minOccurs="1" type="baseBucket" />
@@ -228,7 +229,7 @@
 
     <xs:complexType name="baseBucket" abstract="true">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="metrics" type="metrics" /> 
+            <xs:element name="metrics" type="metrics" />
         </xs:choice>
         <xs:attribute type="xs:string" name="name" use="required" />
     </xs:complexType>
@@ -241,7 +242,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="dynamicBucket">
         <xs:complexContent>
             <xs:extension base="baseBucket">
@@ -250,13 +251,13 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-     
+
     <xs:complexType name="metrics">
         <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="metric" maxOccurs="unbounded" minOccurs="1" type="metric" />
         </xs:choice>
     </xs:complexType>
-    
+
     <xs:complexType name="metric">
         <xs:attribute name="name" use="required" type="xs:string"  />
         <xs:attribute name="field" use="required" type="xs:string" />
