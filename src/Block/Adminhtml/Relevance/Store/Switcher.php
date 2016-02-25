@@ -348,6 +348,7 @@ class Switcher extends Template
                 $name .= " > " . $this->getCurrentStoreName();
             }
         }
+
         return $name;
     }
 

@@ -45,12 +45,18 @@
                     <?php foreach ($block->getStores() as $store) : ?>
                         <?php if ($showContainer == false) : ?>
                             <?php $showContainer = true; ?>
-                            <li class="store-switcher-container <?php if ( ! ($block->isContainerSwitchEnabled() && ! $block->isContainerSelected($container))) {
+                            <?php
+                                $canSelectContainer = (
+                                    $block->isContainerSwitchEnabled()
+                                    && ($block->getStoreId() || (!$block->isContainerSelected($container)))
+                                );
+                            ?>
+                            <li class="store-switcher-container <?php if ( ! $block->isContainerSwitchEnabled() && ! $canSelectContainer) {
                                 echo "disabled";
                             } ?> <?php if ($block->isContainerSelected($container)) {
                                 ?> current<?php
                             } ?>">
-                                <?php if ($block->isContainerSwitchEnabled() && ! $block->isContainerSelected($container)) {
+                                <?php if ($canSelectContainer) {
                                     ?>
                                     <a data-role="container-id" data-value="<?php echo $block->escapeHtml($block->getContainerName($container)) ?>" href="#">
                                         <?php echo $block->escapeHtml($block->getContainerLabel($container)) ?>
