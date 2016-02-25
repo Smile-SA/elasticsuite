@@ -51,7 +51,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
         Structure $configStructure,
         \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory,
         \Magento\Config\Block\System\Config\Form\Field\Factory $fieldFactory,
-        //\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration,
         array $data = []
     ) {
 
@@ -66,13 +65,31 @@ class Form extends \Magento\Config\Block\System\Config\Form
             $data
         );
 
-       // $this->_scopeConfig = $scopeConfiguration;
-
         $this->_scopeLabels = [
             self::SCOPE_DEFAULT          => __('[GLOBAL]'),
             self::SCOPE_CONTAINERS       => __('[CONTAINER]'),
             self::SCOPE_STORE_CONTAINERS => __('[CONTAINER - STORE VIEW]'),
         ];
+    }
+
+    /**
+     * Check if can use default value
+     *
+     * @param int $fieldValue The field value
+     *
+     * @return boolean
+     */
+    public function canUseDefaultValue($fieldValue)
+    {
+        if ($this->getScope() == self::SCOPE_STORE_CONTAINERS && $fieldValue) {
+            return true;
+        }
+
+        if ($this->getScope() == self::SCOPE_CONTAINERS && $fieldValue) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
