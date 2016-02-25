@@ -6,9 +6,9 @@
  */
 -->
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="urn:magento:framework:Search/etc/search_request.xsd">
-    
-    <request name="quick_search_container" index="catalog_product" type="product">
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_search_request.xsd">
+
+    <request name="quick_search_container" label="Quick Search Container" index="catalog_product" type="product">
         <from>0</from>
         <size>20</size>
         <dimensions>
@@ -30,24 +30,24 @@
                 <query clause="must" reference="category_nested_filter" />
                 <query clause="must" reference="visibility_filter"/>
             </query>
-            
+
             <query xsi:type="nestedQuery" name="category_nested_filter" path="category">
                 <query reference="category_id_filter" />
             </query>
             <query xsi:type="termsQuery" name="category_id_filter" field="category.category_id" values="$category_ids$" />
-            
+
             <query xsi:type="nestedQuery" name="price_nested_filter" path="price">
                 <query reference="price_filter" />
-            </query> 
+            </query>
             <query xsi:type="boolQuery" name="price_filter_conditions">
                 <query clause="must" reference="price_customer_group" />
                 <query clause="must" reference="price_filter" />
-            </query> 
+            </query>
             <query xsi:type="termsQuery" name="price_customer_group_filter" field="price.customer_group_id" values="$customer_group_id$" />
             <query xsi:type="rangeQuery" name="price_filter" field="price.price" from="$price.from$" to="$price.to$" />
-            
+
             <query xsi:type="termsQuery" name="visibility_filter" field="visibility" values="$visibility$"/>
-            
+
         </queries>
         <sortOrders>
             <sortOrder xsi:type="standardSortOrder" name="relevance" field="_score" direction="$sortOrder.direction$" />
@@ -63,20 +63,20 @@
             <bucket name="category_bucket" field="category_ids" xsi:type="termBucket" size="10"/>
         </aggregations>
     </request>
-    
-    <request name="advanced_search_container" index="catalog_product" type="product">
+
+    <request name="advanced_search_container" index="catalog_product" label="Advanced Search Container" type="product">
         <from>0</from>
         <size>20</size>
         <dimensions>
             <dimension name="scope" value="default"/>
         </dimensions>
-        
-        <!-- 
+
+        <!--
         @todo: Map queries and aggregations.
          -->
     </request>
-    
-    <request name="catalog_view_container" index="catalog_product" type="product">
+
+    <request name="catalog_view_container" index="catalog_product" label="Catalog View Container" type="product">
         <from>0</from>
         <size>20</size>
         <dimensions>
@@ -93,22 +93,22 @@
                 <query clause="must" reference="price_nested_filter" />
                 <!-- Placeholder for multiselect attributes facets -->
             </query>
-            
+
             <query xsi:type="nestedQuery" name="category_nested_filter" path="category">
                 <query reference="category_id_filter" />
             </query>
             <query xsi:type="termsQuery" name="category_id_filter" field="category.category_id" values="$category_ids$" />
-            
+
             <query xsi:type="nestedQuery" name="price_nested_filter" path="price">
                 <query reference="price_filter" />
-            </query> 
+            </query>
             <query xsi:type="boolQuery" name="price_filter_conditions">
                 <query clause="must" reference="price_customer_group" />
                 <query clause="must" reference="price_filter" />
-            </query> 
+            </query>
             <query xsi:type="termsQuery" name="price_customer_group_filter" field="price.customer_group_id" values="$customer_group_id$" />
             <query xsi:type="rangeQuery" name="price_filter" field="price.price" from="$price.from$" to="$price.to$" />
-            
+
             <query xsi:type="termsQuery" name="visibility_filter" field="visibility" values="$visibility$"/>
         </queries>
         <sortOrders>
@@ -125,5 +125,5 @@
             <bucket name="category_bucket" field="category_ids" xsi:type="termBucket" size="10"/>
         </aggregations>
     </request>
-    
+
 </requests>
