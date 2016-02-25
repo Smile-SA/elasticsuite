@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -17,10 +17,10 @@ use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
 
 /**
- * _________________________________________________
+ * Relevance Configuration Schema Locator
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class SchemaLocator extends \Magento\Config\Model\Config\SchemaLocator implements SchemaLocatorInterface

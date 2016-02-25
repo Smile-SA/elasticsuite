@@ -28,7 +28,7 @@ class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collect
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart
+    // @codingStandardsIgnoreStart This method is inherited
     protected function _construct()
     {
         // @codingStandardIgnoreEnd

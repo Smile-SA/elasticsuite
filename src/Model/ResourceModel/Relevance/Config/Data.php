@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,10 +15,10 @@
 namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config;
 
 /**
- * _________________________________________________
+ * Relevance configuration data Resource Model
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Data extends \Magento\Config\Model\ResourceModel\Config\Data
@@ -29,8 +29,10 @@ class Data extends \Magento\Config\Model\ResourceModel\Config\Data
      *
      * @return void
      */
+    // @codingStandardsIgnoreStart This method is inherited
     protected function _construct()
     {
+        // @codingStandardsIgnoreEnd
         $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
     }
 }
