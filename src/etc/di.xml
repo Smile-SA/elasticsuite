@@ -184,15 +184,4 @@
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container">
-        <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool</argument>
-        </arguments>
-    </type>
-
-    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore">
-        <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool</argument>
-        </arguments>
-    </type>
 </config>

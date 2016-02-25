@@ -33,11 +33,6 @@ class ContainerStore
     protected $initialConfig;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopePool
-     */
-    protected $scopePool;
-
-    /**
      * @var \Magento\Store\Model\Config\Converter
      */
     protected $converter;
@@ -53,24 +48,30 @@ class ContainerStore
     protected $containerInterface;
 
     /**
+     * @var DefaultReader
+     */
+    protected $containerReader;
+
+    /**
      * @param Initial                   $initialConfig      Initial Configuration
      * @param ScopePool                 $scopePool          Scoped Configuration reader
      * @param Converter                 $converter          Configuration Converter
      * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
      * @param RequestContainerInterface $containerInterface Request Containers interface
+     * @param ContainerReader           $containerReader    The Container level configuration reader
      */
     public function __construct(
         Initial $initialConfig,
-        ScopePool $scopePool,
         Converter $converter,
         ScopedFactory $collectionFactory,
-        RequestContainerInterface $containerInterface
+        RequestContainerInterface $containerInterface,
+        Container $containerReader
     ) {
         $this->initialConfig = $initialConfig;
         $this->converter = $converter;
         $this->collectionFactory = $collectionFactory;
         $this->containerInterface = $containerInterface;
-        $this->scopePool = $scopePool;
+        $this->containerReader = $containerReader;
     }
 
     /**
@@ -87,7 +88,7 @@ class ContainerStore
         $logger->addWriter($writer);
 
         $config = array_replace_recursive(
-            $this->scopePool->getScope(RequestContainerInterface::SCOPE_STORE_CONTAINERS)->getSource(),
+            $this->containerReader->read($code),
             $this->initialConfig->getData("containers|stores|{$code}")
         );
 

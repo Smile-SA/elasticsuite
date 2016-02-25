@@ -15,8 +15,8 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
-use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 
 /**
  * Container's scope configuration reader for relevance configuration
@@ -53,24 +53,39 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $containerInterface;
 
     /**
-     * @param Initial                   $initialConfig      Initial Configuration
-     * @param ScopePool                 $scopePool          Scoped Configuration reader
-     * @param Converter                 $converter          Configuration Converter
-     * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
-     * @param RequestContainerInterface $containerInterface Request Containers interface
+     * @var DefaultReader
+     */
+    protected $defaultReader;
+
+    /**
+     * @param Initial                                                             $initialConfig      Initial
+     *                                                                                                Configuration
+     * @param ScopePool                                                           $scopePool          Scoped
+     *                                                                                                Configuration
+     *                                                                                                reader
+     * @param Converter                                                           $converter          Configuration
+     *                                                                                                Converter
+     * @param ScopedFactory                                                       $collectionFactory  Configuration
+     *                                                                                                Collection
+     *                                                                                                Factory
+     * @param RequestContainerInterface                                           $containerInterface Request
+     *                                                                                                Containers
+     *                                                                                                interface
+     * @param \Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\DefaultReader $defaultReader
      */
     public function __construct(
         Initial $initialConfig,
         ScopePool $scopePool,
         Converter $converter,
         ScopedFactory $collectionFactory,
-        RequestContainerInterface $containerInterface
+        RequestContainerInterface $containerInterface,
+        DefaultReader $defaultReader
     ) {
         $this->initialConfig = $initialConfig;
         $this->converter = $converter;
         $this->collectionFactory = $collectionFactory;
         $this->containerInterface = $containerInterface;
-        $this->scopePool = $scopePool;
+        $this->defaultReader = $defaultReader;
     }
 
     /**
@@ -88,7 +103,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         $logger->info(get_class($this));
 
         $config = array_replace_recursive(
-            $this->scopePool->getScope(RequestContainerInterface::SCOPE_TYPE_DEFAULT)->getSource(),
+            $this->defaultReader->read(RequestContainerInterface::SCOPE_TYPE_DEFAULT),
             $this->initialConfig->getData("containers|{$code}")
         );
 
