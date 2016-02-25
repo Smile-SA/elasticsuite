@@ -53,12 +53,12 @@
                                 <?php if ($block->isContainerSwitchEnabled() && ! $block->isContainerSelected($container)) {
                                     ?>
                                     <a data-role="container-id" data-value="<?php echo $block->escapeHtml($block->getContainerName($container)) ?>" href="#">
-                                        <?php echo $block->escapeHtml($block->getContainerName($container)) ?>
+                                        <?php echo $block->escapeHtml($block->getContainerLabel($container)) ?>
                                     </a>
                                     <?php
                                 } else {
                                     ?>
-                                    <span><?php echo $block->escapeHtml($block->getContainerName($container)) ?></span>
+                                    <span><?php echo $block->escapeHtml($block->getContainerLabel($container)) ?></span>
                                     <?php
                                 } ?>
                             </li>

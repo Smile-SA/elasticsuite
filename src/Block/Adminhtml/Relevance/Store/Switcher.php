@@ -340,12 +340,14 @@ class Switcher extends Template
      */
     public function getCurrentSelectionName()
     {
-        if (!($name = $this->getCurrentStoreName())) {
-            if (!($name = $this->getCurrentContainerName())) {
-                $name = $this->getDefaultSelectionName();
+        $name = $this->getDefaultSelectionName();
+
+        if ($this->getCurrentContainerName()) {
+            $name = $this->getCurrentContainerLabel();
+            if ($this->getCurrentStoreName()) {
+                $name .= " > " . $this->getCurrentStoreName();
             }
         }
-
         return $name;
     }
 
@@ -391,6 +393,34 @@ class Switcher extends Template
     public function getContainerName($container)
     {
         return $container["name"];
+    }
+
+    /**
+     * Get current container name
+     *
+     * @return string
+     */
+    public function getCurrentContainerLabel()
+    {
+        if ($this->getContainerCode() != null) {
+            $container = $this->requestConfiguration->getContainer($this->getContainerCode());
+
+            if ($this->getContainerLabel($container)) {
+                return $this->getContainerLabel($container);
+            }
+        }
+    }
+
+    /**
+     * Get container name
+     *
+     * @param array $container The container name
+     *
+     * @return mixed
+     */
+    public function getContainerLabel($container)
+    {
+        return $container["label"];
     }
 
     /**
