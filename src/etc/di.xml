@@ -123,11 +123,11 @@
 
     <virtualType name="Smile\ElasticSuiteCore\App\Config" type="Magento\Framework\App\Config">
         <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\App\Config\ScopePool</argument>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\App\Config\ScopePool" type="Magento\Framework\App\Config\ScopePool">
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool" type="Magento\Framework\App\Config\ScopePool">
         <arguments>
             <argument name="readerPool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ReaderPool</argument>
         </arguments>
@@ -186,13 +186,13 @@
 
     <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container">
         <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\App\Config\ScopePool</argument>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool</argument>
         </arguments>
     </type>
 
     <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore">
         <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\App\Config\ScopePool</argument>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopePool</argument>
         </arguments>
     </type>
 </config>
