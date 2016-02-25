@@ -157,6 +157,14 @@ class Config extends \Magento\Config\Model\Config
      */
     protected function _getConfig($full = true)
     {
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info(get_class($this->_configLoader));
+        $logger->info($this->getSection());
+        $logger->info($this->getScope());
+        $logger->info($this->getScopeCode());
+
         return $this->_configLoader->getConfigByPath(
             $this->getSection(),
             $this->getScope(),
@@ -184,7 +192,7 @@ class Config extends \Magento\Config\Model\Config
         }
 
         $scope = 'default';
-        $scopeCode = '';
+        $scopeCode = 'default';
 
         if ($this->getStore()) {
             $scope = 'containers_stores';

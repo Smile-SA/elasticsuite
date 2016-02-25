@@ -18,12 +18,13 @@ namespace Smile\ElasticSuiteCore\Api\Config;
  * _________________________________________________
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 
 interface RequestContainerInterface
 {
+    const SCOPE_TYPE_DEFAULT = "default";
     const SCOPE_CONTAINERS = "containers";
     const SCOPE_STORE_CONTAINERS = "containers_stores";
 

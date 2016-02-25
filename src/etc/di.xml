@@ -136,6 +136,7 @@
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\ReaderPool" type="Magento\Store\Model\Config\Reader\ReaderPool">
         <arguments>
             <argument name="readers" xsi:type="array">
+                <item name="default" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\DefaultReader</item>
                 <item name="container" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container</item>
                 <item name="containers" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container</item>
                 <item name="containers_stores" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore</item>
@@ -163,36 +164,35 @@
         </arguments>
     </virtualType>
 
-    <!--<type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Edit">
-        <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
-        </arguments>
-    </type>
-
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Index">
-        <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
-        </arguments>
-    </type>
-
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractConfig">
-        <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
-        </arguments>
-    </type>-->
-
     <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractScopeConfig">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
         </arguments>
     </type>
 
+    <virtualType name="Smile\ElasticSuiteCore\Block\Backend\Template\Context" type="Magento\Backend\Block\Template\Context">
+        <arguments>
+            <argument name="scopeConfig" xsi:type="object">Smile\ElasticSuiteCore\App\Config</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
             <argument name="configFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Factory</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>
 
-    <preference for="Magento\Framework\DB\LoggerInterface" type="Magento\Framework\DB\Logger\File"/>
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Container">
+        <arguments>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\App\Config\ScopePool</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\ContainerStore">
+        <arguments>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\App\Config\ScopePool</argument>
+        </arguments>
+    </type>
 </config>

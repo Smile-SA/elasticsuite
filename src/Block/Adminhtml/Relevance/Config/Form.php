@@ -51,6 +51,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
         Structure $configStructure,
         \Magento\Config\Block\System\Config\Form\Fieldset\Factory $fieldsetFactory,
         \Magento\Config\Block\System\Config\Form\Field\Factory $fieldFactory,
+        //\Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration,
         array $data = []
     ) {
 
@@ -64,6 +65,8 @@ class Form extends \Magento\Config\Block\System\Config\Form
             $fieldFactory,
             $data
         );
+
+       // $this->_scopeConfig = $scopeConfiguration;
 
         $this->_scopeLabels = [
             self::SCOPE_DEFAULT          => __('[GLOBAL]'),
@@ -102,6 +105,70 @@ class Form extends \Magento\Config\Block\System\Config\Form
     public function getContainerCode()
     {
         return $this->getRequest()->getParam('container', '');
+    }
+
+    /**
+     * Get config value
+     *
+     * @param string $path The config value path
+     *
+     * @return mixed
+     */
+    public function getConfigValue($path)
+    {
+        //$this->_logger->debug(get_class($this->_scopeConfig));
+        //$this->_logger->debug("CALLING FOR {$path} {$this->getScope()} {$this->getScopeCode()} ");
+        return $this->_scopeConfig->getValue($path, $this->getScope(), $this->getScopeCode());
+    }
+
+    /**
+     * Retrieve current scope
+     *
+     * @return string
+     */
+    public function getScope()
+    {
+        $scope = $this->getData('scope');
+        if ($scope === null) {
+            $scope = self::SCOPE_DEFAULT;
+
+            if ($this->getContainerCode()) {
+                $scope = self::SCOPE_CONTAINERS;
+            }
+            if ($this->getStoreCode()) {
+                $scope = self::SCOPE_STORE_CONTAINERS;
+            }
+
+            $this->setScope($scope);
+        }
+
+        return $scope;
+    }
+
+    /**
+     * Get current scope code
+     *
+     * @return string
+     */
+    public function getScopeCode()
+    {
+        $scopeCode = $this->getData('scope_code');
+        if ($scopeCode === null) {
+            $scopeCode = 'default';
+            if ($this->getStoreCode()) {
+                $store = $this->_storeManager->getStore($this->getStoreCode());
+                $scopeCode = $store->getId();
+                if ($this->getContainerCode() && ($this->getContainerCode() != "")) {
+                    $scopeCode = $this->getContainerCode() . "|" . $scopeCode;
+                }
+            } elseif ($this->getContainerCode()) {
+                $scopeCode = $this->getContainerCode();
+            }
+
+            $this->setScopeCode($scopeCode);
+        }
+
+        return $scopeCode;
     }
 
     /**

@@ -14,18 +14,17 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
-use Magento\Framework\App\Config\ScopePool;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 
 /**
- * Configuration reader for Store Container level : Configuration for a given container on a given store
+ * Default level Relevance Configuration Reader
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class ContainerStore
+class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterface
 {
     /**
      * @var Initial
@@ -33,17 +32,12 @@ class ContainerStore
     protected $initialConfig;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopePool
-     */
-    protected $scopePool;
-
-    /**
-     * @var \Magento\Store\Model\Config\Converter
+     * @var Converter
      */
     protected $converter;
 
     /**
-     * @var ScopedFactory
+     * @var \Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory
      */
     protected $collectionFactory;
 
@@ -54,14 +48,12 @@ class ContainerStore
 
     /**
      * @param Initial                   $initialConfig      Initial Configuration
-     * @param ScopePool                 $scopePool          Scoped Configuration reader
      * @param Converter                 $converter          Configuration Converter
      * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
      * @param RequestContainerInterface $containerInterface Request Containers interface
      */
     public function __construct(
         Initial $initialConfig,
-        ScopePool $scopePool,
         Converter $converter,
         ScopedFactory $collectionFactory,
         RequestContainerInterface $containerInterface
@@ -70,43 +62,42 @@ class ContainerStore
         $this->converter = $converter;
         $this->collectionFactory = $collectionFactory;
         $this->containerInterface = $containerInterface;
-        $this->scopePool = $scopePool;
     }
 
     /**
-     * Read configuration by code
+     * Read configuration data
      *
-     * @param null|string $code The container code
+     * @param null|string $scope The current scope to load (default)
      *
-     * @return array
+     * @return array Exception is thrown when scope other than default is given
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function read($code = null)
+    public function read($scope = null)
     {
         $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
         $logger = new \Zend\Log\Logger();
         $logger->addWriter($writer);
 
-        $config = array_replace_recursive(
-            $this->scopePool->getScope(RequestContainerInterface::SCOPE_STORE_CONTAINERS)->getSource(),
-            $this->initialConfig->getData("containers|stores|{$code}")
-        );
-
-        $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_STORE_CONTAINERS, 'scopeCode' => $code]
-        );
-
-        $logger->info("ITS ME THE READER ---> CONTAINER STORE");
-        $logger->info(get_class($collection));
-
-        $dbStoreConfig = [];
-        foreach ($collection as $item) {
-            $dbStoreConfig[$item->getPath()] = $item->getValue();
+        $scope = $scope === null ? RequestContainerInterface::SCOPE_TYPE_DEFAULT : $scope;
+        if ($scope !== RequestContainerInterface::SCOPE_TYPE_DEFAULT) {
+            throw new \Magento\Framework\Exception\LocalizedException(__("Only default scope allowed"));
         }
 
-        $dbStoreConfig = $this->converter->convert($dbStoreConfig);
-        $config = array_replace_recursive($config, $dbStoreConfig);
+        $config = $this->initialConfig->getData($scope);
 
-        $logger->info(print_r($config, true));
+        $collection = $this->collectionFactory->create(
+            ['scope' => $scope]
+        );
+
+        $logger->info("ITS ME THE READER ---> DEFAULT");
+
+        $dbDefaultConfig = [];
+        foreach ($collection as $item) {
+            $dbDefaultConfig[$item->getPath()] = $item->getValue();
+        }
+
+        $dbDefaultConfig = $this->converter->convert($dbDefaultConfig);
+        $config = array_replace_recursive($config, $dbDefaultConfig);
 
         return $config;
     }

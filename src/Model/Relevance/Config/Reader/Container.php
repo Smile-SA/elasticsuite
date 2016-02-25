@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
@@ -15,7 +14,8 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 
 use Magento\Framework\App\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
-use Magento\Store\Model\ResourceModel\Config\Collection\ScopedFactory;
+use Magento\Framework\App\Config\ScopePool;
+use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 
 /**
@@ -33,7 +33,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $initialConfig;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopePool
+     * @var ScopePool
      */
     protected $scopePool;
 
@@ -54,20 +54,23 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
 
     /**
      * @param Initial                   $initialConfig      Initial Configuration
+     * @param ScopePool                 $scopePool          Scoped Configuration reader
      * @param Converter                 $converter          Configuration Converter
      * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
      * @param RequestContainerInterface $containerInterface Request Containers interface
      */
     public function __construct(
         Initial $initialConfig,
+        ScopePool $scopePool,
         Converter $converter,
         ScopedFactory $collectionFactory,
         RequestContainerInterface $containerInterface
     ) {
-        $this->initialConfig       = $initialConfig;
-        $this->converter           = $converter;
-        $this->collectionFactory   = $collectionFactory;
+        $this->initialConfig = $initialConfig;
+        $this->converter = $converter;
+        $this->collectionFactory = $collectionFactory;
         $this->containerInterface = $containerInterface;
+        $this->scopePool = $scopePool;
     }
 
     /**
@@ -79,13 +82,21 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
      */
     public function read($code = null)
     {
-        // @TODO Proper container retrieval with a correct code
-        //$container = $this->requestConfiguration->getContainer($code);
-        $config    = $this->initialConfig->getData(RequestContainerInterface::SCOPE_CONTAINERS);
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info(get_class($this));
+
+        $config = array_replace_recursive(
+            $this->scopePool->getScope(RequestContainerInterface::SCOPE_TYPE_DEFAULT)->getSource(),
+            $this->initialConfig->getData("containers|{$code}")
+        );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeId' => 99]
+            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
         );
+
+        $logger->info("ITS ME THE READER ---> STORE");
 
         $dbContainerConfig = [];
         foreach ($collection as $item) {
@@ -93,7 +104,10 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         }
 
         $dbContainerConfig = $this->converter->convert($dbContainerConfig);
-        $config = array_replace_recursive($config, $dbContainerConfig);
+
+        if (count($dbContainerConfig)) {
+            $config = array_replace_recursive($config, $dbContainerConfig);
+        }
 
         return $config;
     }
