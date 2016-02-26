@@ -10,7 +10,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Stucture\Element;
+namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element;
 
 use Smile\ElasticSuiteCore\Api\Config\Relevance\FieldInterface;
 

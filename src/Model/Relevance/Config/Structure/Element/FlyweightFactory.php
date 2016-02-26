@@ -35,7 +35,7 @@ class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\Fl
     protected $flyweightMap = [
         'section' => 'Magento\Config\Model\Config\Structure\Element\Section',
         'group' => 'Magento\Config\Model\Config\Structure\Element\Group',
-        'field' => 'Smile\ElasticSuiteCore\Model\Relevance\Config\Stucture\Element\Field',
+        'field' => 'Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Field',
     ];
 
     /**
