@@ -156,18 +156,48 @@
         <arguments>
             <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader</argument>
             <argument name="cacheId" xsi:type="string">smile_elasticsuite_relevance_configuration_structure</argument>
+            <argument name="configScope" xsi:type="object"></argument>
         </arguments>
     </virtualType>
 
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure" type="Magento\Config\Model\Config\Structure">
         <arguments>
             <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
+            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\FlyweightFactory</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\SectionChecker" type="Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
         </arguments>
     </virtualType>
 
     <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractScopeConfig">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\SectionChecker</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\AbstractConfig">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\SectionChecker</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Index">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\SectionChecker</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\Edit">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config\SectionChecker</argument>
         </arguments>
     </type>
 
@@ -177,10 +207,24 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\Field</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
             <argument name="configFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Factory</argument>
+            <argument name="fieldFactory" xsi:type="object">Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\FieldFactory</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Edit">
+        <arguments>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
             <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>

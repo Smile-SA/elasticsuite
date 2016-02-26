@@ -38,7 +38,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $scopePool;
 
     /**
-     * @var \Magento\Store\Model\Config\Converter
+     * @var \Magento\Framework\App\Config\Scope\Converter
      */
     protected $converter;
 
@@ -58,24 +58,14 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $defaultReader;
 
     /**
-     * @param Initial                                                             $initialConfig      Initial
-     *                                                                                                Configuration
-     * @param ScopePool                                                           $scopePool          Scoped
-     *                                                                                                Configuration
-     *                                                                                                reader
-     * @param Converter                                                           $converter          Configuration
-     *                                                                                                Converter
-     * @param ScopedFactory                                                       $collectionFactory  Configuration
-     *                                                                                                Collection
-     *                                                                                                Factory
-     * @param RequestContainerInterface                                           $containerInterface Request
-     *                                                                                                Containers
-     *                                                                                                interface
-     * @param \Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\DefaultReader $defaultReader
+     * @param Initial                   $initialConfig      Initial Configuration
+     * @param Converter                 $converter          Configuration Converter
+     * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
+     * @param RequestContainerInterface $containerInterface Request Containers interface
+     * @param DefaultReader             $defaultReader      The default reader
      */
     public function __construct(
         Initial $initialConfig,
-        ScopePool $scopePool,
         Converter $converter,
         ScopedFactory $collectionFactory,
         RequestContainerInterface $containerInterface,

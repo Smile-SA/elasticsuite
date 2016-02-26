@@ -103,7 +103,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
     {
         $showInStore = $field->showInStore();
 
-        $showInContainer = true; // $field->showInContainer();
+        $showInContainer = true ;//$field->showInContainer();
 
         if ($showInStore == 1) {
             return $this->_scopeLabels[self::SCOPE_STORE_CONTAINERS];
@@ -133,8 +133,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
      */
     public function getConfigValue($path)
     {
-        //$this->_logger->debug(get_class($this->_scopeConfig));
-        //$this->_logger->debug("CALLING FOR {$path} {$this->getScope()} {$this->getScopeCode()} ");
         return $this->_scopeConfig->getValue($path, $this->getScope(), $this->getScopeCode());
     }
 
@@ -146,6 +144,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
     public function getScope()
     {
         $scope = $this->getData('scope');
+
         if ($scope === null) {
             $scope = self::SCOPE_DEFAULT;
 
@@ -170,6 +169,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
     public function getScopeCode()
     {
         $scopeCode = $this->getData('scope_code');
+
         if ($scopeCode === null) {
             $scopeCode = 'default';
             if ($this->getStoreCode()) {

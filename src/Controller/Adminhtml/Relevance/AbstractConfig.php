@@ -82,7 +82,7 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
         //@codingStandardsIgnoreEnd
         $sectionId = $this->_request->getParam('section');
 
-        return $this->configStructure->getElement($sectionId)->isAllowed()
-        || $this->_authorization->isAllowed('Magento_Config::config');
+        return /*$this->configStructure->getElement($sectionId)->isAllowed()
+        || */ $this->_authorization->isAllowed('Smile_ElasticsuiteCore::manage_relevance');
     }
 }
