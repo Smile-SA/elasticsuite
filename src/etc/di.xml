@@ -156,7 +156,7 @@
         <arguments>
             <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader</argument>
             <argument name="cacheId" xsi:type="string">smile_elasticsuite_relevance_configuration_structure</argument>
-            <argument name="configScope" xsi:type="object"></argument>
+            <!--<argument name="configScope" xsi:type="object"></argument>-->
         </arguments>
     </virtualType>
 
@@ -207,6 +207,12 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration\Context" type="Magento\Framework\App\Helper\Context">
+        <arguments>
+            <argument name="scopeConfig" xsi:type="object">Smile\ElasticSuiteCore\App\Config</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\Field</argument>
@@ -235,4 +241,19 @@
             <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </virtualType>
+
+    <preference for="Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface"
+                type="Smile\ElasticSuiteCore\Search\RelevanceConfiguration" />
+
+    <preference for="Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface"
+                type="Smile\ElasticSuiteCore\Search\RelevanceConfiguration\FuzzinessConfiguration" />
+
+    <preference for="Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\PhoneticConfigurationInterface"
+                type="Smile\ElasticSuiteCore\Search\RelevanceConfiguration\PhoneticConfiguration" />
+
+    <type name="Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration">
+        <arguments>
+            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration\Context</argument>
+        </arguments>
+    </type>
 </config>
