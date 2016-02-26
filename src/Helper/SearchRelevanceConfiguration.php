@@ -57,6 +57,11 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
     private $objectManager;
 
     /**
+     * @var SearchRelevanceConfigurationInterface[]
+     */
+    private $scopedConfigurations;
+
+    /**
      * Constructor.
      *
      * @param Context                $context       Helper context.
@@ -69,6 +74,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
         ObjectManagerInterface $objectManager
     ) {
         $this->objectManager = $objectManager;
+        $this->scopedConfigurations = [];
         parent::__construct($context, $storeManager);
     }
 
@@ -82,8 +88,12 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     public function getSearchRelevanceConfiguration($store = null, $container = null)
     {
-        $scope = $this->getScope($store, $container);
+        $scope     = $this->getScope($store, $container);
         $scopeCode = $this->getScopeCode($store, $container);
+
+        if (isset($this->scopedConfigurations[$scopeCode])) {
+            return $this->scopedConfigurations[$scopeCode];
+        }
 
         $configurationParams = [
             'phraseMatchBoost' => $this->getPhraseMatchBoostConfiguration($scope, $scopeCode),
@@ -96,6 +106,8 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
             '\Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface',
             $configurationParams
         );
+
+        $this->scopedConfigurations[$scopeCode] = $configuration;
 
         return $configuration;
     }
