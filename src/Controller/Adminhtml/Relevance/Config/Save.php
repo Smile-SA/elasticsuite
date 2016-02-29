@@ -6,12 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\Config;
+
 use Magento\Backend\App\Action\Context;
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Magento\Config\Model\Config\Structure;

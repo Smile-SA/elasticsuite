@@ -231,7 +231,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
         return $this;
     }
 
-    // @codingStandardsIgnoreStart Method is inherited
     /**
      * @param \Magento\Config\Model\Config\Structure\Element\Field $field
      * @param \Magento\Framework\Data\Form\Element\Fieldset        $fieldset
@@ -239,6 +238,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
      * @param string                                               $fieldPrefix
      * @param string                                               $labelPrefix
      */
+    // @codingStandardsIgnoreStart Method is inherited
     protected function _initElement(
         \Magento\Config\Model\Config\Structure\Element\Field $field,
         \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
