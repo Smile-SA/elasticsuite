@@ -74,7 +74,7 @@
     </type>
 
 
-    <preference for="Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface"
+    <preference for="Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface"
                 type="Smile\ElasticSuiteCore\Search\Request\Config" />
 
 

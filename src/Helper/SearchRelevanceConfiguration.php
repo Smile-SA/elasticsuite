@@ -12,10 +12,11 @@
  */
 namespace Smile\ElasticSuiteCore\Helper;
 
-use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface;
 
 /**
  * Search Relevance Configuration Helper
@@ -62,19 +63,28 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
     private $scopedConfigurations;
 
     /**
+     * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
+     */
+    private $requestConfiguration;
+
+    /**
      * Constructor.
      *
-     * @param Context                $context       Helper context.
-     * @param StoreManagerInterface  $storeManager  Store manager.
-     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param Context                         $context              Helper context.
+     * @param StoreManagerInterface           $storeManager         Store manager.
+     * @param ObjectManagerInterface          $objectManager        Object manager.
+     * @param SearchRequestContainerInterface $requestConfiguration The search request containers interface
      */
     public function __construct(
         Context $context,
         StoreManagerInterface $storeManager,
-        ObjectManagerInterface $objectManager
+        ObjectManagerInterface $objectManager,
+        SearchRequestContainerInterface $requestConfiguration
     ) {
         $this->objectManager = $objectManager;
         $this->scopedConfigurations = [];
+        $this->requestConfiguration = $requestConfiguration;
+
         parent::__construct($context, $storeManager);
     }
 
@@ -88,7 +98,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     public function getSearchRelevanceConfiguration($store = null, $container = null)
     {
-        $scope     = $this->getScope($store, $container);
+        $scope = $this->getScope($store, $container);
         $scopeCode = $this->getScopeCode($store, $container);
 
         if (isset($this->scopedConfigurations[$scopeCode])) {
@@ -283,12 +293,12 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     private function getScope($store, $container)
     {
-        $scope = \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface::SCOPE_TYPE_DEFAULT;
+        $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT;
 
         if ($container !== null) {
-            $scope = \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface::SCOPE_CONTAINERS;
+            $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_CONTAINERS;
             if ($store !== null) {
-                $scope = \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface::SCOPE_STORE_CONTAINERS;
+                $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_STORE_CONTAINERS;
             }
         }
 
@@ -305,7 +315,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     private function getScopeCode($store, $container)
     {
-        $scopeCode = \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface::SCOPE_TYPE_DEFAULT;
+        $scopeCode = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT;
 
         if ($container !== null) {
             $scopeCode = $container;

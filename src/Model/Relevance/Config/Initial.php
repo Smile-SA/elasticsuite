@@ -12,8 +12,6 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
 
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
-
 /**
  * Relevance configuration Initial Reader
  *

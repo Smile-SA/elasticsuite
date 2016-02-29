@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile_ElasticSuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,13 +14,13 @@
 namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Store;
 
 use Magento\Backend\Block\Template;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 
 /**
  * Relevance configuration store switcher
  *
  * @category Smile
- * @package  Smile_ElasticSuite______________
+ * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Switcher extends Template
@@ -64,28 +64,33 @@ class Switcher extends Template
     protected $storeFactory;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface
+     * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
      */
-    protected $requestConfiguration;
+    protected $storeGroupFactory;
+
+    /**
+     * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
+     */
+    protected $relevanceConfig;
 
     /**
      * Class constructor
      *
-     * @param \Magento\Backend\Block\Template\Context $context              Application context
-     * @param \Magento\Store\Model\GroupFactory       $storeGroupFactory    Store group factory
-     * @param \Magento\Store\Model\StoreFactory       $storeFactory         Store factory
-     * @param RequestContainerInterface               $requestConfiguration The Search request containers configuration
-     * @param array                                   $data                 The data
+     * @param \Magento\Backend\Block\Template\Context $context           Application context
+     * @param \Magento\Store\Model\GroupFactory       $storeGroupFactory Store group factory
+     * @param \Magento\Store\Model\StoreFactory       $storeFactory      Store factory
+     * @param SearchRequestContainerInterface         $relevanceConfig   The Search request containers configuration
+     * @param array                                   $data              The data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Store\Model\GroupFactory $storeGroupFactory,
         \Magento\Store\Model\StoreFactory $storeFactory,
-        RequestContainerInterface $requestConfiguration,
+        SearchRequestContainerInterface $relevanceConfig,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->requestConfiguration = $requestConfiguration;
+        $this->relevanceConfig = $relevanceConfig;
         $this->storeGroupFactory = $storeGroupFactory;
         $this->storeFactory = $storeFactory;
     }
@@ -97,15 +102,7 @@ class Switcher extends Template
      */
     public function getContainers()
     {
-        $containers = $this->requestConfiguration->getContainers();
-
-        /*if ($containerIds = $this->getContainerIds()) {
-            foreach (array_keys($containers) as $containerId) {
-                if (!in_array($containerId, $containerIds)) {
-                    unset($containers[$containerId]);
-                }
-            }
-        }*/
+        $containers = $this->relevanceConfig->getContainers();
 
         return $containers;
     }
@@ -370,7 +367,7 @@ class Switcher extends Template
     public function getCurrentContainerName()
     {
         if ($this->getContainerCode() != null) {
-            $container = $this->requestConfiguration->getContainer($this->getContainerCode());
+            $container = $this->relevanceConfig->getContainer($this->getContainerCode());
 
             if ($this->getContainerName($container)) {
                 return $this->getContainerName($container);
@@ -398,7 +395,7 @@ class Switcher extends Template
     public function getCurrentContainerLabel()
     {
         if ($this->getContainerCode() != null) {
-            $container = $this->requestConfiguration->getContainer($this->getContainerCode());
+            $container = $this->relevanceConfig->getContainer($this->getContainerCode());
 
             if ($this->getContainerLabel($container)) {
                 return $this->getContainerLabel($container);

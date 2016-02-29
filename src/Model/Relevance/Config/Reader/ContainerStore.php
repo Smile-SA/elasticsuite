@@ -17,7 +17,7 @@ use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 
 /**
  * Configuration reader for Store Container level : Configuration for a given container on a given store
@@ -44,7 +44,7 @@ class ContainerStore
     protected $collectionFactory;
 
     /**
-     * @var RequestContainerInterface
+     * @var SearchRequestContainerInterface
      */
     protected $containerInterface;
 
@@ -56,12 +56,12 @@ class ContainerStore
     /**
      * Constructor
      *
-     * @param Initial                   $initialConfig      Initial Configuration
-     * @param Converter                 $converter          Configuration Converter
-     * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
-     * @param RequestContainerInterface $containerInterface Request Containers interface
-     * @param Container                 $containerReader    Parent level configuration reader
-     * @param StoreManagerInterface     $storeManager       Magento Store Manager interface
+     * @param Initial                         $initialConfig      Initial Configuration
+     * @param Converter                       $converter          Configuration Converter
+     * @param ScopedFactory                   $collectionFactory  Configuration Collection Factory
+     * @param SearchRequestContainerInterface $containerInterface Request Containers interface
+     * @param Container                       $containerReader    Parent level configuration reader
+     * @param StoreManagerInterface           $storeManager       Magento Store Manager interface
      *
      * @internal param \Magento\Framework\App\Config\ScopePool $scopePool Scoped Configuration reader
      */
@@ -69,7 +69,7 @@ class ContainerStore
         Initial $initialConfig,
         Converter $converter,
         ScopedFactory $collectionFactory,
-        RequestContainerInterface $containerInterface,
+        SearchRequestContainerInterface $containerInterface,
         Container $containerReader,
         StoreManagerInterface $storeManager
     ) {
@@ -90,10 +90,6 @@ class ContainerStore
      */
     public function read($code = null)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-
         list($containerCode, $storeId) = explode("|", $code);
         $store = $this->storeManager->getStore($storeId);
 
@@ -103,10 +99,8 @@ class ContainerStore
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_STORE_CONTAINERS, 'scopeCode' => $code]
+            ['scope' => SearchRequestContainerInterface::SCOPE_STORE_CONTAINERS, 'scopeCode' => $code]
         );
-
-        //$logger->info("ITS ME THE READER ---> CONTAINER STORE");
 
         $dbStoreConfig = [];
         foreach ($collection as $item) {
@@ -115,9 +109,6 @@ class ContainerStore
 
         $dbStoreConfig = $this->converter->convert($dbStoreConfig);
         $config = array_replace_recursive($config, $dbStoreConfig);
-
-        //$logger->info(print_r($config['smile_elasticsuite_relevance'], true));
-        //$logger->info("THAT WAS THE CONTAINER STORE READER");
 
         return $config;
     }

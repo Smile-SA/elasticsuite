@@ -13,7 +13,7 @@
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
 
 use Magento\Framework\App\RequestInterface;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 
 /**
  * Relevance configuration scope
@@ -48,8 +48,8 @@ class ScopeDefiner extends \Magento\Config\Model\Config\ScopeDefiner
     {
         return $this->request->getParam(
             'store'
-        ) ? RequestContainerInterface::SCOPE_STORE_CONTAINERS : ($this->request->getParam(
+        ) ? SearchRequestContainerInterface::SCOPE_STORE_CONTAINERS : ($this->request->getParam(
             'container'
-        ) ? RequestContainerInterface::SCOPE_CONTAINERS : RequestContainerInterface::SCOPE_TYPE_DEFAULT);
+        ) ? SearchRequestContainerInterface::SCOPE_CONTAINERS : SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT);
     }
 }

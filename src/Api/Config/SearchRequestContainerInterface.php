@@ -22,7 +22,7 @@ namespace Smile\ElasticSuiteCore\Api\Config;
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 
-interface RequestContainerInterface
+interface SearchRequestContainerInterface
 {
     const SCOPE_TYPE_DEFAULT = "default";
     const SCOPE_CONTAINERS = "containers";

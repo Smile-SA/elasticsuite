@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
@@ -12,14 +11,6 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-/**
- * _________________________________________________
- *
- * @category Smile
- * @package  Smile_ElasticSuite______________
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
- */
-
 namespace Smile\ElasticSuiteCore\Setup;
 
 use \Magento\Framework\Setup\InstallSchemaInterface;
@@ -27,12 +18,21 @@ use \Magento\Framework\Setup\ModuleContextInterface;
 use \Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
- * @codeCoverageIgnore
+ * Core Module Installer
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * {@inheritdoc}
+     * Installs DB schema for a module
+     *
+     * @param SchemaSetupInterface   $setup   The setup interface
+     * @param ModuleContextInterface $context The module Context
+     *
+     * @return void
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {

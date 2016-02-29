@@ -20,7 +20,7 @@ use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 
 /**
  * Relevance Configuration Model
@@ -32,22 +32,22 @@ use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
 class Config extends \Magento\Config\Model\Config
 {
     /**
-     * @var RequestContainerInterface
+     * @var SearchRequestContainerInterface
      */
     protected $requestConfiguration;
 
     /**
      * Class constructor
      *
-     * @param ReinitableConfigInterface $config               Configuration interface
-     * @param ManagerInterface          $eventManager         Event Manager
-     * @param Structure                 $configStructure      Configuration Structure
-     * @param TransactionFactory        $transactionFactory   Transaction Factory
-     * @param Loader                    $configLoader         Configuration Loader
-     * @param ValueFactory              $configValueFactory   Configuration Value Factory
-     * @param StoreManagerInterface     $storeManager         Store Manager
-     * @param RequestContainerInterface $requestConfiguration Request containers interface
-     * @param array                     $data                 The data
+     * @param ReinitableConfigInterface       $config               Configuration interface
+     * @param ManagerInterface                $eventManager         Event Manager
+     * @param Structure                       $configStructure      Configuration Structure
+     * @param TransactionFactory              $transactionFactory   Transaction Factory
+     * @param Loader                          $configLoader         Configuration Loader
+     * @param ValueFactory                    $configValueFactory   Configuration Value Factory
+     * @param StoreManagerInterface           $storeManager         Store Manager
+     * @param SearchRequestContainerInterface $requestConfiguration Request containers interface
+     * @param array                           $data                 The data
      */
     public function __construct(
         ReinitableConfigInterface $config,
@@ -57,7 +57,7 @@ class Config extends \Magento\Config\Model\Config
         Loader $configLoader,
         ValueFactory $configValueFactory,
         StoreManagerInterface $storeManager,
-        RequestContainerInterface $requestConfiguration,
+        SearchRequestContainerInterface $requestConfiguration,
         array $data = []
     ) {
         $this->requestConfiguration = $requestConfiguration;
@@ -93,11 +93,8 @@ class Config extends \Magento\Config\Model\Config
         $oldConfig = $this->_getConfig(true);
 
         $deleteTransaction = $this->_transactionFactory->create();
-        /* @var $deleteTransaction \Magento\Framework\DB\Transaction */
         $saveTransaction = $this->_transactionFactory->create();
-        /* @var $saveTransaction \Magento\Framework\DB\Transaction */
 
-        // Extends for old config data
         $extraOldGroups = [];
 
         foreach ($groups as $groupId => $groupData) {
@@ -116,17 +113,12 @@ class Config extends \Magento\Config\Model\Config
         try {
             $deleteTransaction->delete();
             $saveTransaction->save();
-
-            // re-init configuration
             $this->_appConfig->reinit();
-
-            // website and store codes can be used in event implementation, so set them as well
             $this->_eventManager->dispatch(
                 "admin_system_config_changed_section_{$this->getSection()}",
                 ['website' => $this->getWebsite(), 'store' => $this->getStore()]
             );
         } catch (\Exception $e) {
-            // re-init configuration
             $this->_appConfig->reinit();
             throw $e;
         }
@@ -153,17 +145,13 @@ class Config extends \Magento\Config\Model\Config
      * Return formatted config data for current section
      *
      * @param bool $full Simple config structure or not
+     *
      * @return array
      */
+    // @codingStandardsIgnoreStart Method is inherited
     protected function _getConfig($full = true)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info(get_class($this->_configLoader));
-        $logger->info($this->getSection());
-        $logger->info($this->getScope());
-        $logger->info($this->getScopeCode());
+        // @codingStandardsIgnoreEnd
 
         return $this->_configLoader->getConfigByPath(
             $this->getSection(),
@@ -176,7 +164,6 @@ class Config extends \Magento\Config\Model\Config
     /**
      * Get scope name and scopeId
      *
-     * @todo refactor to scope resolver
      * @return void
      */
     private function initScope()

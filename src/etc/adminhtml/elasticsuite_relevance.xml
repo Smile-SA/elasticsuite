@@ -138,5 +138,29 @@
             </group>
 
         </section>
+
+        <tab id="catalog" translate="label" sortOrder="200">
+            <label>Catalog</label>
+        </tab>
+        <section id="smile_elasticsuite_relevance_catalog" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+            <tab>catalog</tab>
+            <label>Catalog Relevance Configuration</label>
+            <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
+
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>General Relevance settings</label>
+                <field id="enable_search_in_categories_name" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Enable Search in categories name</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="category_name_weight" translate="label" type="text" sortOrder="20" showInDefault="0" showInContainer="0" showInStore="1">
+                    <label>Category name weight</label>
+                    <depends>
+                        <field id="enable_search_in_categories_name">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+
     </system>
 </config>

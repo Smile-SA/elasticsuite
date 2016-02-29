@@ -15,7 +15,7 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 use Smile\ElasticSuiteCore\Model\Relevance\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 
 /**
@@ -48,7 +48,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $collectionFactory;
 
     /**
-     * @var RequestContainerInterface
+     * @var SearchRequestContainerInterface
      */
     protected $containerInterface;
 
@@ -58,17 +58,17 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     protected $defaultReader;
 
     /**
-     * @param Initial                   $initialConfig      Initial Configuration
-     * @param Converter                 $converter          Configuration Converter
-     * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
-     * @param RequestContainerInterface $containerInterface Request Containers interface
-     * @param DefaultReader             $defaultReader      The default reader
+     * @param Initial                         $initialConfig      Initial Configuration
+     * @param Converter                       $converter          Configuration Converter
+     * @param ScopedFactory                   $collectionFactory  Configuration Collection Factory
+     * @param SearchRequestContainerInterface $containerInterface Request Containers interface
+     * @param DefaultReader                   $defaultReader      The default reader
      */
     public function __construct(
         Initial $initialConfig,
         Converter $converter,
         ScopedFactory $collectionFactory,
-        RequestContainerInterface $containerInterface,
+        SearchRequestContainerInterface $containerInterface,
         DefaultReader $defaultReader
     ) {
         $this->initialConfig = $initialConfig;
@@ -87,20 +87,14 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
      */
     public function read($code = null)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-
         $config = array_replace_recursive(
-            $this->defaultReader->read(RequestContainerInterface::SCOPE_TYPE_DEFAULT),
+            $this->defaultReader->read(SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT),
             $this->initialConfig->getData($code)
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
+            ['scope' => SearchRequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
         );
-
-        //$logger->info("ITS ME THE READER ---> CONTAINER");
 
         $dbContainerConfig = [];
         foreach ($collection as $item) {
@@ -112,9 +106,6 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
         if (count($dbContainerConfig)) {
             $config = array_replace_recursive($config, $dbContainerConfig);
         }
-
-        //$logger->info(print_r($config['smile_elasticsuite_relevance'], true));
-        //$logger->info("THAT WAS THE CONTAINER READER");
 
         return $config;
     }

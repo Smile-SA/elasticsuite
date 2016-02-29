@@ -22,7 +22,7 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config;
  */
 class Value extends \Magento\Framework\App\Config\Value
 {
-    //@TODO This class cannot be deleted otherwise instanciation of the collection
+    // @TODO This class cannot be deleted otherwise instanciation of the collection
     // Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data
     // throws a fatal error.
 }

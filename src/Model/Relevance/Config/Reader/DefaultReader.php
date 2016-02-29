@@ -15,7 +15,7 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 use Smile\ElasticSuiteCore\Model\Relevance\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
-use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
+use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 
 /**
  * Default level Relevance Configuration Reader
@@ -42,21 +42,21 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
     protected $collectionFactory;
 
     /**
-     * @var RequestContainerInterface
+     * @var SearchRequestContainerInterface
      */
     protected $containerInterface;
 
     /**
-     * @param Initial                   $initialConfig      Initial Configuration
-     * @param Converter                 $converter          Configuration Converter
-     * @param ScopedFactory             $collectionFactory  Configuration Collection Factory
-     * @param RequestContainerInterface $containerInterface Request Containers interface
+     * @param Initial                         $initialConfig      Initial Configuration
+     * @param Converter                       $converter          Configuration Converter
+     * @param ScopedFactory                   $collectionFactory  Configuration Collection Factory
+     * @param SearchRequestContainerInterface $containerInterface Request Containers interface
      */
     public function __construct(
         Initial $initialConfig,
         Converter $converter,
         ScopedFactory $collectionFactory,
-        RequestContainerInterface $containerInterface
+        SearchRequestContainerInterface $containerInterface
     ) {
         $this->initialConfig = $initialConfig;
         $this->converter = $converter;
@@ -74,12 +74,8 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
      */
     public function read($scope = null)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-
-        $scope = $scope === null ? RequestContainerInterface::SCOPE_TYPE_DEFAULT : $scope;
-        if ($scope !== RequestContainerInterface::SCOPE_TYPE_DEFAULT) {
+        $scope = $scope === null ? SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT : $scope;
+        if ($scope !== SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT) {
             throw new \Magento\Framework\Exception\LocalizedException(__("Only default scope allowed"));
         }
 
@@ -89,8 +85,6 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
             ['scope' => $scope]
         );
 
-        //$logger->info("ITS ME THE READER ---> DEFAULT");
-
         $dbDefaultConfig = [];
         foreach ($collection as $item) {
             $dbDefaultConfig[$item->getPath()] = $item->getValue();
@@ -98,10 +92,6 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
 
         $dbDefaultConfig = $this->converter->convert($dbDefaultConfig);
         $config = array_replace_recursive($config, $dbDefaultConfig);
-
-        //$logger->info(print_r($config['smile_elasticsuite_relevance'], true));
-        //$logger->info(print_r(array_keys($config), true));
-        //$logger->info("THAT WAS THE DEFAULT READER");
 
         return $config;
     }
