@@ -158,6 +158,16 @@
             <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
             <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\FlyweightFactory</argument>
             <argument name="scopeDefiner" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopeDefiner</argument>
+            <argument name="tabIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Tab</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\StructureProxy" type="Magento\Config\Model\Config\Structure" shared="false">
+        <arguments>
+            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
+            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\FlyweightFactory</argument>
+            <argument name="scopeDefiner" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\ScopeDefiner</argument>
+            <argument name="tabIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Tab</argument>
         </arguments>
     </virtualType>
 
@@ -306,13 +316,13 @@
     <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group" shared="false">
         <arguments>
             <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field</argument>
-            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\Mapper</argument>
+            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\MapperProxy</argument>
         </arguments>
     </type>
 
     <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Field" shared="false">
         <arguments>
-            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\Mapper</argument>
+            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\MapperProxy</argument>
         </arguments>
     </type>
 
@@ -323,8 +333,8 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\Mapper"
-                 type="Magento\Config\Model\Config\Structure\Element\Dependency\Mapper">
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Dependency\MapperProxy"
+                 type="Magento\Config\Model\Config\Structure\Element\Dependency\Mapper\Proxy">
         <arguments>
             <argument name="fieldLocator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
         </arguments>
