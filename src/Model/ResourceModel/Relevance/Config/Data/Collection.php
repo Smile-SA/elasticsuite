@@ -41,6 +41,8 @@ class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collect
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Define resource model
      *
      * @return void

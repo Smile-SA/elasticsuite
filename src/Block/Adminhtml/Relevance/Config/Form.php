@@ -207,6 +207,8 @@ class Form extends \Magento\Config\Block\System\Config\Form
     /**
      * Initialize objects required to render config form
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * @return $this
      */
     // @codingStandardsIgnoreStart Method is inherited
@@ -232,6 +234,8 @@ class Form extends \Magento\Config\Block\System\Config\Form
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * @param \Magento\Config\Model\Config\Structure\Element\Field $field
      * @param \Magento\Framework\Data\Form\Element\Fieldset        $fieldset
      * @param string                                               $path
@@ -250,19 +254,18 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $inherit = true;
         $data = null;
 
+        $data = $this->getConfigValue($path);
         if (array_key_exists($path, $this->_configData)) {
             $data = $this->_configData[$path];
             $inherit = false;
         } elseif ($field->getConfigPath() !== null) {
             $data = $this->getConfigValue($field->getConfigPath());
-        } else {
-            $data = $this->getConfigValue($path);
         }
+
         $fieldRendererClass = $field->getFrontendModel();
+        $fieldRenderer      = $this->_fieldRenderer;
         if ($fieldRendererClass) {
             $fieldRenderer = $this->_layout->getBlockSingleton($fieldRendererClass);
-        } else {
-            $fieldRenderer = $this->_fieldRenderer;
         }
 
         $fieldRenderer->setForm($this);

@@ -22,8 +22,9 @@ namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config;
  */
 class Data extends \Magento\Config\Model\ResourceModel\Config\Data
 {
-
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Define main table
      *
      * @return void

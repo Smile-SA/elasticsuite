@@ -23,6 +23,8 @@ namespace Smile\ElasticSuiteCore\Model\ResourceModel\Relevance;
 class Config extends \Magento\Config\Model\ResourceModel\Config
 {
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Define main table
      *
      * @return void

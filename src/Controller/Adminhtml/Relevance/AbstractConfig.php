@@ -73,6 +73,8 @@ abstract class AbstractConfig extends AbstractAction
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Check is allow modify system configuration
      *
      * @return bool

@@ -40,6 +40,7 @@ class Edit extends \Magento\Backend\Block\Widget
      * @var string
      */
     // @codingStandardsIgnoreStart Property is inherited
+    /** @SuppressWarnings(PHPMD.CamelCasePropertyName) **/
     protected $_template = 'Magento_Config::system/config/edit.phtml';
     // @codingStandardsIgnoreEnd
 
@@ -92,6 +93,7 @@ class Edit extends \Magento\Backend\Block\Widget
      * @return \Magento\Framework\View\Element\AbstractBlock
      */
     // @codingStandardsIgnoreStart Method is inherited
+    /** @SuppressWarnings(PHPMD.CamelCaseMethodName) **/
     protected function _prepareLayout()
     {
         // @codingStandardsIgnoreEnd

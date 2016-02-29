@@ -24,6 +24,8 @@ class Field extends \Magento\Config\Block\System\Config\Form\Field
     /**
      * Check if inheritance checkbox has to be rendered
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element The form element
      *
      * @return bool
@@ -37,6 +39,8 @@ class Field extends \Magento\Config\Block\System\Config\Form\Field
 
     /**
      * Retrieve label for the inheritance checkbox
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element The form element
      *

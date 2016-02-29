@@ -164,9 +164,9 @@ class Switcher extends Template
     {
         if ($this->hasData('container_var_name')) {
             return (string) $this->getData('container_var_name');
-        } else {
-            return (string) $this->defaultContainerVar;
         }
+
+        return (string) $this->defaultContainerVar;
     }
 
     /**
@@ -192,9 +192,9 @@ class Switcher extends Template
     {
         if ($this->hasData('store_var_name')) {
             return (string) $this->getData('store_var_name');
-        } else {
-            return (string) $this->defaultStoreVarName;
         }
+
+        return (string) $this->defaultStoreVarName;
     }
 
     /**
@@ -207,12 +207,12 @@ class Switcher extends Template
     public function getStoreCollection($group)
     {
         if (!$group instanceof \Magento\Store\Model\Group) {
-            $group = $this->_storeGroupFactory->create()->load($group);
+            $group = $this->storeGroupFactory->create()->load($group);
         }
         $stores = $group->getStoreCollection();
-        $_storeIds = $this->getStoreIds();
-        if (!empty($_storeIds)) {
-            $stores->addIdFilter($_storeIds);
+        $storeIds = $this->getStoreIds();
+        if (!empty($storeIds)) {
+            $stores->addIdFilter($storeIds);
         }
 
         return $stores;
@@ -482,6 +482,8 @@ class Switcher extends Template
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * @return string
      */
     // @codingStandardsIgnoreStart Method is inherited

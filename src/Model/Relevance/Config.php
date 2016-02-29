@@ -37,6 +37,11 @@ class Config extends \Magento\Config\Model\Config
     protected $requestConfiguration;
 
     /**
+     * @var bool If getting full config or not
+     */
+    protected $fullConfig;
+
+    /**
      * Class constructor
      *
      * @param ReinitableConfigInterface       $config               Configuration interface
@@ -61,6 +66,7 @@ class Config extends \Magento\Config\Model\Config
         array $data = []
     ) {
         $this->requestConfiguration = $requestConfiguration;
+        $this->fullConfig           = true;
         parent::__construct(
             $config,
             $eventManager,
@@ -71,6 +77,28 @@ class Config extends \Magento\Config\Model\Config
             $storeManager,
             $data
         );
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isFullConfig()
+    {
+        return $this->fullConfig;
+    }
+
+    /**
+     * Set flag to load full config or not
+     *
+     * @param boolean $fullConfig If we should grab full config or not
+     *
+     * @return Config
+     */
+    public function setFullConfig($fullConfig)
+    {
+        $this->fullConfig = $fullConfig;
+
+        return $this;
     }
 
     /**
@@ -90,7 +118,7 @@ class Config extends \Magento\Config\Model\Config
             return $this;
         }
 
-        $oldConfig = $this->_getConfig(true);
+        $oldConfig = $this->getConfig();
 
         $deleteTransaction = $this->_transactionFactory->create();
         $saveTransaction = $this->_transactionFactory->create();
@@ -135,7 +163,9 @@ class Config extends \Magento\Config\Model\Config
     {
         if ($this->_configData === null) {
             $this->initScope();
-            $this->_configData = $this->_getConfig(false);
+            $this->setFullConfig(false);
+            $this->_configData = $this->_getConfig();
+            $this->setFullConfig(true);
         }
 
         return $this->_configData;
@@ -144,12 +174,10 @@ class Config extends \Magento\Config\Model\Config
     /**
      * Return formatted config data for current section
      *
-     * @param bool $full Simple config structure or not
-     *
      * @return array
      */
     // @codingStandardsIgnoreStart Method is inherited
-    protected function _getConfig($full = true)
+    protected function getConfig()
     {
         // @codingStandardsIgnoreEnd
 
@@ -157,7 +185,7 @@ class Config extends \Magento\Config\Model\Config
             $this->getSection(),
             $this->getScope(),
             $this->getScopeCode(),
-            $full
+            $this->isFullConfig()
         );
     }
 

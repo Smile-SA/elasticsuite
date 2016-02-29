@@ -69,6 +69,8 @@ class Scoped extends \Magento\Framework\Model\ResourceModel\Db\Collection\Abstra
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Initialize select
      *
      * @return $this

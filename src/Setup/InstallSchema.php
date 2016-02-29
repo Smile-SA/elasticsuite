@@ -27,6 +27,8 @@ use \Magento\Framework\Setup\SchemaSetupInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * Installs DB schema for a module
      *
      * @param SchemaSetupInterface   $setup   The setup interface
@@ -34,8 +36,10 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @return void
      */
+    // @codingStandardsIgnoreStart Conform to interface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
+        // @codingStandardsIgnoreEnd
         $connection = $setup->getConnection();
 
         $setup->startSetup();
