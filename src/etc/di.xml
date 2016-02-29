@@ -267,11 +267,17 @@
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section" shared="false">
+    <!--<type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section" shared="false">
         <arguments>
             <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group</argument>
         </arguments>
-    </type>
+    </type>-->
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section"
+                 type="Magento\Config\Model\Config\Structure\Element\Section" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group</argument>
+        </arguments>
+    </virtualType>
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group"
                  type="Magento\Config\Model\Config\Structure\Element\Iterator\Group"
                  shared="false">
@@ -306,12 +312,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section"
-                 type="Magento\Config\Model\Config\Structure\Element\Section" shared="false">
-        <arguments>
-            <argument name="childrenIterator" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Iterator\Group</argument>
-        </arguments>
-    </virtualType>
+
 
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field"
                  type="Magento\Config\Model\Config\Structure\Element\Iterator\Field" shared="false">
@@ -320,11 +321,6 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group"
-                 type="Magento\Config\Model\Config\Structure\Element\Group" shared="false">
-        <arguments>
-            <argument name="childrenIterator" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Iterator\Field</argument>
-        </arguments>
-    </virtualType>-->
+   -->
 
 </config>

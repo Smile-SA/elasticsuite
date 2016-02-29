@@ -23,11 +23,6 @@ namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element;
 class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\FlyweightFactory
 {
     /**
-     * @var \Magento\Framework\ObjectManagerInterface
-     */
-    protected $objectManager;
-
-    /**
      * Map of flyweight types
      *
      * @var array
@@ -39,16 +34,6 @@ class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\Fl
     ];
 
     /**
-     * Constructor
-     *
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager The object manager
-     */
-    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    /**
      * Create element flyweight flyweight
      *
      * @param string $type The element type
@@ -57,10 +42,6 @@ class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\Fl
      */
     public function create($type)
     {
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info("RORUA FACTORY! CREATING {$type}");
-        return $this->objectManager->create($this->flyweightMap[$type]);
+        return $this->_objectManager->create($this->flyweightMap[$type]);
     }
 }
