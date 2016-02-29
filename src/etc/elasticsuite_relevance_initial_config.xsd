@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * This schema must be used to validate config.xml files
+ *
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="relevance" type="configType" />
+    <xs:complexType name="configType" mixed="true">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="default"  type="mixedDataType" />
+            <xs:element name="containers" type="containersScopeType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="stores" type="containersScopeType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="containersScopeType">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="container" type="containerType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="containerType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any processContents="lax" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="store_code" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="mixedDataType">
+        <xs:choice>
+            <xs:any processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
+    </xs:complexType>
+</xs:schema>

@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 
-use Magento\Framework\App\Config\Initial;
+use Smile\ElasticSuiteCore\Model\Relevance\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
 use Magento\Store\Model\StoreManagerInterface;
@@ -99,7 +99,7 @@ class ContainerStore
 
         $config = array_replace_recursive(
             $this->containerReader->read($containerCode),
-            $this->initialConfig->getData("containers|stores|{$store->getCode()}")
+            $this->initialConfig->getData("{$containerCode}|{$store->getCode()}")
         );
 
         $collection = $this->collectionFactory->create(

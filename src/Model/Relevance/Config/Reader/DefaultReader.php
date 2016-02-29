@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 
-use Magento\Framework\App\Config\Initial;
+use Smile\ElasticSuiteCore\Model\Relevance\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data\Collection\ScopedFactory;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;

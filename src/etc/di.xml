@@ -256,4 +256,20 @@
             <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration\Context</argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Reader\Initial">
+        <arguments>
+            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Initial\Converter</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Initial\Converter">
+        <arguments>
+            <argument name="nodeMap" xsi:type="array">
+                <item name="default" xsi:type="string">/relevance/default</item>
+                <item name="containers" xsi:type="string">/relevance/containers/*</item>
+                <item name="stores" xsi:type="string">/relevance/stores/*</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

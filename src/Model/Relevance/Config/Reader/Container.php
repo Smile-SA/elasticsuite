@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Reader;
 
-use Magento\Framework\App\Config\Initial;
+use Smile\ElasticSuiteCore\Model\Relevance\Config\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
 use Smile\ElasticSuiteCore\Api\Config\RequestContainerInterface;
@@ -93,7 +93,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
 
         $config = array_replace_recursive(
             $this->defaultReader->read(RequestContainerInterface::SCOPE_TYPE_DEFAULT),
-            $this->initialConfig->getData("containers|{$code}")
+            $this->initialConfig->getData($code)
         );
 
         $collection = $this->collectionFactory->create(
