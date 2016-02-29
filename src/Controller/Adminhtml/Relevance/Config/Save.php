@@ -78,13 +78,10 @@ class Save extends AbstractConfig
      */
     public function execute()
     {
-        $logger = $this->_objectManager->get('Psr\Log\LoggerInterface');
         try {
             $section = $this->getRequest()->getParam('section');
             $container = $this->getRequest()->getParam('container');
             $store = $this->getRequest()->getParam('store');
-
-            $logger->debug(print_r($this->getRequest()->getParams(), true));
 
             $configData = [
                 'section' => $section,
@@ -97,17 +94,13 @@ class Save extends AbstractConfig
             $configModel = $this->configFactory->create(['data' => $configData]);
             $configModel->save();
 
-            $logger->debug(get_class($configModel));
             $this->messageManager->addSuccess(__('You saved the configuration.'));
-
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $logger->critical($e);
             $messages = explode("\n", $e->getMessage());
             foreach ($messages as $message) {
                 $this->messageManager->addError($message);
             }
         } catch (\Exception $e) {
-            $logger->critical($e);
             $this->messageManager->addException(
                 $e,
                 __('Something went wrong while saving this configuration:') . ' ' . $e->getMessage()
