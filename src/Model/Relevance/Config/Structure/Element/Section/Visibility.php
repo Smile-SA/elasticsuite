@@ -31,15 +31,21 @@ class Visibility extends \Smile\ElasticSuiteCore\Model\Relevance\Config\Structur
      */
     public function isVisible(\Magento\Config\Model\Config\Structure\AbstractElement $element, $scope)
     {
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info("RORUA TESTING :: " . get_class($this));
         if (!$element->isAllowed()) {
             return false;
         }
 
         $isVisible = parent::isVisible($element, $scope);
+        $logger->info("PARENT RESULT : " . (int) $isVisible);
         if ($isVisible) {
             $isVisible = $element->hasChildren() || $element->getFrontendModel();
         }
 
+        $logger->info("SECTION RESULT : " . (int) $isVisible);
         return $isVisible;
     }
 }

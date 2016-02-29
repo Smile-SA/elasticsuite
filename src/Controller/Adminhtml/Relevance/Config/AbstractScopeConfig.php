@@ -18,6 +18,7 @@ use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Magento\Config\Model\Config;
 use Magento\Config\Model\Config\Structure;
 use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
+use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\AbstractConfig;
 
 /**
  * Abstract scoped configuration edition container
@@ -26,7 +27,7 @@ use Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-abstract class AbstractScopeConfig extends \Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance\AbstractConfig
+abstract class AbstractScopeConfig extends AbstractConfig
 {
     /**
      * @var Config
@@ -68,6 +69,6 @@ abstract class AbstractScopeConfig extends \Smile\ElasticSuiteCore\Controller\Ad
             $this->backendConfig->setContainer($container);
         }
 
-        return parent::isSectionAllowed($sectionId);
+        return $this->sectionChecker->isSectionAllowed($sectionId);
     }
 }

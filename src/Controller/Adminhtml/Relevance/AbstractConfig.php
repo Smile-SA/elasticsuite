@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Relevance;
 
+use Magento\Backend\App\AbstractAction;
 use Magento\Backend\App\Action\Context;
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Magento\Config\Model\Config\Structure;
@@ -26,7 +27,7 @@ use Magento\Framework\App\RequestInterface;
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
+abstract class AbstractConfig extends AbstractAction
 {
     /**
      * @var Structure
@@ -82,7 +83,7 @@ abstract class AbstractConfig extends \Magento\Backend\App\AbstractAction
         //@codingStandardsIgnoreEnd
         $sectionId = $this->_request->getParam('section');
 
-        return /*$this->configStructure->getElement($sectionId)->isAllowed()
-        || */ $this->_authorization->isAllowed('Smile_ElasticsuiteCore::manage_relevance');
+        return $this->configStructure->getElement($sectionId)->isAllowed()
+        ||  $this->_authorization->isAllowed('Smile_ElasticsuiteCore::manage_relevance');
     }
 }

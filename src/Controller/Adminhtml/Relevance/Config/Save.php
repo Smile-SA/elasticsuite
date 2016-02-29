@@ -113,9 +113,6 @@ class Save extends AbstractConfig
             );
         }
 
-        // @Todo something with this
-        //$this->_saveState($this->getRequest()->getPost('config_state'));
-
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
 

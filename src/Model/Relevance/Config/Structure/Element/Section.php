@@ -33,7 +33,7 @@ class Section extends \Magento\Config\Model\Config\Structure\Element\Section
     private $visibility;
 
     /**
-     * Group constructor.
+     * Section constructor.
      *
      * @param StoreManagerInterface  $storeManager     The store manager
      * @param Manager                $moduleManager    The module manager
@@ -59,6 +59,30 @@ class Section extends \Magento\Config\Model\Config\Structure\Element\Section
      */
     public function isVisible()
     {
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        $logger->info("RORUA VISIBILITY :: " . get_class($this));
         return $this->visibility->isVisible($this, $this->_scope);
+    }
+
+    /**
+     * Set element data
+     *
+     * @param array $data
+     * @param string $scope
+     * @return void
+     */
+    public function setData(array $data, $scope)
+    {
+        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
+        $logger = new \Zend\Log\Logger();
+        $logger->addWriter($writer);
+        //$logger->info(print_r($data, true));
+        $logger->info(print_r($scope, true));
+        $logger->info("DATA WERE SET !");
+        //$e = new \Exception();
+        //$logger->info($e->getTraceAsString());
+        parent::setData($data, $scope);
     }
 }
