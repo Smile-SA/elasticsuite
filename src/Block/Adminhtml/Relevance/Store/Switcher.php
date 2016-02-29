@@ -456,6 +456,8 @@ class Switcher extends Template
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Internal constructor
      *
      * @return void
