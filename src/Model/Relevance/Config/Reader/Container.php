@@ -100,7 +100,7 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
             ['scope' => RequestContainerInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
         );
 
-        $logger->info("ITS ME THE READER ---> CONTAINER");
+        //$logger->info("ITS ME THE READER ---> CONTAINER");
 
         $dbContainerConfig = [];
         foreach ($collection as $item) {
@@ -113,8 +113,8 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
             $config = array_replace_recursive($config, $dbContainerConfig);
         }
 
-        $logger->info(print_r($config['smile_elasticsuite_relevance'], true));
-        $logger->info("THAT WAS THE CONTAINER READER");
+        //$logger->info(print_r($config['smile_elasticsuite_relevance'], true));
+        //$logger->info("THAT WAS THE CONTAINER READER");
 
         return $config;
     }

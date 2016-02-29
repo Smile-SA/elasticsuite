@@ -93,6 +93,22 @@ class Form extends \Magento\Config\Block\System\Config\Form
     }
 
     /**
+     * Check if can use website value
+     *
+     * @param int $fieldValue The field value
+     *
+     * @return boolean
+     */
+    public function canUseContainerValue($fieldValue)
+    {
+        if ($this->getScope() == self::SCOPE_STORE_CONTAINERS && $fieldValue) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Retrieve label for scope
      *
      * @param Field $field The field
@@ -218,5 +234,100 @@ class Form extends \Magento\Config\Block\System\Config\Form
         //$this->_logger->debug(print_r($this->_configData, true));
 
         return $this;
+    }
+
+    // @codingStandardsIgnoreStart Method is inherited
+    /**
+     * @param \Magento\Config\Model\Config\Structure\Element\Field $field
+     * @param \Magento\Framework\Data\Form\Element\Fieldset        $fieldset
+     * @param string                                               $path
+     * @param string                                               $fieldPrefix
+     * @param string                                               $labelPrefix
+     */
+    protected function _initElement(
+        \Magento\Config\Model\Config\Structure\Element\Field $field,
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
+        $path,
+        $fieldPrefix = '',
+        $labelPrefix = ''
+    ) {
+        // @codingStandardsIgnoreEnd
+        $inherit = true;
+        $data = null;
+
+        if (array_key_exists($path, $this->_configData)) {
+            $data = $this->_configData[$path];
+            $inherit = false;
+        } elseif ($field->getConfigPath() !== null) {
+            $data = $this->getConfigValue($field->getConfigPath());
+        } else {
+            $data = $this->getConfigValue($path);
+        }
+        $fieldRendererClass = $field->getFrontendModel();
+        if ($fieldRendererClass) {
+            $fieldRenderer = $this->_layout->getBlockSingleton($fieldRendererClass);
+        } else {
+            $fieldRenderer = $this->_fieldRenderer;
+        }
+
+        $fieldRenderer->setForm($this);
+        $fieldRenderer->setConfigData($this->_configData);
+
+        $elementName = $this->_generateElementName($field->getPath(), $fieldPrefix);
+        $elementId = $this->_generateElementId($field->getPath($fieldPrefix));
+
+        if ($field->hasBackendModel()) {
+            $backendModel = $field->getBackendModel();
+            $backendModel->setPath(
+                $path
+            )->setValue(
+                $data
+            )->setContainer(
+                $this->getContainerCode()
+            )->setStore(
+                $this->getStoreCode()
+            )->afterLoad();
+            $data = $backendModel->getValue();
+        }
+
+        $dependencies = $field->getDependencies($fieldPrefix, $this->getStoreCode());
+        $this->_populateDependenciesBlock($dependencies, $elementId, $elementName);
+
+        $sharedClass = $this->_getSharedCssClass($field);
+        $requiresClass = $this->_getRequiresCssClass($field, $fieldPrefix);
+
+        $formField = $fieldset->addField(
+            $elementId,
+            $field->getType(),
+            [
+                'name' => $elementName,
+                'label' => $field->getLabel($labelPrefix),
+                'comment' => $field->getComment($data),
+                'tooltip' => $field->getTooltip(),
+                'hint' => $field->getHint(),
+                'value' => $data,
+                'inherit' => $inherit,
+                'class' => $field->getFrontendClass() . $sharedClass . $requiresClass,
+                'field_config' => $field->getData(),
+                'scope' => $this->getScope(),
+                'scope_id' => $this->getScopeId(),
+                'scope_label' => $this->getScopeLabel($field),
+                'can_use_default_value' => $this->canUseDefaultValue($field->showInDefault()),
+                'can_use_container_value' => $this->canUseContainerValue($field->showInContainer()),
+            ]
+        );
+
+        $field->populateInput($formField);
+
+        if ($field->hasValidation()) {
+            $formField->addClass($field->getValidation());
+        }
+        if ($field->getType() == 'multiselect') {
+            $formField->setCanBeEmpty($field->canBeEmpty());
+        }
+        if ($field->hasOptions()) {
+            $formField->setValues($field->getOptions());
+        }
+        $formField->setRenderer($fieldRenderer);
     }
 }

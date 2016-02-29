@@ -101,12 +101,6 @@
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure">
-        <arguments>
-            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Data</argument>
-        </arguments>
-    </type>
-
     <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Value" type="Magento\Framework\App\Config\Value">
         <arguments>
             <argument name="resource" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Relevance\Config\Data</argument>
@@ -223,7 +217,7 @@
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure</argument>
             <argument name="configFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Factory</argument>
-            <argument name="fieldFactory" xsi:type="object">Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\FieldFactory</argument>
+            <argument name="fieldFactory" xsi:type="object">Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Config\Form\Field\Factory</argument>
             <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>
@@ -272,4 +266,65 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group</argument>
+        </arguments>
+    </type>
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Group"
+                 type="Magento\Config\Model\Config\Structure\Element\Iterator\Group"
+                 shared="false">
+        <arguments>
+            <argument name="element" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field">
+        <arguments>
+            <argument name="groupFlyweight" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group\Proxy</argument>
+        </arguments>
+    </type>
+    <!--<virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field"
+                 type="Magento\Config\Model\Config\Structure\Element\Iterator\Field" shared="false">
+        <arguments>
+            <argument name="groupFlyweight" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group\Proxy</argument>
+            <argument name="fieldFlyWeight" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Field</argument>
+        </arguments>
+    </virtualType>-->
+
+    <!--<virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Tab"
+                 type="Magento\Config\Model\Config\Structure\Element\Tab" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Iterator\Section</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Section"
+                 type="Magento\Config\Model\Config\Structure\Element\Section" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Iterator\Group</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Iterator\Field"
+                 type="Magento\Config\Model\Config\Structure\Element\Iterator\Field" shared="false">
+        <arguments>
+            <argument name="groupFlyweight" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Group\Proxy</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\Element\Group"
+                 type="Magento\Config\Model\Config\Structure\Element\Group" shared="false">
+        <arguments>
+            <argument name="childrenIterator" xsi:type="object">Magento\Config\Model\Config\Structure\Element\Iterator\Field</argument>
+        </arguments>
+    </virtualType>-->
+
 </config>

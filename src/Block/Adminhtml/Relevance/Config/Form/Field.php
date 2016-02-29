@@ -48,7 +48,7 @@ class Field extends \Magento\Config\Block\System\Config\Form\Field
         // @codingStandardsIgnoreEnd
         $checkboxLabel = __('Use Default');
         if ($element->getCanUseContainerValue()) {
-            $checkboxLabel = __('Use Cpntainer');
+            $checkboxLabel = __('Use Container');
         }
 
         return $checkboxLabel;
