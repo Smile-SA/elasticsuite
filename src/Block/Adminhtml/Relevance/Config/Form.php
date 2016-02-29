@@ -119,7 +119,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
     {
         $showInStore = $field->showInStore();
 
-        $showInContainer = true ;//$field->showInContainer();
+        $showInContainer = $field->showInContainer();
 
         if ($showInStore == 1) {
             return $this->_scopeLabels[self::SCOPE_STORE_CONTAINERS];
@@ -227,11 +227,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $this->_configData = $this->_configDataObject->load();
         $this->_fieldsetRenderer = $this->_fieldsetFactory->create();
         $this->_fieldRenderer = $this->_fieldFactory->create();
-
-        $this->_logger->debug("COUCOU");
-        $this->_logger->debug(get_class($this->_configDataObject));
-        $this->_logger->debug(get_class($this->_configFactory));
-        //$this->_logger->debug(print_r($this->_configData, true));
 
         return $this;
     }

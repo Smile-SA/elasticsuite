@@ -122,4 +122,3 @@ class Edit extends \Magento\Backend\Block\Widget
         return parent::_prepareLayout();
     }
 }
-

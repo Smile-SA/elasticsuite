@@ -11,6 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCore\Search\RelevanceConfiguration;
+
 use Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface;
 
 /**
