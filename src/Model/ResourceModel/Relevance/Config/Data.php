@@ -37,6 +37,8 @@ class Data extends \Magento\Config\Model\ResourceModel\Config\Data
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * Validate unique configuration data before save
      * Set id to object if exists configuration instead of throw exception
      *

@@ -19,6 +19,8 @@ use Magento\Config\Model\Config\Structure;
 /**
  * Relevance Configuration edit form
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName) The property _template is inherited
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -40,7 +42,6 @@ class Edit extends \Magento\Backend\Block\Widget
      * @var string
      */
     // @codingStandardsIgnoreStart Property is inherited
-    /** @SuppressWarnings(PHPMD.CamelCasePropertyName) **/
     protected $_template = 'Magento_Config::system/config/edit.phtml';
     // @codingStandardsIgnoreEnd
 

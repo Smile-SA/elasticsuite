@@ -120,6 +120,8 @@ class Save extends AbstractConfig
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * Get groups for save
      *
      * @return array|null
@@ -137,7 +139,6 @@ class Save extends AbstractConfig
             foreach ($files as $groupName => $group) {
                 $data = $this->processNestedGroups($group);
                 if (!empty($data)) {
-                    /** @SuppressWarnings(PHPMD.ElseExpression) */
                     if (!empty($groups[$groupName])) {
                         $groups[$groupName] = array_merge_recursive((array) $groups[$groupName], $data);
                     } else {
