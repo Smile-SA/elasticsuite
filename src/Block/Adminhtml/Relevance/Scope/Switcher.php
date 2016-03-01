@@ -11,7 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Store;
+namespace Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Scope;
 
 use Magento\Backend\Block\Template;
 use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
@@ -48,13 +48,6 @@ class Switcher extends Template
      * @var boolean
      */
     protected $hasDefaultOption = true;
-
-    /**
-     * Container factory
-     *
-     * @var \Magento\Store\Model\ContainerFactory
-     */
-    protected $containerFactory;
 
     /**
      * Store Factory

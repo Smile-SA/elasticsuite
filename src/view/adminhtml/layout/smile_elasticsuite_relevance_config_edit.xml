@@ -11,7 +11,7 @@
             <block class="Magento\Backend\Block\Template" template="Magento_Config::system/config/js.phtml"/>
         </referenceContainer>
         <referenceContainer name="page.main.actions">
-            <block class="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Store\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticSuiteCore::relevance/configuration/store/switcher.phtml">
+            <block class="Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Scope\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticSuiteCore::relevance/configuration/scope/switcher.phtml">
                 <arguments>
                     <argument name="switch_containers" xsi:type="string">1</argument>
                     <argument name="switch_store_views" xsi:type="string">1</argument>
