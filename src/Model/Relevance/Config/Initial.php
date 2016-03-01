@@ -59,8 +59,12 @@ class Initial
             $data = unserialize($data);
         }
 
-        $this->data = $data['data'];
-        $this->metadata = $data['metadata'];
+        if (isset($data['data'])) {
+            $this->data = $data['data'];
+        }
+        if (isset($data['metadata'])) {
+            $this->metadata = $data['metadata'];
+        }
     }
 
     /**
