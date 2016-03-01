@@ -63,7 +63,9 @@ class Converter implements ConverterInterface
             $output = array_merge($output, $this->convertNode($node));
         }
 
-        return ['data' => $output, 'metadata' => $this->metadata];
+        $result = ['data' => $output, 'metadata' => $this->metadata];
+
+        return $result;
     }
 
     /**

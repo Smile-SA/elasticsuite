@@ -21,14 +21,12 @@ use Magento\Framework\Module\Dir;
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
+class SchemaLocator extends \Magento\Framework\App\Config\Initial\SchemaLocator
 {
     /**
-     * Path to corresponding XSD file with validation rules for config
-     *
-     * @var string
+     * Schema file for elasticsuite initial configuration validation
      */
-    protected $schema = null;
+    const SCHEMA_FILE = "elasticsuite_relevance_initial_config.xsd";
 
     /**
      * Reader constructor
@@ -37,27 +35,7 @@ class SchemaLocator implements \Magento\Framework\Config\SchemaLocatorInterface
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $moduleDir    = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
-        $this->schema = $moduleDir . '/elasticsuite_relevance_initial_config.xsd';
-    }
-
-    /**
-     * Get path to merged config schema
-     *
-     * @return string|null
-     */
-    public function getSchema()
-    {
-        return $this->schema;
-    }
-
-    /**
-     * Get path to pre file validation schema
-     *
-     * @return string|null
-     */
-    public function getPerFileSchema()
-    {
-        return $this->schema;
+        $moduleDir     = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $this->_schema = $moduleDir . '/' . self::SCHEMA_FILE;
     }
 }
