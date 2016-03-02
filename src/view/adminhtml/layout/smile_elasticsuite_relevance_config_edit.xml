@@ -1,8 +1,18 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ * Relevance configuration edition layout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
