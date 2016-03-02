@@ -195,23 +195,8 @@
                 }
 
                 function reload() {
-                    <?php if (!$block->isUsingIframe()) : ?>
                     var url = '<?php echo $block->getSwitchUrl() ?>' + scopeParams;
                     setLocation(url);
-                    <?php else : ?>
-                    jQuery('#preview_selected_store').val(scopeId);
-                    jQuery('#preview_form').submit();
-
-                    jQuery('.store-switcher .dropdown-menu li a').each(function() {
-                        var $this = jQuery(this);
-
-                        if ($this.data('role') === 'store-view-id' && $this.data('value') == scopeId) {
-                            jQuery('#store-change-button').html($this.text());
-                        }
-                    });
-
-                    jQuery('#store-change-button').click();
-                    <?php endif; ?>
                 }
             }
 

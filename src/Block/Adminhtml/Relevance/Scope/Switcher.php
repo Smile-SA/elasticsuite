@@ -59,39 +59,31 @@ class Switcher extends Template
     /**
      * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
      */
-    protected $storeGroupFactory;
-
-    /**
-     * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
-     */
     protected $relevanceConfig;
 
     /**
      * Class constructor
      *
-     * @param \Magento\Backend\Block\Template\Context $context           Application context
-     * @param \Magento\Store\Model\GroupFactory       $storeGroupFactory Store group factory
-     * @param \Magento\Store\Model\StoreFactory       $storeFactory      Store factory
-     * @param SearchRequestContainerInterface         $relevanceConfig   The Search request containers configuration
-     * @param array                                   $data              The data
+     * @param \Magento\Backend\Block\Template\Context $context         Application context
+     * @param \Magento\Store\Model\StoreFactory       $storeFactory    Store factory
+     * @param SearchRequestContainerInterface         $relevanceConfig The Search request containers configuration
+     * @param array                                   $data            The data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Magento\Store\Model\GroupFactory $storeGroupFactory,
         \Magento\Store\Model\StoreFactory $storeFactory,
         SearchRequestContainerInterface $relevanceConfig,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->relevanceConfig = $relevanceConfig;
-        $this->storeGroupFactory = $storeGroupFactory;
         $this->storeFactory = $storeFactory;
     }
 
     /**
      * Get containers
      *
-     * @return \Magento\Store\Model\Container[]
+     * @return array
      */
     public function getContainers()
     {
@@ -191,51 +183,6 @@ class Switcher extends Template
     }
 
     /**
-     * Retrieve store collection
-     *
-     * @param \Magento\Store\Model\Group|int $group A group or group id
-     *
-     * @return \Magento\Store\Model\ResourceModel\Store\Collection
-     */
-    public function getStoreCollection($group)
-    {
-        if (!$group instanceof \Magento\Store\Model\Group) {
-            $group = $this->storeGroupFactory->create()->load($group);
-        }
-        $stores = $group->getStoreCollection();
-        $storeIds = $this->getStoreIds();
-        if (!empty($storeIds)) {
-            $stores->addIdFilter($storeIds);
-        }
-
-        return $stores;
-    }
-
-    /**
-     * Retrieve store ids
-     *
-     * @return array
-     */
-    public function getStoreIds()
-    {
-        return $this->storeIds;
-    }
-
-    /**
-     * Set store ids
-     *
-     * @param array $storeIds The store ids
-     *
-     * @return $this
-     */
-    public function setStoreIds($storeIds)
-    {
-        $this->storeIds = $storeIds;
-
-        return $this;
-    }
-
-    /**
      * Get store views
      *
      * @return \Magento\Store\Model\Store[]
@@ -243,14 +190,6 @@ class Switcher extends Template
     public function getStores()
     {
         $stores = $this->_storeManager->getStores();
-
-        if ($storeIds = $this->getStoreIds()) {
-            foreach (array_keys($stores) as $storeId) {
-                if (!in_array($storeId, $storeIds)) {
-                    unset($stores[$storeId]);
-                }
-            }
-        }
 
         return $stores;
     }
@@ -418,34 +357,10 @@ class Switcher extends Template
     public function hasDefaultOption($hasDefaultOption = null)
     {
         if (null !== $hasDefaultOption) {
-            $this->_hasDefaultOption = $hasDefaultOption;
+            $this->hasDefaultOption = $hasDefaultOption;
         }
 
         return $this->hasDefaultOption;
-    }
-
-    /**
-     * Get whether iframe is being used
-     *
-     * @return bool
-     */
-    public function isUsingIframe()
-    {
-        if ($this->hasData('is_using_iframe')) {
-            return (bool) $this->getData('is_using_iframe');
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if the block is shown
-     *
-     * @return bool
-     */
-    public function isShow()
-    {
-        return true;
     }
 
     /**
@@ -474,21 +389,5 @@ class Switcher extends Template
         }
 
         $this->setDefaultSelectionName(__('All Store Views'));
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * @return string
-     */
-    // @codingStandardsIgnoreStart Method is inherited
-    protected function _toHtml()
-    {
-        // @codingStandardsIgnoreEnd
-        if ($this->isShow()) {
-            return parent::_toHtml();
-        }
-
-        return '';
     }
 }
