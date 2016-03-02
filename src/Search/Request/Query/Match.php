@@ -57,17 +57,17 @@ class Match implements QueryInterface
 
     /**
      *
-     * @param string  $name               Query name.
      * @param string  $queryText          Matched text.
      * @param string  $field              Query field.
      * @param string  $minimumShouldMatch Minimum should match for the match query.
+     * @param string  $name               Query name.
      * @param integer $boost              Query boost.
      */
     public function __construct(
-        $name,
         $queryText,
         $field,
         $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
+        $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->name               = $name;

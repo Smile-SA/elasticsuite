@@ -47,15 +47,15 @@ class Filtered implements QueryInterface
 
     /**
      *
-     * @param string                                           $name   Query name.
      * @param \Magento\Framework\Search\Request\QueryInterface $query  Query part of the filtered query.
      * @param \Magento\Framework\Search\Request\QueryInterface $filter Filter part of the filtered query.
+     * @param string                                           $name   Query name.
      * @param integer                                          $boost  Query boost.
      */
     public function __construct(
-        $name,
         \Magento\Framework\Search\Request\QueryInterface $query = null,
         \Magento\Framework\Search\Request\QueryInterface $filter = null,
+        $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->name   = $name;
@@ -105,6 +105,6 @@ class Filtered implements QueryInterface
      */
     public function getFilter()
     {
-        return $this->query;
+        return $this->filter;
     }
 }

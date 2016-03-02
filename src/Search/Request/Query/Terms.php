@@ -28,18 +28,18 @@ class Terms extends Term
     /**
      * The term query produce an ElasticSearch terms query.
      *
-     * @param string       $name   Name of the query.
      * @param string|array $values Search values. String are exploded using the comma as separator.
      * @param string       $field  Search field.
+     * @param string       $name   Name of the query.
      * @param integer      $boost  Query boost.
      */
-    public function __construct($name, $values, $field, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
+    public function __construct($values, $field, $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
     {
         if (!is_array($values)) {
             $values = explode(',', $values);
         }
 
-        parent::__construct($name, $values, $field, $boost);
+        parent::__construct($values, $field, $name, $boost);
     }
 
     /**
