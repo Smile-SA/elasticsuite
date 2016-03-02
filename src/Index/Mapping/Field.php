@@ -203,6 +203,58 @@ class Field implements FieldInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED)
+    {
+        $fieldName    = $this->getName();
+        $propertyName = $fieldName;
+        $property     = $this->getMappingPropertyConfig();
+
+        if ($property['type'] == self::FIELD_TYPE_MULTI) {
+            $isDefaultAnalyzer = $analyzer == self::ANALYZER_STANDARD;
+            $subFieldName = $isDefaultAnalyzer ? $fieldName : $analyzer;
+            $propertyName = null;
+
+            if (isset($property['fields'][$subFieldName])) {
+                $property     = $property['fields'][$subFieldName];
+                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf("%s.%s", $fieldName, $subFieldName);
+            }
+        }
+
+        if (!$this->checkAnalyzer($property, $analyzer)) {
+            $propertyName = null;
+        }
+
+        return $propertyName;
+    }
+
+    /**
+     * Check if an ES property as the right analyzer.
+     *
+     * @param array  $property         ES Property.
+     * @param string $expectedAnalyzer Analyzer expected for the property.
+     *
+     * @return boolean
+     */
+    private function checkAnalyzer($property, $expectedAnalyzer)
+    {
+        $isAnalyzerCorrect = true;
+
+        if ($property['type'] == self::FIELD_TYPE_STRING) {
+            $isAnalyzed        = $expectedAnalyzer !== self::ANALYZER_UNTOUCHED;
+
+            if ($isAnalyzed && (!isset($property['analyzer']) || $property['analyzer'] != $expectedAnalyzer)) {
+                $isAnalyzerCorrect = false;
+            } elseif (!$isAnalyzed && (!isset($property['index']) || $property['index'] != 'not_analyzed')) {
+                $isAnalyzerCorrect = false;
+            }
+        }
+
+        return $isAnalyzerCorrect;
+    }
+
+    /**
      * Build a multi_field configuration from an analyzers list.
      * Standard analyzer is used as default subfield and should always be present.
      *

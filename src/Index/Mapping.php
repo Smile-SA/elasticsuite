@@ -114,6 +114,18 @@ class Mapping implements MappingInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getField($name)
+    {
+        if (!isset($this->fields[$name])) {
+            throw new \LogicException("Field {$name} does not exists in mapping");
+        }
+
+        return $this->fields[$name];
+    }
+
+    /**
      * Retrieve the fields provided by differents providers.
      *
      * @param DynamicFieldProviderInterface[] $dynamicFieldProviders List of dynamic fields providers

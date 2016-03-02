@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticSuiteCore\Api\Index;
 
+use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
+
 /**
  * Representation of a ElasticSearch type mapping.
  *
@@ -34,13 +36,21 @@ interface MappingInterface
      */
     public function getProperties();
 
-
     /**
      * List of the fields used to build the mapping.
      *
      * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
      */
     public function getFields();
+
+    /**
+     * Return a field of the mapping by name.
+     *
+     * @param string $name Field name
+     *
+     * @return FieldInterface
+     */
+    public function getField($name);
 
     /**
      * Return the mapping as an array you can put into ES through the mapping API.

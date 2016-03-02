@@ -139,4 +139,13 @@ interface FieldInterface
      * @return array
      */
     public function getMappingPropertyConfig();
+
+    /**
+     * Return ES property name eventually using a specified analyzer.
+     *
+     * @param string $analyzer Analyzer for multi_type / string fields.
+     *
+     * @return string|null
+     */
+    public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED);
 }
