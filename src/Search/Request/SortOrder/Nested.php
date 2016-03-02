@@ -43,12 +43,12 @@ class Nested extends Standard
 
     /**
      * Constructor.
-     * @param string         $name         Sort order name.
      * @param string         $field        Sort order field.
      * @param string         $direction    Sort order direction.
-     * @param QueryInterface $nestedFilter The filter applied to the nested sort.
      * @param string         $nestedPath   Nested sort path.
+     * @param QueryInterface $nestedFilter The filter applied to the nested sort.
      * @param string         $scoreMode    Method used to aggregate the sort if there is many match for the filter.
+     * @param string         $name         Sort order name.
      */
     public function __construct(
         $field,
