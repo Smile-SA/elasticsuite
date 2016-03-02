@@ -15,7 +15,10 @@
 namespace Smile\ElasticSuiteCore\Search\Request;
 
 /**
- * Define new usable bucket types in ElasticSuite.
+ * Extension of Magento default bucket interface :
+ *
+ * - Define new usable bucket types in ElasticSuite (histogrrams)
+ * - Additional methods to handle nested and filtered aggregations
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
@@ -25,7 +28,25 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
 {
     const TYPE_HISTOGRAM      = 'histogramBucket';
     const TYPE_DATE_HISTOGRAM = 'dateHistogramBucket';
-    const TYPE_FILTER         = 'filterBucket';
-    const TYPE_FILTER_GROUP   = 'filterGroupBucket';
-    const TYPE_NESTED         = 'nestedBucker';
+
+    /**
+     * Indicates if the aggregation is nested.
+     *
+     * @return @boolean
+     */
+    public function isNested();
+
+    /**
+     * Nested path for nested aggregations.
+     *
+     * @return string
+     */
+    public function getNestedPath();
+
+    /**
+     * Optional filter for filtered aggregations.
+     *
+     * @return QueryInterface|null
+     */
+    public function getFilter();
 }
