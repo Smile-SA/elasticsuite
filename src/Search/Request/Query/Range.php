@@ -41,31 +41,24 @@ class Range implements QueryInterface
     private $field;
 
     /**
-     * @var integer
+     * @var array
      */
-    private $from;
-
-    /**
-     * @var integer
-     */
-    private $to;
+    private $bounds;
 
     /**
      * Constructor.
      *
-     * @param string  $name  Query name.
-     * @param string  $field Query field.
-     * @param string  $from  Lower bound of the range filter.
-     * @param integer $to    Highter bound of the range filter.
-     * @param integer $boost Query boost.
+     * @param string  $field  Query field.
+     * @param array   $bounds Range filter bounds (authorized entries : gt, lt, lte, gte).
+     * @param string  $name   Query name.
+     * @param integer $boost  Query boost.
      */
-    public function __construct($name, $field, $from, $to, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
+    public function __construct($field, array $bounds = [], $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
     {
         $this->name  = $name;
         $this->boost = $boost;
         $this->field = $field;
-        $this->from  = $from;
-        $this->to    = $to;
+        $this->bounds = $bounds;
     }
 
     /**
@@ -103,22 +96,12 @@ class Range implements QueryInterface
     }
 
     /**
-     * Lower bound of the range filter.
+     * Range filter bounds.
      *
-     * @return integer
+     * @return array
      */
-    public function getFrom()
+    public function getBounds()
     {
-        return $this->from;
-    }
-
-    /**
-     * Highter bound of the range filter.
-     *
-     * @return integer
-     */
-    public function getTo()
-    {
-        return $this->to;
+        return $this->bounds;
     }
 }
