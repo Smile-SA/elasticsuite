@@ -58,7 +58,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $indexName,
         $type,
         QueryInterface $query,
-        QueryInterface $filter,
+        QueryInterface $filter = null,
         array $sortOrders = null,
         $from = null,
         $size = null,
