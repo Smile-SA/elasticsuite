@@ -11,7 +11,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Relevance\Config\Structure;
+namespace Smile\ElasticSuiteCore\Model\Relevance\Config\Structure;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;

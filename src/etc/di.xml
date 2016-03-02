@@ -141,7 +141,7 @@
 
     <virtualType name="Smile\ElasticSuiteCore\Relevance\Config\Structure\Reader" type="Magento\Config\Model\Config\Structure\Reader">
         <arguments>
-            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Relevance\Config\Structure\SchemaLocator</argument>
+            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Model\Relevance\Config\Structure\SchemaLocator</argument>
             <argument name="fileName" xsi:type="string">elasticsuite_relevance.xml</argument>
         </arguments>
     </virtualType>
