@@ -47,7 +47,7 @@ class Standard implements SortOrderInterface
      * @param string $field     Sort order field.
      * @param string $direction Sort order direction.
      */
-    public function __construct($name, $field, $direction)
+    public function __construct($field, $direction, $name = null)
     {
         $this->name      = $name;
         $this->field     = $field;

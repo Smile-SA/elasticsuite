@@ -51,14 +51,14 @@ class Nested extends Standard
      * @param string         $scoreMode    Method used to aggregate the sort if there is many match for the filter.
      */
     public function __construct(
-        $name,
         $field,
         $direction,
-        QueryInterface $nestedFilter,
         $nestedPath,
-        $scoreMode = self::SCORE_MODE_MIN
+        QueryInterface $nestedFilter = null,
+        $scoreMode = self::SCORE_MODE_MIN,
+        $name = null
     ) {
-        parent::__construct($name, $field, $direction);
+        parent::__construct($field, $direction, $name);
         $this->nestedFilter = $nestedFilter;
         $this->nestedPath   = $nestedPath;
         $this->scoreMode    = $scoreMode;
