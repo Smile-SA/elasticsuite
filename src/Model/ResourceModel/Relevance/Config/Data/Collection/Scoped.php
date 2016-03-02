@@ -86,11 +86,6 @@ class Scoped extends \Magento\Framework\Model\ResourceModel\Db\Collection\Abstra
             $this->addFieldToFilter('scope_code', $this->scopeCode);
         }
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/debug.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info($this->getSelect()->assemble());
-
         return $this;
     }
 }
