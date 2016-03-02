@@ -226,9 +226,9 @@ class Form extends \Magento\Config\Block\System\Config\Form
             ]
         );
 
-        $this->_configData = $this->_configDataObject->load();
+        $this->_configData       = $this->_configDataObject->load();
         $this->_fieldsetRenderer = $this->_fieldsetFactory->create();
-        $this->_fieldRenderer = $this->_fieldFactory->create();
+        $this->_fieldRenderer    = $this->_fieldFactory->create();
 
         return $this;
     }
@@ -252,7 +252,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
     ) {
         // @codingStandardsIgnoreEnd
         $inherit = true;
-        $data = null;
 
         $data = $this->getConfigValue($path);
         if (array_key_exists($path, $this->_configData)) {

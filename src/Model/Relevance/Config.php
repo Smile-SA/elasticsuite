@@ -164,7 +164,7 @@ class Config extends \Magento\Config\Model\Config
         if ($this->_configData === null) {
             $this->initScope();
             $this->setFullConfig(false);
-            $this->_configData = $this->_getConfig();
+            $this->_configData = $this->getConfig();
             $this->setFullConfig(true);
         }
 
