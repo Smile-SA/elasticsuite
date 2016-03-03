@@ -18,21 +18,25 @@ use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
- * Build an ES nested query.
+ * Build an ES common query.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Terms implements BuilderInterface
+class Common implements BuilderInterface
 {
     /**
      * {@inheritDoc}
      */
     public function buildQuery(QueryInterface $query)
     {
-        $field = $query->getField();
+        $searchQueryParams = [
+            'query'                => $query->getQueryText(),
+            'minimum_should_match' => $query->getMinimumShouldMatch(),
+            'cutoff_frequency'     => $query->getCutoffFrequency(),
+        ];
 
-        return ['terms' => [$query->getField() => $query->getValues()]];
+        return ['common' => [$query->getField() => $searchQueryParams]];
     }
 }

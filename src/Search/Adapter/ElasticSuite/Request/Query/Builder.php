@@ -30,12 +30,14 @@ class Builder implements BuilderInterface
      * @var array
      */
     private $queryBuilderClasses = [
-        QueryInterface::TYPE_BOOL   => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool',
-        QueryInterface::TYPE_FILTER => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Filtered',
-        QueryInterface::TYPE_NESTED => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Nested',
-        QueryInterface::TYPE_TERMS  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Terms',
-        QueryInterface::TYPE_RANGE  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Range',
-        QueryInterface::TYPE_MATCH  => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Match',
+        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool',
+        QueryInterface::TYPE_FILTER     => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Filtered',
+        QueryInterface::TYPE_NESTED     => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Nested',
+        QueryInterface::TYPE_TERMS      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Terms',
+        QueryInterface::TYPE_RANGE      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Range',
+        QueryInterface::TYPE_MATCH      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Match',
+        QueryInterface::TYPE_COMMON     => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Common',
+        QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\MultiMatch',
     ];
 
     /**
@@ -46,7 +48,7 @@ class Builder implements BuilderInterface
     /**
      * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object Manager
+     * @param ObjectManagerInterface $objectManager Object Manager.
      */
     public function __construct(ObjectManagerInterface $objectManager)
     {
@@ -66,6 +68,7 @@ class Builder implements BuilderInterface
     {
         $searchQuery = false;
         $builder = $this->getBuilder($query);
+
         if ($builder) {
             $searchQuery = $builder->buildQuery($query);
         }

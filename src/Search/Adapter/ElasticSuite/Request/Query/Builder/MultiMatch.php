@@ -18,21 +18,31 @@ use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
- * Build an ES nested query.
+ * Build an ES multi match match query.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Terms implements BuilderInterface
+class MultiMatch implements BuilderInterface
 {
     /**
      * {@inheritDoc}
      */
     public function buildQuery(QueryInterface $query)
     {
-        $field = $query->getField();
+        $fields = [];
 
-        return ['terms' => [$query->getField() => $query->getValues()]];
+        foreach ($query->getFields() as $field => $weight) {
+            $fields[] = sprintf("%s^%s", $field, $weight);
+        }
+
+        $searchQueryParams = [
+            'query'                => $query->getQueryText(),
+            'fields'               => $fields,
+            'minimum_should_match' => $query->getMinimumShouldMatch(),
+        ];
+
+        return ['multi_match' => $searchQueryParams];
     }
 }

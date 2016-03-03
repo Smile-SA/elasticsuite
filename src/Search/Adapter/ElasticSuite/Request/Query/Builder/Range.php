@@ -31,6 +31,6 @@ class Range implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        return ['range' => [$query->getField() => ['from' => $query->getFrom(), 'to' => $query->getTo()]]];
+        return ['range' => [$query->getField() => $query->getBounds()]];
     }
 }
