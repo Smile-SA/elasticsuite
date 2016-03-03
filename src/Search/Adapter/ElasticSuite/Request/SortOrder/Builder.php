@@ -72,9 +72,12 @@ class Builder
         ];
 
         if ($sortOrder->getType() == SortOrderInterface::TYPE_NESTED) {
-            $sortOrderConfig['nested_filter'] = $this->queryBuilder->buildQuery($sortOrder->getNestedFilter());
             $sortOrderConfig['nested_path']   = $sortOrder->getNestedPath();
             $sortOrderConfig['mode']          = $sortOrder->getScoreMode();
+
+            if ($sortOrder->getNestedFilter()) {
+                $sortOrderConfig['nested_filter'] = $this->queryBuilder->buildQuery($sortOrder->getNestedFilter());
+            }
         }
 
         return [$sortField => $sortOrderConfig];
