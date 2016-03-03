@@ -14,15 +14,16 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\Search\Request\Binder;
 use Smile\ElasticSuiteCore\Search\Request\Config;
-use Smile\ElasticSuiteCore\Search\Request\Builder\Cleaner;
-use Magento\Framework\Search\SearchEngineInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Query\Builder\Bool;
-use Magento\Framework\Search\Response\Bucket;
+use Magento\Framework\Search\Request\DimensionFactory;
+use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticSuiteCore\Search\Request\SortOrder\SortOrderBuilder;
+use Smile\ElasticSuiteCore\Search\Request\Aggregation\AggregationBuilder;
 use Magento\Framework\Search\Request\BucketInterface;
 use Smile\ElasticSuiteCore\Search\RequestInterface;
+use Smile\ElasticSuiteCore\Search\RequestFactory;
+use Magento\Framework\Search\Request\Dimension;
+use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 
 /**
  * ElasticSuite search requests builder.
@@ -34,52 +35,94 @@ use Smile\ElasticSuiteCore\Search\RequestInterface;
 class Builder
 {
     /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
-
-    /**
      * @var Config
      */
     private $config;
 
     /**
-     * @var Binder
+     * @var string|null
      */
-    private $binder;
+    private $queryText;
+
+    /**
+     * @var integer
+     */
+    private $size;
+
+    /**
+     * @var integer
+     */
+    private $from;
+
+    /**
+     * @var string
+     */
+    private $requestName;
+
+    /**
+     * @var integer
+     */
+    private $storeId;
 
     /**
      * @var array
      */
-    private $data = [
-        'dimensions'  => [],
-        'placeholder' => [],
-        'sortOrders'  => [],
-    ];
+    private $filters = [];
 
     /**
-     * @var Cleaner
+     * @var array
      */
-    private $cleaner;
+    private $sortOrders = [];
 
     /**
-     * Request Builder constructor
+     * @var QueryBuilder
+     */
+    private $queryBuilder;
+
+    /**
+     * @var SortOrderBuilder
+     */
+    private $sortOrderBuilder;
+
+    /**
+     * @var AggregationBuilder
+     */
+    private $aggregationBuilder;
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
+     * @var DimensionFactory
+     */
+    private $dimensionFactory;
+
+    /**
+     * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object manager.
-     * @param Config                 $config        Search requests configuration.
-     * @param Binder                 $binder        Binder.
-     * @param Cleaner                $cleaner       Cleaner.
+     * @param RequestFactory     $requestFactory     Factory used to build the search request.
+     * @param DimensionFactory   $dimensionFactory   Factory used to dimensions of the search request.
+     * @param QueryBuilder       $queryBuilder       Builder for the query part of the search request.
+     * @param SortOrderBuilder   $sortOrderBuilder   Builder for the sort part of the search request.
+     * @param AggregationBuilder $aggregationBuilder Builder for the aggregation part of the search request.
+     * @param Config             $config             Search requests configuration.
      */
     public function __construct(
-        ObjectManagerInterface $objectManager,
-        Config $config,
-        Binder $binder,
-        Cleaner $cleaner
+        RequestFactory $requestFactory,
+        DimensionFactory $dimensionFactory,
+        QueryBuilder $queryBuilder,
+        SortOrderBuilder $sortOrderBuilder,
+        AggregationBuilder $aggregationBuilder,
+        Config $config
     ) {
-        $this->objectManager = $objectManager;
-        $this->config        = $config;
-        $this->binder        = $binder;
-        $this->cleaner       = $cleaner;
+        $this->requestFactory     = $requestFactory;
+        $this->dimensionFactory   = $dimensionFactory;
+        $this->queryBuilder       = $queryBuilder;
+        $this->sortOrderBuilder   = $sortOrderBuilder;
+        $this->aggregationBuilder = $aggregationBuilder;
+        $this->config             = $config;
     }
 
 
@@ -92,7 +135,7 @@ class Builder
      */
     public function setRequestName($requestName)
     {
-        $this->data['requestName'] = $requestName;
+        $this->requestName = $requestName;
 
         return $this;
     }
@@ -106,7 +149,7 @@ class Builder
      */
     public function setSize($size)
     {
-        $this->data['size'] = $size;
+        $this->size = $size;
 
         return $this;
     }
@@ -120,22 +163,21 @@ class Builder
      */
     public function setFrom($from)
     {
-        $this->data['from'] = $from;
+        $this->from = $from;
 
         return $this;
     }
 
     /**
-     * Bind dimension data by name
+     * Set the store id of the built search request.
      *
-     * @param string $name  Dimension name.
-     * @param string $value Dimension value.
+     * @param integer $storeId Store id.
      *
      * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
-    public function bindDimension($name, $value)
+    public function setStoreId($storeId)
     {
-        $this->data['dimensions'][$name] = $value;
+        $this->storeId = $storeId;
 
         return $this;
     }
@@ -143,167 +185,144 @@ class Builder
     /**
      * Add a new sort order to the request.
      *
-     * @param string $name      Sort order name (reference to a sort order declared into the configuration).
-     * @param string $direction Sort order direction.
+     * @param string $field        Sort order name (reference to a sort order declared into the configuration).
+     * @param string $direction    Sort order direction.
+     * @param string $nestedPath   Nested path for nested field.
+     * @param array  $nestedFilter Nested filter : optionaly used for nested field.
      *
      * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
-    public function bindSortOrder($name, $direction)
+    public function addSortOrder($field, $direction, $nestedPath = null, $nestedFilter = null)
     {
-        $this->data['sortOrders'][$name] = strtolower($direction);
+        $this->sortOrders[$field] = ['direction' => strtolower($direction)];
+
+        if ($nestedPath !== null) {
+            $this->sortOrders[$field]['nestedPath'] = $nestedPath;
+
+            if ($nestedFilter !== null) {
+                $this->sortOrders[$field]['nestedFilter'] = $nestedFilter;
+            }
+        }
 
         return $this;
     }
 
     /**
-     * Bind data to placeholder
+     * Set fulltext query of the search request built.
      *
-     * @param string $placeholder Placeholder name.
-     * @param mixed  $value       Binded value.
+     * @param string $queryText Fultext query.
      *
      * @return \Smile\ElasticSuiteCore\Search\Request\Builder
      */
-    public function bind($placeholder, $value)
+    public function setQueryText($queryText)
     {
-        $this->data['placeholder']['$' . $placeholder . '$'] = $value;
+        $this->queryText = $queryText;
 
         return $this;
     }
 
     /**
-     * Create request object
+     * Add a filter to the search request built.
+     *
+     * @param string $fieldName Filter field name.
+     * @param array  $condition Filter condition.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\Builder
+     */
+    public function addFilter($fieldName, $condition)
+    {
+        $this->filters[$fieldName] = $condition;
+
+        return $this;
+    }
+
+    /**
+     * Create the search request object.
      *
      * @return RequestInterface
      */
     public function create()
     {
-        if (!isset($this->data['requestName'])) {
-            throw new \InvalidArgumentException("Request name not defined.");
-        }
-        $requestName = $this->data['requestName'];
+        $requestConfiguration = $this->getRequestConfiguration();
+        $mapping              = $requestConfiguration['mapping'];
+        $facetFilters         = $this->getFacetFilters($mapping);
+        $queryFilters         = array_diff_key($this->filters, $facetFilters);
 
-        $data = $this->getConfig($requestName);
+        $requestParams = [
+            'name'       => $this->requestName,
+            'indexName'  => $requestConfiguration['index'],
+            'type'       => $requestConfiguration['type'],
+            'from'       => $this->from !== null ? $this->from : $requestConfiguration['from'],
+            'size'       => $this->size !== null ? $this->size : $requestConfiguration['size'],
+            'dimensions' => $this->buildDimensions(),
+            'query'      => $this->queryBuilder->createQuery($mapping, $this->queryText, $queryFilters),
+            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($requestConfiguration, $this->sortOrders),
+            'buckets'    => $this->aggregationBuilder->buildAggregations($requestConfiguration, $facetFilters),
 
-        $data = $this->prepareSortOrders($data);
-
-        // Binder hopes to find a filters field into the array.
-        // We put this even if it does not make sense for our builder.
-        $data['filters'] = [];
-        $data = $this->binder->bind($data, $this->data);
-        $data = $this->cleaner->clean($data);
-        $data = $this->convert($data);
-
-        return $data;
-    }
-
-    /**
-     * Load configuration for a request by name and returns it as an array.
-     *
-     * @throws \InvalidArgumentException
-     *
-     * @param string $requestName Request name.
-     *
-     * @return array
-     */
-    protected function getConfig($requestName)
-    {
-        $data = $this->config->get($requestName);
-
-        if ($data === null) {
-            throw new \InvalidArgumentException("Request name '{$requestName}' doesn't exist.");
-        }
-
-        return $data;
-    }
-
-    /**
-     * Convert array to RequestInterface instance.
-     *
-     * @param array $data Converted data.
-     *
-     * @return RequestInterface
-     */
-    private function convert($data)
-    {
-        $mapperClass = 'Smile\ElasticSuiteCore\Search\Request\Builder\Mapper';
-        /** @var Mapper $mapper */
-        $mapper = $this->objectManager->create($mapperClass, ['requestData' => $data]);
-
-        $searchRequestParams = [
-            'name'       => $data['name'],
-            'indexName'  => $data['index'],
-            'type'       => $data['type'],
-            'from'       => $data['from'],
-            'size'       => $data['size'],
-            'query'      => $mapper->getRootQuery(),
-            'filter'     => $mapper->getRootFilter(),
-            'buckets'    => $mapper->getAggregations(),
-            'sortOrders' => $mapper->getSortOrders(),
-            'dimensions' => $this->buildDimensions(isset($data['dimensions']) ? $data['dimensions'] : []),
         ];
 
-        return $this->objectManager->create('Smile\ElasticSuiteCore\Search\Request', $searchRequestParams);
-    }
-
-    /**
-     * Bind dimension data to the built query.
-     *
-     * @param array $dimensionsData Binded data.
-     *
-     * @return array
-     */
-    private function buildDimensions(array $dimensionsData)
-    {
-        $dimensions = [];
-
-        foreach ($dimensionsData as $dimensionData) {
-            $dimensions[$dimensionData['name']] = $this->objectManager->create(
-                'Magento\Framework\Search\Request\Dimension',
-                $dimensionData
-            );
+        if (!empty($facetFilters)) {
+            $requestParams['filter'] = $this->queryBuilder->createFilters($mapping, $facetFilters);
         }
 
-        return $dimensions;
+        $request = $this->requestFactory->create($requestParams);
+
+        return $request;
     }
 
     /**
-     * Prepare the search request config data to applied binded sort orders.
+     * Extract facet filters from current filters.
      *
-     * @param array $data Request config data.
+     * @param MappingInterface $mapping Search mapping.
      *
      * @return array
      */
-    private function prepareSortOrders($data)
+    private function getFacetFilters(MappingInterface $mapping)
     {
-        $sortOrders           = [];
-        $hasDefaultSortOrder  = false;
-        $defaultSortOrderName = SortOrderInterface::DEFAULT_SORT_NAME;
+        $filters = [];
 
-        foreach ($this->data['sortOrders'] as $sortOrderName => $direction) {
-            if (isset($data['sortOrders']) && isset($data['sortOrders'][$sortOrderName])) {
-                $sortOrder = $data['sortOrders'][$sortOrderName];
-
-                $sortOrder['direction'] = $direction;
-
-                $sortOrders[] = $sortOrder;
-
-                if ($sortOrderName == $defaultSortOrderName) {
-                    $hasDefaultSortOrder = true;
-                }
+        foreach ($this->filters as $fieldName => $condition) {
+            $field = $mapping->getField($fieldName);
+            if ($field && $field->isFacet($this->requestName)) {
+                $filters[$fieldName] = $condition;
             }
         }
 
-        if (!$hasDefaultSortOrder && isset($data['sortOrders']) && isset($data['sortOrders'][$defaultSortOrderName])) {
-            $sortOrders[] = [
-                'type'      => SortOrderInterface::TYPE_STANDARD,
-                'name'      => $defaultSortOrderName,
-                'field'     => SortOrderInterface::DEFAULT_SORT_FIELD,
-                'direction' => SortOrderInterface::DEFAULT_SORT_DIRECTION,
-            ];
+        return $filters;
+    }
+
+    /**
+     * Load the search request configuration (index, type, mapping, ...) using the search request container name.
+     *
+     * @throws \LogicException Thrown when the search container is not found into the configuration.
+     *
+     * @return array
+     */
+    private function getRequestConfiguration()
+    {
+        if ($this->requestName == null) {
+            throw new \LogicException('Request name is not set');
         }
 
-        $data['sortOrders'] = $sortOrders;
+        $config = $this->config->get($this->requestName);
 
-        return $data;
+        if ($config == null) {
+            throw new \LogicException("No configuration exists for request {$this->requestName}");
+        }
+
+        return $config;
+    }
+
+    /**
+     * Build a dimenstion object from
+     * It is quite useless since we have a per store index but required by the RequestInterface specification.
+     *
+     * @return Dimension[]
+     */
+    private function buildDimensions()
+    {
+        $dimensions = ['scope' => $this->dimensionFactory->create(['name' => 'scope', 'value' => $this->storeId])];
+
+        return $dimensions;
     }
 }
