@@ -16,6 +16,8 @@ namespace Smile\ElasticSuiteCore\Search;
 
 use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Magento\Framework\Search\Request\Dimension;
 
 /**
  * Default implementation of ElasticSuite search request.
@@ -42,16 +44,16 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $filter;
 
     /**
-     * @param string                   $name       Search request name.
-     * @param string                   $indexName  Index name.
-     * @param string                   $type       Searched document type.
-     * @param QueryInterface           $query      Search query.
-     * @param QueryInterface           $filter     Search filter.
-     * @param SortOrderInterface[]     $sortOrders Sort orders specification.
-     * @param int|null                 $from       Pagination from clause.
-     * @param int|null                 $size       Pagination page size clause.
-     * @param Dimension[]              $dimensions Searched store.
-     * @param RequestBucketInterface[] $buckets    Search request aggregations definition.
+     * @param string               $name       Search request name.
+     * @param string               $indexName  Index name.
+     * @param string               $type       Searched document type.
+     * @param QueryInterface       $query      Search query.
+     * @param QueryInterface       $filter     Search filter.
+     * @param SortOrderInterface[] $sortOrders Sort orders specification.
+     * @param int|null             $from       Pagination from clause.
+     * @param int|null             $size       Pagination page size clause.
+     * @param Dimension[]          $dimensions Searched store.
+     * @param BucketInterface[]    $buckets    Search request aggregations definition.
      */
     public function __construct(
         $name,
