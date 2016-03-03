@@ -53,7 +53,7 @@ class Term implements QueryInterface
      * @param string  $name  Name of the query.
      * @param integer $boost Query boost.
      */
-    public function __construct($value, $field, $name = null,$boost = QueryInterface::DEFAULT_BOOST_VALUE)
+    public function __construct($value, $field, $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
     {
         $this->name  = $name;
         $this->value = $value;
