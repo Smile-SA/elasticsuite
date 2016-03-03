@@ -28,7 +28,7 @@ class MultiMatch implements QueryInterface
     /**
      * @var string
      */
-    const DEFAULT_MINIMUM_SHOULD_MATCH = "100%";
+    const DEFAULT_MINIMUM_SHOULD_MATCH = "1";
 
     /**
      * @var string
