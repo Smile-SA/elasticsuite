@@ -36,6 +36,7 @@
                 <field name="updated_at" type="date" />
                 <field name="type_id" type="string" />
                 <field name="sku" type="string" />
+                <field name="visibility" type="integer" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
