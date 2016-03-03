@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
+use Magento\Framework\Profiler;
+
 /**
  * Search engine product collection.
  *
@@ -41,11 +43,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var string
      */
     private $queryText;
-
-    /**
-     * @var string|null
-     */
-    private $order = null;
 
     /**
      * @var string
@@ -127,7 +124,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $connection
         );
 
-
         $this->requestBuilder    = $requestBuilder;
         $this->searchEngine      = $searchEngine;
         $this->searchRequestName = $searchRequestName;
@@ -139,7 +135,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function getSize()
     {
         if ($this->_totalRecords === null) {
-            $this->_renderFilters();
+            // @TODO : better fix
+            $this->_totalRecords = 1;
         }
 
         return $this->_totalRecords;
@@ -160,20 +157,15 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addFieldToFilter($field, $condition = null)
     {
-        if ($this->queryResponse !== null) {
-            throw new \RuntimeException('Illegal state');
+        if ($field == 'category_ids') {
+            $field = 'category.category_id';
         }
 
-        if (!is_array($condition) || !in_array((string) key($condition), ['from', 'to'])) {
-            $this->requestBuilder->bind($field, $condition);
-        } else {
-            if (!empty($condition['from'])) {
-                $this->requestBuilder->bind("{$field}.from", $condition['from']);
-            }
-            if (!empty($condition['to'])) {
-                $this->requestBuilder->bind("{$field}.to", $condition['to']);
-            }
+        if ($field == 'price') {
+            $field = 'price.price';
         }
+
+        $this->requestBuilder->addFilter($field, $condition);
 
         return $this;
     }
@@ -222,6 +214,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addCategoryFilter(\Magento\Catalog\Model\Category $category)
     {
         $this->addFieldToFilter('category_ids', $category->getId());
+        $this->_productLimitationFilters['category_ids'] = $category->getId();
 
         return $this;
     }
@@ -241,9 +234,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _renderFiltersBefore()
     {
+        Profiler::start("ES: Prepare request");
         $queryRequest = $this->prepareRequest();
+        Profiler::stop("ES: Prepare request");
 
+        Profiler::start("ES: Execute request");
         $this->queryResponse = $this->searchEngine->search($queryRequest);
+        Profiler::stop("ES: Execute request");
 
         // Update the product count.
         $this->_totalRecords = $this->queryResponse->count();
@@ -283,7 +280,19 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         if (!$this->_isOrdersRendered) {
             foreach ($this->_orders as $attribute => $direction) {
-                $this->requestBuilder->bindSortOrder($attribute, $direction);
+                if ($attribute == 'position') {
+                    $categoryIds  = $this->_productLimitationFilters['category_ids'];
+                    $nestedPath   = 'category';
+                    $nestedFilter = ['category.category_id' => $categoryIds];
+                    $this->requestBuilder->addSortOrder('category.position', $direction, $nestedPath, $nestedFilter);
+                } elseif ($attribute == 'price') {
+                    $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
+                    $nestedPath   = 'price';
+                    $nestedFilter = ['price.customer_group_id' => $customerGroupId];
+                    $this->requestBuilder->addSortOrder('price.price', $direction, $nestedPath, $nestedFilter);
+                } else {
+                    $this->requestBuilder->addSortOrder($attribute, $direction);
+                }
             }
 
             $this->_isOrdersRendered = true;
@@ -322,23 +331,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->requestBuilder->setRequestName($this->searchRequestName);
 
         // Bind the current store.
-        $this->requestBuilder->bindDimension('scope', $this->getStoreId());
-
-        // Bind the current customer group id.
-        $this->requestBuilder->bind('customer_group_id', $this->_productLimitationFilters['customer_group_id']);
+        $this->requestBuilder->setStoreId($this->getStoreId());
 
         // For fulltext search : set the query text.
         if ($this->queryText) {
-            $this->requestBuilder->bind('search_term', $this->queryText);
-        }
-
-        // Update the price ranges computing strategy.
-        $configPath  = \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory::XML_PATH_RANGE_CALCULATION;
-        $configScope = \Magento\Store\Model\ScopeInterface::SCOPE_STORE;
-        $priceRangeCalculation = $this->_scopeConfig->getValue($configPath, $configScope);
-
-        if ($priceRangeCalculation) {
-            $this->requestBuilder->bind('price_dynamic_algorithm', $priceRangeCalculation);
+            $this->requestBuilder->setQueryText($this->queryText);
         }
 
         // Update pagination of the request.
