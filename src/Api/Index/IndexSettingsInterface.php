@@ -74,6 +74,13 @@ interface IndexSettingsInterface
     public function getIndicesConfig();
 
     /**
+     * @param string $indexIdentifier
+     *
+     * @return array
+     */
+    public function getIndexConfig($indexIdentifier);
+
+    /**
      * Get indexing batch size configured.
      *
      * @return integer

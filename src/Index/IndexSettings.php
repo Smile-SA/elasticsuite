@@ -144,6 +144,20 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * {@inheritDoc}
      */
+    public function getIndexConfig($indexIdentifier)
+    {
+        $indicesConfig = $this->getIndicesConfig();
+
+        if (!isset($indicesConfig[$indexIdentifier])) {
+            throw new \LogicException("No indices found with identifier {$indexIdentifier}");
+        }
+
+        return $indicesConfig[$indexIdentifier];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getBatchIndexingSize()
     {
         return $this->helper->getBatchIndexingSize();
