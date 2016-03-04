@@ -53,7 +53,7 @@ class InventoryData extends AbstractIndexer
     }
 
     /**
-     * Load categories data for a list of product ids and a given store.
+     * Load inventory data for a list of product ids and a given store.
      *
      * @param integer $storeId    Store id.
      * @param array   $productIds Product ids list.
