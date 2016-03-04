@@ -149,11 +149,11 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
 
                 foreach ($relationsByChildrenId[$childId] as $relationByChildren) {
                     $parentId = $relationByChildren['parent_id'];
+                    $this->addRelationData($indexData[$parentId], $childId, $relationByChildren);
                     $this->addChildrenData(
                         $indexData[$parentId],
                         $attribute,
                         $storeId,
-                        $childId,
                         $relationByChildren,
                         $row
                     );
@@ -315,17 +315,16 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
     }
 
     /**
-     * @param array     $parentIndexData    Index data of the parent product
-     * @param Attribute $attribute          The attribute
-     * @param int       $storeId            The store Id
-     * @param int       $childId            The child product Id
-     * @param array     $relationByChildren The relation data
-     * @param array     $row                The value row for children
+     * Append children data to parent product
+     *
+     * @param array                     $parentIndexData    Index data of the parent product
+     * @param ProductAttributeInterface $attribute          The attribute
+     * @param int                       $storeId            The store Id
+     * @param array                     $relationByChildren The relation data
+     * @param array                     $row                The value row for children
      */
-    private function addChildrenData(&$parentIndexData, $attribute, $storeId, $childId, $relationByChildren, $row )
+    private function addChildrenData(&$parentIndexData, $attribute, $storeId, $relationByChildren, $row)
     {
-        $this->addRelationData($parentIndexData, $childId, $relationByChildren);
-
         $canIndex = $this->canAddAttributeAsChild(
             $attribute,
             $relationByChildren,
