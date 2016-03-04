@@ -8,10 +8,10 @@
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:framework:Search/etc/search_request.xsd">
     
-    <request name="quick_search_container" index="catalog_product" type="product" />
+    <request name="quick_search_container" label="Quick Search Container" index="catalog_product" type="product" />
     
-    <request name="advanced_search_container" index="catalog_product" type="product" />
+    <request name="advanced_search_container" label="Catalog View Container" index="catalog_product" type="product" />
     
-    <request name="catalog_view_container" index="catalog_product" type="product" />
-    
+    <request name="catalog_view_container" label="Catalog View Container" index="catalog_product" type="product" />
+
 </requests>
