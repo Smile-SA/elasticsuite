@@ -12,9 +12,9 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Config;
+namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration;
 
-use Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig\Reader;
+use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;

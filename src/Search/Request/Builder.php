@@ -244,9 +244,9 @@ class Builder
     public function create()
     {
         $containerConfiguration = $this->getRequestContainerConfiguration();
-        $mapping              = $containerConfiguration->getMapping();
-        $facetFilters         = $this->getFacetFilters($mapping);
-        $queryFilters         = array_diff_key($this->filters, $facetFilters);
+        $mapping                = $containerConfiguration->getMapping();
+        $facetFilters           = $this->getFacetFilters($mapping);
+        $queryFilters           = array_diff_key($this->filters, $facetFilters);
 
         $requestParams = [
             'name'       => $this->requestName,

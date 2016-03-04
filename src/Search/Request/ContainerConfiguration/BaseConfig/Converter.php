@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig;
+namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 

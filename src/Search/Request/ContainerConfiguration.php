@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
-use Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig;
+use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -103,8 +103,8 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     {
         $indexName = $this->getIndexName();
         $typeName  = $this->getTypeName();
-        $index = $this->indexManager->getIndexByName($indexName, $this->storeId);
-        $type  = $index->getType($typeName);
+        $index     = $this->indexManager->getIndexByName($indexName, $this->storeId);
+        $type      = $index->getType($typeName);
 
         return $type->getMapping();
     }

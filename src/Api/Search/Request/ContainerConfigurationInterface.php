@@ -40,7 +40,6 @@ interface ContainerConfigurationInterface
      */
     public function getIndexName();
 
-
     /**
      * Search request container document type name.
      *
