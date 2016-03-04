@@ -51,8 +51,8 @@
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
 
                 <!-- Static fields handled by the "stock" datasource -->
-                <field name="stock.is_in_stock" type="boolean" nestedPath="stock" />
-                <field name="stock.qty" type="integer" nestedPath="stock" />
+                <field name="stock.is_in_stock" type="boolean" />
+                <field name="stock.qty" type="integer" />
 
             </mapping>
         </type>
