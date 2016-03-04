@@ -104,6 +104,14 @@ class ProductAttribute extends Mapping
             $options['is_facet'][] = 'quick_search_container';
         }
 
+        if ($attribute->getIsUsedInSpellcheck()) {
+            $options['is_used_in_spellcheck'] = true;
+        }
+
+        if ($attribute->getIsUsedInAutocomplete()) {
+            $options['is_used_in_autocomplete'] = true;
+        }
+
         return $options;
     }
 

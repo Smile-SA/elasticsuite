@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /**
  * Smile_ElasticSuiteCatalog dependency injection configuration.
  *
@@ -16,7 +16,7 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    
+
     <type name="Magento\CatalogSearch\Model\Indexer\IndexerHandlerFactory">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -24,10 +24,10 @@
             </argument>
         </arguments>
     </type>
-    
+
     <preference for="Magento\CatalogSearch\Model\Indexer\Fulltext\Action\FullFactory"
                 type="Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Action\FullFactory" />
-    
+
     <type name="Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Action\FullFactory">
         <arguments>
             <argument name="fullActionPool"  xsi:type="array">
@@ -36,7 +36,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Framework\Search\Dynamic\IntervalFactory">
         <arguments>
             <argument name="intervals" xsi:type="array">
@@ -44,7 +44,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Framework\Search\Dynamic\DataProviderFactory">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
@@ -52,7 +52,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\CatalogSearch\Model\ResourceModel\EngineProvider">
         <arguments>
             <argument name="engines" xsi:type="array">
@@ -60,7 +60,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Search\Model\Adminhtml\System\Config\Source\Engine">
         <arguments>
             <argument name="engines" xsi:type="array">
@@ -68,22 +68,25 @@
             </argument>
         </arguments>
     </type>
-   
+
     <preference for="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection"
                 type="Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection" />
 
-    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory" 
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory"
                  type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection" 
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Fulltext\SearchCollection"
                  type="Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
-    
+
+    <type name="\Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front">
+        <plugin name="smile_elasticsuite_catalog_attribute_search_configuration" type="\Smile\ElasticSuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin" />
+    </type>
 </config>
