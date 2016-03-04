@@ -18,6 +18,7 @@ use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\Filter\QueryBuilder;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Allow to build a sort order from arrays.
@@ -63,15 +64,15 @@ class SortOrderBuilder
     /**
      * Build sort orders from array of sort orders definition.
      *
-     * @param array $requestConfiguration Request configuration.
-     * @param array $orders               Sort orders definitions.
+     * @param ContainerConfigurationInterface $containerConfiguration Request configuration.
+     * @param array                           $orders                 Sort orders definitions.
      *
      * @return SortOrderInterface[]
      */
-    public function buildSordOrders(array $requestConfiguration, array $orders)
+    public function buildSordOrders(ContainerConfigurationInterface $containerConfiguration, array $orders)
     {
         $sortOrders = [];
-        $mapping    = $requestConfiguration['mapping'];
+        $mapping    = $containerConfiguration->getMapping();
 
         if (!in_array(SortOrderInterface::DEFAULT_SORT_FIELD, array_keys($orders))) {
             $orders[SortOrderInterface::DEFAULT_SORT_FIELD] = [

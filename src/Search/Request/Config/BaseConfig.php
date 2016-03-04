@@ -12,9 +12,9 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request;
+namespace Smile\ElasticSuiteCore\Search\Request\Config;
 
-use Smile\ElasticSuiteCore\Search\Request\Config\Reader;
+use Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
@@ -28,7 +28,7 @@ use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Boo
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Config extends \Magento\Framework\Config\Data
+class BaseConfig extends \Magento\Framework\Config\Data
 {
     /**
      * Cache ID for Search Request

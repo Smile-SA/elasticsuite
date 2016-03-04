@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
-use Smile\ElasticSuiteCore\Search\Request\Config;
 use Magento\Framework\Search\Request\DimensionFactory;
 use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticSuiteCore\Search\Request\SortOrder\SortOrderBuilder;
@@ -24,6 +23,7 @@ use Smile\ElasticSuiteCore\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\RequestFactory;
 use Magento\Framework\Search\Request\Dimension;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * ElasticSuite search requests builder.
@@ -35,9 +35,9 @@ use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 class Builder
 {
     /**
-     * @var Config
+     * @var ContainerConfigurationFactory
      */
-    private $config;
+    private $containerConfigFactory;
 
     /**
      * @var string|null
@@ -102,12 +102,12 @@ class Builder
     /**
      * Constructor.
      *
-     * @param RequestFactory     $requestFactory     Factory used to build the search request.
-     * @param DimensionFactory   $dimensionFactory   Factory used to dimensions of the search request.
-     * @param QueryBuilder       $queryBuilder       Builder for the query part of the search request.
-     * @param SortOrderBuilder   $sortOrderBuilder   Builder for the sort part of the search request.
-     * @param AggregationBuilder $aggregationBuilder Builder for the aggregation part of the search request.
-     * @param Config             $config             Search requests configuration.
+     * @param RequestFactory                $requestFactory         Factory used to build the search request.
+     * @param DimensionFactory              $dimensionFactory       Factory used to dimensions of the search request.
+     * @param QueryBuilder                  $queryBuilder           Builder for the query part of the search request.
+     * @param SortOrderBuilder              $sortOrderBuilder       Builder for the sort part of the search request.
+     * @param AggregationBuilder            $aggregationBuilder     Builder for the aggregation part of the search request.
+     * @param ContainerConfigurationFactory $containerConfigFactory Search requests configuration.
      */
     public function __construct(
         RequestFactory $requestFactory,
@@ -115,14 +115,14 @@ class Builder
         QueryBuilder $queryBuilder,
         SortOrderBuilder $sortOrderBuilder,
         AggregationBuilder $aggregationBuilder,
-        Config $config
+        ContainerConfigurationFactory $containerConfigFactory
     ) {
-        $this->requestFactory     = $requestFactory;
-        $this->dimensionFactory   = $dimensionFactory;
-        $this->queryBuilder       = $queryBuilder;
-        $this->sortOrderBuilder   = $sortOrderBuilder;
-        $this->aggregationBuilder = $aggregationBuilder;
-        $this->config             = $config;
+        $this->requestFactory         = $requestFactory;
+        $this->dimensionFactory       = $dimensionFactory;
+        $this->queryBuilder           = $queryBuilder;
+        $this->sortOrderBuilder       = $sortOrderBuilder;
+        $this->aggregationBuilder     = $aggregationBuilder;
+        $this->containerConfigFactory = $containerConfigFactory;
     }
 
 
@@ -243,21 +243,21 @@ class Builder
      */
     public function create()
     {
-        $requestConfiguration = $this->getRequestConfiguration();
-        $mapping              = $requestConfiguration['mapping'];
+        $containerConfiguration = $this->getRequestContainerConfiguration();
+        $mapping              = $containerConfiguration->getMapping();
         $facetFilters         = $this->getFacetFilters($mapping);
         $queryFilters         = array_diff_key($this->filters, $facetFilters);
 
         $requestParams = [
             'name'       => $this->requestName,
-            'indexName'  => $requestConfiguration['index'],
-            'type'       => $requestConfiguration['type'],
-            'from'       => $this->from !== null ? $this->from : $requestConfiguration['from'],
-            'size'       => $this->size !== null ? $this->size : $requestConfiguration['size'],
+            'indexName'  => $containerConfiguration->getIndexName(),
+            'type'       => $containerConfiguration->getTypeName(),
+            'from'       => $this->from,
+            'size'       => $this->size,
             'dimensions' => $this->buildDimensions(),
             'query'      => $this->queryBuilder->createQuery($mapping, $this->queryText, $queryFilters),
-            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($requestConfiguration, $this->sortOrders),
-            'buckets'    => $this->aggregationBuilder->buildAggregations($requestConfiguration, $facetFilters),
+            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($containerConfiguration, $this->sortOrders),
+            'buckets'    => $this->aggregationBuilder->buildAggregations($containerConfiguration, $facetFilters),
 
         ];
 
@@ -296,15 +296,17 @@ class Builder
      *
      * @throws \LogicException Thrown when the search container is not found into the configuration.
      *
-     * @return array
+     * @return ContainerConfigurationInterface
      */
-    private function getRequestConfiguration()
+    private function getRequestContainerConfiguration()
     {
         if ($this->requestName == null) {
             throw new \LogicException('Request name is not set');
         }
 
-        $config = $this->config->get($this->requestName);
+        $config = $this->containerConfigFactory->create(
+            ['containerName' => $this->requestName, 'storeId' => $this->storeId]
+        );
 
         if ($config == null) {
             throw new \LogicException("No configuration exists for request {$this->requestName}");

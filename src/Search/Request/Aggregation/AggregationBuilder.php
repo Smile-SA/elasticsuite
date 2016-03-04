@@ -18,6 +18,7 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Aggregation\MetricFactory;
 use Magento\Framework\Search\Request\Aggregation\Metric;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Build aggregation from the mapping.
@@ -53,15 +54,15 @@ class AggregationBuilder
     /**
      * Build the list of buckets from the mapping.
      *
-     * @param array $searchRequestConfiguration Search request configuration
-     * @param array $filters                    Facet filters to be added to buckets.
+     * @param ContainerConfigurationInterface $containerConfiguration Search request configuration
+     * @param array                           $filters                Facet filters to be added to buckets.
      *
      * @return BucketInterface[]
      */
-    public function buildAggregations(array $searchRequestConfiguration, array $filters)
+    public function buildAggregations(ContainerConfigurationInterface $containerConfiguration, array $filters)
     {
-        foreach ($searchRequestConfiguration['mapping']->getFields() as $mappingField) {
-            if ($mappingField->isFacet($searchRequestConfiguration['name'])) {
+        foreach ($containerConfiguration->getMapping()->getFields() as $mappingField) {
+            if ($mappingField->isFacet($containerConfiguration->getName())) {
                 $bucketField = $mappingField->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
                 if ($bucketField) {
                     $bucketType = BucketInterface::TYPE_TERM;
