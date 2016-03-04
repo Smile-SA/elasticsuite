@@ -45,11 +45,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $queryText;
 
     /**
-     * @var string|null
-     */
-    private $order = null;
-
-    /**
      * @var string
      */
     private $searchRequestName;

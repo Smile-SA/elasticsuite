@@ -37,7 +37,7 @@
                 <field name="type_id" type="string" />
                 <field name="sku" type="string" />
                 <field name="visibility" type="integer" />
-                
+
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
                 <field name="price.original_price" type="double" nestedPath="price" />
