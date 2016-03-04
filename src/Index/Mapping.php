@@ -203,6 +203,16 @@ class Mapping implements MappingInterface
 
             $fieldRoot = &$properties[$nestedPath]['properties'];
             $fieldName = $field->getNestedFieldName();
+        } elseif (strstr($fieldName, '.')) {
+            $fieldPathArray = explode('.', $fieldName);
+            if (!isset($properties[current($fieldPathArray)])) {
+                $properties[current($fieldPathArray)] = [
+                    'type' => FieldInterface::FIELD_TYPE_OBJECT,
+                    'properties' => [],
+                ];
+            }
+            $fieldRoot = &$properties[current($fieldPathArray)]['properties'];
+            $fieldName = end($fieldPathArray);
         }
 
         /*
