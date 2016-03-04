@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -20,7 +20,7 @@ use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface;
  * Default implementation for ES bulk (Smile\ElasticSuiteCore\Api\Index\BulkInterface).
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class BulkResponse implements BulkResponseInterface

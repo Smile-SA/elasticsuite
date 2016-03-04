@@ -9,7 +9,7 @@
  *
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -24,7 +24,7 @@ use Psr\Log\NullLogger as Logger;
  * Client factory test case.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ClientFactoryTest extends \PHPUnit_Framework_TestCase

@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -18,7 +18,7 @@ namespace Smile\ElasticSuiteCore\Api\Index\Mapping;
  * Representation of a ElasticSearch field (abstraction of mapping properties).
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface FieldInterface

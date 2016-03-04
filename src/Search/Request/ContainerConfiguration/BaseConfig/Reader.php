@@ -24,7 +24,7 @@ use Magento\Framework\Config\ValidationStateInterface;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Reader extends Filesystem

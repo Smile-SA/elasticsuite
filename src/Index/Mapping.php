@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -21,7 +21,7 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
  * Default implementation for ES mappings (Smile\ElasticSuiteCore\Api\Index\MappingInterface).
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Mapping implements MappingInterface

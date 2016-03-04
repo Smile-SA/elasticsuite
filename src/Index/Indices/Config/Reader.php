@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -14,15 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Index\Indices\Config;
 
-/**
- * Validate, read and convert elasticsearch indices configuration files.
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- *
- * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
- */
 use Magento\Framework\Config\Reader\Filesystem;
 use Magento\Framework\Config\FileResolverInterface;
 use Magento\Framework\Config\ValidationStateInterface;
@@ -33,7 +24,7 @@ use Magento\Framework\Config\ValidationStateInterface;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Reader extends Filesystem

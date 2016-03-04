@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -21,7 +21,7 @@ use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
  * Default implementation for ES document types (Smile\ElasticSuiteCore\Api\Index\TypeInterface).
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Type implements TypeInterface

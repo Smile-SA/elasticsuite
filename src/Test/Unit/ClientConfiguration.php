@@ -9,7 +9,7 @@
  *
  *
  * @category  Smile_ElasticSuite
- * @package   Smile\ElasticSuiteCore
+ * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -23,7 +23,7 @@ use Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface;
  * Configuration mock for ES testing.
  *
  * @category Smile_ElasticSuite
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ClientConfiguration implements ClientConfigurationInterface
