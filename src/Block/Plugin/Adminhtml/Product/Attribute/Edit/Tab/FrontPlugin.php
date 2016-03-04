@@ -58,6 +58,8 @@ class FrontPlugin
 
         $yesnoSource = $this->yesNo->toOptionArray();
 
+        $originalFieldSet = $form->getElement('front_fieldset');
+
         $fieldset = $form->addFieldset(
             'elasticsuite_catalog_attribute_fieldset',
             [
@@ -66,6 +68,17 @@ class FrontPlugin
             ],
             'front_fieldset'
         );
+
+        $elementsToMove = ['is_searchable', 'is_visible_in_advanced_search', 'is_filterable', 'is_filterable_in_search',
+            'used_for_sort_by', 'search_weight', ];
+
+        foreach ($elementsToMove as $elementId) {
+            $element = $form->getElement($elementId);
+            if ($element) {
+                $originalFieldSet->removeField($elementId);
+                $fieldset->addElement($element);
+            }
+        }
 
         $fieldset->addField(
             'is_used_in_autocomplete',
@@ -90,17 +103,6 @@ class FrontPlugin
         );
 
         $fieldset->addField(
-            'is_snowball_used',
-            'select',
-            [
-                'name'   => 'is_snowball_used',
-                'label'  => __('Use language analysis'),
-                'values' => $yesnoSource,
-            ],
-            'is_displayed_in_autocomplete'
-        );
-
-        $fieldset->addField(
             'is_used_in_spellcheck',
             'select',
             [
@@ -108,7 +110,7 @@ class FrontPlugin
                 'label'  => __('Used in spellcheck'),
                 'values' => $yesnoSource,
             ],
-            'is_snowball_used'
+            'is_displayed_in_autocomplete'
         );
 
         $fieldset->addField(
@@ -142,48 +144,49 @@ class FrontPlugin
             'facet_min_coverage_rate'
         );
 
-        /** @TODO Grab the values from a dedicated object ?
         $fieldset->addField(
-            'facets_sort_order',
+            'facet_sort_order',
             'select',
             [
-                'name'   => 'facets_sort_order',
+                'name'   => 'facet_sort_order',
                 'label'  => __('Facet sort order'),
                 'values' => [
                     [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_COUNT,
+                        'value' => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT,
                         'label' => __('Result count'),
                     ],
                     [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_ADMIN,
+                        'value' => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_MANUAL,
                         'label' => __('Admin sort'),
                     ],
                     [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_TERM,
+                        'value' => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_TERM,
                         'label' => __('Name'),
                     ],
                     [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_RELEVANCE,
+                        'value' => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_RELEVANCE,
                         'label' => __('Relevance'),
                     ],
                 ],
             ],
-            'facets_max_size'
+            'facet_max_size'
         );
-        **/
 
-        /*
-                $subject->getChildBlock('form_after')
-                    ->addFieldMap(
-                        'search_weight',
-                        'search_weight'
-                    )
-                    ->addFieldDependence(
-                        'search_weight',
-                        'searchable',
-                        '1'
-                    );
-        */
+        $subject->getChildBlock('form_after')
+            ->addFieldMap('is_used_in_autocomplete', 'is_used_in_autocomplete')
+            ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
+            ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
+            ->addFieldMap('facet_min_coverage_rate', 'facet_min_coverage_rate')
+            ->addFieldMap('facet_max_size', 'facet_max_size')
+            ->addFieldMap('facet_sort_order', 'facet_sort_order')
+            ->addFieldMap('is_filterable', 'is_filterable')
+            ->addFieldMap('facet_sort_order', 'facet_sort_order')
+            ->addFieldDependence('is_used_in_autocomplete', 'searchable', '1')
+            ->addFieldDependence('is_displayed_in_autocomplete', 'searchable', '1')
+            ->addFieldDependence('is_used_in_spellcheck', 'searchable', '1')
+            ->addFieldDependence('facet_min_coverage_rate', 'searchable', '1')
+            ->addFieldDependence('facet_max_size', 'searchable', '1')
+            ->addFieldDependence('facet_sort_order', 'searchable', '1');
 
         if ($attributeObject->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
