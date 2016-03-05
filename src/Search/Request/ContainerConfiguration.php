@@ -18,6 +18,7 @@ use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 
 /**
  * Search request container configuration implementation.
@@ -77,7 +78,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
      */
     public function getIndexName()
     {
-        return $this->readBaseConfigParam('index');
+        return $this->getIndex()->getName();
     }
 
     /**
@@ -101,10 +102,8 @@ class ContainerConfiguration implements ContainerConfigurationInterface
      */
     public function getMapping()
     {
-        $indexName = $this->getIndexName();
-        $typeName  = $this->getTypeName();
-        $index     = $this->indexManager->getIndexByName($indexName, $this->storeId);
-        $type      = $index->getType($typeName);
+        $typeName = $this->getTypeName();
+        $type     = $this->getIndex()->getType($typeName);
 
         return $type->getMapping();
     }
@@ -119,5 +118,17 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     private function readBaseConfigParam($param)
     {
         return $this->baseConfig->get($this->containerName . '/' . $param);
+    }
+
+    /**
+     * Retrieve the index associated with the currrent search request container.
+     *
+     * @return IndexInterface
+     */
+    private function getIndex()
+    {
+        $indexName = $this->readBaseConfigParam('index');
+
+        return $this->indexManager->getIndexByName($indexName, $this->storeId);
     }
 }

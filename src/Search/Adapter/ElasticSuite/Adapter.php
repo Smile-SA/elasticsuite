@@ -19,9 +19,9 @@ use Magento\Framework\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponseFactory;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticSuiteCore\Index\IndexOperation;
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticSuiteCore\Search\Request\Builder\Mapper;
+use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 
 /**
  * ElasticSuite Search Adapter.
@@ -43,11 +43,6 @@ class Adapter implements AdapterInterface
     private $logger;
 
     /**
-     * @var IndexOperation
-     */
-    private $indexManager;
-
-    /**
      * @var \Elasticsearch\Client
      */
     private $client;
@@ -61,21 +56,18 @@ class Adapter implements AdapterInterface
      * Constructor.
      *
      * @param QueryResponseFactory   $responseFactory Search response factory.
-     * @param IndexOperation         $indexManager    ES index manager.
      * @param Request\Mapper         $requestMapper   Search request mapper.
      * @param ClientFactoryInterface $clientFactory   ES Client Factory.
      * @param LoggerInterface        $logger          Logger.
      */
     public function __construct(
         QueryResponseFactory $responseFactory,
-        IndexOperation $indexManager,
         Request\Mapper $requestMapper,
         ClientFactoryInterface $clientFactory,
         LoggerInterface $logger
     ) {
         $this->responseFactory = $responseFactory;
         $this->logger          = $logger;
-        $this->indexManager    = $indexManager;
         $this->client          = $clientFactory->createClient();
         $this->requestMapper   = $requestMapper;
     }
@@ -104,29 +96,12 @@ class Adapter implements AdapterInterface
      */
     private function doSearch(RequestInterface $request)
     {
-        $index = $this->getIndex($request);
-
         $searchRequest = [
-            'index' => $index->getName(),
+            'index' => $request->getIndex(),
             'type'  => $request->getType(),
             'body'  => $this->requestMapper->buildSearchRequest($request),
         ];
 
         return $this->client->search($searchRequest);
-    }
-
-    /**
-     * Retrive the index for the current request.
-     *
-     * @param RequestInterface $request Request.
-     *
-     * @return IndexInterface
-     */
-    private function getIndex(RequestInterface $request)
-    {
-        $indexIdentifier = $request->getIndex();
-        $storeId = $request->getDimensions()['scope']->getValue();
-
-        return $this->indexManager->getIndexByName($indexIdentifier, $storeId);
     }
 }
