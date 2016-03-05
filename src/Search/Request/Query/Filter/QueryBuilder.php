@@ -15,9 +15,9 @@
 namespace Smile\ElasticSuiteCore\Search\Request\Query\Filter;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Prepare filter condition from an array as used into addFieldToFilter.
@@ -74,14 +74,16 @@ class QueryBuilder
     /**
      * Prepare filter condition from an array as used into addFieldToFilter.
      *
-     * @param MappingInterface $mapping Field mapping used to build filters.
-     * @param array            $filters Filters to be built.
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param array                           $filters         Filters to be built.
      *
      * @return QueryInterface
      */
-    public function create(MappingInterface $mapping, array $filters)
+    public function create(ContainerConfigurationInterface $containerConfig, array $filters)
     {
         $queries = [];
+
+        $mapping = $containerConfig->getMapping();
 
         foreach ($filters as $fieldName => $condition) {
             $mappingField = $mapping->getField($fieldName);

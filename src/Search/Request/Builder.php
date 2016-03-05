@@ -255,14 +255,13 @@ class Builder
             'from'       => $this->from,
             'size'       => $this->size,
             'dimensions' => $this->buildDimensions(),
-            'query'      => $this->queryBuilder->createQuery($mapping, $this->queryText, $queryFilters),
+            'query'      => $this->queryBuilder->createQuery($containerConfiguration, $this->queryText, $queryFilters),
             'sortOrders' => $this->sortOrderBuilder->buildSordOrders($containerConfiguration, $this->sortOrders),
             'buckets'    => $this->aggregationBuilder->buildAggregations($containerConfiguration, $facetFilters),
-
         ];
 
         if (!empty($facetFilters)) {
-            $requestParams['filter'] = $this->queryBuilder->createFilters($mapping, $facetFilters);
+            $requestParams['filter'] = $this->queryBuilder->createFilters($containerConfiguration, $facetFilters);
         }
 
         $request = $this->requestFactory->create($requestParams);

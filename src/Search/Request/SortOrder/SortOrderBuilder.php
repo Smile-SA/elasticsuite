@@ -15,7 +15,6 @@
 namespace Smile\ElasticSuiteCore\Search\Request\SortOrder;
 
 use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -64,15 +63,15 @@ class SortOrderBuilder
     /**
      * Build sort orders from array of sort orders definition.
      *
-     * @param ContainerConfigurationInterface $containerConfiguration Request configuration.
-     * @param array                           $orders                 Sort orders definitions.
+     * @param ContainerConfigurationInterface $containerConfig Request configuration.
+     * @param array                           $orders          Sort orders definitions.
      *
      * @return SortOrderInterface[]
      */
-    public function buildSordOrders(ContainerConfigurationInterface $containerConfiguration, array $orders)
+    public function buildSordOrders(ContainerConfigurationInterface $containerConfig, array $orders)
     {
         $sortOrders = [];
-        $mapping    = $containerConfiguration->getMapping();
+        $mapping    = $containerConfig->getMapping();
 
         if (!in_array(SortOrderInterface::DEFAULT_SORT_FIELD, array_keys($orders))) {
             $orders[SortOrderInterface::DEFAULT_SORT_FIELD] = [
@@ -92,7 +91,7 @@ class SortOrderBuilder
                 }
 
                 if (isset($sortOrderParams['nestedFilter'])) {
-                    $nestedFilter = $this->queryBuilder->create($mapping, $sortOrderParams['nestedFilter']);
+                    $nestedFilter = $this->queryBuilder->create($containerConfig, $sortOrderParams['nestedFilter']);
                     $sortOrderParams['nestedFilter'] = $nestedFilter->getQuery();
                 }
             } catch (\LogicException $e) {

@@ -19,6 +19,7 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticSuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
 use Smile\ElasticSuiteCore\Search\Request\Query\Filter\QueryBuilder as FilterQueryBuilder;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Builder for query part of the search request.
@@ -66,18 +67,18 @@ class Builder
     /**
      * Create a filtered query with an optional fulltext query part.
      *
-     * @param MappingInterface $mapping   Search mapping used.
-     * @param string|null      $queryText Fulltext query;
-     * @param array            $filters   Filter part of the query.
+     * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
+     * @param string|null                     $queryText              Fulltext query.
+     * @param array                           $filters                Filter part of the query.
      *
      * @return QueryInterface
      */
-    public function createQuery(MappingInterface $mapping, $queryText, array $filters)
+    public function createQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, array $filters)
     {
-        $queryParams = ['filter' => $this->filterQueryBuilder->create($mapping, $filters)];
+        $queryParams = ['filter' => $this->filterQueryBuilder->create($containerConfiguration, $filters)];
 
         if ($queryText) {
-            $queryParams['query'] = $this->fulltextQueryBuilder->create($mapping, $queryText);
+            $queryParams['query'] = $this->fulltextQueryBuilder->create($containerConfiguration, $queryText);
         }
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
@@ -86,13 +87,13 @@ class Builder
     /**
      * Create a query from filters passed as arguments.
      *
-     * @param MappingInterface $mapping Search mapping used.
-     * @param array            $filters Filters used to build the query.
+     * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
+     * @param array                           $filters                Filters used to build the query.
      *
      * @return QueryInterface
      */
-    public function createFilters($mapping, array $filters)
+    public function createFilters(ContainerConfigurationInterface $containerConfiguration, array $filters)
     {
-        return $this->filterQueryBuilder->create($mapping, $filters);
+        return $this->filterQueryBuilder->create($containerConfiguration, $filters);
     }
 }

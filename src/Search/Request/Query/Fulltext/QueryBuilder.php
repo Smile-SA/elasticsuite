@@ -18,6 +18,7 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Prepare a fulltext search query.
@@ -46,15 +47,15 @@ class QueryBuilder
     /**
      * Create the fulltext search query.
      *
-     * @param MappingInterface $mapping   Mapping to be searched.
-     * @param string           $queryText The text query.
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param string                          $queryText       The text query.
      *
      * @return QueryInterface
      */
-    public function create(MappingInterface $mapping, $queryText)
+    public function create(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $queryParams = [
-            'query'  => $this->getWeightedSearchQuery($mapping, $queryText),
+            'query'  => $this->getWeightedSearchQuery($containerConfig, $queryText),
             'filter' => $this->getCutoffFrequencyQuery($queryText),
         ];
 
@@ -70,7 +71,11 @@ class QueryBuilder
      */
     private function getCutoffFrequencyQuery($queryText)
     {
-        $queryParams = ['field' => MappingInterface::DEFAULT_SEARCH_FIELD, 'queryText' => $queryText];
+        $queryParams = [
+            'field'              => MappingInterface::DEFAULT_SEARCH_FIELD,
+            'queryText'          => $queryText,
+            'minimumShouldMatch' => '100%',
+        ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_COMMON, $queryParams);
     }
@@ -78,14 +83,16 @@ class QueryBuilder
     /**
      * Provides a weighted search query (multi match) using mapping field configuration.
      *
-     * @param MappingInterface $mapping   Searched mapping.
-     * @param string           $queryText The text query.
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param string                          $queryText       The text query.
      *
      * @return QueryInterface
      */
-    private function getWeightedSearchQuery(MappingInterface $mapping, $queryText)
+    private function getWeightedSearchQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $searchFields = [];
+
+        $mapping = $containerConfig->getMapping();
 
         foreach ($mapping->getFields() as $field) {
             if ($field->isSearchable()) {
