@@ -35,6 +35,7 @@ interface FieldInterface
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
     const FIELD_TYPE_MULTI   = 'multi_field';
+    const FIELD_TYPE_OBJECT  = 'object';
 
     /**
      * Analyzers declarations.
