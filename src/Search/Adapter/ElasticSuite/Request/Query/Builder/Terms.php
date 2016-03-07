@@ -31,8 +31,6 @@ class Terms implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        $field = $query->getField();
-
         return ['terms' => [$query->getField() => $query->getValues()]];
     }
 }

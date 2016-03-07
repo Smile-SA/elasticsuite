@@ -45,7 +45,6 @@ class Builder
      */
     private $filterQueryBuilder;
 
-
     /**
      * Constructor.
      *

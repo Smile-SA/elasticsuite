@@ -74,7 +74,9 @@ interface IndexSettingsInterface
     public function getIndicesConfig();
 
     /**
-     * @param string $indexIdentifier
+     * Return config of an index.
+     *
+     * @param string $indexIdentifier Index indentifier.
      *
      * @return array
      */
