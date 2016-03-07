@@ -8,7 +8,7 @@
                 module="Smile_ElasticSuiteCore"
                 sortOrder="10"
                 parent="Smile_ElasticSuiteCore::manage"
-                action="smile_elasticsuite/search_relevance_config/index"
+                action="smile_elasticsuite/search_request_relevanceconfig/index"
                 resource="Smile_ElasticsuiteCore::manage_relevance"/>
     </menu>
 </config>

@@ -15,7 +15,9 @@ namespace Smile\ElasticSuiteCore\Helper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
 
 /**
@@ -94,7 +96,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      * @param int|string|\Magento\Store\Api\Data\StoreInterface $store     The store identifier or id.
      * @param string                                            $container The search request container
      *
-     * @return SearchRelevanceConfigurationInterface
+     * @return RelevanceConfigurationInterface
      */
     public function getSearchRelevanceConfiguration($store = null, $container = null)
     {
@@ -113,7 +115,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
         ];
 
         $configuration = $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface',
+            '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface',
             $configurationParams
         );
 
@@ -178,7 +180,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      * @param string $scope     The scope
      * @param string $scopeCode The scope code
      *
-     * @return \Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface|null
+     * @return FuzzinessConfigurationInterface|null
      */
     private function getFuzzinessConfiguration($scope, $scopeCode)
     {
@@ -207,7 +209,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      * @param string $scope     The scope
      * @param string $scopeCode The scope code
      *
-     * @return \Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface|null
+     * @return PhoneticConfigurationInterface|null
      */
     private function getPhoneticConfiguration($scope, $scopeCode)
     {
@@ -235,7 +237,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
         }
 
         return $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\PhoneticConfigurationInterface',
+            '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface',
             $configurationParams
         );
     }
@@ -245,12 +247,12 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      *
      * @param array $configurationParams Object parameters
      *
-     * @return \Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface
+     * @return FuzzinessConfigurationInterface
      */
     private function createFuzzinessConfiguration($configurationParams)
     {
         return $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\SearchRelevanceConfiguration\FuzzinessConfigurationInterface',
+            '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface',
             $configurationParams
         );
     }
