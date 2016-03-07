@@ -147,7 +147,7 @@ class AttributeData extends AbstractIndexer
      *
      * @return array
      */
-    public function loadChildrenIds($productIds)
+    public function loadChildrens($productIds)
     {
         $children = [];
 
@@ -168,12 +168,27 @@ class AttributeData extends AbstractIndexer
                     $select->where($relation->getWhere());
                 }
 
+                $configurationTable   = $this->getTable("catalog_product_super_attribute");
+                $configurableAttrExpr = "GROUP_CONCAT(DISTINCT super_table.attribute_id SEPARATOR ',')";
+
+                $select->joinLeft(
+                    ["super_table" => $configurationTable],
+                    "super_table.product_id = main.{$parentFieldName}",
+                    ["configurable_attributes" => new \Zend_Db_Expr($configurableAttrExpr)]
+                );
+
+                $select->group("main.{$childFieldName}");
+
                 $data = $this->getConnection()->fetchAll($select);
 
                 foreach ($data as $relationRow) {
                     $parentId = (int) $relationRow[$parentFieldName];
                     $childId  = (int) $relationRow[$childFieldName];
-                    $children[$childId][] = $parentId;
+                    $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"]));
+                    $children[$childId][] = [
+                        "parent_id"               => $parentId,
+                        "configurable_attributes" => $configurableAttributes,
+                    ];
                 }
             }
         }

@@ -38,13 +38,15 @@
                 <field name="type_id" type="string" />
                 <field name="sku" type="string" />
                 <field name="visibility" type="integer" />
+                <field name="children_ids" type="integer" />
+                <field name="configurable_attributes" type="string" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
                 <field name="price.original_price" type="double" nestedPath="price" />
                 <field name="price.is_discount" type="boolean" nestedPath="price" />
                 <field name="price.customer_group_id" type="integer" nestedPath="price" />
-
+                
                 <!-- Static fields handled by the "category" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
@@ -53,7 +55,6 @@
                 <!-- Static fields handled by the "stock" datasource -->
                 <field name="stock.is_in_stock" type="boolean" />
                 <field name="stock.qty" type="integer" />
-
             </mapping>
         </type>
     </index>
