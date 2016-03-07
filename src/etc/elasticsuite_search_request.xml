@@ -1,17 +1,28 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ * Smile_ElasticSuiteCatalog search requests configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
  */
--->
+ -->
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="urn:magento:framework:Search/etc/search_request.xsd">
-    
-    <request name="quick_search_container" label="Quick Search Container" index="catalog_product" type="product" />
-    
-    <request name="advanced_search_container" label="Catalog View Container" index="catalog_product" type="product" />
-    
-    <request name="catalog_view_container" label="Catalog View Container" index="catalog_product" type="product" />
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_search_request.xsd">
+
+    <request name="quick_search_container" label="Catalog Product Search" index="catalog_product" type="product" fulltext="true" />
+
+    <request name="advanced_search_container" label="Advanced Product Search" index="catalog_product" type="product" fulltext="true" />
+
+    <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false" />
 
 </requests>
