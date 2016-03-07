@@ -232,6 +232,8 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         if ($attribute->usesSource()) {
             $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
             $fieldConfig['is_searchable'] = false;
+            $fieldConfig['is_used_in_spellcheck'] = false;
+            $fieldConfig['is_used_in_autocomplete'] = false;
             $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
             $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
             $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
