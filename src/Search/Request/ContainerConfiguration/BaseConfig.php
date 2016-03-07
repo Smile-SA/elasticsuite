@@ -14,12 +14,9 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration;
 
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool;
+use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Reader;
 
 /**
  * ElasticSuite Search requests configuration.
@@ -28,7 +25,7 @@ use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Boo
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class BaseConfig extends \Magento\Framework\Config\Data
+class BaseConfig extends \Magento\Framework\Config\Data implements BaseConfigInterface
 {
     /**
      * Cache ID for Search Request
@@ -62,9 +59,31 @@ class BaseConfig extends \Magento\Framework\Config\Data
     }
 
     /**
+     * Get a container by its code
+     *
+     * @param string $code code to get
+     *
+     * @return array
+     */
+    public function getContainer($code)
+    {
+        return $this->get($code, []);
+    }
+
+    /**
+     * Get all registered containers
+     *
+     * @return array
+     */
+    public function getContainers()
+    {
+        return $this->get();
+    }
+
+    /**
      * Append the type mapping to search requests configuration.
      *
-     * @return Config
+     * @return BaseConfig
      */
     private function addMappings()
     {

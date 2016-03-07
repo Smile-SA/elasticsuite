@@ -15,8 +15,8 @@ namespace Smile\ElasticSuiteCore\Helper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface;
 use Smile\ElasticSuiteCore\Api\SearchRelevanceConfigurationInterface;
+use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
 
 /**
  * Search Relevance Configuration Helper
@@ -63,27 +63,27 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
     private $scopedConfigurations;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface
+     * @var BaseConfigInterface
      */
-    private $requestConfiguration;
+    private $baseConfiguration;
 
     /**
      * Constructor.
      *
-     * @param Context                         $context              Helper context.
-     * @param StoreManagerInterface           $storeManager         Store manager.
-     * @param ObjectManagerInterface          $objectManager        Object manager.
-     * @param SearchRequestContainerInterface $requestConfiguration The search request containers interface
+     * @param Context                $context           Helper context.
+     * @param StoreManagerInterface  $storeManager      Store manager.
+     * @param ObjectManagerInterface $objectManager     Object manager.
+     * @param BaseConfigInterface    $baseConfiguration The search request containers interface
      */
     public function __construct(
         Context $context,
         StoreManagerInterface $storeManager,
         ObjectManagerInterface $objectManager,
-        SearchRequestContainerInterface $requestConfiguration
+        BaseConfigInterface $baseConfiguration
     ) {
         $this->objectManager = $objectManager;
         $this->scopedConfigurations = [];
-        $this->requestConfiguration = $requestConfiguration;
+        $this->baseConfiguration = $baseConfiguration;
 
         parent::__construct($context, $storeManager);
     }
@@ -293,12 +293,12 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     private function getScope($store, $container)
     {
-        $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT;
+        $scope = BaseConfigInterface::SCOPE_DEFAULT;
 
         if ($container !== null) {
-            $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_CONTAINERS;
+            $scope = BaseConfigInterface::SCOPE_CONTAINERS;
             if ($store !== null) {
-                $scope = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_STORE_CONTAINERS;
+                $scope = BaseConfigInterface::SCOPE_STORE_CONTAINERS;
             }
         }
 
@@ -315,7 +315,7 @@ class SearchRelevanceConfiguration extends AbstractConfiguration
      */
     private function getScopeCode($store, $container)
     {
-        $scopeCode = \Smile\ElasticSuiteCore\Api\Config\SearchRequestContainerInterface::SCOPE_TYPE_DEFAULT;
+        $scopeCode = BaseConfigInterface::SCOPE_DEFAULT;
 
         if ($container !== null) {
             $scopeCode = $container;
