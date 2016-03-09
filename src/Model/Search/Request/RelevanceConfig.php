@@ -20,7 +20,7 @@ use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Model\Search\Request\Source\Containers;
 
 /**
  * Relevance Configuration Model
@@ -32,9 +32,9 @@ use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInter
 class RelevanceConfig extends \Magento\Config\Model\Config
 {
     /**
-     * @var BaseConfigInterface
+     * @var Containers
      */
-    protected $baseConfiguration;
+    protected $containersSource;
 
     /**
      * @var bool If getting full config or not
@@ -51,7 +51,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
      * @param Loader                    $configLoader       Configuration Loader
      * @param ValueFactory              $configValueFactory Configuration Value Factory
      * @param StoreManagerInterface     $storeManager       Store Manager
-     * @param BaseConfigInterface       $baseConfiguration  Request containers interface
+     * @param Containers                $containersSource   The Containers source model
      * @param array                     $data               The data
      */
     public function __construct(
@@ -62,10 +62,10 @@ class RelevanceConfig extends \Magento\Config\Model\Config
         Loader $configLoader,
         ValueFactory $configValueFactory,
         StoreManagerInterface $storeManager,
-        BaseConfigInterface $baseConfiguration,
+        Containers $containersSource,
         array $data = []
     ) {
-        $this->baseConfiguration = $baseConfiguration;
+        $this->containersSource = $containersSource;
         $this->fullConfig = true;
         parent::__construct(
             $config,
@@ -218,7 +218,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             }
         } elseif ($this->getContainer()) {
             $scope = 'containers';
-            $container = $this->baseConfiguration->getContainer($this->getContainer());
+            $container = $this->containersSource->get($this->getContainer());
             $scopeCode = $container['name'];
         }
 

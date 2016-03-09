@@ -14,7 +14,7 @@
 namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope;
 
 use Magento\Backend\Block\Template;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Model\Search\Request\Source\Containers;
 
 /**
  * Relevance configuration store switcher
@@ -57,26 +57,26 @@ class Switcher extends Template
     protected $storeFactory;
 
     /**
-     * @var BaseConfigInterface
+     * @var Containers
      */
-    protected $baseConfiguration;
+    protected $containersSource;
 
     /**
      * Class constructor
      *
-     * @param \Magento\Backend\Block\Template\Context $context           Application context
-     * @param \Magento\Store\Model\StoreFactory       $storeFactory      Store factory
-     * @param BaseConfigInterface                     $baseConfiguration The Search request containers configuration
-     * @param array                                   $data              The data
+     * @param \Magento\Backend\Block\Template\Context $context          Application context
+     * @param \Magento\Store\Model\StoreFactory       $storeFactory     Store factory
+     * @param Containers                              $containersSource The Containers source model
+     * @param array                                   $data             The data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Store\Model\StoreFactory $storeFactory,
-        BaseConfigInterface $baseConfiguration,
+        Containers $containersSource,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->baseConfiguration = $baseConfiguration;
+        $this->containersSource = $containersSource;
         $this->storeFactory = $storeFactory;
     }
 
@@ -87,7 +87,7 @@ class Switcher extends Template
      */
     public function getContainers()
     {
-        $containers = $this->baseConfiguration->getContainers();
+        $containers = $this->containersSource->getContainers();
 
         return $containers;
     }
@@ -299,7 +299,7 @@ class Switcher extends Template
     public function getCurrentContainerName()
     {
         if ($this->getContainerCode() != null) {
-            $container = $this->baseConfiguration->getContainer($this->getContainerCode());
+            $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerName($container)) {
                 return $this->getContainerName($container);
@@ -327,7 +327,7 @@ class Switcher extends Template
     public function getCurrentContainerLabel()
     {
         if ($this->getContainerCode() != null) {
-            $container = $this->baseConfiguration->getContainer($this->getContainerCode());
+            $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerLabel($container)) {
                 return $this->getContainerLabel($container);

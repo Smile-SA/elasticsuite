@@ -25,7 +25,7 @@ use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Read
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class BaseConfig extends \Magento\Framework\Config\Data implements BaseConfigInterface
+class BaseConfig extends \Magento\Framework\Config\Data
 {
     /**
      * Cache ID for Search Request
@@ -56,28 +56,6 @@ class BaseConfig extends \Magento\Framework\Config\Data implements BaseConfigInt
         parent::__construct($reader, $cache, $cacheId);
         $this->indexSettings = $indexSettings;
         $this->addMappings();
-    }
-
-    /**
-     * Get a container by its code
-     *
-     * @param string $code code to get
-     *
-     * @return array
-     */
-    public function getContainer($code)
-    {
-        return $this->get($code, []);
-    }
-
-    /**
-     * Get all registered containers
-     *
-     * @return array
-     */
-    public function getContainers()
-    {
-        return $this->get();
     }
 
     /**

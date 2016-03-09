@@ -73,9 +73,6 @@
         </arguments>
     </type>
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface"
-                type="Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig" />
-
     <!-- Relevance configuration related DI -->
 
     <!-- This one is mandatory since no preference for FrontendInterface is declared elsewhere -->
