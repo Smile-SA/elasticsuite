@@ -26,7 +26,7 @@ class Reader extends \Magento\Framework\App\Config\Initial\Reader
     /**
      * The relevance configuration default filename
      */
-    const FILE_NAME = 'relevance.xml';
+    const FILE_NAME = 'elasticsuite_relevance.xml';
 
     /**
      * @param \Magento\Framework\Config\FileResolverInterface $fileResolver  The file resolver
