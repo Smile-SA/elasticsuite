@@ -100,18 +100,6 @@ class InstallSchema implements InstallSchemaInterface
             ]
         );
 
-        // Append a column 'is_snowball_used'.
-        $connection->addColumn(
-            $table,
-            'is_snowball_used',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '1',
-                'comment'  => 'If language analysis is used on attribute',
-            ]
-        );
-
         // Append a column 'is_used_in_spellcheck' to the table.
         $connection->addColumn(
             $table,
@@ -153,11 +141,11 @@ class InstallSchema implements InstallSchemaInterface
         // Append facet_sort_order to the table.
         $connection->addColumn(
             $table,
-            'facets_sort_order',
+            'facet_sort_order',
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 'nullable' => false,
-                'default'  => 'count',
+                'default'  => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT,
                 'length'   => 25,
                 'comment'  => 'The sort order for facet values',
             ]

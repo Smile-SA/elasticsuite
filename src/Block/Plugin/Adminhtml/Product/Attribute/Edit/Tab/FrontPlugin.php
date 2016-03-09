@@ -16,6 +16,7 @@ use Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front;
 use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 
 /**
  * Plugin that happend custom fields dedicated to search configuration
@@ -90,17 +91,6 @@ class FrontPlugin
         );
 
         $fieldset->addField(
-            'is_snowball_used',
-            'select',
-            [
-                'name'   => 'is_snowball_used',
-                'label'  => __('Use language analysis'),
-                'values' => $yesnoSource,
-            ],
-            'is_displayed_in_autocomplete'
-        );
-
-        $fieldset->addField(
             'is_used_in_spellcheck',
             'select',
             [
@@ -142,48 +132,21 @@ class FrontPlugin
             'facet_min_coverage_rate'
         );
 
-        /** @TODO Grab the values from a dedicated object ?
         $fieldset->addField(
-            'facets_sort_order',
+            'facet_sort_order',
             'select',
             [
                 'name'   => 'facets_sort_order',
                 'label'  => __('Facet sort order'),
                 'values' => [
-                    [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_COUNT,
-                        'label' => __('Result count'),
-                    ],
-                    [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_ADMIN,
-                        'label' => __('Admin sort'),
-                    ],
-                    [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_TERM,
-                        'label' => __('Name'),
-                    ],
-                    [
-                        'value' => Smile_ElasticSearch_Model_Catalog_Layer_Filter_Attribute::SORT_ORDER_RELEVANCE,
-                        'label' => __('Relevance'),
-                    ],
+                    ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
+                    ['value' => BucketInterface::SORT_ORDER_MANUAL, 'label' => __('Admin sort')],
+                    ['value' => BucketInterface::SORT_ORDER_TERM, 'label' => __('Name')],
+                    ['value' => BucketInterface::SORT_ORDER_RELEVANCE,'label' => __('Relevance')],
                 ],
             ],
             'facets_max_size'
         );
-        **/
-
-        /*
-                $subject->getChildBlock('form_after')
-                    ->addFieldMap(
-                        'search_weight',
-                        'search_weight'
-                    )
-                    ->addFieldDependence(
-                        'search_weight',
-                        'searchable',
-                        '1'
-                    );
-        */
 
         if ($attributeObject->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
