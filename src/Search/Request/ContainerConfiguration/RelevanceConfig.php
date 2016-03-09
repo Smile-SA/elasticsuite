@@ -78,11 +78,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getCutOffFrequency()
     {
-        return (int) $this->cutOffFrequency;
+        return (float) $this->cutOffFrequency;
     }
 
     /**
