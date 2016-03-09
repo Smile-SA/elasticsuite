@@ -348,6 +348,23 @@ class Switcher extends Template
     }
 
     /**
+     * Check if container is used for fulltext queries
+     *
+     * @param array $container The container name
+     *
+     * @return bool
+     */
+    public function isFullText($container)
+    {
+        $fulltext = false;
+        if (isset($container['fulltext'])) {
+            $fulltext = filter_var($container['fulltext'], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return $fulltext;
+    }
+
+    /**
      * Set/Get whether the switcher should show default option
      *
      * @param bool $hasDefaultOption If witcher has default option

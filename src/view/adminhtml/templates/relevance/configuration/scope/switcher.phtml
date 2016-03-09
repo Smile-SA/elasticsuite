@@ -56,6 +56,9 @@
                 </li>
             <?php endif; ?>
             <?php foreach ($containers as $container) : ?>
+                <?php if (!$block->isFullText($container)) :?>
+                    <?php continue;?>
+                <?php endif;?>
                 <?php $showContainer = false; ?>
                 <?php foreach ($block->getStores() as $store) : ?>
                     <?php if ($showContainer == false) : ?>

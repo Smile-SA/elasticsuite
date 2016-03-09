@@ -79,11 +79,6 @@ class Converter implements ConverterInterface
     protected function convertNode(\DOMNode $node, $path = '')
     {
         $output = [];
-        if ($node->nodeType == XML_CDATA_SECTION_NODE
-            || $node->nodeType == XML_TEXT_NODE && trim($node->nodeValue) != '') {
-            return $node->nodeValue;
-        }
-
         if ($node->nodeType == XML_ELEMENT_NODE) {
             $nodeName = $this->parseNodeName($node);
             $nodeData = [];
@@ -93,15 +88,19 @@ class Converter implements ConverterInterface
                 if ($childrenData == null) {
                     continue;
                 }
-                $nodeData = $childrenData;
                 if (is_array($childrenData)) {
                     $nodeData = array_merge($nodeData, $childrenData);
+                } else {
+                    $nodeData = $childrenData;
                 }
             }
             if (is_array($nodeData) && empty($nodeData)) {
                 $nodeData = null;
             }
             $output[$nodeName] = $nodeData;
+        } elseif ($node->nodeType == XML_CDATA_SECTION_NODE
+            || $node->nodeType == XML_TEXT_NODE && trim($node->nodeValue) != '') {
+            return $node->nodeValue;
         }
 
         return $output;
