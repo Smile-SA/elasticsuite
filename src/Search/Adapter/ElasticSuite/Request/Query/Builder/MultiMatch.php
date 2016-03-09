@@ -41,6 +41,7 @@ class MultiMatch implements BuilderInterface
             'query'                => $query->getQueryText(),
             'fields'               => $fields,
             'minimum_should_match' => $query->getMinimumShouldMatch(),
+            'tie_breaker'          => $query->getTieBreaker(),
         ];
 
         return ['multi_match' => $searchQueryParams];

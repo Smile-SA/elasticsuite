@@ -31,6 +31,11 @@ class MultiMatch implements QueryInterface
     const DEFAULT_MINIMUM_SHOULD_MATCH = "1";
 
     /**
+     * @var integer
+     */
+    const DEFAULT_TIE_BREAKER = 1;
+
+    /**
      * @var string
      */
     private $name;
@@ -56,10 +61,16 @@ class MultiMatch implements QueryInterface
     private $minimumShouldMatch;
 
     /**
+     * @var integer
+     */
+    private $tieBreaker;
+
+    /**
      *
      * @param string  $queryText          Matched text.
      * @param array   $fields             Query fields as key with their weigth as values.
      * @param string  $minimumShouldMatch Minimum should match for the match query.
+     * @param integer $tieBreaker         Tie breaker for the multi_match query.
      * @param string  $name               Query name.
      * @param integer $boost              Query boost.
      */
@@ -67,6 +78,7 @@ class MultiMatch implements QueryInterface
         $queryText,
         array $fields,
         $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
+        $tieBreaker = self::DEFAULT_TIE_BREAKER,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
@@ -74,6 +86,7 @@ class MultiMatch implements QueryInterface
         $this->queryText          = $queryText;
         $this->fields             = $fields;
         $this->minimumShouldMatch = $minimumShouldMatch;
+        $this->tieBreaker         = $tieBreaker;
         $this->boost              = $boost;
     }
 
@@ -129,5 +142,15 @@ class MultiMatch implements QueryInterface
     public function getMinimumShouldMatch()
     {
         return $this->minimumShouldMatch;
+    }
+
+    /**
+     * Tie breaker for the multi_match query.
+     *
+     * @return float
+     */
+    public function getTieBreaker()
+    {
+        return $this->tieBreaker;
     }
 }

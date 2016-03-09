@@ -56,7 +56,7 @@ class QueryBuilder
     {
         $queryParams = [
             'query'  => $this->getWeightedSearchQuery($containerConfig, $queryText),
-            'filter' => $this->getCutoffFrequencyQuery($queryText),
+            'filter' => $this->getCutoffFrequencyQuery($containerConfig, $queryText),
         ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
@@ -65,16 +65,19 @@ class QueryBuilder
     /**
      * Provides a common search query for the searched text.
      *
-     * @param string $queryText The text query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param string                          $queryText       The text query.
      *
      * @return QueryInterface
      */
-    private function getCutoffFrequencyQuery($queryText)
+    private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $queryParams = [
             'field'              => MappingInterface::DEFAULT_SEARCH_FIELD,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => '100%',
+            'cutoffFrequency'    => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            'minimumShouldMatch' => $containerConfig->getRelevanceConfig()->getMinimumShouldMatch(),
         ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_COMMON, $queryParams);
@@ -103,7 +106,12 @@ class QueryBuilder
             }
         }
 
-        $queryParams = ['fields' => $searchFields, 'queryText' => $queryText];
+        $queryParams = [
+            'fields'             => $searchFields,
+            'queryText'          => $queryText,
+            'minimumShouldMatch' => 1,
+            'tieBreaker'         => $containerConfig->getRelevanceConfig()->getTieBreaker(),
+        ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
