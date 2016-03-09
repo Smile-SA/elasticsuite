@@ -209,12 +209,6 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration\Context" type="Magento\Framework\App\Helper\Context">
-        <arguments>
-            <argument name="scopeConfig" xsi:type="object">Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
-        </arguments>
-    </virtualType>
-
     <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field</argument>
@@ -253,13 +247,7 @@
     <preference for="Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface"
                 type="Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\PhoneticConfig" />
 
-    <type name="Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration">
-        <arguments>
-            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Helper\SearchRelevanceConfiguration\Context</argument>
-        </arguments>
-    </type>
-
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\Initial">
+    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader">
         <arguments>
             <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter</argument>
         </arguments>
