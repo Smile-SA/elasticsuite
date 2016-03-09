@@ -40,9 +40,19 @@ class Factory
     const PHRASE_MATCH_CONFIG_XML_PREFIX = 'phrase_match_configuration';
 
     /**
+     * XML node for minimum should match configuration.
+     */
+    const MINIMUM_SHOULD_MATCH_CONFIG_XML_PATH = 'fulltext_base_settings/minimum_should_match';
+
+    /**
+     * XML node for tie breaker configuration.
+     */
+    const TIE_BREAKER_CONFIG_XML_PATH = 'fulltext_base_settings/tie_breaker';
+
+    /**
      * XML node for cutoff frequency configuration
      */
-    const CUTOFF_FREQUENCY_CONFIG_XML_PREFIX = 'cutoff_frequency_configuration';
+    const CUTOFF_FREQUENCY_CONFIG_XML_PATH = 'cutoff_frequency_configuration/cutoff_frequency';
 
     /**
      * XML node for fuzziness configuration
@@ -53,7 +63,6 @@ class Factory
      * XML node for phonetic configuration
      */
     const PHONETIC_CONFIG_XML_PREFIX = 'phonetic_configuration';
-
 
     /**
      * @var RelevanceConfigurationInterface[]
@@ -112,10 +121,12 @@ class Factory
     private function loadConfiguration($scopeCode)
     {
         $configurationParams = [
-            'phraseMatchBoost' => $this->getPhraseMatchBoostConfiguration($scopeCode),
-            'cutOffFrequency'  => $this->getCutoffFrequencyConfiguration($scopeCode),
-            'fuzziness'        => $this->getFuzzinessConfiguration($scopeCode),
-            'phonetic'         => $this->getPhoneticConfiguration($scopeCode),
+            'minimumShouldMatch' => $this->getMinimumShouldMatch($scopeCode),
+            'tieBreaker'         => $this->getTieBreaker($scopeCode),
+            'phraseMatchBoost'   => $this->getPhraseMatchBoostConfiguration($scopeCode),
+            'cutOffFrequency'    => $this->getCutoffFrequencyConfiguration($scopeCode),
+            'fuzziness'          => $this->getFuzzinessConfiguration($scopeCode),
+            'phonetic'           => $this->getPhoneticConfiguration($scopeCode),
         ];
 
         return $this->objectManager->create(
@@ -223,6 +234,34 @@ class Factory
     }
 
     /**
+     * Retrieve minimum should match config for a container.
+     *
+     * @param string $scopeCode The scope code.
+     *
+     * @return string
+     */
+    private function getMinimumShouldMatch($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::MINIMUM_SHOULD_MATCH_CONFIG_XML_PATH;
+
+        return $this->getConfigValue($path, $scopeCode);
+    }
+
+    /**
+     * Retrieve tie breaker config for a container.
+     *
+     * @param string $scopeCode The scope code.
+     *
+     * @return string
+     */
+    private function getTieBreaker($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::TIE_BREAKER_CONFIG_XML_PATH;
+
+        return (float) $this->getConfigValue($path, $scopeCode);
+    }
+
+    /**
      * Retrieve cutoff frequency for a container.
      *
      * @param string $scopeCode The scope code.
@@ -231,9 +270,9 @@ class Factory
      */
     private function getCutoffFrequencyConfiguration($scopeCode)
     {
-        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::CUTOFF_FREQUENCY_CONFIG_XML_PREFIX;
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::CUTOFF_FREQUENCY_CONFIG_XML_PATH;
 
-        return (float) $this->getConfigValue($path . "/cutoff_frequency", $scopeCode);
+        return (float) $this->getConfigValue($path, $scopeCode);
     }
 
     /**

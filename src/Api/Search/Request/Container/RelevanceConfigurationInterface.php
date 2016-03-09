@@ -23,6 +23,16 @@ namespace Smile\ElasticSuiteCore\Api\Search\Request\Container;
 interface RelevanceConfigurationInterface
 {
     /**
+     * @return string
+     */
+    public function getMinimumShouldMatch();
+
+    /**
+     * @return float
+     */
+    public function getTieBreaker();
+
+    /**
      * @return int|false
      */
     public function getPhraseMatchBoost();
