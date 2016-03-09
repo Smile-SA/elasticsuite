@@ -15,7 +15,7 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
 use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\ScopedFactory;
 
 /**
@@ -80,12 +80,12 @@ class Container implements \Magento\Framework\App\Config\Scope\ReaderInterface
     public function read($code = null)
     {
         $config = array_replace_recursive(
-            $this->defaultReader->read(BaseConfigInterface::SCOPE_DEFAULT),
+            $this->defaultReader->read(ContainerScopeInterface::SCOPE_DEFAULT),
             $this->initialConfig->getData($code)
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => BaseConfigInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
+            ['scope' => ContainerScopeInterface::SCOPE_CONTAINERS, 'scopeCode' => $code]
         );
 
         $dbContainerConfig = [];

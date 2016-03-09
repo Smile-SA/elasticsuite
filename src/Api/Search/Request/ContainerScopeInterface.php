@@ -10,30 +10,30 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration;
+
+namespace Smile\ElasticSuiteCore\Api\Search\Request;
 
 /**
- * Base Container Configuration interface
+ * Search Request Containers Scope interface
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-interface BaseConfigInterface
+interface ContainerScopeInterface
 {
     /**
-     * Retrieve all search containers
-     *
-     * @return mixed
+     * Default Scope for configuration
      */
-    public function getContainers();
+    const SCOPE_DEFAULT = "default";
 
     /**
-     * Retrieve a given search container by its code
-     *
-     * @param string $code The container code
-     *
-     * @return mixed
+     * Container Scope for configuration
      */
-    public function getContainer($code);
+    const SCOPE_CONTAINERS = "containers";
+
+    /**
+     * Container-Store couple Scope for configuration
+     */
+    const SCOPE_STORE_CONTAINERS = "containers_stores";
 }

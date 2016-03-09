@@ -14,7 +14,7 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
 
 use Magento\Framework\App\Config\Scope\Converter;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\ScopedFactory;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 
 /**
@@ -66,8 +66,8 @@ class DefaultReader implements \Magento\Framework\App\Config\Scope\ReaderInterfa
      */
     public function read($scope = null)
     {
-        $scope = $scope === null ? BaseConfigInterface::SCOPE_DEFAULT : $scope;
-        if ($scope !== BaseConfigInterface::SCOPE_DEFAULT) {
+        $scope = $scope === null ? ContainerScopeInterface::SCOPE_DEFAULT : $scope;
+        if ($scope !== ContainerScopeInterface::SCOPE_DEFAULT) {
             throw new \Magento\Framework\Exception\LocalizedException(__("Only default scope allowed"));
         }
 

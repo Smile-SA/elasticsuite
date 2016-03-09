@@ -17,8 +17,9 @@ namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\Relevance
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Symfony\Component\DependencyInjection\Tests\Compiler\C;
 
 /**
  * Search relevance configuration factory.
@@ -285,7 +286,7 @@ class Factory
      */
     private function getConfigValue($path, $scopeCode)
     {
-        $scope = BaseConfigInterface::SCOPE_STORE_CONTAINERS;
+        $scope = ContainerScopeInterface::SCOPE_STORE_CONTAINERS;
 
         return $this->scopeConfig->getValue($path, $scope, $scopeCode);
     }

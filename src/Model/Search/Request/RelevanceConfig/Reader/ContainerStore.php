@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
 
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Framework\App\Config\ScopePool;
@@ -91,7 +91,7 @@ class ContainerStore
         );
 
         $collection = $this->collectionFactory->create(
-            ['scope' => BaseConfigInterface::SCOPE_STORE_CONTAINERS, 'scopeCode' => $code]
+            ['scope' => ContainerScopeInterface::SCOPE_STORE_CONTAINERS, 'scopeCode' => $code]
         );
 
         $dbStoreConfig = [];
