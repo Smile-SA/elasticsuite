@@ -50,9 +50,15 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $searchRequestName;
 
     /**
+     * @var array
+     */
+    private $filters = [];
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity factory
+     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity
+     *                                                                                              factory
      * @param \Psr\Log\LoggerInterface                                     $logger                  Logger.
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy           Db Fetch strategy.
      * @param \Magento\Framework\Event\ManagerInterface                    $eventManager            Event manager.
@@ -65,16 +71,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Framework\Module\Manager                            $moduleManager           Module manager.
      * @param \Magento\Catalog\Model\Indexer\Product\Flat\State            $catalogProductFlatState Flat index state.
      * @param \Magento\Framework\App\Config\ScopeConfigInterface           $scopeConfig             Store configuration.
-     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options factory.
-     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL resource model.
+     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options
+     *                                                                                              factory.
+     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL
+     *                                                                                              resource model.
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface         $localeDate              Timezone helper.
      * @param \Magento\Customer\Model\Session                              $customerSession         Customer session.
      * @param \Magento\Framework\Stdlib\DateTime                           $dateTime                Datetime helper.
-     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
+     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group
+     *                                                                                              manager.
+     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request
+     *                                                                                              builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
-     * @param string                                                       $searchRequestName       Search request name.
+     * @param string                                                       $searchRequestName       Search request
+     *                                                                                              name.
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -165,7 +176,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $field = 'price.price';
         }
 
-        $this->requestBuilder->addFilter($field, $condition);
+        $this->filters[$field] = $condition;
 
         return $this;
     }
@@ -278,25 +289,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _renderOrders()
     {
-        if (!$this->_isOrdersRendered) {
-            foreach ($this->_orders as $attribute => $direction) {
-                if ($attribute == 'position') {
-                    $categoryIds  = $this->_productLimitationFilters['category_ids'];
-                    $nestedPath   = 'category';
-                    $nestedFilter = ['category.category_id' => $categoryIds];
-                    $this->requestBuilder->addSortOrder('category.position', $direction, $nestedPath, $nestedFilter);
-                } elseif ($attribute == 'price') {
-                    $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
-                    $nestedPath   = 'price';
-                    $nestedFilter = ['price.customer_group_id' => $customerGroupId];
-                    $this->requestBuilder->addSortOrder('price.price', $direction, $nestedPath, $nestedFilter);
-                } else {
-                    $this->requestBuilder->addSortOrder($attribute, $direction);
-                }
-            }
-
-            $this->_isOrdersRendered = true;
-        }
+        // Sort orders are managed through the search engine and are added through the prepareRequest method.
 
         return $this;
     }
@@ -327,26 +320,66 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     private function prepareRequest()
     {
-        // Set the right search name (eg. catalog_product_view, ...).
-        $this->requestBuilder->setRequestName($this->searchRequestName);
+        // Store id and request name.
+        $storeId           = $this->getStoreId();
+        $searchRequestName = $this->searchRequestName;
 
-        // Bind the current store.
-        $this->requestBuilder->setStoreId($this->getStoreId());
+        // Pagination params.
+        $size = $this->_pageSize ? $this->_pageSize : 20;
+        $from = $size * (max(1, $this->_curPage) - 1);
 
-        // For fulltext search : set the query text.
-        if ($this->queryText) {
-            $this->requestBuilder->setQueryText($this->queryText);
-        }
-
-        // Update pagination of the request.
-        $pageSize = $this->_pageSize ? $this->_pageSize : 20;
-        $curPage  = max(1, $this->_curPage);
-        $this->requestBuilder->setSize($pageSize);
-        $this->requestBuilder->setFrom($pageSize * ($curPage - 1));
+        // Query text.
+        $queryText = $this->queryText;
 
         // Setup sort orders.
-        $this->_renderOrders();
+        $sortOrders = $this->prepareSortOrders();
 
-        return $this->requestBuilder->create();
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $searchRequestName,
+            $from,
+            $size,
+            $queryText,
+            $sortOrders,
+            $this->filters
+        );
+
+        return $searchRequest;
+    }
+
+    /**
+     * Prepare sort orders for the request builder.
+     *
+     * @return array()
+     */
+    private function prepareSortOrders()
+    {
+        $sortOrders = [];
+
+        foreach ($this->_orders as $attribute => $direction) {
+            $sortField  = $attribute;
+            $sortParams = ['direction' => $direction];
+
+            if ($attribute == 'position') {
+                // Change the field position to the category position.
+                $sortField = 'category.position';
+                // Use a nested sort order.
+                $sortParams['nestedPath'] = 'category';
+                // Ensure we sort on the position field of the current category.
+                $categoryIds = $this->_productLimitationFilters['category_ids'];
+                $sortParams['nestedFilter'] = ['category.category_id' => $categoryIds];
+            } elseif ($attribute == 'price') {
+                // Change the price sort field to the nested price field.
+                $sortField = 'price.price';
+                $sortParams['nestedPath'] = 'price';
+                // Ensure we sort on the position field of the current customer group.
+                $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
+                $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
+            }
+
+            $sortOrders[$sortField] = $sortParams;
+        }
+
+        return $sortOrders;
     }
 }
