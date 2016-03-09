@@ -19,6 +19,8 @@ use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory as RelevanceConfigFactory;
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
 /**
  * Search request container configuration implementation.
@@ -50,19 +52,31 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     private $indexManager;
 
     /**
+     * @var RelevanceConfigurationInterface
+     */
+    private $relevanceConfig;
+
+    /**
      * Constructor.
      *
-     * @param string                  $containerName Search request container name.
-     * @param integer                 $storeId       Store id.
-     * @param BaseConfig              $baseConfig    XML file configuration.
-     * @param IndexOperationInterface $indexManager  Index manager (used to load mappings).
+     * @param string                  $containerName          Search request container name.
+     * @param integer                 $storeId                Store id.
+     * @param BaseConfig              $baseConfig             XML file configuration.
+     * @param RelevanceConfigFactory  $relevanceConfigFactory Fulltext search relevance factory
+     * @param IndexOperationInterface $indexManager           Index manager (used to load mappings).
      */
-    public function __construct($containerName, $storeId, BaseConfig $baseConfig, IndexOperationInterface $indexManager)
-    {
-        $this->containerName = $containerName;
-        $this->storeId       = $storeId;
-        $this->baseConfig    = $baseConfig;
-        $this->indexManager  = $indexManager;
+    public function __construct(
+        $containerName,
+        $storeId,
+        BaseConfig $baseConfig,
+        RelevanceConfigFactory $relevanceConfigFactory,
+        IndexOperationInterface $indexManager
+    ) {
+        $this->containerName   = $containerName;
+        $this->storeId         = $storeId;
+        $this->baseConfig      = $baseConfig;
+        $this->indexManager    = $indexManager;
+        $this->relevanceConfig = $relevanceConfigFactory->create($storeId, $containerName);
     }
 
     /**
@@ -106,6 +120,14 @@ class ContainerConfiguration implements ContainerConfigurationInterface
         $type     = $this->getIndex()->getType($typeName);
 
         return $type->getMapping();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRelevanceConfig()
+    {
+        return $this->relevanceConfig;
     }
 
     /**

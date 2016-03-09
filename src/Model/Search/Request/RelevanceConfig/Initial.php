@@ -12,6 +12,8 @@
  */
 namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
 
+use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader;
+
 /**
  * Relevance configuration Initial Reader
  *
@@ -47,21 +49,22 @@ class Initial
      * @param \Magento\Framework\App\Cache\Type\Config                                    $cache  Cache instance
      */
     public function __construct(
-        \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\Initial $reader,
+        Reader $reader,
         \Magento\Framework\App\Cache\Type\Config $cache
     ) {
         $data = $cache->load(self::CACHE_ID);
 
         if (!$data) {
-            $data = $reader->read();
-            $cache->save(serialize($data), self::CACHE_ID);
-        } else {
-            $data = unserialize($data);
+            $data = serialize($reader->read());
+            $cache->save($data, self::CACHE_ID);
         }
+
+        $data = unserialize($data);
 
         if (isset($data['data'])) {
             $this->data = $data['data'];
         }
+
         if (isset($data['metadata'])) {
             $this->metadata = $data['metadata'];
         }

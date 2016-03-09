@@ -10,7 +10,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
+namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 
 use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\SchemaLocator;
 
@@ -21,7 +21,7 @@ use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\SchemaLo
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Initial extends \Magento\Framework\App\Config\Initial\Reader
+class Reader extends \Magento\Framework\App\Config\Initial\Reader
 {
     /**
      * The relevance configuration default filename

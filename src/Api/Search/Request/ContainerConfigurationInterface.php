@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteCore\Api\Search\Request;
 
 use Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
 /**
  * Search request container configuration interface.
@@ -54,11 +55,17 @@ interface ContainerConfigurationInterface
      */
     public function getLabel();
 
-
     /**
      * Search request container mapping.
      *
      * @return MappingInterface
      */
     public function getMapping();
+
+    /**
+     * Retrieve the fulltext search relevance configuration for the container.
+     *
+     * @return RelevanceConfigurationInterface
+     */
+    public function getRelevanceConfig();
 }
