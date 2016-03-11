@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
@@ -14,6 +13,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request\Query;
 
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -34,6 +34,11 @@ class MultiMatch implements QueryInterface
      * @var integer
      */
     const DEFAULT_TIE_BREAKER = 1;
+
+    /**
+     * @var string
+     */
+    const DEFAULT_MATCH_TYPE = "best_fields";
 
     /**
      * @var string
@@ -66,13 +71,30 @@ class MultiMatch implements QueryInterface
     private $tieBreaker;
 
     /**
-     *
-     * @param string  $queryText          Matched text.
-     * @param array   $fields             Query fields as key with their weigth as values.
-     * @param string  $minimumShouldMatch Minimum should match for the match query.
-     * @param integer $tieBreaker         Tie breaker for the multi_match query.
-     * @param string  $name               Query name.
-     * @param integer $boost              Query boost.
+     * @var null|FuzzinessConfigurationInterface
+     */
+    private $fuzzinessConfig;
+
+    /**
+     * @var float
+     */
+    private $cutoffFrequency;
+
+    /**
+     * @var string
+     */
+    private $matchType;
+
+    /**
+     * @param string                               $queryText          Matched text.
+     * @param array                                $fields             Query fields as key with their weigth as values.
+     * @param string                               $minimumShouldMatch Minimum should match for the match query.
+     * @param integer                              $tieBreaker         Tie breaker for the multi_match query.
+     * @param string                               $name               Query name.
+     * @param int                                  $boost              Query boost.
+     * @param FuzzinessConfigurationInterface|null $fuzzinessConfig    The fuzziness Configuration
+     * @param float                                $cutoffFrequency    Cutoff frequency.
+     * @param string                               $matchType          The match type.
      */
     public function __construct(
         $queryText,
@@ -80,7 +102,10 @@ class MultiMatch implements QueryInterface
         $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
         $tieBreaker = self::DEFAULT_TIE_BREAKER,
         $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        $boost = QueryInterface::DEFAULT_BOOST_VALUE,
+        FuzzinessConfigurationInterface $fuzzinessConfig = null,
+        $cutoffFrequency = null,
+        $matchType = self::DEFAULT_MATCH_TYPE
     ) {
         $this->name               = $name;
         $this->queryText          = $queryText;
@@ -88,6 +113,9 @@ class MultiMatch implements QueryInterface
         $this->minimumShouldMatch = $minimumShouldMatch;
         $this->tieBreaker         = $tieBreaker;
         $this->boost              = $boost;
+        $this->fuzzinessConfig    = $fuzzinessConfig;
+        $this->cutoffFrequency    = $cutoffFrequency;
+        $this->matchType          = $matchType;
     }
 
     /**
@@ -152,5 +180,33 @@ class MultiMatch implements QueryInterface
     public function getTieBreaker()
     {
         return $this->tieBreaker;
+    }
+
+    /**
+     * Retrieve Fuzziness Configuration if any
+     *
+     * @return null|FuzzinessConfigurationInterface
+     */
+    public function getFuzzinessConfiguration()
+    {
+        return $this->fuzzinessConfig;
+    }
+
+    /**
+     * Query cutoff frequency.
+     *
+     * @return float
+     */
+    public function getCutoffFrequency()
+    {
+        return $this->cutoffFrequency;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMatchType()
+    {
+        return $this->matchType;
     }
 }
