@@ -48,4 +48,14 @@ class PhoneticConfig implements PhoneticConfigurationInterface
     {
         return ($this->fuzzinessConfiguration !== null);
     }
+
+    /**
+     * Retrieve Fuzziness Configuration
+     *
+     * @return FuzzinessConfigurationInterface
+     */
+    public function getFuzzinessConfiguration()
+    {
+        return $this->fuzzinessConfiguration;
+    }
 }
