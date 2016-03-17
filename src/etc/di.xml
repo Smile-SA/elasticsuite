@@ -109,7 +109,4 @@
     </virtualType>
     
 
-    <type name="\Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front">
-        <plugin name="smile_elasticsuite_catalog_attribute_search_configuration" type="\Smile\ElasticSuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin" />
-    </type>
 </config>

@@ -14,9 +14,12 @@ namespace Smile\ElasticSuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edi
 
 use Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front;
 use Magento\Config\Model\Config\Source\Yesno;
+use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Magento\Framework\Data\Form\Element\Fieldset;
+use Magento\Catalog\Api\Data\EavAttributeInterface;
 
 /**
  * Plugin that happend custom fields dedicated to search configuration
@@ -28,23 +31,44 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 class FrontPlugin
 {
     /**
+     * @var array
+     */
+    private $movedFields = [
+        'is_searchable',
+        'is_visible_in_advanced_search',
+        'is_filterable',
+        'is_filterable_in_search',
+        'used_for_sort_by',
+        'search_weight',
+    ];
+
+    /**
+     * @var Weight
+     */
+    private $weightSource;
+
+    /**
      * @var Yesno
      */
-    private $yesNo;
+    private $booleanSource;
 
     /**
      * Class constructor
      *
-     * @param Yesno    $yesNo    The YesNo source
-     * @param Registry $registry Core registry
+     * @param Yesno    $booleanSource The YesNo source.
+     * @param Weight   $weightSource  Weight source.
+     * @param Registry $registry      Core registry.
      */
-    public function __construct(Yesno $yesNo, Registry $registry)
+    public function __construct(Yesno $booleanSource, Weight $weightSource, Registry $registry)
     {
-        $this->yesNo        = $yesNo;
-        $this->coreRegistry = $registry;
+        $this->weightSource  = $weightSource;
+        $this->booleanSource = $booleanSource;
+        $this->coreRegistry  = $registry;
     }
 
     /**
+     * Append ES specifics fields into the attribute edit store front tab.
+     *
      * @param Front    $subject The StoreFront tab
      * @param \Closure $proceed The parent function
      * @param Form     $form    The form
@@ -55,10 +79,42 @@ class FrontPlugin
     {
         $block = $proceed($form);
 
-        $attributeObject = $this->coreRegistry->registry('entity_attribute');
+        $fieldset = $this->createFieldset($form, $subject);
 
-        $yesnoSource = $this->yesNo->toOptionArray();
+        $this->moveOrginalFields($form)
+            ->addSearchFields($fieldset)
+            ->addAutocompleteFields($fieldset)
+            ->addFacetFields($fieldset);
 
+        if ($this->getAttribute()->getAttributeCode() == 'name') {
+            $form->getElement('is_searchable')->setDisabled(1);
+            $form->getElement('is_used_in_autocomplete')->setDisabled(1);
+            $form->getElement('is_used_in_autocomplete')->setValue(1);
+        }
+
+        return $block;
+    }
+
+    /**
+     * Return the current edit attribute.
+     *
+     * @return EavAttributeInterface
+     */
+    private function getAttribute()
+    {
+        return $this->coreRegistry->registry('entity_attribute');
+    }
+
+    /**
+     * Append the "Search Configuration" fieldset to the tab.
+     *
+     * @param Form  $form    Target form.
+     * @param Front $subject Target tab.
+     *
+     * @return Fieldset
+     */
+    private function createFieldset(Form $form, Front $subject)
+    {
         $fieldset = $form->addFieldset(
             'elasticsuite_catalog_attribute_fieldset',
             [
@@ -68,15 +124,50 @@ class FrontPlugin
             'front_fieldset'
         );
 
+        return $fieldset;
+    }
+
+    /**
+     * Move original fields to the new fieldset.
+     *
+     * @param Form $form Form
+     *
+     * @return FrontPlugin
+     */
+    private function moveOrginalFields(Form $form)
+    {
+        $originalFieldset = $form->getElement('front_fieldset');
+        $targetFieldset   = $form->getElement('elasticsuite_catalog_attribute_fieldset');
+
+        foreach ($this->movedFields as $elementId) {
+            $element = $form->getElement($elementId);
+            if ($element) {
+                $originalFieldset->removeField($elementId);
+                $targetFieldset->addElement($element);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Append autocomplete related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addAutocompleteFields(Fieldset $fieldset)
+    {
         $fieldset->addField(
             'is_used_in_autocomplete',
             'select',
             [
                 'name'   => 'is_used_in_autocomplete',
                 'label'  => __('Used in autocomplete'),
-                'values' => $yesnoSource,
+                'values' => $this->booleanSource->toOptionArray(),
             ],
-            'search_weight'
+            'is_used_in_spellcheck'
         );
 
         $fieldset->addField(
@@ -85,22 +176,23 @@ class FrontPlugin
             [
                 'name'   => 'is_displayed_in_autocomplete',
                 'label'  => __('Display in autocomplete'),
-                'values' => $yesnoSource,
+                'values' => $this->booleanSource->toOptionArray(),
             ],
             'is_used_in_autocomplete'
         );
 
-        $fieldset->addField(
-            'is_used_in_spellcheck',
-            'select',
-            [
-                'name'   => 'is_used_in_spellcheck',
-                'label'  => __('Used in spellcheck'),
-                'values' => $yesnoSource,
-            ],
-            'is_snowball_used'
-        );
+        return $this;
+    }
 
+    /**
+     * Append faceting related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addFacetFields(Fieldset $fieldset)
+    {
         $fieldset->addField(
             'facet_min_coverage_rate',
             'text',
@@ -111,7 +203,7 @@ class FrontPlugin
                 'value' => '90',
                 'note'  => __('Ex: Brand facet will be displayed only if 90% of the product have a brand.'),
             ],
-            'is_fuzziness_enabled'
+            'is_filterable_in_search'
         );
 
         $fieldset->addField(
@@ -127,7 +219,7 @@ class FrontPlugin
                     [
                         __('Max number of values returned by a facet query.'),
                     ]
-                ),
+                    ),
             ],
             'facet_min_coverage_rate'
         );
@@ -145,15 +237,43 @@ class FrontPlugin
                     ['value' => BucketInterface::SORT_ORDER_RELEVANCE,'label' => __('Relevance')],
                 ],
             ],
-            'facets_max_size'
+            'facet_max_size'
         );
 
-        if ($attributeObject->getAttributeCode() == 'name') {
-            $form->getElement('is_searchable')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setValue(1);
-        }
+        return $this;
+    }
 
-        return $block;
+    /**
+     * Append spellchecking related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addSearchFields(Fieldset $fieldset)
+    {
+        $fieldset->addField(
+            'search_weight',
+            'select',
+            [
+                'name' => 'search_weight',
+                'label' => __('Search Weight'),
+                'values' => $this->weightSource->getOptions()
+            ],
+            'is_searchable'
+        );
+
+        $fieldset->addField(
+            'is_used_in_spellcheck',
+            'select',
+            [
+                'name'   => 'is_used_in_spellcheck',
+                'label'  => __('Used in spellcheck'),
+                'values' => $this->booleanSource->toOptionArray(),
+            ],
+            'search_weight'
+        );
+
+        return $this;
     }
 }
