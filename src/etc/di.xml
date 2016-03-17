@@ -108,5 +108,12 @@
         </arguments>
     </virtualType>
     
+    <type name="\Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front">
+        <plugin name="smile_elasticsuite_catalog_attribute_search_configuration" type="\Smile\ElasticSuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin" />
+    </type>
+
+    <type name="\Magento\Catalog\Model\Category">
+        <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
+    </type>
 
 </config>
