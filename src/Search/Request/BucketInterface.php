@@ -49,6 +49,13 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     public function getNestedPath();
 
     /**
+     * Optional filter for nested filters (eg. filter by customer group for price).
+     *
+     * @return QueryInterface|null
+     */
+    public function getNestedFilter();
+
+    /**
      * Optional filter for filtered aggregations.
      *
      * @return QueryInterface|null

@@ -34,12 +34,13 @@ class Histogram extends AbstractBucket
     /**
      * Constructor.
      *
-     * @param string         $name       Bucket name.
-     * @param string         $field      Bucket field.
-     * @param Metric[]       $metrics    Bucket metrics.
-     * @param string         $nestedPath Nested path for nested bucket.
-     * @param QueryInterface $filter     Bucket filter.
-     * @param integer        $interval   Histogram interval.
+     * @param string         $name         Bucket name.
+     * @param string         $field        Bucket field.
+     * @param Metric[]       $metrics      Bucket metrics.
+     * @param string         $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface $filter       Bucket filter.
+     * @param QueryInterface $nestedFilter Nested filter for the bucket.
+     * @param integer        $interval     Histogram interval.
      */
     public function __construct(
         $name,
@@ -47,9 +48,10 @@ class Histogram extends AbstractBucket
         array $metrics,
         $nestedPath = null,
         QueryInterface $filter = null,
+        QueryInterface $nestedFilter = null,
         $interval = 1
     ) {
-        parent::__construct($name, $field, $metrics, $nestedPath, $filter);
+        parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
         $this->interval = $interval;
     }
 

@@ -100,59 +100,44 @@ class Builder
      * @param string  $queryText     Search request fulltext query.
      * @param array   $sortOrders    Search request sort orders.
      * @param array   $filters       Search request filters.
+     * @param array   $facets        Search request facets.
      *
      * @return RequestInterface
      */
-    public function create($storeId, $containerName, $from, $size, $queryText = null, $sortOrders = [], $filters = [])
-    {
-        $containerConfiguration = $this->getRequestContainerConfiguration($storeId, $containerName);
-        $facetFilters           = $this->getFacetFilters($filters, $containerConfiguration, $containerName);
-        $queryFilters           = array_diff_key($filters, $facetFilters);
+    public function create(
+        $storeId,
+        $containerName,
+        $from,
+        $size,
+        $queryText = null,
+        $sortOrders = [],
+        $filters = [],
+        $facets = []
+    ) {
+        $containerConfig = $this->getRequestContainerConfiguration($storeId, $containerName);
+
+        $facetFilters  = array_intersect_key($filters, $facets);
+        $queryFilters  = array_diff_key($filters, $facetFilters);
 
         $requestParams = [
             'name'       => $containerName,
-            'indexName'  => $containerConfiguration->getIndexName(),
-            'type'       => $containerConfiguration->getTypeName(),
+            'indexName'  => $containerConfig->getIndexName(),
+            'type'       => $containerConfig->getTypeName(),
             'from'       => $from,
             'size'       => $size,
             'dimensions' => $this->buildDimensions($storeId),
-            'query'      => $this->queryBuilder->createQuery($containerConfiguration, $queryText, $queryFilters),
-            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($containerConfiguration, $sortOrders),
-            'buckets'    => $this->aggregationBuilder->buildAggregations($containerConfiguration, $facetFilters),
+            'query'      => $this->queryBuilder->createQuery($containerConfig, $queryText, $queryFilters),
+            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($containerConfig, $sortOrders),
+            'buckets'    => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
         ];
 
         if (!empty($facetFilters)) {
-            $requestParams['filter'] = $this->queryBuilder->createFilters($containerConfiguration, $facetFilters);
+            $requestParams['filter'] = $this->queryBuilder->createFilters($containerConfig, $facetFilters);
         }
 
         $request = $this->requestFactory->create($requestParams);
 
         return $request;
-    }
-
-    /**
-     * Extract facet filters from current filters.
-     *
-     * @param array                           $filters         Filters applied to the request.
-     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
-     *
-     * @return array
-     */
-    private function getFacetFilters($filters, ContainerConfigurationInterface $containerConfig)
-    {
-        $filters = [];
-
-        $containerName = $containerConfig->getName();
-        $mapping       = $containerConfig->getMapping();
-
-        foreach ($filters as $fieldName => $condition) {
-            $field = $mapping->getField($fieldName);
-            if ($field && $field->isFacet($containerName)) {
-                $filters[$fieldName] = $condition;
-            }
-        }
-
-        return $filters;
     }
 
     /**

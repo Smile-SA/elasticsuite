@@ -33,14 +33,21 @@ class Term extends AbstractBucket
     private $size;
 
     /**
+     * @var string
+     */
+    private $sortOrder;
+
+    /**
      * Constructor.
      *
-     * @param string         $name       Bucket name.
-     * @param string         $field      Bucket field.
-     * @param Metric[]       $metrics    Bucket metrics.
-     * @param string         $nestedPath Nested path for nested bucket.
-     * @param QueryInterface $filter     Bucket filter.
-     * @param integer        $size       Bucket size.
+     * @param string         $name         Bucket name.
+     * @param string         $field        Bucket field.
+     * @param Metric[]       $metrics      Bucket metrics.
+     * @param string         $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface $filter       Bucket filter.
+     * @param QueryInterface $nestedFilter Nested filter for the bucket.
+     * @param integer        $size         Bucket size.
+     * @param string         $sortOrder    Bucket sort order.
      */
     public function __construct(
         $name,
@@ -48,10 +55,13 @@ class Term extends AbstractBucket
         array $metrics,
         $nestedPath = null,
         QueryInterface $filter = null,
-        $size = 0
+        QueryInterface $nestedFilter = null,
+        $size = 0,
+        $sortOrder = BucketInterface::SORT_ORDER_MANUAL
     ) {
-        parent::__construct($name, $field, $metrics, $nestedPath, $filter);
+        parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
         $this->size = $size;
+        $this->sortOrder = $sortOrder;
     }
 
     /**
@@ -70,5 +80,15 @@ class Term extends AbstractBucket
     public function getSize()
     {
         return $this->size;
+    }
+
+    /**
+     * Bucket sort order.
+     *
+     * @return string
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
     }
 }

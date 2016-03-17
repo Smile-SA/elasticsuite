@@ -52,21 +52,34 @@ abstract class AbstractBucket implements BucketInterface
     private $filter;
 
     /**
+     * @var QueryInterface|null
+     */
+    private $nestedFilter;
+
+    /**
      * Constructor.
      *
-     * @param string         $name       Bucket name.
-     * @param string         $field      Bucket field.
-     * @param Metric[]       $metrics    Bucket metrics.
-     * @param string         $nestedPath Nested path for nested bucket.
-     * @param QueryInterface $filter     Bucket filter.
+     * @param string         $name         Bucket name.
+     * @param string         $field        Bucket field.
+     * @param Metric[]       $metrics      Bucket metrics.
+     * @param string         $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface $filter       Bucket filter.
+     * @param QueryInterface $nestedFilter Nested filter for the bucket.
      */
-    public function __construct($name, $field, array $metrics, $nestedPath = null, QueryInterface $filter = null)
-    {
-        $this->name       = $name;
-        $this->field      = $field;
-        $this->metrics    = $metrics;
-        $this->nestedPath = $nestedPath;
-        $this->filter     = $filter;
+    public function __construct(
+        $name,
+        $field,
+        array $metrics,
+        $nestedPath = null,
+        QueryInterface $filter = null,
+        QueryInterface $nestedFilter = null
+    ) {
+        $this->name         = $name;
+        $this->field        = $field;
+        $this->metrics      = $metrics;
+        $this->nestedPath   = $nestedPath;
+        $this->filter       = $filter;
+        $this->nestedFilter = $nestedFilter;
     }
 
     /**
@@ -108,6 +121,15 @@ abstract class AbstractBucket implements BucketInterface
     {
         return $this->nestedPath;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getNestedFilter()
+    {
+        return $this->nestedFilter;
+    }
+
 
     /**
      * {@inheritDoc}
