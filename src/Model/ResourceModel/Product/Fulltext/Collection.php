@@ -55,6 +55,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $filters = [];
 
     /**
+     * @var array
+     */
+    private $facets = [];
+
+
+    /**
+     * @var array
+     */
+    private $fieldNameMapping = [
+        'price'        => 'price.price',
+        'position'     => 'category.position',
+        'category_ids' => 'category.category_id',
+    ];
+
+    /**
      * Constructor.
      *
      * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity
@@ -168,14 +183,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addFieldToFilter($field, $condition = null)
     {
-        if ($field == 'category_ids') {
-            $field = 'category.category_id';
-        }
-
-        if ($field == 'price') {
-            $field = 'price.price';
-        }
-
+        $field = $this->mapFieldName($field);
         $this->filters[$field] = $condition;
 
         return $this;
@@ -191,6 +199,23 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addSearchFilter($query)
     {
         $this->queryText = trim($this->queryText . ' ' . $query);
+
+        return $this;
+    }
+
+    /**
+     * Append a facet to the collection
+     *
+     * @param string $field       Facet field.
+     * @param string $facetType   Facet type.
+     * @param array  $facetConfig Facet config params.
+     * @param array  $facetFilter Facet filter.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function addFacet($field, $facetType, $facetConfig, $facetFilter = null)
+    {
+        $this->facets[$field] = ['type' => $facetType, 'filter' => $facetFilter, 'config' => $facetConfig];
 
         return $this;
     }
@@ -290,7 +315,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     protected function _renderOrders()
     {
         // Sort orders are managed through the search engine and are added through the prepareRequest method.
-
         return $this;
     }
 
@@ -341,7 +365,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $size,
             $queryText,
             $sortOrders,
-            $this->filters
+            $this->filters,
+            $this->facets
         );
 
         return $searchRequest;
@@ -357,9 +382,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $sortOrders = [];
 
         foreach ($this->_orders as $attribute => $direction) {
-            $sortField  = $attribute;
             $sortParams = ['direction' => $direction];
-
             if ($attribute == 'position') {
                 // Change the field position to the category position.
                 $sortField = 'category.position';
@@ -368,7 +391,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 // Ensure we sort on the position field of the current category.
                 $categoryIds = $this->_productLimitationFilters['category_ids'];
                 $sortParams['nestedFilter'] = ['category.category_id' => $categoryIds];
-            } elseif ($attribute == 'price') {
+            } elseif ($attribute == 'price.price') {
                 // Change the price sort field to the nested price field.
                 $sortField = 'price.price';
                 $sortParams['nestedPath'] = 'price';
@@ -376,10 +399,27 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
             }
-
+            $sortField = $this->mapFieldName($attribute);
             $sortOrders[$sortField] = $sortParams;
         }
 
         return $sortOrders;
+    }
+
+    /**
+     * Convert standard field name to ES fieldname.
+     * (eg. category_ids => category.category_id).
+     *
+     * @param string $fieldName
+     *
+     * @return string
+     */
+    private function mapFieldName($fieldName)
+    {
+        if (isset($this->fieldNameMapping[$fieldName])) {
+            $fieldName = $this->fieldNameMapping[$fieldName];
+        }
+
+        return $fieldName;
     }
 }

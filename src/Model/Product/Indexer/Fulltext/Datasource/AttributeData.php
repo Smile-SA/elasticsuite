@@ -237,7 +237,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
             $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
             $fieldType = 'string';
 
-            $fieldConfig['is_filterable'] = false;
             $fieldConfig['is_searchable'] = true;
         }
 

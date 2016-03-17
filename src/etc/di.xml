@@ -85,6 +85,29 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
+    
+    <virtualType name="categoryFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
+                <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
+                <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
 
     <type name="\Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front">
         <plugin name="smile_elasticsuite_catalog_attribute_search_configuration" type="\Smile\ElasticSuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin" />

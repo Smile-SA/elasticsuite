@@ -136,7 +136,7 @@ class FrontPlugin
             'facet_sort_order',
             'select',
             [
-                'name'   => 'facets_sort_order',
+                'name'   => 'facet_sort_order',
                 'label'  => __('Facet sort order'),
                 'values' => [
                     ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
