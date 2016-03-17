@@ -140,7 +140,7 @@ class AggregationBuilder
             'field'   => $bucketField,
             'name'    => $field->getName() . '_bucket',
             'metrics' => [],
-            'filter' => array_diff_key($filters, [$bucketField => true]),
+            'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];
 
         $bucketParams += $aggregationParams['config'];
