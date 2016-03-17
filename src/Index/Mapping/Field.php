@@ -56,7 +56,6 @@ class Field implements FieldInterface
     private $config = [
         'is_searchable'           => false,
         'is_filterable'           => true,
-        'is_facet'                => [],
         'is_used_for_sort_by'     => false,
         'is_used_in_spellcheck'   => false,
         'is_used_in_autocomplete' => false,
@@ -110,14 +109,6 @@ class Field implements FieldInterface
     public function isFilterable()
     {
         return (bool) $this->config['is_filterable'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isFacet($requestName)
-    {
-        return (bool) in_array($requestName, $this->config['is_facet']);
     }
 
     /**

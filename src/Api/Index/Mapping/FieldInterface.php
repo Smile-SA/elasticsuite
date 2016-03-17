@@ -78,15 +78,6 @@ interface FieldInterface
     public function isFilterable();
 
     /**
-     * Indicates if the field is a facet for a request.
-     *
-     * @param string $requestName Name of the request.
-     *
-     * @return boolean
-     */
-    public function isFacet($requestName);
-
-    /**
      * Is the attribute used in sorting.
      */
     public function isUsedForSortBy();
