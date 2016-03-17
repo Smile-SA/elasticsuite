@@ -157,14 +157,4 @@ class AggregationBuilder
 
         return $bucketParams;
     }
-
-    /**
-     * Build the default metric (count).
-     *
-     * @return Metric[]
-     */
-    private function getScoreMetric()
-    {
-        return [];
-    }
 }

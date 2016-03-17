@@ -18,7 +18,6 @@ use Magento\Framework\Search\Request\DimensionFactory;
 use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticSuiteCore\Search\Request\SortOrder\SortOrderBuilder;
 use Smile\ElasticSuiteCore\Search\Request\Aggregation\AggregationBuilder;
-use Magento\Framework\Search\Request\BucketInterface;
 use Smile\ElasticSuiteCore\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\RequestFactory;
 use Magento\Framework\Search\Request\Dimension;

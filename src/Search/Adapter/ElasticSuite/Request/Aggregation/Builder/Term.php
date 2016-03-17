@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation
 
 use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Build an ES Term aggregation.
@@ -35,6 +36,17 @@ class Term
      */
     public function buildBucket(BucketInterface $bucket)
     {
-        return ['terms' => ['field' => $bucket->getField(), 'size' => $bucket->getSize()]];
+        $aggregation = ['terms' => ['field' => $bucket->getField(), 'size' => $bucket->getSize()]];
+
+        if (in_array($bucket->getSortOrder(), [$bucket::SORT_ORDER_COUNT, $bucket::SORT_ORDER_MANUAL])) {
+            $aggregation['terms']['order'] = [$bucket::SORT_ORDER_COUNT => SortOrderInterface::SORT_DESC];
+        } elseif ($bucket->getSortOrder() == $bucket::SORT_ORDER_TERM) {
+            $aggregation['terms']['order'] = [$bucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC];
+        } elseif ($bucket->getSortOrder() == $bucket::SORT_ORDER_RELEVANCE && !$bucket->isNested()) {
+            $aggregation['aggregations']['termRelevance'] = ['avg' => ['script' => $bucket::SORT_ORDER_RELEVANCE]];
+            $aggregation['terms']['order'] = ['termRelevance' => SortOrderInterface::SORT_DESC];
+        }
+
+        return $aggregation;
     }
 }

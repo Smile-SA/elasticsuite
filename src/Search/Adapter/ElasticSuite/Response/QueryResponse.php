@@ -102,6 +102,10 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
 
         if (isset($searchResponse['aggregations'])) {
             foreach ($searchResponse['aggregations'] as $bucketName => $aggregation) {
+                while (isset($aggregation[$bucketName])) {
+                    $aggregation = $aggregation[$bucketName];
+                }
+
                 if (isset($aggregation['buckets'])) {
                     foreach ($aggregation['buckets'] as $currentBuket) {
                         $buckets[$bucketName][$currentBuket['key']] = [

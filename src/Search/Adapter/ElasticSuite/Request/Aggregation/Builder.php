@@ -46,7 +46,8 @@ class Builder
      * BucketInterface::TYPE_DATE_HISTOGRAM
      */
     private $bucketBuilderClasses = [
-        BucketInterface::TYPE_TERM => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Term',
+        BucketInterface::TYPE_TERM      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Term',
+        BucketInterface::TYPE_HISTOGRAM => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Histogram',
     ];
 
 
@@ -72,10 +73,34 @@ class Builder
     public function buildAggregations(array $buckets = [])
     {
         $aggregations = [];
+
         foreach ($buckets as $bucket) {
             $bucketType = $bucket->getType();
             $builder    = $this->getBuilder($bucketType);
-            $aggregations[$bucket->getName()] = $builder->buildBucket($bucket);
+            $aggregation = $builder->buildBucket($bucket);
+
+            if ($bucket->isNested()) {
+                if ($bucket->getNestedFilter()) {
+                    $aggregation = [
+                        'filter'       => $this->queryBuilder->buildQuery($bucket->getNestedFilter()),
+                        'aggregations' => [$bucket->getName() => $aggregation],
+                    ];
+                }
+
+                $aggregation = [
+                    'nested'       => ['path' => $bucket->getNestedPath()],
+                    'aggregations' => [$bucket->getName() => $aggregation],
+                ];
+            }
+
+            if ($bucket->getFilter()) {
+                $aggregation = [
+                    'filter'       => $this->queryBuilder->buildQuery($bucket->getFilter()),
+                    'aggregations' => [$bucket->getName() => $aggregation],
+                ];
+            }
+
+            $aggregations[$bucket->getName()] = $aggregation;
         }
 
         return $aggregations;
