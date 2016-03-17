@@ -35,12 +35,10 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
         },
         
         _create: function () {
-            
             this.from = this.options.currentValue.from;
             this.to   = this.options.currentValue.to;
             this._createSlider();
             this._refreshDisplay();
-            console.log(this.element.find(this.options.applyButton));
             this.element.find(this.options.applyButton).bind('click', this._applyRange.bind(this));
         },
         
@@ -98,8 +96,7 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
             return count;
         },
         
-        _formatLabel : function(value)
-        {
+        _formatLabel : function(value) {
             var formattedValue = value;
             
             if (this.options.priceFormat) {
