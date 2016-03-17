@@ -14,7 +14,7 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\
 
 use Magento\Framework\Module\Manager;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Relevance Config field visibility
@@ -64,9 +64,9 @@ class Visibility
         }
 
         $showInScope = [
-            BaseConfigInterface::SCOPE_DEFAULT          => $element->getAttribute('showInDefault'),
-            BaseConfigInterface::SCOPE_CONTAINERS       => $element->getAttribute('showInContainer'),
-            BaseConfigInterface::SCOPE_STORE_CONTAINERS => $element->getAttribute('showInStore'),
+            ContainerScopeInterface::SCOPE_DEFAULT          => $element->getAttribute('showInDefault'),
+            ContainerScopeInterface::SCOPE_CONTAINERS       => $element->getAttribute('showInContainer'),
+            ContainerScopeInterface::SCOPE_STORE_CONTAINERS => $element->getAttribute('showInStore'),
         ];
 
         if ($this->storeManager->isSingleStoreMode()) {

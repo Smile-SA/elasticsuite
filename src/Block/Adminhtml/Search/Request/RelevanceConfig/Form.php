@@ -18,7 +18,7 @@ use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\Registry;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfigInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Relevance configuration edit form
@@ -64,9 +64,9 @@ class Form extends \Magento\Config\Block\System\Config\Form
         );
 
         $this->_scopeLabels = [
-            BaseConfigInterface::SCOPE_DEFAULT          => __('[GLOBAL]'),
-            BaseConfigInterface::SCOPE_CONTAINERS       => __('[CONTAINER]'),
-            BaseConfigInterface::SCOPE_STORE_CONTAINERS => __('[CONTAINER - STORE VIEW]'),
+            ContainerScopeInterface::SCOPE_DEFAULT          => __('[GLOBAL]'),
+            ContainerScopeInterface::SCOPE_CONTAINERS       => __('[CONTAINER]'),
+            ContainerScopeInterface::SCOPE_STORE_CONTAINERS => __('[CONTAINER - STORE VIEW]'),
         ];
     }
 
@@ -79,11 +79,11 @@ class Form extends \Magento\Config\Block\System\Config\Form
      */
     public function canUseDefaultValue($fieldValue)
     {
-        if ($this->getScope() == BaseConfigInterface::SCOPE_STORE_CONTAINERS && $fieldValue) {
+        if ($this->getScope() == ContainerScopeInterface::SCOPE_STORE_CONTAINERS && $fieldValue) {
             return true;
         }
 
-        if ($this->getScope() == BaseConfigInterface::SCOPE_CONTAINERS && $fieldValue) {
+        if ($this->getScope() == ContainerScopeInterface::SCOPE_CONTAINERS && $fieldValue) {
             return true;
         }
 
@@ -99,7 +99,7 @@ class Form extends \Magento\Config\Block\System\Config\Form
      */
     public function canUseContainerValue($fieldValue)
     {
-        if ($this->getScope() == BaseConfigInterface::SCOPE_STORE_CONTAINERS && $fieldValue) {
+        if ($this->getScope() == ContainerScopeInterface::SCOPE_STORE_CONTAINERS && $fieldValue) {
             return true;
         }
 
@@ -120,12 +120,12 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $showInContainer = $field->showInContainer();
 
         if ($showInStore == 1) {
-            return $this->_scopeLabels[BaseConfigInterface::SCOPE_STORE_CONTAINERS];
+            return $this->_scopeLabels[ContainerScopeInterface::SCOPE_STORE_CONTAINERS];
         } elseif ($showInContainer == 1) {
-            return $this->_scopeLabels[BaseConfigInterface::SCOPE_CONTAINERS];
+            return $this->_scopeLabels[ContainerScopeInterface::SCOPE_CONTAINERS];
         }
 
-        return $this->_scopeLabels[BaseConfigInterface::SCOPE_DEFAULT];
+        return $this->_scopeLabels[ContainerScopeInterface::SCOPE_DEFAULT];
     }
 
     /**
@@ -160,13 +160,13 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $scope = $this->getData('scope');
 
         if ($scope === null) {
-            $scope = BaseConfigInterface::SCOPE_DEFAULT;
+            $scope = ContainerScopeInterface::SCOPE_DEFAULT;
 
             if ($this->getContainerCode()) {
-                $scope = BaseConfigInterface::SCOPE_CONTAINERS;
+                $scope = ContainerScopeInterface::SCOPE_CONTAINERS;
             }
             if ($this->getStoreCode()) {
-                $scope = BaseConfigInterface::SCOPE_STORE_CONTAINERS;
+                $scope = ContainerScopeInterface::SCOPE_STORE_CONTAINERS;
             }
 
             $this->setScope($scope);
