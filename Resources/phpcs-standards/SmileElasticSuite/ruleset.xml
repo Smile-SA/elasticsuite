@@ -3,7 +3,14 @@
     
     <description>Coding standard for Smile ElasticSuite projects.</description>
     
-    <rule ref="PSR2" />
+    <rule ref="PSR2">
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+    
+    <rule ref="Generic.Files.LineLength">
+        <property name="lineLimit" value="135" />
+        <property name="absoluteLineLimit" value="135 "/>
+    </rule>
     
     <rule ref="Generic.ControlStructures.InlineControlStructure" />
     <rule ref="Generic.Formatting.SpaceAfterCast" />
@@ -51,6 +58,5 @@
     
     <rule ref="SmileElasticSuite.Commenting.FileComment" /> 
     <rule ref="SmileElasticSuite.Commenting.ClassComment" />
-    <rule ref="SmileElasticSuite.Commenting.FunctionComment" />
-    
+    <rule ref="SmileElasticSuite.Commenting.FunctionComment" />    
 </ruleset>

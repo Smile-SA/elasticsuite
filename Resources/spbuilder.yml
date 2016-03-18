@@ -34,12 +34,7 @@ tools:
     files:
       -  vendor/smile-sa
     rulesets:
-      - cleancode
-      - codesize
-      - design
-      - naming
-      - unusedcode
-      - controversial
+      - vendor/smile-sa/elasticsuite-full/Resources/phpmd-rulesets/rulset.xml
     extensions:
       - php
     ignores:
