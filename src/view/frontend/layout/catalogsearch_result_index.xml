@@ -18,6 +18,9 @@
  -->
  
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Magento_Swatches::css/swatches.css"/>
+    </head>
     <body>
         <referenceBlock name="catalogsearch.leftnav">
             <block class="Smile\ElasticSuiteCatalog\Block\Navigation\FilterRenderer" 
@@ -25,10 +28,17 @@
                    as="renderer" 
                    template="Smile_ElasticSuiteCatalog::layer/filter/default.phtml">
                    
-                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
-                          name="catalog.navigation.renderer.slider"
-                          template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
+                           name="catalog.navigation.renderer.slider"
+                           template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                          
+                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Swatches"
+                           name="catalog.navigation.renderer.swatches" />
             </block>
+        </referenceBlock>
+
+        <referenceBlock name="category.product.type.details.renderers">
+            <block class="Magento\Swatches\Block\Product\Renderer\Listing\Configurable" as="configurable" template="Magento_Swatches::product/listing/renderer.phtml" />
         </referenceBlock>
     </body>
 </page>

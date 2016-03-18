@@ -28,6 +28,9 @@
                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
                           name="catalog.navigation.renderer.slider"
                           template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                          
+                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Swatches"
+                          name="catalog.navigation.renderer.swatches" />
             </block>
         </referenceBlock>
     </body>

@@ -410,7 +410,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * Convert standard field name to ES fieldname.
      * (eg. category_ids => category.category_id).
      *
-     * @param string $fieldName
+     * @param string $fieldName Field name to be mapped.
      *
      * @return string
      */

@@ -7,15 +7,19 @@
  * @category  Smile
  * @package   Smile_ElasticSuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCatalog\Setup;
 
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Eav\Setup\EavSetup;
 
 /**
  * Catalog installer
@@ -34,9 +38,14 @@ class InstallData implements InstallDataInterface
     private $eavSetupFactory;
 
     /**
+     * @var EavSetup
+     */
+    private $eavSetup;
+
+    /**
      * Class Constructor
      *
-     * @param EavSetupFactory $eavSetupFactory
+     * @param EavSetupFactory $eavSetupFactory Eav setup factory.
      */
     public function __construct(EavSetupFactory $eavSetupFactory)
     {
@@ -46,27 +55,32 @@ class InstallData implements InstallDataInterface
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * Create attribute on category to enable/disable name indexation for search
-     *
-     * Installs Data for the module
+     * Installs Data for the module :
+     *  - Create attribute on category to enable/disable name indexation for search
+     *  - Update is anchor attribute (hidden frontend input, null source model, enabled by default).
      *
      * @param ModuleDataSetupInterface $setup   The setup interface
      * @param ModuleContextInterface   $context The module Context
      */
-    // @codingStandardsIgnoreStart Conform to interface
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        // @codingStandardsIgnoreEnd
-
         $setup->startSetup();
+        $this->eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+        $this->addCategoryNameSearchAttribute();
+        $this->updateCategoryIsAnchorAttribute();
+        $setup->endSetup();
+    }
 
-        /** @var \Magento\Eav\Setup\EavSetup $eavSetup */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-        $connection = $setup->getConnection();
-        $entityTypeId = \Magento\Catalog\Model\Category::ENTITY;
-
-        $eavSetup->addAttribute(
-            $entityTypeId,
+    /**
+     * Create attribute on category to enable/disable name indexation for search.
+     *
+     * @return void
+     */
+    private function addCategoryNameSearchAttribute()
+    {
+        // Installing the new attribute.
+        $this->eavSetup->addAttribute(
+            Category::ENTITY,
             'use_name_in_product_search',
             [
                 'type'       => 'int',
@@ -83,28 +97,64 @@ class InstallData implements InstallDataInterface
             ]
         );
 
-        $attributeId = $eavSetup->getAttributeId($entityTypeId, 'use_name_in_product_search');
+        // Set the attribute value to 1 for all existing categories.
+        $this->updateAttributeDefaultValue(Category::ENTITY, 'use_name_in_product_search', 1);
+    }
 
-        $select = $connection->select();
+    /**
+     * Update is anchor attribute (hidden frontend input, null source model, enabled by default).
+     *
+     * @return void
+     */
+    private function updateCategoryIsAnchorAttribute()
+    {
+        $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'frontend_input', 'hidden');
+        $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'source_model', null);
+        $this->updateAttributeDefaultValue(Category::ENTITY, 'is_anchor', 1);
+    }
 
-        $select->from(
-            $setup->getTable('catalog_category_entity'),
-            [
-                new \Zend_Db_Expr("{$attributeId} as attribute_id"),
-                'entity_id',
-                new \Zend_Db_Expr("1 as value"),
-            ]
+    /**
+     * Update attribute value for an entity with a default value.
+     * All existing values are erased by the new value.
+     *
+     * @param integer|string $entityTypeId Target entity id.
+     * @param integer|string $attributeId  Target attribute id.
+     * @param mixed          $value        Value to be set.
+     *
+     * @return void
+     */
+    private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value)
+    {
+        $entityTable    = $this->eavSetup->getEntityType($entityTypeId, 'entity_table');
+        $attributeTable = $this->eavSetup->getAttributeTable($entityTypeId, $attributeId);
+
+        if (!is_int($attributeId)) {
+            $attributeId = $this->eavSetup->getAttributeId($entityTypeId, $attributeId);
+        }
+
+        $entitySelect = $this->getConnection()->select();
+        $entitySelect->from(
+            $entityTable,
+            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), 'entity_id', new \Zend_Db_Expr("{$value} as value")]
         );
 
-        $insert = $setup->getConnection()->insertFromSelect(
-            $select,
-            $setup->getTable('catalog_category_entity_int'),
+        $insertQuery = $this->getConnection()->insertFromSelect(
+            $entitySelect,
+            $attributeTable,
             ['attribute_id', 'entity_id', 'value'],
-            \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_ON_DUPLICATE
+            AdapterInterface::INSERT_ON_DUPLICATE
         );
 
-        $setup->getConnection()->query($insert);
+        $this->getConnection()->query($insertQuery);
+    }
 
-        $setup->endSetup();
+    /**
+     * DB connection.
+     *
+     * @return AdapterInterface
+     */
+    private function getConnection()
+    {
+        return $this->eavSetup->getSetup()->getConnection();
     }
 }

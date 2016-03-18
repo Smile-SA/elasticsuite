@@ -49,7 +49,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      * @param array                                                $data              Custom data.
      */
     public function __construct(
-        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
+        \Smile\ElasticSuiteCatalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
@@ -104,8 +104,6 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      */
     protected function _getItemsData()
     {
-        $attribute = $this->getAttributeModel();
-
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
 
@@ -121,9 +119,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
             ];
         }
 
-        if ($attribute->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL) {
-            $items = $this->applyAdminSortOrder($items);
-        }
+        $items = $this->addOptionsData($items);
 
         return $items;
     }
@@ -136,15 +132,16 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         parent::_initItems();
 
         foreach ($this->_items as $item) {
-            $itemValue = $item->getValue();
-            if (($valuePos = array_search($itemValue, $this->currentFilterValue)) !== false) {
+            $applyValue = $item->getLabel();
+            if (($valuePos = array_search($applyValue, $this->currentFilterValue)) !== false) {
                 $item->setIsSelected(true);
-                $itemValue = $this->currentFilterValue;
-                unset($itemValue[$valuePos]);
+                $applyValue = $this->currentFilterValue;
+                unset($applyValue[$valuePos]);
             } else {
-                $itemValue = array_merge($this->currentFilterValue, [$itemValue]);
+                $applyValue = array_merge($this->currentFilterValue, [$applyValue]);
             }
-            $item->setValue(array_values($itemValue));
+
+            $item->setApplyFilterValue(array_values($applyValue));
         }
 
         return $this;
@@ -212,24 +209,25 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      *
      * @return array
      */
-    private function applyAdminSortOrder(array $items)
+    private function addOptionsData(array $items)
     {
         $options = $this->getAttributeModel()->getFrontend()->getSelectOptions();
         $optionPosition = 0;
 
         foreach ($options as $option) {
+            $optionLabel = (string) $option['label'];
             $optionPosition++;
-            if (isset($items[$option['label']])) {
-                $items[$option['label']]['sortIndex'] = $optionPosition;
+
+            if ($optionLabel && isset($items[$optionLabel])) {
+                $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                $items[$optionLabel]['value']          = $option['value'];
             }
         }
 
-        usort($items, function ($item1, $item2) {
-            return $item1['sortIndex'] <= $item2['sortIndex'] ? -1 : 1;
-        });
-
-        if ($this->getAttributeModel()->getFacetMaxSize() > 0) {
-            $items = array_slice($items, 0, $this->getAttributeModel()->getFacetSize(), true);
+        if ($this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL) {
+            usort($items, function ($item1, $item2) {
+                return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
+            });
         }
 
         return $items;

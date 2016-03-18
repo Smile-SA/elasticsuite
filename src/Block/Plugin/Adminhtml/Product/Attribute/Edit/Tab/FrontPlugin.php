@@ -214,12 +214,7 @@ class FrontPlugin
                 'label' => __('Facet max. size'),
                 'class' => 'validate-digits validate-greater-than-zero',
                 'value' => '10',
-                'note'  => implode(
-                    '</br>',
-                    [
-                        __('Max number of values returned by a facet query.'),
-                    ]
-                    ),
+                'note'  => __('Max number of values returned by a facet query.'),
             ],
             'facet_min_coverage_rate'
         );
@@ -234,7 +229,7 @@ class FrontPlugin
                     ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
                     ['value' => BucketInterface::SORT_ORDER_MANUAL, 'label' => __('Admin sort')],
                     ['value' => BucketInterface::SORT_ORDER_TERM, 'label' => __('Name')],
-                    ['value' => BucketInterface::SORT_ORDER_RELEVANCE,'label' => __('Relevance')],
+                    ['value' => BucketInterface::SORT_ORDER_RELEVANCE, 'label' => __('Relevance')],
                 ],
             ],
             'facet_max_size'
@@ -258,7 +253,7 @@ class FrontPlugin
             [
                 'name' => 'search_weight',
                 'label' => __('Search Weight'),
-                'values' => $this->weightSource->getOptions()
+                'values' => $this->weightSource->getOptions(),
             ],
             'is_searchable'
         );

@@ -91,12 +91,12 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
         $optionsFacetedData = $productCollection->getFacetedData('category.category_id');
-        $category = $this->dataProvider->getCategory();
-        $categories = $category->getChildrenCategories();
+        $currentCategory = $this->dataProvider->getCategory();
+        $categories = $currentCategory->getChildrenCategories();
 
-        if ($category->getIsActive()) {
+        if ($currentCategory->getIsActive()) {
             foreach ($categories as $category) {
-                if ($category->getIsActive()&& isset($optionsFacetedData[$category->getId()])) {
+                if ($category->getIsActive() && isset($optionsFacetedData[(int) $category->getId()])) {
                     $this->itemDataBuilder->addItemData(
                         $this->escaper->escapeHtml($category->getName()),
                         $category->getId(),
