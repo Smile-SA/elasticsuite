@@ -11,25 +11,22 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
+namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item;
 
 /**
  * Attribute item filter override.
- *
- * Allow to load swatche images from a multivalued attribute filter.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Item extends \Magento\Catalog\Model\Layer\Filter\Item
+class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
 {
     /**
      * {@inheritDoc}
      */
     public function getUrl()
     {
-        parent::getUrl();
         $value = $this->getValue();
 
         if (is_array($this->getApplyFilterValue())) {

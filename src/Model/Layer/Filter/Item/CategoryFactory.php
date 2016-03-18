@@ -11,7 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
+namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item;
 
 /**
  * Filter item factory for multiselect attributes.
@@ -20,7 +20,7 @@ namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ItemFactory extends \Magento\Catalog\Model\Layer\Filter\ItemFactory
+class CategoryFactory extends \Magento\Catalog\Model\Layer\Filter\ItemFactory
 {
     /**
      * Constructor.
@@ -30,7 +30,7 @@ class ItemFactory extends \Magento\Catalog\Model\Layer\Filter\ItemFactory
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
-        $instanceName = 'Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item'
+        $instanceName = 'Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\Category'
     ) {
         parent::__construct($objectManager, $instanceName);
     }
