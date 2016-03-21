@@ -172,11 +172,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
      */
     private function initAttributes()
     {
-        \Magento\Framework\Profiler::start(
-            'ES:' . __METHOD__,
-            ['group' => 'ES', 'method' => __METHOD__]
-        );
-
         $attributeCollection = $this->attributeHelper->getAttibuteCollection();
         $this->resourceModel->addIndexedFilterToAttributeCollection($attributeCollection);
 
@@ -189,8 +184,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
                 $this->initField($attribute);
             }
         }
-
-        \Magento\Framework\Profiler::stop('ES:' . __METHOD__);
 
         return $this;
     }

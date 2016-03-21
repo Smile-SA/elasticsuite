@@ -13,7 +13,6 @@
  */
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
-use Magento\Framework\Profiler;
 use Smile\ElasticSuiteCore\Search\RequestInterface;
 
 /**
@@ -286,13 +285,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _renderFiltersBefore()
     {
-        Profiler::start("ES: Prepare request");
         $queryRequest = $this->prepareRequest();
-        Profiler::stop("ES: Prepare request");
 
-        Profiler::start("ES: Execute request");
         $this->queryResponse = $this->searchEngine->search($queryRequest);
-        Profiler::stop("ES: Execute request");
 
         // Update the product count.
         $this->_totalRecords = $this->queryResponse->count();
