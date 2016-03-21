@@ -5,6 +5,7 @@
     
     <rule ref="PSR2">
         <exclude name="Generic.Files.LineLength"/>
+        <exclude name="PSR2.Methods.MethodDeclaration"/>
     </rule>
     
     <rule ref="Generic.Files.LineLength">
@@ -17,7 +18,6 @@
     <rule ref="Generic.Functions.CallTimePassByReference" />
     <rule ref="Generic.NamingConventions.UpperCaseConstantName" />
     <rule ref="Generic.PHP.LowerCaseConstant" />
-    <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter" />
     <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
     <rule ref="Generic.Commenting.Fixme" />
     <rule ref="Generic.Commenting.Todo" />
