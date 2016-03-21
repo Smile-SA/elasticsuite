@@ -7,6 +7,7 @@
  * @category  Smile
  * @package   Smile_ElasticSuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -24,6 +25,7 @@ use \Magento\Eav\Setup\EavSetup;
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class InstallSchema implements InstallSchemaInterface
 {
@@ -55,11 +57,24 @@ class InstallSchema implements InstallSchemaInterface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         // @codingStandardsIgnoreEnd
+        $setup->startSetup();
+        $this->addEavCatalogFields($setup);
+        $this->updateDefaultValues($setup);
+        $this->addIsSpellcheckedToSearchQuery($setup);
+        $setup->endSetup();
+    }
 
+    /**
+     * Add custom fields to catalog_eav_attribute table.
+     *
+     * @param SchemaSetupInterface $setup The setup interface
+     *
+     * @return void
+     */
+    private function addEavCatalogFields(SchemaSetupInterface $setup)
+    {
         $connection = $setup->getConnection();
-        $eavSetup = $this->eavSetup;
-
-        $table = $setup->getTable('catalog_eav_attribute');
+        $table      = $setup->getTable('catalog_eav_attribute');
 
         // Append a column 'is_used_in_autocomplete' into the db.
         $connection->addColumn(
@@ -71,21 +86,6 @@ class InstallSchema implements InstallSchemaInterface
                 'default'  => '1',
                 'comment'  => 'If attribute is used in autocomplete',
             ]
-        );
-
-        // Enable 'is_used_in_autocomplete' by default for the attribute 'name' for product AND category.
-        $attributeId = $eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'name');
-        $connection->update(
-            $table,
-            ['is_used_in_autocomplete' => 1],
-            $connection->quoteInto('attribute_id = ?', $attributeId)
-        );
-
-        $attributeId = $eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name');
-        $connection->update(
-            $table,
-            ['is_used_in_autocomplete' => 1],
-            $connection->quoteInto('attribute_id = ?', $attributeId)
         );
 
         // Append a column 'is_displayed_in_autocomplete' into the db.
@@ -150,7 +150,62 @@ class InstallSchema implements InstallSchemaInterface
                 'comment'  => 'The sort order for facet values',
             ]
         );
+    }
 
-        $setup->endSetup();
+    /**
+     * Update default values for the name field of category and product entities.
+     *
+     * @param SchemaSetupInterface $setup The setup interface
+     *
+     * @return void
+     */
+    private function updateDefaultValues(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        $configFields = [
+            'is_used_in_spellcheck',
+            'is_used_in_autocomplete',
+        ];
+
+        $attributeIds = [
+            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'name'),
+            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),
+        ];
+
+        foreach (['is_used_in_spellcheck', 'is_used_in_autocomplete'] as $configField) {
+            foreach ($attributeIds as $attributeId) {
+                $connection->update(
+                    $table,
+                    [$configField => 1],
+                    $connection->quoteInto('attribute_id = ?', $attributeId)
+                );
+            }
+        }
+
+    }
+
+    /**
+     * Append is spellchecked to the search query report table.
+     *
+     * @param SchemaSetupInterface $setup The setup interface
+     *
+     * @return void
+     */
+    private function addIsSpellcheckedToSearchQuery(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('search_query');
+        $connection->addColumn(
+            $table,
+            'is_spellchecked',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => '0',
+                'comment'  => 'Is the query spellchecked',
+            ]
+        );
     }
 }

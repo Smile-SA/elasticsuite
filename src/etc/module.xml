@@ -20,6 +20,7 @@
     <module name="Smile_ElasticSuiteCatalog" setup_version="1.0.0">
         <sequence>
             <module name="Smile_ElasticSuiteCore" />
+            <module name="Magento_Search" />
             <module name="Magento_CatalogSearch" />
             <module name="Magento_LayeredNavigation" />
         </sequence>

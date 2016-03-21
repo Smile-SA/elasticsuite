@@ -14,6 +14,7 @@
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
 use Magento\Framework\Profiler;
+use Smile\ElasticSuiteCore\Search\RequestInterface;
 
 /**
  * Search engine product collection.
@@ -59,7 +60,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     private $facets = [];
 
-
     /**
      * @var array
      */
@@ -68,6 +68,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         'position'     => 'category.position',
         'category_ids' => 'category.category_id',
     ];
+
+    /**
+     * @var boolean
+     */
+    private $isSpellchecked = false;
 
     /**
      * Constructor.
@@ -266,6 +271,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Indicates if the collection is spellchecked or not.
+     *
+     * @return boolean
+     */
+    public function isSpellchecked()
+    {
+        return $this->isSpellchecked;
+    }
+
+
+    /**
      * {@inheritdoc}
      */
     protected function _renderFiltersBefore()
@@ -295,6 +311,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $this->_pageSize = false;
+
+        $this->isSpellchecked = $queryRequest->isSpellchecked();
 
         return parent::_renderFiltersBefore();
     }
@@ -340,7 +358,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Prepare the search request before it will be executed.
      *
-     * @return void
+     * @return RequestInterface
      */
     private function prepareRequest()
     {

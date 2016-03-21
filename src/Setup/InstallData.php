@@ -27,6 +27,7 @@ use Magento\Eav\Setup\EavSetup;
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class InstallData implements InstallDataInterface
 {
@@ -61,6 +62,8 @@ class InstallData implements InstallDataInterface
      *
      * @param ModuleDataSetupInterface $setup   The setup interface
      * @param ModuleContextInterface   $context The module Context
+     *
+     * @return void
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
