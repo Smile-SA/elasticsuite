@@ -57,6 +57,8 @@ class Builder
     /**
      * Build a sort order ES condition from a SortOrderInterface specification.
      *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
      * @param SortOrderInterface $sortOrder Request sort order specification object.
      *
      * @return array
