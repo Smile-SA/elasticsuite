@@ -157,15 +157,6 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\StructureProxy" type="Magento\Config\Model\Config\Structure" shared="false">
-        <arguments>
-            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data</argument>
-            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\FlyweightFactory</argument>
-            <argument name="scopeDefiner" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ScopeDefiner</argument>
-            <argument name="tabIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Tab</argument>
-        </arguments>
-    </virtualType>
-
     <virtualType name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker" type="Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
@@ -299,13 +290,13 @@
     <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group" shared="false">
         <arguments>
             <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Field</argument>
-            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Dependency\MapperProxy</argument>
+            <argument name="dependencyMapper" xsi:type="object">relevanceDependencyMapper</argument>
         </arguments>
     </type>
 
     <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field" shared="false">
         <arguments>
-            <argument name="dependencyMapper" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Dependency\MapperProxy</argument>
+            <argument name="dependencyMapper" xsi:type="object">relevanceDependencyMapper</argument>
         </arguments>
     </type>
 
@@ -316,7 +307,7 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Dependency\MapperProxy"
+    <virtualType name="relevanceDependencyMapper"
                  type="Magento\Config\Model\Config\Structure\Element\Dependency\Mapper\Proxy">
         <arguments>
             <argument name="fieldLocator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
