@@ -164,11 +164,6 @@ class InstallSchema implements InstallSchemaInterface
         $connection = $setup->getConnection();
         $table      = $setup->getTable('catalog_eav_attribute');
 
-        $configFields = [
-            'is_used_in_spellcheck',
-            'is_used_in_autocomplete',
-        ];
-
         $attributeIds = [
             $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'name'),
             $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),

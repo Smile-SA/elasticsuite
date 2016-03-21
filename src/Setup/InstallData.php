@@ -27,7 +27,7 @@ use Magento\Eav\Setup\EavSetup;
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class InstallData implements InstallDataInterface
 {
