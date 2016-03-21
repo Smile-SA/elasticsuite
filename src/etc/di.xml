@@ -50,6 +50,12 @@
     <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
                 type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
 
+    <preference for="Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface"
+                type="Smile\ElasticSuiteCore\Search\Spellchecker\Request" />
+
+    <preference for="Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface"
+                type="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Spellchecker" />
+
     <type name="Magento\Search\Model\AdapterFactory">
         <arguments>
             <argument name="adapters" xsi:type="array">

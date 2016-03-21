@@ -69,15 +69,16 @@ class Builder
      * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
      * @param string|null                     $queryText              Fulltext query.
      * @param array                           $filters                Filter part of the query.
+     * @param string                          $spellingType           For fulltext query : the type of spellchecked applied.
      *
      * @return QueryInterface
      */
-    public function createQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, array $filters)
+    public function createQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, array $filters, $spellingType)
     {
         $queryParams = ['filter' => $this->filterQueryBuilder->create($containerConfiguration, $filters)];
 
         if ($queryText) {
-            $queryParams['query'] = $this->fulltextQueryBuilder->create($containerConfiguration, $queryText);
+            $queryParams['query'] = $this->fulltextQueryBuilder->create($containerConfiguration, $queryText, $spellingType);
         }
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);

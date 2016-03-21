@@ -45,7 +45,7 @@ class MultiMatch implements BuilderInterface
         ];
 
         if ($query->getMatchType()) {
-            $searchQueryParams['cutoff_frequency'] = $query->getMatchType();
+            $searchQueryParams['type'] = $query->getMatchType();
         }
 
         if ($query->getCutoffFrequency()) {

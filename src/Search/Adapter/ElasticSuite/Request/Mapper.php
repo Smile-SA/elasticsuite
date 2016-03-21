@@ -82,6 +82,7 @@ class Mapper
         }
 
         $filter = $this->getRootFilter($request);
+
         if ($filter) {
             $searchRequest['filter'] = $filter;
         }

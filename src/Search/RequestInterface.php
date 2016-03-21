@@ -54,4 +54,11 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return SortOrderInterface[]
      */
     public function getSortOrders();
+
+    /**
+     * Indicates if the query has been spellchecked.
+     *
+     * @return boolean
+     */
+    public function isSpellchecked();
 }
