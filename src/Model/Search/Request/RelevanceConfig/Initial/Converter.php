@@ -44,7 +44,6 @@ class Converter implements ConverterInterface
         $this->nodeMap      = $nodeMap;
     }
 
-
     /**
      * Convert config
      *
@@ -81,23 +80,7 @@ class Converter implements ConverterInterface
         $output = [];
         if ($node->nodeType == XML_ELEMENT_NODE) {
             $nodeName = $this->parseNodeName($node);
-            $nodeData = [];
-            /** @var $childNode \DOMNode */
-            foreach ($node->childNodes as $childNode) {
-                $childrenData = $this->convertNode($childNode, ($path ? $path . '/' : '') . $childNode->nodeName);
-                if ($childrenData == null) {
-                    continue;
-                }
-                if (is_array($childrenData)) {
-                    $nodeData = array_merge($nodeData, $childrenData);
-                } else {
-                    $nodeData = $childrenData;
-                }
-            }
-            if (is_array($nodeData) && empty($nodeData)) {
-                $nodeData = null;
-            }
-            $output[$nodeName] = $nodeData;
+            $output[$nodeName] = $this->parseNodeData($node, $path);
         } elseif ($node->nodeType == XML_CDATA_SECTION_NODE
             || $node->nodeType == XML_TEXT_NODE && trim($node->nodeValue) != '') {
             return $node->nodeValue;
@@ -128,5 +111,53 @@ class Converter implements ConverterInterface
         }
 
         return $nodeName;
+    }
+
+    /**
+     * Convert node onto array
+     *
+     * @param \DOMNode $node The Configuration DOM node to parse
+     * @param string   $path The path for DOM navigation
+     *
+     * @return array|string|null
+     */
+    private function parseNodeData(\DOMNode $node, $path)
+    {
+        $nodeData = [];
+
+        foreach ($node->childNodes as $childNode) {
+            $childrenData = $this->convertNode($childNode, ($path ? $path . '/' : '') . $childNode->nodeName);
+            if ($childrenData == null) {
+                continue;
+            }
+            $nodeData = $this->mergeChildData($nodeData, $childrenData);
+        }
+
+        if (is_array($nodeData) && empty($nodeData)) {
+            $nodeData = null;
+        }
+
+        return $nodeData;
+    }
+
+    /**
+     * Merge child node data into current node
+     *
+     * @param array $nodeData     Current node data
+     * @param array $childrenData The child node data
+     *
+     * @return array
+     */
+    private function mergeChildData($nodeData, $childrenData)
+    {
+        if (is_array($childrenData)) {
+            $nodeData = array_merge($nodeData, $childrenData);
+
+            return $nodeData;
+        }
+
+        $nodeData = $childrenData;
+
+        return $nodeData;
     }
 }
