@@ -16,9 +16,9 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
-<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
+
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_indices.xsd">
 
     <index identifier="catalog_product">
         <type name="product">
@@ -42,12 +42,12 @@
                 <field name="price.original_price" type="double" nestedPath="price"/>
                 <field name="price.is_discount" type="boolean" nestedPath="price"/>
                 <field name="price.customer_group_id" type="integer" nestedPath="price"/>
-                
+
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category"/>
                 <field name="category.position" type="integer" nestedPath="category"/>
                 <field name="category.is_parent" type="boolean" nestedPath="category"/>
-                
+
             </mapping>
         </type>
     </index>

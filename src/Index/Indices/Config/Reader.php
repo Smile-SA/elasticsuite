@@ -34,7 +34,7 @@ class Reader extends Filesystem
      *
      * @var string
      */
-    const FILENAME = 'elasticsearch/indices.xml';
+    const FILENAME = 'elasticsuite_indices.xml';
 
     // @codingStandardsIgnoreStart
     /**

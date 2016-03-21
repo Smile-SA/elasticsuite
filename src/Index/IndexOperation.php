@@ -253,7 +253,9 @@ class IndexOperation implements IndexOperationInterface
     private function initIndex($indexIdentifier, $store, $existingIndex)
     {
         if (!isset($this->indicesConfiguration[$indexIdentifier])) {
-            throw new \LogicException("No index found with identifier {$indexIdentifier} into indices.xml");
+            throw new \LogicException(
+                "No index found with identifier {$indexIdentifier} into elasticsuite_indices.xml"
+            );
         }
 
         $indexSettings    = $this->indexSettings;
