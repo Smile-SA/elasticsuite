@@ -24,7 +24,7 @@ interface FuzzinessConfigurationInterface
     /**
      * Get Fuzziness value
      *
-     * @return float
+     * @return string|integer
      */
     public function getValue();
 

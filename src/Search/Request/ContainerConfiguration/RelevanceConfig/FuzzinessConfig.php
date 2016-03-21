@@ -56,15 +56,15 @@ class FuzzinessConfig implements FuzzinessConfigurationInterface
     }
 
     /**
-     * @return float
+     * {@inheritDoc}
      */
     public function getValue()
     {
-        return (float) $this->value;
+        return $this->value;
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getPrefixLength()
     {
@@ -72,7 +72,7 @@ class FuzzinessConfig implements FuzzinessConfigurationInterface
     }
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getMaxExpansion()
     {

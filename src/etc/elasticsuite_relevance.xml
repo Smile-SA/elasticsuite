@@ -31,7 +31,7 @@
             </cutoff_frequency_configuration>
             <search_fuzziness_configuration>
                 <enable_fuzziness>1</enable_fuzziness>
-                <fuzziness_value>0.75</fuzziness_value>
+                <fuzziness_value>AUTO</fuzziness_value>
                 <fuzziness_prefix_length>1</fuzziness_prefix_length>
                 <fuzziness_max_expansion>10</fuzziness_max_expansion>
             </search_fuzziness_configuration>
