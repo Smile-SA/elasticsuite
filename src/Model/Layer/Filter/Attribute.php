@@ -100,6 +100,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _getItemsData()
@@ -125,6 +127,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _initItems()

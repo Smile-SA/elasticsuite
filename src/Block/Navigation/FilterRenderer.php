@@ -41,6 +41,8 @@ class FilterRenderer extends Template implements FilterRendererInterface
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     public function _toHtml()

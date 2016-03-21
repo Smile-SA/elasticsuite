@@ -101,6 +101,8 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _getItemsData()
@@ -133,6 +135,8 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _initItems()

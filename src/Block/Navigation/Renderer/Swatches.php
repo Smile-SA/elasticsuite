@@ -65,6 +65,8 @@ class Swatches extends AbstractRenderer
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _toHtml()

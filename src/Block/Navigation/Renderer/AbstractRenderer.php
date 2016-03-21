@@ -53,6 +53,8 @@ abstract class AbstractRenderer extends Template implements FilterRendererInterf
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _toHtml()

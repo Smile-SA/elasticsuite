@@ -87,6 +87,8 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     *
      * {@inheritDoc}
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
@@ -123,6 +125,8 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _getItemsData()
@@ -160,6 +164,8 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _renderRangeLabel($fromPrice, $toPrice)
