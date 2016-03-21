@@ -107,6 +107,8 @@ class SortOrderBuilder
     /**
      * Retrieve base params for a sort order field.
      *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
      * @param FieldInterface $field           Sort order field.
      * @param array          $sortOrderParams Sort order params.
      *
