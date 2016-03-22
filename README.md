@@ -1,5 +1,7 @@
 # ElasticSuite for Magento 2
 
+![ElasticSuite](doc/static/elasticsuite-banner.jpg)
+
 ## What is ElasticSuite for Magento 2 ?
 
 ElasticSuite is a merchandising suite for Magento which aims to provide out the box a lot of features usually only available with proprietary merchandising tools.
@@ -8,15 +10,19 @@ The project was originnaly created by Smile and released to the Open Source comm
 
 ## Who is developping ElasticSuite ?
 
-![SmileLab](doc/static/smilelab-logo.png)
+[![SmileLab](doc/static/smilelab-logo.png)](http://www.smile-oss.com)
 
 
-Smilelab is the innovation and experimentation entity of Smile. Our multidisciplinary team brings together experts in technology, innovation, and new applications. Together we explore, invent, and test technologies of the future, to better serve our clients.
+SmileLab is the innovation and experimentation department of Smile.
+
+Our multidisciplinary team brings together experts in technology, innovation, and new applications.
+
+Together we explore, invent, and test technologies of the future, to better serve our clients.
+
 
 ## Main Features
 
 The current version 2.0.0 has been focused on the Magento 2 migration of our ElasticSearch search engine.
-
 
 We are still working on the migration of all features available into the Magento 1.x .version of the module in this new version. The next versions that will be coming all among this year will include the following features :
 
@@ -37,7 +43,6 @@ We are still working on the migration of all features available into the Magento
 
     The engine will automatically refresh products matching the selection in Front-Office and will prevent you from having to re-assign products manually.
 
-
 <br/>
 
 * **Search optimizations :**
@@ -48,7 +53,6 @@ We are still working on the migration of all features available into the Magento
 
     Second part of the relevance optimization features will be the behavioral optimizers. This will allow you to build **rules matching your customer's behavior**.
     Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.
-
 
 <br/>
 
@@ -67,4 +71,4 @@ We are still working on the migration of all features available into the Magento
 
 ## Documentation
 
-Documentation is available [here](doc/DOCUMENTATION.md).
+Documentation is available [here](https://github.com/Smile-SA/elasticsuite/wiki).
