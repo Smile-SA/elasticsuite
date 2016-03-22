@@ -1,5 +1,3 @@
-# ElasticSuite for Magento 2
-
 ![ElasticSuite](doc/static/elasticsuite-banner.jpg)
 
 ## What is ElasticSuite for Magento 2 ?
