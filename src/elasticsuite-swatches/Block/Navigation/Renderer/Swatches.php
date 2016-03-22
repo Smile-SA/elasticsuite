@@ -15,6 +15,7 @@ namespace Smile\ElasticSuiteSwatches\Block\Navigation\Renderer;
 
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Swatches\Helper\Data as SwatchHelper;
+use Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\AbstractRenderer;
 
 /**
  * This block handle swatches slider rendering.

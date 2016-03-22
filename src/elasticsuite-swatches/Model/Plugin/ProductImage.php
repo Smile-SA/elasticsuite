@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteSwatches\Model\Swatches\Plugin;
+namespace Smile\ElasticSuiteSwatches\Model\Plugin;
 
 use Magento\Eav\Model\Entity\Attribute;
 
