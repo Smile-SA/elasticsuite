@@ -1,0 +1,107 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+namespace Smile\ElasticSuiteCore\Search\Request\Query;
+
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+
+/**
+ * ElasticSuite range query implementation.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Range implements QueryInterface
+{
+    /**
+     * @var integer
+     */
+    private $boost;
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $field;
+
+    /**
+     * @var array
+     */
+    private $bounds;
+
+    /**
+     * Constructor.
+     *
+     * @param string  $field  Query field.
+     * @param array   $bounds Range filter bounds (authorized entries : gt, lt, lte, gte).
+     * @param string  $name   Query name.
+     * @param integer $boost  Query boost.
+     */
+    public function __construct($field, array $bounds = [], $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
+    {
+        $this->name  = $name;
+        $this->boost = $boost;
+        $this->field = $field;
+        $this->bounds = $bounds;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getBoost()
+    {
+        return $this->boost;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return QueryInterface::TYPE_RANGE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Query field.
+     *
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->field;
+    }
+
+    /**
+     * Range filter bounds.
+     *
+     * @return array
+     */
+    public function getBounds()
+    {
+        return $this->bounds;
+    }
+}
