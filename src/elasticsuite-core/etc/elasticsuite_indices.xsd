@@ -72,6 +72,9 @@
         <xs:annotation>
             <xs:documentation>Mapping field declaration root node</xs:documentation>
         </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any processContents="lax" />
+        </xs:choice>
         <xs:attribute type="xs:string" name="name" use="required"/>
         <xs:attribute type="xs:string" name="type" use="required"/>
         <xs:attribute type="xs:string" name="nestedPath" use="optional"/>
