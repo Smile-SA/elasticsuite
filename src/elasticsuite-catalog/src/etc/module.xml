@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteCatalog module loading configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Smile_ElasticSuiteCatalog" setup_version="1.0.0">
+        <sequence>
+            <module name="Smile_ElasticSuiteCore" />
+            <module name="Magento_Search" />
+            <module name="Magento_CatalogSearch" />
+            <module name="Magento_LayeredNavigation" />
+        </sequence>
+    </module>
+</config>
