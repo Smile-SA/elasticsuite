@@ -1,0 +1,76 @@
+# Contains global Spbuilder configuration
+global:
+  log_dir: build/logs
+  package_dir: build/dist
+  clean: false
+
+# Quality tools configuration
+tools:
+
+  # Runs PHPUnit tests
+  # phpunit:
+  #   configuration: dev/tests/local/phpunit.xml
+  #   coverage: true                # (Optional) If set to true, will generate a XML clover coverage report
+
+  # Will recursively run 'php -l' on directories and matching file extensions
+  phplint:
+    files:
+      -  vendor/smile-sa/module-elasticsuite-core
+      -  vendor/smile-sa/module-elasticsuite-catalog
+    extensions:
+      - php
+
+  # Runs PHP_CodeSniffer
+  phpcs:
+    files:
+      -  vendor/smile-sa
+    standard: vendor/smile-sa/elasticsuite-full/Resources/phpcs-standards/SmileElasticSuite
+    ignores:
+      - "lib"
+      - "Resources"
+
+  # Runs PHPMD
+  phpmd:
+    files:
+      -  vendor/smile-sa
+    rulesets:
+      - vendor/smile-sa/elasticsuite-full/Resources/phpmd-rulesets/rulset.xml
+    extensions:
+      - php
+    ignores:
+      - Resources
+      - .git
+
+  # Runs PDepend
+  pdepend:
+    files:
+      -  vendor/smile-sa
+    enable:
+      - jdepend-xml
+      - jdepend-chart
+      - summary-xml
+      - overview-pyramid
+    extensions:
+      - php
+    ignores:
+      - Resources
+      - .git
+
+  # Runs phpcpd
+  phpcpd:
+    files:
+      -  vendor/smile-sa
+    fuzzy: false
+    patterns:
+      - "*.php"
+    ignores:
+      - Resources
+      - .git
+    min_lines: 5
+    min_tokens: 70
+
+  # Runs Qafoo Quality Analyzer
+  visualization:
+    files: vendor/smile-sa
+    hostname: localhost
+    port: 8080
