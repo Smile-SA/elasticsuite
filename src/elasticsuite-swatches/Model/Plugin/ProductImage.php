@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteSwatches
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Swatches\Plugin;
+namespace Smile\ElasticSuiteSwatches\Model\Swatches\Plugin;
 
 use Magento\Eav\Model\Entity\Attribute;
 
@@ -20,19 +20,19 @@ use Magento\Eav\Model\Entity\Attribute;
  * Plugin that allow to select the right product image when a filter is selected.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile_ElasticSuiteSwatches
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
 {
     /**
      *
-     * @param \Smile\ElasticSuiteCatalog\Helper\Swatches $swatchesHelperData Swatch helper.
+     * @param \Smile\ElasticSuiteSwatches\Helper\Swatches $swatchesHelperData Swatch helper.
      * @param \Magento\Eav\Model\Config                  $eavConfig          Product EAV configuration.
      * @param \Magento\Framework\App\Request\Http        $request            HTTP Request.
      */
     public function __construct(
-        \Smile\ElasticSuiteCatalog\Helper\Swatches $swatchesHelperData,
+        \Smile\ElasticSuiteSwatches\Helper\Swatches $swatchesHelperData,
         \Magento\Eav\Model\Config $eavConfig,
         \Magento\Framework\App\Request\Http $request
     ) {

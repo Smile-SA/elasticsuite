@@ -29,11 +29,13 @@
     "autoload" : {
         "files" : [
             "src/elasticsuite-core/registration.php",
-            "src/elasticsuite-catalog/registration.php"
+            "src/elasticsuite-catalog/registration.php",
+            "src/elasticsuite-swatches/registration.php"
         ],
         "psr-4" : {
             "Smile\\ElasticSuiteCore\\" : "src/elasticsuite-core",
-            "Smile\\ElasticSuiteCatalog\\" : "src/elasticsuite-catalog"
+            "Smile\\ElasticSuiteCatalog\\" : "src/elasticsuite-catalog",
+            "Smile\\ElasticSuiteSwatches\\" : "src/elasticsuite-swatches"
         }
     }
 }

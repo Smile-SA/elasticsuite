@@ -117,10 +117,6 @@
     <type name="\Magento\Catalog\Model\Category">
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
     </type>
-    
-    <type name="Magento\Catalog\Block\Product\AbstractProduct">
-        <plugin name="add_product_object_to_image_data_array" type="Smile\ElasticSuiteCatalog\Model\Swatches\Plugin\ProductImage" />
-    </type>
 
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticSuiteCatalog\Block\Plugin\ResultPlugin" />

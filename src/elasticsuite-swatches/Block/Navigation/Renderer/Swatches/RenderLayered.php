@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile_ElasticSuiteSwatches
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Swatches;
+namespace Smile\ElasticSuiteSwatches\Block\Navigation\Renderer\Swatches;
 
 use Magento\Catalog\Model\Layer\Filter\Item as FilterItem;
 use Magento\Eav\Model\Entity\Attribute\Option;
@@ -21,7 +21,7 @@ use Magento\Eav\Model\Entity\Attribute\Option;
  * Override Magento standard swatches renderer block.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile_ElasticSuiteSwatches
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLayered

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCatalog search requests configuration.
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
@@ -28,9 +26,6 @@
                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
                           name="catalog.navigation.renderer.slider"
                           template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
-                          
-                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Swatches"
-                          name="catalog.navigation.renderer.swatches" />
             </block>
         </referenceBlock>
     </body>
