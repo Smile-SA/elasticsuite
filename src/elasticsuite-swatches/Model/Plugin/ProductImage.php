@@ -28,8 +28,8 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
     /**
      *
      * @param \Smile\ElasticSuiteSwatches\Helper\Swatches $swatchesHelperData Swatch helper.
-     * @param \Magento\Eav\Model\Config                  $eavConfig          Product EAV configuration.
-     * @param \Magento\Framework\App\Request\Http        $request            HTTP Request.
+     * @param \Magento\Eav\Model\Config                   $eavConfig          Product EAV configuration.
+     * @param \Magento\Framework\App\Request\Http         $request            HTTP Request.
      */
     public function __construct(
         \Smile\ElasticSuiteSwatches\Helper\Swatches $swatchesHelperData,
