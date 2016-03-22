@@ -16,8 +16,8 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
-<analysis xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/analysis.xsd">
+<analysis xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_analysis.xsd">
 
     <char_filters>
         <char_filter name="html_strip" type="html_strip" language="default"/>

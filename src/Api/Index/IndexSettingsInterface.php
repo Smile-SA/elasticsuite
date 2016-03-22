@@ -67,7 +67,7 @@ interface IndexSettingsInterface
     public function getInstallIndexSettings();
 
     /**
-     * Returns the list of the available indices declared in elasticsearch/indices.xml.
+     * Returns the list of the available indices declared in elasticsuite_indices.xml.
      *
      * @return array
      */

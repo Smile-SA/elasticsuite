@@ -41,7 +41,7 @@ class SchemaLocator implements SchemaLocatorInterface
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
         $moduleDir = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
-        $this->schema = $moduleDir . '/elasticsearch/indices.xsd';
+        $this->schema = $moduleDir . '/elasticsuite_indices.xsd';
     }
 
     /**
