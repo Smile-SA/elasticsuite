@@ -10,6 +10,7 @@
     "description" : "Smile ElasticSuite",
     "homepage" : "https://github.com/Smile-SA/elasticsuite",
     "keywords" : [
+        "magento",
         "magento2",
         "elasticsearch",
         "search",
