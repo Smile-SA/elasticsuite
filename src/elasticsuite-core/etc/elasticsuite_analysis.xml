@@ -52,6 +52,13 @@
         <filter name="elision" type="elision" language="default">
             <articles>["l", "m", "t", "qu", "n", "s", "j"]</articles>
         </filter>
+        <filter name="phonetic" type="phonetic" language="default">
+            <encoder>metaphone</encoder>
+        </filter>
+        <filter name="phonetic" type="phonetic" language="en">
+            <encoder>beider_morse</encoder>
+            <languageset>french</languageset>
+        </filter>
     </filters>
 
     <analyzers>
@@ -108,6 +115,18 @@
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="phonetic" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="phonetic" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />

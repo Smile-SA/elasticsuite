@@ -45,6 +45,7 @@ interface FieldInterface
     const ANALYZER_WHITESPACE = 'whitespace';
     const ANALYZER_SHINGLE    = 'shingle';
     const ANALYZER_SORTABLE   = 'sortable';
+    const ANALYZER_PHONETIC   = 'phonetic';
     const ANALYZER_EDGE_NGRAM = 'edge_ngram_front';
     const ANALYZER_UNTOUCHED  = 'untouched';
 

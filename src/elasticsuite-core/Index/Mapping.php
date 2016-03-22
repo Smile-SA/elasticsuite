@@ -48,6 +48,7 @@ class Mapping implements MappingInterface
             FieldInterface::ANALYZER_STANDARD,
             FieldInterface::ANALYZER_WHITESPACE,
             FieldInterface::ANALYZER_SHINGLE,
+            FieldInterface::ANALYZER_PHONETIC,
         ],
         self::DEFAULT_AUTOCOMPLETE_FIELD => [
             FieldInterface::ANALYZER_STANDARD,

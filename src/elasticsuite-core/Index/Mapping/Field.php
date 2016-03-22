@@ -295,6 +295,10 @@ class Field implements FieldInterface
                 // Append edge_ngram analyzer when the field is used in autocomplete.
                 $analyzers[] = self::ANALYZER_EDGE_NGRAM;
             }
+
+            if ($this->isUsedInSpellcheck()) {
+                $analyzers[] = self::ANALYZER_PHONETIC;
+            }
         }
 
         if ($this->isFilterable() || empty($analyzers)) {

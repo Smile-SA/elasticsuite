@@ -27,4 +27,11 @@ interface PhoneticConfigurationInterface
      * @return bool
      */
     public function isFuzzinessEnabled();
+
+    /**
+     * Return fuzziness configuration.
+     *
+     * @return FuzzinessConfiguration.
+     */
+    public function getFuzzinessConfiguration();
 }

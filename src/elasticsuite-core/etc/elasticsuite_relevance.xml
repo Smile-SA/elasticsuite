@@ -38,7 +38,7 @@
             <phonetic_configuration>
                 <enable_phonetic_search>1</enable_phonetic_search>
                 <enable_phonetic_fuzziness>1</enable_phonetic_fuzziness>
-                <phonetic_fuzziness_value>0.5</phonetic_fuzziness_value>
+                <phonetic_fuzziness_value>AUTO</phonetic_fuzziness_value>
                 <phonetic_fuzziness_prefix_length>1</phonetic_fuzziness_prefix_length>
                 <phonetic_fuzziness_max_expansion>2</phonetic_fuzziness_max_expansion>
             </phonetic_configuration>

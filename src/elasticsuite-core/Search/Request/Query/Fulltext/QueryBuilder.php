@@ -59,12 +59,11 @@ class QueryBuilder
         $query = null;
 
         $fuzzySpellingTypes = [SpellcheckerInterface::SPELLING_TYPE_FUZZY, SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY];
-        $isFuzinessEnabled  = $containerConfig->getRelevanceConfig()->isFuzzinessEnabled();
 
         if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
             $query = $this->getPurewordsQuery($containerConfig, $queryText);
-        } elseif ($isFuzinessEnabled && in_array($spellingType, $fuzzySpellingTypes)) {
-            $query = $this->getFuzzyQuery($containerConfig, $queryText);
+        } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
+            $query = $this->getSpellcheckedQuery($containerConfig, $queryText);
         }
 
         if ($query == null) {
@@ -157,6 +156,37 @@ class QueryBuilder
     }
 
     /**
+     * Spellcheked query building.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param string                          $queryText       The text query.
+     *
+     * @return QueryInterface
+     */
+    private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText)
+    {
+        $query = null;
+
+        $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $queryClauses = [];
+
+        if ($relevanceConfig->isFuzzinessEnabled()) {
+            $queryClauses[] = $this->getFuzzyQuery($containerConfig, $queryText);
+        }
+
+        if ($relevanceConfig->isPhoneticSearchEnabled()) {
+            $queryClauses[] = $this->getPhoneticQuery($containerConfig, $queryText);
+        }
+
+        if (!empty($queryClauses)) {
+            $queryParams = ['should' => $queryClauses];
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+        }
+
+        return $query;
+    }
+
+    /**
      * Fuzzy query part.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
@@ -185,6 +215,41 @@ class QueryBuilder
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
+
+    /**
+     * Phonentic query part.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
+     * @param string                          $queryText       The text query.
+     *
+     * @return QueryInterface
+     */
+    private function getPhoneticQuery(ContainerConfigurationInterface $containerConfig, $queryText)
+    {
+        $relevanceConfig = $containerConfig->getRelevanceConfig();
+
+
+        $analyzer           = FieldInterface::ANALYZER_PHONETIC;
+        $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
+        $fuzzyFieldCallback = [$this, 'isFuzzyFieldCallback'];
+
+        $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $fuzzyFieldCallback, $defaultSearchField);
+
+        $queryParams = [
+            'fields'             => $searchFields,
+            'queryText'          => $queryText,
+            'minimumShouldMatch' => "100%",
+            'tieBreaker'         => $relevanceConfig->getTieBreaker(),
+            'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
+        ];
+
+        if ($relevanceConfig->getPhoneticConfiguration()->isFuzzinessEnabled()) {
+            $queryParams['fuzzinessConfig'] = $relevanceConfig->getPhoneticConfiguration()->getFuzzinessConfiguration();
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
+    }
+
 
     /**
      * Build an array of weighted fields to be searched with the ability to apply a filter callback method and a default field.
