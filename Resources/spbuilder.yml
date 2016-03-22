@@ -15,16 +15,15 @@ tools:
   # Will recursively run 'php -l' on directories and matching file extensions
   phplint:
     files:
-      -  vendor/smile-sa/module-elasticsuite-core
-      -  vendor/smile-sa/module-elasticsuite-catalog
+      -  vendor/smile-sa/elasticsuite/src/
     extensions:
       - php
 
   # Runs PHP_CodeSniffer
   phpcs:
     files:
-      -  vendor/smile-sa
-    standard: vendor/smile-sa/elasticsuite-full/Resources/phpcs-standards/SmileElasticSuite
+      -  vendor/smile-sa/elasticsuite/src/
+    standard: vendor/smile-sa/elasticsuite/Resources/phpcs-standards/SmileElasticSuite
     ignores:
       - "lib"
       - "Resources"
@@ -32,9 +31,9 @@ tools:
   # Runs PHPMD
   phpmd:
     files:
-      -  vendor/smile-sa
+      -  vendor/smile-sa/elasticsuite/src/
     rulesets:
-      - vendor/smile-sa/elasticsuite-full/Resources/phpmd-rulesets/rulset.xml
+      - vendor/smile-sa/elasticsuite/Resources/phpmd-rulesets/rulset.xml
     extensions:
       - php
     ignores:
@@ -44,7 +43,7 @@ tools:
   # Runs PDepend
   pdepend:
     files:
-      -  vendor/smile-sa
+      -  vendor/smile-sa/elasticsuite/src/
     enable:
       - jdepend-xml
       - jdepend-chart
@@ -59,7 +58,7 @@ tools:
   # Runs phpcpd
   phpcpd:
     files:
-      -  vendor/smile-sa
+      -  vendor/smile-sa/elasticsuite/src/
     fuzzy: false
     patterns:
       - "*.php"
@@ -71,6 +70,6 @@ tools:
 
   # Runs Qafoo Quality Analyzer
   visualization:
-    files: vendor/smile-sa
+    files: vendor/smile-sa/elasticsuite/src/
     hostname: localhost
     port: 8080
