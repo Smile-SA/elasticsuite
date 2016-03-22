@@ -65,11 +65,6 @@ We are still working on the migration of all features available into the Magento
      + And more to come !
 
 
-## Changelog
-
-TODO : Current release description
-
 ## Documentation
 
 Documentation is available [here](doc/DOCUMENTATION.md).
-
