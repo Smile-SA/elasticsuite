@@ -17,7 +17,7 @@
  */
  -->
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsearch/indices.xsd">
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_indices.xsd">
 
     <index identifier="catalog_product" defaultSearchType="product">
         <type name="product">
