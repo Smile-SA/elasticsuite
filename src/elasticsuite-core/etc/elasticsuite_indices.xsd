@@ -12,6 +12,7 @@
  * @category  Smile
  * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -20,10 +21,59 @@
 
     <xs:element name="indices">
         <xs:complexType>
-            <xs:choice maxOccurs="unbounded">
-                <xs:any processContents="lax" />
-            </xs:choice>
+            <xs:sequence>
+                <xs:element name="index" type="indexDefinition" maxOccurs="unbounded" minOccurs="0"/>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
 
+    <xs:complexType name="indexDefinition">
+        <xs:sequence>
+            <xs:element name="type" maxOccurs="unbounded" minOccurs="0" type="typeDefinition"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="identifier" use="optional"/>
+        <xs:attribute type="xs:string" name="defaultSearchType" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="typeDefinition">
+        <xs:sequence>
+            <xs:element name="datasources" type="datasourcesDefinition"/>
+            <xs:element name="mapping" type="mappingDefinition"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="datasourcesDefinition">
+        <xs:sequence maxOccurs="unbounded" minOccurs="1">
+            <xs:element name="datasource" type="datasourceDefinition" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="datasourceDefinition">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="mappingDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                Mapping declaration root node
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded" minOccurs="1">
+            <xs:element name="field" type="fieldDefinition"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="fieldDefinition">
+        <xs:annotation>
+            <xs:documentation>Mapping field declaration root node</xs:documentation>
+        </xs:annotation>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+        <xs:attribute type="xs:string" name="type" use="required"/>
+        <xs:attribute type="xs:string" name="nestedPath" use="optional"/>
+    </xs:complexType>
 </xs:schema>
