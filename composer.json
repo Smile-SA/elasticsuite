@@ -7,8 +7,8 @@
             "email" : "aurelien.foucret@smile.fr"
         }
     ],
-    "description" : "Smile ElasticSuite Main Module",
-    "homepage" : "https://git.smile.fr/magento-es/elasticsuite",
+    "description" : "Smile ElasticSuite",
+    "homepage" : "https://github.com/Smile-SA/elasticsuite",
     "keywords" : [
         "magento2",
         "elasticsearch",
