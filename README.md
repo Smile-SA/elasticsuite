@@ -4,7 +4,7 @@
 
 ElasticSuite is a merchandising suite for Magento which aims to provide out the box a lot of features usually only available with proprietary merchandising tools.
 
-The project was originnaly created by Smile and released to the Open Source community for Magento 1.x. You can still find the Magento 1.x module here.
+The project was originally created by Smile and released to the Open Source community for Magento 1.x. You can still find the Magento 1.x module [here](https://github.com/Smile-SA/smile-magento-elasticsearch).
 
 ## Who is developping ElasticSuite ?
 
