@@ -22,7 +22,7 @@
         "magento/module-store" : "*",
         "magento/module-backend" : "*",
         "magento/module-catalog" : "*",
-        "magento/module-catalogsearch" : "*",
+        "magento/module-catalog-search" : "*",
         "magento/magento-composer-installer" : "*",
         "elasticsearch/elasticsearch" : "2.1.*"
     },
