@@ -102,13 +102,13 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value" type="Magento\Framework\App\Config\Value">
+    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value">
         <arguments>
             <argument name="resource" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data</argument>
             <argument name="resourceCollection" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\Proxy</argument>
             <argument name="config" xsi:type="object">Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
         </arguments>
-    </virtualType>
+    </type>
 
     <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory" type="Magento\Framework\App\Config\ValueFactory">
         <arguments>

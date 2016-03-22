@@ -143,8 +143,8 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             $saveTransaction->save();
             $this->_appConfig->reinit();
             $this->_eventManager->dispatch(
-                "admin_system_config_changed_section_{$this->getSection()}",
-                ['website' => $this->getWebsite(), 'store' => $this->getStore()]
+                "smile_elasticsuite_relevance_config_changed_section_{$this->getSection()}",
+                ['container' => $this->getContainer(), 'store' => $this->getStore()]
             );
         } catch (\Exception $e) {
             $this->_appConfig->reinit();

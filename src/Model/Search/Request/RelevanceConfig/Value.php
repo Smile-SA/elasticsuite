@@ -22,7 +22,33 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
  */
 class Value extends \Magento\Framework\App\Config\Value
 {
-    // @TODO This class cannot be deleted otherwise instanciation of the collection
-    // Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data
-    // throws a fatal error.
+    /**
+     * Prefix of model events names
+     *
+     * @var string
+     */
+    // @codingStandardsIgnoreStart Property is inherited
+    protected $_eventPrefix = 'smile_elasticsuite_relevance_config_value';
+    //@codingStandardsIgnoreEnd
+
+    /**
+     * Parameter name in event
+     *
+     * In observe method you can use $observer->getEvent()->getObject() in this case
+     *
+     * @var string
+     */
+    // @codingStandardsIgnoreStart Property is inherited
+    protected $_eventObject = 'smile_elasticsuite_relevance_config_value';
+    //@codingStandardsIgnoreEnd
+
+    /**
+     * Processing object's after save. Overriden to prevent invalidation of "config" cache tag.
+     *
+     * @return $this
+     */
+    public function afterSave()
+    {
+        return \Magento\Framework\Model\AbstractModel::afterSave();
+    }
 }
