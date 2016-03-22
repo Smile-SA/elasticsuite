@@ -1,5 +1,5 @@
 {
-    "name" : "smile-sa/elasticsuite-full",
+    "name" : "smile-sa/elasticsuite",
     "type" : "magento2-module",
     "license" : "OSL-3.0",
     "authors" : [{
@@ -7,15 +7,33 @@
             "email" : "aurelien.foucret@smile.fr"
         }
     ],
-    "description" : "Core foundation of Smile ElasticSuite",
-    "homepage" : "https://git.smile.fr/magento-es/module-elasticsuite-core",
+    "description" : "Smile ElasticSuite Main Module",
+    "homepage" : "https://git.smile.fr/magento-es/elasticsuite",
     "keywords" : [
         "magento2",
+        "elasticsearch",
+        "search",
+        "merchandising",
         "core",
         "setup"
     ],
     "require" : {
-        "smile-sa/module-elasticsuite-core" : "self.version",
-        "smile-sa/module-elasticsuite-catalog" : "self.version"
-    }
+        "magento/framework" : "*",
+        "magento/module-store" : "*",
+        "magento/module-backend" : "*",
+        "magento/module-catalog" : "*",
+        "magento/module-catalogsearch" : "*",
+        "magento/magento-composer-installer" : "*",
+        "elasticsearch/elasticsearch" : "2.1.*"
+    },
+    "autoload" : {
+        "files" : [
+            "src/elasticsuite-core/registration.php"
+            "src/elasticsuite-catalog/registration.php"
+        ],
+        "psr-4" : {
+            "Smile\\ElasticSuiteCore\\" : "src/elasticsuite-core"
+            "Smile\\ElasticSuiteCatalog\\" : "src/elasticsuite-catalog"
+        }
+	}
 }
