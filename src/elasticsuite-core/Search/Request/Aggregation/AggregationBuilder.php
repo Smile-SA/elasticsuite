@@ -37,11 +37,6 @@ class AggregationBuilder
     private $aggregationFactory;
 
     /**
-     * @var MetricFactory
-     */
-    private $metricFactory;
-
-    /**
      * @var QueryBuilder
      */
     private $queryBuilder;
@@ -50,16 +45,13 @@ class AggregationBuilder
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
-     * @param MetricFactory      $metricFactory      Factory used to instantiate buckets metrics.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
         AggregationFactory $aggregationFactory,
-        MetricFactory $metricFactory,
         QueryBuilder $queryBuilder
     ) {
         $this->aggregationFactory = $aggregationFactory;
-        $this->metricFactory      = $metricFactory;
         $this->queryBuilder       = $queryBuilder;
     }
 

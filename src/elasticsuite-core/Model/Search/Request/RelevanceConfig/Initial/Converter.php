@@ -13,7 +13,6 @@
 namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 
 use Magento\Framework\Config\ConverterInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Default Configuration converter

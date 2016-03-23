@@ -15,11 +15,9 @@
 namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
 
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterfaceFactory;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
-use Symfony\Component\DependencyInjection\Tests\Compiler\C;
 
 /**
  * Search relevance configuration factory.

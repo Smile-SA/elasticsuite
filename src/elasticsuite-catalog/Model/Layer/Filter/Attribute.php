@@ -16,7 +16,6 @@ namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
 
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 
 /**
  * Product attribute filter implementation.

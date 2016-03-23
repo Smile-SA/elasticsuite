@@ -14,8 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Helper;
 
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**

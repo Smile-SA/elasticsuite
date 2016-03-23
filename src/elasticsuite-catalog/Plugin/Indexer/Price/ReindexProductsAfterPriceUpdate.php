@@ -10,6 +10,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Price;
 
 use Smile\ElasticSuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
