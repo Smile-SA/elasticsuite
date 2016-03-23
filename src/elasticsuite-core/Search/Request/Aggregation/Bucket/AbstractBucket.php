@@ -111,7 +111,7 @@ abstract class AbstractBucket implements BucketInterface
      */
     public function isNested()
     {
-        return $this->nestedPath != null;
+        return $this->nestedPath !== null;
     }
 
     /**

@@ -84,7 +84,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $this->filter = $filter;
         $this->sortOrders = $sortOrders;
 
-        if ($spellingType != null) {
+        if ($spellingType !== null) {
             $this->spellingType = $spellingType;
         }
     }

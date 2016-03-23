@@ -66,7 +66,7 @@ class QueryBuilder
             $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType);
         }
 
-        if ($query == null) {
+        if ($query === null) {
             $queryParams = [
                 'query'  => $this->getWeightedSearchQuery($containerConfig, $queryText),
                 'filter' => $this->getCutoffFrequencyQuery($containerConfig, $queryText),
@@ -290,7 +290,7 @@ class QueryBuilder
     ) {
         $weightedFields = [];
 
-        if ($defaultField != null) {
+        if ($defaultField !== null) {
             if ($analyzer != FieldInterface::ANALYZER_STANDARD) {
                 $defaultField = sprintf("%s.%s", $defaultField, $analyzer);
             }
@@ -306,7 +306,7 @@ class QueryBuilder
         foreach ($fields as $field) {
             $mappingProperty = $field->getMappingProperty($analyzer);
 
-            if ($mappingProperty && ($defaultField == null || $field->getSearchWeight() != 1)) {
+            if ($mappingProperty && ($defaultField === null || $field->getSearchWeight() != 1)) {
                 $weightedFields[$mappingProperty] = $field->getSearchWeight() * $boost;
             }
         }

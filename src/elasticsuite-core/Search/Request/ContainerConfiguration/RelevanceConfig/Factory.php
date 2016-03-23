@@ -147,7 +147,7 @@ class Factory
 
         $configuration = (bool) $this->getConfigValue($path . "/enable_fuzziness", $scopeCode);
 
-        if ($configuration == true) {
+        if ($configuration === true) {
             $configurationParams = [
                 'value'        => $this->getConfigValue($path . "/fuzziness_value", $scopeCode),
                 'prefixLength' => $this->getConfigValue($path . "/fuzziness_prefix_length", $scopeCode),
@@ -157,7 +157,7 @@ class Factory
             $configuration = $this->createFuzzinessConfiguration($configurationParams);
         }
 
-        return $configuration == false ? null : $configuration;
+        return $configuration === false ? null : $configuration;
     }
 
     /**
@@ -177,7 +177,7 @@ class Factory
             $phoneticFuzziness = (bool) $this->getConfigValue($path . "/enable_phonetic_fuzziness", $scopeCode);
             $configurationParams = ['fuzziness' => null];
 
-            if ($phoneticFuzziness == true) {
+            if ($phoneticFuzziness === true) {
                 $path .= "/phonetic_";
                 $fuzzinessParams = [
                     'value'        => $this->getConfigValue($path . "fuzziness_value", $scopeCode),
@@ -194,7 +194,7 @@ class Factory
             );
         }
 
-        return $configuration == false ? null : $configuration;
+        return $configuration === false ? null : $configuration;
     }
 
     /**

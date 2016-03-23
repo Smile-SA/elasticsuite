@@ -16,8 +16,6 @@ namespace Smile\ElasticSuiteCore\Search\Request\Aggregation;
 
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
-use Magento\Framework\Search\Request\Aggregation\MetricFactory;
-use Magento\Framework\Search\Request\Aggregation\Metric;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
@@ -76,7 +74,7 @@ class AggregationBuilder
         foreach ($aggregations as $fieldName => $aggregationParams) {
             $field = $mapping->getField($fieldName);
 
-            if ($field == null) {
+            if ($field === null) {
                 throw new \LogicException("Field {$fieldName} does not exists in mapping.");
             }
 
@@ -124,7 +122,7 @@ class AggregationBuilder
     {
         $bucketField = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
 
-        if ($bucketField == null) {
+        if ($bucketField === null) {
             throw new \LogicException("Unable to init the filter field for {$field->getName()}");
         }
 
@@ -143,7 +141,7 @@ class AggregationBuilder
 
         if ($field->isNested() && !isset($bucketParams['nestedPath'])) {
             $bucketParams['nestedPath'] = $field->getNestedPath();
-        } elseif ($field->isNested() == false && isset($bucketParams['nestedPath'])) {
+        } elseif ($field->isNested() === false && isset($bucketParams['nestedPath'])) {
             unset($bucketParams['nestedPath']);
         }
 

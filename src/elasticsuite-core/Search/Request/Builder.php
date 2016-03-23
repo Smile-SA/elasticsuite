@@ -203,7 +203,7 @@ class Builder
      */
     private function getRequestContainerConfiguration($storeId, $containerName)
     {
-        if ($containerName == null) {
+        if ($containerName === null) {
             throw new \LogicException('Request name is not set');
         }
 
@@ -211,7 +211,7 @@ class Builder
             ['containerName' => $containerName, 'storeId' => $storeId]
         );
 
-        if ($config == null) {
+        if ($config === null) {
             throw new \LogicException("No configuration exists for request {$containerName}");
         }
 

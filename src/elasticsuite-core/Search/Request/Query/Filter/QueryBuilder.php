@@ -88,7 +88,7 @@ class QueryBuilder
         foreach ($filters as $fieldName => $condition) {
             $mappingField = $mapping->getField($fieldName);
 
-            if ($mappingField->isFilterable() == false) {
+            if ($mappingField->isFilterable() === false) {
                 throw new \LogicException("Field {$fieldName} is not filterable.");
             }
 

@@ -126,7 +126,7 @@ class Converter implements ConverterInterface
 
         foreach ($node->childNodes as $childNode) {
             $childrenData = $this->convertNode($childNode, ($path ? $path . '/' : '') . $childNode->nodeName);
-            if ($childrenData == null) {
+            if ($childrenData === null) {
                 continue;
             }
             $nodeData = $this->mergeChildData($nodeData, $childrenData);
