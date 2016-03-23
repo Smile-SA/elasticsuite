@@ -55,7 +55,9 @@
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
-                <field name="category.name" type="string" nestedPath="category" />
+                <field name="category.name" type="string" nestedPath="category">
+                    <isSearchable>1</isSearchable>
+                </field>
 
             </mapping>
         </type>

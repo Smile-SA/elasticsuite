@@ -167,7 +167,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         foreach ($fieldNode->childNodes as $childNode) {
             if ($childNode instanceof \DOMElement) {
                 $tagName = $this->underscore($childNode->tagName);
-                $fieldParam[$tagName] = $childNode->nodeValue;
+                $fieldParam['fieldConfig'][$tagName] = $childNode->nodeValue;
             }
         }
 
