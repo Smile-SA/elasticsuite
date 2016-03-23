@@ -20,11 +20,10 @@
         <css src="Magento_Swatches::css/swatches.css"/>
     </head>
     <body>
-        <referenceBlock name="catalog.navigation.renderer">                  
-            <block type="Smile\ElasticSuiteSwatches\Block\Navigation\Renderer\Swatches"
+        <referenceBlock name="catalogsearch.navigation.renderer">
+            <block class="Smile\ElasticSuiteSwatches\Block\Navigation\Renderer\Swatches"
                    name="catalog.navigation.renderer.swatches" />
         </referenceBlock>
-
         <referenceBlock name="category.product.type.details.renderers">
             <block class="Magento\Swatches\Block\Product\Renderer\Listing\Configurable" as="configurable" template="Magento_Swatches::product/listing/renderer.phtml" />
         </referenceBlock>
