@@ -489,6 +489,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->_totalRecords       = $searchResponse->count();
         $this->countByAttributeSet = [];
+        $this->isSpellchecked = $searchRequest->isSpellchecked();
 
         $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
 

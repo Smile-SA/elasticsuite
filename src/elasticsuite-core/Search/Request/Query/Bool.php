@@ -51,18 +51,25 @@ class Bool implements QueryInterface
     private $mustNot;
 
     /**
+     * @var integer
+     */
+    private $minimumShouldMatch;
+
+    /**
      * Constructor.
      *
-     * @param QueryInterface[] $must    Must clause queries.
-     * @param QueryInterface[] $should  Should clause queries.
-     * @param QueryInterface[] $mustNot Must not clause queries.
-     * @param string           $name    Query name.
-     * @param integer          $boost   Query boost.
+     * @param QueryInterface[] $must               Must clause queries.
+     * @param QueryInterface[] $should             Should clause queries.
+     * @param QueryInterface[] $mustNot            Must not clause queries.
+     * @param integer          $minimumShouldMatch Minimum should match query clause.
+     * @param string           $name               Query name.
+     * @param integer          $boost              Query boost.
      */
     public function __construct(
         array $must = [],
         array $should = [],
         array $mustNot = [],
+        $minimumShouldMatch = 1,
         array $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
@@ -71,6 +78,7 @@ class Bool implements QueryInterface
         $this->mustNot = $mustNot;
         $this->boost   = $boost;
         $this->name    = $name;
+        $this->minimumShouldMatch = $minimumShouldMatch;
     }
 
     /**
@@ -125,5 +133,15 @@ class Bool implements QueryInterface
     public function getMustNot()
     {
         return $this->mustNot;
+    }
+
+    /**
+     * Minimum should match query clause.
+     *
+     * @return integer
+     */
+    public function getMinimumShouldMatch()
+    {
+        return $this->minimumShouldMatch;
     }
 }
