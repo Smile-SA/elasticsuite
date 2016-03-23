@@ -11,6 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save;
+use Smile\ElasticSuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
 
 /**
  * Plugin that proceed products reindex after category reindexing
@@ -19,23 +20,8 @@ namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save;
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class ReindexProductsAfterSave
+class ReindexProductsAfterSave extends AbstractIndexerPlugin
 {
-    /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
-     */
-    private $indexerRegistry;
-
-    /**
-     * ReindexProductsAfterSave constructor.
-     *
-     * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry The indexer registry
-     */
-    public function __construct(\Magento\Framework\Indexer\IndexerRegistry $indexerRegistry)
-    {
-        $this->indexerRegistry = $indexerRegistry;
-    }
-
     /**
      * Reindex category's products after reindexing the category
      *
@@ -51,10 +37,8 @@ class ReindexProductsAfterSave
     ) {
         $proceed();
 
-        $fullTextIndexer = $this->indexerRegistry->get(\Magento\CatalogSearch\Model\Indexer\Fulltext::INDEXER_ID);
-
-        if (!$fullTextIndexer->isScheduled() && (!empty($subject->getAffectedProductIds()))) {
-            $fullTextIndexer->reindexList($subject->getAffectedProductIds());
+        if (!empty($subject->getAffectedProductIds())) {
+            $this->processFullTextIndex($subject->getAffectedProductIds());
         }
 
         return;
