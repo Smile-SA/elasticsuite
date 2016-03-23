@@ -19,7 +19,7 @@
     <body>
         <referenceBlock name="catalogsearch.leftnav">
             <block class="Smile\ElasticSuiteCatalog\Block\Navigation\FilterRenderer" 
-                   name="catalogsearch.navigation.renderer" 
+                   name="catalogsearch.navigation.renderer"
                    as="renderer" 
                    template="Smile_ElasticSuiteCatalog::layer/filter/default.phtml">
                    

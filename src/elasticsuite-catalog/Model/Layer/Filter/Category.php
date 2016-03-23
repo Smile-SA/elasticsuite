@@ -95,7 +95,22 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
             }
         }
 
-        $this->addFacetToCollection();
+        return $this;
+    }
+
+    /**
+     * Append the facet to the product collection.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+     */
+    public function addFacetToCollection()
+    {
+        $facetField  = $this->getFilterField();
+        $facetType   = BucketInterface::TYPE_TERM;
+        $facetConfig = ['size' => 0];
+
+        $productCollection = $this->getLayer()->getProductCollection();
+        $productCollection->addFacet($facetField, $facetType, $facetConfig);
 
         return $this;
     }
@@ -164,22 +179,5 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     private function getFilterField()
     {
         return 'category.category_id';
-    }
-
-    /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
-     */
-    private function addFacetToCollection()
-    {
-        $facetField  = $this->getFilterField();
-        $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = ['size' => 0];
-
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
-
-        return $this;
     }
 }

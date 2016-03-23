@@ -136,7 +136,7 @@ class ResultPlugin
      */
     private function getProductCollection()
     {
-        return $this->layer->getProductCollection()->load();
+        return $this->layer->getProductCollection();
     }
 
     /**
