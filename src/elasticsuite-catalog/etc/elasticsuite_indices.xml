@@ -57,6 +57,7 @@
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
                 <field name="category.name" type="string" nestedPath="category">
                     <isSearchable>1</isSearchable>
+                    <isUsedInSpellcheck>1</isUsedInSpellcheck>
                 </field>
 
             </mapping>

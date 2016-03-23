@@ -63,7 +63,7 @@ class QueryBuilder
         if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
             $query = $this->getPurewordsQuery($containerConfig, $queryText);
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
-            $query = $this->getSpellcheckedQuery($containerConfig, $queryText);
+            $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType);
         }
 
         if ($query == null) {
@@ -160,10 +160,11 @@ class QueryBuilder
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
+     * @param string                          $spellingType    The type of spellchecked applied.
      *
      * @return QueryInterface
      */
-    private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText)
+    private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType)
     {
         $query = null;
 
@@ -180,6 +181,11 @@ class QueryBuilder
 
         if (!empty($queryClauses)) {
             $queryParams = ['should' => $queryClauses];
+
+            if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY) {
+                $queryParams['must'] = [$this->getWeightedSearchQuery($containerConfig, $queryText)];
+            }
+
             $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
         }
 
