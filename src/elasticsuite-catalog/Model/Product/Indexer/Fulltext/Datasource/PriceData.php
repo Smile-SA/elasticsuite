@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -32,13 +33,20 @@ class PriceData implements DatasourceInterface
     private $resourceModel;
 
     /**
+     * @var ProductType
+     */
+    private $productType;
+
+    /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model
+     * @param ResourceModel      $resourceModel      Resource model
+     * @param ProductTypeFactory $productTypeFactory Product type factory (used to detect products types).
      */
-    public function __construct(ResourceModel $resourceModel)
+    public function __construct(ResourceModel $resourceModel, ProductTypeFactory $productTypeFactory)
     {
         $this->resourceModel = $resourceModel;
+        $this->productType   = $productTypeFactory->create();
     }
 
     /**
@@ -49,17 +57,21 @@ class PriceData implements DatasourceInterface
     public function addData($storeId, array $indexData)
     {
         $priceData = $this->resourceModel->loadPriceData($storeId, array_keys($indexData));
+
         foreach ($priceData as $priceDataRow) {
-            $productId  = (int) $priceDataRow['entity_id'];
+            $productId = (int) $priceDataRow['entity_id'];
+            $isOriginalPriceReliable = $this->isOriginalPriceReliable($indexData[$productId]['type_id']);
 
-            $originalPrice = $priceDataRow['price'];
-            if ($originalPrice === null) {
-                $originalPrice = $priceDataRow['min_price'];
-            }
+            $originalPrice = $priceDataRow['min_price'];
+            $finalPrice = $priceDataRow['min_price'];
 
-            $finalPrice = $priceDataRow['final_price'];
-            if ($finalPrice === null) {
-                $finalPrice = $priceDataRow['min_price'];
+            if ($isOriginalPriceReliable) {
+                if ($priceDataRow['price']) {
+                    $originalPrice = $priceDataRow['price'];
+                }
+                if ($priceDataRow['final_price']) {
+                    $originalPrice = $priceDataRow['final_price'];
+                }
             }
 
             $indexData[$productId]['price'][] = [
@@ -71,5 +83,18 @@ class PriceData implements DatasourceInterface
         }
 
         return $indexData;
+    }
+
+    /**
+     * Price into indexed is not reliable for composite type.
+     * This method detects this.
+     *
+     * @param string $productTypeId Product type id.
+     *
+     * @return boolean
+     */
+    private function isOriginalPriceReliable($productTypeId)
+    {
+        return !in_array($productTypeId, $this->productType->getCompositeTypes());
     }
 }
