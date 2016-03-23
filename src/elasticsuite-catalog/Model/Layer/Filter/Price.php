@@ -18,6 +18,8 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 /**
  * Product price filter implementation.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -41,6 +43,8 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
 
     /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory               $filterItemFactory   Item filter facotory.
      * @param \Magento\Store\Model\StoreManagerInterface                    $storeManager        Store manager.

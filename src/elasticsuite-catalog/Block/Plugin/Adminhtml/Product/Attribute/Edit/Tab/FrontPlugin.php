@@ -24,6 +24,8 @@ use Magento\Catalog\Api\Data\EavAttributeInterface;
 /**
  * Plugin that happend custom fields dedicated to search configuration
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>

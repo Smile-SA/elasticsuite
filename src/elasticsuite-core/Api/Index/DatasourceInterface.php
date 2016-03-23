@@ -25,7 +25,6 @@ interface DatasourceInterface
 {
     /**
      * Append data to a list of documents.
-     * @todo : Rename this method (name is not explicit).
      *
      * @param integer $storeId   Store id.
      * @param array   $indexData List of documents to get enriched by the datasources.

@@ -62,6 +62,8 @@ class Index implements IndexInterface
     /**
      * Instanciate a new index.
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @param string          $identifier        Index real name.
      * @param string          $name              Index real name.
      * @param TypeInterface[] $types             Index current types.

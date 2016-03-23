@@ -38,12 +38,6 @@ class Builder
 
     /**
      * @var array
-     *
-     * @todo Implement missing types :
-     * BucketInterface::TYPE_HISTOGRAM
-     * BucketInterface::TYPE_RANGE
-     * BucketInterface::TYPE_DYNAMIC
-     * BucketInterface::TYPE_DATE_HISTOGRAM
      */
     private $bucketBuilderClasses = [
         BucketInterface::TYPE_TERM      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Term',

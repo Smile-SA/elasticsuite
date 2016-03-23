@@ -19,6 +19,8 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 /**
  * Search engine product collection.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category  Smile
  * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -63,6 +65,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * @var array
      */
+    private $countByAttributeSet;
+
+    /**
+     * @var array
+     */
     private $fieldNameMapping = [
         'price'        => 'price.price',
         'position'     => 'category.position',
@@ -76,6 +83,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity
      *                                                                                              factory
@@ -166,8 +175,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function getSize()
     {
         if ($this->_totalRecords === null) {
-            // @TODO : better fix
-            $this->_totalRecords = 1;
+            $this->loadProductCounts();
         }
 
         return $this->_totalRecords;
@@ -287,32 +295,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function getProductCountByAttributeSetId()
     {
-        $result = [];
-
-        $storeId     = $this->getStoreId();
-        $requestName = $this->searchRequestName;
-
-        // Query text.
-        $queryText = $this->queryText;
-
-        $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
-
-        $searchRequest = $this->requestBuilder->create($storeId, $requestName, 0, 0, $queryText, [], $this->filters, $setIdFacet);
-
-        $searchResponse = $this->searchEngine->search($searchRequest);
-
-        $this->_totalRecords = $searchResponse->count();
-
-        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
-
-        if ($bucket) {
-            foreach ($bucket->getValues() as $value) {
-                $metrics = $value->getMetrics();
-                $result[$metrics['value']] = $metrics['count'];
-            }
+        if ($this->countByAttributeSet == null) {
+            $this->loadProductCounts();
         }
 
-        return $result;
+        return $this->countByAttributeSet;
     }
 
     /**
@@ -477,5 +464,39 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         return $fieldName;
+    }
+
+    /**
+     * Load product count :
+     *  - collection size
+     *  - number of products by attribute set
+     *
+     * @return void
+     */
+    private function loadProductCounts()
+    {
+        $storeId     = $this->getStoreId();
+        $requestName = $this->searchRequestName;
+
+        // Query text.
+        $queryText = $this->queryText;
+
+        $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
+
+        $searchRequest = $this->requestBuilder->create($storeId, $requestName, 0, 0, $queryText, [], $this->filters, $setIdFacet);
+
+        $searchResponse = $this->searchEngine->search($searchRequest);
+
+        $this->_totalRecords       = $searchResponse->count();
+        $this->countByAttributeSet = [];
+
+        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
+
+        if ($bucket) {
+            foreach ($bucket->getValues() as $value) {
+                $metrics = $value->getMetrics();
+                $this->countByAttributeSet[$metrics['value']] = $metrics['count'];
+            }
+        }
     }
 }

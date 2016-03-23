@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query;
 
-use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
 /**
  * Build ElasticSearch queries from search request QueryInterface queries.
@@ -27,8 +27,6 @@ interface BuilderInterface
 {
     /**
      * Build the ES query from a Query
-     *
-     * @todo : more strict typing of $query.
      *
      * @param QueryInterface $query Query to be built.
      *

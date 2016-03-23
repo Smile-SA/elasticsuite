@@ -58,13 +58,11 @@ class Builder implements BuilderInterface
     /**
      * Build the ES query from a Query
      *
-     * @todo : more strict typing of $query.
-     *
      * @param QueryInterface $query Query to be built.
      *
      * @return array
      */
-    public function buildQuery(\Magento\Framework\Search\Request\QueryInterface $query)
+    public function buildQuery(QueryInterface $query)
     {
         $searchQuery = false;
         $builder = $this->getBuilder($query);

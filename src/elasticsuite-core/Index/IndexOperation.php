@@ -310,7 +310,6 @@ class IndexOperation implements IndexOperationInterface
         $this->client->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
 
         foreach ($deletedIndices as $deletedIndex) {
-            /** @todo : Dispatch event */
             $this->client->indices()->delete(['index' => $deletedIndex]);
         }
     }

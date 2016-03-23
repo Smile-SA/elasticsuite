@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
-use Magento\Framework\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
 /**

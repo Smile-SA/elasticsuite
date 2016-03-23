@@ -16,6 +16,8 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
 /**
  * Relevance Configuration Value class
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -44,6 +46,8 @@ class Value extends \Magento\Framework\App\Config\Value
 
     /**
      * Processing object's after save. Overriden to prevent invalidation of "config" cache tag.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @return $this
      */

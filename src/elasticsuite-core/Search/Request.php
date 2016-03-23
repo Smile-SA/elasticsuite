@@ -50,6 +50,10 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
     /**
+     * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param string               $name         Search request name.
      * @param string               $indexName    Index name.
      * @param string               $type         Searched document type.

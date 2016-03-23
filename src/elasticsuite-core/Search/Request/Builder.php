@@ -29,6 +29,8 @@ use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
 /**
  * ElasticSuite search requests builder.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>

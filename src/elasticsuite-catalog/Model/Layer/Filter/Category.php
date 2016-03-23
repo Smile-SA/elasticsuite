@@ -42,6 +42,8 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     /**
      * Constructor.
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory   Filter item factory.
      * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager        Store manager.
      * @param \Magento\Catalog\Model\Layer                                     $layer               Search layer.

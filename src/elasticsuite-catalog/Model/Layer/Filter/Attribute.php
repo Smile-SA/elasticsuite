@@ -143,6 +143,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
 
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * {@inheritDoc}
      */

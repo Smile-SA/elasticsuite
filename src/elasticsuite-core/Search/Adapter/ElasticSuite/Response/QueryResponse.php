@@ -14,11 +14,9 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
-use Magento\Framework\Api\Search\AggregationInterfaceFactory;
 use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Search\Document;
 use Magento\Framework\Search\ResponseInterface;
-use Magento\Framework\Search\Adapter\Mysql\AggregationFactory;
 
 /**
  * ElasticSuite search adapter response.
@@ -51,8 +49,8 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
     /**
      * Constructor
      *
-     * @param DocumentFactory    $documentFactory    Document factory
-     * @param AggregationFactory $aggregationFactory Aggregation factory (@todo replace with non MySQL implemenation)..
+     * @param DocumentFactory    $documentFactory    Document factory.
+     * @param AggregationFactory $aggregationFactory Aggregation factory.
      * @param array              $searchResponse     Engine raw response.
      */
     public function __construct(
@@ -98,26 +96,13 @@ class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
      */
     private function prepareAggregations(array $searchResponse, AggregationFactory $aggregationFactory)
     {
-        $buckets = [];
+        $aggregations = [];
 
         if (isset($searchResponse['aggregations'])) {
-            foreach ($searchResponse['aggregations'] as $bucketName => $aggregation) {
-                while (isset($aggregation[$bucketName])) {
-                    $aggregation = $aggregation[$bucketName];
-                }
-
-                if (isset($aggregation['buckets'])) {
-                    foreach ($aggregation['buckets'] as $currentBuket) {
-                        $buckets[$bucketName][$currentBuket['key']] = [
-                            'value' => $currentBuket['key'],
-                            'count' => $currentBuket['doc_count'],
-                        ];
-                    }
-                }
-            }
+            $aggregations = $searchResponse['aggregations'];
         }
 
-        $this->aggregations = $aggregationFactory->create($buckets);
+        $this->aggregations = $aggregationFactory->create($aggregations);
     }
 
     /**
