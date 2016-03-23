@@ -295,7 +295,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function getProductCountByAttributeSetId()
     {
-        if ($this->countByAttributeSet == null) {
+        if ($this->countByAttributeSet === null) {
             $this->loadProductCounts();
         }
 
@@ -318,7 +318,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         // Filter search results. The pagination has to be resetted since it is managed by the engine itself.
         $docIds = array_map(
-            function ($doc) {
+            function (\Magento\Framework\Api\Search\Document $doc) {
                 return (int) $doc->getId();
             },
             $this->queryResponse->getIterator()->getArrayCopy()

@@ -55,13 +55,13 @@ class Config extends \Magento\Framework\Config\Data
      */
     public function get($language = null, $default = null)
     {
-        if ($language == null) {
+        if ($language === null) {
             $language = 'default';
         }
 
         $data = parent::get($language, null);
 
-        if ($data == null) {
+        if ($data === null) {
             $data = $this->get('default', $default);
         }
 

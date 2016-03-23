@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder;
 
 /**

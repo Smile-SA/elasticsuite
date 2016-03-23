@@ -18,7 +18,6 @@ use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**

@@ -15,7 +15,6 @@
 namespace Smile\ElasticSuiteCore\Search\Request;
 
 use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexInterface;

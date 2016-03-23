@@ -14,8 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 
-use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
-
 /**
  * ElasticSuite search requests XML converter.
  *

@@ -14,9 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\Search\EntityMetadata;
-use Magento\Framework\Search\DocumentFieldFactory;
 use Magento\Framework\Api\Search\DocumentFactory as GenericDocumentFactory;
 use Magento\Framework\Api\Search\Document;
 

@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder;
 
-use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 

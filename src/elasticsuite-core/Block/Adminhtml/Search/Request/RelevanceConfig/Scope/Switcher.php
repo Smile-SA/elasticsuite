@@ -298,7 +298,7 @@ class Switcher extends Template
      */
     public function getCurrentContainerName()
     {
-        if ($this->getContainerCode() != null) {
+        if ($this->getContainerCode() !== null) {
             $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerName($container)) {
@@ -326,7 +326,7 @@ class Switcher extends Template
      */
     public function getCurrentContainerLabel()
     {
-        if ($this->getContainerCode() != null) {
+        if ($this->getContainerCode() !== null) {
             $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerLabel($container)) {

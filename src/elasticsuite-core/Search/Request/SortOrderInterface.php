@@ -14,8 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request;
 
-use Magento\Framework\Search\Request\FilterInterface;
-
 /**
  * Search sort order specification.
  *
@@ -44,7 +42,7 @@ interface SortOrderInterface
     /**
      * Sort order name.
      *
-     * @return strin
+     * @return string
      */
     public function getName();
 

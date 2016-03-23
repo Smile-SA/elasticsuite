@@ -63,7 +63,7 @@ class ClientFactory implements ClientFactoryInterface
      */
     public function createClient()
     {
-        if ($this->client == null) {
+        if ($this->client === null) {
             $clientBuilder = ClientBuilder::create();
             $clientBuilder->setHosts($this->clientConfiguration->getServerList());
             if ($this->clientConfiguration->isDebugModeEnabled()) {

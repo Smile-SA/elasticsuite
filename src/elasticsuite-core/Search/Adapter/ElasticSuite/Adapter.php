@@ -20,8 +20,6 @@ use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponseFac
 use Psr\Log\LoggerInterface;
 use Smile\ElasticSuiteCore\Index\IndexOperation;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
-use Smile\ElasticSuiteCore\Search\Request\Builder\Mapper;
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
 
 /**
  * ElasticSuite Search Adapter.

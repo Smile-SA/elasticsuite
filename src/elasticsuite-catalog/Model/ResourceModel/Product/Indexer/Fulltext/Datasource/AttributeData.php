@@ -164,7 +164,7 @@ class AttributeData extends AbstractIndexer
                     ->from(['main' => $relationTable], [$parentFieldName, $childFieldName])
                     ->where("main.{$parentFieldName} in (?)", $productIds);
 
-                if ($relation->getWhere() != null) {
+                if ($relation->getWhere() !== null) {
                     $select->where($relation->getWhere());
                 }
 

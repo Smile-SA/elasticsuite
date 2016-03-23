@@ -329,7 +329,7 @@ class Field implements FieldInterface
             $fieldMapping['index'] = 'not_analyzed';
         } elseif ($this->getType() == self::FIELD_TYPE_STRING) {
             $fieldMapping['fielddata'] = ['format' => 'lazy'];
-            $fieldMapping['analyzer']  = $analyzer != null ? $analyzer : self::ANALYZER_UNTOUCHED;
+            $fieldMapping['analyzer']  = $analyzer !== null ? $analyzer : self::ANALYZER_UNTOUCHED;
         } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
             $fieldMapping['format'] = implode('||', $this->dateFormats);
         }

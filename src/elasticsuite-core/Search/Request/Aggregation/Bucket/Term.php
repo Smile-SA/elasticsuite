@@ -15,7 +15,6 @@
 namespace Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket;
 
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
-use Magento\Framework\Search\Request\Aggregation\TermBucket;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
 /**

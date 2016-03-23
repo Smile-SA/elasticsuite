@@ -164,7 +164,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
             $item = $this->_createItem($itemData['label'], $itemData['value'], $itemData['count']);
             $items[] = $item;
 
-            if ($this->useUrlRewrites == true) {
+            if ($this->useUrlRewrites === true) {
                 $item->setUrlRewrite($itemData['url']);
             }
         }
