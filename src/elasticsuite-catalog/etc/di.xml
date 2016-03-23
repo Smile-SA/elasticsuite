@@ -89,9 +89,13 @@
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticSuiteCatalog\Block\Plugin\ResultPlugin" />
     </type>
-    
+
     <type name="\Magento\Catalog\Model\Category">
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
+    </type>
+
+    <type name="Magento\CatalogInventory\Model\Indexer\Stock">
+        <plugin name="smile_elasticsuite_catalog_reindex_products_after_stock_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Stock\ReindexProductsAfterStockUpdate"/>
     </type>
 
 </config>
