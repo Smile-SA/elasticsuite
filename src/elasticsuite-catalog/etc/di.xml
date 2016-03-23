@@ -98,4 +98,8 @@
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_stock_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Stock\ReindexProductsAfterStockUpdate"/>
     </type>
 
+    <type name="Magento\Catalog\Model\Indexer\Product\Price">
+        <plugin name="smile_elasticsuite_catalog_reindex_products_after_price_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Price\ReindexProductsAfterPriceUpdate"/>
+    </type>
+
 </config>
