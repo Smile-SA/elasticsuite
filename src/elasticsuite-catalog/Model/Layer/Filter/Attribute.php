@@ -94,7 +94,22 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
             $layerState->addFilter($filter);
         }
 
-        $this->addFacetToCollection();
+        return $this;
+    }
+
+    /**
+     * Append the facet to the product collection.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute
+     */
+    public function addFacetToCollection()
+    {
+        $facetField  = $this->getFilterField();
+        $facetType   = BucketInterface::TYPE_TERM;
+        $facetConfig = $this->getFacetConfig();
+
+        $productCollection = $this->getLayer()->getProductCollection();
+        $productCollection->addFacet($facetField, $facetType, $facetConfig);
 
         return $this;
     }
@@ -185,25 +200,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
             $facetConfig['size'] = 0;
         }
 
-
         return $facetConfig;
-    }
-
-    /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute
-     */
-    private function addFacetToCollection()
-    {
-        $facetField  = $this->getFilterField();
-        $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = $this->getFacetConfig();
-
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
-
-        return $this;
     }
 
     /**

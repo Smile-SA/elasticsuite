@@ -85,41 +85,13 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
-    
-    <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category">
-        <arguments>
-            <argument name="useUrlRewrites" xsi:type="boolean">true</argument>
-        </arguments>
-    </virtualType>
-    
-    <virtualType name="categoryFilterList" type="Magento\Catalog\Model\Layer\FilterList">
-        <arguments>
-            <argument name="filters" xsi:type="array">
-                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
-                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
-                <item name="category" xsi:type="string">categoryFilterUsingRewrite</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    
-    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
-        <arguments>
-            <argument name="filters" xsi:type="array">
-                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
-                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
-                <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <type name="\Magento\Catalog\Model\Category">
-        <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
-    </type>
 
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticSuiteCatalog\Block\Plugin\ResultPlugin" />
+    </type>
+    
+    <type name="\Magento\Catalog\Model\Category">
+        <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
     </type>
 
 </config>

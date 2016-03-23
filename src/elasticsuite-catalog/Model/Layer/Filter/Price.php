@@ -119,7 +119,24 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
             }
         }
 
-        $this->addFacetToCollection();
+        return $this;
+    }
+
+    /**
+     * Append the facet to the product collection.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+     */
+    public function addFacetToCollection()
+    {
+        $facetField      = $this->getFilterField();
+        $facetType       = BucketInterface::TYPE_HISTOGRAM;
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+
+        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]]
+        ;
+        $productCollection = $this->getLayer()->getProductCollection();
+        $productCollection->addFacet($facetField, $facetType, $facetConfig);
 
         return $this;
     }
@@ -189,24 +206,5 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     private function getFilterField()
     {
         return 'price.price';
-    }
-
-    /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
-     */
-    private function addFacetToCollection()
-    {
-        $facetField      = $this->getFilterField();
-        $facetType       = BucketInterface::TYPE_HISTOGRAM;
-        $customerGroupId = $this->customerSession->getCustomerGroupId();
-
-        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]]
-        ;
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
-
-        return $this;
     }
 }

@@ -14,6 +14,7 @@
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
 use Smile\ElasticSuiteCore\Search\RequestInterface;
+use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 
 /**
  * Search engine product collection.
@@ -279,6 +280,40 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         return $this->isSpellchecked;
     }
 
+    /**
+     * Load the product count by attribute set id.
+     *
+     * @return array
+     */
+    public function getProductCountByAttributeSetId()
+    {
+        $result = [];
+
+        $storeId     = $this->getStoreId();
+        $requestName = $this->searchRequestName;
+
+        // Query text.
+        $queryText = $this->queryText;
+
+        $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
+
+        $searchRequest = $this->requestBuilder->create($storeId, $requestName, 0, 0, $queryText, [], $this->filters, $setIdFacet);
+
+        $searchResponse = $this->searchEngine->search($searchRequest);
+
+        $this->_totalRecords = $searchResponse->count();
+
+        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
+
+        if ($bucket) {
+            foreach ($bucket->getValues() as $value) {
+                $metrics = $value->getMetrics();
+                $result[$metrics['value']] = $metrics['count'];
+            }
+        }
+
+        return $result;
+    }
 
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -287,9 +322,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     protected function _renderFiltersBefore()
     {
-        $queryRequest = $this->prepareRequest();
+        $searchRequest = $this->prepareRequest();
 
-        $this->queryResponse = $this->searchEngine->search($queryRequest);
+        $this->queryResponse = $this->searchEngine->search($searchRequest);
 
         // Update the product count.
         $this->_totalRecords = $this->queryResponse->count();
@@ -309,7 +344,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $this->_pageSize = false;
 
-        $this->isSpellchecked = $queryRequest->isSpellchecked();
+        $this->isSpellchecked = $searchRequest->isSpellchecked();
 
         return parent::_renderFiltersBefore();
     }
