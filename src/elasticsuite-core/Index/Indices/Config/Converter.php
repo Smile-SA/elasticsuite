@@ -33,6 +33,13 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const DATASOURCES_PATH        = 'datasources/datasource';
 
     /**
+     * Tag names underscore transformation cache
+     *
+     * @var array
+     */
+    private $underscoreCache = [];
+
+    /**
      * Convert dom node tree to array
      *
      * @param mixed $source Configuration XML source.
@@ -159,10 +166,34 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         foreach ($fieldNode->childNodes as $childNode) {
             if ($childNode instanceof \DOMElement) {
-                $fieldParam[$childNode->tagName] = $childNode->nodeValue;
+                $tagName = $this->underscore($childNode->tagName);
+                $fieldParam[$tagName] = $childNode->nodeValue;
             }
         }
 
         return $fieldParam;
+    }
+
+    /**
+     * Converts tag name from camelCase to snake_case
+     *
+     * isSearchable === is_searchable
+     * Uses cache to eliminate unnecessary preg_replace
+     *
+     * @param string $name The name to transform
+     *
+     * @return string
+     */
+    private function underscore($name)
+    {
+        if (isset($this->underscoreCache[$name])) {
+            return $this->underscoreCache[$name];
+        }
+
+        $result = strtolower(preg_replace('/(.)([A-Z])/', "$1_$2", $name));
+
+        $this->underscoreCache[$name] = $result;
+
+        return $result;
     }
 }
