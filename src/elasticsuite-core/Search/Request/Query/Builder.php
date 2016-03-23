@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request\Query;
 
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticSuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;

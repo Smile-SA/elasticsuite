@@ -18,7 +18,6 @@ use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponseFactory;
 use Psr\Log\LoggerInterface;
-use Smile\ElasticSuiteCore\Index\IndexOperation;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
 
 /**

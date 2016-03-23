@@ -15,7 +15,6 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
-use Magento\Framework\App\Config\ScopePool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\ScopedFactory;
 

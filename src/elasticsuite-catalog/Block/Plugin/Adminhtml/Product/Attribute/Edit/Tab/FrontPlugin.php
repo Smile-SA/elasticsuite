@@ -83,10 +83,10 @@ class FrontPlugin
 
         $fieldset = $this->createFieldset($form, $subject);
 
-        $this->moveOrginalFields($form)
-            ->addSearchFields($fieldset)
-            ->addAutocompleteFields($fieldset)
-            ->addFacetFields($fieldset);
+        $this->moveOrginalFields($form);
+        $this->addSearchFields($fieldset);
+        $this->addAutocompleteFields($fieldset);
+        $this->addFacetFields($fieldset);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
