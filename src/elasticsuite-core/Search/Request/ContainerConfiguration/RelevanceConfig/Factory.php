@@ -31,7 +31,7 @@ class Factory
     /**
      * XML root node for search relevance
      */
-    const BASE_RELEVANCE_CONFIG_XML_PREFIX = 'smile_elasticsuite_relevance';
+    const BASE_RELEVANCE_CONFIG_XML_PREFIX = 'relevance';
 
     /**
      * XML node for phrase match configuration
@@ -56,12 +56,12 @@ class Factory
     /**
      * XML node for fuzziness configuration
      */
-    const FUZZINESS_CONFIG_XML_PREFIX = 'search_fuzziness_configuration';
+    const FUZZINESS_CONFIG_XML_PREFIX = 'spellchecking/fuzziness';
 
     /**
      * XML node for phonetic configuration
      */
-    const PHONETIC_CONFIG_XML_PREFIX = 'phonetic_configuration';
+    const PHONETIC_CONFIG_XML_PREFIX = 'spellchecking/phonetic';
 
     /**
      * @var RelevanceConfigurationInterface[]
@@ -143,15 +143,15 @@ class Factory
      */
     private function getFuzzinessConfiguration($scopeCode)
     {
-        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::FUZZINESS_CONFIG_XML_PREFIX;
+        $path = self::FUZZINESS_CONFIG_XML_PREFIX;
 
-        $configuration = (bool) $this->getConfigValue($path . "/enable_fuzziness", $scopeCode);
+        $configuration = (bool) $this->getConfigValue($path . "/enable", $scopeCode);
 
         if ($configuration === true) {
             $configurationParams = [
-                'value'        => $this->getConfigValue($path . "/fuzziness_value", $scopeCode),
-                'prefixLength' => $this->getConfigValue($path . "/fuzziness_prefix_length", $scopeCode),
-                'maxExpansion' => $this->getConfigValue($path . "/fuzziness_max_expansion", $scopeCode),
+                'value'        => $this->getConfigValue($path . "/value", $scopeCode),
+                'prefixLength' => $this->getConfigValue($path . "/prefix_length", $scopeCode),
+                'maxExpansion' => $this->getConfigValue($path . "/max_expansion", $scopeCode),
             ];
 
             $configuration = $this->createFuzzinessConfiguration($configurationParams);
@@ -169,20 +169,19 @@ class Factory
      */
     private function getPhoneticConfiguration($scopeCode)
     {
-        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::PHONETIC_CONFIG_XML_PREFIX;
+        $path = self::PHONETIC_CONFIG_XML_PREFIX;
 
-        $configuration = (bool) $this->getConfigValue($path . "/enable_phonetic_search", $scopeCode);
+        $configuration = (bool) $this->getConfigValue($path . "/enable", $scopeCode);
 
         if ($configuration) {
-            $phoneticFuzziness = (bool) $this->getConfigValue($path . "/enable_phonetic_fuzziness", $scopeCode);
+            $phoneticFuzziness = (bool) $this->getConfigValue($path . "/enable_fuzziness", $scopeCode);
             $configurationParams = ['fuzziness' => null];
 
             if ($phoneticFuzziness === true) {
-                $path .= "/phonetic_";
                 $fuzzinessParams = [
-                    'value'        => $this->getConfigValue($path . "fuzziness_value", $scopeCode),
-                    'prefixLength' => $this->getConfigValue($path . "fuzziness_prefix_length", $scopeCode),
-                    'maxExpansion' => $this->getConfigValue($path . "fuzziness_max_expansion", $scopeCode),
+                    'value'        => $this->getConfigValue($path . "/fuzziness_value", $scopeCode),
+                    'prefixLength' => $this->getConfigValue($path . "/fuzziness_prefix_length", $scopeCode),
+                    'maxExpansion' => $this->getConfigValue($path . "/fuzziness_max_expansion", $scopeCode),
                 ];
 
                 $configurationParams['fuzziness'] = $this->createFuzzinessConfiguration($fuzzinessParams);

@@ -250,9 +250,9 @@
     <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter">
         <arguments>
             <argument name="nodeMap" xsi:type="array">
-                <item name="default" xsi:type="string">/relevance/default</item>
-                <item name="containers" xsi:type="string">/relevance/containers/*</item>
-                <item name="stores" xsi:type="string">/relevance/stores/*</item>
+                <item name="default" xsi:type="string">/config/default</item>
+                <item name="containers" xsi:type="string">/config/containers/*</item>
+                <item name="stores" xsi:type="string">/config/stores/*</item>
             </argument>
         </arguments>
     </type>

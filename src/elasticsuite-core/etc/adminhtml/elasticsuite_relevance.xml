@@ -19,9 +19,10 @@
         <tab id="general" translate="label" sortOrder="100">
             <label>General</label>
         </tab>
-        <section id="smile_elasticsuite_relevance" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+
+        <section id="relevance" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
             <tab>general</tab>
-            <label>Relevance Configuration</label>
+            <label>Relevance configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
 
             <group id="fulltext_base_settings" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
@@ -57,22 +58,28 @@
                     <comment><![CDATA[A number between 0 and 1. Used as automatic stopwords detection threshold.]]></comment>
                 </field>
             </group>
+        </section>
+            
+        <section id="spellchecking" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+            <tab>general</tab>
+            <label>Spellchecking configuration</label>
+            <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
 
-            <group id="search_fuzziness_configuration" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+            <group id="fuzziness" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Search fuzziness configuration</label>
-                <field id="enable_fuzziness" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Enable fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="fuzziness_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness value</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
                     </depends>
                     <!--<validate>validate-digits validate-digits-range validate-zero-or-greater</validate>-->
-                    <comment><![CDATA[A number between 0 and 1. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
+                    <comment><![CDATA[Allowed values "0", "1" or "AUTO". See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="fuzziness_prefix_length" translate="label" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="prefix_length" translate="label" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness Prefix Length</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
@@ -80,7 +87,7 @@
                     <!--<validate>validate-digits validate-digits-range validate-zero-or-greater</validate>-->
                     <comment><![CDATA[A integer between greater or equal than 0. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="fuzziness_max_expansion" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="max_expansion" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Max. expansion</label>
                     <depends>
                         <field id="enable_fuzziness">1</field>
@@ -90,30 +97,30 @@
                 </field>
             </group>
 
-            <group id="phonetic_configuration" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
+            <group id="phonetic" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Phonetic search configuration</label>
-                <field id="enable_phonetic_search" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Enable phonetic search</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment> <![CDATA[<comment>Require Phonetic analysis plugin installation: https://github.com/elastic/elasticsearch-analysis-phonetic</comment>]]></comment>
                 </field>
-                <field id="enable_phonetic_fuzziness" translate="label" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="enable_fuzziness" translate="label" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Enable phonetic fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <depends>
                         <field id="enable_phonetic_search">1</field>
                     </depends>
                 </field>
-                <field id="phonetic_fuzziness_value" translate="label" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="fuzziness_value" translate="label" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phonetic fuzziness value</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>
                         <field id="enable_phonetic_fuzziness">1</field>
                     </depends>
                     <!--<validate>validate-digits validate-digits-range validate-zero-or-greater</validate>-->
-                    <comment><![CDATA[A number between 0 and 1. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
+                    <comment><![CDATA[Allowed values "0", "1" or "AUTO". See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="phonetic_fuzziness_prefix_length" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="fuzziness_prefix_length" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phonetic fuzziness prefix length</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>
@@ -122,7 +129,7 @@
                     <!--<validate>validate-digits validate-digits-range validate-zero-or-greater</validate>-->
                     <comment><![CDATA[A integer between greater or equal than 0. See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information]]></comment>
                 </field>
-                <field id="phonetic_fuzziness_max_expansion" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="fuzziness_max_expansion" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Phonetic fuzziness max expansion</label>
                     <depends>
                         <field id="enable_phonetic_search">1</field>

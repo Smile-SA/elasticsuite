@@ -14,10 +14,10 @@
  * @license   Apache License Version 2.0
  */
 -->
-<relevance xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
     <default>
-        <smile_elasticsuite_relevance>
+        <relevance>
             <fulltext_base_settings>
                 <minimum_should_match>100%</minimum_should_match>
                 <tie_breaker>1</tie_breaker>
@@ -29,19 +29,21 @@
             <cutoff_frequency_configuration>
                 <cutoff_frequency>0.15</cutoff_frequency>
             </cutoff_frequency_configuration>
-            <search_fuzziness_configuration>
+        </relevance>
+        <spellchecking>
+            <fuzziness>
+                <enable>1</enable>
+                <value>AUTO</value>
+                <prefix_length>1</prefix_length>
+                <max_expansion>10</max_expansion>
+            </fuzziness>
+            <phonetic>
+                <enable>1</enable>
                 <enable_fuzziness>1</enable_fuzziness>
                 <fuzziness_value>AUTO</fuzziness_value>
                 <fuzziness_prefix_length>1</fuzziness_prefix_length>
-                <fuzziness_max_expansion>10</fuzziness_max_expansion>
-            </search_fuzziness_configuration>
-            <phonetic_configuration>
-                <enable_phonetic_search>1</enable_phonetic_search>
-                <enable_phonetic_fuzziness>1</enable_phonetic_fuzziness>
-                <phonetic_fuzziness_value>AUTO</phonetic_fuzziness_value>
-                <phonetic_fuzziness_prefix_length>1</phonetic_fuzziness_prefix_length>
-                <phonetic_fuzziness_max_expansion>2</phonetic_fuzziness_max_expansion>
-            </phonetic_configuration>
-        </smile_elasticsuite_relevance>
+                <fuzziness_max_expansion>2</fuzziness_max_expansion>
+            </phonetic>
+        </spellchecking>
     </default>
-</relevance>
+</config>
