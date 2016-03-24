@@ -35,6 +35,7 @@ class Common implements BuilderInterface
             'query'                => $query->getQueryText(),
             'minimum_should_match' => $query->getMinimumShouldMatch(),
             'cutoff_frequency'     => $query->getCutoffFrequency(),
+            'boost'                => $query->getBoost(),
         ];
 
         return ['common' => [$query->getField() => $searchQueryParams]];

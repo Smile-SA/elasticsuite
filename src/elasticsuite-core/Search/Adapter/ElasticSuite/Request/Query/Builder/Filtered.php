@@ -41,6 +41,8 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
             $searchQuery['query'] = $this->parentBuilder->buildQuery($query->getQuery());
         }
 
+        $searchQuery['boost'] = $query->getBoost();
+
         return ['filtered' => $searchQuery];
     }
 }

@@ -35,6 +35,7 @@ class Nested extends AbstractComplexBuilder implements BuilderInterface
             'path'       => $query->getPath(),
             'score_mode' => $query->getScoreMode(),
             'query'      => $this->parentBuilder->buildQuery($query->getQuery()),
+            'boost'      => $query->getBoost(),
         ];
 
         return ['nested' => $searchQuery];

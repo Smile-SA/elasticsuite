@@ -52,6 +52,7 @@ class Bool extends AbstractComplexBuilder implements BuilderInterface
         }
 
         $searchQuery['minimum_should_match'] = $query->getMinimumShouldMatch();
+        $searchQuery['boost'] = $query->getBoost();
 
         return ['bool' => $searchQuery];
     }

@@ -51,25 +51,27 @@ class QueryBuilder
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
+     * @param number                          $boost           Boost of the created query.
      *
      * @return QueryInterface
      */
-    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType)
+    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost = 1)
     {
         $query = null;
 
         $fuzzySpellingTypes = [SpellcheckerInterface::SPELLING_TYPE_FUZZY, SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY];
 
         if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
-            $query = $this->getPurewordsQuery($containerConfig, $queryText);
+            $query = $this->getPurewordsQuery($containerConfig, $queryText, $boost);
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
-            $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType);
+            $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType, $boost);
         }
 
         if ($query === null) {
             $queryParams = [
                 'query'  => $this->getWeightedSearchQuery($containerConfig, $queryText),
                 'filter' => $this->getCutoffFrequencyQuery($containerConfig, $queryText),
+                'boost'  => $boost,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
         }
@@ -138,10 +140,11 @@ class QueryBuilder
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
+     * @param number                          $boost           Boost of the created query.
      *
      * @return QueryInterface
      */
-    private function getPurewordsQuery(ContainerConfigurationInterface $containerConfig, $queryText)
+    private function getPurewordsQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
@@ -156,6 +159,7 @@ class QueryBuilder
             'queryText'          => $queryText,
             'minimumShouldMatch' => "100%",
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
+            'boost'              => $boost,
         ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
@@ -167,10 +171,11 @@ class QueryBuilder
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
+     * @param number                          $boost           Boost of the created query.
      *
      * @return QueryInterface
      */
-    private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType)
+    private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost)
     {
         $query = null;
 
@@ -186,7 +191,7 @@ class QueryBuilder
         }
 
         if (!empty($queryClauses)) {
-            $queryParams = ['should' => $queryClauses];
+            $queryParams = ['should' => $queryClauses, 'boost' => $boost];
 
             if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY) {
                 $queryParams['must'] = [$this->getWeightedSearchQuery($containerConfig, $queryText)];

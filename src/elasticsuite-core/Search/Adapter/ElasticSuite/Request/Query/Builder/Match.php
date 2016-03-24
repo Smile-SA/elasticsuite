@@ -34,6 +34,7 @@ class Match implements BuilderInterface
         $searchQueryParams = [
             'query'                => $query->getQueryText(),
             'minimum_should_match' => $query->getMinimumShouldMatch(),
+            'boost'                => $query->getBoost(),
         ];
 
         return ['match' => [$query->getField() => $searchQueryParams]];
