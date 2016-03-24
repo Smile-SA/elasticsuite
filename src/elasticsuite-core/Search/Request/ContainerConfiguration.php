@@ -130,6 +130,14 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getStoreId()
+    {
+        return $this->storeId;
+    }
+
+    /**
      * Read configuration param from base config.
      *
      * @param string $param Param name.

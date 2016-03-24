@@ -67,4 +67,11 @@ interface ContainerConfigurationInterface
      * @return RelevanceConfigurationInterface
      */
     public function getRelevanceConfig();
+
+    /**
+     * Current container store id.
+     *
+     * @return integer
+     */
+    public function getStoreId();
 }
