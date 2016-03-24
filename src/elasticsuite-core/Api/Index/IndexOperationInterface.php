@@ -105,4 +105,17 @@ interface IndexOperationInterface
      * @return integer
      */
     public function getBatchIndexingSize();
+
+    /**
+     * Proceed to the indices install :
+     *
+     *  1) First switch the alias to the new index
+     *  2) Remove old indices
+     *
+     * @param string $indexName  Real index name.
+     * @param string $indexAlias Index alias (must include store identifier).
+     *
+     * @return void
+     */
+    public function proceedIndexInstall($indexName, $indexAlias);
 }

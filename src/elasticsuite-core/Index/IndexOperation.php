@@ -243,6 +243,34 @@ class IndexOperation implements IndexOperationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function proceedIndexInstall($indexName, $indexAlias)
+    {
+        $aliasActions   = [['add' => ['index' => $indexName, 'alias' => $indexAlias]]];
+        $deletedIndices = [];
+
+        try {
+            $oldIndices = $this->client->indices()->getMapping(['index' => $indexAlias]);
+        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
+            $oldIndices = [];
+        }
+
+        foreach (array_keys($oldIndices) as $oldIndexName) {
+            if ($oldIndexName != $indexName) {
+                $deletedIndices[] = $oldIndexName;
+                $aliasActions[]   = ['remove' => ['index' => $oldIndexName, 'alias' => $indexAlias]];
+            }
+        }
+
+        $this->client->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
+
+        foreach ($deletedIndices as $deletedIndex) {
+            $this->client->indices()->delete(['index' => $deletedIndex]);
+        }
+    }
+
+    /**
      *
      * @param string                                                $indexIdentifier An index indentifier.
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
@@ -276,41 +304,5 @@ class IndexOperation implements IndexOperationInterface
         $this->indicesByIdentifier[$indexAlias] = $index;
 
         return $this->indicesByIdentifier[$indexAlias];
-    }
-
-    /**
-     * Proceed to the indices install :
-     *
-     *  1) First switch the alias to the new index
-     *  2) Remove old indices
-     *
-     * @param string $indexName  Real index name.
-     * @param string $indexAlias Index alias (must include store identifier).
-     *
-     * @return void
-     */
-    private function proceedIndexInstall($indexName, $indexAlias)
-    {
-        $aliasActions   = [['add' => ['index' => $indexName, 'alias' => $indexAlias]]];
-        $deletedIndices = [];
-
-        try {
-            $oldIndices = $this->client->indices()->getMapping(['index' => $indexAlias]);
-        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
-            $oldIndices = [];
-        }
-
-        foreach (array_keys($oldIndices) as $oldIndexName) {
-            if ($oldIndexName != $indexName) {
-                $deletedIndices[] = $oldIndexName;
-                $aliasActions[]   = ['remove' => ['index' => $oldIndexName, 'alias' => $indexAlias]];
-            }
-        }
-
-        $this->client->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
-
-        foreach ($deletedIndices as $deletedIndex) {
-            $this->client->indices()->delete(['index' => $deletedIndex]);
-        }
     }
 }
