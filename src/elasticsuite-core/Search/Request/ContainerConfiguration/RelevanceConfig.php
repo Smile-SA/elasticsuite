@@ -77,12 +77,12 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         FuzzinessConfigurationInterface $fuzziness = null,
         PhoneticConfigurationInterface $phonetic = null
     ) {
-        $this->minimumShouldMatch = $minimumShouldMatch;
-        $this->tieBreaker = $tieBreaker;
-        $this->phraseMatchBoost = $phraseMatchBoost;
-        $this->cutOffFrequency = $cutOffFrequency;
+        $this->minimumShouldMatch     = $minimumShouldMatch;
+        $this->tieBreaker             = $tieBreaker;
+        $this->phraseMatchBoost       = $phraseMatchBoost;
+        $this->cutOffFrequency        = $cutOffFrequency;
         $this->fuzzinessConfiguration = $fuzziness;
-        $this->phoneticConfiguration = $phonetic;
+        $this->phoneticConfiguration  = $phonetic;
     }
 
     /**

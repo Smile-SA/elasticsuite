@@ -26,6 +26,7 @@ use Magento\Eav\Model\Entity\Attribute;
 class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
 {
     /**
+     * Constructor.
      *
      * @param \Smile\ElasticSuiteSwatches\Helper\Swatches $swatchesHelperData Swatch helper.
      * @param \Magento\Eav\Model\Config                   $eavConfig          Product EAV configuration.

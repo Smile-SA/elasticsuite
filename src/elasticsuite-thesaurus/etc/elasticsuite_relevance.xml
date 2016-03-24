@@ -1,0 +1,29 @@
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
+    <default>
+        <thesaurus>
+            <synonyms>
+                <enable>1</enable>
+                <weight_divider>10</weight_divider>
+            </synonyms>
+            <concepts>
+                <enable>1</enable>
+                <weight_divider>10</weight_divider>
+            </concepts>
+        </thesaurus>
+    </default>
+</config>

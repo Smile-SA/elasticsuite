@@ -79,16 +79,23 @@ class Factory
     private $objectManager;
 
     /**
+     * @var string
+     */
+    private $instanceName;
+
+    /**
      * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object manager instance
+     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param string                 $instanceName  Config class name.
      */
-    public function __construct(ObjectManagerInterface $objectManager)
-    {
-        $this->scopeConfig   = $objectManager->create(
-            'Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config'
-        );
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        $instanceName = 'Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface'
+    ) {
+        $this->scopeConfig   = $objectManager->get('Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config');
         $this->objectManager = $objectManager;
+        $this->instanceName  = $instanceName;
     }
 
     /**
@@ -104,7 +111,8 @@ class Factory
         $scopeCode = $this->getScopeCode($storeId, $containerName);
 
         if (!isset($this->cachedConfig[$scopeCode])) {
-            $this->cachedConfig[$scopeCode] = $this->loadConfiguration($scopeCode);
+            $instanceConfiguration          = $this->loadConfiguration($scopeCode);
+            $this->cachedConfig[$scopeCode] = $this->objectManager->create($this->instanceName, $instanceConfiguration);
         }
 
         return $this->cachedConfig[$scopeCode];
@@ -117,7 +125,7 @@ class Factory
      *
      * @return \Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface
      */
-    private function loadConfiguration($scopeCode)
+    protected function loadConfiguration($scopeCode)
     {
         $configurationParams = [
             'minimumShouldMatch' => $this->getMinimumShouldMatch($scopeCode),
@@ -128,10 +136,22 @@ class Factory
             'phonetic'           => $this->getPhoneticConfiguration($scopeCode),
         ];
 
-        return $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface',
-            $configurationParams
-        );
+        return $configurationParams;
+    }
+
+    /**
+     * Read value into the config by path and scope.
+     *
+     * @param unknown $path      Config path.
+     * @param unknown $scopeCode Scope coode.
+     *
+     * @return mixed
+     */
+    protected function getConfigValue($path, $scopeCode)
+    {
+        $scope = ContainerScopeInterface::SCOPE_STORE_CONTAINERS;
+
+        return $this->scopeConfig->getValue($path, $scope, $scopeCode);
     }
 
     /**
@@ -271,21 +291,6 @@ class Factory
         $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::CUTOFF_FREQUENCY_CONFIG_XML_PATH;
 
         return (float) $this->getConfigValue($path, $scopeCode);
-    }
-
-    /**
-     * Read value into the config by path and scope.
-     *
-     * @param unknown $path      Config path.
-     * @param unknown $scopeCode Scope coode.
-     *
-     * @return mixed
-     */
-    private function getConfigValue($path, $scopeCode)
-    {
-        $scope = ContainerScopeInterface::SCOPE_STORE_CONTAINERS;
-
-        return $this->scopeConfig->getValue($path, $scope, $scopeCode);
     }
 
     /**
