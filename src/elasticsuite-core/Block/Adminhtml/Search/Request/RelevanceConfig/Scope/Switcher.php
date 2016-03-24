@@ -134,7 +134,7 @@ class Switcher extends Template
     public function getContainerCode()
     {
         if (!$this->hasData('container_code')) {
-            $this->setData('container_code', (string) $this->getRequest()->getParam($this->getContainerVarName()));
+            $this->setData('container_code', $this->getRequest()->getParam($this->getContainerVarName()));
         }
 
         return $this->getData('container_code');
