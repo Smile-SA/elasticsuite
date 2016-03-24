@@ -29,7 +29,7 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
         \Magento\Catalog\Model\Layer $subject,
         \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection $collection
     ) {
-        if ($this->_isEnabledShowOutOfStock() == false) {
+        if ($this->_isEnabledShowOutOfStock() === false) {
             $collection->addIsInStockFilter();
         }
     }
