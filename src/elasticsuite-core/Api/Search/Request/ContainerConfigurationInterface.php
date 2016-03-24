@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteCore\Api\Search\Request;
 
-use Smile\ElasticSuiteCore\Search\Request\Config\BaseConfig;
 use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
