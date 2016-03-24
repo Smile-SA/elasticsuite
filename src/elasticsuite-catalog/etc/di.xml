@@ -85,6 +85,10 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
+    
+    <type name="Magento\Catalog\Model\Layer">
+        <plugin name="addStockStatusOnPrepareFrontCollection" type="Smile\ElasticSuiteCatalog\Plugin\LayerPlugin"/>
+    </type>
 
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticSuiteCatalog\Block\Plugin\ResultPlugin" />

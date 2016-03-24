@@ -303,6 +303,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Filter in stock product.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function addIsInStockFilter()
+    {
+        $this->addFieldToFilter('stock.is_in_stock', true);
+        return $this;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritdoc}
