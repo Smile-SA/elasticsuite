@@ -310,6 +310,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addIsInStockFilter()
     {
         $this->addFieldToFilter('stock.is_in_stock', true);
+
         return $this;
     }
 
