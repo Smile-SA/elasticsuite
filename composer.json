@@ -35,16 +35,16 @@
     },
     "autoload" : {
         "files" : [
-            "src/module-elasticsuite-core/src/registration.php",
-            "src/module-elasticsuite-catalog/src/registration.php",
-            "src/module-elasticsuite-swatches/src/registration.php",
-            "src/module-elasticsuite-thesaurus/src/registration.php"
+            "src/module-elasticsuite-core/registration.php",
+            "src/module-elasticsuite-catalog/registration.php",
+            "src/module-elasticsuite-swatches/registration.php",
+            "src/module-elasticsuite-thesaurus/registration.php"
         ],
         "psr-4" : {
-            "Smile\\ElasticSuiteCore\\" : "src/module-elasticsuite-core/src",
-            "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog/src",
-            "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches/src",
-            "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus/src"
+            "Smile\\ElasticSuiteCore\\" : "src/module-elasticsuite-core",
+            "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog",
+            "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches",
+            "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus"
         }
     }
 }
