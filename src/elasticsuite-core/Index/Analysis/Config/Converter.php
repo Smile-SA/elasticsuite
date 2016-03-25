@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
 use Magento\Framework\Json\Decoder;
+
 /**
  * Convert analysis configuration XML file.
  *
@@ -167,7 +168,6 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $filter     = ['type' => $filterNode->getAttribute('type')];
             foreach ($filterNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMElement) {
-                    $filterConfigValue = $childNode->nodeValue;
                     try {
                         $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
                     } catch (\Exception $e) {
