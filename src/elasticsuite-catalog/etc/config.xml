@@ -21,4 +21,5 @@
                 <engine>elasticsuite</engine>
             </search>
         </catalog>
+    </default>
 </config>
