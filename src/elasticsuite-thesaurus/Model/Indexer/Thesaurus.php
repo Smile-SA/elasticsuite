@@ -27,6 +27,11 @@ use Magento\Store\Model\StoreManagerInterface;
 class Thesaurus implements \Magento\Framework\Indexer\ActionInterface, \Magento\Framework\Mview\ActionInterface
 {
     /**
+     * @var string
+     */
+    const INDEXER_ID = 'elasticsuite_thesaurus';
+
+    /**
      * @var ResourceModel
      */
     private $resourceModel;

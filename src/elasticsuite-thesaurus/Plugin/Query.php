@@ -14,7 +14,9 @@
 
 namespace Smile\ElasticSuiteThesaurus\Plugin;
 
+use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Search\Model\Query as QueryModel;
+use Smile\ElasticSuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
 
 /**
  * Thesaurus search query model plugin.
@@ -25,6 +27,22 @@ use Magento\Search\Model\Query as QueryModel;
  */
 class Query
 {
+    /**
+     * @var IndexerRegistry
+     */
+    protected $indexerRegistry;
+
+    /**
+     * Constructor.
+     *
+     * @param IndexerRegistry $indexerRegistry Indexers registry.
+     */
+    public function __construct(IndexerRegistry $indexerRegistry)
+    {
+        $this->indexerRegistry = $indexerRegistry;
+    }
+
+
     /**
      * Avoid original query rewrite using synonym_for to be applied into the query factory.
      *
@@ -39,5 +57,26 @@ class Query
     public function aroundLoadByQuery(QueryModel $subject, \Closure $proceed, $text)
     {
         return $subject->loadByQueryText($text);
+    }
+
+    /**
+     * Ensure the index is invalidated when synonyms are updated.
+     *
+     * @param QueryModel $subject Saved query.
+     * @param \Closure   $proceed Original save method.
+     *
+     * @return QueryModel
+     */
+    public function aroundSave(QueryModel $subject, \Closure $proceed)
+    {
+        $needReindex = $subject->dataHasChangedFor('synonym_for');
+
+        $result = $proceed();
+
+        if ($needReindex) {
+            $this->indexerRegistry->get(ThesaurusIndexer::INDEXER_ID)->invalidate();
+        }
+
+        return $result;
     }
 }
