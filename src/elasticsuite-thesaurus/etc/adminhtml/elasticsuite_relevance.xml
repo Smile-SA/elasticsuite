@@ -1,0 +1,58 @@
+<!--
+/**
+ * Smile ElasticSuite Relevance configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_relevance_config.xsd">
+    <system>
+        <section id="thesaurus" translate="label" type="text" sortOrder="100" showInDefault="1" showInContainer="1" showInStore="1">
+            <tab>general</tab>
+            <label>Synonyms configuration</label>
+            <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
+
+            <group id="synonyms" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Synonyms configuration</label>
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Enable synonyms search</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="weight_divider" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Synonyms weight divider</label>
+                    <depends>
+                        <field id="enable">1</field>
+                    </depends>
+                </field>
+            </group>
+            <!--
+            @todo : TO BE IMPLEMENTED :
+               - Index synonym as bag of words producing a global expanstions (eg. : footbal,foot)
+               - Index concepts as left side expansions (eg. sport => footbal,tennis)
+               
+            <group id="concepts" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Concepts configuration</label>
+                <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Enable concepts search</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="weight_divider" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Concepts weight divider</label>
+                    <depends>
+                        <field id="enable">1</field>
+                    </depends>
+                </field>
+            </group>
+             -->
+        </section>
+    </system>
+</config>
