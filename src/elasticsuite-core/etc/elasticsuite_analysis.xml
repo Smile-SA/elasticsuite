@@ -26,9 +26,14 @@
     <filters>
         <filter name="trim" type="trim" language="default"/>
         <filter name="lowercase" type="lowercase" language="default"/>
-        <filter name="strip_whitespaces" type="pattern_replace" language="default">
-            <pattern>\s</pattern>
-            <replacement></replacement>
+        <filter name="word_delimiter" type="word_delimiter" language="default">
+            <generate_word_parts>1</generate_word_parts>
+            <catenate_words>1</catenate_words>
+            <catenate_numbers>1</catenate_numbers>
+            <catenate_all>1</catenate_all>
+            <split_on_case_change>1</split_on_case_change>
+            <split_on_numerics>1</split_on_numerics>
+            <preserve_original>1</preserve_original>
         </filter>
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
@@ -62,7 +67,7 @@
     </filters>
 
     <analyzers>
-        <analyzer name="standard" tokenizer="standard" language="default">
+        <analyzer name="standard" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
@@ -75,7 +80,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="whitespace" tokenizer="standard" language="default">
+        <analyzer name="whitespace" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
@@ -86,7 +91,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="shingle" tokenizer="standard" language="default">
+        <analyzer name="shingle" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
@@ -98,7 +103,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="edge_ngram_front" tokenizer="standard" language="default">
+        <analyzer name="edge_ngram_front" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
@@ -120,7 +125,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="phonetic" tokenizer="standard" language="default">
+        <analyzer name="phonetic" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />

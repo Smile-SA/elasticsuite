@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
 
+use Magento\Framework\Json\Decoder;
 /**
  * Convert analysis configuration XML file.
  *
@@ -30,6 +31,21 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const FILTER_TYPE_NODE           = 'filter';
     const ANALYZER_TYPE_ROOT_NODE    = 'analyzers';
     const ANALYZER_TYPE_NODE         = 'analyzer';
+
+    /**
+     * @var Decoder
+     */
+    private $jsonDecoder;
+
+    /**
+     * Constructor.
+     *
+     * @param Decoder $jsonDecoder JSON Decoder.
+     */
+    public function __construct(Decoder $jsonDecoder)
+    {
+        $this->jsonDecoder = $jsonDecoder;
+    }
 
     /**
      * Convert dom node tree to array.
@@ -151,7 +167,12 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $filter     = ['type' => $filterNode->getAttribute('type')];
             foreach ($filterNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMElement) {
-                    $filter[$childNode->tagName] = $childNode->nodeValue;
+                    $filterConfigValue = $childNode->nodeValue;
+                    try {
+                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                    } catch (\Exception $e) {
+                        $filter[$childNode->tagName] = $childNode->nodeValue;
+                    }
                 }
             }
             $filters[$filterName] = $filter;
