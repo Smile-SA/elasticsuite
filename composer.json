@@ -27,18 +27,24 @@
         "magento/magento-composer-installer" : "*",
         "elasticsearch/elasticsearch" : "2.1.*"
     },
+    "replace": {
+        "smile-sa/module-elasticsuite-core": "self.version",
+        "smile-sa/module-elasticsuite-catalog": "self.version",
+        "smile-sa/module-elasticsuite-swatches": "self.version",
+        "smile-sa/module-elasticsuite-thesaurus": "self.version"
+    },
     "autoload" : {
         "files" : [
-            "src/elasticsuite-core/registration.php",
-            "src/elasticsuite-catalog/registration.php",
-            "src/elasticsuite-swatches/registration.php",
-            "src/elasticsuite-thesaurus/registration.php"
+            "src/module-elasticsuite-core/src/registration.php",
+            "src/module-elasticsuite-catalog/src/registration.php",
+            "src/module-elasticsuite-swatches/src/registration.php",
+            "src/module-elasticsuite-thesaurus/src/registration.php"
         ],
         "psr-4" : {
-            "Smile\\ElasticSuiteCore\\" : "src/elasticsuite-core",
-            "Smile\\ElasticSuiteCatalog\\" : "src/elasticsuite-catalog",
-            "Smile\\ElasticSuiteSwatches\\" : "src/elasticsuite-swatches",
-            "Smile\\ElasticSuiteThesaurus\\" : "src/elasticsuite-thesaurus"
+            "Smile\\ElasticSuiteCore\\" : "src/module-elasticsuite-core/src",
+            "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog/src",
+            "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches/src",
+            "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus/src"
         }
     }
 }
