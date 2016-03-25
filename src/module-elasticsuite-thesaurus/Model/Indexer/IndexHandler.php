@@ -93,22 +93,24 @@ class IndexHandler
             'number_of_replicas' => $this->indexSettingsHelper->getNumberOfReplicas(),
         ];
 
+        $settings['analysis']['filter']['shingle'] = [
+            'type' => 'shingle',
+            'output_unigrams' => true,
+            'token_separator' => ThesaurusIndex::WORD_DELIMITER,
+        ];
+
+        $settings['analysis']['analyzer']['synonym'] = [
+            'tokenizer' => 'standard',
+            'filter' => ['lowercase', 'shingle'],
+        ];
+
         if (!empty($synonyms)) {
             $settings['analysis']['filter']['synonym'] = [
                 'type' => 'synonym',
                 'synonyms' => $synonyms,
             ];
 
-            $settings['analysis']['filter']['shingle'] = [
-                'type' => 'shingle',
-                'output_unigrams' => true,
-                'token_separator' => ThesaurusIndex::WORD_DELIMITER,
-            ];
-
-            $settings['analysis']['analyzer']['synonym'] = [
-                'tokenizer' => 'standard',
-                'filter' => ['lowercase', 'shingle', 'synonym'],
-            ];
+            $settings['analysis']['analyzer']['synonym']['filter'][] = 'synonym';
         }
 
         return $settings;
