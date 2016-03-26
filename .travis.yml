@@ -7,8 +7,11 @@ php:
 install:
     - mkdir -p app/etc
     - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
-    - cat auth.json
     - composer install --prefer-dist
+
+cache:
+  directories:
+    - $HOME/.composer/cache
 
 script:
     - vendor/squizlabs/php_codesniffer/scripts/phpcs --standard=Resources/phpcs-standards/SmileElasticSuite --extensions=php src/
