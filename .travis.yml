@@ -7,13 +7,9 @@ php:
 install:
     - mkdir -p app/etc
     - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
+    - cat auth.json
     - composer install --prefer-dist
 
 script:
     - vendor/squizlabs/php_codesniffer/scripts/phpcs --standard=Resources/phpcs-standards/SmileElasticSuite --extensions=php src/
     - vendor/phpmd/phpmd/src/bin/phpmd src text Resources/phpmd-rulesets/rulset.xml
-
-env:
-  global:
-  - secure: FB8CxAu5pGuRELW/TjuUTQD+Tub6MZHZARn7EHUeh+Uld9svmqiUaNruTpybZHo/tWAr63w/QIUT+Wd0MWJc0GT/EbyB2f50qN9WtzLHx2QDcWq+IOb+ieizMbznsQazMKhvf5y6opB5WhsLhjE7cLXOhjHYZQOpzWhIudnUIP+s5mcexe/zzI2de2Q6t3npViuKF21u9Yrz48VcREIgiEybkdZVpHgJ4s2n71ZyZaz3QUVtIWm+m5MsOfrUUOPCrWExnDWXu7ZtL9q5LojnTYSLRJb9Y+tKCU5H1IEt3sjUe7o6Ch/VfXqy0eTMmtR59TcpGLW4nETNWjxnfLFkxVy/RjYXNXfYnIB3mWHI5+o5h+O5WZLjmnOp5GlIIZ9bsmawVd8PAxHQ9bLwigQaqHbRmte6Uh0xdjgCp+4zn+fAaEb7Kjlr1wd/PNgZnuggoUpjng8TPFhol8yrFR2YhbS7S0bf1fklOvPYHvhzcrShZh0/0v82nshX2Weg2/JVoGtOy0DWn+rgrkcPDOOXpFej7ju2cqH48LtV+MkZ45zjZboVtlK1kAs5jaUMxQBvYivJFnKccZTcaJCEO3J4RrN9jnYs1LSx6Z249BF5SNiZRatH/mXdf8yfTLZ2xfxo+0LSiaqWt+bS9VpvXwBoS83RNyDmU1OLF/kuW5DQPbg=
-  - secure: Ifl0/YMTPGsyInWVykoD6kNfOaGdqBnR2RQHo790J+AtIpiTMCQuw4qlK13SJX10MZQWlmIMhiz4ZQ5a+Luwrm/FPkLlFOhQbV21xINwdtb62+xpgN/IF4g/XVbehLAjJkmar064ScG7KhgrCvMH3yIgFvo/UiYkIKR+p1chhgatsTtS3UCVMrmeDJ4cZUlWs5P8Y+pICm7b1mShMQOG8nzkAT9WLR5eS0G4Mndg3OTlM1AjXlpkMpiCN+WrtPIPKHkJWkMwwOmF2C88ZuhC0De+ZOHXJH5FWA4wbAF21ZhiL4Tm+HxVHPUiC6LtWDPVtgqdUcZdlEmpHUCosqbaY4xI2214ILflmotVNOqVJ0m9qRYbyFJlCGnh4zzUnCXajm/HmNjs8DQ1A2AySmrI5g5b9ua7dkwrrUo7zo0+Vv9H6s50dw04fT3v9Rf4/T1o4oTBtsfLYpfAg+Pq928tACmpl3z/jQl6TUtXheUwnSB2UDapBEuUzaXAY89nUKPjgb8E5unSRAT0i6Jz0eNYond+75CB1wsbfO+SrrKHgm/T2XeNul355OdiNtUAqjyvHGMgS66VjaoqeInW7tae06YV6nUvVw12jPphNwrOk7vxAYKS8nZhUkHBL+X/GPDTcslWy4iR3xYdfKOR1cksM4VNvPYHNoDTVI79Pi0blgU=
