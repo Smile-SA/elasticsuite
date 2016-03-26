@@ -18,6 +18,12 @@
         "core",
         "setup"
     ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        }
+    ],
     "require" : {
         "magento/framework" : "*",
         "magento/module-store" : "*",
@@ -32,6 +38,15 @@
         "smile-sa/module-elasticsuite-catalog": "self.version",
         "smile-sa/module-elasticsuite-swatches": "self.version",
         "smile-sa/module-elasticsuite-thesaurus": "self.version"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "phpmd/phpmd": "*",
+        "pdepend/pdepend": "*",
+        "sjparkinson/static-review": "*",
+        "fabpot/php-cs-fixer": "*",
+        "lusitanian/oauth": "*",
+        "squizlabs/php_codesniffer": "*"
     },
     "autoload" : {
         "files" : [
