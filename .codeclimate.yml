@@ -1,0 +1,30 @@
+---
+engines:
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+      - javascript
+      - python
+      - php
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+    file_extensions: php
+    rulesets: Resources/phpmd-rulesets/rulset.xml
+ratings:
+  paths:
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+  - "**.rb"
+exclude_paths:
+  - vendor/*
+  - Resources/*
