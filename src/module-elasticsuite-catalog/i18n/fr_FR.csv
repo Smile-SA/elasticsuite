@@ -1,0 +1,28 @@
+"<%- count %> products","<%- count %> produits"
+"No products in the selected range.","Aucun produit trouvé pour cet intervalle."
+"Search Configuration","Configuration de la recherche"
+"Used in autocomplete","Utiliser dans l'autocomplétion"
+"Display in autocomplete","Afficher dans l'autocomplétion"
+"Facet coverage rate","Taux de couverture de la facette"
+"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: La facette Marque sera affichée uniquement si 90% of des produits ont une marque."
+"Facet max. size","Taille maximale de la facette"
+"Max number of values returned by a facet query.","Nombre maximal de valeurs affichées par la facette."
+"Facet sort order","Ordre de tri de la facette"
+"Result count","Nombre de résultat"
+"Admin sort","Tri administrateur"
+Name,Nom
+Relevance,Pertinence
+"Search Weight","Pondération dans la recherche"
+"Used in spellcheck","Utiliser la recherche approchante"
+"No search results for: <b>'%1'</b>. We propose you approaching results.","Aucun résultat pour la recherche: <b>'%1'</b>. Nous vous proposons des résultats approchants."
+"%1 and above","%1 et plus"
+"%1 - %2","%1 - %2"
+item,élément
+items,éléments
+OK,OK
+"Shop By","Filtrer Par"
+"Clear All","Tout effacer"
+"Shopping Options","Filtres"
+"Is Spellchecked","Recherche Approchante"
+Yes,Yes
+No,No
