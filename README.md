@@ -8,8 +8,9 @@ The project was originally created by Smile and released to the Open Source comm
 
 ## Who is developping ElasticSuite ?
 
-[![SmileLab](doc/static/smilelab-logo.png)](http://www.smile-oss.com)
-
+<p align="center">
+    <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
+</p>
 
 SmileLab is the innovation and experimentation department of Smile.
 
@@ -20,11 +21,85 @@ Together we explore, invent, and test technologies of the future, to better serv
 
 ## Main Features
 
+### Current version
+
 The current version 2.0.0 has been focused on the Magento 2 migration of our ElasticSearch search engine.
 
-We are still working on the migration of all features available into the Magento 1.x .version of the module in this new version. The next versions that will be coming all among this year will include the following features :
+We are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
+
+Actually, there are the features actually included :
 
 <br/>
+
+* **Enhanced price slider :**
+
+    The module features an **out of the box price slider**.
+
+    ![Price Slider](doc/static/price_slider.png)
+
+<br/>
+
+* **Multiple select in layered navigation :**
+
+    The module allows customers to **apply multiple values of the same filter** criteria.
+
+    ![Multi Select Facet](doc/static/multiselect_facet.png)
+
+<br/>
+
+* **Multiple select for swatches :**
+
+    Same as above, the module allow the users to **choose several swatches** for filtering.
+
+    ![Multi Select Swatches](doc/static/multiselect_swatches.png)
+
+<br/>
+
+* **Approaching search and spellchecking :**
+
+    The module **automatically detects typing mistakes** and handles correct results for them. Don't worry about "fat-finger syndrome" anymore !
+
+    ![Approaching Search](doc/static/approaching_search.png)
+
+<br/>
+
+* **Automatic stopwords detection :**
+
+    The module is able to **automatically detect "stopwords"** based on their frequency into the search index.
+    This means the engine is able to deal with queries containing stopwords, but also with **pure stopwords queries** such as "to be or not to be" or even "he and she"!
+
+<br/>
+
+* **Fully Configurable relevance configuration :**
+
+    You are able to customize - on your own, via a dedicated screen in Magento's back-office - each technical parameters that are used to communicate with ElasticSearch.
+    Doig so, you can **fine-tune the engine's configuration** to fit your needs according to your store's data typology.
+
+<br/>
+
+* **Customizable filters :**
+
+    Each attribute can now be configured in Magento's back-office to **change its behavior when used for filtering**
+
+   -  Conditional display of the filter based on its coverage rate.
+   -  Maximum number of elements displayed by the filter.
+   -  Sort order of elements of the filter.
+
+    ![Facet Configuration](doc/static/facet_configuration.png)
+
+<br/>
+
+* **Enhanced synonyms management :**
+
+    Synonyms are now managed directly by the engine instead of the legacy Magento's behavior.
+
+    This means that adding a synonym between *"men"* and *"man"* will make it working in all queries containing *"men"* like *"man shirt"* or *"man pants"* instead of having to define a synonym for each query.
+
+<br/>
+
+### And more to come !
+
+The next versions that will be coming all among this year will include the following features :
 
 * **Better autocomplete  :**
 
