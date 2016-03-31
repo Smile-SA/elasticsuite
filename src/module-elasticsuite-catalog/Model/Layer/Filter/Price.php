@@ -26,6 +26,8 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
  */
 class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
 {
+    use DecimalFilterTrait;
+
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Price
      */
@@ -91,42 +93,6 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ShortVariable)
-     *
-     * {@inheritDoc}
-     */
-    public function apply(\Magento\Framework\App\RequestInterface $request)
-    {
-        /**
-         * Filter must be string: $fromPrice-$toPrice
-         */
-        $filter = $request->getParam($this->getRequestVar());
-
-        if ($filter && !is_array($filter)) {
-            $filterParams = explode(',', $filter);
-            $filter = $this->dataProvider->validateFilter($filterParams[0]);
-            if ($filter) {
-                $this->dataProvider->setInterval($filter);
-                $priorFilters = $this->dataProvider->getPriorFilters($filterParams);
-                if ($priorFilters) {
-                    $this->dataProvider->setPriorIntervals($priorFilters);
-                }
-
-                list($from, $to) = $filter;
-                $this->setCurrentValue(['from' => $from, 'to' => $to]);
-
-                $this->getLayer()->getProductCollection()->addFieldToFilter('price', ['from' => $from, 'to' => $to]);
-
-                $this->getLayer()->getState()->addFilter(
-                    $this->_createItem($this->_renderRangeLabel(empty($from) ? 0 : $from, $to), $filter)
-                );
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Append the facet to the product collection.
      *
      * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
@@ -137,51 +103,12 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
         $facetType       = BucketInterface::TYPE_HISTOGRAM;
         $customerGroupId = $this->customerSession->getCustomerGroupId();
 
-        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]]
-        ;
+        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]];
+
         $productCollection = $this->getLayer()->getProductCollection();
         $productCollection->addFacet($facetField, $facetType, $facetConfig);
 
         return $this;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _getItemsData()
-    {
-        $attribute = $this->getAttributeModel();
-        $this->_requestVar = $attribute->getAttributeCode();
-
-        /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
-        $productCollection = $this->getLayer()->getProductCollection();
-        $facets = $productCollection->getFacetedData($this->getFilterField());
-
-        $minValue = false;
-        $maxValue = false;
-
-        $data = [];
-        if (count($facets) > 1) {
-            foreach ($facets as $key => $aggregation) {
-                $count = $aggregation['count'];
-                $data[] = ['label' => $key, 'value' => $key, 'count' => $count];
-
-                if ($minValue === false || $minValue > $key) {
-                    $minValue = $key;
-                }
-
-                if ($maxValue === false || $maxValue < $key) {
-                    $maxValue = $key;
-                }
-            }
-
-            $this->setMinValue($minValue);
-            $this->setMaxValue($maxValue);
-        }
-
-        return $data;
     }
 
     /**

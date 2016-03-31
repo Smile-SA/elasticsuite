@@ -14,14 +14,14 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    
+
     <virtualType name="categoryFilterList" type="Magento\Catalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filterableAttributes" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
             <argument name="filters" xsi:type="array">
                 <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
                 <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
+                <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">categoryFilterUsingRewrite</item>
             </argument>
         </arguments>
@@ -33,7 +33,7 @@
             <argument name="filters" xsi:type="array">
                 <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
                 <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Magento\CatalogSearch\Model\Layer\Filter\Decimal</item>
+                <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
             </argument>
         </arguments>
@@ -44,13 +44,13 @@
             <argument name="useUrlRewrites" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Magento\LayeredNavigation\Block\Navigation\Category" type="Smile\ElasticSuiteCatalog\Block\Navigation">
         <arguments>
             <argument name="filterList" xsi:type="object">categoryFilterList</argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Magento\LayeredNavigation\Block\Navigation\Search" type="Smile\ElasticSuiteCatalog\Block\Navigation">
         <arguments>
             <argument name="filterList" xsi:type="object">searchFilterList</argument>

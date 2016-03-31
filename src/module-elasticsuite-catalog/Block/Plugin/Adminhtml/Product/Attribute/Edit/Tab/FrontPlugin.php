@@ -88,6 +88,8 @@ class FrontPlugin
         $this->addAutocompleteFields($fieldset);
         $this->addFacetFields($fieldset);
 
+        $this->appendSliderDisplayRelatedFields($form, $subject);
+
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
             $form->getElement('is_used_in_autocomplete')->setDisabled(1);
@@ -270,6 +272,94 @@ class FrontPlugin
             ],
             'search_weight'
         );
+
+        return $this;
+    }
+
+    /**
+     * Append the "Slider Display Configuration" fieldset to the tab.
+     *
+     * @param Form  $form    Target form.
+     * @param Front $subject Target tab.
+     *
+     * @return Fieldset
+     */
+    private function createDisplayFieldset(Form $form, Front $subject)
+    {
+        $fieldset = $form->addFieldset(
+            'elasticsuite_catalog_attribute_display_fieldset',
+            [
+                'legend'      => __('Slider Display Configuration'),
+                'collapsable' => $subject->getRequest()->has('popup'),
+            ],
+            'elasticsuite_catalog_attribute_fieldset'
+        );
+
+        return $fieldset;
+    }
+
+    /**
+     * Append display related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addDisplayFields(Fieldset $fieldset)
+    {
+        $fieldset->addField(
+            'display_pattern',
+            'text',
+            [
+                'name'  => 'display_pattern',
+                'label' => __('Display pattern'),
+                'note'  => __('A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €'),
+            ]
+        );
+
+        $fieldset->addField(
+            'display_precision',
+            'text',
+            [
+                'name'  => 'display_precision',
+                'label' => __('Display Precision'),
+                'class' => 'validate-digits',
+                'value' => '2',
+                'note'  => __('The number of digits to use for precision when displaying.'),
+            ],
+            'display_pattern'
+        );
+
+        $fieldset->addField(
+            'display_integer_required',
+            'select',
+            [
+                'name'   => 'display_integer_required',
+                'label'  => __('Should display only integer values'),
+                'values' => $this->booleanSource->toOptionArray(),
+            ],
+            'display_precision'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Append slider display related fields
+     *
+     * @param Form  $form    The form
+     * @param Front $subject The StoreFront tab
+     *
+     * @return FrontPlugin
+     */
+    private function appendSliderDisplayRelatedFields($form, $subject)
+    {
+        if (($this->getAttribute()->getBackendType() == "decimal")
+            && ($this->getAttribute()->getFrontendInput() !== "price")
+        ) {
+            $displayFieldset = $this->createDisplayFieldset($form, $subject);
+            $this->addDisplayFields($displayFieldset);
+        }
 
         return $this;
     }
