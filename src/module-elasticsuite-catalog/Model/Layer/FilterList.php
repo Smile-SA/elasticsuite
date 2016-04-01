@@ -23,6 +23,11 @@ namespace Smile\ElasticSuiteCatalog\Model\Layer;
 class FilterList extends \Magento\Catalog\Model\Layer\FilterList
 {
     /**
+     * Boolean filter name
+     */
+    const BOOLEAN_FILTER = 'boolean';
+
+    /**
      * {@inheritDoc}
      */
     protected function getAttributeFilterClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute)
@@ -31,6 +36,12 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
 
         if ($attribute->getBackendType() == 'varchar' && $attribute->getFrontendClass() == 'validate-number') {
             $filterClassName = $this->filterTypes[self::DECIMAL_FILTER];
+        }
+
+        if (($attribute->getFrontendInput() == 'boolean')
+            && ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean')
+            && isset($this->filterTypes[self::BOOLEAN_FILTER])) {
+            $filterClassName = $this->filterTypes[self::BOOLEAN_FILTER];
         }
 
         return $filterClassName;

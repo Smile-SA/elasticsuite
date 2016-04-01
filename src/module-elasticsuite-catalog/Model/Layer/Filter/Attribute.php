@@ -15,7 +15,6 @@
 namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
 
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
-use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
 
 /**
  * Product attribute filter implementation.
@@ -29,8 +28,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     /**
      * @var array
      */
-    private $currentFilterValue = [];
-
+    protected $currentFilterValue = [];
 
     /**
      * @var \Magento\Framework\Filter\StripTags
@@ -171,7 +169,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      *
      * @return string
      */
-    private function getFilterField()
+    protected function getFilterField()
     {
         $field = $this->getAttributeModel()->getAttributeCode();
 

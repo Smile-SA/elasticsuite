@@ -117,12 +117,12 @@ class ProductAttribute extends Mapping
     {
         $type = FieldInterface::FIELD_TYPE_STRING;
 
-        if ($attribute->getBackendType() == 'int' || $attribute->getFrontendClass() == 'validate-digits') {
+        if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
+            $type = FieldInterface::FIELD_TYPE_BOOLEAN;
+        } elseif ($attribute->getBackendType() == 'int' || $attribute->getFrontendClass() == 'validate-digits') {
             $type = FieldInterface::FIELD_TYPE_INTEGER;
         } elseif ($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
             $type = FieldInterface::FIELD_TYPE_DOUBLE;
-        } elseif ($attribute->getSourceModel() == 'eav/entity_attribute_source_boolean') {
-            $type = FieldInterface::FIELD_TYPE_BOOLEAN;
         } elseif ($attribute->getBackendType() == 'datetime') {
             $type = FieldInterface::FIELD_TYPE_DATE;
         } elseif ($attribute->usesSource() && $attribute->getSourceModel() === null) {
@@ -221,6 +221,9 @@ class ProductAttribute extends Mapping
 
         if (!isset($this->attributeOptionTextCache[$storeId][$attributeId][$optionId])) {
             $optionValue = $attribute->getSource()->getIndexOptionText($optionId);
+            if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
+                $optionValue = $attribute->getStoreLabel($storeId);
+            }
             $this->attributeOptionTextCache[$storeId][$attributeId][$optionId] = $optionValue;
         }
 
