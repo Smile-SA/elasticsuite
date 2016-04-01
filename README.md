@@ -18,6 +18,9 @@ Our multidisciplinary team brings together experts in technology, innovation, an
 
 Together we explore, invent, and test technologies of the future, to better serve our clients.
 
+## Where can I see it in action ? 
+
+A demonstration store including the latest version of ElasticSuite is available here : [ElasticSuite Demo](http://demo.magento-elastic-suite.io/)
 
 ## Main Features
 
