@@ -13,21 +13,30 @@
  */
 namespace Smile\ElasticSuiteCatalog\Block\Navigation\Renderer;
 
-use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price;
+use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal;
+
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Json\EncoderInterface;
 
 /**
- * This block handle price slider rendering.
+ * This block handle standard decimal slider rendering.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Slider extends AbstractRenderer
 {
+    /**
+     * The Data role, used for Javascript mapping of slider Widget
+     *
+     * @var string
+     */
+    protected $dataRole = "range-slider";
+
     /**
      * @var EncoderInterface
      */
@@ -36,7 +45,7 @@ class Slider extends AbstractRenderer
     /**
      * @var FormatInterface
      */
-    private $localeFormat;
+    protected $localeFormat;
 
     /**
      *
@@ -68,7 +77,7 @@ class Slider extends AbstractRenderer
             'minValue'         => $this->getMinValue(),
             'maxValue'         => $this->getMaxValue(),
             'currentValue'     => $this->getCurrentValue(),
-            'priceFormat'      => $this->localeFormat->getPriceFormat(),
+            'fieldFormat'      => $this->getFieldFormat(),
             'intervals'        => $this->getIntervals(),
             'urlTemplate'      => $this->getUrlTemplate(),
             'messageTemplates' => [
@@ -81,11 +90,42 @@ class Slider extends AbstractRenderer
     }
 
     /**
+     * Retrieve the data role
+     *
+     * @return string
+     */
+    public function getDataRole()
+    {
+        $filter = $this->getFilter();
+
+        return $this->dataRole . "-" . $filter->getRequestVar();
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function canRenderFilter()
     {
-        return $this->getFilter() instanceof Price;
+        return $this->getFilter() instanceof Decimal;
+    }
+
+    /**
+     * Retrieve Field Format for slider display
+     *
+     * @return array
+     */
+    protected function getFieldFormat()
+    {
+        $format = $this->localeFormat->getPriceFormat();
+
+        $attribute = $this->getFilter()->getAttributeModel();
+
+        $format['pattern']           = (string) $attribute->getDisplayPattern();
+        $format['precision']         = (int) $attribute->getDisplayPrecision();
+        $format['requiredPrecision'] = (int) $attribute->getDisplayPrecision();
+        $format['integerRequired']   = (bool) $attribute->getDisplayIntegerRequired();
+
+        return $format;
     }
 
     /**
