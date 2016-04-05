@@ -354,9 +354,9 @@ class FrontPlugin
      */
     private function appendSliderDisplayRelatedFields($form, $subject)
     {
-        if (($this->getAttribute()->getBackendType() == "decimal")
-            && ($this->getAttribute()->getFrontendInput() !== "price")
-        ) {
+        $attribute = $this->getAttribute();
+
+        if (($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') && ($attribute->getFrontendInput() !== 'price')) {
             $displayFieldset = $this->createDisplayFieldset($form, $subject);
             $this->addDisplayFields($displayFieldset);
         }

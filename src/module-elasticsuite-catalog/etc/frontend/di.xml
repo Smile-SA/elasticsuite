@@ -15,7 +15,7 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <virtualType name="categoryFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+    <virtualType name="categoryFilterList" type="Smile\ElasticSuiteCatalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filterableAttributes" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
             <argument name="filters" xsi:type="array">
@@ -27,7 +27,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="searchFilterList" type="Magento\Catalog\Model\Layer\FilterList">
+    <virtualType name="searchFilterList" type="Smile\ElasticSuiteCatalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filterableAttributes" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Search\FilterableAttributeList</argument>
             <argument name="filters" xsi:type="array">

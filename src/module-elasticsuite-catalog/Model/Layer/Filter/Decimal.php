@@ -74,7 +74,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
             $data
         );
         $this->localeResolver = $localeResolver;
-        $this->dataProvider = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->dataProvider   = $dataProviderFactory->create(['layer' => $this->getLayer()]);
     }
 
     /**
@@ -137,7 +137,8 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
         if ((int) $attribute->getDisplayPrecision() > 0) {
             $locale = $this->localeResolver->getLocale();
             $options = ['locale' => $locale, 'precision' => (int) $attribute->getDisplayPrecision()];
-            $value = \Zend_Locale_Format::toNumber($value, $options);
+            $valueFormatter = new \Zend_Filter_NormalizedToLocalized($options);
+            $value = $valueFormatter->filter($value);
         }
 
         if ((string) $attribute->getDisplayPattern() != "") {
