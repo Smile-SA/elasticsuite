@@ -123,7 +123,7 @@ class Slider extends AbstractRenderer
         $format['pattern']           = (string) $attribute->getDisplayPattern();
         $format['precision']         = (int) $attribute->getDisplayPrecision();
         $format['requiredPrecision'] = (int) $attribute->getDisplayPrecision();
-        $format['integerRequired']   = (bool) $attribute->getDisplayIntegerRequired();
+        $format['integerRequired']   = (int) $attribute->getDisplayPrecision() > 0;
 
         return $format;
     }

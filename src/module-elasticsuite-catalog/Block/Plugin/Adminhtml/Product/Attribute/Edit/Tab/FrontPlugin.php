@@ -324,21 +324,10 @@ class FrontPlugin
                 'name'  => 'display_precision',
                 'label' => __('Display Precision'),
                 'class' => 'validate-digits',
-                'value' => '2',
+                'value' => '0',
                 'note'  => __('The number of digits to use for precision when displaying.'),
             ],
             'display_pattern'
-        );
-
-        $fieldset->addField(
-            'display_integer_required',
-            'select',
-            [
-                'name'   => 'display_integer_required',
-                'label'  => __('Should display only integer values'),
-                'values' => $this->booleanSource->toOptionArray(),
-            ],
-            'display_precision'
         );
 
         return $this;
@@ -354,9 +343,10 @@ class FrontPlugin
      */
     private function appendSliderDisplayRelatedFields($form, $subject)
     {
-        $attribute = $this->getAttribute();
+        $attribute          = $this->getAttribute();
+        $isAttributeDecimal = $attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number';
 
-        if (($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') && ($attribute->getFrontendInput() !== 'price')) {
+        if ($isAttributeDecimal && ($attribute->getFrontendInput() !== 'price')) {
             $displayFieldset = $this->createDisplayFieldset($form, $subject);
             $this->addDisplayFields($displayFieldset);
         }

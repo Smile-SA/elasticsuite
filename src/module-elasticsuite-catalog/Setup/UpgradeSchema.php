@@ -76,20 +76,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 'nullable' => true,
-                'default'  => null,
+                'default'  => 0,
                 'comment'  => 'Attribute decimal precision for display',
-            ]
-        );
-
-        // Append a column 'display_precision' into the db.
-        $connection->addColumn(
-            $table,
-            'display_integer_required',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '1',
-                'comment'  => 'If the facet should display integers only',
             ]
         );
     }
