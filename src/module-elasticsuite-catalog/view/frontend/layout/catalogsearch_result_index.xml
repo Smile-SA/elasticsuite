@@ -24,8 +24,12 @@
                    template="Smile_ElasticSuiteCatalog::layer/filter/default.phtml">
                    
                     <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
-                           name="catalog.navigation.renderer.slider"
+                           name="catalogsearch.navigation.renderer.slider"
                            template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                           
+                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\PriceSlider"
+                          name="catalogsearch.navigation.renderer.price.slider"
+                          template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
             </block>
         </referenceBlock>
     </body>
