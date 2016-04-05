@@ -17,7 +17,7 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Smile_ElasticSuiteCatalog" setup_version="1.0.0">
+    <module name="Smile_ElasticSuiteCatalog" setup_version="1.1.0">
         <sequence>
             <module name="Smile_ElasticSuiteCore" />
             <module name="Magento_Search" />

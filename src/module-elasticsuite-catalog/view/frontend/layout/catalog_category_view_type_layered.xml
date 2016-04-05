@@ -14,17 +14,21 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
+
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="catalog.leftnav">
-            <block class="Smile\ElasticSuiteCatalog\Block\Navigation\FilterRenderer" 
-                   name="catalog.navigation.renderer" 
-                   as="renderer" 
+            <block class="Smile\ElasticSuiteCatalog\Block\Navigation\FilterRenderer"
+                   name="catalog.navigation.renderer"
+                   as="renderer"
                    template="Smile_ElasticSuiteCatalog::layer/filter/default.phtml">
-                   
+
                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
                           name="catalog.navigation.renderer.slider"
+                          template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+
+                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\PriceSlider"
+                          name="catalog.navigation.renderer.price.slider"
                           template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
             </block>
         </referenceBlock>

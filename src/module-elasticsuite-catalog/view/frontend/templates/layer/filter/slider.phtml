@@ -19,10 +19,7 @@
  * @var $block \Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider
  */
 ?>
-
-<?php $this->getUrlTemplate();?>
-
-<div data-role="range-slider">
+<div class="smile-es-range-slider" data-role="<?php echo $block->getDataRole(); ?>">
     <div data-role="from-label"></div>
     <div data-role="to-label"></div>
     <div data-role="slider-bar"></div>
@@ -37,5 +34,5 @@
 </div>
 
 <script type="text/x-magento-init">
-    { "[data-role=range-slider]" : { "rangeSlider" : <?php echo $block->getJsonConfig(); ?> } }
+    { "[data-role=<?php echo $block->getDataRole(); ?>]" : { "rangeSlider" : <?php echo $block->getJsonConfig(); ?> } }
 </script>
