@@ -1,0 +1,144 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalogRule
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+namespace Smile\ElasticSuiteCatalogRule\Block\Product;
+
+use Magento\Backend\Block\Template;
+use Magento\Framework\Data\Form\Element\AbstractElement;
+use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
+
+/**
+ * Catalog search rule contribution form element renderer.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCatalogRule
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Conditions extends Template implements RendererInterface
+{
+    /**
+     * @var \Magento\Rule\Block\Conditions
+     */
+    protected $conditions;
+
+    /**
+     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule
+     */
+    protected $rule;
+
+    /**
+     * @var \Magento\Framework\Data\Form\Element\Factory
+     */
+    protected $elementFactory;
+
+    /**
+     * @var AbstractElement
+     */
+    protected $element;
+
+    /**
+     * @var \Magento\Framework\Data\Form\Element\Text
+     */
+    protected $input;
+
+    /**
+     * @var string
+     */
+    protected $_template = 'product/conditions.phtml';
+
+    /**
+     * Block constructor.
+     *
+     * @param \Magento\Backend\Block\Template\Context          $context        Templating context.
+     * @param \Magento\Framework\Data\Form\Element\Factory     $elementFactory Form element factory.
+     * @param \Magento\Rule\Block\Conditions                   $conditions     Rule conditions block.
+     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory    Search rule factory.
+     * @param array                                            $data           Additional data.
+     */
+    public function __construct(
+        \Magento\Backend\Block\Template\Context $context,
+        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
+        \Magento\Rule\Block\Conditions $conditions,
+        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        array $data = []
+    ) {
+        $this->elementFactory = $elementFactory;
+        $this->conditions     = $conditions;
+        $this->rule           = $ruleFactory->create();
+
+        parent::__construct($context, $data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function render(AbstractElement $element)
+    {
+        $this->element = $element;
+
+        return $this->toHtml();
+    }
+
+    /**
+     * Get URL used to create a new child condition into the rule.
+     *
+     * @return string
+     */
+    public function getNewChildUrl()
+    {
+        $urlParams = [
+            'form'         => $this->getElement()->getContainer()->getHtmlId(),
+            'element_name' => $this->getElement()->getName(),
+        ];
+
+        return $this->getUrl('catalog_search_rule/product_rule/conditions', $urlParams);
+    }
+
+    /**
+     * Get currently edited element.
+     *
+     * @return AbstractElement
+     */
+    public function getElement()
+    {
+        return $this->element;
+    }
+
+    /**
+     * Retrieve element unique container id.
+     *
+     * @return string
+     */
+    public function getHtmlId()
+    {
+        return $this->getElement()->getContainer()->getHtmlId();
+    }
+
+    /**
+     * Render HTML of the element using the rule engine.
+     *
+     * @todo : Read the rule from the element.
+     *
+     * @return string
+     */
+    public function getInputHtml()
+    {
+        $this->rule->setElementName($this->element->getName());
+        $this->input = $this->elementFactory->create('text');
+        $this->input->setRule($this->rule)->setRenderer($this->conditions);
+
+        return $this->input->toHtml();
+    }
+}
