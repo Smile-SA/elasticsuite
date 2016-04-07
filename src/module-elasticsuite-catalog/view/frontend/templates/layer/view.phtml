@@ -14,39 +14,53 @@
  */
 
 /**
- * Template for layer nabigation view
+ * Template for layer navigation view
  *
  * @var $block \Smile\ElasticSuiteCatalog\Block\Navigation
  */
 ?>
 
-<?php if ($block->canShowBlock()): ?>
-    <div class="block filter">
-        <div class="block-title filter-title">
-            <strong><?php /* @escapeNotVerified */ echo __('Shop By') ?></strong>
+<?php if ($block->canShowBlock()) : ?>
+    <?php $filters = count($block->getFilters());?>
+    <?php $activeFilters = "[" . implode(',', range(0, (int) $filters - 1)) . "]" ;?>
+    <div class="block filter" id="layered-filter-block" data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false, "collateral": { "openedState": "filter-active", "element": "body" } }}'>
+        <?php $filtered = count($block->getLayer()->getState()->getFilters()) ?>
+        <div class="block-title filter-title" data-count="<?php /* @escapeNotVerified */ echo $filtered; ?>">
+            <strong data-role="title"><?php /* @escapeNotVerified */ echo __('Shop By') ?></strong>
         </div>
 
         <div class="block-content filter-content">
             <?php echo $block->getChildHtml('state') ?>
 
-            <?php if ($block->getLayer()->getState()->getFilters()): ?>
+            <?php if ($block->getLayer()->getState()->getFilters()) : ?>
                 <div class="block-actions filter-actions">
                     <a href="<?php /* @escapeNotVerified */ echo $block->getClearUrl() ?>" class="action clear filter-clear"><span><?php /* @escapeNotVerified */ echo __('Clear All') ?></span></a>
                 </div>
             <?php endif; ?>
             <?php $wrapOptions = false; ?>
-            <?php foreach ($block->getFilters() as $filter): ?>
-                <?php if (!$wrapOptions): ?>
-                    <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
-                    <dl class="filter-options" id="narrow-by-list">
-                <?php $wrapOptions = true; endif; ?>
-                    <?php if ($filter->getItemsCount()): ?>
-                        <dt role="heading" aria-level="3" class="filter-options-title"><?php echo $block->escapeHtml(__($filter->getName())) ?></dt>
-                        <dd class="filter-options-content"><?php /* @escapeNotVerified */ echo $block->getChildBlock('renderer')->render($filter); ?></dd>
+            <?php foreach ($block->getFilters() as $filter) : ?>
+                <?php if ($filter->getItemsCount()) : ?>
+                    <?php if (!$wrapOptions) : ?>
+                        <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
+                        <dl class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?php echo $activeFilters; ?>, "multipleCollapsible": true}}'>
+                            <?php $wrapOptions = true;?>
                     <?php endif; ?>
+                    <dt data-role="title" class="filter-options-title"><?php /* @escapeNotVerified */ echo __($filter->getName()) ?></dt>
+                    <dd data-role="collapsible" class="filter-options-item">
+                        <div data-role="content" class="filter-options-content"><?php /* @escapeNotVerified */ echo $block->getChildBlock('renderer')->render($filter); ?></div>
+                    </dd>
+                <?php endif; ?>
             <?php endforeach; ?>
-            <?php if ($wrapOptions): ?>
+            <?php if ($wrapOptions) : ?>
                 </dl>
+            <?php else : ?>
+                <script>
+                    require([
+                        'jquery'
+                    ], function ($) {
+                        $('#layered-filter-block').addClass('filter-no-options');
+                    });
+                </script>
             <?php endif; ?>
         </div>
     </div>
