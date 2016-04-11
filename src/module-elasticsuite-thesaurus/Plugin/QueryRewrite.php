@@ -88,9 +88,13 @@ class QueryRewrite
         $spellingType,
         $boost = 1
     ) {
+        if (!is_array($queryText)) {
+            $queryText = [$queryText];
+        }
+
         $storeId         = $containerConfig->getStoreId();
         $requestName     = $containerConfig->getName();
-        $rewriteCacheKey = $requestName . '|' . $storeId . '|' . $queryText;
+        $rewriteCacheKey = $requestName . '|' . $storeId . '|' . md5(json_encode($queryText));
         $config          = $this->getConfig($containerConfig);
 
         if ($config->isSynonymSearchEnabled() && !isset($this->rewritesCache[$rewriteCacheKey])) {
@@ -100,16 +104,18 @@ class QueryRewrite
             $synonymQueriesSpellcheck = SpellcheckerInterface::SPELLING_TYPE_EXACT;
             $synonymWeightDivider     = $config->getSynonymWeightDivider();
 
-            $rewrites = $this->index->getSynonymRewrites($storeId, $queryText);
+            foreach ($queryText as $simpleQuery) {
+                $rewrites = $this->index->getSynonymRewrites($storeId, $simpleQuery);
 
-            foreach ($rewrites as $rewrittenQuery) {
-                $currentBoost = $boost / $synonymWeightDivider;
-                $synonymQueries[] = $proceed($containerConfig, $rewrittenQuery, $synonymQueriesSpellcheck, $currentBoost);
-            }
+                foreach ($rewrites as $rewrittenQuery) {
+                    $currentBoost = $boost / $synonymWeightDivider;
+                    $synonymQueries[] = $proceed($containerConfig, $rewrittenQuery, $synonymQueriesSpellcheck, $currentBoost);
+                }
 
-            if (!empty($synonymQueries)) {
-                array_push($synonymQueries, $query);
-                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $synonymQueries]);
+                if (!empty($synonymQueries)) {
+                    array_push($synonymQueries, $query);
+                    $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $synonymQueries]);
+                }
             }
 
             $this->rewritesCache[$rewriteCacheKey] = $query;
