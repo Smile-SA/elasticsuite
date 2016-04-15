@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer;
+namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer;
 
 use Smile\ElasticSuiteCatalog\Model\Eav\Indexer\IndexerHandler as AbstractIndexer;
 
@@ -25,8 +25,8 @@ use Smile\ElasticSuiteCatalog\Model\Eav\Indexer\IndexerHandler as AbstractIndexe
  */
 class IndexerHandler extends AbstractIndexer
 {
-    const INDEX_NAME = 'catalog_product';
-    const TYPE_NAME  = 'product';
+    const INDEX_NAME = 'catalog_category';
+    const TYPE_NAME  = 'category';
 
     /**
      * {@inheritDoc}

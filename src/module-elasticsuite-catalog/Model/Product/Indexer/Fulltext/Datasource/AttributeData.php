@@ -14,12 +14,10 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Smile\ElasticSuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as ResourceModel;
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Smile\ElasticSuiteCore\Index\Mapping\FieldFactory;
-use Smile\ElasticSuiteCatalog\Helper\ProductAttribute as ProductAttributeHelper;
 
 /**
  * Datasource used to index product attributes.
@@ -29,90 +27,12 @@ use Smile\ElasticSuiteCatalog\Helper\ProductAttribute as ProductAttributeHelper;
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class AttributeData implements DatasourceInterface, DynamicFieldProviderInterface
+class AttributeData extends AbstractAttributeData implements DatasourceInterface, DynamicFieldProviderInterface
 {
-    /**
-     * @var \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ProductAttributes
-     */
-    private $resourceModel;
-
-    /**
-     * @var \Smile\ElasticSuiteCore\Index\Mapping\FieldFactory
-     */
-    private $fieldFactory;
-
-    /**
-     * @var array
-     */
-    private $fields = [];
-
-    /**
-     * @var array
-     */
-    private $attributesById = [];
-
-    /**
-     * @var array
-     */
-    private $attributeIdsByTable = [];
-
-    /**
-     * @var \Smile\ElasticSuiteCatalog\Helper\ProductAttribute
-     */
-    private $attributeHelper;
-
-    /**
-     * @var array
-     */
-    private $indexedBackendModels = [
-        'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
-        'Magento\Eav\Model\Entity\Attribute\Backend\Datetime',
-        'Magento\Catalog\Model\Attribute\Backend\Startdate',
-        'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
-        'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend',
-    ];
-
     /**
      * @var array
      */
     private $forbidenChildrenAttributeCode = ['visibility', 'status', 'price', 'tax_class_id'];
-
-    /**
-     * Constructor
-     *
-     * @param ResourceModel          $resourceModel        Resource model.
-     * @param FieldFactory           $fieldFactory         Mapping field factory.
-     * @param ProductAttributeHelper $attributeHelper      Attribute helper.
-     * @param array                  $indexedBackendModels List of indexed backend models added to the default list.
-     */
-    public function __construct(
-        ResourceModel $resourceModel,
-        FieldFactory $fieldFactory,
-        ProductAttributeHelper $attributeHelper,
-        array $indexedBackendModels = []
-    ) {
-        $this->resourceModel   = $resourceModel;
-        $this->attributeHelper = $attributeHelper;
-        $this->fieldFactory    = $fieldFactory;
-
-        if (is_array($indexedBackendModels) && !empty($indexedBackendModels)) {
-            $indexedBackendModels = array_values($indexedBackendModels);
-            $this->indexedBackendModels = array_merge($indexedBackendModels, $this->indexedBackendModels);
-        }
-
-        $this->initAttributes();
-    }
-
-    /**
-     * List of fields generated from the attributes list.
-     * This list is used to generate the catalog_product ES mapping.
-     *
-     * {@inheritdoc}
-     */
-    public function getFields()
-    {
-        return $this->fields;
-    }
 
     /**
      * {@inheritdoc}
@@ -120,7 +40,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
     public function addData($storeId, array $indexData)
     {
         $productIds   = array_keys($indexData);
-        $attributeIds = array_keys($this->attributesById);
 
         foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
             $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
@@ -164,82 +83,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         return $indexData;
     }
 
-
-    /**
-     * Init attributes used into ES.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes
-     */
-    private function initAttributes()
-    {
-        $attributeCollection = $this->attributeHelper->getAttibuteCollection();
-        $this->resourceModel->addIndexedFilterToAttributeCollection($attributeCollection);
-
-        foreach ($attributeCollection as $attribute) {
-            if ($this->canIndexAttribute($attribute)) {
-                $attributeId = (int) $attribute->getId();
-                $this->attributesById[$attributeId] = $attribute;
-                $this->attributeIdsByTable[$attribute->getBackendTable()][] = $attributeId;
-
-                $this->initField($attribute);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Check if an attribute can be indexed.
-     *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     *
-     * @return boolean
-     */
-    private function canIndexAttribute(ProductAttributeInterface $attribute)
-    {
-        $canIndex = $attribute->getBackendType() != 'static';
-
-        if ($canIndex && $attribute->getBackendModel()) {
-            $canIndex = in_array($attribute->getBackendModel(), $this->indexedBackendModels);
-        }
-
-        return $canIndex;
-    }
-
-    /**
-     * Create a mapping field from an attribute.
-     *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     *
-     * @return \Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes
-     */
-    private function initField(ProductAttributeInterface $attribute)
-    {
-        $fieldName = $attribute->getAttributeCode();
-        $fieldType = $this->attributeHelper->getFieldType($attribute);
-
-        $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
-
-        if ($attribute->usesSource()) {
-            $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
-            $fieldConfig['is_searchable'] = false;
-            $fieldConfig['is_used_in_spellcheck'] = false;
-            $fieldConfig['is_used_in_autocomplete'] = false;
-            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
-            $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
-            $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
-            $fieldType = 'string';
-
-            $fieldConfig['is_searchable'] = true;
-        }
-
-        $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
-
-        $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
-
-        return $this;
-    }
-
     /**
      * Check if an attribute can be indexed when used as a children/
      *
@@ -262,21 +105,6 @@ class AttributeData implements DatasourceInterface, DynamicFieldProviderInterfac
         }
 
         return $canUseAsChild;
-    }
-
-    /**
-     * Load attribute data from the database.
-     *
-     * @param integer $storeId      Store id.
-     * @param array   $productIds   Product ids.
-     * @param string  $tableName    Attribute table name.
-     * @param array   $attributeIds Loaded attribute ids.
-     *
-     * @return array
-     */
-    private function loadAttributesRawData($storeId, array $productIds, $tableName, array $attributeIds)
-    {
-        return $this->resourceModel->getAttributesRawData($storeId, $productIds, $tableName, $attributeIds);
     }
 
     /**

@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
 
 /**
  * Prices data datasource resource model.

@@ -15,7 +15,7 @@ namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
 
 /**
  * Catalog Inventory Data source resource model
