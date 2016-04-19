@@ -41,7 +41,8 @@
         "smile/module-elasticsuite-swatches": "self.version",
         "smile/module-elasticsuite-thesaurus": "self.version",
         "smile/module-elasticsuite-tracker": "self.version",
-        "smile/module-elasticsuite-virtual-category": "self.version"
+        "smile/module-elasticsuite-virtual-category": "self.version",
+        "smile/module-elasticsuite-search": "self.version"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
@@ -54,14 +55,15 @@
     },
     "autoload": {
         "files": [
-            "src/module-elasticsuite-core/registration.php",
-            "src/module-elasticsuite-catalog/registration.php",
-            "src/module-elasticsuite-catalog-optimizer/registration.php",
-            "src/module-elasticsuite-catalog-rule/registration.php",
-            "src/module-elasticsuite-swatches/registration.php",
-            "src/module-elasticsuite-thesaurus/registration.php",
-            "src/module-elasticsuite-tracker/registration.php",
-            "src/module-elasticsuite-virtual-category/registration.php"
+          "src/module-elasticsuite-core/registration.php",
+          "src/module-elasticsuite-catalog/registration.php",
+          "src/module-elasticsuite-catalog-optimizer/registration.php",
+          "src/module-elasticsuite-catalog-rule/registration.php",
+          "src/module-elasticsuite-swatches/registration.php",
+          "src/module-elasticsuite-thesaurus/registration.php",
+          "src/module-elasticsuite-tracker/registration.php",
+          "src/module-elasticsuite-virtual-category/registration.php",
+          "src/module-elasticsuite-search/registration.php"
         ],
         "psr-4": {
             "Smile\\ElasticsuiteCore\\": "src/module-elasticsuite-core",
@@ -71,7 +73,8 @@
             "Smile\\ElasticsuiteSwatches\\": "src/module-elasticsuite-swatches",
             "Smile\\ElasticsuiteThesaurus\\": "src/module-elasticsuite-thesaurus",
             "Smile\\ElasticsuiteTracker\\": "src/module-elasticsuite-tracker",
-            "Smile\\ElasticsuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category"
+            "Smile\\ElasticsuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category",
+            "Smile\\ElasticSuiteSearch\\" : "src/module-elasticsuite-search"
         }
     },
     "extra": {
