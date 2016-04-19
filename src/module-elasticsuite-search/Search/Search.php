@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticSuiteSearch\Search;
 
-
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Search\Api\SearchInterface;
 use Magento\Framework\App\ScopeResolverInterface;
@@ -72,12 +71,12 @@ class Search implements SearchInterface
     /**
      * SearchEs constructor.
      *
-     * @param Builder                         $requestBuilder         Request Builder
-     * @param ContainerConfigurationFactory   $containerConfigFactory Config container
-     * @param ScopeResolverInterface          $scopeResolver          Scope resolver
-     * @param SearchEngineInterface           $searchEngine           Search engine
-     * @param SearchResponseBuilder           $searchResponseBuilder  Search Response Builder
-     * @param QueryBuilder                    $querybuilder           Query builder
+     * @param Builder                       $requestBuilder         Request Builder
+     * @param ContainerConfigurationFactory $containerConfigFactory Config container
+     * @param ScopeResolverInterface        $scopeResolver          Scope resolver
+     * @param SearchEngineInterface         $searchEngine           Search engine
+     * @param SearchResponseBuilder         $searchResponseBuilder  Search Response Builder
+     * @param QueryBuilder                  $querybuilder           Query builder
      */
     public function __construct(
         Builder $requestBuilder,
@@ -86,8 +85,7 @@ class Search implements SearchInterface
         SearchEngineInterface $searchEngine,
         SearchResponseBuilder $searchResponseBuilder,
         QueryBuilder $querybuilder
-    )
-    {
+    ) {
         $this->requestBuilder           = $requestBuilder;
         $this->scopeResolver            = $scopeResolver;
         $this->searchEngine             = $searchEngine;
@@ -124,6 +122,7 @@ class Search implements SearchInterface
             $this->extractFilters($searchCriteria)
         );
         $searchResponse = $this->searchEngine->search($request);
+
         return $this->searchResponseBuilder->build($searchResponse)->setSearchCriteria($searchCriteria);
     }
 
@@ -142,6 +141,7 @@ class Search implements SearchInterface
                 $filters[$criteriaFilter->getField()] = [$criteriaFilter->getValue()];
             }
         }
+
         return $filters;
     }
 
@@ -187,6 +187,7 @@ class Search implements SearchInterface
                 $queryText .= (strlen($queryText) > 0 ? ',' : '') . $filter->getValue();
             }
         }
+
         return $queryText;
     }
 }
