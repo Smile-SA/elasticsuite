@@ -104,14 +104,6 @@ class Search implements SearchInterface
     public function search(SearchCriteriaInterface $searchCriteria)
     {
         $scope = $this->scopeResolver->getScope();
-        $configurationContainer = $this->getRequestContainerConfiguration(
-            $scope->getId(),
-            $searchCriteria->getRequestName()
-        );
-        $filters = $this->querybuilder->createFilters(
-            $configurationContainer,
-            $this->extractFilters($searchCriteria)
-        );
         $request = $this->requestBuilder->create(
             $scope->getId(),
             $searchCriteria->getRequestName(),
@@ -143,33 +135,6 @@ class Search implements SearchInterface
         }
 
         return $filters;
-    }
-
-    /**
-     * Load the search request configuration (index, type, mapping, ...) using the search request container name.
-     *
-     * @param integer $storeId       Store id
-     * @param string  $containerName Search request container name.
-     *
-     * @throws \LogicException Thrown when the search container is not found into the configuration.
-     *
-     * @return ContainerConfigurationInterface
-     */
-    private function getRequestContainerConfiguration($storeId, $containerName)
-    {
-        if ($containerName === null) {
-            throw new \LogicException('Request name is not set');
-        }
-
-        $config = $this->containerConfigFactory->create(
-            ['containerName' => $containerName, 'storeId' => $storeId]
-        );
-
-        if ($config === null) {
-            throw new \LogicException("No configuration exists for request {$containerName}");
-        }
-
-        return $config;
     }
 
     /**
