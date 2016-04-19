@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticSuiteSearch\Search;
 
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\CatalogInventory\Model\Stock\Status;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Search\Api\SearchInterface;
 use Magento\Framework\App\ScopeResolverInterface;
@@ -81,37 +83,19 @@ class Search implements SearchInterface
     public function search(SearchCriteriaInterface $searchCriteria)
     {
         $scope = $this->scopeResolver->getScope();
-        $request = $this->requestBuilder->create(
+        $searchRequest = $this->requestBuilder->create(
             $scope->getId(),
             $searchCriteria->getRequestName(),
             $searchCriteria->getCurrentPage() * $searchCriteria->getPageSize(),
             $searchCriteria->getPageSize(),
             $this->getQueryText($searchCriteria),
             (array) $searchCriteria->getSortOrders(),
-            $this->extractFilters($searchCriteria)
+            $this->getRootFilters(),
+            $this->getFacets()
         );
-        $searchResponse = $this->searchEngine->search($request);
+        $searchResponse = $this->searchEngine->search($searchRequest);
 
         return $this->searchResponseBuilder->build($searchResponse)->setSearchCriteria($searchCriteria);
-    }
-
-    /**
-     * Extract filter from search criterias
-     *
-     * @param SearchCriteriaInterface $searchCriteria Search criteria
-     *
-     * @return array
-     */
-    private function extractFilters(SearchCriteriaInterface $searchCriteria)
-    {
-        $filters = [];
-        foreach ($searchCriteria->getFilterGroups() as $group) {
-            foreach ($group->getFilters() as $criteriaFilter) {
-                $filters[$criteriaFilter->getField()] = [$criteriaFilter->getValue()];
-            }
-        }
-
-        return $filters;
     }
 
     /**
@@ -131,5 +115,28 @@ class Search implements SearchInterface
         }
 
         return $queryText;
+    }
+
+    /**
+     * Get root filters
+     *
+     * @return array
+     */
+    private function getRootFilters()
+    {
+        return [
+            'stock.is_in_stock' => Status::STATUS_IN_STOCK,
+            'visibility' => [Visibility::VISIBILITY_IN_SEARCH]
+        ];
+    }
+
+    /**
+     * Get facets
+     *
+     * @return array
+     */
+    private function getFacets()
+    {
+        return [];
     }
 }
