@@ -20,9 +20,7 @@ use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\Search\SearchEngineInterface;
 use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Search\Model\SearchEngine;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticSuiteCore\Search\Request\Builder;
-use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
 
 /**
  * Substitution Search class for Magento\Search\Search
@@ -54,44 +52,23 @@ class Search implements SearchInterface
     protected $searchResponseBuilder;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\ContainerConfigurationFactory
-     */
-    protected $containerConfigFactory;
-
-    /**
-     * @var QueryFactory
-     */
-    protected $queryFactory;
-
-    /**
-     * @var FilterQueryBuilder
-     */
-    protected $querybuilder;
-
-    /**
-     * SearchEs constructor.
+     * Search constructor.
      *
-     * @param Builder                       $requestBuilder         Request Builder
-     * @param ContainerConfigurationFactory $containerConfigFactory Config container
-     * @param ScopeResolverInterface        $scopeResolver          Scope resolver
-     * @param SearchEngineInterface         $searchEngine           Search engine
-     * @param SearchResponseBuilder         $searchResponseBuilder  Search Response Builder
-     * @param QueryBuilder                  $querybuilder           Query builder
+     * @param Builder                $requestBuilder        Request Builder
+     * @param ScopeResolverInterface $scopeResolver         Scope resolver
+     * @param SearchEngineInterface  $searchEngine          Search engine
+     * @param SearchResponseBuilder  $searchResponseBuilder Search Response Builder
      */
     public function __construct(
         Builder $requestBuilder,
-        \Smile\ElasticSuiteCore\Search\Request\ContainerConfigurationFactory $containerConfigFactory,
         ScopeResolverInterface $scopeResolver,
         SearchEngineInterface $searchEngine,
-        SearchResponseBuilder $searchResponseBuilder,
-        QueryBuilder $querybuilder
+        SearchResponseBuilder $searchResponseBuilder
     ) {
         $this->requestBuilder           = $requestBuilder;
         $this->scopeResolver            = $scopeResolver;
         $this->searchEngine             = $searchEngine;
         $this->searchResponseBuilder    = $searchResponseBuilder;
-        $this->containerConfigFactory   = $containerConfigFactory;
-        $this->querybuilder             = $querybuilder;
     }
 
     /**
