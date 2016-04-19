@@ -1,0 +1,39 @@
+{
+    "name" : "smile-sa/module-elasticsuite-search",
+    "type" : "magento2-module",
+    "license" : "OSL-3.0",
+    "authors" : [{
+            "name" : "David Dattée",
+            "email" : "david.dattee@smile.fr"
+        }
+    ],
+    "description" : "Smile ElasticSuite - Module Search.",
+    "homepage" : "https://github.com/Smile-SA/module-elasticsuite-search",
+    "keywords" : [
+        "magento",
+        "magento2",
+        "elasticsearch",
+        "search",
+        "merchandising",
+        "core",
+        "setup"
+    ],
+    "require" : {
+        "magento/framework" : "*",
+        "magento/module-store" : "*",
+        "magento/module-backend" : "*",
+        "magento/module-search" : "*",
+        "magento/module-catalog" : "*",
+        "magento/module-catalog-search" : "*",
+        "magento/magento-composer-installer" : "*",
+        "elasticsearch/elasticsearch" : "2.1.*"
+    },
+    "autoload" : {
+        "files" : [
+            "registration.php"
+        ],
+        "psr-4" : {
+            "Smile\\ElasticSuiteSearch\\" : ""
+        }
+    }
+}
