@@ -126,7 +126,7 @@ class Search implements SearchInterface
     {
         return [
             'stock.is_in_stock' => Status::STATUS_IN_STOCK,
-            'visibility' => [Visibility::VISIBILITY_IN_SEARCH]
+            'visibility' => [Visibility::VISIBILITY_IN_SEARCH],
         ];
     }
 
