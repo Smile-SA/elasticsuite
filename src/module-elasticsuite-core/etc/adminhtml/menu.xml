@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Smile_ElasticSuiteCore::manage" title="Search Engine" module="Smile_ElasticSuiteCore" sortOrder="15" parent="Magento_Backend::stores" resource="Smile_ElasticSuiteCore::manage"/>
+        <add id="Smile_ElasticSuiteCore::elasticsuite_menu" title="Smile ElasticSuite" module="Smile_ElasticSuiteCore" sortOrder="50" resource="Smile_ElasticSuiteCore::menu"/>
+        <add id="Smile_ElasticSuiteCore::manage_search" title="Search Engine" module="Smile_ElasticSuiteCore" sortOrder="15" parent="Smile_ElasticSuiteCore::elasticsuite_menu" resource="Smile_ElasticSuiteCore::manage_search"/>
         <add
                 id="Smile_ElasticSuiteCore::manage_relevance"
                 title="Search Relevance"
                 module="Smile_ElasticSuiteCore"
                 sortOrder="10"
-                parent="Smile_ElasticSuiteCore::manage"
+                parent="Smile_ElasticSuiteCore::manage_search"
                 action="smile_elasticsuite/search_request_relevanceconfig/index"
                 resource="Smile_ElasticsuiteCore::manage_relevance"/>
     </menu>
