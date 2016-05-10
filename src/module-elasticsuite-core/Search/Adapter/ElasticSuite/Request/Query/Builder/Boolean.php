@@ -24,7 +24,7 @@ use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInte
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Bool extends AbstractComplexBuilder implements BuilderInterface
+class Boolean extends AbstractComplexBuilder implements BuilderInterface
 {
     const QUERY_CONDITION_MUST   = 'must';
     const QUERY_CONDITION_NOT    = 'must_not';

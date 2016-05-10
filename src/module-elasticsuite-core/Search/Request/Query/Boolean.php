@@ -23,7 +23,7 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Bool implements QueryInterface
+class Boolean implements QueryInterface
 {
     /**
      * @var string
