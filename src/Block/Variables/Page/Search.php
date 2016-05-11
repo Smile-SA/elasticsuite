@@ -12,6 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+
 use Magento\Framework\View\Element\Template;
 
 /**

@@ -18,4 +18,3 @@
     'Smile_ElasticSuiteTracker',
     __DIR__
 );
-
