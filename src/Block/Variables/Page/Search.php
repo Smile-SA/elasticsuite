@@ -73,11 +73,10 @@ class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlo
     {
         $variables = ['search.query' => $this->catalogSearchData->getEscapedQueryText()];
 
-        // @TODO The isSpellchecked() method does not exists on native M2
-        /*if ($layer = $this->catalogLayer) {
+        if ($layer = $this->catalogLayer) {
             $productCollection = $layer->getProductCollection();
-            $variables['search.is_spellchecked'] = $productCollection->isSpellchecked();
-        }*/
+            $variables['search.is_spellchecked'] = (int) $productCollection->isSpellchecked();
+        }
 
         return $variables;
     }
