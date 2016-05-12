@@ -17,6 +17,7 @@ use Magento\Search\Model\ResourceModel\Query\Collection;
 use Magento\Search\Model\QueryFactory;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\Autocomplete\ItemFactory;
+use Smile\ElasticSuiteCatalogAutocomplete\Helper\Configuration as ConfigurationHelper;
 
 /**
  * Popular search terms data provider.
@@ -48,17 +49,25 @@ class DataProvider implements DataProviderInterface
     private $items;
 
     /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
      * Constructor.
      *
-     * @param QueryFactory $queryFactory Search query text factory.
-     * @param ItemFactory  $itemFactory  Suggest terms item facory.
+     * @param QueryFactory        $queryFactory        Search query text factory.
+     * @param ItemFactory         $itemFactory         Suggest terms item facory.
+     * @param ConfigurationHelper $configurationHelper Autocomplete configuration helper.
      */
     public function __construct(
         QueryFactory $queryFactory,
-        ItemFactory $itemFactory
+        ItemFactory $itemFactory,
+        ConfigurationHelper $configurationHelper
     ) {
-        $this->queryFactory = $queryFactory;
-        $this->itemFactory = $itemFactory;
+        $this->queryFactory        = $queryFactory;
+        $this->itemFactory         = $itemFactory;
+        $this->configurationHelper = $configurationHelper;
     }
 
     /**
@@ -90,8 +99,18 @@ class DataProvider implements DataProviderInterface
     private function getSuggestCollection()
     {
         $queryCollection = $this->queryFactory->get()->getSuggestCollection();
-        $queryCollection->addFieldToFilter('is_spellchecked', 'false')->setPageSize(3);
+        $queryCollection->addFieldToFilter('is_spellchecked', 'false')->setPageSize($this->getResultsPageSize());
 
         return $queryCollection;
+    }
+
+    /**
+     * Retrieve number of products to display in autocomplete results
+     *
+     * @return int
+     */
+    private function getResultsPageSize()
+    {
+        return $this->configurationHelper->getTermsMaxSize();
     }
 }

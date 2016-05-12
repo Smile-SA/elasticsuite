@@ -18,6 +18,7 @@ use Magento\Search\Model\Autocomplete\ItemFactory;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticSuiteCatalogAutocomplete\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
+use \Smile\ElasticSuiteCatalogAutocomplete\Helper\Configuration as ConfigurationHelper;
 
 /**
  * Catalog product autocomplete data provider.
@@ -58,6 +59,11 @@ class DataProvider implements DataProviderInterface
     protected $imageHelper;
 
     /**
+     * @var ConfigurationHelper
+     */
+    protected $configurationHelper;
+
+    /**
      * Constructor.
      *
      * @param ItemFactory                     $itemFactory              Suggest item factory.
@@ -65,19 +71,22 @@ class DataProvider implements DataProviderInterface
      * @param TermDataProvider                $termDataProvider         Search terms suggester.
      * @param ProductCollectionFactory        $productCollectionFactory Product collection factory.
      * @param \Magento\Catalog\Helper\Product $productHelper            Catalog Image helper.
+     * @param ConfigurationHelper             $configurationHelper      Autocomplete configuration helper.
      */
     public function __construct(
         ItemFactory $itemFactory,
         QueryFactory $queryFactory,
         TermDataProvider $termDataProvider,
         ProductCollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Helper\Product $productHelper
+        \Magento\Catalog\Helper\Product $productHelper,
+        ConfigurationHelper $configurationHelper
     ) {
         $this->itemFactory              = $itemFactory;
         $this->queryFactory             = $queryFactory;
         $this->termDataProvider         = $termDataProvider;
         $this->productCollectionFactory = $productCollectionFactory;
         $this->imageHelper              = $productHelper;
+        $this->configurationHelper      = $configurationHelper;
     }
     /**
      * {@inheritDoc}
@@ -140,12 +149,22 @@ class DataProvider implements DataProviderInterface
 
         $productCollection = $this->productCollectionFactory->create();
         $productCollection->addSearchFilter($terms);
-        $productCollection->setPageSize(5);
+        $productCollection->setPageSize($this->getResultsPageSize());
         $productCollection
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('small_image')
             ->addPriceData();
 
         return $productCollection;
+    }
+
+    /**
+     * Retrieve number of products to display in autocomplete results
+     *
+     * @return int
+     */
+    private function getResultsPageSize()
+    {
+        return $this->configurationHelper->getProductsMaxSize();
     }
 }
