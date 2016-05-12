@@ -37,7 +37,7 @@
 
     <xs:complexType name="typeDefinition">
         <xs:sequence>
-            <xs:element name="datasources" type="datasourcesDefinition"/>
+            <xs:element name="datasources" type="datasourcesDefinition" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="mapping" type="mappingDefinition"/>
         </xs:sequence>
         <xs:attribute type="xs:string" name="name" use="required"/>
