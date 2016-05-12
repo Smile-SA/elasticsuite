@@ -118,7 +118,10 @@ class QueryBuilder
 
 
         $standardAnalyzer   = FieldInterface::ANALYZER_STANDARD;
-        $phraseAnalyzer     = str_word_count($queryText) > 1 ? FieldInterface::ANALYZER_SHINGLE : FieldInterface::ANALYZER_WHITESPACE;
+        $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
+        if (is_string($queryText) && str_word_count($queryText) > 1) {
+            $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
+        }
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, $standardAnalyzer, $searchableCallback, $defaultSearchField),
@@ -148,7 +151,11 @@ class QueryBuilder
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
-        $analyzer           = str_word_count($queryText) > 1 ? FieldInterface::ANALYZER_SHINGLE : FieldInterface::ANALYZER_WHITESPACE;
+        $analyzer = FieldInterface::ANALYZER_WHITESPACE;
+        if (is_string($queryText) && str_word_count($queryText) > 1) {
+            $analyzer = FieldInterface::ANALYZER_SHINGLE;
+        }
+
         $defaultSearchField = MappingInterface::DEFAULT_SEARCH_FIELD;
         $searchableCallback = [$this, 'isSearchableFieldCallback'];
 
@@ -219,7 +226,10 @@ class QueryBuilder
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
 
         $standardAnalyzer = FieldInterface::ANALYZER_WHITESPACE;
-        $phraseAnalyzer   = str_word_count($queryText) > 1 ? FieldInterface::ANALYZER_SHINGLE : FieldInterface::ANALYZER_WHITESPACE;
+        $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
+        if (is_string($queryText) && str_word_count($queryText) > 1) {
+            $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
+        }
 
         $fuzzyFieldCallback = [$this, 'isFuzzyFieldCallback'];
 

@@ -211,7 +211,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addSearchFilter($query)
     {
-        $this->queryText = trim($this->queryText . ' ' . $query);
+        $this->queryText = $query;
 
         return $this;
     }
