@@ -23,6 +23,7 @@
                 <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
                 <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">categoryFilterUsingRewrite</item>
+                <item name="boolean" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Boolean</item>
             </argument>
         </arguments>
     </virtualType>
@@ -35,6 +36,7 @@
                 <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
                 <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
+                <item name="boolean" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Boolean</item>
             </argument>
         </arguments>
     </virtualType>
