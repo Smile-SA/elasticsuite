@@ -34,6 +34,11 @@ class Configuration extends AbstractHelper
     const PRODUCT_AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX = 'product_autocomplete';
 
     /**
+     * @var string
+     */
+    const TERMS_AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX = 'term_autocomplete';
+
+    /**
      * Retrieve Max Size for products results
      *
      * @return int
@@ -41,6 +46,16 @@ class Configuration extends AbstractHelper
     public function getProductsMaxSize()
     {
         return (int) $this->getConfigValue(self::PRODUCT_AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX . "/max_size");
+    }
+
+    /**
+     * Retrieve Max Size for terms results
+     *
+     * @return int
+     */
+    public function getTermsMaxSize()
+    {
+        return (int) $this->getConfigValue(self::TERMS_AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX . "/max_size");
     }
 
     /**
