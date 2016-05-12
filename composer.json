@@ -71,7 +71,7 @@
     "extra": {
         "map": [
             [
-                "lib/web/fonts/elasticsuite",
+                "src/lib/web/fonts/elasticsuite",
                 "lib/web/fonts/elasticsuite"
             ]
         ]
