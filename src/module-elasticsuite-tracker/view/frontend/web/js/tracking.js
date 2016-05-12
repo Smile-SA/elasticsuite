@@ -17,15 +17,15 @@ var smileTracker = (function () {
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
                 s4() + '-' + s4() + s4() + s4();
         };
-    })();
+    }());
 
     function getCookie(cname) {
         var name = cname + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+            while (c.charAt(0) === ' ') c = c.substring(1);
+            if (c.indexOf(name) !== -1) return c.substring(name.length, c.length);
         }
         return null;
     }
@@ -40,10 +40,11 @@ var smileTracker = (function () {
         var results = null;
         if (name && name.replace) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-                results = regex.exec(window.location.search);
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+            results = regex.exec(window.location.search);
         }
-        return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
     // Add page title and page URL to the tracked variables
@@ -58,7 +59,7 @@ var smileTracker = (function () {
         this.addPageVar("title", encodeURI(document.title));
 
         // Current timestamp in seconds
-        this.addPageVar("time", parseInt(new Date().getTime() / 1000));
+        this.addPageVar("time", parseInt((new Date().getTime() / 1000), 10));
     }
 
     // Append GA campaign variable to the tracked variables
@@ -71,14 +72,14 @@ var smileTracker = (function () {
         // GA variables to be fetched from URI
         var urlParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term'];
 
-        for (var paramNameIndex in urlParams) {
-            var paramName = urlParams[paramNameIndex];
+        urlParams.forEach(function (element) {
+            var paramName = element;
             var paramValue = getQueryStringParameterByName(paramName);
             if (paramValue) {
                 // Append the GA param to the tracker
                 this.addPageVar(paramName, paramValue);
             }
-        }
+        });
     }
 
     function addReferrerVars() {
@@ -101,7 +102,7 @@ var smileTracker = (function () {
         for (var tagIndex = 0; tagIndex < metaTags.length; tagIndex++) {
             if (metaTags[tagIndex].getAttribute('name')) {
                 var components = metaTags[tagIndex].getAttribute('name').split(':');
-                if (components.length == 2 && components[0] == 'sct') {
+                if (components.length === 2 && components[0] === 'sct') {
                     var varName = components[1];
                     this.addPageVar(varName, metaTags[tagIndex].getAttribute('content'));
                 }
@@ -113,7 +114,7 @@ var smileTracker = (function () {
 
         initSession.bind(this)();
 
-        if (this.trackerSent == false) {
+        if (this.trackerSent === false) {
             addStandardPageVars.bind(this)();
             addReferrerVars.bind(this)();
             addCampaignVars.bind(this)();
@@ -122,8 +123,11 @@ var smileTracker = (function () {
         }
 
         var urlParams = [];
+
         for (var currentVar in this.vars) {
-            urlParams.push(currentVar + "=" + this.vars[currentVar]);
+            if ({}.hasOwnProperty.call(this.vars, currentVar)) {
+                urlParams.push(currentVar + "=" + this.vars[currentVar]);
+            }
         }
 
         return this.baseUrl + "?" + urlParams.join('&');
@@ -132,7 +136,7 @@ var smileTracker = (function () {
     // Send the tag to the remote server
     // Append a transparent pixel to the body
     function sendTag(forceCollect) {
-        if (this.trackerSent == false || forceCollect == true) {
+        if (this.trackerSent === false || forceCollect === true) {
             var trackingUrl = getTrackerUrl.bind(this)();
             var bodyNode = document.getElementsByTagName('body')[0];
             var imgNode = document.createElement('img');
@@ -141,7 +145,7 @@ var smileTracker = (function () {
             this.trackerSent = true;
             this.vars = {};
 
-            if (window.location.protocol == "http:") {
+            if (window.location.protocol === "http:") {
                 var extImgNode = document.createElement('img');
                 extImgNode.setAttribute('src', "http://t.smile.eu/h.png");
                 bodyNode.appendChild(extImgNode);
@@ -168,19 +172,19 @@ var smileTracker = (function () {
     }
 
     function initSession() {
-        var config = this.config.sessionConfig
+        var config = this.config.sessionConfig;
         var expireAt = new Date();
 
-        if (getCookie(config['visit_cookie_name']) == null) {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime']));
+        if (getCookie(config['visit_cookie_name']) === null) {
+            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
             setCookie(config['visit_cookie_name'], guid(), expireAt);
         } else {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime']));
+            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
             setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt);
         }
 
-        if (getCookie(config['visitor_cookie_name']) == null) {
-            expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime']));
+        if (getCookie(config['visitor_cookie_name']) === null) {
+            expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
             setCookie(config['visitor_cookie_name'], guid(), expireAt);
         }
 
@@ -215,4 +219,4 @@ var smileTracker = (function () {
     }
 
     return new SmileTrackerImpl();
-})();
+}());
