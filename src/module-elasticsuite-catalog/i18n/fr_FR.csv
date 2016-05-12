@@ -26,3 +26,6 @@ OK,OK
 "Is Spellchecked","Recherche Approchante"
 Yes,Yes
 No,No
+"Product Autocomplete","Autocomplétion des produits"
+"Max size","Taille maximum"
+"Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."

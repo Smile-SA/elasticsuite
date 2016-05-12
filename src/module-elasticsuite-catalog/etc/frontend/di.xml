@@ -59,4 +59,25 @@
         </arguments>
     </virtualType>
 
+    <type name="Magento\Search\Model\Autocomplete">
+        <arguments>
+            <argument name="dataProviders" xsi:type="array">
+                <item name="20" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticSuiteCore\Block\Search\Form\Autocomplete">
+        <arguments>
+            <argument name="rendererList" xsi:type="array">
+                <item name="product" xsi:type="array">
+                    <item name="title" xsi:type="string">Products</item>
+                    <item name="template" xsi:type="string">Smile_ElasticSuiteCatalog/autocomplete/product</item>
+                </item>
+                <item name="category" xsi:type="array">
+                    <item name="title" xsi:type="string">Categories</item>
+                    <item name="template" xsi:type="string">Smile_ElasticSuiteCatalog/autocomplete/category</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>

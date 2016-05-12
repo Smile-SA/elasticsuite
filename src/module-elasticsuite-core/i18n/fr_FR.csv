@@ -55,3 +55,7 @@ General,Général
 "Require <a href='https://github.com/elastic/elasticsearch-analysis-phonetic'>Phonetic analysis</a> plugin installation.","Nécessite l'installation du plugin <a href='https://github.com/elastic/elasticsearch-analysis-phonetic'>Phonetic analysis</a>."
 "Yes","Oui"
 "No","Non"
+"Maximum number of popular search terms to display in autocomplete results.","Nombre maximum de recherches populaires à afficher dans les résultats de l'autocomplétion."
+"Popular Term Autocomplete","Autocomplétion des recherches populaires"
+"Max size","Taille maximum"
+"Autocomplete","Autocomplétion"
