@@ -85,7 +85,7 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Magento\Catalog\Model\Layer">
         <plugin name="addStockStatusOnPrepareFrontCollection" type="Smile\ElasticSuiteCatalog\Plugin\LayerPlugin"/>
     </type>
@@ -96,6 +96,7 @@
 
     <type name="\Magento\Catalog\Model\Category">
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexProductsAfterSave" />
+        <plugin name="smile_elasticsuite_catalog_reindex_category_after_category_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save\ReindexCategoryAfterSave" />
     </type>
 
     <type name="Magento\CatalogInventory\Model\Indexer\Stock">
@@ -105,5 +106,30 @@
     <type name="Magento\Catalog\Model\Indexer\Product\Price">
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_price_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Price\ReindexProductsAfterPriceUpdate"/>
     </type>
+
+    <type name="Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData">
+        <arguments>
+            <argument name="attributeHelper" xsi:type="object">Smile\ElasticSuiteCatalog\Helper\CategoryAttribute</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData">
+        <arguments>
+            <argument name="attributeHelper" xsi:type="object">Smile\ElasticSuiteCatalog\Helper\ProductAttribute</argument>
+            <argument name="resourceModel" xsi:type="object">Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticSuiteCatalog\Helper\ProductAttribute" type="Smile\ElasticSuiteCatalog\Helper\Attribute">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticSuiteCatalog\Helper\CategoryAttribute" type="Smile\ElasticSuiteCatalog\Helper\Attribute">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Category\Attribute\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
 
 </config>

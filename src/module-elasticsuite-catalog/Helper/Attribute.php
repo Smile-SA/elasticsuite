@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
@@ -16,18 +15,17 @@ namespace Smile\ElasticSuiteCatalog\Helper;
 
 use Smile\ElasticSuiteCore\Helper\Mapping;
 use Magento\Framework\App\Helper\Context;
-use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
+use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ProductAttribute extends Mapping
+class Attribute extends Mapping
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory
@@ -50,27 +48,36 @@ class ProductAttribute extends Mapping
     private $attributeOptionTextCache = [];
 
     /**
+     * Object manager
      *
-     * @param Context                    $context                    Helper context.
-     * @param AttributeCollectionFactory $attributeCollectionFactory Factory used to create attribute collections.
-     * @param AttributeFactory           $attributeFactory           Factory used to create attributes.
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
+     * @param Context                $context           Helper context.
+     * @param ObjectManagerInterface $objectManager     The object manager
+     * @param AttributeFactory       $attributeFactory  Factory used to create attributes.
+     * @param string                 $collectionFactory Factory class name to use for create attribute collections.
      */
     public function __construct(
         Context $context,
-        AttributeCollectionFactory $attributeCollectionFactory,
-        AttributeFactory $attributeFactory
+        ObjectManagerInterface $objectManager,
+        AttributeFactory $attributeFactory,
+        $collectionFactory
     ) {
         parent::__construct($context);
-        $this->attributeFactory           = $attributeFactory;
-        $this->attributeCollectionFactory = $attributeCollectionFactory;
+        $this->attributeFactory = $attributeFactory;
+        $this->objectManager = $objectManager;
+        $this->attributeCollectionFactory = $this->objectManager->get($collectionFactory);
     }
 
     /**
      * Retrieve a new product attribute collection.
      *
-     * @return Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
+     * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
      */
-    public function getAttibuteCollection()
+    public function getAttributeCollection()
     {
         return $this->attributeCollectionFactory->create();
     }
@@ -78,17 +85,17 @@ class ProductAttribute extends Mapping
     /**
      * Parse attribute to get mapping field creation parameters.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param AttributeInterface $attribute Product attribute.
      *
      * @return array
      */
-    public function getMappingFieldOptions(ProductAttributeInterface $attribute)
+    public function getMappingFieldOptions(AttributeInterface $attribute)
     {
         $options = [
-            'is_searchable'           => $attribute->getIsSearchable(),
-            'is_filterable'           => $attribute->getIsFilterable() || $attribute->getIsFilterableInSearch(),
-            'search_weight'           => $attribute->getSearchWeight(),
-            'is_used_for_sort_by'     => $attribute->getUsedForSortBy(),
+            'is_searchable'       => $attribute->getIsSearchable(),
+            'is_filterable'       => $attribute->getIsFilterable() || $attribute->getIsFilterableInSearch(),
+            'search_weight'       => $attribute->getSearchWeight(),
+            'is_used_for_sort_by' => $attribute->getUsedForSortBy(),
         ];
 
         if (!$options['is_filterable'] && $attribute->getBackendType() != 'string') {
@@ -109,11 +116,11 @@ class ProductAttribute extends Mapping
     /**
      * Get mapping field type for an attribute.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
+     * @param AttributeInterface $attribute Product attribute.
      *
      * @return string
      */
-    public function getFieldType(ProductAttributeInterface $attribute)
+    public function getFieldType(AttributeInterface $attribute)
     {
         $type = FieldInterface::FIELD_TYPE_STRING;
 
@@ -134,22 +141,20 @@ class ProductAttribute extends Mapping
 
     /**
      * Parse attribute raw value (as saved in the database) to prepare the indexed value.
-     *
      * For attribute using options the option value is also added to the result which contains two keys :
      *   - one is "attribute_code" and contained the option id(s)
      *   - the other one is "option_text_attribute_code" and contained option value(s)
-     *
      * All value are transformed into arays to have a more simple management of
      * multivalued attributes merging on composite products).
      * ES doesn't care of having array of int when it an int is required.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     * @param integer                   $storeId   Store id.
-     * @param mixed                     $value     Raw value to be parsed.
+     * @param AttributeInterface $attribute Product attribute.
+     * @param integer            $storeId   Store id.
+     * @param mixed              $value     Raw value to be parsed.
      *
      * @return array
      */
-    public function prepareIndexValue(ProductAttributeInterface $attribute, $storeId, $value)
+    public function prepareIndexValue(AttributeInterface $attribute, $storeId, $value)
     {
         $attributeCode = $attribute->getAttributeCode();
         $values = [];
@@ -180,13 +185,13 @@ class ProductAttribute extends Mapping
      * Transform an array of options ids into an arrays of option values for attribute that uses a source.
      * Values are localized for a store id.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     * @param integer                   $storeId   Store id
-     * @param array                     $optionIds Array of options ids.
+     * @param AttributeInterface $attribute Product attribute.
+     * @param integer            $storeId   Store id
+     * @param array              $optionIds Array of options ids.
      *
      * @return array
      */
-    public function getIndexOptionsText(ProductAttributeInterface $attribute, $storeId, array $optionIds)
+    public function getIndexOptionsText(AttributeInterface $attribute, $storeId, array $optionIds)
     {
         $mapper = function ($optionId) use ($attribute, $storeId) {
             return $this->getIndexOptionText($attribute, $storeId, $optionId);
@@ -200,15 +205,15 @@ class ProductAttribute extends Mapping
      * Transform an options id into an array of option value for attribute that uses a source.
      * Value islocalized for a store id.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     * @param integer                   $storeId   Store id.
-     * @param string|integer            $optionId  Option id.
+     * @param AttributeInterface $attribute Product attribute.
+     * @param integer            $storeId   Store id.
+     * @param string|integer     $optionId  Option id.
      *
      * @return string|boolean
      */
-    public function getIndexOptionText(ProductAttributeInterface $attribute, $storeId, $optionId)
+    public function getIndexOptionText(AttributeInterface $attribute, $storeId, $optionId)
     {
-        $attribute   = $this->getAttributeByStore($attribute, $storeId);
+        $attribute = $this->getAttributeByStore($attribute, $storeId);
         $attributeId = $attribute->getAttributeId();
 
         if (!isset($this->attributeOptionTextCache[$storeId])) {
@@ -233,12 +238,12 @@ class ProductAttribute extends Mapping
     /**
      * Ensure types of numerical values is correct before indexing.
      *
-     * @param ProductAttributeInterface $attribute Product attribute.
-     * @param mixed                     $value     Raw value.
+     * @param AttributeInterface $attribute Product attribute.
+     * @param mixed              $value     Raw value.
      *
      * @return mixed
      */
-    private function prepareSimpleIndexAttributeValue(ProductAttributeInterface $attribute, $value)
+    private function prepareSimpleIndexAttributeValue(AttributeInterface $attribute, $value)
     {
         if ($attribute->getBackendType() == 'decimal') {
             $value = floatval($value);
@@ -253,19 +258,18 @@ class ProductAttribute extends Mapping
      * Load the localized version of an attribute.
      * This code uses a local cache to ensure correct performance during indexing.
      *
-     * @param ProductAttributeInterface|int $attribute Product attribute.
-     * @param integer                       $storeId   Store id.
+     * @param AttributeInterface|int $attribute Product attribute.
+     * @param integer                $storeId   Store id.
      *
-     * @return \Magento\Catalog\Api\Data\ProductAttributeInterface
+     * @return \Magento\Catalog\Api\Data\EavAttributeInterface
      */
     private function getAttributeByStore($attribute, $storeId)
     {
-        $storeAttribute = false;
         $attributeId = $this->getAttributeId($attribute);
 
         if (!isset($this->storeAttributes[$storeId]) || !isset($this->storeAttributes[$storeId][$attributeId])) {
             /**
-             * @var ProductAttributeInterface
+             * @var EavAttributeInterface
              */
             $storeAttribute = $this->attributeFactory->create();
             $storeAttribute->setStoreId($storeId)
@@ -280,7 +284,7 @@ class ProductAttribute extends Mapping
     /**
      * This util method is used to ensure the attribute is an integer and uses it's id if it is an object.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface|integer $attribute Product attribute.
+     * @param AttributeInterface|integer $attribute Product attribute.
      *
      * @return integer
      */
