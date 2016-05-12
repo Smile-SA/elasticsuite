@@ -26,8 +26,10 @@
                             <resource id="Magento_Catalog::config_smile_elasticsuite_core_base_settings" title="smile_elasticsuite_core_base_settings" />
                         </resource>
                     </resource>
-                    <resource id="Smile_ElasticsuiteCore::manage" title="Manage Search Engine configuration">
-                        <resource id="Smile_ElasticsuiteCore::manage_relevance" title="Manage Relevance" />
+                    <resource id="Smile_ElasticsuiteCore::menu" title="Manage Smile Elastic Suite configuration">
+                        <resource id="Smile_ElasticsuiteCore::manage_search" title="Manage Search Engine configuration">
+                            <resource id="Smile_ElasticsuiteCore::manage_relevance" title="Manage Relevance" />
+                        </resource>
                     </resource>
                 </resource>
             </resource>

@@ -1,6 +1,6 @@
 {
     "name" : "smile-sa/elasticsuite",
-    "type" : "magento2-module",
+    "type" : "magento2-component",
     "license" : "OSL-3.0",
     "authors" : [{
             "name" : "Aurélien FOUCRET",
@@ -64,5 +64,13 @@
             "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus",
             "Smile\\ElasticSuiteCatalogAutocomplete\\" : "src/module-elasticsuite-catalog-autocomplete"
         }
+    },
+    "extra": {
+        "map": [
+            [
+                "lib/web/fonts/elasticsuite",
+                "lib/web/fonts/elasticsuite"
+            ]
+        ]
     }
 }
