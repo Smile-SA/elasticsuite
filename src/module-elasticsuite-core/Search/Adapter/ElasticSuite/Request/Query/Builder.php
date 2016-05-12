@@ -30,7 +30,7 @@ class Builder implements BuilderInterface
      * @var array
      */
     private $queryBuilderClasses = [
-        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Bool',
+        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Boolean',
         QueryInterface::TYPE_FILTER     => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Filtered',
         QueryInterface::TYPE_NESTED     => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Nested',
         QueryInterface::TYPE_TERMS      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\Builder\Terms',

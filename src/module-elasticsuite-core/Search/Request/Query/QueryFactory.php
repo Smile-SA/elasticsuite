@@ -29,7 +29,7 @@ class QueryFactory
      * @var array
      */
     private $factories = [
-        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Request\Query\BoolFactory',
+        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Request\Query\BooleanFactory',
         QueryInterface::TYPE_FILTER     => 'Smile\ElasticSuiteCore\Search\Request\Query\FilteredFactory',
         QueryInterface::TYPE_NESTED     => 'Smile\ElasticSuiteCore\Search\Request\Query\NestedFactory',
         QueryInterface::TYPE_TERM       => 'Smile\ElasticSuiteCore\Search\Request\Query\TermFactory',
