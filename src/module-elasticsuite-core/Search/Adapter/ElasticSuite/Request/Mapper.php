@@ -73,7 +73,6 @@ class Mapper
             'from'         => $request->getFrom(),
             'size'         => $request->getSize(),
             'sort'         => $this->getSortOrders($request),
-            'aggregations' => $this->getAggregations($request),
         ];
 
         $query = $this->getRootQuery($request);
@@ -85,6 +84,11 @@ class Mapper
 
         if ($filter) {
             $searchRequest['filter'] = $filter;
+        }
+
+        $aggregations = $this->getAggregations($request);
+        if (!empty($aggregations)) {
+            $searchRequest['aggregations'] = $aggregations;
         }
 
         return $searchRequest;

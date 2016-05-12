@@ -74,7 +74,11 @@ class Builder
      */
     public function createQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, array $filters, $spellingType)
     {
-        $queryParams = ['filter' => $this->filterQueryBuilder->create($containerConfiguration, $filters)];
+        $queryParams = [];
+
+        if (!empty($filters)) {
+            $queryParams = ['filter' => $this->filterQueryBuilder->create($containerConfiguration, $filters)];
+        }
 
         if ($queryText) {
             $queryParams['query'] = $this->fulltextQueryBuilder->create($containerConfiguration, $queryText, $spellingType);

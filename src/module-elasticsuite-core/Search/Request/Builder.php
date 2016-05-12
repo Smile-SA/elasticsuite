@@ -156,10 +156,6 @@ class Builder
             'spellingType' => $spellingType,
         ];
 
-        if ($queryText) {
-            $this->getSpellingType($containerConfig, $queryText);
-        }
-
         if (!empty($facetFilters)) {
             $requestParams['filter'] = $this->queryBuilder->createFilters($containerConfig, $facetFilters);
         }
@@ -179,16 +175,21 @@ class Builder
      */
     private function getSpellingType(ContainerConfigurationInterface $containerConfig, $queryText)
     {
-        $spellcheckRequestParams = [
-            'index'           => $containerConfig->getIndexName(),
-            'type'            => $containerConfig->getTypeName(),
-            'queryText'       => $queryText,
-            'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
-        ];
+        $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
-        $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
+        if (!is_array($queryText)) {
+            $spellcheckRequestParams = [
+                'index'           => $containerConfig->getIndexName(),
+                'type'            => $containerConfig->getTypeName(),
+                'queryText'       => $queryText,
+                'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            ];
 
-        return $this->spellchecker->getSpellingType($spellcheckRequest);
+            $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
+            $spellingType = $this->spellchecker->getSpellingType($spellcheckRequest);
+        }
+
+        return $spellingType;
     }
 
     /**
