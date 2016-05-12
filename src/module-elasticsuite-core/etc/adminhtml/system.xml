@@ -64,10 +64,12 @@
                 </field>
             </group>
         </section>
+
         <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Autocomplete</label>
             <tab>smile_elasticsuite</tab>
             <resource>Magento_Backend::smile_elasticsuite_autocomplete</resource>
+
             <group id="term_autocomplete" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Popular Term Autocomplete</label>
                 <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
