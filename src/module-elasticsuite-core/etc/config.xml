@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /**
  * Smile_ElasticSuiteCore default configuration.
  *
@@ -33,5 +33,12 @@
                 <batch_indexing_size>100</batch_indexing_size>
             </indices_settings>
         </smile_elasticsuite_core_base_settings>
+
+        <smile_elasticsuite_autocomplete_settings>
+            <term_autocomplete>
+                <max_size>3</max_size>
+            </term_autocomplete>
+        </smile_elasticsuite_autocomplete_settings>
+
     </default>
 </config>
