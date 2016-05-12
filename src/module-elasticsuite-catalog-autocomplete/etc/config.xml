@@ -21,6 +21,9 @@
             <product_autocomplete>
                 <max_size>5</max_size>
             </product_autocomplete>
+            <term_autocomplete>
+                <max_size>3</max_size>
+            </term_autocomplete>
         </smile_elasticsuite_catalogautocomplete>
     </default>
 </config>
