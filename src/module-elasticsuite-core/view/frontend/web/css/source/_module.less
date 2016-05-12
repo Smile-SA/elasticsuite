@@ -1,0 +1,76 @@
+// /**
+//  * DISCLAIMER
+//  *
+//  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+//  * versions in the future.
+//  *
+//  *
+//  * @category  Smile
+//  * @package   Smile_ElasticSuiteCore
+//  * @author    Romain Ruaud <romain.ruaud@smile.fr>
+//  * @copyright 2016 Smile
+//  * @license   Open Software License ("OSL") v. 3.0
+//  */
+
+.search-autocomplete {
+    position: absolute;
+    z-index: 3;
+    overflow: hidden;
+    margin-top: -15px;
+    &:extend(.abs-add-box-sizing all);
+    dl {
+        .lib-list-reset-styles();
+        dt {
+            &:not(:empty) {
+                .lib-css(background, @autocomplete-background);
+                .lib-css(border, @autocomplete-border);
+                border-top: 0;
+                border-bottom: 0;
+            }
+            .lib-css(border-top, @autocomplete-item-border);
+            cursor: default;
+            margin: 0;
+            padding: @indent__xs @indent__xl @indent__xs @indent__s;
+            position: relative;
+            text-align: left;
+            white-space: normal;
+            &:first-child {
+                border-top: none;
+            }
+            &:hover,
+            &.selected {
+                .lib-css(background, @autocomplete-item-hover);
+            }
+        }
+        dd {
+            &:not(:empty) {
+                .lib-css(background, @autocomplete-background);
+                .lib-css(border, @autocomplete-border);
+                border-top: 0;
+            }
+            .lib-css(border-top, @autocomplete-item-border);
+            cursor: pointer;
+            margin: 0;
+            padding: @indent__xs @indent__s;
+            position: relative;
+            text-align: left;
+            white-space: normal;
+            &:first-child {
+                border-top: none;
+            }
+            &:hover,
+            &.selected {
+                .lib-css(background, @autocomplete-item-hover);
+            }
+            .amount {
+                .lib-css(color, @autocomplete-item-amount-color);
+                position: absolute;
+                right: 7px;
+                top: @indent__xs;
+            }
+            .clear {
+                clear:both;
+            }
+        }
+    }
+}

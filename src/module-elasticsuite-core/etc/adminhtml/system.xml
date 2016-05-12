@@ -18,17 +18,17 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        
+
         <tab id="smile_elasticsuite" translate="label" sortOrder="210">
             <label>Smile ElasticSuite</label>
         </tab>
-        
+
         <section id="smile_elasticsuite_core_base_settings" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>Base settings</label>
             <tab>smile_elasticsuite</tab>
             <resource>Magento_Catalog::config_smile_elasticsuite_core_base_settings</resource>
-            
+
             <group id="es_client" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>ElaticSearch Client</label>
                 <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0">
@@ -45,7 +45,7 @@
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>
-            
+
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Indices settings</label>
                 <field id="alias" translate="label" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0">
@@ -61,6 +61,19 @@
                 <field id="number_of_replicas" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Number of replicas per index</label>
                     <frontend_class>validate-number</frontend_class>
+                </field>
+            </group>
+        </section>
+        <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Autocomplete</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_autocomplete</resource>
+            <group id="term_autocomplete" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Popular Term Autocomplete</label>
+                <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max size</label>
+                    <validate>integer</validate>
+                    <comment><![CDATA[Maximum number of popular search terms to display in autocomplete results.]]></comment>
                 </field>
             </group>
         </section>
