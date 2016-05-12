@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Smile_ElasticSuiteCore module loading configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="elasticsuite_categories_fulltext" view_id="elasticsuite_categories_fulltext" class="Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext">
+        <title translate="true">ElasticSuite Category Indexing</title>
+        <description translate="true">Reindex ElasticSuite catalog categories.</description>
+    </indexer>
+</config>

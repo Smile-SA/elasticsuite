@@ -64,4 +64,24 @@
         </type>
     </index>
 
+    <index identifier="catalog_category" defaultSearchType="category">
+        <type name="category">
+            <datasources>
+                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</datasource>
+            </datasources>
+            <mapping>
+                <!-- Static fields handled by the base indexer (not datasource) -->
+                <field name="entity_id" type="integer" />
+                <field name="attribute_set_id" type="integer" />
+                <field name="parent_id" type="integer" />
+                <field name="created_at" type="date" />
+                <field name="updated_at" type="date" />
+                <field name="path" type="string" />
+                <field name="position" type="integer" />
+                <field name="level" type="integer" />
+                <field name="children_count" type="integer" />
+            </mapping>
+        </type>
+    </index>
+
 </indices>
