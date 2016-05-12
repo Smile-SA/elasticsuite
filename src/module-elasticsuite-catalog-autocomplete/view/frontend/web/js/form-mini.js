@@ -19,7 +19,7 @@ define([
             responseFieldElements: 'dl dd',
             selectClass: 'selected',
             submitBtn: 'button[type="submit"]',
-            searchLabel: '[data-role=minisearch-label]',
+            searchLabel: '[data-role=minisearch-label]'
         },
 
         /**
@@ -132,7 +132,7 @@ define([
             var title = '';
             var header = $('<dl role="listbox" class="autocomplete-list"></dl>');
 
-            if (typeof type != 'undefined') {
+            if (type !== undefined) {
                 title = this._getSectionTitle(type);
                 header.append(title);
             }
@@ -168,7 +168,7 @@ define([
          * @private
          */
         _isEmpty : function(value) {
-            return (value.length === 0) || (value == null) || /^\s+$/.test(value);
+            return value === null || value.trim().length === 0;
         },
 
         /**

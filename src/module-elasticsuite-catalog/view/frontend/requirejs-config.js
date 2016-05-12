@@ -15,7 +15,7 @@
 var config = {
     map: {
         '*': {
-            rangeSlider: 'Smile_ElasticSuiteCatalog/js/range-slider-widget',
+            rangeSlider: 'Smile_ElasticSuiteCatalog/js/range-slider-widget'
         }
     }
 };
