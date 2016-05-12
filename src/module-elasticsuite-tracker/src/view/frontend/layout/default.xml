@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile Tracker default layout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteTracker
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <link src="Smile_ElasticSuiteTracker::js/tracking.js" type="text/javascript"/>
+    </head>
+    <referenceBlock name="head.additional">
+        <block template="config.phtml" class="Smile\ElasticSuiteTracker\Block\Config" name="smile.tracker.config" />
+    </referenceBlock>
+    <referenceBlock name="before.body.end">
+        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
+        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
+    </referenceBlock>
+</page>

@@ -1,0 +1,30 @@
+<?php
+/**
+ * Tracker init template
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteTracker
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+<?php /** @var $block Smile\ElasticSuiteTracker\Block\Config **/ ?>
+<?php $jsonHelper = $block->getJsonHelper(); ?>
+<?php if ($block->isEnabled()) : ?>
+<script type="text/javascript">
+//<![CDATA[
+    smileTracker.setConfig({
+        beaconUrl  : '<?php echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
+        sessionConfig : <?php echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>
+    });
+
+    smileTracker.addPageVar('store_id', '<?php echo $this->escapeJsQuote($block->getStoreId());?>');
+//]]>
+</script>
+<?php endif; ?>
