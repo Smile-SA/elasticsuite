@@ -56,7 +56,7 @@
             "src/module-elasticsuite-catalog/registration.php",
             "src/module-elasticsuite-swatches/registration.php",
             "src/module-elasticsuite-thesaurus/registration.php",
-            "smile-sa/module-elasticsuite-tracker/registration.php",
+            "src/module-elasticsuite-tracker/registration.php",
             "src/module-elasticsuite-catalog-autocomplete/registration.php"
         ],
         "psr-4" : {
