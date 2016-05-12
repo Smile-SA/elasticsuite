@@ -64,7 +64,7 @@
             "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog",
             "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches",
             "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus",
-            "Smile\\ElasticSuiteTracker\\" : "src/module-elasticsuite-catalog-tracker",
+            "Smile\\ElasticSuiteTracker\\" : "src/module-elasticsuite-tracker",
             "Smile\\ElasticSuiteCatalogAutocomplete\\" : "src/module-elasticsuite-catalog-autocomplete"
         }
     },
