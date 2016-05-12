@@ -168,7 +168,7 @@ define([
          * @private
          */
         _isEmpty : function(value) {
-            return value === null || value.trim().length === 0;
+            return value === null || value.trim().length === 0;
         },
 
         /**
