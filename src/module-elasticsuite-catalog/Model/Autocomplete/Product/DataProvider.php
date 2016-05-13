@@ -14,7 +14,6 @@
 namespace Smile\ElasticSuiteCatalog\Model\Autocomplete\Product;
 
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
-use Magento\Search\Model\Autocomplete\ItemFactory;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticSuiteCore\Helper\Autocomplete as ConfigurationHelper;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
@@ -59,11 +58,6 @@ class DataProvider implements DataProviderInterface
     protected $productCollectionFactory;
 
     /**
-     * @var \Magento\Catalog\Helper\Product
-     */
-    protected $imageHelper;
-
-    /**
      * @var ConfigurationHelper
      */
     protected $configurationHelper;
@@ -76,20 +70,18 @@ class DataProvider implements DataProviderInterface
     /**
      * Constructor.
      *
-     * @param ItemFactory                     $itemFactory              Suggest item factory.
-     * @param QueryFactory                    $queryFactory             Search query factory.
-     * @param TermDataProvider                $termDataProvider         Search terms suggester.
-     * @param ProductCollectionFactory        $productCollectionFactory Product collection factory.
-     * @param \Magento\Catalog\Helper\Product $productHelper            Catalog Image helper.
-     * @param ConfigurationHelper             $configurationHelper      Autocomplete configuration helper.
-     * @param string                          $type                     Autocomplete provider type.
+     * @param ItemFactory              $itemFactory              Suggest item factory.
+     * @param QueryFactory             $queryFactory             Search query factory.
+     * @param TermDataProvider         $termDataProvider         Search terms suggester.
+     * @param ProductCollectionFactory $productCollectionFactory Product collection factory.
+     * @param ConfigurationHelper      $configurationHelper      Autocomplete configuration helper.
+     * @param string                   $type                     Autocomplete provider type.
      */
     public function __construct(
         ItemFactory $itemFactory,
         QueryFactory $queryFactory,
         TermDataProvider $termDataProvider,
         ProductCollectionFactory $productCollectionFactory,
-        \Magento\Catalog\Helper\Product $productHelper,
         ConfigurationHelper $configurationHelper,
         $type = self::AUTOCOMPLETE_TYPE
     ) {
@@ -97,9 +89,8 @@ class DataProvider implements DataProviderInterface
         $this->queryFactory             = $queryFactory;
         $this->termDataProvider         = $termDataProvider;
         $this->productCollectionFactory = $productCollectionFactory;
-        $this->imageHelper              = $productHelper;
         $this->configurationHelper      = $configurationHelper;
-        $this->type                     = $type;
+        $this->type                      = $type;
     }
 
     /**
@@ -119,16 +110,7 @@ class DataProvider implements DataProviderInterface
         $productCollection = $this->getProductCollection();
         if ($productCollection) {
             foreach ($productCollection as $product) {
-                $result[] = $this->itemFactory->create(
-                    [
-                        'title'       => $product->getName(),
-                        'image'       => $this->imageHelper->getSmallImageUrl($product),
-                        'url'         => $product->getProductUrl(),
-                        'price'       => $product->getFinalPrice(),
-                        'final_price' => $product->getPrice(), // The getPrice method returns always 0.
-                        'type'        => $this->getType(),
-                    ]
-                );
+                $result[] = $this->itemFactory->create(['product' => $product, 'type' => $this->getType()]);
             }
         }
 
