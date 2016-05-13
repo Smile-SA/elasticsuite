@@ -69,8 +69,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @param \Magento\Framework\App\Helper\Context      $context         The current context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager    The Store Manager
      * @param \Magento\Framework\View\Asset\Repository   $assetRepository The asset repository
-     *
-     * @return Data
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,

@@ -48,8 +48,6 @@ class Search extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlo
      * @param \Magento\Catalog\Model\Layer\Resolver  $layerResolver     The Magento layer resolver
      * @param \Magento\CatalogSearch\Helper\Data     $catalogSearchData The Catalogsearch data
      * @param array                                  $data              The block data
-     *
-     * @return Search
      */
     public function __construct(
         Template\Context $context,

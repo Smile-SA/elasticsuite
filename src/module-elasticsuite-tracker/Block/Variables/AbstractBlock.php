@@ -51,8 +51,6 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
      * @param \Smile\ElasticSuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
      * @param \Magento\Framework\Registry                      $registry      The Magento registry
      * @param array                                            $data          additional datas
-     *
-     * @return AbstractBlock
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,

@@ -39,8 +39,6 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      * @param \Magento\Framework\Registry                    $registry       Magento Core Registry
      * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig The page type configuration
      * @param array                                          $data           The block data
-     *
-     * @return Base
      */
     public function __construct(
         Template\Context $context,

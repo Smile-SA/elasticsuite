@@ -40,8 +40,6 @@ class Order extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBloc
      * @param \Magento\Framework\Registry            $registry        Magento Core Registry
      * @param \Magento\Checkout\Model\Session        $checkoutSession The checkout session
      * @param array                                  $data            The block data
-     *
-     * @return Order
      */
     public function __construct(
         Template\Context $context,

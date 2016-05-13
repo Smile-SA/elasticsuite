@@ -51,8 +51,6 @@ class Config extends \Magento\Framework\View\Element\Template
      * @param \Magento\Framework\Json\Helper\Data                $jsonHelper    The Magento's JSON Helper
      * @param \Smile\ElasticSuiteTracker\Helper\Data             $trackerHelper The Smile Tracker helper
      * @param array                                              $data          additional datas
-     *
-     * @return Config
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,

@@ -40,8 +40,6 @@ class Cms extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      * @param \Magento\Framework\Registry            $registry      Magento Core Registry
      * @param \Magento\Cms\Model\Page                $page          The CMS Page
      * @param array                                  $data          The block data
-     *
-     * @return Cms
      */
     public function __construct(
         Template\Context $context,

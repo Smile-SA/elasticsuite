@@ -40,8 +40,6 @@ class Catalog extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBl
      * @param \Magento\Framework\Registry            $registry      Magento Core Registry
      * @param \Magento\Catalog\Model\Layer\Resolver  $layerResolver The Magento layer resolver
      * @param array                                  $data          The block data
-     *
-     * @return Catalog
      */
     public function __construct(
         Template\Context $context,
@@ -151,13 +149,9 @@ class Catalog extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBl
     {
         $variables = [];
 
-        try {
-            $productListBlock = $this->getLayout()->getBlock('product_list_toolbar');
-        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
-            $productListBlock = false;
-        }
+        $productListBlock = $this->getProductListBlock();
 
-        if ($productListBlock && $productListBlock->getCollection()) {
+        if ($productListBlock !== null && $productListBlock->getCollection()) {
             $variables['product_list.page_count'] = $productListBlock->getLastPageNum();
             $variables['product_list.product_count'] = $productListBlock->getTotalNum();
             $variables['product_list.current_page'] = $productListBlock->getCurrentPage();
@@ -167,5 +161,17 @@ class Catalog extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBl
         }
 
         return $variables;
+    }
+
+    /**
+     * Retrieve the product list block from the layout.
+     *
+     * @return \Magento\Framework\View\Element\BlockInterface
+     */
+    private function getProductListBlock()
+    {
+        $productListBlock = $this->getLayout()->getBlock('product_list_toolbar');
+
+        return is_object($productListBlock) ? $productListBlock : null;
     }
 }
