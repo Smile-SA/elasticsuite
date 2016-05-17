@@ -12,10 +12,10 @@
  */
 namespace Smile\ElasticSuiteThesaurus\Setup;
 
-use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
 
 /**
  * Install Schema for Thesaurus Module
@@ -24,7 +24,7 @@ use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
  * @package  Smile_ElasticSuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class InstallSchema implements InstallSchemaInterface
+class UpgradeSchema implements UpgradeSchemaInterface
 {
     /**
      * Installs DB schema for a module
@@ -37,7 +37,7 @@ class InstallSchema implements InstallSchemaInterface
      * @return void
      */
     // @codingStandardsIgnoreStart Conform to interface
-    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         // @codingStandardsIgnoreEnd
         $setup->startSetup();
