@@ -12,6 +12,7 @@
  * @category  Smile
  * @package   Smile_ElasticSuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -20,8 +21,13 @@
     <type name="\Smile\ElasticSuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <plugin name="queryRewriteSynonyms" type="\Smile\ElasticSuiteThesaurus\Plugin\QueryRewrite" />
     </type>
-    
+
     <type name="\Magento\Search\Model\Query">
         <plugin name="synonymQueryPlugin" type="\Smile\ElasticSuiteThesaurus\Plugin\Query" />
     </type>
+
+    <!-- Dependency Injection for Thesaurus Models -->
+    <preference for="Smile\ElasticSuiteThesaurus\Api\ThesaurusRepositoryInterface" type="Smile\ElasticSuiteThesaurus\Model\ThesaurusRepository" />
+    <preference for="Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface" type="Smile\ElasticSuiteThesaurus\Model\Thesaurus" />
+    <preference for="Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 </config>

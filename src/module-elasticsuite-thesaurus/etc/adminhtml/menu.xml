@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile ElasticSuite Thesaurus menu configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteThesaurus
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+            id="Smile_ElasticSuiteThesaurus::manage"
+            title="Thesaurus"
+            module="Smile_ElasticSuiteThesaurus"
+            sortOrder="10"
+            parent="Smile_ElasticSuiteCore::manage_search"
+            action="smile_elasticsuite_thesaurus/thesaurus/index"
+            resource="Smile_ElasticSuiteThesaurus::manage"/>
+    </menu>
+</config>

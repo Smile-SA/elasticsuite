@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Thesaurus edition layout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteThesaurus
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit" name="adminhtml.elasticsuite.thesaurus.create"/>
+        </referenceContainer>
+    </body>
+</page>
