@@ -36,9 +36,11 @@
     "replace": {
         "smile-sa/module-elasticsuite-core": "self.version",
         "smile-sa/module-elasticsuite-catalog": "self.version",
+        "smile-sa/module-elasticsuite-catalog-rule": "self.version",
         "smile-sa/module-elasticsuite-swatches": "self.version",
         "smile-sa/module-elasticsuite-thesaurus": "self.version",
-        "smile-sa/module-elasticsuite-tracker": "self.version"
+        "smile-sa/module-elasticsuite-tracker": "self.version",
+        "smile-sa/module-elasticsuite-virtual-category": "self.version"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
@@ -53,16 +55,20 @@
         "files" : [
             "src/module-elasticsuite-core/registration.php",
             "src/module-elasticsuite-catalog/registration.php",
+            "src/module-elasticsuite-catalog-rule/registration.php",
             "src/module-elasticsuite-swatches/registration.php",
             "src/module-elasticsuite-thesaurus/registration.php",
-            "src/module-elasticsuite-tracker/registration.php"
+            "src/module-elasticsuite-tracker/registration.php",
+            "src/module-elasticsuite-virtual-category/registration.php"
         ],
         "psr-4" : {
             "Smile\\ElasticSuiteCore\\" : "src/module-elasticsuite-core",
             "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog",
+            "Smile\\ElasticSuiteCatalogRule\\" : "src/module-elasticsuite-catalog-rule",
             "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches",
             "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus",
-            "Smile\\ElasticSuiteTracker\\" : "src/module-elasticsuite-tracker"
+            "Smile\\ElasticSuiteTracker\\" : "src/module-elasticsuite-tracker",
+            "Smile\\ElasticSuiteVirtualCategory\\" : "src/module-elasticsuite-virtual-category"
         }
     },
     "extra": {
