@@ -18,7 +18,7 @@
     <system>
         <section id="thesaurus" translate="label" type="text" sortOrder="100" showInDefault="1" showInContainer="1" showInStore="1">
             <tab>general</tab>
-            <label>Synonyms configuration</label>
+            <label>Thesaurus configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
 
             <group id="synonyms" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
