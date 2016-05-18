@@ -87,7 +87,15 @@ class QueryRewrite
         if (!isset($this->rewritesCache[$rewriteCacheKey])) {
             $query  = $proceed($containerConfig, $queryText, $spellingType, $boost);
 
-            $rewrites = $this->index->getQueryRewrites($containerConfig, $queryText);
+            $rewrites = [];
+
+            if (!is_array($queryText)) {
+                $queryText = [$queryText];
+            }
+
+            foreach ($queryText as $currentQueryText) {
+                $rewrites = array_merge($rewrites, $this->index->getQueryRewrites($containerConfig, $currentQueryText));
+            }
 
             if (!empty($rewrites)) {
                 $synonymQueries = [$query];
