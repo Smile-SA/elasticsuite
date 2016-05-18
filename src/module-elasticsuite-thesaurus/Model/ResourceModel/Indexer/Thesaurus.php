@@ -16,7 +16,6 @@ namespace Smile\ElasticSuiteThesaurus\Model\ResourceModel\Indexer;
 
 use Smile\ElasticSuiteThesaurus\Model\Index as ThesaurusIndex;
 use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
-use Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus;
 
 /**
  * Thesaurus indexer resource model.

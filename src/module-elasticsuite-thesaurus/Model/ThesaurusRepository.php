@@ -137,7 +137,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      *
-     @ return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
+     * @return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
      */
     public function delete(\Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {

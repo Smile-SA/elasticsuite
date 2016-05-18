@@ -114,12 +114,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function setTermFilter($term)
     {
         $term = preg_replace("/[\s-]/", "%", $term);
-
-        $this->initSelectWithTerms();
-
-        $this->getSelect()
-            ->where("expansion_table.term LIKE '%{$term}%'", $term)
-            ->orWhere("reference_table.term LIKE '%{$term}%'", $term);
+        $this->addTermFilterToSelect($term);
 
         return $this;
     }
@@ -204,7 +199,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         //@codingStandardsIgnoreEnd
         $this->loadStores();
-        $this->injectTermsData();
+        $this->loadTermsData();
 
         return parent::_afterLoad();
     }
@@ -212,9 +207,11 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     /**
      * Inject terms data on collection
      *
+     * @param string $term Term filter text.
+     *
      * @return $this
      */
-    private function initSelectWithTerms()
+    private function addTermFilterToSelect($term)
     {
         $select = $this->getSelect();
 
@@ -237,22 +234,14 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             );
 
             $select->group("main_table." . ThesaurusInterface::THESAURUS_ID);
+
+            $select->where("expansion_table.term LIKE '%{$term}%'", $term)
+                ->orWhere("reference_table.term LIKE '%{$term}%'", $term);
+
             $this->termsLinked = true;
         }
 
         return $select;
-    }
-
-    /**
-     * Perform operations after collection load
-     *
-     * @return void
-     */
-    private function injectTermsData()
-    {
-        $select    = $this->initSelectWithTerms();
-        $termsData = $this->getConnection()->fetchAssoc($select);
-        $this->appendTermsSummary($termsData);
     }
 
     /**
@@ -296,30 +285,60 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
-     * Append terms summary to items
+     * Perform operations after collection load
      *
-     * @param array $termsData All terms data for items
+     * @return void
      */
-    private function appendTermsSummary($termsData)
+    private function loadTermsData()
     {
-        if (count($termsData)) {
-            foreach ($this as $item) {
-                $entityId = $item->getId();
-                if (!isset($termsData[$entityId])) {
-                    continue;
-                }
-                $concatenatedTerms = '';
-                if (trim($termsData[$entityId]['reference_terms']) != '') {
-                    $termsLabel = $termsData[$entityId]['reference_terms'];
-                    $concatenatedTerms .= "[" . $termsLabel . "] => ";
-                }
-                if ($termsData[$entityId]['expansion_terms'] !== '') {
-                    $termsLabel = $termsData[$entityId]['expansion_terms'];
-                    $concatenatedTerms .= $termsLabel;
-                }
+        $select = $this->getConnection()->select();
 
-                $item->setData('terms_summary', $concatenatedTerms);
+        $itemIds = array_keys($this->_items);
+
+        $select->from(['exp' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)], [])
+            ->joinLeft(
+                ['ref' => $this->getTable(ThesaurusInterface::REFERENCE_TABLE_NAME)],
+                "exp.thesaurus_id = ref.thesaurus_id AND exp.term_id = ref.term_id",
+                []
+            )
+            ->where('exp.thesaurus_id IN (?)', $itemIds)
+            ->group(["exp.thesaurus_id", "exp.term_id"])
+            ->columns(
+                [
+                    'thesaurus_id'    => 'exp.thesaurus_id',
+                    'expansions_terms' => new \Zend_Db_Expr("GROUP_CONCAT(exp.term)"),
+                    'expanded_term'    => 'ref.term',
+                ]
+            );
+
+        $this->addTermData($this->getConnection()->fetchAll($select));
+    }
+
+    /**
+     * Process terms of each thesaurus and display a summary for each thesaurus.
+     *
+     * @param array $termData Raw terms data loaded from the DB.
+     *
+     * @return $this
+     */
+    private function addTermData($termData)
+    {
+        $labelsByThesaurusId = [];
+
+        foreach ($termData as $currentTerm) {
+            $label = $currentTerm['expansions_terms'];
+
+            if (isset($currentTerm['expanded_term']) && $currentTerm['expanded_term']) {
+                $label = sprintf("%s => %s", $currentTerm['expanded_term'], $label);
             }
+
+            $labelsByThesaurusId[$currentTerm['thesaurus_id']][] = $label;
         }
+
+        foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
+            $this->_items[$thesaurusId]->setData('terms_summary', implode("<br/>", $labels));
+        }
+
+        return $this;
     }
 }

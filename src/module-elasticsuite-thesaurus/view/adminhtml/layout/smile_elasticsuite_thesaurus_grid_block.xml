@@ -74,6 +74,7 @@
                     </block>
                     <block class="Magento\Backend\Block\Widget\Grid\Column" as="thesaurus_terms_summary">
                         <arguments>
+                            <argument name="type" xsi:type="string">text</argument>
                             <argument name="header" xsi:type="string" translate="true">Terms</argument>
                             <argument name="index" xsi:type="string">terms_summary</argument>
                         </arguments>
