@@ -5,7 +5,7 @@ php:
 - '7.0'
 
 install:
-    - mkdir -p app/etc
+    - mkdir -p app/etc var
     - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
     - composer install --prefer-dist
 
