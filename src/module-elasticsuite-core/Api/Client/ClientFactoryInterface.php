@@ -26,7 +26,7 @@ interface ClientFactoryInterface
     /**
      * Create an ES client.
      *
-     * @return Elasticsearch\Client
+     * @return \Elasticsearch\Client
      */
     public function createClient();
 }

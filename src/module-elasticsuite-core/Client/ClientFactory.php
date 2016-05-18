@@ -40,7 +40,7 @@ class ClientFactory implements ClientFactoryInterface
     private $logger;
 
     /**
-     * @var Elasticsearch\Client
+     * @var \Elasticsearch\Client
      */
     private $client;
 
