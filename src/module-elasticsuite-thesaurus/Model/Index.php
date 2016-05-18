@@ -154,7 +154,7 @@ class Index
      * @param string $queryText          Original query text
      * @param array  $synonymByPositions Synonyms array by positions.
      * @param int    $substitutions      Number of substitutions in the current query.
-     * @param number $offset             Offset of previous substitutions.
+     * @param int    $offset             Offset of previous substitutions.
      *
      * @return array
      */

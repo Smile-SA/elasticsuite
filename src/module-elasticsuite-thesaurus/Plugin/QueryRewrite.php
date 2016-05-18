@@ -67,7 +67,7 @@ class QueryRewrite
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Current query text.
      * @param string                          $spellingType    Spelling type of the query.
-     * @param number                          $boost           Original query boost.
+     * @param float                           $boost           Original query boost.
      *
      * @return QueryInterface
      */

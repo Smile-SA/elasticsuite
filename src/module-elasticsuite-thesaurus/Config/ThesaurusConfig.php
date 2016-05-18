@@ -58,7 +58,7 @@ class ThesaurusConfig
     /**
      * Synonyms search weight divider.
      *
-     * @return number
+     * @return int
      */
     public function getSynonymWeightDivider()
     {
@@ -78,7 +78,7 @@ class ThesaurusConfig
     /**
      * Concepts search weight divider.
      *
-     * @return number
+     * @return int
      */
     public function getExpansionWeightDivider()
     {

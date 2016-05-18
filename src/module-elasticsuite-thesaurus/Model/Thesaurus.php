@@ -206,6 +206,8 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     public function setStoreIds($storeIds)
     {
         $this->storeIds = $storeIds;
+
+        return $this;
     }
 
     /**

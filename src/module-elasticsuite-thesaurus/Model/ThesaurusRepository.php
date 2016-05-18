@@ -72,8 +72,6 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      * @param ThesaurusSearchResultsInterfaceFactory $searchResultsFactory  Search Result Factory
      * @param FilterBuilder                          $filterBuilder         Filter Builder
      * @param SearchCriteriaBuilder                  $searchCriteriaBuilder Search Criteria Builder
-     *
-     * @return ThesaurusRepository
      */
     public function __construct(
         ThesaurusFactory $thesaurusFactory,
@@ -139,7 +137,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      *
-     * @return void
+     @ return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
      */
     public function delete(\Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {
@@ -150,6 +148,8 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
         if (isset($this->thesaurusRepositoryById[$thesaurusId])) {
             unset($this->thesaurusRepositoryById[$thesaurusId]);
         }
+
+        return $thesaurus;
     }
 
     /**
