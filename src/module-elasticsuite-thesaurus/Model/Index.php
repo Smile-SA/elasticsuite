@@ -170,7 +170,7 @@ class Index
                 $startOffset = $synonym['start_offset'] + $offset;
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
                 $rewrittenQueryText = substr_replace($queryText, $synonym['token'], $startOffset, $length);
-                $newOffset = strlen($rewrittenQueryText) - strlen($queryText);
+                $newOffset = strlen($rewrittenQueryText) - strlen($queryText) + $offset;
                 $combinations[$rewrittenQueryText] = $substitutions + 1;
 
                 if (!empty($remainingSynonyms)) {
