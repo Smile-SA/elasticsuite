@@ -26,17 +26,17 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 class Field implements FieldInterface
 {
     /**
-     * @var boolean
+     * @var string
      */
     private $name;
 
     /**
-     * @var boolean
+     * @var string
      */
     private $type;
 
     /**
-     * @var boolean
+     * @var string
      */
     private $nestedPath;
 

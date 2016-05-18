@@ -70,7 +70,7 @@ class Boolean implements QueryInterface
         array $should = [],
         array $mustNot = [],
         $minimumShouldMatch = 1,
-        array $name = null,
+        $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->must    = $must;

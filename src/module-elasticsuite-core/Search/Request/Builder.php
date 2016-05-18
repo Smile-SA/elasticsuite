@@ -171,7 +171,7 @@ class Builder
      * @param ContainerConfigurationInterface $containerConfig Search request configuration.
      * @param string                          $queryText       Query text.
      *
-     * @return string
+     * @return int
      */
     private function getSpellingType(ContainerConfigurationInterface $containerConfig, $queryText)
     {

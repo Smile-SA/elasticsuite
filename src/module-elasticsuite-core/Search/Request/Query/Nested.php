@@ -125,7 +125,7 @@ class Nested implements QueryInterface
     /**
      * Nested query.
      *
-     * @return string
+     * @return QueryInterface
      */
     public function getQuery()
     {

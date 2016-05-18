@@ -80,28 +80,6 @@ class RelevanceConfig extends \Magento\Config\Model\Config
     }
 
     /**
-     * @return boolean
-     */
-    public function isFullConfig()
-    {
-        return $this->fullConfig;
-    }
-
-    /**
-     * Set flag to load full config or not
-     *
-     * @param boolean $fullConfig If we should grab full config or not
-     *
-     * @return Config
-     */
-    public function setFullConfig($fullConfig)
-    {
-        $this->fullConfig = $fullConfig;
-
-        return $this;
-    }
-
-    /**
      * Save config section
      * Require set: section, website, store and groups
      *
@@ -118,7 +96,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             return $this;
         }
 
-        $oldConfig = $this->getConfig();
+        $oldConfig = $this->_getConfig(true);
 
         $deleteTransaction = $this->_transactionFactory->create();
         $saveTransaction = $this->_transactionFactory->create();
@@ -163,30 +141,10 @@ class RelevanceConfig extends \Magento\Config\Model\Config
     {
         if ($this->_configData === null) {
             $this->initScope();
-            $this->setFullConfig(false);
-            $this->_configData = $this->getConfig();
-            $this->setFullConfig(true);
+            $this->_configData = $this->_getConfig(false);
         }
 
         return $this->_configData;
-    }
-
-    /**
-     * Return formatted config data for current section
-     *
-     * @return array
-     */
-    // @codingStandardsIgnoreStart Method is inherited
-    protected function getConfig()
-    {
-        // @codingStandardsIgnoreEnd
-
-        return $this->_configLoader->getConfigByPath(
-            $this->getSection(),
-            $this->getScope(),
-            $this->getScopeCode(),
-            $this->isFullConfig()
-        );
     }
 
     /**

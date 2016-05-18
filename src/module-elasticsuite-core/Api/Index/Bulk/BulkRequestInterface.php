@@ -48,7 +48,7 @@ interface BulkRequestInterface
      * @param string|integer $docId Document id.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface Self reference.
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function addDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
 
@@ -61,7 +61,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface Self reference.
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function addDocuments(IndexInterface $index, TypeInterface $type, array $data);
 
@@ -72,15 +72,18 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param string|integer $docId Document id.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface Self reference.
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function deleteDocument(IndexInterface $index, TypeInterface $type, $docId);
 
     /**
+     * Delete multiple documents from the index.
      *
      * @param IndexInterface $index  Index the document has to be delete from.
      * @param TypeInterface  $type   Type of the documents to be delete.
      * @param array          $docIds Ids of the deleted documents.
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function deleteDocuments(IndexInterface $index, TypeInterface $type, array $docIds);
 
@@ -95,7 +98,7 @@ interface BulkRequestInterface
      * @param string|integer $docId Document id.
      * @param array          $data  Updated data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface Self reference.
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
     public function updateDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
 
@@ -108,7 +111,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\BulkInterface Self reference.
+     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
     public function updateDocuments(IndexInterface $index, TypeInterface $type, array $data);
 }

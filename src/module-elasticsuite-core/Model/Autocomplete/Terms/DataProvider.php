@@ -54,7 +54,7 @@ class DataProvider implements DataProviderInterface
 
     /**
      *
-     * @var \Magento\Search\Model\Autocomplete\Item[]
+     * @var \Magento\Search\Model\Autocomplete\Item[]|null
      */
     private $items;
 

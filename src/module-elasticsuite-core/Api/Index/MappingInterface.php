@@ -48,7 +48,7 @@ interface MappingInterface
      *
      * @param string $name Field name
      *
-     * @return FieldInterface
+     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getField($name);
 

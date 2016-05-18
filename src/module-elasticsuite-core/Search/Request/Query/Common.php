@@ -28,7 +28,7 @@ class Common extends Match
     /**
      * @var string
      */
-    const DEFAULT_CUTOFF_FREQUENCY = "0.1";
+    const DEFAULT_CUTOFF_FREQUENCY = 0.1;
 
     /**
      * @var float

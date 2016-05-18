@@ -123,7 +123,7 @@ class Factory
      *
      * @param string $scopeCode Container scope code.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface
+     * @return array
      */
     protected function loadConfiguration($scopeCode)
     {
@@ -142,8 +142,8 @@ class Factory
     /**
      * Read value into the config by path and scope.
      *
-     * @param unknown $path      Config path.
-     * @param unknown $scopeCode Scope coode.
+     * @param string $path      Config path.
+     * @param string $scopeCode Scope coode.
      *
      * @return mixed
      */
@@ -270,7 +270,7 @@ class Factory
      *
      * @param string $scopeCode The scope code.
      *
-     * @return string
+     * @return float
      */
     private function getTieBreaker($scopeCode)
     {
@@ -284,7 +284,7 @@ class Factory
      *
      * @param string $scopeCode The scope code.
      *
-     * @return bool|int
+     * @return float
      */
     private function getCutoffFrequencyConfiguration($scopeCode)
     {

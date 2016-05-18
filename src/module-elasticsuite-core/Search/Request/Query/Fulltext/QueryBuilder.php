@@ -51,7 +51,7 @@ class QueryBuilder
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
-     * @param number                          $boost           Boost of the created query.
+     * @param float                           $boost           Boost of the created query.
      *
      * @return QueryInterface
      */
@@ -143,7 +143,7 @@ class QueryBuilder
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
-     * @param number                          $boost           Boost of the created query.
+     * @param float                           $boost           Boost of the created query.
      *
      * @return QueryInterface
      */
@@ -178,7 +178,7 @@ class QueryBuilder
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
-     * @param number                          $boost           Boost of the created query.
+     * @param float                           $boost           Boost of the created query.
      *
      * @return QueryInterface
      */

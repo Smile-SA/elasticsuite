@@ -53,12 +53,12 @@ class IndexSettings implements IndexSettingsInterface
     protected $helper;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Analysis\Config
+     * @var \Smile\ElasticSuiteCore\Index\Analysis\Config
      */
     protected $analysisConfig;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Indices\Config
+     * @var \Smile\ElasticSuiteCore\Index\Indices\Config
      */
     protected $indicesConfig;
 

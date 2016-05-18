@@ -63,7 +63,7 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
      * @param QueryInterface $query  Bool query.
      * @param string         $clause Current clause (must, should, must_not).
      *
-     * @return string
+     * @return QueryInterface[]
      */
     private function getQueryClause($query, $clause)
     {

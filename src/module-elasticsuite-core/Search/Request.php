@@ -45,7 +45,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $filter;
 
     /**
-     * @var string
+     * @var int
      */
     private $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 

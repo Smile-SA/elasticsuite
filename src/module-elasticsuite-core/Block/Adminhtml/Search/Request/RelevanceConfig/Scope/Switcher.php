@@ -129,7 +129,7 @@ class Switcher extends Template
     /**
      * Retrieve container code
      *
-     * @return int|null
+     * @return string|null
      */
     public function getContainerCode()
     {

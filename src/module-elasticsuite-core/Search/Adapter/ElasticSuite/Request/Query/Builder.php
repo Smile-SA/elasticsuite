@@ -67,7 +67,7 @@ class Builder implements BuilderInterface
         $searchQuery = false;
         $builder = $this->getBuilder($query);
 
-        if ($builder) {
+        if ($builder !== null) {
             $searchQuery = $builder->buildQuery($query);
         }
 
@@ -79,7 +79,7 @@ class Builder implements BuilderInterface
      *
      * @param QueryInterface $query Query to be built.
      *
-     * @return BuilderInterface
+     * @return BuilderInterface|null
      */
     private function getBuilder($query)
     {

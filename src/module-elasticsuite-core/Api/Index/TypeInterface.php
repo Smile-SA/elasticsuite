@@ -49,7 +49,7 @@ interface TypeInterface
      *
      * @param string $name Datasource name.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface
      */
     public function getDatasource($name);
 }
