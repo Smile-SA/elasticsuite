@@ -16,6 +16,10 @@ namespace Smile\ElasticSuiteThesaurus\Model;
 
 use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticSuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticSuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus index.
@@ -29,7 +33,7 @@ class Index
     /**
      * @var string
      */
-    const INDEX_IDENTIER = 'synonyms';
+    const INDEX_IDENTIER = 'thesaurus';
 
     /**
      * @var string
@@ -47,15 +51,72 @@ class Index
     private $indexSettingsHelper;
 
     /**
+     * @var ThesaurusConfigFactory
+     */
+    private $thesaurusConfigFactory;
+
+    /**
      * Constructor.
      *
-     * @param ClientFactoryInterface $clientFactory       ES Client Factory.
-     * @param IndexSettingsHelper    $indexSettingsHelper Index Settings Helper.
+     * @param ClientFactoryInterface $clientFactory          ES Client Factory.
+     * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
+     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      */
-    public function __construct(ClientFactoryInterface $clientFactory, IndexSettingsHelper $indexSettingsHelper)
+    public function __construct(
+        ClientFactoryInterface $clientFactory,
+        IndexSettingsHelper $indexSettingsHelper,
+        ThesaurusConfigFactory $thesaurusConfigFactory
+    ) {
+        $this->client                 = $clientFactory->createClient();
+        $this->indexSettingsHelper    = $indexSettingsHelper;
+        $this->thesaurusConfigFactory = $thesaurusConfigFactory;
+    }
+
+    /**
+     * Provides weigthed rewrites for the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container config.
+     * @param string                          $queryText       Fulltext query.
+     *
+     * @return array
+     */
+    public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
     {
-        $this->client              = $clientFactory->createClient();
-        $this->indexSettingsHelper = $indexSettingsHelper;
+        $config   = $this->getConfig($containerConfig);
+        $storeId  = $containerConfig->getStoreId();
+        $rewrites = [];
+
+        if ($config->isSynonymSearchEnabled()) {
+            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, ThesaurusInterface::TYPE_SYNONYM);
+            $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider());
+        }
+
+        if ($config->isExpansionSearchEnabled()) {
+            $synonymRewrites = array_merge([$queryText => 1], $rewrites);
+
+            foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
+                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, ThesaurusInterface::TYPE_EXPANSION);
+                $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
+                $rewrites = array_merge($rewrites, $expansionRewrites);
+            }
+        }
+
+        return $rewrites;
+    }
+
+    /**
+     * Load the thesaurus config for the current container.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container config.
+     *
+     * @return ThesaurusConfig
+     */
+    private function getConfig(ContainerConfigurationInterface $containerConfig)
+    {
+        $storeId       = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
+
+        return $this->thesaurusConfigFactory->create($storeId, $containerName);
     }
 
     /**
@@ -63,15 +124,16 @@ class Index
      *
      * @param integer $storeId   Store id.
      * @param string  $queryText Text query.
+     * @param string  $type      Substitution type (synonym or expansion).
      *
-     * @return string[]
+     * @return array
      */
-    public function getSynonymRewrites($storeId, $queryText)
+    private function getSynonymRewrites($storeId, $queryText, $type)
     {
         $indexName = $this->indexSettingsHelper->getIndexAliasFromIdentifier(self::INDEX_IDENTIER, $storeId);
 
         $analysis = $this->client->indices()->analyze(
-            ['index' => $indexName, 'text' => $queryText, 'analyzer' => 'synonym']
+            ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
         );
 
         $synonymByPositions = [];
@@ -89,13 +151,14 @@ class Index
     /**
      * Combine analysis result to provides all possible synonyms substitution comination.
      *
-     * @param string  $queryText          Original query text
-     * @param unknown $synonymByPositions Synonyms array by positions.
-     * @param number  $offset             Offset of previous substitutions.
+     * @param string $queryText          Original query text
+     * @param array  $synonymByPositions Synonyms array by positions.
+     * @param int    $substitutions      Number of substitutions in the current query.
+     * @param number $offset             Offset of previous substitutions.
      *
-     * @return string[]
+     * @return array
      */
-    private function combineSynonyms($queryText, $synonymByPositions, $offset = 0)
+    private function combineSynonyms($queryText, $synonymByPositions, $substitutions = 0, $offset = 0)
     {
         $combinations = [];
 
@@ -108,12 +171,12 @@ class Index
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
                 $rewrittenQueryText = substr_replace($queryText, $synonym['token'], $startOffset, $length);
                 $newOffset = strlen($rewrittenQueryText) - strlen($queryText);
-                $combinations[] = $rewrittenQueryText;
+                $combinations[$rewrittenQueryText] = $substitutions + 1;
 
                 if (!empty($remainingSynonyms)) {
                     $combinations = array_merge(
                         $combinations,
-                        $this->combineSynonyms($rewrittenQueryText, $remainingSynonyms, $newOffset)
+                        $this->combineSynonyms($rewrittenQueryText, $remainingSynonyms, $substitutions + 1, $newOffset)
                     );
                 }
             }
@@ -121,11 +184,29 @@ class Index
             if (!empty($remainingSynonyms)) {
                 $combinations = array_merge(
                     $combinations,
-                    $this->combineSynonyms($queryText, $remainingSynonyms, $offset)
+                    $this->combineSynonyms($queryText, $remainingSynonyms, $substitutions, $offset)
                 );
             }
         }
 
         return $combinations;
+    }
+
+    /**
+     * Convert number of substitution into search queries boost.
+     *
+     * @param array $queryRewrites Array of query rewrites.
+     * @param int   $divider       Score divider.
+     * @param int   $baseWeight    Original score.
+     *
+     * @return array
+     */
+    private function getWeightedRewrites($queryRewrites, $divider, $baseWeight = 1)
+    {
+        $mapper = function ($substitutions) use ($baseWeight, $divider) {
+            return $baseWeight / ($substitutions * $divider);
+        };
+
+        return array_map($mapper, $queryRewrites);
     }
 }

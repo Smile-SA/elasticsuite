@@ -113,6 +113,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function setTermFilter($term)
     {
+        $term = preg_replace("/[\s-]/", "%", $term);
+
         $this->initSelectWithTerms();
 
         $this->getSelect()
@@ -131,15 +133,22 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      */
     public function addStoreFilter($storeIds)
     {
+        $defaultStoreId = Store::DEFAULT_STORE_ID;
+
         if (!is_array($storeIds)) {
             $storeIds = [$storeIds];
         }
+        if (!in_array($defaultStoreId, $storeIds)) {
+            $storeIds[] = $defaultStoreId;
+        }
 
-        $this->getSelect()->join(
-            ['store_table' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)],
-            'main_table.' . ThesaurusInterface::THESAURUS_ID . ' = store_table.' . ThesaurusInterface::THESAURUS_ID,
-            []
-        )->where('store_table.store_id IN (?)', $storeIds)
+        $this->getSelect()
+            ->join(
+                ['store_table' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)],
+                'main_table.' . ThesaurusInterface::THESAURUS_ID . ' = store_table.' . ThesaurusInterface::THESAURUS_ID,
+                []
+            )
+            ->where('store_table.store_id IN (?)', $storeIds)
             ->group('main_table.' . ThesaurusInterface::THESAURUS_ID);
 
         return $this;
@@ -194,7 +203,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _afterLoad()
     {
         //@codingStandardsIgnoreEnd
-        $this->injectStoresData(ThesaurusInterface::STORE_TABLE_NAME, ThesaurusInterface::THESAURUS_ID);
+        $this->loadStores();
         $this->injectTermsData();
 
         return parent::_afterLoad();
@@ -249,27 +258,27 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     /**
      * Perform operations after collection load
      *
-     * @param string $tableName  Table name to fetch data from
-     * @param string $columnName Column name to fetch
      * @return void
      */
-    private function injectStoresData($tableName, $columnName)
+    private function loadStores()
     {
-        $items = $this->getColumnValues($columnName);
+        $itemIds = array_keys($this->_items);
 
-        if (count($items)) {
+        if (count($itemIds)) {
             $connection = $this->getConnection();
-            $select = $connection->select()->from(['thesaurus_entity_store' => $this->getTable($tableName)])
-                ->where('thesaurus_entity_store.' . $columnName . ' IN (?)', $items);
+            $select = $connection->select()
+                ->from(['thesaurus_entity_store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)])
+                ->where('thesaurus_entity_store.' . ThesaurusInterface::THESAURUS_ID . ' IN (?)', $itemIds);
+
             $result = $connection->fetchPairs($select);
 
             if ($result) {
                 foreach ($this as $item) {
-                    $entityId = $item->getData($columnName);
+                    $entityId = $item->getData(ThesaurusInterface::THESAURUS_ID);
                     if (!isset($result[$entityId])) {
                         continue;
                     }
-                    $storeId = $result[$item->getData($columnName)];
+                    $storeId = $result[$item->getData(ThesaurusInterface::THESAURUS_ID)];
                     $storeCode = $this->storeManager->getStore($storeId)->getCode();
 
                     if ($result[$entityId] == 0) {

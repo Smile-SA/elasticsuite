@@ -31,18 +31,18 @@ class ThesaurusConfig
     /**
      * @var array
      */
-    private $conceptsConfig;
+    private $expansionsConfig;
 
     /**
      * Constructor.
      *
-     * @param array $synonyms Synonyms configuration.
-     * @param array $concepts Concepts configuration.
+     * @param array $synonyms   Synonyms configuration.
+     * @param array $expansions Expansions configuration.
      */
-    public function __construct($synonyms = [], $concepts = [])
+    public function __construct($synonyms = [], $expansions = [])
     {
-        $this->synonymsConfig = $synonyms;
-        $this->conceptsConfig = $concepts;
+        $this->synonymsConfig   = $synonyms;
+        $this->expansionsConfig = $expansions;
     }
 
     /**
@@ -62,7 +62,7 @@ class ThesaurusConfig
      */
     public function getSynonymWeightDivider()
     {
-        return isset($this->synonymsConfig['weight_divider']) ? (int) $this->synonymsConfig['weight_divider'] : 1;
+        return isset($this->synonymsConfig['weight_divider']) ? (int) $this->synonymsConfig['weight_divider'] : -1;
     }
 
     /**
@@ -70,9 +70,9 @@ class ThesaurusConfig
      *
      * @return boolean
      */
-    public function isConceptSearchEnabled()
+    public function isExpansionSearchEnabled()
     {
-        return isset($this->conceptsConfig['enable']) ? (bool) $this->conceptsConfig['enable'] : false;
+        return isset($this->expansionsConfig['enable']) ? (bool) $this->expansionsConfig['enable'] : false;
     }
 
     /**
@@ -80,8 +80,8 @@ class ThesaurusConfig
      *
      * @return number
      */
-    public function getConceptWeightDivider()
+    public function getExpansionWeightDivider()
     {
-        return isset($this->conceptsConfig['weight_divider']) ? (int) $this->conceptsConfig['weight_divider'] : 1;
+        return isset($this->expansionsConfig['weight_divider']) ? (int) $this->expansionsConfig['weight_divider'] : -1;
     }
 }

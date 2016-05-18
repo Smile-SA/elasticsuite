@@ -63,17 +63,18 @@ class IndexHandler
     /**
      * Create the synonyms index for a store id.
      *
-     * @param integer $storeId  Store id.
-     * @param array   $synonyms Raw synonyms list.
+     * @param integer  $storeId    Store id.
+     * @param string[] $synonyms   Raw synonyms list.
+     * @param string[] $expansions Raw expansions list.
      *
      * @return void
      */
-    public function reindex($storeId, $synonyms)
+    public function reindex($storeId, $synonyms, $expansions)
     {
         $indexIdentifier = ThesaurusIndex::INDEX_IDENTIER;
         $indexName       = $this->indexSettingsHelper->createIndexNameFromIdentifier($indexIdentifier, $storeId);
         $indexAlias      = $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
-        $indexSettings   = ['settings' => $this->getIndexSettings($synonyms)];
+        $indexSettings   = ['settings' => $this->getIndexSettings($synonyms, $expansions)];
 
         $this->client->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
         $this->indexManager->proceedIndexInstall($indexName, $indexAlias);
@@ -82,11 +83,12 @@ class IndexHandler
     /**
      * Returns index settings.
      *
-     * @param array $synonyms Raw synonyms list.
+     * @param string[] $synonyms   Raw synonyms list.
+     * @param string[] $expansions Raw expansions list.
      *
      * @return array
      */
-    private function getIndexSettings($synonyms)
+    private function getIndexSettings($synonyms, $expansions)
     {
         $settings = [
             'number_of_shards'   => $this->indexSettingsHelper->getNumberOfShards(),
@@ -95,24 +97,55 @@ class IndexHandler
 
         $settings['analysis']['filter']['shingle'] = [
             'type' => 'shingle',
-            'output_unigrams' => true,
+            'output_false' => true,
             'token_separator' => ThesaurusIndex::WORD_DELIMITER,
         ];
 
-        $settings['analysis']['analyzer']['synonym'] = [
+        $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms);
+        $settings = $this->addAnalyzerSettings($settings, 'expansion', $expansions);
+
+        return $settings;
+    }
+
+    /**
+     * Append an analyzer for a thesaurus to existing settings.
+     *
+     * @param array    $settings Original settings.
+     * @param string   $type     Thesaurus type.
+     * @param string[] $values   Thesaurus entries in Lucene format.
+     *
+     * @return array
+     */
+    private function addAnalyzerSettings($settings, $type, $values)
+    {
+        $settings['analysis']['analyzer'][$type] = [
             'tokenizer' => 'standard',
             'filter' => ['lowercase', 'shingle'],
         ];
 
-        if (!empty($synonyms)) {
-            $settings['analysis']['filter']['synonym'] = [
-                'type' => 'synonym',
-                'synonyms' => $synonyms,
-            ];
-
-            $settings['analysis']['analyzer']['synonym']['filter'][] = 'synonym';
+        if (!empty($values)) {
+            $values = $this->prepareSynonymFilterData($values);
+            $settings['analysis']['filter'][$type] = ['type' => 'synonym', 'synonyms' => $values];
+            $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
 
         return $settings;
+    }
+
+    /**
+     * Prepare the thesaurus data to be saved.
+     * Spaces are replaced with "_" into multiwords expression (ex foo bar => foo_bar).
+     *
+     * @param string[] $rows Original thesaurus text rows.
+     *
+     * @return string[]
+     */
+    private function prepareSynonymFilterData($rows)
+    {
+        $rowMaper = function ($row) {
+            return preg_replace('/([\w])\s(?=[\w])/', '\1-', $row);
+        };
+
+        return array_map($rowMaper, $rows);
     }
 }

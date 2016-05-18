@@ -20,10 +20,10 @@
                 <enable>1</enable>
                 <weight_divider>10</weight_divider>
             </synonyms>
-            <concepts>
+            <expansions>
                 <enable>1</enable>
                 <weight_divider>10</weight_divider>
-            </concepts>
+            </expansions>
         </thesaurus>
     </default>
 </config>

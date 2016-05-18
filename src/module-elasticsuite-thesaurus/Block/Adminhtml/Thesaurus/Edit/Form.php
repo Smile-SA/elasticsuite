@@ -142,7 +142,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                     'name'     => 'stores[]',
                     'label'    => __('Store'),
                     'title'    => __('Store'),
-                    'values'   => $this->systemStore->getStoreValuesForForm(true, false),
+                    'values'   => $this->systemStore->getStoreValuesForForm(false, true),
                     'required' => true,
                 ]
             );

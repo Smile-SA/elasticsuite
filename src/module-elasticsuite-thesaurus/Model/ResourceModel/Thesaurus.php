@@ -34,16 +34,12 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $connection = $this->getConnection();
 
-        $select = $connection->select()->from(
-            $this->getTable(ThesaurusInterface::STORE_TABLE_NAME),
-            ThesaurusInterface::STORE_ID
-        )->where(
-            ThesaurusInterface::THESAURUS_ID . ' = :thesaurus_id'
-        );
+        $select = $connection->select();
 
-        $binds = [':thesaurus_id' => (int) $thesaurusId];
+        $select->from($this->getTable(ThesaurusInterface::STORE_TABLE_NAME), ThesaurusInterface::STORE_ID)
+            ->where(ThesaurusInterface::THESAURUS_ID . ' = ?', (int) $thesaurusId);
 
-        return $connection->fetchCol($select, $binds);
+        return $connection->fetchCol($select);
     }
 
     /**
@@ -58,22 +54,24 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $connection = $this->getConnection();
         $binds      = [':thesaurus_id' => (int) $object->getThesaurusId()];
 
-        $select = $connection->select()->from(
-            [ 'expansion_table' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)],
-            [
-                ThesaurusInterface::THESAURUS_ID => ThesaurusInterface::THESAURUS_ID,
-                'term_id' => 'term_id',
-                'values' => new \Zend_Db_Expr("GROUP_CONCAT( expansion_table.term SEPARATOR ',')"),
-            ]
-        )->where(
-            'expansion_table.' . ThesaurusInterface::THESAURUS_ID . ' = :thesaurus_id'
-        )->group('term_id');
+        $select = $connection->select();
+
+        $select->from(['expansion_table' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)])
+            ->where('expansion_table.' . ThesaurusInterface::THESAURUS_ID . ' = :thesaurus_id')
+            ->group('term_id')
+            ->columns(
+                [
+                    ThesaurusInterface::THESAURUS_ID => ThesaurusInterface::THESAURUS_ID,
+                    'term_id' => 'term_id',
+                    'values' => new \Zend_Db_Expr("GROUP_CONCAT( expansion_table.term SEPARATOR ',')"),
+                ]
+            );
 
         // Retrieve also reference term if needed.
         if ($object->getType() === ThesaurusInterface::TYPE_EXPANSION) {
             $select->joinLeft(
                 ['ref' => $this->getTable(ThesaurusInterface::REFERENCE_TABLE_NAME)],
-                new \Zend_Db_Expr("ref.term_id = expansion_table.term_id"),
+                new \Zend_Db_Expr("ref.term_id = expansion_table.term_id AND ref.thesaurus_id = expansion_table.thesaurus_id"),
                 ['reference_term' => 'term']
             );
         }
@@ -150,6 +148,10 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $storeIds = $object->getStoreIds();
 
         if (is_array($storeIds) && (count($storeIds) > 0)) {
+            if (in_array(0, $storeIds)) {
+                $storeIds = [0];
+            }
+
             $storeLinks = [];
             $deleteCondition = [ThesaurusInterface::THESAURUS_ID . " = ?" => $object->getThesaurusId()];
 
@@ -163,16 +165,8 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             $deleteCondition[ThesaurusInterface::STORE_ID . " NOT IN (?)"] = array_keys($storeIds);
 
-            $this->getConnection()->delete(
-                ThesaurusInterface::STORE_TABLE_NAME,
-                $deleteCondition
-            );
-
-            $this->getConnection()->insertOnDuplicate(
-                ThesaurusInterface::STORE_TABLE_NAME,
-                $storeLinks,
-                array_keys(current($storeLinks))
-            );
+            $this->getConnection()->delete(ThesaurusInterface::STORE_TABLE_NAME, $deleteCondition);
+            $this->getConnection()->insertOnDuplicate(ThesaurusInterface::STORE_TABLE_NAME, $storeLinks, array_keys(current($storeLinks)));
         }
     }
 

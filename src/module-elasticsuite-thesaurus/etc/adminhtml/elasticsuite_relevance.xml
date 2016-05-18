@@ -34,15 +34,11 @@
                     </depends>
                 </field>
             </group>
-            <!--
-            @todo : TO BE IMPLEMENTED :
-               - Index synonym as bag of words producing a global expanstions (eg. : footbal,foot)
-               - Index concepts as left side expansions (eg. sport => footbal,tennis)
                
-            <group id="concepts" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
-                <label>Concepts configuration</label>
+            <group id="expansions" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Query expansions configuration</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
-                    <label>Enable concepts search</label>
+                    <label>Enable search expansions</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="weight_divider" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
@@ -52,7 +48,7 @@
                     </depends>
                 </field>
             </group>
-             -->
+            
         </section>
     </system>
 </config>

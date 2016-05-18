@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteThesaurus\Model\Indexer;
 
-use Smile\ElasticSuiteThesaurus\Model\Resource\Indexer\Thesaurus as ResourceModel;
+use Smile\ElasticSuiteThesaurus\Model\ResourceModel\Indexer\Thesaurus as ResourceModel;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
@@ -70,8 +70,9 @@ class Thesaurus implements \Magento\Framework\Indexer\ActionInterface, \Magento\
     {
         $storeIds = array_keys($this->storeManager->getStores());
         foreach ($storeIds as $storeId) {
-            $synonyms = $this->resourceModel->getSynonymsByStoreId($storeId);
-            $this->indexHandler->reindex($storeId, $synonyms);
+            $synonyms   = $this->resourceModel->getSynonyms($storeId);
+            $expansions = $this->resourceModel->getExpansions($storeId);
+            $this->indexHandler->reindex($storeId, $synonyms, $expansions);
         }
     }
 
