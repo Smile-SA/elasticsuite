@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer;
 
-use Smile\ElasticSuiteCatalog\Model\Eav\Indexer\IndexerHandler as AbstractIndexer;
+use Smile\ElasticSuiteCore\Model\Indexer\AbstractIndexerHandler as AbstractIndexer;
 
 /**
  * Indexing operation handling for ElasticSearch engine.
