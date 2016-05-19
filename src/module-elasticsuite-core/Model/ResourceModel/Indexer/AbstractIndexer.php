@@ -88,5 +88,4 @@ class AbstractIndexer
     {
         return $this->storeManager->getStore($storeId);
     }
-
 }
