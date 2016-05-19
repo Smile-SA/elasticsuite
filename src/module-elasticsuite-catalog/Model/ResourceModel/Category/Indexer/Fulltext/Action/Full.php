@@ -13,7 +13,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Action;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
 /**
  * ElasticSearch category full indexer resource model.
@@ -22,7 +22,7 @@ use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
  * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Full extends AbstractIndexer
+class Full extends Indexer
 {
     /**
      * Load a bulk of category data.

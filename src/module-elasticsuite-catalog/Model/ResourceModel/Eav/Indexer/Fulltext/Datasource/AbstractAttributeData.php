@@ -13,7 +13,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 
 /**
@@ -23,7 +23,7 @@ use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeColl
  * @package  Smile_ElasticSuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class AbstractAttributeData extends AbstractIndexer
+class AbstractAttributeData extends Indexer
 {
     /**
      * @var array
