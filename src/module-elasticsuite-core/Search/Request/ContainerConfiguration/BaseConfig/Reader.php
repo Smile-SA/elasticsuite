@@ -43,7 +43,7 @@ class Reader extends Filesystem
      * @var array
      */
     protected $_idAttributes = [
-        //@todo
+        '/requests/request' => 'name'
     ];
     // @codingStandardsIgnoreEnd
 
