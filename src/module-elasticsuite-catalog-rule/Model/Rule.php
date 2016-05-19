@@ -91,4 +91,15 @@ class Rule extends \Magento\Rule\Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConditions()
+    {
+        $conditions = parent::getConditions();
+        $conditions->setElementName($this->elementName);
+
+        return $conditions;
+    }
 }

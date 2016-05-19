@@ -88,7 +88,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $value      = $this->getValueFromArray($arr);
 
         $this->setAggregator($aggregator)
-            ->setValue($value);
+             ->setValue($value);
 
         if (!empty($arr[$key]) && is_array($arr[$key])) {
             foreach ($arr[$key] as $conditionArr) {

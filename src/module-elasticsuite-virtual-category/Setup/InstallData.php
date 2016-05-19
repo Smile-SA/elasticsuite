@@ -62,13 +62,14 @@ class InstallData implements InstallDataInterface
     {
         $setup->startSetup();
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
+
         $eavSetup->addAttribute(
             Category::ENTITY,
             'is_virtual_category',
             [
                 'type'       => 'int',
                 'label'      => 'Is virtual category',
-                'input'      => 'hidden',
+                'input'      => null,
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
                 'required'   => false,
                 'default'    => 0,
@@ -81,11 +82,27 @@ class InstallData implements InstallDataInterface
 
         $eavSetup->addAttribute(
             Category::ENTITY,
+            'virtual_category_root',
+            [
+                'type'       => 'varchar',
+                'label'      => 'Virtual category root',
+                'input'      => null,
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'   => false,
+                'default'    => 0,
+                'visible'    => true,
+                'note'       => "Root display of the virtual category (usefull to display a facet category on virtual).",
+                'sort_order' => 200,
+                'group'      => 'General Information',
+            ]
+        );
+
+        $eavSetup->addAttribute(
+            Category::ENTITY,
             'virtual_rule',
             [
                 'type'       => 'text',
-                'label'      => 'Virtual Rule',
-                'input'      => 'hidden',
+                'label'      => 'Virtual rule',
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
                 'backend'    => 'Smile\ElasticSuiteVirtualCategory\Model\Category\Attribute\Backend\VirtualRule',
                 'required'   => false,
@@ -96,6 +113,11 @@ class InstallData implements InstallDataInterface
                 'group'      => 'General Information',
             ]
         );
+
+        // Force the frontend input to be null for these attributes since they are managed by code.
+        $eavSetup->updateAttribute(Category::ENTITY, 'is_virtual_category', 'frontend_input', null);
+        $eavSetup->updateAttribute(Category::ENTITY, 'virtual_category_root', 'frontend_input', null);
+        $eavSetup->updateAttribute(Category::ENTITY, 'virtual_rule', 'frontend_input', null);
 
         $setup->endSetup();
     }

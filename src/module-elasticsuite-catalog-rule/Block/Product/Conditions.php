@@ -129,13 +129,22 @@ class Conditions extends Template implements RendererInterface
     /**
      * Render HTML of the element using the rule engine.
      *
-     * @todo : Read the rule from the element.
-     *
      * @return string
      */
     public function getInputHtml()
     {
         $this->rule->setElementName($this->element->getName());
+
+        if ($this->element->getValue()) {
+            /* Hack : reload in a new instance to have element name set.
+             *        can not be done in afterLoad of the backend model
+             *        since we do not know yet the form structure
+             */
+            $conditions = $this->element->getValue()->getConditions()->asArray();
+            $this->rule->getConditions()->loadArray($conditions);
+            $this->element->setRule($this->rule);
+        }
+
         $this->input = $this->elementFactory->create('text');
         $this->input->setRule($this->rule)->setRenderer($this->conditions);
 

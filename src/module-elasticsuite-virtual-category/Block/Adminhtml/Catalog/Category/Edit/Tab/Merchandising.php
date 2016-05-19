@@ -97,6 +97,9 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
 
         $form->addValues($this->getCategory()->getData());
         $form->setFieldNameSuffix('general');
+
+        $this->addFieldRenderers($form);
+
         $this->setForm($form);
 
         return parent::_prepareLayout();
@@ -107,23 +110,17 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
      *
      * @param \Magento\Framework\Data\Form $form Current form.
      *
-     * @return \Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab\Merchandising
+     * @return $this
      */
     private function addCategoryMode(\Magento\Framework\Data\Form $form)
     {
-        $fieldset = $form->addFieldset('merchandising_category_mode_fieldset', ['legend' => __('Category mode')]);
-        $booleanSelectValues = $this->booleanSource->toOptionArray();
-        $fieldset->addField(
-            'is_virtual_category',
-            'select',
-            [
-                'name' => 'is_virtual_category',
-                'label' => __('Virtual category'),
-                'values' => $booleanSelectValues,
-            ]
-        );
+           $fieldset = $form->addFieldset('merchandising_category_mode_fieldset', ['legend' => __('Category mode')]);
 
-        return $this;
+           $booleanSelectValues = $this->booleanSource->toOptionArray();
+           $categoryModeFieldOptions = ['name' => 'is_virtual_category', 'label' => __('Virtual category'), 'values' => $booleanSelectValues];
+           $fieldset->addField('is_virtual_category', 'select', $categoryModeFieldOptions);
+
+           return $this;
     }
 
     /**
@@ -131,28 +128,49 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
      *
      * @param \Magento\Framework\Data\Form $form Current form.
      *
-     * @return \Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab\Merchandising
+     * @return $this
      */
     private function addVirtualCategorySettings(\Magento\Framework\Data\Form $form)
     {
         $fieldset = $form->addFieldset('merchandising_virtual_settings_fieldset', ['legend' => __('Virtual category settings')]);
 
-        /* Create the virtual category root selector. */
+        // This field is added to manage fieldset dependence to the "is_virtual_category" field.
+        // @see self::addDependenceManager for more additional information.
+        $fieldset->addField('virtual_rule_fieldset_visibility_switcher', 'hidden', []);
+
+        // Append the virtual rule conditions field.
+        $fieldset->addField('virtual_rule', 'text', ['name' => 'virtual_rule', 'label' => __('Virtual rule')]);
+
+        // Create the virtual category root selector field.
         $categoryChooserFieldOptions = ['name' => 'virtual_category_root', 'label' => __('Virtual category root')];
+        $fieldset->addField('virtual_category_root', 'label', $categoryChooserFieldOptions);
 
-        $categoryChooserField = $fieldset->addField('virtual_category_root', 'label', $categoryChooserFieldOptions);
+        return $this;
+    }
 
-        $categoryChooserRenderer = $this->getLayout()
-            ->createBlock('Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser')
-            ->setFieldsetId($fieldset->getId())
-            ->setConfig(['buttons' => ['open' => __('Select category ...')]]);
-
-        $categoryChooserRenderer->prepareElementHtml($categoryChooserField);
-
-        /* Append the conditions renderer */
+    /**
+     * Append renderers to the form.
+     *
+     * Note : This is called AFTER calling $form->addValues since the category chooser field renderer is not a
+     *        real renderer and is not applied when the form is rendered but at build time => we need the values are set.
+     *
+     * @param \Magento\Framework\Data\Form $form
+     *
+     * @return $this
+     */
+    private function addFieldRenderers(\Magento\Framework\Data\Form $form)
+    {
+        // Append the virtual conditions rule renderer.
+        $virtualRuleField    = $form->getElement('virtual_rule');
         $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticSuiteCatalogRule\Block\Product\Conditions');
-        $virtualRuleField = $fieldset->addField('virtual_rule', 'text', ['name' => 'virtual_rule', 'label' => __('Virtual rule')]);
         $virtualRuleField->setRenderer($virtualRuleRenderer);
+
+        // Append the virtual category root chooser.
+        $categoryChooserField    = $form->getElement('virtual_category_root');
+        $categoryChooserRenderer = $this->getLayout()->createBlock('Magento\Catalog\Block\Adminhtml\Category\Widget\Chooser');
+        $categoryChooserRenderer->setFieldsetId($form->getElement('merchandising_virtual_settings_fieldset')->getId())
+                                ->setConfig(['buttons' => ['open' => __('Select category ...')]]);
+        $categoryChooserRenderer->prepareElementHtml($categoryChooserField);
 
         return $this;
     }
@@ -160,21 +178,19 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     /**
      * Apply depedence manegemnt on the form.
      *
-     * Due to the difficulty to manage dependencies between the multiple fieldset we hacked the mechanisms by using a random
-     * field container to get things working.
+     * Due to the difficulty to manage dependencies between the multiple fieldset we hacked the mechanisms by using an
+     * arbitary chosen dummy field with a predictable id container to get things working.
      *
-     *  If you remove the virtual_category_root field the associated container (attribute-chooservirtual_category_root-container)
-     *  will not exists anymore and you will have to choose a new one to get things working again.
-     *
-     * @return \Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab\Merchandising
+     * @return $this
      */
     private function addDependenceManager()
     {
         $dependenceManagerBlock = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Form\Element\Dependence');
+
         $dependenceManagerBlock->addConfigOptions(['levels_up' => 0])
             ->addFieldMap('is_virtual_category', 'is_virtual_category')
-            ->addFieldMap('attribute-chooservirtual_category_root-container', 'attribute-chooservirtual_category_root-container')
-            ->addFieldDependence('attribute-chooservirtual_category_root-container', 'is_virtual_category', '1');
+            ->addFieldMap('virtual_rule_fieldset_visibility_switcher', 'virtual_rule_fieldset_visibility_switcher')
+            ->addFieldDependence('virtual_rule_fieldset_visibility_switcher', 'is_virtual_category', 1);
 
         $this->setChild('form_after', $dependenceManagerBlock);
 

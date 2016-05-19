@@ -24,5 +24,71 @@ namespace Smile\ElasticSuiteVirtualCategory\Model\Category\Attribute\Backend;
  */
 class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
+    /**
+     * @var \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory
+     */
+    private $ruleFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory Search rule factory.
+     */
+    public function __construct(\Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory)
+    {
+        $this->ruleFactory = $ruleFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function beforeSave($object)
+    {
+        $attributeCode = $this->getAttributeCode();
+        $attributeData = $object->getData($attributeCode);
+
+        $rule = $this->ruleFactory->create();
+
+        if ($attributeData !== null && is_object($attributeData)) {
+            $rule = $attributeData;
+        } elseif ($attributeData !== null && is_array($attributeData)) {
+            $rule->loadPost($attributeData);
+        }
+
+        $object->setData($attributeCode, serialize($rule->getConditions()->asArray()));
+
+        return $this;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    public function afterLoad($object)
+    {
+        $attributeCode = $this->getAttributeCode();
+        $attributeData = $object->getData($attributeCode);
+
+        $rule = $this->ruleFactory->create();
+
+        if ($attributeData !== null && is_string($attributeData)) {
+            $attributeData = unserialize($attributeData);
+        }
+
+        $rule->getConditions()->loadArray($attributeData);
+
+        $object->setData($attributeCode, $rule);
+
+        return $this;
+    }
+
+    /**
+     * Get current attribute code.
+     *
+     * @return string
+     */
+    private function getAttributeCode()
+    {
+        return $this->getAttribute()->getAttributeCode();
+    }
 }
