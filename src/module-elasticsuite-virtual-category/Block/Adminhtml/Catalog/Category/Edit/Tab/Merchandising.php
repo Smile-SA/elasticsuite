@@ -136,7 +136,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
 
         // This field is added to manage fieldset dependence to the "is_virtual_category" field.
         // @see self::addDependenceManager for more additional information.
-        $fieldset->addField('virtual_rule_fieldset_visibility_switcher', 'hidden', []);
+        $fieldset->addField('virtual_rule_fieldset_visibility_switcher', 'hidden', ['name' => 'virtual_rule_fieldset_visibility_switcher']);
 
         // Append the virtual rule conditions field.
         $fieldset->addField('virtual_rule', 'text', ['name' => 'virtual_rule', 'label' => __('Virtual rule')]);
