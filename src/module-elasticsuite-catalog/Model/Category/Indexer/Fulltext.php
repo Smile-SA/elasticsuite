@@ -15,6 +15,7 @@ namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer;
 use Magento\Framework\Search\Request\DimensionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Action\Full;
+use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 
 /**
  * Categories fulltext indexer
@@ -34,7 +35,7 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
     protected $data;
 
     /**
-     * @var IndexerHandler
+     * @var IndexerInterface
      */
     private $indexerHandler;
 
@@ -55,14 +56,14 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
 
     /**
      * @param Full                  $fullAction       The full index action
-     * @param IndexerHandler        $indexerHandler   The index handler
+     * @param IndexerInterface      $indexerHandler   The index handler
      * @param StoreManagerInterface $storeManager     The Store Manager
      * @param DimensionFactory      $dimensionFactory The dimension factory
      * @param array                 $data             The data
      */
     public function __construct(
         Full $fullAction,
-        IndexerHandler $indexerHandler,
+        IndexerInterface $indexerHandler,
         StoreManagerInterface $storeManager,
         DimensionFactory $dimensionFactory,
         array $data
@@ -84,12 +85,11 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
     public function execute($ids)
     {
         $storeIds = array_keys($this->storeManager->getStores());
-        /** @var IndexerHandler $saveHandler */
-        $saveHandler = $this->indexerHandler;
+
         foreach ($storeIds as $storeId) {
             $dimension = $this->dimensionFactory->create(['name' => 'scope', 'value' => $storeId]);
-            $saveHandler->deleteIndex([$dimension], new \ArrayObject($ids));
-            $saveHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId, $ids));
+            $this->indexerHandler->deleteIndex([$dimension], new \ArrayObject($ids));
+            $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId, $ids));
         }
     }
 
@@ -102,13 +102,10 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
     {
         $storeIds = array_keys($this->storeManager->getStores());
 
-        /** @var IndexerHandler $saveHandler */
-        $saveHandler = $this->indexerHandler;
-
         foreach ($storeIds as $storeId) {
             $dimension = $this->dimensionFactory->create(['name' => 'scope', 'value' => $storeId]);
-            $saveHandler->cleanIndex([$dimension]);
-            $saveHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId));
+            $this->indexerHandler->cleanIndex([$dimension]);
+            $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId));
         }
 
     }

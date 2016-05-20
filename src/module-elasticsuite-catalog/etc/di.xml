@@ -17,10 +17,17 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <virtualType name="catalogProductSearchIndexHandler" type="\Smile\ElasticSuiteCore\Indexer\GenericIndexerHandler">
+        <arguments>
+            <argument name="indexName" xsi:type="string">catalog_product</argument>
+            <argument name="typeName" xsi:type="string">product</argument>
+        </arguments>
+    </virtualType>
+    
     <type name="Magento\CatalogSearch\Model\Indexer\IndexerHandlerFactory">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Product\Indexer\IndexerHandler</item>
+                <item name="elasticsuite" xsi:type="string">catalogProductSearchIndexHandler</item>
             </argument>
         </arguments>
     </type>
@@ -105,6 +112,19 @@
 
     <type name="Magento\Catalog\Model\Indexer\Product\Price">
         <plugin name="smile_elasticsuite_catalog_reindex_products_after_price_reindex" type="\Smile\ElasticSuiteCatalog\Plugin\Indexer\Price\ReindexProductsAfterPriceUpdate"/>
+    </type>
+
+    <virtualType name="catalogCategorySearchIndexHandler" type="\Smile\ElasticSuiteCore\Indexer\GenericIndexerHandler">
+        <arguments>
+            <argument name="indexName" xsi:type="string">catalog_category</argument>
+            <argument name="typeName" xsi:type="string">category</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext">
+        <arguments>
+            <argument name="indexerHandler" xsi:type="object">catalogCategorySearchIndexHandler</argument>
+        </arguments>
     </type>
 
     <type name="Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData">
