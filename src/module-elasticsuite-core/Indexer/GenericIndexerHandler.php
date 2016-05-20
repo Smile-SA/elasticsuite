@@ -11,7 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Eav\Indexer;
+namespace Smile\ElasticSuiteCore\Indexer;
 
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
@@ -24,8 +24,9 @@ use Magento\Framework\Indexer\SaveHandler\Batch;
  * @package  Smile_ElasticSuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @author   Fanny DECLERCK <fadec@smile.fr>
  */
-class IndexerHandler implements IndexerInterface
+class GenericIndexerHandler implements IndexerInterface
 {
     /**
      * @var \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface

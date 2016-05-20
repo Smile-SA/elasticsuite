@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
 /**
  * ElasticSearch product full indexer resource model.
@@ -23,7 +23,7 @@ use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
  * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Full extends AbstractIndexer
+class Full extends Indexer
 {
     /**
      * Load a bulk of product data.

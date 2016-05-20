@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
 /**
  * Prices data datasource resource model.
@@ -23,7 +23,7 @@ use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\AbstractIndexer;
  * @package   Smile_ElasticSuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class PriceData extends AbstractIndexer
+class PriceData extends Indexer
 {
     /**
      * Load prices data for a list of product ids and a given store.
