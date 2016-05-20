@@ -14,6 +14,7 @@
  */
 namespace Smile\ElasticSuiteCatalogRule\Model;
 
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 /**
  * Catalog search engine rule.
  *
@@ -101,5 +102,22 @@ class Rule extends \Magento\Rule\Model\AbstractModel
         $conditions->setElementName($this->elementName);
 
         return $conditions;
+    }
+
+    /**
+     * Build a search query for the current rule.
+     *
+     * @return QueryInterface
+     */
+    public function getSearchQuery()
+    {
+        $query      = null;
+        $conditions = $this->getConditions();
+
+        if ($conditions) {
+            $query = $conditions->getSearchQuery();
+        }
+
+        return $query;
     }
 }

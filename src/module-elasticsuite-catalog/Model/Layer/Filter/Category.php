@@ -90,7 +90,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 
             $category = $this->dataProvider->getCategory();
 
-            $this->getLayer()->getProductCollection()->addCategoryFilter($category);
+            $this->applyCategoryFilterToCollection($category);
 
             if ($request->getParam('id') != $category->getId() && $this->dataProvider->isValid()) {
                 $this->getLayer()->getState()->addFilter($this->_createItem($category->getName(), $categoryId));
@@ -103,7 +103,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     /**
      * Append the facet to the product collection.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+     * @return $this
      */
     public function addFacetToCollection()
     {
@@ -149,6 +149,20 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         }
 
         return $items;
+    }
+
+    /**
+     * Apply the category filter to the layer product collection.
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category.
+     *
+     * @return $this
+     */
+    protected function applyCategoryFilterToCollection(\Magento\Catalog\Api\Data\CategoryInterface $category)
+    {
+        $this->getLayer()->getProductCollection()->addCategoryFilter($category);
+
+        return $this;
     }
 
     /**

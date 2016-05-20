@@ -185,14 +185,14 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
      */
     private function addDependenceManager()
     {
-        $dependenceManagerBlock = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Form\Element\Dependence');
+        /*$dependenceManagerBlock = $this->getLayout()->createBlock('Magento\Backend\Block\Widget\Form\Element\Dependence');
 
         $dependenceManagerBlock->addConfigOptions(['levels_up' => 0])
             ->addFieldMap('is_virtual_category', 'is_virtual_category')
             ->addFieldMap('virtual_rule_fieldset_visibility_switcher', 'virtual_rule_fieldset_visibility_switcher')
             ->addFieldDependence('virtual_rule_fieldset_visibility_switcher', 'is_virtual_category', 1);
 
-        $this->setChild('form_after', $dependenceManagerBlock);
+        $this->setChild('form_after', $dependenceManagerBlock);*/
 
         return $this;
     }

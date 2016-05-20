@@ -14,6 +14,7 @@
  */
 namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition;
 
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 /**
  * Product attributes combination search engine rule.
  *
@@ -29,18 +30,27 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     protected $productFactory;
 
     /**
+     * @var \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Rule\Model\Condition\Context                              $context          Rule context.
      * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory Product condition factory.
+     * @param \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory          $queryFactory     Search query factory.
      * @param array                                                              $data             Additional data.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
         \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory,
+        \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
         $this->productFactory = $conditionFactory;
+        $this->queryFactory   = $queryFactory;
+
         parent::__construct($context, $data);
         $this->setType('Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine');
     }
@@ -142,5 +152,30 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     private function getValueFromArray($arr)
     {
         return isset($arr['value']) ? $arr['value'] : (isset($arr['operator']) ? $arr['operator'] : null);
+    }
+
+    /**
+     * Build a search query for the current rule.
+     *
+     * @return QueryInterface
+     */
+    public function getSearchQuery()
+    {
+        $queryParams = [];
+
+        $aggregator = $this->getAggregator();
+        $value      = $this->getValue();
+
+        $queryClause = $aggregator == 'all' ? 'must' : 'should';
+
+        foreach ($this->getConditions() as $condition)
+        {
+            $subQuery = $condition->getSearchQuery();
+            if ($subQuery !== null && $subQuery instanceof QueryInterface) {
+                $queryParams[$queryClause][] = $condition->getSearchQuery();
+            }
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
     }
 }

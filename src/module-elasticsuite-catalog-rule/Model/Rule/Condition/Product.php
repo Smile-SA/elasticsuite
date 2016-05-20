@@ -36,4 +36,9 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
         return $this;
     }
+
+    public function getSearchQuery()
+    {
+        return null;
+    }
 }
