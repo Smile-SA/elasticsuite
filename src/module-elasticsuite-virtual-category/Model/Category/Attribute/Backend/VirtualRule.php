@@ -61,7 +61,6 @@ class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
     }
 
     /**
-     *
      * {@inheritDoc}
      */
     public function afterLoad($object)
@@ -70,6 +69,7 @@ class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
         $attributeData = $object->getData($attributeCode);
 
         $rule = $this->ruleFactory->create();
+        $rule->setStoreId($object->getStoreId());
 
         if ($attributeData !== null && is_string($attributeData)) {
             $attributeData = unserialize($attributeData);

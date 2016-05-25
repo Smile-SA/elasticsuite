@@ -15,8 +15,6 @@
 
 namespace Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
-
 /**
  * Product category filter implementation using virtual categories.
  *
@@ -26,9 +24,14 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
  */
 class Category extends \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
 {
+    /**
+     * {@inheritDoc}
+     */
     protected function applyCategoryFilterToCollection(\Magento\Catalog\Api\Data\CategoryInterface $category)
     {
-        var_dump($category->getVirtualRule()->getSearchQuery());
+        $query = $category->getVirtualRule()->getCategorySearchQuery($category);
+        $this->getLayer()->getProductCollection()->addQueryFilter($query);
+
         return $this;
     }
 }

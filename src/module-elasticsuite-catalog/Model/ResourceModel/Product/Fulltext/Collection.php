@@ -15,6 +15,7 @@ namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
 use Smile\ElasticSuiteCore\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
 /**
  * Search engine product collection.
@@ -56,6 +57,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var array
      */
     private $filters = [];
+
+    /**
+     * @var QueryInterface[]
+     */
+    private $queryFilters = [];
 
     /**
      * @var array
@@ -203,6 +209,20 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Append a prebuilt (QueryInterface) query filter to the collection.
+     *
+     * @param QueryInterface $queryFilter Query filter.
+     *
+     * @return $this
+     */
+    public function addQueryFilter(QueryInterface $queryFilter)
+    {
+        $this->queryFilters[] = $queryFilter;
+
+        return $this;
+    }
+
+    /**
      * Add search query filter
      *
      * @param string $query Search query text.
@@ -262,8 +282,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addCategoryFilter(\Magento\Catalog\Model\Category $category)
     {
-        $this->addFieldToFilter('category_ids', $category->getId());
-        $this->_productLimitationFilters['category_ids'] = $category->getId();
+        $categoryId = $category;
+
+        if (is_object($category)) {
+            $categoryId = $category->getId();
+        }
+
+        $this->addFieldToFilter('category_ids', $categoryId);
+        $this->_productLimitationFilters['category_ids'] = $categoryId;
 
         return $this;
     }
@@ -421,6 +447,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $queryText,
             $sortOrders,
             $this->filters,
+            $this->queryFilters,
             $this->facets
         );
 
@@ -444,7 +471,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 // Use a nested sort order.
                 $sortParams['nestedPath'] = 'category';
                 // Ensure we sort on the position field of the current category.
-                $categoryIds = $this->_productLimitationFilters['category_ids'];
+                $categoryIds = isset($this->_productLimitationFilters['category_ids']) ? $this->_productLimitationFilters['category_ids'] : [0];
                 $sortParams['nestedFilter'] = ['category.category_id' => $categoryIds];
             } elseif ($attribute == 'price.price') {
                 // Change the price sort field to the nested price field.
@@ -495,7 +522,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
 
-        $searchRequest = $this->requestBuilder->create($storeId, $requestName, 0, 0, $queryText, [], $this->filters, $setIdFacet);
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $requestName,
+            0,
+            0,
+            $queryText,
+            [],
+            $this->filters,
+            $this->queryFilters,
+            $setIdFacet
+        );
 
         $searchResponse = $this->searchEngine->search($searchRequest);
 

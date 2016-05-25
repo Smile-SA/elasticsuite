@@ -18,20 +18,19 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
- * Build an ES terms query.
+ * Build an ES term query.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Terms implements BuilderInterface
+class Term implements BuilderInterface
 {
     /**
      * {@inheritDoc}
      */
     public function buildQuery(QueryInterface $query)
     {
-
-        return ['terms' => [$query->getField() => $query->getValues()]];
+        return ['term' => [$query->getField() => $query->getValue()]];
     }
 }

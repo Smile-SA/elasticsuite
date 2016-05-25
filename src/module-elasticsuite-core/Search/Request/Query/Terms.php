@@ -55,6 +55,6 @@ class Terms extends Term
      */
     public function getValues()
     {
-        return (array) $this->getValue();
+        return $this->getValue();
     }
 }

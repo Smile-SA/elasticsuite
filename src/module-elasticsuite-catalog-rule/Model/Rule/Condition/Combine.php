@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+
 /**
  * Product attributes combination search engine rule.
  *
@@ -27,7 +28,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     /**
      * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory
      */
-    protected $productFactory;
+    protected $productConditionFactory;
 
     /**
      * @var \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory
@@ -48,7 +49,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
-        $this->productFactory = $conditionFactory;
+        $this->productConditionFactory = $conditionFactory;
         $this->queryFactory   = $queryFactory;
 
         parent::__construct($context, $data);
@@ -60,7 +61,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
      */
     public function getNewChildSelectOptions()
     {
-        $productAttributes = $this->productFactory->create()->loadAttributeOptions()->getAttributeOption();
+        $productAttributes = $this->productConditionFactory->create()->loadAttributeOptions()->getAttributeOption();
         $attributes = [];
 
         foreach ($productAttributes as $code => $label) {
@@ -105,6 +106,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
                 try {
                     $condition = $this->_conditionFactory->create($conditionArr['type']);
                     $condition->setElementName($this->elementName);
+                    $condition->setRule($this->getRule());
                     $this->addCondition($condition);
                     $condition->loadArray($conditionArr, $key);
                 } catch (\Exception $e) {
@@ -131,6 +133,37 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     }
 
     /**
+     * Build a search query for the current rule.
+     *
+     * @return QueryInterface
+     */
+    public function getSearchQuery()
+    {
+        $queryParams = [];
+
+        $aggregator = $this->getAggregator();
+        $value      = (bool) $this->getValue();
+
+        $queryClause = $aggregator === 'all' ? 'must' : 'should';
+
+        foreach ($this->getConditions() as $condition) {
+            $subQuery = $condition->getSearchQuery();
+            if ($subQuery !== null && $subQuery instanceof QueryInterface) {
+                $queryParams[$queryClause][] = $subQuery;
+            }
+        }
+
+        $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+
+        if ($value == false) {
+            // @todo: Check the boolean logic applied is correct regarding to the admin logic.
+            $query = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
+        }
+
+        return $query;
+    }
+
+    /**
      * Read the aggregator from an array.
      *
      * @param array $arr Array.
@@ -152,30 +185,5 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     private function getValueFromArray($arr)
     {
         return isset($arr['value']) ? $arr['value'] : (isset($arr['operator']) ? $arr['operator'] : null);
-    }
-
-    /**
-     * Build a search query for the current rule.
-     *
-     * @return QueryInterface
-     */
-    public function getSearchQuery()
-    {
-        $queryParams = [];
-
-        $aggregator = $this->getAggregator();
-        $value      = $this->getValue();
-
-        $queryClause = $aggregator == 'all' ? 'must' : 'should';
-
-        foreach ($this->getConditions() as $condition)
-        {
-            $subQuery = $condition->getSearchQuery();
-            if ($subQuery !== null && $subQuery instanceof QueryInterface) {
-                $queryParams[$queryClause][] = $condition->getSearchQuery();
-            }
-        }
-
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
     }
 }

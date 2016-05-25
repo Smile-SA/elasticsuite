@@ -86,13 +86,17 @@ class QueryBuilder
         $mapping = $containerConfig->getMapping();
 
         foreach ($filters as $fieldName => $condition) {
-            $mappingField = $mapping->getField($fieldName);
+            if ($condition instanceof QueryInterface) {
+                $queries[] = $condition;
+            } else {
+                $mappingField = $mapping->getField($fieldName);
 
-            if ($mappingField->isFilterable() === false) {
-                throw new \LogicException("Field {$fieldName} is not filterable.");
+                if ($mappingField->isFilterable() === false) {
+                    throw new \LogicException("Field {$fieldName} is not filterable.");
+                }
+
+                $queries[] = $this->prepareFieldCondition($mappingField, $condition);
             }
-
-            $queries[] = $this->prepareFieldCondition($mappingField, $condition);
         }
 
         $filterQuery = current($queries);

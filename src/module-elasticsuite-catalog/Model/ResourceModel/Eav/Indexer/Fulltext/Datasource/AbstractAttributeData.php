@@ -33,6 +33,7 @@ class AbstractAttributeData extends Indexer
         'is_visible_in_advanced_search' => ['operator' => '=', 'value' => 1],
         'is_filterable'                 => ['operator' => '>', 'value' => 0],
         'is_filterable_in_search'       => ['operator' => '=', 'value' => 1],
+        'is_used_for_promo_rules'       => ['operator' => '=', 'value' => 1],
         'used_for_sort_by'              => ['operator' => '=', 'value' => 1],
     ];
 

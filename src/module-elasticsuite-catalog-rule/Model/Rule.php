@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCatalogRule\Model;
 
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+
 /**
  * Catalog search engine rule.
  *
@@ -66,6 +67,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel
     public function getConditionsInstance()
     {
         $condition = $this->conditionsFactory->create();
+        $condition->setRule($this);
         $condition->setElementName($this->elementName);
 
         return $condition;
@@ -99,6 +101,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel
     public function getConditions()
     {
         $conditions = parent::getConditions();
+        $conditions->setRule($this);
         $conditions->setElementName($this->elementName);
 
         return $conditions;

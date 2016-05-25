@@ -18,20 +18,21 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
- * Build an ES terms query.
+ * Build an ES not query.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Terms implements BuilderInterface
+class Not extends AbstractComplexBuilder implements BuilderInterface
 {
     /**
      * {@inheritDoc}
      */
     public function buildQuery(QueryInterface $query)
     {
+        $subQuery = $this->parentBuilder->buildQuery($query->getQuery());
 
-        return ['terms' => [$query->getField() => $query->getValues()]];
+        return ['bool' => ['must_not' => [$subQuery]]];
     }
 }

@@ -66,6 +66,7 @@ class AbstractAttributeData
         'Magento\Catalog\Model\Attribute\Backend\Startdate',
         'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
         'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend',
+        'Magento\Catalog\Model\Product\Attribute\Backend\Weight',
     ];
 
     /**
