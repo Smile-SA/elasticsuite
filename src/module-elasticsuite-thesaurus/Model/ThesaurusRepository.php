@@ -96,7 +96,6 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     public function getById($thesaurusId)
     {
         if (!isset($this->thesaurusRepositoryById[$thesaurusId])) {
-
             /** @var ThesaurusInterface $thesaurus */
             $thesaurus = $this->thesaurusFactory->create()->load($thesaurusId);
             if (!$thesaurus->getThesaurusId()) {
