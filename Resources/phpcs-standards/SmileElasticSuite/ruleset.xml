@@ -35,6 +35,10 @@
     <rule ref="Squiz.Scope.MemberVarScope" />
     <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
     
+    <rule ref="PSR2.Classes.PropertyDeclaration">
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+    </rule>
+     
     <rule ref="SmileElasticSuite.Arrays.MultiLineArrayComma" />
     <rule ref="SmileElasticSuite.Formatting.BlankLineBeforeReturn" />
     <rule ref="SmileElasticSuite.NamingConventions.ValidClassName" />
