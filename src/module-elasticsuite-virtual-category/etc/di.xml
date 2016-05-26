@@ -19,19 +19,19 @@
  
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <type name="\Smile\ElasticSuiteCatalogRule\Model\RuleFactory">
+    <type name="Smile\ElasticSuiteCatalogRule\Model\RuleFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule</argument>
         </arguments>
     </type>
 
-    <type name="\Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory">
+    <type name="Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Combine</argument>
         </arguments>
     </type>
     
-    <type name="\Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory">
+    <type name="Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Product</argument>
         </arguments>

@@ -26,6 +26,11 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 class Combine extends \Magento\Rule\Model\Condition\Combine
 {
     /**
+     * @var string
+     */
+    protected $type = 'Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine';
+
+    /**
      * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory
      */
     protected $productConditionFactory;
@@ -53,7 +58,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $this->queryFactory   = $queryFactory;
 
         parent::__construct($context, $data);
-        $this->setType('Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine');
+        $this->setType($this->type);
     }
 
     /**
@@ -64,9 +69,11 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $productAttributes = $this->productConditionFactory->create()->loadAttributeOptions()->getAttributeOption();
         $attributes = [];
 
+        $productConditionType = get_class($this->productConditionFactory->create());
+
         foreach ($productAttributes as $code => $label) {
             $attributes[] = [
-                'value' => 'Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product|' . $code,
+                'value' => $productConditionType . '|' . $code,
                 'label' => $label,
             ];
         }
@@ -77,7 +84,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
             $conditions,
             [
                 [
-                    'value' => 'Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine',
+                    'value' => $this->getType(),
                     'label' => __('Conditions Combination'),
                 ],
                 [
@@ -99,7 +106,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $value      = $this->getValueFromArray($arr);
 
         $this->setAggregator($aggregator)
-             ->setValue($value);
+            ->setValue($value);
 
         if (!empty($arr[$key]) && is_array($arr[$key])) {
             foreach ($arr[$key] as $conditionArr) {
@@ -156,7 +163,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
 
         if ($value == false) {
-            // @todo: Check the boolean logic applied is correct regarding to the admin logic.
+            /* @todo: Check the boolean logic applied is correct regarding to the admin logic */
             $query = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
         }
 

@@ -29,15 +29,18 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
     private $virtualAttributeBackend;
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */
     protected function _afterLoad()
     {
+        parent::_afterLoad();
+
         foreach ($this->_items as $item) {
             $this->getVirtualAttributeBackend()->afterLoad($item);
         }
 
-        return parent::_afterLoad();
+        return $this;
     }
 
     /**

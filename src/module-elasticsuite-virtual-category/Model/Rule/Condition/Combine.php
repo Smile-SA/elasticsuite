@@ -26,6 +26,11 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 class Combine extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine
 {
     /**
+     * @var string
+     */
+    protected $type = 'Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Combine';
+
+    /**
      * Build a search query for the current rule.
      *
      * @param array $excludedCategories Categories excluded of query building (avoid infinite recursion).

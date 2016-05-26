@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteVirtualCategory\Model;
 
 use Smile\ElasticSuiteCatalogRule\Model\Rule;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Magento\Catalog\Api\Data\CategoryInterface;
 
 /**
  * Virtual category rule.
@@ -47,6 +48,11 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
     private $categoryCollectionFactory;
 
     /**
+     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
+     */
+    private $queryBuilder;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Framework\Model\Context                                                         $context                   Context.
@@ -58,6 +64,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      * @param \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory                                $queryFactory              Search query factory.
      * @param \Magento\Catalog\Model\CategoryFactory                                                   $categoryFactory           Product category factorty.
      * @param \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory Virtual categories collection factory.
+     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder                 $queryBuilder              Search rule query builder.
      * @param array                                                                                    $data                      Additional data.
      */
     public function __construct(
@@ -70,12 +77,14 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
         \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory,
+        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
         array $data = []
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
         $this->categoryFactory           = $categoryFactory;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->queryBuilder              = $queryBuilder;
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory);
     }
@@ -89,120 +98,106 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      *
      * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
      */
-    public function getCategorySearchQuery(\Magento\Catalog\Api\Data\CategoryInterface $category, $excludedCategories = [])
+    public function getCategorySearchQuery($category, $excludedCategories = [])
     {
-        $excludedCategories[] = $category->getId();
-
-        $queryClauses = [];
-        $queryType    = 'must';
-
-        if ((bool) $category->getIsVirtualCategory()) {
-            $queryClauses[] = $this->getVirtualCategorySearchQuery($category, $excludedCategories);
-
-            if ($category->getVirtualCategoryRoot()) {
-                $parentCategory = $this->getParentCategory($category);
-
-                if ($parentCategory->getVirtualRule()) {
-                    $queryClauses[] = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
-                }
-            }
-        } else {
-            $queryType    = 'should';
-            $queryClauses = array_merge(
-                [$this->getNormalCategorySearchQuery($category, $excludedCategories)],
-                $this->getCategoryChildrenQueries($category, $excludedCategories)
-            );
+        if (!is_object($category)) {
+            $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
         }
 
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, [$queryType => $queryClauses]);
+        $queryParams = [];
+
+        if ((bool) $category->getIsVirtualCategory()) {
+            $parentCategory = $this->getVirtualRootCategory($category);
+            $excludedCategories[]  = $category->getId();
+
+            $queryParams['must'][] = $this->getVirtualCategoryQuery($category, $excludedCategories);
+
+            if ($parentCategory && $parentCategory->getId()) {
+                $queryParams['must'][] = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
+            }
+        } elseif ($category->getId()) {
+            $queryParams['should'][] = $this->getStandardCategoryQuery($category);
+
+            foreach ($this->getChildrenVirtualCategories($category, $excludedCategories) as $childrenCategory) {
+                $queryParams['should'][] = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+            }
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
     }
 
     /**
-     * Build search query by category (virtual category).
+     * Load the root category used for a virtual category.
      *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category           Search category.
-     * @param array                                       $excludedCategories Categories that should not be used into search query building.
-     *                                                                        Used to avoid infinite recursion while building virtual categories rules.
+     * @param CategoryInterface $category Virtual category.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
+     * @return CategoryInterface
      */
-    private function getVirtualCategorySearchQuery(\Magento\Catalog\Api\Data\CategoryInterface $category, $excludedCategories = [])
+    private function getVirtualRootCategory(CategoryInterface $category)
+    {
+        $storeId      = $this->getStoreId();
+        $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
+
+        if ($category->getVirtualCategoryRoot() !== null) {
+            $rootCategoryId = explode('/', $category->getVirtualCategoryRoot())[1];
+            $rootCategory->load($rootCategoryId);
+        }
+
+        return $rootCategory;
+    }
+
+    /**
+     * Transform a category in query rule.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return QueryInterface
+     */
+    private function getStandardCategoryQuery(CategoryInterface $category)
+    {
+        $conditionsParams  = ['data' => ['attribute' => 'category_ids', 'operator' => '()', 'value' => $category->getId()]];
+        $categoryCondition = $this->productConditionsFactory->create($conditionsParams);
+
+        return $this->queryBuilder->getSearchQuery($categoryCondition);
+    }
+
+    /**
+     * Transform the virtual category into a QueryInterface used for filtering.
+     *
+     * @param CategoryInterface $category           Virtual category.
+     * @param array             $excludedCategories Category already used into the building stack. Avoid short circuit.
+     *
+     * @return QueryInterface
+     */
+    private function getVirtualCategoryQuery(CategoryInterface $category, $excludedCategories = [])
     {
         return $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
     }
 
     /**
-     * Build search query by category (normal category).
+     * Returns the list of the virtual categories available under a category.
      *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category           Search category.
-     * @param array                                       $excludedCategories Categories that should not be used into search query building.
-     *                                                                        Used to avoid infinite recursion while building virtual categories rules.
+     * @param CategoryInterface $category           Category.
+     * @param array             $excludedCategories Category already used into the building stack. Avoid short circuit.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
+     * @return \Magento\Catalog\Model\ResourceModel\Category\Collection;
      */
-    private function getNormalCategorySearchQuery(\Magento\Catalog\Api\Data\CategoryInterface $category, $excludedCategories = [])
+    private function getChildrenVirtualCategories(CategoryInterface $category, $excludedCategories = [])
     {
-        $condition = $this->productConditionsFactory->create(
-            ['data' => ['attribute' => 'category_ids', 'operator' => "==", 'value' => $category->getId()]]
-        );
+        $storeId            = $this->getStoreId();
+        $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
-        $condition->setRule($this);
-
-        return $condition->getSearchQuery($excludedCategories);
-    }
-
-    /**
-     * Build search queries list of children categories of a categories.
-     *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $parentCategory     Search category.
-     * @param array                                       $excludedCategories Categories that should not be used into search query building.
-     *                                                                        Used to avoid infinite recursion while building virtual categories rules.
-     *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
-     */
-    private function getCategoryChildrenQueries($parentCategory, $excludedCategories = [])
-    {
-        $childrenQueries = [];
-        $categoryCollection = $this->categoryCollectionFactory->create()
+        $categoryCollection
             ->setStoreId($this->getStoreId())
-            ->addAttributeToFilter('is_active', true)
+            ->addIsActiveFilter()
             ->addAttributeToFilter('is_virtual_category', true)
-            ->addAttributeToFilter('path', ['like' => $parentCategory->getPath(). '/%'])
-            ->addAttributeToSelect(['is_virtual_category', 'virtual_category_root', 'virtual_rule']);
+            ->addPathFilter(sprintf('%s/.*', $category->getPath()))
+            ->addAttributeToSelect(['virtual_category_root', 'is_virtual_category', 'virtual_rule']);
 
         if (!empty($excludedCategories)) {
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
         }
 
-        foreach ($categoryCollection as $category) {
-            $childrenQueries[] = $this->getCategorySearchQuery($category, $excludedCategories);
-        }
-
-        return $childrenQueries;
-    }
-
-    /**
-     * Retrive the category used as parent for a given category.
-     *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category.
-     *
-     * @return \Magento\Catalog\Api\Data\CategoryInterface
-     */
-    private function getParentCategory(\Magento\Catalog\Api\Data\CategoryInterface $category)
-    {
-        $parentCategory = $category->getVirtualCategoryRoot();
-
-        if (!is_object($parentCategory)) {
-            if (!is_int($parentCategory)) {
-                $parentCategory = explode('/', $parentCategory);
-                $parentCategory = end($parentCategory);
-            }
-
-            $parentCategory = $this->categoryFactory->create()
-                ->setStoreId($category->getStoreId())
-                ->load($parentCategory);
-        }
-
-        return $parentCategory;
+        return $categoryCollection;
     }
 }

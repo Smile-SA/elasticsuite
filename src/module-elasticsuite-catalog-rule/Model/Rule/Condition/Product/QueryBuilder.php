@@ -130,7 +130,7 @@ class QueryBuilder
                 break;
         }
 
-        // @todo: manage date ranges.
+        /* @todo: manage date ranges */
 
         return ['bounds' => [$operator => $value], 'field' => $fieldName];
     }

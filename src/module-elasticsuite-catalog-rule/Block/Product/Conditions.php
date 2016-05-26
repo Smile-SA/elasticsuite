@@ -22,6 +22,8 @@ use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
 /**
  * Catalog search rule contribution form element renderer.
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>

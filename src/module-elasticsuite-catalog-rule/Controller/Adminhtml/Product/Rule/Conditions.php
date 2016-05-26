@@ -28,21 +28,21 @@ use Magento\Rule\Model\Condition\AbstractCondition;
 class Conditions extends Action
 {
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule
+     * @var \Smile\ElasticSuiteCatalogRule\Model\RuleFactory
      */
-    protected $rule;
+    protected $ruleFactory;
 
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\App\Action\Context       $context Context.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule $rule    Search engine rule.
+     * @param \Magento\Backend\App\Action\Context              $context     Context.
+     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory Search engine rule factory.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule $rule
+        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory
     ) {
-        $this->rule = $rule;
+        $this->ruleFactory = $ruleFactory;
         parent::__construct($context);
     }
 
@@ -55,10 +55,12 @@ class Conditions extends Action
         $typeData = explode('|', str_replace('-', '/', $this->getRequest()->getParam('type')));
         $className = $typeData[0];
 
+        $rule = $this->ruleFactory->create();
+
         $model = $this->_objectManager->create($className)
             ->setId($conditionId)
             ->setType($className)
-            ->setRule($this->rule)
+            ->setRule($rule)
             ->setPrefix('conditions');
 
         $model->setElementName($this->getRequest()->getParam('element_name'));
@@ -76,11 +78,12 @@ class Conditions extends Action
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */
     protected function _isAllowed()
     {
-        // @todo : better check.
+        /* @todo : implement check */
         return true;
     }
 }
