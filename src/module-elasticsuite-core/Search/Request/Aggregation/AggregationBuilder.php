@@ -68,26 +68,25 @@ class AggregationBuilder
         array $filters
     ) {
         $buckets = [];
-
         $mapping = $containerConfiguration->getMapping();
 
         foreach ($aggregations as $fieldName => $aggregationParams) {
-            $field = $mapping->getField($fieldName);
-
-            if ($field === null) {
-                throw new \LogicException("Field {$fieldName} does not exists in mapping.");
-            }
-
             $bucketType = $aggregationParams['type'];
-            $bucketParams = $this->getBucketParams($field, $aggregationParams, $filters);
+            try {
+                $field = $mapping->getField($fieldName);
+                $bucketParams = $this->getBucketParams($field, $aggregationParams, $filters);
 
-            if (isset($bucketParams['filter'])) {
-                $bucketParams['filter'] = $this->createFilter($containerConfiguration, $bucketParams['filter']);
-            }
+                if (isset($bucketParams['filter'])) {
+                    $bucketParams['filter'] = $this->createFilter($containerConfiguration, $bucketParams['filter']);
+                }
 
-            if (isset($bucketParams['nestedFilter'])) {
-                $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
-                $bucketParams['nestedFilter'] = $nestedFilter->getQuery();
+                if (isset($bucketParams['nestedFilter'])) {
+                    $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
+                    $bucketParams['nestedFilter'] = $nestedFilter->getQuery();
+                }
+            } catch (\Exception $e) {
+                $bucketParams = $aggregationParams['config'];
+
             }
 
             $buckets[] = $this->aggregationFactory->create($bucketType, $bucketParams);
@@ -128,7 +127,7 @@ class AggregationBuilder
 
         $bucketParams = [
             'field'   => $bucketField,
-            'name'    => $field->getName() . '_bucket',
+            'name'    => $field->getName(),
             'metrics' => [],
             'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];

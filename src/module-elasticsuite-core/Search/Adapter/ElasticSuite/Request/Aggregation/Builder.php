@@ -40,8 +40,9 @@ class Builder
      * @var array
      */
     private $bucketBuilderClasses = [
-        BucketInterface::TYPE_TERM      => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Term',
-        BucketInterface::TYPE_HISTOGRAM => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Histogram',
+        BucketInterface::TYPE_TERM        => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Term',
+        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\Histogram',
+        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Aggregation\Builder\QueryGroup',
     ];
 
 

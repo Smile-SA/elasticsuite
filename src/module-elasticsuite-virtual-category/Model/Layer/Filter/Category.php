@@ -15,6 +15,9 @@
 
 namespace Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter;
 
+use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category;
+use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+
 /**
  * Product category filter implementation using virtual categories.
  *
@@ -24,6 +27,68 @@ namespace Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter;
  */
 class Category extends \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
 {
+    /**
+     * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory   Filter item factory.
+     * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager        Store manager.
+     * @param \Magento\Catalog\Model\Layer                                     $layer               Search layer.
+     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder     Item data builder.
+     * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
+     * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
+     * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
+     * @param array                                                            $data                Custom data.
+     */
+    public function __construct(
+        \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory $filterItemFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Catalog\Model\Layer $layer,
+        \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
+        \Magento\Framework\Escaper $escaper,
+        \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
+        $useUrlRewrites = false,
+        array $data = []
+    ) {
+        parent::__construct(
+            $filterItemFactory,
+            $storeManager,
+            $layer,
+            $itemDataBuilder,
+            $escaper,
+            $dataProviderFactory,
+            $useUrlRewrites,
+            $data
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addFacetToCollection()
+    {
+        $currentCategory = $this->getDataProvider()->getCategory();
+        $facetQueries    = $currentCategory->getVirtualRule()->getSearchQueriesByChildren($currentCategory);
+
+        $facetType   = BucketInterface::TYPE_QUERY_GROUP;
+        $facetField  = $this->getFilterField();
+        $facetConfig = ['name' => $facetField, 'queries' => $facetQueries];
+
+        $productCollection = $this->getLayer()->getProductCollection();
+        $productCollection->addFacet($facetField, $facetType, $facetConfig);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFilterField()
+    {
+        return 'categories';
+    }
+
     /**
      * {@inheritDoc}
      */

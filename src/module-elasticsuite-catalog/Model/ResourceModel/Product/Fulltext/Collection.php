@@ -265,7 +265,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->_renderFilters();
         $result = [];
         $aggregations = $this->queryResponse->getAggregations();
-        $bucket = $aggregations->getBucket($field . '_bucket');
+
+        $bucket = $aggregations->getBucket($field);
 
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
@@ -540,7 +541,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->countByAttributeSet = [];
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
-        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
+        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
 
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {

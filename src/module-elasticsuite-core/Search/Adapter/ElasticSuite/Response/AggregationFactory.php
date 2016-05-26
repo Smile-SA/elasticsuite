@@ -50,9 +50,13 @@ class AggregationFactory extends \Magento\Framework\Search\Adapter\Mysql\Aggrega
             }
 
             if (isset($aggregation['buckets'])) {
-                foreach ($aggregation['buckets'] as $currentBuket) {
-                    $processedAggregations[$bucketName][$currentBuket['key']] = [
-                        'value' => $currentBuket['key'],
+                foreach ($aggregation['buckets'] as $key => $currentBuket) {
+                    if (isset($currentBuket['key'])) {
+                        $key = $currentBuket['key'];
+                    }
+
+                    $processedAggregations[$bucketName][$key] = [
+                        'value' => $key,
                         'count' => $currentBuket['doc_count'],
                     ];
                 }

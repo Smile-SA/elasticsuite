@@ -127,6 +127,36 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
     }
 
     /**
+     * Retrieve search queries of children categories.
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $rootCategory Root category.
+     *
+     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     */
+    public function getSearchQueriesByChildren(CategoryInterface $rootCategory)
+    {
+        $queries     = [];
+        $childrenIds = $rootCategory->getResource()->getChildren($rootCategory, false);
+
+        if (!empty($childrenIds)) {
+            $storeId            = $this->getStoreId();
+            $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
+
+            $categoryCollection
+                ->setStoreId($this->getStoreId())
+                ->addIsActiveFilter()
+                ->addIdFilter($childrenIds)
+                ->addAttributeToSelect(['virtual_category_root', 'is_virtual_category', 'virtual_rule']);
+
+            foreach ($categoryCollection as $category) {
+                $queries[$category->getId()] = $this->getCategorySearchQuery($category);
+            }
+        }
+
+        return $queries;
+    }
+
+    /**
      * Load the root category used for a virtual category.
      *
      * @param CategoryInterface $category Virtual category.
