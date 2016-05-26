@@ -205,7 +205,7 @@ class QueryBuilder
         $field    = $this->attributeList->getField($productCondition->getAttribute());
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
-        if ($productCondition->getInputType() == "string") {
+        if ($productCondition->getInputType() === "string") {
             $analyzer = FieldInterface::ANALYZER_STANDARD;
         }
 

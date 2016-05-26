@@ -80,7 +80,7 @@ class Product extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Produc
     {
         $searchQuery = parent::getSearchQuery();
 
-        if ($this->getAttribute() == "category_ids") {
+        if ($this->getAttribute() === 'category_ids') {
             $searchQuery = $this->getCategorySearchQuery($excludedCategories);
         }
 

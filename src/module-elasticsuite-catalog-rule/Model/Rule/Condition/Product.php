@@ -128,13 +128,13 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
 
-            if ($this->getAttributeObject()->getAttributeCode() == 'category_ids') {
+            if ($this->getAttributeObject()->getAttributeCode() === 'category_ids') {
                 $inputType = 'category';
             } elseif (in_array($frontendInput, ['select', 'multiselect'])) {
                 $inputType = 'multiselect';
-            } elseif ($frontendInput == 'date') {
+            } elseif ($frontendInput === 'date') {
                 $inputType = 'date';
-            } elseif ($frontendInput == 'boolean') {
+            } elseif ($frontendInput === 'boolean') {
                 $inputType = 'boolean';
             }
         }
@@ -156,9 +156,9 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
 
-            if ($frontendInput == 'boolean') {
+            if ($frontendInput === 'boolean') {
                 $valueElementType = 'select';
-            } elseif ($frontendInput == 'date') {
+            } elseif ($frontendInput === 'date') {
                 $valueElementType = 'date';
             } elseif (in_array($frontendInput, ['select', 'multiselect'])) {
                 $valueElementType = 'multiselect';
