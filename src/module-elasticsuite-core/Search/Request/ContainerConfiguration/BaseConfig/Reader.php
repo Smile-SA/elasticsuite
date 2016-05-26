@@ -36,16 +36,14 @@ class Reader extends Filesystem
      */
     const FILENAME = 'elasticsuite_search_request.xml';
 
-    // @codingStandardsIgnoreStart
     /**
      * List of attributes by XPath used as ids during the file merge process.
      *
      * @var array
      */
     protected $_idAttributes = [
-        '/requests/request' => 'name'
+        '/requests/request' => 'name',
     ];
-    // @codingStandardsIgnoreEnd
 
     /**
      * {@inheritdoc}

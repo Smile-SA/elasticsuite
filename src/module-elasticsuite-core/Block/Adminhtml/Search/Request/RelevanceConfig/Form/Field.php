@@ -30,10 +30,8 @@ class Field extends \Magento\Config\Block\System\Config\Form\Field
      *
      * @return bool
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _isInheritCheckboxRequired(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        // @codingStandardsIgnoreEnd
         return $element->getCanUseContainerValue() || $element->getCanUseDefaultValue();
     }
 
@@ -46,10 +44,8 @@ class Field extends \Magento\Config\Block\System\Config\Form\Field
      *
      * @return string
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _getInheritCheckboxLabel(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        // @codingStandardsIgnoreEnd
         $checkboxLabel = __('Use Default');
         if ($element->getCanUseContainerValue()) {
             $checkboxLabel = __('Use Container');

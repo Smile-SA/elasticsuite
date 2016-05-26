@@ -86,26 +86,22 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         $this->_init(ThesaurusInterface::TABLE_NAME, ThesaurusInterface::THESAURUS_ID);
     }
 
     /**
      * Saves thesaurus linking to terms and stores after save
      *
-     * @param \Magento\Framework\Model\AbstractModel $object Thesaurus to save
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object Thesaurus to save
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
-        //@codingStandardsIgnoreEnd
         parent::_afterSave($object);
 
         $this->saveStoreRelation($object);
@@ -117,16 +113,14 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Perform operations after object load, restore linking with terms and stores
      *
-     * @param \Magento\Framework\Model\AbstractModel $object Thesaurus being loaded
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object Thesaurus being loaded
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
-        //@codingStandardsIgnoreEnd
         if ($object->getId()) {
             $stores = $this->getStoreIdsFromThesaurusId($object->getId());
             $object->setData('store_id', $stores);

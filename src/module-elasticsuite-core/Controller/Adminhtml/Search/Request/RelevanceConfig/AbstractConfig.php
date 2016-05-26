@@ -73,16 +73,14 @@ abstract class AbstractConfig extends AbstractAction
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Check is allow modify system configuration
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return bool
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _isAllowed()
     {
-        //@codingStandardsIgnoreEnd
         $sectionId = $this->_request->getParam('section');
 
         return $this->configStructure->getElement($sectionId)->isAllowed()

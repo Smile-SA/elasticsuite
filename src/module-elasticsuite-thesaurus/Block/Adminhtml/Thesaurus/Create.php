@@ -55,10 +55,8 @@ class Create extends \Magento\Backend\Block\Widget\Form\Container
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_objectId = 'id';
         $this->_blockGroup = 'Smile_ElasticSuiteThesaurus';
         $this->_controller = 'adminhtml_thesaurus';

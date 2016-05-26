@@ -61,6 +61,7 @@ class Switcher extends Template
      */
     protected $containersSource;
 
+
     /**
      * Class constructor
      *
@@ -381,16 +382,14 @@ class Switcher extends Template
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Internal constructor
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         parent::_construct();
 
         $this->setUseConfirm(true);

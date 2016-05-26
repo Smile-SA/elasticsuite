@@ -32,9 +32,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      *
      * @var string
      */
-    // @codingStandardsIgnoreStart Property is inherited
     protected $_eventPrefix = 'smile_elasticsuite_thesaurus';
-    // @codingStandardsIgnoreEnd
 
     /**
      * Parameter name in event
@@ -42,9 +40,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      *
      * @var string
      */
-    // @codingStandardsIgnoreStart Property is inherited
     protected $_eventObject = 'thesaurus';
-    // @codingStandardsIgnoreEnd
 
     /**
      * @var array The store ids of this thesaurus
@@ -229,10 +225,8 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         $this->_init('Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus');
     }
 

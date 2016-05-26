@@ -69,16 +69,14 @@ class Scoped extends \Magento\Framework\Model\ResourceModel\Db\Collection\Abstra
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Initialize select
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _initSelect()
     {
-        // @codingStandardsIgnoreEnd
         parent::_initSelect();
         $this->addFieldToSelect(['path', 'value'])->addFieldToFilter('scope', $this->scope);
 

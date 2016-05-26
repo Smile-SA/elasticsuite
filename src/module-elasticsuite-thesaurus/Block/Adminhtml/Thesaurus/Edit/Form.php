@@ -55,31 +55,28 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     }
 
     /**
-     * Init Form properties
+     * Init Form properties.
+     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         parent::_construct();
         $this->setId('thesaurus_edit_form');
         $this->setTitle(__('Edit a Thesaurus'));
     }
 
     /**
-     * Prepare form fields
+     * Prepare form fields.
+     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return Form
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _prepareForm()
     {
-        //@codingStandardsIgnoreEnd
-
         $model = $this->getModel();
 
         /** @var \Magento\Framework\Data\Form $form */

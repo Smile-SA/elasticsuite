@@ -36,7 +36,6 @@ class Reader extends Filesystem
      */
     const FILENAME = 'elasticsuite_analysis.xml';
 
-    // @codingStandardsIgnoreStart
     /**
      * List of attributes by XPath used as ids during the file merge process.
      *
@@ -47,7 +46,6 @@ class Reader extends Filesystem
         '/analysis/filters/filter'           => ['name', 'language'],
         '/analysis/analyzers/analyzer'       => ['name', 'language'],
     ];
-    // @codingStandardsIgnoreEnd
 
     /**
      * {@inheritdoc}

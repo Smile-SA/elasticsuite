@@ -26,10 +26,8 @@ class Grid extends \Magento\Backend\Block\Widget\Grid
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _preparePage()
     {
-        //@codingStandardsIgnoreEnd
         parent::_preparePage();
         $this->getColumnSet()->getChildBlock('store_id')->setFilterConditionCallback([$this, 'filterStoreCondition']);
         $this->getColumnSet()->getChildBlock('thesaurus_terms_summary')->setFilterConditionCallback([$this, 'filterTermsCondition']);

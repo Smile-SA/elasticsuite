@@ -31,10 +31,8 @@ class Synonyms extends AbstractRenderer
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         $this->addColumn('term_id', ['label' => __('')]);
         $this->addColumn(
             'values',

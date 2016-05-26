@@ -36,10 +36,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Conform to interface
     public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        // @codingStandardsIgnoreEnd
         $setup->startSetup();
 
         $this->createThesaurusTable($setup);

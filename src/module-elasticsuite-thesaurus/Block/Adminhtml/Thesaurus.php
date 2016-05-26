@@ -36,10 +36,8 @@ class Thesaurus extends GridContainer
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_controller = 'thesaurus';
         $this->_headerText = __('Thesaurus');
         $this->_addButtonLabel = __('Add New Thesaurus');

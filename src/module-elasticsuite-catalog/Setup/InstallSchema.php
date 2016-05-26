@@ -45,18 +45,17 @@ class InstallSchema implements InstallSchemaInterface
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * Installs DB schema for the module
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param SchemaSetupInterface   $setup   The setup interface
      * @param ModuleContextInterface $context The module Context
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Conform to interface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        // @codingStandardsIgnoreEnd
         $setup->startSetup();
         $this->addEavCatalogFields($setup);
         $this->updateDefaultValues($setup);

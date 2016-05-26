@@ -91,16 +91,14 @@ abstract class AbstractThesaurus extends Action
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Check if allowed to manage thesaurus
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return bool
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _isAllowed()
     {
-        //@codingStandardsIgnoreEnd
         return $this->_authorization->isAllowed('Smile_ElasticsuiteThesaurus::manage');
     }
 }

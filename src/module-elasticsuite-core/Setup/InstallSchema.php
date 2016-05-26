@@ -36,10 +36,8 @@ class InstallSchema implements InstallSchemaInterface
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Conform to interface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        // @codingStandardsIgnoreEnd
         $connection = $setup->getConnection();
 
         $setup->startSetup();

@@ -153,12 +153,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      * Join store relation table if there is store filter
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _renderFiltersBefore()
     {
-        //@codingStandardsIgnoreEnd
         if ($this->getFilter('store')) {
             $this->getSelect()->join(
                 ['store_table' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)],
@@ -177,10 +174,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         $this->_init(
             'Smile\ElasticSuiteThesaurus\Model\Thesaurus',
             'Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus'
@@ -194,10 +189,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _afterLoad()
     {
-        //@codingStandardsIgnoreEnd
         $this->loadStores();
         $this->loadTermsData();
 

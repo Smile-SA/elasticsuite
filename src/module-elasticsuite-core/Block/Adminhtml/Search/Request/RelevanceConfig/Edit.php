@@ -41,9 +41,7 @@ class Edit extends \Magento\Backend\Block\Widget
      *
      * @var string
      */
-    // @codingStandardsIgnoreStart Property is inherited
     protected $_template = 'Magento_Config::system/config/edit.phtml';
-    // @codingStandardsIgnoreEnd
 
     /**
      * Configuration structure
@@ -91,13 +89,12 @@ class Edit extends \Magento\Backend\Block\Widget
     /**
      * Prepare layout object
      *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * @return \Magento\Framework\View\Element\AbstractBlock
      */
-    // @codingStandardsIgnoreStart Method is inherited
-    /** @SuppressWarnings(PHPMD.CamelCaseMethodName) **/
     protected function _prepareLayout()
     {
-        // @codingStandardsIgnoreEnd
         /** @var $section \Magento\Config\Model\Config\Structure\Element\Section */
         $section = $this->configStructure->getElement($this->getRequest()->getParam('section'));
         $this->formBlockName = $section->getFrontendModel();

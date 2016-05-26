@@ -30,10 +30,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         parent::_construct();
         $this->setId('thesaurus_create_form');
         $this->setTitle(__('Create a Thesaurus'));
@@ -46,10 +44,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      *
      * @return Form
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _prepareForm()
     {
-        //@codingStandardsIgnoreEnd
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action')]]

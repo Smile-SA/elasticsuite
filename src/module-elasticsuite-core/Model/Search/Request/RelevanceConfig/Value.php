@@ -29,9 +29,7 @@ class Value extends \Magento\Framework\App\Config\Value
      *
      * @var string
      */
-    // @codingStandardsIgnoreStart Property is inherited
     protected $_eventPrefix = 'smile_elasticsuite_relevance_config_value';
-    //@codingStandardsIgnoreEnd
 
     /**
      * Parameter name in event
@@ -40,9 +38,7 @@ class Value extends \Magento\Framework\App\Config\Value
      *
      * @var string
      */
-    // @codingStandardsIgnoreStart Property is inherited
     protected $_eventObject = 'smile_elasticsuite_relevance_config_value';
-    //@codingStandardsIgnoreEnd
 
     /**
      * Processing object's after save. Overriden to prevent invalidation of "config" cache tag.

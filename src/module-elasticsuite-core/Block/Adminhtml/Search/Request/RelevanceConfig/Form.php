@@ -209,11 +209,8 @@ class Form extends \Magento\Config\Block\System\Config\Form
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _initObjects()
     {
-        // @codingStandardsIgnoreEnd
-
         $this->_configDataObject = $this->_configFactory->create(
             [
                 'data' => [
@@ -232,15 +229,16 @@ class Form extends \Magento\Config\Block\System\Config\Form
     }
 
     /**
+     * Init form element from config.
+     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
-     * @param \Magento\Config\Model\Config\Structure\Element\Field $field
-     * @param \Magento\Framework\Data\Form\Element\Fieldset        $fieldset
-     * @param string                                               $path
-     * @param string                                               $fieldPrefix
-     * @param string                                               $labelPrefix
+     * @param \Magento\Config\Model\Config\Structure\Element\Field $field       Form field.
+     * @param \Magento\Framework\Data\Form\Element\Fieldset        $fieldset    Form fieldset.
+     * @param string                                               $path        Config path.
+     * @param string                                               $fieldPrefix Field name prefix.
+     * @param string                                               $labelPrefix Field label prefix.
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _initElement(
         \Magento\Config\Model\Config\Structure\Element\Field $field,
         \Magento\Framework\Data\Form\Element\Fieldset $fieldset,
@@ -248,7 +246,6 @@ class Form extends \Magento\Config\Block\System\Config\Form
         $fieldPrefix = '',
         $labelPrefix = ''
     ) {
-        // @codingStandardsIgnoreEnd
         $inherit = true;
 
         $data = $this->getConfigValue($path);

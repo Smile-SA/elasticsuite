@@ -26,10 +26,8 @@ class Expansions extends AbstractRenderer
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        //@codingStandardsIgnoreEnd
         $this->addColumn('term_id', ['label' => __('')]);
         $this->addColumn('reference_term', ['label' => __('Reference Term')]);
         $this->addColumn('values', ['label' => __('Expansion terms')]);

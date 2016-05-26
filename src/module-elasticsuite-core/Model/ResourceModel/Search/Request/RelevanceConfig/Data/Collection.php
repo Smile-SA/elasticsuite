@@ -41,16 +41,14 @@ class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collect
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Define resource model
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart This method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_init(
             'Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value',
             'Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data'

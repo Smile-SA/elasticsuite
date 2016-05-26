@@ -23,33 +23,29 @@ namespace Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceCon
 class Data extends \Magento\Config\Model\ResourceModel\Config\Data
 {
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Define main table
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart This method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
      * Validate unique configuration data before save
      * Set id to object if exists configuration instead of throw exception
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @param \Magento\Framework\Model\AbstractModel $object The current configuration value being saved
      *
      * @return $this
      */
-    // @codingStandardsIgnoreStart This method is inherited
     protected function _checkUnique(\Magento\Framework\Model\AbstractModel $object)
     {
-        // @codingStandardsIgnoreEnd
         $select = $this->getConnection()->select()->from(
             $this->getMainTable(),
             [$this->getIdFieldName()]

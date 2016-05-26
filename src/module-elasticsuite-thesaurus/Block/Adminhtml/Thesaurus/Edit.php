@@ -53,10 +53,8 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart Method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_objectId = ThesaurusInterface::THESAURUS_ID;
         $this->_blockGroup = 'Smile_ElasticSuiteThesaurus';
         $this->_controller = 'adminhtml_thesaurus';

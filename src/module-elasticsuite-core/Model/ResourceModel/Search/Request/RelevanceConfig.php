@@ -23,16 +23,14 @@ namespace Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request;
 class RelevanceConfig extends \Magento\Config\Model\ResourceModel\Config
 {
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * Define main table.
      *
-     * Define main table
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return void
      */
-    // @codingStandardsIgnoreStart This method is inherited
     protected function _construct()
     {
-        // @codingStandardsIgnoreEnd
         $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
     }
 }
