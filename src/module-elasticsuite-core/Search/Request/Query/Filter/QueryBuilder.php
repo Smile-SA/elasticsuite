@@ -74,6 +74,8 @@ class QueryBuilder
     /**
      * Prepare filter condition from an array as used into addFieldToFilter.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param array                           $filters         Filters to be built.
      *

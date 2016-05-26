@@ -21,6 +21,8 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 /**
  * Virtual category rule.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -54,6 +56,8 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
 
     /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Framework\Model\Context                                                         $context                   Context.
      * @param \Magento\Framework\Registry                                                              $registry                  Registry.

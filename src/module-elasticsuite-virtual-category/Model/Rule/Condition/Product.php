@@ -20,6 +20,8 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 /**
  * Product search rule condition.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile_ElasticSuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -33,6 +35,8 @@ class Product extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Produc
 
     /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Rule\Model\Condition\Context                                     $context           Rule context.
      * @param \Magento\Backend\Helper\Data                                              $backendData       Admin helper.

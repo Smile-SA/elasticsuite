@@ -37,6 +37,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     /**
      * Constructor.
      *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param \Magento\Rule\Model\Condition\Context                                     $context           Rule context.
      * @param \Magento\Backend\Helper\Data                                              $backendData       Admin helper.
      * @param \Magento\Eav\Model\Config                                                 $config            EAV config.
