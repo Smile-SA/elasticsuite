@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteVirtualCategory\Observer;
 
 use Magento\Catalog\Block\Adminhtml\Category\Tabs;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Catalog\Api\Data\CategoryInterface;
 
 /**
  * Handles additional tab for merchandising in the catagory edit page.
@@ -41,9 +42,23 @@ class CategoryProductFormObserver implements ObserverInterface
             'category.merchandising.form'
         );
 
-        $tabs->addTab(
-            'category.merchandising',
-            ['label' => __('Merchandising'), 'content' => $virtualCategoryFormBlock->toHtml()]
-        );
+        if ($this->canDisplayTab($virtualCategoryFormBlock->getCategory())) {
+            $tabs->addTab(
+                'category.merchandising',
+                ['label' => __('Merchandising'), 'content' => $virtualCategoryFormBlock->toHtml()]
+            );
+        }
+    }
+
+    /**
+     * Indicates if the merchandising tab can be displayed on the current category.
+     *
+     * @param CategoryInterface $category Current category.
+     *
+     * @return boolean
+     */
+    private function canDisplayTab(CategoryInterface $category)
+    {
+        return $category->getId() !== null && $category->getLevel() > 1;
     }
 }
