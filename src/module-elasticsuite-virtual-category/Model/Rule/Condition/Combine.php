@@ -49,15 +49,15 @@ class Combine extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combin
         foreach ($this->getConditions() as $condition) {
             $subQuery = $condition->getSearchQuery($excludedCategories);
             if ($subQuery !== null && $subQuery instanceof QueryInterface) {
+                if ($value === false) {
+                    $subQuery = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $subQuery]);
+                }
+
                 $queryParams[$queryClause][] = $subQuery;
             }
         }
 
         $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
-
-        if ($value == false) {
-            $query = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
-        }
 
         return $query;
     }

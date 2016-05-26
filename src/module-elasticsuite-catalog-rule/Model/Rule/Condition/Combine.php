@@ -156,16 +156,14 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         foreach ($this->getConditions() as $condition) {
             $subQuery = $condition->getSearchQuery();
             if ($subQuery !== null && $subQuery instanceof QueryInterface) {
+                if ($value === false) {
+                    $subQuery = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $subQuery]);
+                }
                 $queryParams[$queryClause][] = $subQuery;
             }
         }
 
         $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
-
-        if ($value == false) {
-            /* @todo: Check the boolean logic applied is correct regarding to the admin logic */
-            $query = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
-        }
 
         return $query;
     }
