@@ -37,4 +37,12 @@
         </arguments>
     </type> 
     
+    <type name="Smile\ElasticSuiteCatalogRule\Controller\Adminhtml\Product\Rule\Conditions">
+        <arguments>
+            <argument name="acls" xsi:type="array">
+                <item name="manage_categories" xsi:type="string">Magento_Catalog::categories</item>
+            </argument>
+        </arguments>
+    </type>
+    
 </config>

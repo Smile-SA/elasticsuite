@@ -33,16 +33,24 @@ class Conditions extends Action
     protected $ruleFactory;
 
     /**
+     * @var arrray
+     */
+    private $acls = [];
+
+    /**
      * Constructor.
      *
      * @param \Magento\Backend\App\Action\Context              $context     Context.
      * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory Search engine rule factory.
+     * @param array                                            $acls        List of resource allowed to use the controller.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory
+        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        $acls = []
     ) {
         $this->ruleFactory = $ruleFactory;
+        $this->acls        = $acls;
         parent::__construct($context);
     }
 
@@ -83,7 +91,12 @@ class Conditions extends Action
      */
     protected function _isAllowed()
     {
-        /* @todo : implement check */
-        return true;
+        $isAllowed = false;
+
+        foreach ($this->acls as $acl) {
+            $isAllowed = $isAllowed || $this->_authorization->isAllowed($acl);
+        }
+
+        return $isAllowed;
     }
 }
