@@ -110,7 +110,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
 
         $queryParams = [];
 
-        if ((bool) $category->getIsVirtualCategory()) {
+        if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
             $parentCategory = $this->getVirtualRootCategory($category);
             $excludedCategories[]  = $category->getId();
 
@@ -119,11 +119,11 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
             if ($parentCategory && $parentCategory->getId()) {
                 $queryParams['must'][] = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
             }
-        } elseif ($category->getId()) {
+        } elseif ($category->getId() && $category->getIsActive()) {
             $queryParams['should'][] = $this->getStandardCategoryQuery($category);
 
             foreach ($this->getChildrenVirtualCategories($category, $excludedCategories) as $childrenCategory) {
-                $queryParams['should'][] = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+                $queryParams['should'][] = $this->getVirtualCategoryQuery($childrenCategory, $excludedCategories);
             }
         }
 
@@ -218,19 +218,18 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      */
     private function getChildrenVirtualCategories(CategoryInterface $category, $excludedCategories = [])
     {
-        $storeId            = $this->getStoreId();
+        $storeId            = $category->getStoreId();
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
-        $categoryCollection
-            ->setStoreId($this->getStoreId())
-            ->addIsActiveFilter()
-            ->addAttributeToFilter('is_virtual_category', true)
-            ->addPathFilter(sprintf('%s/.*', $category->getPath()))
-            ->addAttributeToSelect(['virtual_category_root', 'is_virtual_category', 'virtual_rule']);
+        $categoryCollection->addAttributeToFilter('is_virtual_category', 1)
+            ->addAttributeToFilter('is_active', ['neq' => 0]) // Bug (Magento ?) when not using "neq".
+            ->addPathFilter(sprintf('%s/.*', $category->getPath()));
 
         if (!empty($excludedCategories)) {
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
         }
+
+        $categoryCollection->addAttributeToSelect(['is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
 
         return $categoryCollection;
     }
