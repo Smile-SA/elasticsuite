@@ -172,7 +172,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
         $storeId      = $this->getStoreId();
         $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
 
-        if ($category->getVirtualCategoryRoot() !== null) {
+        if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
             $rootCategoryId = explode('/', $category->getVirtualCategoryRoot())[1];
             $rootCategory->load($rootCategoryId);
         }

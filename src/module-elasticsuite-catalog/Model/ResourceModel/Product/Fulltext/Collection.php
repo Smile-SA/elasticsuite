@@ -16,6 +16,7 @@ namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 use Smile\ElasticSuiteCore\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponse;
 
 /**
  * Search engine product collection.
@@ -412,6 +413,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         foreach ($this->queryResponse->getIterator() as $document) {
             $documentId = $document->getId();
             if (isset($orginalItems[$documentId])) {
+                $orginalItems[$documentId]->setDocumentScore($document->getScore());
+                $orginalItems[$documentId]->setDocumentSource($document->getSource());
                 $this->_items[$documentId] = $orginalItems[$documentId];
             }
         }

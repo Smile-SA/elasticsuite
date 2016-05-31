@@ -1,0 +1,12 @@
+<input type="hidden" 
+       data-bind="attr: { name: targetElementName, value: getSerializedSortOrder() }" />
+
+<div class="elasticsuite-admin-product-sorter">
+    <ul data-bind="foreach: getSortedProducts(), afterRender: enableSortableList" class="product-list">
+        <li class="product-list-item">
+            <div class="draggable-handle" title="Sort Option"></div>
+            <h1><span data-bind="html: name"></span></h1>
+            <div class="product-image"><img width="150" height="150" data-bind="attr: { src: image }" /></div>
+        </li>
+    </ul>
+</div>

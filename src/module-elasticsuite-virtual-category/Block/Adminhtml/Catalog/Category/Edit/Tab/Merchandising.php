@@ -16,7 +16,6 @@ namespace Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edi
 
 use Magento\Catalog\Model\Category;
 use Magento\Backend\Block\Template;
-use Magento\Backend\Block\Widget\Form\Generic;
 use Magento\Config\Model\Config\Source\Yesno;
 
 /**
@@ -69,7 +68,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     /**
      * Return currently edited category
      *
-     * @return Category|null
+     * @return \Magento\Catalog\Model\Category
      */
     public function getCategory()
     {
@@ -93,6 +92,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
 
         $this->addCategoryMode($form)
              ->addVirtualCategorySettings($form)
+             ->addProductSorter($form)
              ->addDependenceManager();
 
         $form->addValues($this->getCategory()->getData());
@@ -149,6 +149,21 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     }
 
     /**
+     *
+     * @param \Magento\Framework\Data\Form $form Current form.
+     *
+     * @return $this
+     */
+    private function addProductSorter(\Magento\Framework\Data\Form $form)
+    {
+        $fieldset = $form->addFieldset('merchandising_product_sort_fieldset', ['legend' => __('Preview and sorting')]);
+
+        $fieldset->addField('product_sort', 'text', ['name' => 'product_sort']);
+
+        return $this;
+    }
+
+    /**
      * Append renderers to the form.
      *
      * Note : This is called AFTER calling $form->addValues since the category chooser field renderer is not a
@@ -171,6 +186,18 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
         $categoryChooserRenderer->setFieldsetId($form->getElement('merchandising_virtual_settings_fieldset')->getId())
                                 ->setConfig(['buttons' => ['open' => __('Select category ...')]]);
         $categoryChooserRenderer->prepareElementHtml($categoryChooserField);
+
+        $productSortField    = $form->getElement('product_sort');
+        $productSortField->setLoadUrl($this->getPreviewUrl())
+            ->setFormId('category_edit_form')
+            ->setRefreshElements([
+                'category_products',
+                $form->getElement('is_virtual_category')->getName(),
+                $form->getElement('virtual_rule')->getName(),
+                $form->getElement('virtual_category_root')->getName(),
+            ]);
+        $productSortRenderer = $this->getLayout()->createBlock('Smile\ElasticSuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer\Sort');
+        $productSortField->setRenderer($productSortRenderer);
 
         return $this;
     }
@@ -195,5 +222,23 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
         $this->setChild('form_after', $dependenceManagerBlock);
 
         return $this;
+    }
+
+    /**
+     * Return the product list preview URL.
+     *
+     * @return string
+     */
+    private function getPreviewUrl()
+    {
+        $storeId = $this->getCategory()->getStoreId();
+
+        if ($storeId === 0) {
+            $storeId = current(array_filter($this->getCategory()->getStoreIds()));
+        }
+
+        $urlParams = ['ajax' => true, 'store' => $storeId];
+
+        return $this->getUrl('virtualcategory/category_virtual/preview', $urlParams);
     }
 }

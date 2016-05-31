@@ -12,12 +12,24 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
+// Display fieldsets legend into catalog category merchandising tab.
 #category_info_tabs_category\.merchandising_content {
-
     .fieldset {
         padding-top: 10px;
         .legend {
             display: block;
         }
+    }
+}
+
+// Hide the position edit column into catalog category products tab
+#catalog_category_products {
+
+    .data-grid td:nth-last-child(2) {
+        border-right-style: solid;
+    }
+
+    .col-position {
+        display: none;
     }
 }
