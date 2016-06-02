@@ -12,8 +12,9 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    file_extensions: php
-    rulesets: Resources/phpmd-rulesets/rulset.xml
+    config
+      file_extensions: php
+      rulesets: Resources/phpmd-rulesets/rulset.xml
 ratings:
   paths:
   - "**.js"
