@@ -52,4 +52,11 @@ interface TypeInterface
      * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface
      */
     public function getDatasource($name);
+
+    /**
+     * Field use as unique id for the doc.
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     */
+    public function getIdField();
 }

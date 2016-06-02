@@ -86,7 +86,6 @@ class AggregationBuilder
                 }
             } catch (\Exception $e) {
                 $bucketParams = $aggregationParams['config'];
-
             }
 
             $buckets[] = $this->aggregationFactory->create($bucketType, $bucketParams);

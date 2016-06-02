@@ -59,28 +59,34 @@ class QueryBuilder
      */
     public function getSearchQuery(ProductCondition $productCondition)
     {
-        $queryType   = QueryInterface::TYPE_TERMS;
-        $queryParams = $this->getTermsQueryParams($productCondition);
+        $query       = null;
 
-        if ($productCondition->getInputType() === 'string') {
-            $queryType = QueryInterface::TYPE_MATCH;
-            $queryParams = $this->getMatchQueryParams($productCondition);
-        } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
-            $queryType = QueryInterface::TYPE_RANGE;
-            $queryParams = $this->getRangeQueryParams($productCondition);
-        }
+        $this->prepareFieldValue($productCondition);
 
-        $query = $this->prepareQuery($queryType, $queryParams);
+        if (!empty($productCondition->getValue())) {
+            $queryType   = QueryInterface::TYPE_TERMS;
+            $queryParams = $this->getTermsQueryParams($productCondition);
 
-        if (substr($productCondition->getOperator(), 0, 1) === '!') {
-            $query = $this->applyNegation($query);
-        }
+            if ($productCondition->getInputType() === 'string') {
+                $queryType = QueryInterface::TYPE_MATCH;
+                $queryParams = $this->getMatchQueryParams($productCondition);
+            } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
+                $queryType = QueryInterface::TYPE_RANGE;
+                $queryParams = $this->getRangeQueryParams($productCondition);
+            }
 
-        $field = $this->getSearchField($productCondition);
+            $query = $this->prepareQuery($queryType, $queryParams);
 
-        if ($field->isNested()) {
-            $nestedQueryParams = ['query' => $query, 'path' => $field->getNestedPath()];
-            $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
+            if (substr($productCondition->getOperator(), 0, 1) === '!') {
+                $query = $this->applyNegation($query);
+            }
+
+            $field = $this->getSearchField($productCondition);
+
+            if ($field->isNested()) {
+                $nestedQueryParams = ['query' => $query, 'path' => $field->getNestedPath()];
+                $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
+            }
         }
 
         return $query;
@@ -130,9 +136,7 @@ class QueryBuilder
                 break;
         }
 
-        /* @todo: manage date ranges */
-
-        return ['bounds' => [$operator => $value], 'field' => $fieldName];
+        return ['bounds' => [$operator => (float) $value], 'field' => $fieldName];
     }
 
     /**
@@ -186,7 +190,7 @@ class QueryBuilder
      *
      * @return \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface
      */
-    private function getSearchField($productCondition)
+    private function getSearchField(ProductCondition $productCondition)
     {
         $field = $this->attributeList->getField($productCondition->getAttribute());
 
@@ -200,7 +204,7 @@ class QueryBuilder
      *
      * @return string
      */
-    private function getSearchFieldName($productCondition)
+    private function getSearchFieldName(ProductCondition $productCondition)
     {
         $field    = $this->attributeList->getField($productCondition->getAttribute());
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
@@ -210,5 +214,25 @@ class QueryBuilder
         }
 
         return $field->getMappingProperty($analyzer);
+    }
+
+    /**
+     * Update the condition value to ignore empty array items.
+     *
+     * @param ProductCondition $productCondition Product condition.
+     *
+     * @return $this
+     */
+    private function prepareFieldValue(ProductCondition $productCondition)
+    {
+        $value = $productCondition->getValue();
+
+        if (is_array($value)) {
+            $value = array_filter($value);
+        }
+
+        $productCondition->setValue($value);
+
+        return $this;
     }
 }

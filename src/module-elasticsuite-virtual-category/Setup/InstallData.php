@@ -12,13 +12,11 @@
  */
 namespace Smile\ElasticSuiteVirtualCategory\Setup;
 
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Eav\Setup\EavSetup;
 
 /**
  * Catalog installer

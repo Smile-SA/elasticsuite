@@ -52,19 +52,28 @@ class Preview
     private $queryFactory;
 
     /**
+     *
+     * @var unknown
+     */
+    private $size;
+
+    /**
      * Constructor.
      *
      * @param CategoryInterface         $category                 Category to preview.
      * @param FulltextCollectionFactory $productCollectionFactory Fulltext product collection factory.
      * @param ItemFactory               $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             QueryInterface factory.
+     * @param int                       $size                     Preview size.
      */
     public function __construct(
         CategoryInterface $category,
         FulltextCollectionFactory $productCollectionFactory,
         ItemFactory $previewItemFactory,
-        QueryFactory $queryFactory
+        QueryFactory $queryFactory,
+        $size = 10
     ) {
+        $this->size                     = $size;
         $this->productCollectionFactory = $productCollectionFactory;
         $this->previewItemFactory       = $previewItemFactory;
         $this->category                 = $category;
@@ -78,34 +87,76 @@ class Preview
      */
     public function getData()
     {
-        $productCollection = $this->productCollectionFactory->create();
+        $manualSortProductCollection = $this->getManualSortProductCollection();
+        $automaticProductCollection  = $this->getAutomaticSortProductCollection()->setPageSize($this->size);
 
-        $productCollection
-            ->addQueryFilter($this->getFilterQuery())
-            ->setStoreId($this->category->getStoreId())
-            ->addAttributeToSelect(['name', 'price', 'small_image']);
-        $productCollection->setPageSize(20);
+        $loadedProducts = array_merge($automaticProductCollection->getItems(), $manualSortProductCollection->getItems());
 
-        return ['products' => $this->loadItems($productCollection), 'size' => $productCollection->getSize()];
+        return ['products' => $this->loadItems($loadedProducts), 'size' => $automaticProductCollection->getSize()];
     }
 
     /**
-     * Load items data from the collection.
+     * Return a collection with with products that match the category rules loaded.
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection Product collection.
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    private function getAutomaticSortProductCollection()
+    {
+        $productCollection = $this->productCollectionFactory->create();
+
+        $productCollection
+            ->setStoreId($this->category->getStoreId())
+            ->addQueryFilter($this->getFilterQuery())
+            ->addAttributeToSelect(['name', 'small_image']);
+
+        return $productCollection;
+    }
+
+    /**
+     * Return a collection with all products manually sorted loaded.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    private function getManualSortProductCollection()
+    {
+        $productIds = $this->getSortedProductIds();
+
+        $productCollection = $this->getAutomaticSortProductCollection();
+        $productCollection->setPageSize(count($productIds));
+
+        $idFilter = $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['values' => $productIds, 'field' => 'entity_id']);
+        $productCollection->addQueryFilter($idFilter);
+
+        return $productCollection;
+    }
+
+    /**
+     * Return the list of sorted product ids.
+     *
+     * @return array
+     */
+    private function getSortedProductIds()
+    {
+        return $this->category->getSortedProductIds();
+    }
+
+    /**
+     * Convert an array of products to an array of preview items.
+     *
+     * @param \Magento\Catalog\Model\ResourceModel\Product[] $products Product list.
      *
      * @return Preview\Item[]
      */
-    private function loadItems(\Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection)
+    private function loadItems($products = [])
     {
         $items = [];
 
-        foreach ($productCollection as $product) {
+        foreach ($products as $product) {
             $item = $this->previewItemFactory->create(['product' => $product]);
-            $items[] = $item->getData();
+            $items[$product->getId()] = $item->getData();
         }
 
-        return $items;
+        return array_values($items);
     }
 
     /**

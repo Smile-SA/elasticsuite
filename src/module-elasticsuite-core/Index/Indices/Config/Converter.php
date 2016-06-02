@@ -96,7 +96,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     private function parseTypeConfig(\DOMXPath $xpath, \DOMNode $typeRootNode)
     {
         $staticFields  = $this->parseMappingFields($xpath, $typeRootNode);
-        $datasources = $this->parseDatasources($xpath, $typeRootNode);
+        $idFieldName   = $typeRootNode->getAttribute('idFieldName');
+        $datasources   = $this->parseDatasources($xpath, $typeRootNode);
 
         $dynamicFieldProviders = array_filter(
             $datasources,
@@ -107,7 +108,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $dynamicFieldProviders];
 
-        return ['mapping' => $mappingParams, 'datasources' => $datasources];
+        return ['mapping' => $mappingParams, 'datasources' => $datasources, 'idFieldName' => $idFieldName];
     }
 
     /**

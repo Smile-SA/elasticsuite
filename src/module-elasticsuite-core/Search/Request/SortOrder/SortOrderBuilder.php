@@ -18,6 +18,7 @@ use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
 use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticSuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
 
 /**
  * Allow to build a sort order from arrays.
@@ -73,11 +74,7 @@ class SortOrderBuilder
         $sortOrders = [];
         $mapping    = $containerConfig->getMapping();
 
-        if (!in_array(SortOrderInterface::DEFAULT_SORT_FIELD, array_keys($orders))) {
-            $orders[SortOrderInterface::DEFAULT_SORT_FIELD] = [
-                'direction' => SortOrderInterface::DEFAULT_SORT_DIRECTION,
-            ];
-        }
+        $orders = $this->addDefaultSortOrders($orders, $mapping);
 
         foreach ($orders as $fieldName => $sortOrderParams) {
             $factory = $this->standardOrderFactory;
@@ -102,6 +99,32 @@ class SortOrderBuilder
         }
 
         return $sortOrders;
+    }
+
+    /**
+     * Append default sort to all queries to get fully predictable search results.
+     *
+     * Order by _score first and then by the id field.
+     *
+     * @param array            $orders  Original orders.
+     * @param MappingInterface $mapping Mapping.
+     *
+     * @return array
+     */
+    private function addDefaultSortOrders($orders, MappingInterface $mapping)
+    {
+        $defaultOrders = [
+            SortOrderInterface::DEFAULT_SORT_FIELD => SortOrderInterface::DEFAULT_SORT_DIRECTION,
+            $mapping->getIdField()->getName()      => SortOrderInterface::DEFAULT_SORT_DIRECTION,
+        ];
+
+        foreach ($defaultOrders as $currentOrder => $direction) {
+            if (!in_array($currentOrder, array_keys($orders))) {
+                $orders[$currentOrder] = ['direction' => $direction];
+            }
+        }
+
+        return $orders;
     }
 
     /**

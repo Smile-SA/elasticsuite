@@ -15,7 +15,7 @@
 // Display fieldsets legend into catalog category merchandising tab.
 #category_info_tabs_category\.merchandising_content {
     .fieldset {
-        padding-top: 10px;
+        padding: 10px 0 15px;
         .legend {
             display: block;
         }
@@ -31,5 +31,55 @@
 
     .col-position {
         display: none;
+    }
+}
+
+#merchandising_virtual_settings_fieldset {
+
+    label.label {
+        width: 100%;
+        float: none;
+        text-align: left;
+        padding: 0px 0px 0 10px;
+        margin: 0px;
+        background: #41362f;
+        color: #FFFFFF;
+    }
+
+    div.control {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .field-virtual_rule {
+        width: 61%;
+        float: left;
+        border: 1px solid #DADADA;
+        margin: 0 2% 0 0;
+    }
+
+    .field-virtual_category_root {
+        float: left;
+        width: 25%;
+        border: 1px solid #DADADA;
+        border-right: none;
+
+        div.control {
+            label {
+                padding: 10px;
+                font-weight: bold;
+            }
+        }
+    }
+
+    .field-chooservirtual_category_root {
+        float: left;
+        width: 12%;
+        border: 1px solid #DADADA;
+        border-left: none;
+
+        button {
+            margin: 6px 0 0;
+        }
     }
 }

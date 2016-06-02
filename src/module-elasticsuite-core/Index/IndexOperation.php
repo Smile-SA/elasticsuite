@@ -229,7 +229,11 @@ class IndexOperation implements IndexOperationInterface
      */
     public function refreshIndex(IndexInterface $index)
     {
-        $this->client->indices()->refresh(['index' => $index->getName()]);
+        try {
+            $this->client->indices()->refresh(['index' => $index->getName()]);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+        }
 
         return $this;
     }

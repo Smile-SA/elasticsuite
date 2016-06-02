@@ -124,7 +124,8 @@ class AttributeList
 
             $fieldNames = array_map($arrayNameCb, array_filter($this->getMapping()->getFields(), $attributeFilterCb));
 
-            $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames);
+            $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames)
+                 ->addFieldToFilter('backend_type', ['neq' => 'datetime']);
         }
 
         return $this->attributeCollection;

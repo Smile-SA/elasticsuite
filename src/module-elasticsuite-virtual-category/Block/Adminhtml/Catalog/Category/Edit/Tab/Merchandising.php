@@ -19,7 +19,7 @@ use Magento\Backend\Block\Template;
 use Magento\Config\Model\Config\Source\Yesno;
 
 /**
- * Categroy edit merchandising tab form implementation.
+ * Category edit merchandising tab form implementation.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteVirtualCategory
@@ -27,6 +27,11 @@ use Magento\Config\Model\Config\Source\Yesno;
  */
 class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
 {
+    /**
+     * @var integer
+     */
+    const DEFAULT_PREVIEW_SIZE = 20;
+
     /**
      * @var Category|null
      */
@@ -43,13 +48,26 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     private $ruleFactory;
 
     /**
+     * @var integer
+     */
+    private $previewSize;
+
+    /**
+     * @var \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
+     */
+    private $productPositionResource;
+
+    /**
+     * Constructor.
      *
-     * @param \Magento\Backend\Block\Template\Context          $context       Template context.
-     * @param \Magento\Framework\Registry                      $registry      Registry (used to read current category)
-     * @param \Magento\Framework\Data\FormFactory              $formFactory   Form factory.
-     * @param \Magento\Config\Model\Config\Source\Yesno        $booleanSource Data source for boolean fields.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory   Catalog product rule factory.
-     * @param array                                            $data          Additional data.
+     * @param \Magento\Backend\Block\Template\Context                                          $context                 Template context.
+     * @param \Magento\Framework\Registry                                                      $registry                Registry (used to read current category)
+     * @param \Magento\Framework\Data\FormFactory                                              $formFactory             Form factory.
+     * @param \Magento\Config\Model\Config\Source\Yesno                                        $booleanSource           Data source for boolean fields.
+     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory                                 $ruleFactory             Catalog product rule factory.
+     * @param \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource Product position loading resource.
+     * @param integer                                                                          $previewSize             Preview size.
+     * @param array                                                                            $data                    Additional data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -57,12 +75,16 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource,
+        $previewSize = self::DEFAULT_PREVIEW_SIZE,
         array $data = []
     ) {
         parent::__construct($context, $registry, $formFactory, $data);
 
-        $this->booleanSource = $booleanSource;
-        $this->ruleFactory   = $ruleFactory;
+        $this->booleanSource           = $booleanSource;
+        $this->ruleFactory             = $ruleFactory;
+        $this->productPositionResource = $productPositionResource;
+        $this->previewSize             = $previewSize;
     }
 
     /**
@@ -158,7 +180,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     {
         $fieldset = $form->addFieldset('merchandising_product_sort_fieldset', ['legend' => __('Preview and sorting')]);
 
-        $fieldset->addField('product_sort', 'text', ['name' => 'product_sort']);
+        $fieldset->addField('sorted_products', 'text', ['name' => 'sorted_products']);
 
         return $this;
     }
@@ -187,7 +209,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
                                 ->setConfig(['buttons' => ['open' => __('Select category ...')]]);
         $categoryChooserRenderer->prepareElementHtml($categoryChooserField);
 
-        $productSortField    = $form->getElement('product_sort');
+        $productSortField    = $form->getElement('sorted_products');
         $productSortField->setLoadUrl($this->getPreviewUrl())
             ->setFormId('category_edit_form')
             ->setRefreshElements([
@@ -195,7 +217,10 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
                 $form->getElement('is_virtual_category')->getName(),
                 $form->getElement('virtual_rule')->getName(),
                 $form->getElement('virtual_category_root')->getName(),
-            ]);
+            ])
+            ->setSavedPositions($this->getProductSavedPositions())
+            ->setPageSize($this->previewSize);
+
         $productSortRenderer = $this->getLayout()->createBlock('Smile\ElasticSuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer\Sort');
         $productSortField->setRenderer($productSortRenderer);
 
@@ -240,5 +265,15 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
         $urlParams = ['ajax' => true, 'store' => $storeId];
 
         return $this->getUrl('virtualcategory/category_virtual/preview', $urlParams);
+    }
+
+    /**
+     * Load product saved positions for the current category.
+     *
+     * @return array
+     */
+    private function getProductSavedPositions()
+    {
+        return $this->productPositionResource->getProductPositionsByCategory($this->getCategory());
     }
 }

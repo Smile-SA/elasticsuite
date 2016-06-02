@@ -52,12 +52,17 @@ class CategoryData implements DatasourceInterface
 
         foreach ($categoryData as $categoryDataRow) {
             $productId = (int) $categoryDataRow['product_id'];
-            $indexData[$productId]['category'][] = [
+            $currentCategoryData = [
                 'category_id' => (int) $categoryDataRow['category_id'],
                 'is_parent'   => (bool) $categoryDataRow['is_parent'],
-                'position'    => (int) $categoryDataRow['position'],
                 'name'        => (string) $categoryDataRow['name'],
             ];
+
+            if (isset($categoryDataRow['position']) && $categoryDataRow['position'] !== null) {
+                $currentCategoryData['position'] = (int) $categoryDataRow['position'];
+            }
+
+            $indexData[$productId]['category'][] = $currentCategoryData;
         }
 
         return $indexData;

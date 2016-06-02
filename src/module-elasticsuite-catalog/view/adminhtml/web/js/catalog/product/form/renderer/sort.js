@@ -15,177 +15,226 @@
 /*jshint browser:true jquery:true*/
 /*global console*/
 
+define([
+    'uiComponent', 
+    'jquery', 
+    'Smile.ES.FormListener', 
+    'Magento_Catalog/js/price-utils',
+    'mage/translate'
+], function (Component, $, FormListener, priceUtil) {
 
-define(["uiComponent", "jquery"], function (Component, $) {
+    'use strict';
 
-    "use strict";
-    
     var Product = Component.extend({
         initialize : function () {
             this._super();
             this.observe(['position']);
+            this.setPosition(this.data.position);
         },
-        
-        getRowCssClass : function (rowPosition) {
-            var cssClasses = [(rowPosition() % 2) === 0 ? "even" : "odd"];
-            return cssClasses.join(' ');
-        },
-        
-        hasPosition: function () {
-            return this.position() !== undefined && this.position() !== null;
-        }
-    });
-    
-    var FormListener = function (formId, formChangedEvent, listenFormElements) {
-        this.form               = $('#' + formId);
-        this.formChangedEvent   = formChangedEvent;
-        this.listenFormElements = listenFormElements;
-    };
-    
-    FormListener.prototype.startListener = function () {
-        if (this.timer === undefined || this.timer === null) {
-            this.hash  = this.getFormHash();
-            this.timer = setInterval(this.detectChanges.bind(this), 1000);
-        }
-    };
-    
-    FormListener.prototype.stopListener = function () {
-        if (this.timer === undefined || this.timer === null) {
-            clearInterval(this.timer);
-            delete this.timer; 
-        }
-    };
-    
-    FormListener.prototype.getFormHash = function () {
-        var serializedElements = this.form.serializeArray();
-        
-        var filterElementFunction = this.getFilterFunction();
-        if (filterElementFunction) {
-            serializedElements = serializedElements.filter(filterElementFunction);
-        }
-        
-        return serializedElements.map(function (formElement) { return formElement.name + formElement.value; }).join('|');
-    }
-    
-    FormListener.prototype.getFilterFunction = function () {
-        var filterFunction = null;
-        
-        var isElementTargeted = function (elementName, targetName) {
-            var isElementTargeted = elementName === targetName;
-            if (targetName.match(/.*\[.*\]$/)) {
-                isElementTargeted = elementName.startsWith(targetName);
+
+        setPosition : function (position) {
+            if (position) {
+                position = parseInt(position);
             }
-            return isElementTargeted;
-        }
+            
+            this.position(position);
+        },
+
+        compareTo : function(product) {
+            var result = 0;
+            result = this.hasPosition() && product.hasPosition() ? this.getPosition() - product.getPosition() : 0;
+            result = result === 0 && this.hasPosition() ? -1 : result;
+            result = result === 0 && product.hasPosition() ? 1 : result;
+            result = result === 0 ? product.getScore() - this.getScore()  : result;
+            result = result === 0 ? this.getId() - product.getId(): result;
+            
+            return result;
+        },
+
+        getPosition       : function () { return this.position(); },
+
+        hasPosition       : function () { return this.getPosition() !== undefined && this.getPosition() !== null; },
+
+        getFormattedPrice : function () { return priceUtil.formatPrice(this.data.price, this.data.priceFormat); },
+
+        getId             : function () { return parseInt(this.data.id); },
+
+        getScore          : function () { return parseFloat(this.data.score); },
+
+        getImageUrl       : function () { return this.data.image; },
+
+        getName           : function () { return this.data.name; },
         
-        if (Object.prototype.toString.call(this.listenFormElements) === '[object Array]') {
-            filterFunction = function(element) {
-                var addElement = false;
-                for (var i = 0; i < this.listenFormElements.length; i++) {
-                    addElement = addElement || isElementTargeted(element.name, this.listenFormElements[i]);
-                }
-                return addElement;
-            };
-        } else if (typeof this.listenFormElements === 'string') {
-            filterFunction = function (element) {
-                return isElementTargeted(element.name, this.listenFormElements);
-            };
-        } else if (typeof this.listenFormElements === 'object') {
-            filterFunction = function (element) {
-                return this.listenFormElements.name === element.name;
-            };
-        }
-        
-        return filterFunction.bind(this);
-    };
-    
-    FormListener.prototype.detectChanges = function () {
-        var currentHash = this.getFormHash();
-        
-        if (currentHash !== this.hash) {
-            $(document).trigger(this.formChangedEvent, [this.form]);
-        }
-        
-        this.hash = currentHash;
-    }
-    
-    FormListener.prototype.serialize = function () {
-        return this.form.serialize();
-    }
-    
+        getStockLabel     : function () { return this.data['is_in_stock'] == true ? $.mage.__('In Stock') : $.mage.__('Out Of Stock'); }
+    });
+
     var productSorterComponent = Component.extend({
-        
+
         initialize : function () {
             this._super();
-            
-            this.products     = [];
-            
-            this.observe(['products']);
+
+            this.products           = [];
+            this.countTotalProducts = 0;
+            this.currentSize        = this.pageSize;
+
             this.addListners();
+            this.observe(['products', 'countTotalProducts', 'currentSize']);
             this.loadProducts();
         },
-        
+
         addListners : function () {
+            // Reload the product list when something change into the form.
             var formListenerChangeEvent = 'formListener:' + this.targetElementName;
             this.formListener = new FormListener(this.formId, formListenerChangeEvent, this.refreshElements);
             $(document).bind(formListenerChangeEvent, this.loadProducts.bind(this));
         },
-        
+
         loadProducts : function () {
-            this.loadXhr = $.post(this.loadUrl, this.formListener.serialize(), this.onProductLoad.bind(this));
+            if (this.loadXhr) {
+                this.loadXhr.abort();
+            }
+            this.loadXhr = $.post(this.loadUrl, this.getLoadParams(), this.onProductLoad.bind(this));
         },
-        
-        onProductLoad : function (loadedData) {
+
+        getLoadParams : function() {
+            var formData = this.formListener.serializeArray();
+            var positionedProducts = this.isLoaded ? this.getEditPositions() : this.savedPositions;
             
-            var loadedProducts = loadedData['products'].map(
-                function (productData) { return new Product(productData); }
-            );
-
-            this.formListener.startListener();
-
-            this.products(loadedProducts);
-        },
-        
-        getSortedProducts : function () {
-            var products = this.products()
-            products.sort(function (product1, product2) {
-                if (product1.hasPosition() && product2.hasPosition()) {
-                    return product1.position() - product2.position();
-                } else if (product1.hasPosition()) {
-                    return -1;
-                } else if (product2.hasPosition()) {
-                    return 1;
-                } else {
-                    return product1.score - product2.score;
-                }
+            Object.keys(positionedProducts).each(function(productId) {
+                formData.push({name: 'product_position[' + productId + ']', value: positionedProducts[productId]});
             });
 
+            formData.push({name: 'page_size', value: this.currentSize()});
+            
+            return formData;
+        },
+
+        onProductLoad : function (loadedData) {
+            this.isLoaded = true;
+            this.products(loadedData.products.map(this.createProduct.bind(this)));
+            this.countTotalProducts(parseInt(loadedData.size));
+            this.currentSize(Math.max(this.currentSize(), this.products().length));
+            this.formListener.startListener();
+            
+        },
+
+        createProduct : function(productData) {
+            productData.priceFormat = this.priceFormat;
+            
+            if (this.products() !== undefined && this.getEditPositions()[productData.id]) {
+                productData.position = this.getEditPositions()[productData.id];
+            } else if (this.savedPositions[productData.id]) {
+                productData.position = this.savedPositions[productData.id];
+            }
+            
+            return new Product({data : productData});
+        },
+
+        getSortedProducts : function () {
+            var products = this.products();
+            products.sort(function (product1, product2) { return product1.compareTo(product2); });
             return products;
         },
-        
-        enableSortableList: function (element, component) {
-            $(element).sortable({
-                helper : "clone",
-                handle : ".draggable-handle",
-                placeholder: "product-list-item-placeholder"
-            });
-            $(element).disableSelection();
-        },
-        
+
         getSerializedSortOrder: function () {
+            return JSON.stringify(this.getEditPositions());
+        },
+
+        getEditPositions : function() {
             var serializedProductPosition = {};
-            
+
             this.products()
                 .filter(function (product) {
                     return product.hasPosition();
                 })
                 .each(function (product) {
-                    serializedProductPosition[product.id] = product.position();
+                    serializedProductPosition[product.getId()] = product.getPosition();
                 });
+            return serializedProductPosition;
+        },
+
+        hasProducts: function() {
+            return this.products().length > 0;
+        },
+
+        hasMoreProducts: function() {
+            return this.products().length < this.countTotalProducts();
+        },
+
+        showMoreProducts: function()
+        {
+            console.log(this.currentSize() + this.pageSize);
+            this.currentSize(this.currentSize() + this.pageSize);
+            this.loadProducts();
+        },
+
+        getProductById : function (productId) {
+            var product = null;
+            this.products.each(function(currentProduct) {
+                if (currentProduct.getId() === productId) {
+                    product = currentProduct;
+                }
+            });
+            return product;
+        },
+
+        enableSortableList: function (element, component) {
+            $(element).sortable({
+                items       : "li:not('.manual-sorting')",
+                helper      : 'clone',
+                handle      : '.draggable-handle',
+                placeholder : 'product-list-item-placeholder',
+                update      : component.onSortUpdate.bind(component)
+            });
+            $(element).disableSelection();
+        },
+
+        onSortUpdate : function(event, ui)
+        {
+            var productId = ui.item.attr('data-product-id');
+            var position  = 1;
+
+            var previousProductId = ui.item.prev('li.product-list-item').attr('data-product-id');
+            if (previousProductId !== undefined) {
+                var previousProduct = this.getProductById(previousProductId);
+                position = parseInt(previousProduct.getPosition()) + 1;
+            }
+
+            this.getProductById(productId).setPosition(position);
             
-            return JSON.stringify(serializedProductPosition);
+            var previousProductId = ui.item.nextAll('li.product-list-item').each(function (index, element) {
+                var currentProduct = this.getProductById(element.getAttribute('data-product-id'));
+                if(currentProduct.getPosition()) {
+                    position = position + 1;
+                    currentProduct.setPosition(position);
+                }
+            }.bind(this))
+        },
+
+        toggleSortType: function(product) {
+            if (product.getPosition() !== undefined) {
+                var lastProduct = this.getSortedProducts()[this.products().length -1];
+                if (lastProduct.hasPosition() || lastProduct.getScore() >= product.getScore()) {
+                    this.loadProducts();
+                }
+                product.setPosition(undefined);
+                if (this.savedPositions[product.getId()]) {
+                    delete this.savedPositions[product.getId()]
+                }
+            } else {
+                var allPositions = this.products()
+                    .filter(function (product) { return product.hasPosition(); })
+                    .map(function (product) { return product.getPosition(); })
+                var maxPosition  = Math.max.apply(null, allPositions);
+                console.log(maxPosition);
+                product.setPosition(maxPosition + 1);
+            }
+        },
+        
+        __ : function(string) {
+            return $.mage.__(string);
         }
     }); 
-    
+
     return productSorterComponent;
 });

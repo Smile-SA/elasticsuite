@@ -15,6 +15,7 @@
 namespace Smile\ElasticSuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer;
 
 use Magento\Backend\Block\Template;
+use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
 
@@ -45,6 +46,24 @@ class Sort extends Template implements RendererInterface
     protected $_template = 'catalog/product/form/renderer/sort.phtml';
 
     /**
+     * @var \Magento\Framework\Locale\FormatInterface
+     */
+    private $localeFormat;
+
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Backend\Block\Template\Context   $context      Template context.
+     * @param \Magento\Framework\Locale\FormatInterface $localeFormat Locale format.
+     * @param array                                     $data         Additional data.
+     */
+    public function __construct(\Magento\Backend\Block\Template\Context $context, FormatInterface $localeFormat, array $data = [])
+    {
+        parent::__construct($context, $data);
+        $this->localeFormat = $localeFormat;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
@@ -67,6 +86,9 @@ class Sort extends Template implements RendererInterface
             'targetElementName' => $this->getElement()->getName(),
             'formId'            => $this->getElement()->getFormId(),
             'refreshElements'   => $this->getElement()->getRefreshElements(),
+            'savedPositions'    => $this->getElement()->getSavedPositions(),
+            'pageSize'          => $this->getElement()->getPageSize(),
+            'priceFormat'       => $this->localeFormat->getPriceFormat(),
         ];
 
         return json_encode(['components' => $layoutJsComponents]);

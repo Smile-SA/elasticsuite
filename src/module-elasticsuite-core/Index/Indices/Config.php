@@ -141,7 +141,11 @@ class Config extends \Magento\Framework\Config\Data
             }
 
             $mapping = $this->mappingFactory->create(
-                ['staticFields' => $staticFields, 'dynamicFieldProviders' => $dynamicFieldProviders]
+                [
+                    'staticFields'          => $staticFields,
+                    'dynamicFieldProviders' => $dynamicFieldProviders,
+                    'idFieldName'           => $typeConfigData['idFieldName'],
+                ]
             );
 
             $types[$typeName] = $this->typeFactory->create(

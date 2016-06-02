@@ -68,9 +68,8 @@ class Preview extends Action
      */
     public function execute()
     {
-        $category = $this->getCategory();
-        $responseObject = $this->previewModelFactory->create(['category' => $category])->getData();
-        $json = $this->jsonHelper->jsonEncode($responseObject);
+        $responseData = $this->getPreviewObject()->getData();
+        $json = $this->jsonHelper->jsonEncode($responseData);
 
         $this->getResponse()->representJson($json);
     }
@@ -82,6 +81,19 @@ class Preview extends Action
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Magento_Catalog::categories');
+    }
+
+    /**
+     * Load and initialize the preview model.
+     *
+     * @return \Smile\ElasticSuiteVirtualCategory\Model\Preview
+     */
+    private function getPreviewObject()
+    {
+        $category = $this->getCategory();
+        $pageSize = $this->getPageSize();
+
+        return $this->previewModelFactory->create(['category' => $category, 'size' => $pageSize]);
     }
 
     /**
@@ -107,6 +119,19 @@ class Preview extends Action
             $category->setVirtualCategoryRoot($categoryPostData['virtual_category_root']);
         }
 
+        $productPositions = $this->getRequest()->getParam('product_position', []);
+        $category->setSortedProductIds(array_keys($productPositions));
+
         return $category;
+    }
+
+    /**
+     * Return the preview page size.
+     *
+     * @return int
+     */
+    private function getPageSize()
+    {
+        return (int) $this->getRequest()->getParam('page_size');
     }
 }

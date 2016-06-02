@@ -20,7 +20,7 @@
          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_indices.xsd">
 
     <index identifier="catalog_product" defaultSearchType="product">
-        <type name="product">
+        <type name="product" idFieldName="entity_id">
             <datasources>
                 <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
                 <datasource name="categories">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
@@ -65,7 +65,7 @@
     </index>
 
     <index identifier="catalog_category" defaultSearchType="category">
-        <type name="category">
+        <type name="category" idFieldName="entity_id">
             <datasources>
                 <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</datasource>
             </datasources>
