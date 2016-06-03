@@ -14,7 +14,6 @@
  */
 namespace Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition;
 
-use Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 
 /**
