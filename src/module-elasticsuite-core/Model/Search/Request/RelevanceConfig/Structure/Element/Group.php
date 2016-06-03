@@ -14,7 +14,7 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\
 
 use Magento\Config\Model\Config\BackendClone\Factory;
 use Magento\Config\Model\Config\Structure\Element\Dependency\Mapper;
-use Magento\Config\Model\Config\Structure\Element\Iterator\Field;
+use Magento\Config\Model\Config\Structure\Element\Iterator\Field as FieldIterator;
 use Magento\Framework\Module\Manager;
 use Magento\Store\Model\StoreManagerInterface;
 
@@ -35,7 +35,7 @@ class Group extends \Magento\Config\Model\Config\Structure\Element\Group
      *
      * @param StoreManagerInterface $storeManager      The store manager
      * @param Manager               $moduleManager     The module manager
-     * @param Field                 $childrenIterator  The children iterator
+     * @param FieldIterator         $childrenIterator  The children iterator
      * @param Factory               $cloneModelFactory The clone model factory
      * @param Mapper                $dependencyMapper  The dependency mapper
      * @param Visibility            $visibility        The visibility manager
@@ -43,7 +43,7 @@ class Group extends \Magento\Config\Model\Config\Structure\Element\Group
     public function __construct(
         StoreManagerInterface $storeManager,
         Manager $moduleManager,
-        Field $childrenIterator,
+        FieldIterator $childrenIterator,
         Factory $cloneModelFactory,
         Mapper $dependencyMapper,
         Visibility $visibility

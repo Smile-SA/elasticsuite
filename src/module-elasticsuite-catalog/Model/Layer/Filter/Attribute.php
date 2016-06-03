@@ -38,15 +38,15 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory $filterItemFactory Factory for item of the facets.
-     * @param \Magento\Store\Model\StoreManagerInterface                          $storeManager      Store manager.
-     * @param \Magento\Catalog\Model\Layer                                        $layer             Catalog product layer.
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder                $itemDataBuilder   Item data builder.
-     * @param \Magento\Framework\Filter\StripTags                                 $tagFilter         String HTML tags filter.
-     * @param array                                                               $data              Custom data.
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory Factory for item of the facets.
+     * @param \Magento\Store\Model\StoreManagerInterface           $storeManager      Store manager.
+     * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
+     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
+     * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
+     * @param array                                                $data              Custom data.
      */
     public function __construct(
-        \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory $filterItemFactory,
+        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,

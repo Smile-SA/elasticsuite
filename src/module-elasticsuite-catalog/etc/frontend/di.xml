@@ -80,4 +80,28 @@
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\Attribute</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute">
+        <arguments>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\Category</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category">
+        <arguments>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
+        </arguments>
+    </type>
 </config>
