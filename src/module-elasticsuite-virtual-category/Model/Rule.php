@@ -14,7 +14,6 @@
  */
 namespace Smile\ElasticSuiteVirtualCategory\Model;
 
-use Smile\ElasticSuiteCatalogRule\Model\Rule;
 use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 

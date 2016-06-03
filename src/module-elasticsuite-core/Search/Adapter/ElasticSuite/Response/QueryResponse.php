@@ -15,7 +15,6 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
 use Magento\Framework\Api\Search\AggregationInterface;
-use Magento\Framework\Search\Document;
 use Magento\Framework\Search\ResponseInterface;
 
 /**
