@@ -41,7 +41,7 @@ class Category extends \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
      * @param array                                                            $data                Custom data.
      */
     public function __construct(
-        \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory $filterItemFactory,
+        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,

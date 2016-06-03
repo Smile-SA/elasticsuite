@@ -54,14 +54,13 @@ class Config extends \Magento\Framework\View\Element\Template
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
 
-        $this->scopeConfig   = $scopeConfig;
+        $this->scopeConfig   = $context->getScopeConfig();
         $this->jsonHelper    = $jsonHelper;
         $this->trackerHelper = $trackerHelper;
     }
