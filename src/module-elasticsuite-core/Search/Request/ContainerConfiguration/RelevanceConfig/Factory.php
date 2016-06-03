@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
 
+use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
