@@ -12,7 +12,7 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    config
+    config:
       file_extensions: php
       rulesets: Resources/phpmd-rulesets/rulset.xml
 ratings:
