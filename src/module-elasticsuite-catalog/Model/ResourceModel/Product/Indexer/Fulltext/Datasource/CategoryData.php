@@ -71,11 +71,7 @@ class CategoryData extends Indexer
      */
     public function loadCategoryData($storeId, $productIds)
     {
-        $select = $this->getConnection()->select()
-            ->from(['cpi' => $this->getTable('catalog_category_product_index')])
-            ->where('cpi.store_id = ?', $storeId)
-            ->where('cpi.product_id IN(?)', $productIds);
-
+        $select       = $this->getCategoryProductSelect($productIds, $storeId);
         $categoryData = $this->getConnection()->fetchAll($select);
 
         $categoryIds = [];
@@ -91,6 +87,24 @@ class CategoryData extends Indexer
         }
 
         return $categoryData;
+    }
+
+    /**
+     * Prepare indexed data select.
+     *
+     * @param array   $productIds Product ids.
+     * @param integer $storeId    Store id.
+     *
+     * @return \Zend_Db_Select
+     */
+    protected function getCategoryProductSelect($productIds, $storeId)
+    {
+        $select = $this->getConnection()->select()
+            ->from(['cpi' => $this->getTable('catalog_category_product_index')])
+            ->where('cpi.store_id = ?', $storeId)
+            ->where('cpi.product_id IN(?)', $productIds);
+
+        return $select;
     }
 
     /**
@@ -116,6 +130,16 @@ class CategoryData extends Indexer
             ->getAttribute(\Magento\Catalog\Model\Category::ENTITY, 'use_name_in_product_search');
 
         return $this->useNameInSearchAttribute;
+    }
+
+    /**
+     * Access to EAV configuration.
+     *
+     * @return \Magento\Eav\Model\Config
+     */
+    protected function getEavConfig()
+    {
+        return $this->eavConfig;
     }
 
     /**

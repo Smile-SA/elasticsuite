@@ -32,6 +32,7 @@ class QueryFactory
         QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Request\Query\BooleanFactory',
         QueryInterface::TYPE_FILTER     => 'Smile\ElasticSuiteCore\Search\Request\Query\FilteredFactory',
         QueryInterface::TYPE_NESTED     => 'Smile\ElasticSuiteCore\Search\Request\Query\NestedFactory',
+        QueryInterface::TYPE_NOT        => 'Smile\ElasticSuiteCore\Search\Request\Query\NotFactory',
         QueryInterface::TYPE_TERM       => 'Smile\ElasticSuiteCore\Search\Request\Query\TermFactory',
         QueryInterface::TYPE_TERMS      => 'Smile\ElasticSuiteCore\Search\Request\Query\TermsFactory',
         QueryInterface::TYPE_RANGE      => 'Smile\ElasticSuiteCore\Search\Request\Query\RangeFactory',

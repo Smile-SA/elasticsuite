@@ -82,12 +82,12 @@ class ResultPlugin
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param Result   $subject Search result block.
-     * @param \Closure $proceed Original method.
+     * @param \Magento\CatalogSearch\Block\Result $resultBlock Result block.
+     * @param \Closure                            $proceed     Original method.
      *
      * @return string[]
      */
-    public function aroundGetNoteMessages(Result $subject, \Closure $proceed)
+    public function aroundGetNoteMessages(Result $resultBlock, \Closure $proceed)
     {
         $messages = $proceed();
         $query    = $this->queryFactory->get();
@@ -114,12 +114,12 @@ class ResultPlugin
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param Result   $subject Search result block.
-     * @param \Closure $proceed Original method.
+     * @param \Magento\CatalogSearch\Block\Result $resultBlock Result block.
+     * @param \Closure                            $proceed     Original method.
      *
      * @return integer
      */
-    public function aroundGetResultCount(Result $subject, \Closure $proceed)
+    public function aroundGetResultCount(Result $resultBlock, \Closure $proceed)
     {
         if ($this->resultCount === null) {
             $size = $this->getProductCollection()->getSize();
@@ -127,6 +127,23 @@ class ResultPlugin
         }
 
         return $this->resultCount;
+    }
+
+    /**
+     * Change default behavior of the search result block.
+     * Order has to be set to ASC and not DESC.
+     *
+     * @param \Magento\CatalogSearch\Block\Result $resultBlock Result block.
+     * @param \Closure                            $proceed     Original method.
+     *
+     * @return \Magento\CatalogSearch\Block\Result
+     */
+    public function aroundSetListOrders(Result $resultBlock, \Closure $proceed)
+    {
+        $proceed();
+        $resultBlock->getListBlock()->setDefaultDirection('asc');
+
+        return $resultBlock;
     }
 
     /**

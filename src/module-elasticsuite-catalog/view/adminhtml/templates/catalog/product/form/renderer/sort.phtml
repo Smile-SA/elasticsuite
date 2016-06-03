@@ -1,0 +1,31 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCatalog
+ * @author    Aurelien FOUCRET
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var $block \Magento\Framework\View\Element\Template
+ */
+?>
+
+<div id="<?php echo $block->getJsId(); ?>">
+    <div data-bind="scope: 'adminProductSort'">
+        <!-- ko template: getTemplate() --><!-- /ko -->
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+    { "#<?php echo $block->getJsId(); ?>" : { "Magento_Ui/js/core/app": <?php echo $block->getJsLayout(); ?>} }
+</script>

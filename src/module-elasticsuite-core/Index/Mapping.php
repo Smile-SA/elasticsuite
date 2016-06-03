@@ -27,6 +27,11 @@ use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
 class Mapping implements MappingInterface
 {
     /**
+     * @var string
+     */
+    private $idFieldName;
+
+    /**
      * List of fields for the current mapping.
      *
      * @var \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
@@ -72,12 +77,14 @@ class Mapping implements MappingInterface
     /**
      * Instanciate a new mapping.
      *
+     * @param string                          $idFieldName           Field use as unique id for the documents.
      * @param FieldInterface[]                $staticFields          List of static fields.
      * @param DynamicFieldProviderInterface[] $dynamicFieldProviders Dynamic fields providers.
      */
-    public function __construct(array $staticFields = [], array $dynamicFieldProviders = [])
+    public function __construct($idFieldName, array $staticFields = [], array $dynamicFieldProviders = [])
     {
-        $this->fields = $staticFields + $this->getDynamicFields($dynamicFieldProviders);
+        $this->fields      = $staticFields + $this->getDynamicFields($dynamicFieldProviders);
+        $this->idFieldName = $idFieldName;
     }
 
     /**
@@ -124,6 +131,14 @@ class Mapping implements MappingInterface
         }
 
         return $this->fields[$name];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIdField()
+    {
+        return $this->getField($this->idFieldName);
     }
 
     /**

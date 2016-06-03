@@ -58,4 +58,11 @@ interface MappingInterface
      * @return array
      */
     public function asArray();
+
+    /**
+     * Field use as unique id for the doc.
+     *
+     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     */
+    public function getIdField();
 }

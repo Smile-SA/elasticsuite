@@ -69,7 +69,7 @@ class Builder
 
         $sortOrderConfig = [
             'order'         => $sortOrder->getDirection(),
-            'missing'       => '_last',
+            'missing'       => $sortOrder->getDirection() == SortOrderInterface::SORT_ASC ? '_last' : '_first',
             'unmapped_type' => FieldInterface::FIELD_TYPE_STRING,
         ];
 

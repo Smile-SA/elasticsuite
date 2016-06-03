@@ -1,0 +1,92 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+namespace Smile\ElasticSuiteCore\Search\Request\Query;
+
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+
+/**
+ * Query negation definition implementation.
+ *
+ * @category Smile
+ * @package  Smile_ElasticSuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Not implements QueryInterface
+{
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var integer
+     */
+    private $boost;
+
+    /**
+     * @var QueryInterface
+     */
+    private $query;
+
+    /**
+     * Constructor.
+     * @param \Magento\Framework\Search\Request\QueryInterface $query Negated query.
+     * @param string                                           $name  Query name.
+     * @param integer                                          $boost Query boost.
+     */
+    public function __construct(
+        \Magento\Framework\Search\Request\QueryInterface $query = null,
+        $name = null,
+        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+    ) {
+        $this->name      = $name;
+        $this->boost     = $boost;
+        $this->query     = $query;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getBoost()
+    {
+        return $this->boost;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return QueryInterface::TYPE_NOT;
+    }
+
+    /**
+     * Negated query.
+     *
+     * @return QueryInterface
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+}

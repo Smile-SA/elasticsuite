@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteVirtualCategory DI.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile_ElasticSuiteVirtualCategory
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+ 
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Smile\ElasticSuiteCatalogRule\Model\RuleFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Combine</argument>
+        </arguments>
+    </type>
+    
+    <type name="Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Product</argument>
+        </arguments>
+    </type> 
+    
+    <type name="Smile\ElasticSuiteCatalogRule\Controller\Adminhtml\Product\Rule\Conditions">
+        <arguments>
+            <argument name="acls" xsi:type="array">
+                <item name="manage_categories" xsi:type="string">Magento_Catalog::categories</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <type name="\Magento\Catalog\Model\ResourceModel\Category">
+        <plugin name="smile_elasticsuite_virtual_categories_save_products_positions" 
+                type="\Smile\ElasticSuiteVirtualCategory\Plugin\Catalog\Category\SaveProductsPositions" />
+    </type>
+    
+    <type name="Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData">
+        <arguments>
+            <argument name="resourceModel" xsi:type="object">Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData</argument>
+        </arguments>
+    </type>
+    
+</config>

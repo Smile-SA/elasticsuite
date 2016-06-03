@@ -40,6 +40,11 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     private $useUrlRewrites;
 
     /**
+     * @var \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
+     */
+    private $childrenCategories;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -83,14 +88,14 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        $categoryId = $request->getParam($this->_requestVar) ?: $request->getParam('id');
+        $categoryId = $request->getParam($this->_requestVar) ? : $request->getParam('id');
 
         if (!empty($categoryId)) {
             $this->dataProvider->setCategoryId($categoryId);
 
             $category = $this->dataProvider->getCategory();
 
-            $this->getLayer()->getProductCollection()->addCategoryFilter($category);
+            $this->applyCategoryFilterToCollection($category);
 
             if ($request->getParam('id') != $category->getId() && $this->dataProvider->isValid()) {
                 $this->getLayer()->getState()->addFilter($this->_createItem($category->getName(), $categoryId));
@@ -103,7 +108,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     /**
      * Append the facet to the product collection.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+     * @return $this
      */
     public function addFacetToCollection()
     {
@@ -128,14 +133,15 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
-        $optionsFacetedData = $productCollection->getFacetedData('category.category_id');
-        $currentCategory = $this->dataProvider->getCategory();
+        $optionsFacetedData = $productCollection->getFacetedData($this->getFilterField());
 
-        $categories = $currentCategory->getChildrenCategories();
+        $currentCategory = $this->dataProvider->getCategory();
+        $categories = $this->getChildrenCategories();
 
         if ($currentCategory->getIsActive()) {
             foreach ($categories as $category) {
-                if ($category->getIsActive() && isset($optionsFacetedData[(int) $category->getId()])) {
+                $productCount = $optionsFacetedData[$category->getId()]['count'];
+                if ($category->getIsActive() && isset($optionsFacetedData[(int) $category->getId()]) && $productCount > 0) {
                     $item = [
                         'label' => $this->escaper->escapeHtml($category->getName()),
                         'value' => $category->getId(),
@@ -152,6 +158,20 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     }
 
     /**
+     * Apply the category filter to the layer product collection.
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category.
+     *
+     * @return $this
+     */
+    protected function applyCategoryFilterToCollection(\Magento\Catalog\Api\Data\CategoryInterface $category)
+    {
+        $this->getLayer()->getProductCollection()->addCategoryFilter($category);
+
+        return $this;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
@@ -164,7 +184,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
             $item = $this->_createItem($itemData['label'], $itemData['value'], $itemData['count']);
             $items[] = $item;
 
-            if ($this->useUrlRewrites === true) {
+            if ($this->useUrlRewrites() === true) {
                 $item->setUrlRewrite($itemData['url']);
             }
         }
@@ -174,12 +194,47 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     }
 
     /**
+     * Indicates if the filter uses url rewrites or not.
+     *
+     * @return bool
+     */
+    protected function useUrlRewrites()
+    {
+        return $this->useUrlRewrites;
+    }
+
+    /**
+     * Retrieve currently selected category children categories.
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
+     */
+    protected function getChildrenCategories()
+    {
+        if ($this->childrenCategories === null) {
+            $currentCategory = $this->dataProvider->getCategory();
+            $this->childrenCategories = $currentCategory->getChildrenCategories();
+        }
+
+        return $this->childrenCategories;
+    }
+
+    /**
      * Retrieve ES filter field.
      *
      * @return string
      */
-    private function getFilterField()
+    protected function getFilterField()
     {
         return 'category.category_id';
+    }
+
+    /**
+     * Category data provider.
+     *
+     * @return \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
+     */
+    protected function getDataProvider()
+    {
+        return $this->dataProvider;
     }
 }

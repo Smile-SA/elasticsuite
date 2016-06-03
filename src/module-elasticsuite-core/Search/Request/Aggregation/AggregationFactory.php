@@ -30,8 +30,9 @@ class AggregationFactory
      * @var array
      */
     private $factories = [
-        BucketInterface::TYPE_TERM      => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\TermFactory',
-        BucketInterface::TYPE_HISTOGRAM => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory',
+        BucketInterface::TYPE_TERM        => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\TermFactory',
+        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory',
+        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory',
     ];
 
     /**

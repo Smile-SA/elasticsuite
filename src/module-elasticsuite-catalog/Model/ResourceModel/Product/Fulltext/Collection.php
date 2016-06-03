@@ -15,6 +15,8 @@ namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
 use Smile\ElasticSuiteCore\Search\RequestInterface;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponse;
 
 /**
  * Search engine product collection.
@@ -58,6 +60,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $filters = [];
 
     /**
+     * @var QueryInterface[]
+     */
+    private $queryFilters = [];
+
+    /**
      * @var array
      */
     private $facets = [];
@@ -86,8 +93,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity
-     *                                                                                              factory
+     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity factory
      * @param \Psr\Log\LoggerInterface                                     $logger                  Logger.
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy           Db Fetch strategy.
      * @param \Magento\Framework\Event\ManagerInterface                    $eventManager            Event manager.
@@ -100,21 +106,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Framework\Module\Manager                            $moduleManager           Module manager.
      * @param \Magento\Catalog\Model\Indexer\Product\Flat\State            $catalogProductFlatState Flat index state.
      * @param \Magento\Framework\App\Config\ScopeConfigInterface           $scopeConfig             Store configuration.
-     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options
-     *                                                                                              factory.
-     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL
-     *                                                                                              resource model.
+     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options factory.
+     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL resource model.
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface         $localeDate              Timezone helper.
      * @param \Magento\Customer\Model\Session                              $customerSession         Customer session.
      * @param \Magento\Framework\Stdlib\DateTime                           $dateTime                Datetime helper.
-     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group
-     *                                                                                              manager.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request
-     *                                                                                              builder.
+     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
+     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
-     * @param string                                                       $searchRequestName       Search request
-     *                                                                                              name.
+     * @param string                                                       $searchRequestName       Search request name.
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -203,6 +204,20 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Append a prebuilt (QueryInterface) query filter to the collection.
+     *
+     * @param QueryInterface $queryFilter Query filter.
+     *
+     * @return $this
+     */
+    public function addQueryFilter(QueryInterface $queryFilter)
+    {
+        $this->queryFilters[] = $queryFilter;
+
+        return $this;
+    }
+
+    /**
      * Add search query filter
      *
      * @param string $query Search query text.
@@ -245,7 +260,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->_renderFilters();
         $result = [];
         $aggregations = $this->queryResponse->getAggregations();
-        $bucket = $aggregations->getBucket($field . '_bucket');
+
+        $bucket = $aggregations->getBucket($field);
 
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
@@ -262,8 +278,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addCategoryFilter(\Magento\Catalog\Model\Category $category)
     {
-        $this->addFieldToFilter('category_ids', $category->getId());
-        $this->_productLimitationFilters['category_ids'] = $category->getId();
+        $categoryId = $category;
+
+        if (is_object($category)) {
+            $categoryId = $category->getId();
+        }
+
+        $this->addFieldToFilter('category_ids', $categoryId);
+        $this->_productLimitationFilters['category_ids'] = $categoryId;
 
         return $this;
     }
@@ -310,6 +332,27 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addIsInStockFilter()
     {
         $this->addFieldToFilter('stock.is_in_stock', true);
+
+        return $this;
+    }
+
+    /**
+     * Set param for a sort order.
+     *
+     * @param string $sortName     Sort order name (eg. position, ...).
+     * @param string $sortField    Sort field.
+     * @param string $nestedPath   Optional nested path for the sort field.
+     * @param array  $nestedFilter Optional nested filter for the sort field.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function addSortFilterParameters($sortName, $sortField, $nestedPath = null, $nestedFilter = null)
+    {
+        $this->_productLimitationFilters['sortParams'][$sortName] = [
+            'sortField'    => $sortField,
+            'nestedPath'   => $nestedPath,
+            'nestedFilter' => $nestedFilter,
+        ];
 
         return $this;
     }
@@ -385,6 +428,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         foreach ($this->queryResponse->getIterator() as $document) {
             $documentId = $document->getId();
             if (isset($orginalItems[$documentId])) {
+                $orginalItems[$documentId]->setDocumentScore($document->getScore());
+                $orginalItems[$documentId]->setDocumentSource($document->getSource());
                 $this->_items[$documentId] = $orginalItems[$documentId];
             }
         }
@@ -421,6 +466,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $queryText,
             $sortOrders,
             $this->filters,
+            $this->queryFilters,
             $this->facets
         );
 
@@ -438,15 +484,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
-            if ($attribute == 'position') {
-                // Change the field position to the category position.
-                $sortField = 'category.position';
-                // Use a nested sort order.
-                $sortParams['nestedPath'] = 'category';
-                // Ensure we sort on the position field of the current category.
-                $categoryIds = $this->_productLimitationFilters['category_ids'];
-                $sortParams['nestedFilter'] = ['category.category_id' => $categoryIds];
-            } elseif ($attribute == 'price.price') {
+
+            if (isset($this->_productLimitationFilters['sortParams'][$attribute])) {
+                $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
+                $sortParams = array_merge($sortParams, $this->_productLimitationFilters['sortParams'][$attribute]);
+            } elseif ($attribute == 'price') {
                 // Change the price sort field to the nested price field.
                 $sortField = 'price.price';
                 $sortParams['nestedPath'] = 'price';
@@ -454,6 +496,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
             }
+
             $sortField = $this->mapFieldName($attribute);
             $sortOrders[$sortField] = $sortParams;
         }
@@ -495,7 +538,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
 
-        $searchRequest = $this->requestBuilder->create($storeId, $requestName, 0, 0, $queryText, [], $this->filters, $setIdFacet);
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $requestName,
+            0,
+            0,
+            $queryText,
+            [],
+            $this->filters,
+            $this->queryFilters,
+            $setIdFacet
+        );
 
         $searchResponse = $this->searchEngine->search($searchRequest);
 
@@ -503,7 +556,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->countByAttributeSet = [];
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
-        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id_bucket');
+        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
 
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {

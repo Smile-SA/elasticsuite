@@ -15,8 +15,8 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
 use Magento\Framework\Search\EntityMetadata;
-use Magento\Framework\Api\Search\DocumentFactory as GenericDocumentFactory;
 use Magento\Framework\Api\Search\Document;
+use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Generate document from ES hit response.
@@ -28,30 +28,30 @@ use Magento\Framework\Api\Search\Document;
 class DocumentFactory
 {
     /**
-     * @var string
-     */
-    const SCORE_DOC_FIELD_NAME = "score";
-
-    /**
-     * @var GenericDocumentFactory
-     */
-    private $documentFactory;
-
-    /**
      * @var EntityMetadata
      */
     private $entityMetadata;
 
     /**
+     * @var string
+     */
+    private $instanceName;
+
+    /**
      * Constructor.
      *
-     * @param GenericDocumentFactory $documentFactory Generic document factory used to build documents.
-     * @param EntityMetadata         $entityMetadata  Entity metadata configurartion.
+     * @param ObjectManagerInterface $objectManager  Object manager.
+     * @param EntityMetadata         $entityMetadata Entity metadata configurartion.
+     * @param string                 $instanceName   Object instantiated type.
      */
-    public function __construct(GenericDocumentFactory $documentFactory, EntityMetadata $entityMetadata)
-    {
-        $this->documentFactory = $documentFactory;
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        EntityMetadata $entityMetadata,
+        $instanceName = 'Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\Document'
+    ) {
         $this->entityMetadata  = $entityMetadata;
+        $this->objectManager   = $objectManager;
+        $this->instanceName    = $instanceName;
     }
 
     /**
@@ -64,15 +64,11 @@ class DocumentFactory
     public function create($rawDocument)
     {
         /** @var \Magento\Framework\Search\DocumentField[] $fields */
-        $fields            = [];
-        $documentId        = null;
+
         $entityIdFieldName = $this->entityMetadata->getEntityId();
 
-        $fields[Document::ID] = $rawDocument[$entityIdFieldName];
-        $fields[self::SCORE_DOC_FIELD_NAME] = $rawDocument['_score'];
+        $rawDocument[Document::ID] = $rawDocument[$entityIdFieldName];
 
-        $documentParams = ['data' => $fields, 'documentId' => $documentId];
-
-        return $this->documentFactory->create($documentParams);
+        return $this->objectManager->create($this->instanceName, ['data' => $rawDocument]);
     }
 }

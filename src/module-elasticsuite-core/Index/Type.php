@@ -92,4 +92,11 @@ class Type implements TypeInterface
     {
         return $this->datasources[$name];
     }
+    /**
+    * {@inheritDoc}
+    */
+    public function getIdField()
+    {
+        return $this->getMapping()->getIdField();
+    }
 }

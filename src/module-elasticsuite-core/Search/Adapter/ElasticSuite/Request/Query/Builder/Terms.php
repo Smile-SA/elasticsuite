@@ -18,7 +18,7 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Request\Query\BuilderInterface;
 
 /**
- * Build an ES nested query.
+ * Build an ES terms query.
  *
  * @category Smile
  * @package  Smile_ElasticSuiteCore
@@ -31,6 +31,7 @@ class Terms implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+
         return ['terms' => [$query->getField() => $query->getValues()]];
     }
 }

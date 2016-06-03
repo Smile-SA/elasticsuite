@@ -111,14 +111,15 @@ class Builder
     /**
      * Create a new search request.
      *
-     * @param integer $storeId       Search request store id.
-     * @param string  $containerName Search request name.
-     * @param integer $from          Search request pagination from clause.
-     * @param integer $size          Search request pagination size.
-     * @param string  $queryText     Search request fulltext query.
-     * @param array   $sortOrders    Search request sort orders.
-     * @param array   $filters       Search request filters.
-     * @param array   $facets        Search request facets.
+     * @param integer          $storeId       Search request store id.
+     * @param string           $containerName Search request name.
+     * @param integer          $from          Search request pagination from clause.
+     * @param integer          $size          Search request pagination size.
+     * @param string           $queryText     Search request fulltext query.
+     * @param array            $sortOrders    Search request sort orders.
+     * @param array            $filters       Search request filters.
+     * @param QueryInterface[] $queryFilters  Search request filters prebuilt as QueryInterface.
+     * @param array            $facets        Search request facets.
      *
      * @return RequestInterface
      */
@@ -130,12 +131,13 @@ class Builder
         $queryText = null,
         $sortOrders = [],
         $filters = [],
+        $queryFilters = [],
         $facets = []
     ) {
         $containerConfig = $this->getRequestContainerConfiguration($storeId, $containerName);
 
         $facetFilters  = array_intersect_key($filters, $facets);
-        $queryFilters  = array_diff_key($filters, $facetFilters);
+        $queryFilters  = array_merge($queryFilters, array_diff_key($filters, $facetFilters));
 
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 

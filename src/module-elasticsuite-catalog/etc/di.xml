@@ -96,7 +96,20 @@
     <type name="Magento\Catalog\Model\Layer">
         <plugin name="addStockStatusOnPrepareFrontCollection" type="Smile\ElasticSuiteCatalog\Plugin\LayerPlugin"/>
     </type>
-
+    
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context" type="Magento\Catalog\Model\Layer\Search\Context">
+        <arguments>
+            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+            <argument name="stateKey" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\StateKey</argument>
+        </arguments>
+    </virtualType>
+    
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticSuiteCatalog\Block\Plugin\ResultPlugin" />
     </type>
