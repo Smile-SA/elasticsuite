@@ -140,16 +140,18 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 
         if ($currentCategory->getIsActive()) {
             foreach ($categories as $category) {
-                $productCount = $optionsFacetedData[$category->getId()]['count'];
-                if ($category->getIsActive() && isset($optionsFacetedData[(int) $category->getId()]) && $productCount > 0) {
-                    $item = [
-                        'label' => $this->escaper->escapeHtml($category->getName()),
-                        'value' => $category->getId(),
-                        'count' => $optionsFacetedData[$category->getId()]['count'],
-                        'url'   => $category->getUrl(),
-                    ];
+                if (isset($optionsFacetedData[(int) $category->getId()])) {
+                    $productCount = $optionsFacetedData[$category->getId()]['count'];
+                    if ($category->getIsActive() && $productCount > 0) {
+                        $item = [
+                            'label' => $this->escaper->escapeHtml($category->getName()),
+                            'value' => $category->getId(),
+                            'count' => $optionsFacetedData[$category->getId()]['count'],
+                            'url'   => $category->getUrl(),
+                        ];
 
-                    $items[] = $item;
+                        $items[] = $item;
+                    }
                 }
             }
         }
