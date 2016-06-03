@@ -64,9 +64,6 @@
         </arguments>
     </type>
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface"
-                type="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Spellchecker" />
-
     <virtualType name="Magento\Framework\Search\EsHitMetadata" type="Magento\Framework\Search\EntityMetadata">
         <arguments>
             <argument name="entityId" xsi:type="string">_id</argument>

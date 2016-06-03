@@ -46,11 +46,10 @@ class Config extends \Magento\Framework\View\Element\Template
     /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\View\Element\Template\Context   $context       App context
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig   The Magento configuration
-     * @param \Magento\Framework\Json\Helper\Data                $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticSuiteTracker\Helper\Data             $trackerHelper The Smile Tracker helper
-     * @param array                                              $data          additional datas
+     * @param \Magento\Framework\View\Element\Template\Context $context       App context
+     * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
+     * @param \Smile\ElasticSuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
+     * @param array                                            $data          additional datas
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,

@@ -15,7 +15,7 @@
 namespace Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response;
 
 use Magento\Framework\Search\EntityMetadata;
-use Magento\Framework\Api\Search\Document;
+use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\Document;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
