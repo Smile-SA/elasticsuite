@@ -38,14 +38,12 @@ class Rule extends \Magento\Rule\Model\AbstractModel
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\Model\Context                                   $context            Context.
-     * @param \Magento\Framework\Registry                                        $registry           Registry.
-     * @param \Magento\Framework\Data\FormFactory                                $formFactory        Form factory.
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface               $localeDate         Locale date.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory  Search engine rule condition factory.
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource            $resource           Base resource model.
-     * @param \Magento\Framework\Data\Collection\AbstractDb                      $resourceCollection Base resource collection.
-     * @param array                                                              $data               Additional data.
+     * @param \Magento\Framework\Model\Context                                   $context           Context.
+     * @param \Magento\Framework\Registry                                        $registry          Registry.
+     * @param \Magento\Framework\Data\FormFactory                                $formFactory       Form factory.
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface               $localeDate        Locale date.
+     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory Search engine rule condition factory.
+     * @param array                                                              $data              Additional data.
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -53,12 +51,10 @@ class Rule extends \Magento\Rule\Model\AbstractModel
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->conditionsFactory = $conditionsFactory;
-        parent::__construct($context, $registry, $formFactory, $localeDate, $resource, $resourceCollection, $data);
+        parent::__construct($context, $registry, $formFactory, $localeDate, null, null, $data);
     }
 
     /**

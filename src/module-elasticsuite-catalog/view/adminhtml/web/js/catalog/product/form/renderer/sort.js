@@ -32,9 +32,9 @@ define([
             this.setPosition(this.data.position);
         },
 
-        setPosition : function (position) {
+        setPosition : function (position) {
             if (position) {
-                position = parseInt(position);
+                position = parseInt(position, 10);
             }
             
             this.position(position);
@@ -46,7 +46,7 @@ define([
             result = result === 0 && this.hasPosition() ? -1 : result;
             result = result === 0 && product.hasPosition() ? 1 : result;
             result = result === 0 ? product.getScore() - this.getScore()  : result;
-            result = result === 0 ? this.getId() - product.getId(): result;
+            result = result === 0 ? product.getId() - this.getId(): result;
             
             return result;
         },
@@ -57,15 +57,17 @@ define([
 
         getFormattedPrice : function () { return priceUtil.formatPrice(this.data.price, this.data.priceFormat); },
 
-        getId             : function () { return parseInt(this.data.id); },
+        getId             : function () { return parseInt(this.data.id, 10); },
 
         getScore          : function () { return parseFloat(this.data.score); },
 
         getImageUrl       : function () { return this.data.image; },
 
         getName           : function () { return this.data.name; },
-        
-        getStockLabel     : function () { return this.data['is_in_stock'] == true ? $.mage.__('In Stock') : $.mage.__('Out Of Stock'); }
+
+        getIsInStock      : function () { return Boolean(this.data['is_in_stock']) },
+
+        getStockLabel     : function () { return this.getIsInStock() === true ? $.mage.__('In Stock') : $.mage.__('Out Of Stock'); }
     });
 
     var productSorterComponent = Component.extend({
@@ -98,6 +100,11 @@ define([
 
         getLoadParams : function() {
             var formData = this.formListener.serializeArray();
+
+            if (Array.isArray(this.savedPositions)) {
+                this.savedPositions = {};
+            }
+
             var positionedProducts = this.isLoaded ? this.getEditPositions() : this.savedPositions;
             
             Object.keys(positionedProducts).each(function(productId) {
@@ -105,14 +112,14 @@ define([
             });
 
             formData.push({name: 'page_size', value: this.currentSize()});
-            
+
             return formData;
         },
 
         onProductLoad : function (loadedData) {
             this.isLoaded = true;
             this.products(loadedData.products.map(this.createProduct.bind(this)));
-            this.countTotalProducts(parseInt(loadedData.size));
+            this.countTotalProducts(parseInt(loadedData.size, 10));
             this.currentSize(Math.max(this.currentSize(), this.products().length));
             this.formListener.startListener();
             
@@ -126,7 +133,7 @@ define([
             } else if (this.savedPositions[productData.id]) {
                 productData.position = this.savedPositions[productData.id];
             }
-            
+
             return new Product({data : productData});
         },
 
@@ -163,14 +170,14 @@ define([
 
         showMoreProducts: function()
         {
-            console.log(this.currentSize() + this.pageSize);
             this.currentSize(this.currentSize() + this.pageSize);
             this.loadProducts();
         },
 
         getProductById : function (productId) {
             var product = null;
-            this.products.each(function(currentProduct) {
+            productId   = parseInt(productId, 10);
+            this.products().each(function(currentProduct) {
                 if (currentProduct.getId() === productId) {
                     product = currentProduct;
                 }
@@ -197,12 +204,12 @@ define([
             var previousProductId = ui.item.prev('li.product-list-item').attr('data-product-id');
             if (previousProductId !== undefined) {
                 var previousProduct = this.getProductById(previousProductId);
-                position = parseInt(previousProduct.getPosition()) + 1;
+                position = parseInt(previousProduct.getPosition(), 10) + 1;
             }
 
             this.getProductById(productId).setPosition(position);
-            
-            var previousProductId = ui.item.nextAll('li.product-list-item').each(function (index, element) {
+
+            ui.item.nextAll('li.product-list-item').each(function (index, element) {
                 var currentProduct = this.getProductById(element.getAttribute('data-product-id'));
                 if(currentProduct.getPosition()) {
                     position = position + 1;
@@ -225,8 +232,10 @@ define([
                 var allPositions = this.products()
                     .filter(function (product) { return product.hasPosition(); })
                     .map(function (product) { return product.getPosition(); })
+                    .concat([0]);
+
                 var maxPosition  = Math.max.apply(null, allPositions);
-                console.log(maxPosition);
+
                 product.setPosition(maxPosition + 1);
             }
         },

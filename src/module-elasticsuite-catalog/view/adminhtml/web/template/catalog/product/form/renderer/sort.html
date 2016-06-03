@@ -6,7 +6,7 @@
 
 <div class="elasticsuite-admin-product-sorter" data-bind="if: hasProducts()">
     <ul data-bind="foreach: getSortedProducts(), afterRender: enableSortableList" class="product-list">
-        <li class="product-list-item" data-bind="attr: {'data-product-id': id}, css: {'manual-sorting': !hasPosition()}">
+        <li class="product-list-item" data-bind="attr: {'data-product-id': getId()}, css: {'manual-sorting': !hasPosition()}">
             
             <div class="draggable-handle" title="Sort Option" data-bind="if: hasPosition()"></div>
             

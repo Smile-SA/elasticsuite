@@ -90,7 +90,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->queryBuilder              = $queryBuilder;
 
-        parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory);
+        parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $data);
     }
 
     /**

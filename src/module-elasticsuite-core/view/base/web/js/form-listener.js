@@ -28,7 +28,7 @@ define(["jquery"], function ($) {
             serializedElements = serializedElements.filter(filterElementFunction);
         }
         
-        return serializedElements.map(function (formElement) { return formElement.name + formElement.value; }).join('|');
+        return serializedElements.map(function (formElement) { return formElement.name + formElement.value; }).join('|');
     }
 
     FormListener.prototype.getFilterFunction = function () {

@@ -49,7 +49,7 @@ class QueryGroup extends AbstractBucket
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null
     ) {
-        parent::__construct($name, $name, $metrics, $filter, $nestedFilter);
+        parent::__construct($name, $name, $metrics, $nestedPath, $filter, $nestedFilter);
         $this->queries = $queries;
     }
 
