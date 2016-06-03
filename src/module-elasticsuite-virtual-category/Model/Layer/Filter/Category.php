@@ -15,7 +15,6 @@
 
 namespace Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter;
 
-use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category;
 use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
 
 /**
