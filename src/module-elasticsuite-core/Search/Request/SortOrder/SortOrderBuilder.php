@@ -114,9 +114,17 @@ class SortOrderBuilder
     private function addDefaultSortOrders($orders, MappingInterface $mapping)
     {
         $defaultOrders = [
-            SortOrderInterface::DEFAULT_SORT_FIELD => SortOrderInterface::DEFAULT_SORT_DIRECTION,
-            $mapping->getIdField()->getName()      => SortOrderInterface::DEFAULT_SORT_DIRECTION,
+            SortOrderInterface::DEFAULT_SORT_FIELD => SortOrderInterface::SORT_DESC,
+            $mapping->getIdField()->getName()      => SortOrderInterface::SORT_DESC,
         ];
+
+        if (count($orders) > 0) {
+            $firstOrder = current($orders);
+            if ($firstOrder['direction'] == SortOrderInterface::SORT_DESC) {
+                $defaultOrders[SortOrderInterface::DEFAULT_SORT_FIELD] = SortOrderInterface::SORT_ASC;
+                $defaultOrders[$mapping->getIdField()->getName()]      = SortOrderInterface::SORT_ASC;
+            }
+        }
 
         foreach ($defaultOrders as $currentOrder => $direction) {
             if (!in_array($currentOrder, array_keys($orders))) {

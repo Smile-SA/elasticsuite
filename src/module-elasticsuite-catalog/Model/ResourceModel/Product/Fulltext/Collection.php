@@ -93,8 +93,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity
-     *                                                                                              factory
+     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory           Collection entity factory
      * @param \Psr\Log\LoggerInterface                                     $logger                  Logger.
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy           Db Fetch strategy.
      * @param \Magento\Framework\Event\ManagerInterface                    $eventManager            Event manager.
@@ -107,21 +106,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Framework\Module\Manager                            $moduleManager           Module manager.
      * @param \Magento\Catalog\Model\Indexer\Product\Flat\State            $catalogProductFlatState Flat index state.
      * @param \Magento\Framework\App\Config\ScopeConfigInterface           $scopeConfig             Store configuration.
-     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options
-     *                                                                                              factory.
-     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL
-     *                                                                                              resource model.
+     * @param \Magento\Catalog\Model\Product\OptionFactory                 $productOptionFactory    Product options factory.
+     * @param \Magento\Catalog\Model\ResourceModel\Url                     $catalogUrl              Catalog URL resource model.
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface         $localeDate              Timezone helper.
      * @param \Magento\Customer\Model\Session                              $customerSession         Customer session.
      * @param \Magento\Framework\Stdlib\DateTime                           $dateTime                Datetime helper.
-     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group
-     *                                                                                              manager.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request
-     *                                                                                              builder.
+     * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
+     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
-     * @param string                                                       $searchRequestName       Search request
-     *                                                                                              name.
+     * @param string                                                       $searchRequestName       Search request name.
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -343,6 +337,27 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Set param for a sort order.
+     *
+     * @param string $sortName     Sort order name (eg. position, ...).
+     * @param string $sortField    Sort field.
+     * @param string $nestedPath   Optional nested path for the sort field.
+     * @param array  $nestedFilter Optional nested filter for the sort field.
+     *
+     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function addSortFilterParameters($sortName, $sortField, $nestedPath = null, $nestedFilter = null)
+    {
+        $this->_productLimitationFilters['sortParams'][$sortName] = [
+            'sortField'    => $sortField,
+            'nestedPath'   => $nestedPath,
+            'nestedFilter' => $nestedFilter,
+        ];
+
+        return $this;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritdoc}
@@ -469,15 +484,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
-            if ($attribute == 'position') {
-                // Change the field position to the category position.
-                $sortField = 'category.position';
-                // Use a nested sort order.
-                $sortParams['nestedPath'] = 'category';
-                // Ensure we sort on the position field of the current category.
-                $categoryIds = isset($this->_productLimitationFilters['category_ids']) ? $this->_productLimitationFilters['category_ids'] : [0];
-                $sortParams['nestedFilter'] = ['category.category_id' => $categoryIds];
-            } elseif ($attribute == 'price.price') {
+
+            if (isset($this->_productLimitationFilters['sortParams'][$attribute])) {
+                $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
+                $sortParams = array_merge($sortParams, $this->_productLimitationFilters['sortParams'][$attribute]);
+            } elseif ($attribute == 'price') {
                 // Change the price sort field to the nested price field.
                 $sortField = 'price.price';
                 $sortParams['nestedPath'] = 'price';
@@ -485,6 +496,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
             }
+
             $sortField = $this->mapFieldName($attribute);
             $sortOrders[$sortField] = $sortParams;
         }
