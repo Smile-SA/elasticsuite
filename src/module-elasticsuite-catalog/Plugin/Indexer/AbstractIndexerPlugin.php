@@ -13,6 +13,7 @@
 namespace Smile\ElasticSuiteCatalog\Plugin\Indexer;
 
 use Magento\Framework\App\ResourceConnection;
+use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as FullIndexer;
 
 /**
  * Generic indexer plugin, handling fulltext index process
@@ -24,20 +25,20 @@ use Magento\Framework\App\ResourceConnection;
 class AbstractIndexerPlugin
 {
     /**
-     * @var \Magento\Framework\Indexer\IndexerRegistry
+     * @var \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full
      */
-    private $indexerRegistry;
+    private $fullIndexer;
 
     /**
      * ReindexProductsAfterSave constructor.
      *
      * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry The indexer registry
-     * @param ResourceConnection                         $resource        The Resource connection
+     * @param FullIndexer                                $fullIndexer     The Full Indexer
      */
-    public function __construct(\Magento\Framework\Indexer\IndexerRegistry $indexerRegistry, ResourceConnection $resource)
+    public function __construct(\Magento\Framework\Indexer\IndexerRegistry $indexerRegistry, FullIndexer $fullIndexer)
     {
         $this->indexerRegistry = $indexerRegistry;
-        $this->resource        = $resource;
+        $this->fullIndexer     = $fullIndexer;
     }
 
     /**
@@ -53,7 +54,7 @@ class AbstractIndexerPlugin
             $ids = [$ids];
         }
 
-        $parentIds  = $this->getRelationsByChild($ids);
+        $parentIds  = $this->fullIndexer->getRelationsByChild($ids);
         $processIds = $parentIds ? array_merge($parentIds, $ids) : $ids;
 
         if (!$fullTextIndexer->isScheduled()) {
@@ -61,22 +62,5 @@ class AbstractIndexerPlugin
                 $fullTextIndexer->reindexList($processIds);
             }
         }
-    }
-
-    /**
-     * Retrieve products relations by childrens
-     *
-     * @param array $childrenIds The product ids being reindexed
-     *
-     * @return array
-     */
-    private function getRelationsByChild($childrenIds)
-    {
-        $connection = $this->resource->getConnection();
-        $select = $connection->select()
-            ->from($this->resource->getTableName('catalog_product_relation'), 'parent_id')
-            ->where('child_id IN(?)', $childrenIds);
-
-        return $connection->fetchCol($select);
     }
 }
