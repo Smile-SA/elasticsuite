@@ -1,15 +1,15 @@
 {
-    "name" : "smile-sa/module-elasticsuite-virtual-category",
-    "type" : "magento2-module",
-    "license" : "OSL-3.0",
-    "authors" : [{
-            "name" : "Aurélien FOUCRET",
-            "email" : "aurelien.foucret@smile.fr"
+    "name": "smile-sa/module-elasticsuite-virtual-category",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [{
+            "name": "Aurélien FOUCRET",
+            "email": "aurelien.foucret@smile.fr"
         }
     ],
-    "description" : "Smile ElasticSuite - Virtual categories implementation module.",
-    "homepage" : "https://github.com/Smile-SA/module-elasticsuite-catalog",
-    "keywords" : [
+    "description": "Smile ElasticSuite - Virtual categories implementation module.",
+    "homepage": "https://github.com/Smile-SA/module-elasticsuite-catalog",
+    "keywords": [
         "magento",
         "magento2",
         "elasticsearch",
@@ -18,15 +18,16 @@
         "core",
         "setup"
     ],
-    "require" : {
-        "smile-sa/module-elasticsuite-catalog-rule" : "self.version"
+    "require": {
+        "smile-sa/module-elasticsuite-catalog-rule": "self.version"
     },
-    "autoload" : {
-        "files" : [
+    "version":"1.0.0",
+    "autoload": {
+        "files": [
             "registration.php"
         ],
-        "psr-4" : {
-            "Smile\\ElasticSuiteVirtualCategory\\" : ""
+        "psr-4": {
+            "Smile\\ElasticSuiteVirtualCategory\\": ""
         }
     }
 }

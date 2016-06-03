@@ -47,7 +47,7 @@ class Full
      * @param integer    $storeId    Store id.
      * @param array|null $productIds List of product ids.
      *
-     * @return Generator
+     * @return array
      */
     public function rebuildStoreIndex($storeId, $productIds = null)
     {

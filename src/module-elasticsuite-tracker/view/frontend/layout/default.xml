@@ -19,11 +19,13 @@
     <head>
         <link src="Smile_ElasticSuiteTracker::js/tracking.js" type="text/javascript"/>
     </head>
-    <referenceBlock name="head.additional">
-        <block template="config.phtml" class="Smile\ElasticSuiteTracker\Block\Config" name="smile.tracker.config" />
-    </referenceBlock>
-    <referenceBlock name="before.body.end">
-        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
-        <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
-    </referenceBlock>
+    <body>
+        <referenceContainer name="head.additional">
+            <block template="config.phtml" class="Smile\ElasticSuiteTracker\Block\Config" name="smile.tracker.config" />
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
+            <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
+        </referenceContainer>
+    </body>
 </page>

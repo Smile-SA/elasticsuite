@@ -56,7 +56,7 @@ class AggregationFactory
      * @param string $bucketType   Bucket type (must be a valid bucket type defined into the factories array).
      * @param array  $bucketParams Bucket constructor params.
      *
-     * @return QueryInterface
+     * @return BucketInterface
      */
     public function create($bucketType, $bucketParams)
     {

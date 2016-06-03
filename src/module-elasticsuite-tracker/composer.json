@@ -1,31 +1,32 @@
 {
-    "name" : "smile-sa/module-elasticsuite-tracker",
-    "type" : "magento2-module",
-    "license" : "OSL-3.0",
-    "authors" : [
+    "name": "smile-sa/module-elasticsuite-tracker",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
         {
-            "name" : "Romain Ruaud",
-            "email" : "romain.ruaud@smile.fr"
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
         }
     ],
-    "description" : "Provides Smile Tracker module for Magento 2.",
-    "homepage" : "https://git.smile.fr/magento-es/module-elasticsuite-tracker",
-    "keywords" : [
+    "description": "Provides Smile Tracker module for Magento 2.",
+    "homepage": "https://git.smile.fr/magento-es/module-elasticsuite-tracker",
+    "keywords": [
         "smile",
         "elasticsuite",
         "tracker",
         "elasticsearch",
         "magento"
     ],
-    "require" : {
-        "magento/magento-composer-installer" : "*"
+    "require": {
+        "magento/magento-composer-installer": "*"
     },
-    "autoload" : {
-        "files" : [
+    "version":"1.0.0",
+    "autoload": {
+        "files": [
             "registration.php"
         ],
-        "psr-4" : {
-            "Smile\\ElasticSuiteTracker\\" : ""
+        "psr-4": {
+            "Smile\\ElasticSuiteTracker\\": ""
         }
     }
 }

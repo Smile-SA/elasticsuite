@@ -8,7 +8,7 @@
  *
  * @category  Smile
  * @package   Smile_ElasticSuiteCatalog
- * @author    Aurelien FOUCRET
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -20,12 +20,12 @@
  */
 ?>
 
-<div id="<?php echo $block->getJsId(); ?>">
+<div id="<?php /* @noEscape */ echo $block->getJsId(); ?>">
     <div data-bind="scope: 'adminProductSort'">
         <!-- ko template: getTemplate() --><!-- /ko -->
     </div>
 </div>
 
 <script type="text/x-magento-init">
-    { "#<?php echo $block->getJsId(); ?>" : { "Magento_Ui/js/core/app": <?php echo $block->getJsLayout(); ?>} }
+    { "#<?php /* @noEscape */  echo $block->getJsId(); ?>" : { "Magento_Ui/js/core/app": <?php echo /* @noEscape */  $block->getJsLayout(); ?>} }
 </script>

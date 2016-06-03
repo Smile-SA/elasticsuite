@@ -42,7 +42,7 @@
                 <?php if ($filter->getItemsCount()) : ?>
                     <?php if (!$wrapOptions) : ?>
                         <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
-                        <dl class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?php echo $activeFilters; ?>, "multipleCollapsible": true}}'>
+                        <dl class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?php  /* @noEscape */  echo $activeFilters; ?>, "multipleCollapsible": true}}'>
                             <?php $wrapOptions = true;?>
                     <?php endif; ?>
                     <dt data-role="title" class="filter-options-title"><?php /* @escapeNotVerified */ echo __($filter->getName()) ?></dt>

@@ -14,20 +14,20 @@
  * @license   Apache License Version 2.0
  */
 ?>
-<?php /** @var $block Smile\ElasticSuiteCore\Block\Adminhtml\Relevance\Scope\Switcher */ ?>
+<?php /** @var $block \Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope\Switcher */ ?>
 <?php if ($block->getContainers()) : ?>
     <?php $containers = $block->getContainers(); ?>
     <div class="store-switcher store-view">
-        <span class="store-switcher-label"><?php echo __('View:') ?></span>
+        <span class="store-switcher-label"><?php /* @noEscape */ echo __('View:') ?></span>
         <div class="actions dropdown closable">
             <input type="hidden" name="container_switcher" id="container_switcher"
-                   data-role="container-id" data-param="<?php echo $block->getContainerVarName() ?>"
+                   data-role="container-id" data-param="<?php /* @noEscape */ echo $block->getContainerVarName() ?>"
                    value="<?php echo $block->escapeHtml($block->getWebsiteId()) ?>"
-                   onchange="switchScope(this);"<?php echo $block->getUiId()?> />
+                   onchange="switchScope(this);"<?php /* @noEscape */ echo $block->getUiId()?> />
             <input type="hidden" name="store_switcher" id="store_switcher"
-                   data-role="store-view-id" data-param="<?php echo $block->getStoreVarName() ?>"
+                   data-role="store-view-id" data-param="<?php /* @noEscape */ echo $block->getStoreVarName() ?>"
                    value="<?php echo $block->escapeHtml($block->getStoreId()) ?>"
-                   onchange="switchScope(this);"<?php echo $block->getUiId()?> />
+                   onchange="switchScope(this);"<?php /* @noEscape */ echo $block->getUiId()?> />
             <button
                 type="button"
                 class="admin__action-dropdown"
@@ -35,7 +35,7 @@
                 data-toggle="dropdown"
                 aria-haspopup="true"
                 id="store-change-button">
-                <?php echo $block->getCurrentSelectionName() ?>
+                <?php /* @noEscape */ echo $block->getCurrentSelectionName() ?>
             </button>
             <ul class="dropdown-menu" data-role="stores-list">
             <?php if ($block->hasDefaultOption()) : ?>
@@ -48,10 +48,10 @@
                 <?php endif;?>">
                     <?php if ($block->getDefaultSelectionName() != $block->getCurrentSelectionName()) :?>
                         <a data-role="store-view-id" data-value="" href="#">
-                            <?php echo $block->getDefaultSelectionName() ?>
+                            <?php /* @noEscape */ echo $block->getDefaultSelectionName() ?>
                         </a>
                     <?php else :?>
-                        <span><?php echo $block->getDefaultSelectionName() ?></span>
+                        <span><?php /* @noEscape */ echo $block->getDefaultSelectionName() ?></span>
                     <?php endif; ?>
                 </li>
             <?php endif; ?>
@@ -181,7 +181,7 @@
                     <?php if ($block->getUseConfirm()) : ?>
 
                     confirm({
-                        content:  "<?php echo __('Please confirm scope switching. All data that hasn\'t been saved will be lost.') ?>",
+                        content:  "<?php /* @noEscape */ echo __('Please confirm scope switching. All data that hasn\'t been saved will be lost.') ?>",
                         actions: {
                             confirm: function() {
                                 reload();
@@ -198,7 +198,7 @@
                 }
 
                 function reload() {
-                    var url = '<?php echo $block->getSwitchUrl() ?>' + scopeParams;
+                    var url = '<?php /* @noEscape */ echo $block->getSwitchUrl() ?>' + scopeParams;
                     setLocation(url);
                 }
             }

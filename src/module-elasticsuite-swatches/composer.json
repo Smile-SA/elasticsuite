@@ -1,15 +1,15 @@
 {
-    "name" : "smile-sa/module-elasticsuite-swatches",
-    "type" : "magento2-module",
-    "license" : "OSL-3.0",
-    "authors" : [{
-            "name" : "Aurélien FOUCRET",
-            "email" : "aurelien.foucret@smile.fr"
+    "name": "smile-sa/module-elasticsuite-swatches",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [{
+            "name": "Aurélien FOUCRET",
+            "email": "aurelien.foucret@smile.fr"
         }
     ],
-    "description" : "Smile ElasticSuite - Swatches support.",
-    "homepage" : "https://github.com/Smile-SA/module-elasticsuite",
-    "keywords" : [
+    "description": "Smile ElasticSuite - Swatches support.",
+    "homepage": "https://github.com/Smile-SA/module-elasticsuite",
+    "keywords": [
         "magento",
         "magento2",
         "elasticsearch",
@@ -18,22 +18,23 @@
         "core",
         "setup"
     ],
-    "require" : {
-        "magento/framework" : "*",
-        "magento/module-store" : "*",
-        "magento/module-backend" : "*",
-        "magento/module-search" : "*",
-        "magento/module-catalog" : "*",
-        "magento/module-catalog-search" : "*",
-        "magento/magento-composer-installer" : "*",
-        "elasticsearch/elasticsearch" : "2.1.*"
+    "require": {
+        "magento/framework": "*",
+        "magento/module-store": "*",
+        "magento/module-backend": "*",
+        "magento/module-search": "*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-search": "*",
+        "magento/magento-composer-installer": "*",
+        "elasticsearch/elasticsearch": "2.1.*"
     },
-    "autoload" : {
-        "files" : [
+    "version":"0.0.1",
+    "autoload": {
+        "files": [
             "registration.php"
         ],
-        "psr-4" : {
-            "Smile\\ElasticSuiteSwatches\\" : ""
+        "psr-4": {
+            "Smile\\ElasticSuiteSwatches\\": ""
         }
     }
 }
