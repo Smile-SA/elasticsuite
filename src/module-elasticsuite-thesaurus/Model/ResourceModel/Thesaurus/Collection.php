@@ -329,7 +329,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         }
 
         foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
-            $this->_items[$thesaurusId]->setData('terms_summary', implode("<br/>", $labels));
+            $this->_items[$thesaurusId]->setData('terms_summary', implode(" <br/> ", $labels));
         }
 
         return $this;
