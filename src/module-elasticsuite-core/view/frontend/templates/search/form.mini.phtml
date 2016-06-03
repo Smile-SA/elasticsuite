@@ -39,8 +39,8 @@ $helper = $this->helper('Magento\Search\Helper\Data');
                                 "formSelector":"#search_mini_form",
                                 "url":"<?php /* @escapeNotVerified */ echo $block->getUrl('search/ajax/suggest'); ?>",
                                 "destinationSelector":"#search_autocomplete",
-                                "templates": <?php echo $block->getJsonSuggestRenderers();?>,
-                                "priceFormat" : <?php echo $block->getJsonPriceFormat();?>}
+                                "templates": <?php /* @noEscape */ echo $block->getJsonSuggestRenderers();?>,
+                                "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>}
                             }'
                            type="text"
                            name="<?php /* @escapeNotVerified */ echo $helper->getQueryParamName() ?>"

@@ -20,11 +20,11 @@
 <script type="text/javascript">
 //<![CDATA[
     smileTracker.setConfig({
-        beaconUrl  : '<?php echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
-        sessionConfig : <?php echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>
+        beaconUrl  : '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
+        sessionConfig : <?php /* @noEscape */ echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>
     });
 
-    smileTracker.addPageVar('store_id', '<?php echo $this->escapeJsQuote($block->getStoreId());?>');
+    smileTracker.addPageVar('store_id', '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getStoreId());?>');
 //]]>
 </script>
 <?php endif; ?>
