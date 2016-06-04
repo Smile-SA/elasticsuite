@@ -19,8 +19,8 @@ var smileTracker = (function () {
         };
     }());
 
-    function getCookie(cname) {
-        var name = cname + "=";
+    function getCookie(cookieName) {
+        var name = cookieName + "=";
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
@@ -30,14 +30,15 @@ var smileTracker = (function () {
         return null;
     }
 
-    function setCookie(cname, cvalue, expiresAt) {
+    function setCookie(cookieName, cookieValue, expiresAt) {
         var expires = "expires=" + expiresAt.toUTCString();
-        document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=/";
     }
 
     // Retrieve values for a param into URL
     function getQueryStringParameterByName(name) {
         var results = null;
+
         if (name && name.replace) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
@@ -158,7 +159,7 @@ var smileTracker = (function () {
             }
         }
     }
-    
+
     // Append a variable to the page
     function addVariable(varName, value) {
         this.vars[varName] = encodeURI(value);
