@@ -132,6 +132,10 @@ var smileTracker = (function () {
 
         return this.baseUrl + "?" + urlParams.join('&');
     }
+    
+    function setTrackerStyle(imgNode) {
+        imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0;');
+    }
 
     // Send the tag to the remote server
     // Append a transparent pixel to the body
@@ -141,18 +145,20 @@ var smileTracker = (function () {
             var bodyNode = document.getElementsByTagName('body')[0];
             var imgNode = document.createElement('img');
             imgNode.setAttribute('src', trackingUrl);
+            setTrackerStyle(imgNode);
             bodyNode.appendChild(imgNode);
             this.trackerSent = true;
             this.vars = {};
 
             if (window.location.protocol === "http:") {
                 var extImgNode = document.createElement('img');
-                extImgNode.setAttribute('src', "http://t.smile.eu/h.png");
+                extImgNode.setAttribute('src', "http://t.smile.eu/h.png?magento2");
+                setTrackerStyle(extImgNode);
                 bodyNode.appendChild(extImgNode);
             }
         }
     }
-
+    
     // Append a variable to the page
     function addVariable(varName, value) {
         this.vars[varName] = encodeURI(value);
