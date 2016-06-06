@@ -12,7 +12,7 @@ The project was originally created by Smile and released to the Open Source comm
     <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile.
+SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014) and two-times **Spirit of Excellence** (2015-2016) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
