@@ -28,7 +28,7 @@
         "magento/magento-composer-installer": "*",
         "elasticsearch/elasticsearch": "2.1.*"
     },
-    "version":"0.0.2",
+    "version": "2.1.0",
     "autoload": {
         "files": [
             "registration.php"
