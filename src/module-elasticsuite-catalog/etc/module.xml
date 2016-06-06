@@ -23,6 +23,7 @@
             <module name="Magento_Search" />
             <module name="Magento_CatalogSearch" />
             <module name="Magento_LayeredNavigation" />
+            <module name="Magento_CatalogInventory" />
         </sequence>
     </module>
 </config>

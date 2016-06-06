@@ -54,6 +54,22 @@ class Full extends Indexer
     }
 
     /**
+     * Retrieve products relations by childrens
+     *
+     * @param array $childrenIds The product ids being reindexed
+     *
+     * @return array
+     */
+    public function getRelationsByChild($childrenIds)
+    {
+        $select = $this->getConnection()->select()
+            ->from($this->resource->getTableName('catalog_product_relation'), 'parent_id')
+            ->where('child_id IN(?)', $childrenIds);
+
+        return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
      * Filter the select to append only product visible into the catalog or search into the index.
      *
      * Note : Magento put only enabled products that have the following
