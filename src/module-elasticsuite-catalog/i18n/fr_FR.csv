@@ -14,6 +14,11 @@ Name,Nom
 Relevance,Pertinence
 "Search Weight","Pondération dans la recherche"
 "Used in spellcheck","Utiliser la recherche approchante"
+"Slider Display Configuration","Slider Display Configuration"
+"Display pattern","Display pattern"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €"
+"Display Precision","Display Precision"
+"The number of digits to use for precision when displaying.","The number of digits to use for precision when displaying."
 "No search results for: <b>'%1'</b>. We propose you approaching results.","Aucun résultat pour la recherche: <b>'%1'</b>. Nous vous proposons des résultats approchants."
 "%1 and above","%1 et plus"
 "%1 - %2","%1 - %2"
@@ -23,9 +28,17 @@ OK,OK
 "Shop By","Filtrer Par"
 "Clear All","Tout effacer"
 "Shopping Options","Filtres"
-"Is Spellchecked","Recherche Approchante"
-Yes,Yes
-No,No
+"In Stock","En Stock"
+"Out Of Stock","Épuisé"
+"Automatic Sort","Tri Automatique"
+"Manual Sort","Tri manuel"
+"Show more","Voir plus"
+"Your product selection is empty.","Votre sélection de produits est vide."
 "Product Autocomplete","Autocomplétion des produits"
 "Max size","Taille maximum"
+"ElasticSuite Category Indexing","Index des catégories Elastic Suite"
+"Reindex ElasticSuite catalog categories.","Reconstruire l'index de catégories ElasticSuite."
+"Is Spellchecked","Recherche Approchante"
+Yes,Oui
+No,Non
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
