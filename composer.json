@@ -1,15 +1,15 @@
 {
-    "name" : "smile-sa/elasticsuite",
-    "type" : "magento2-component",
-    "license" : "OSL-3.0",
-    "authors" : [{
-            "name" : "Aurélien FOUCRET",
-            "email" : "aurelien.foucret@smile.fr"
+    "name": "smile-sa/elasticsuite",
+    "type": "magento2-component",
+    "license": "OSL-3.0",
+    "authors": [{
+            "name": "Aurélien FOUCRET",
+            "email": "aurelien.foucret@smile.fr"
         }
     ],
-    "description" : "Smile ElasticSuite - Magento2 Merchandising built on ElasticSearch",
-    "homepage" : "https://github.com/Smile-SA/elasticsuite",
-    "keywords" : [
+    "description": "Smile ElasticSuite - Magento2 Merchandising built on ElasticSearch",
+    "homepage": "https://github.com/Smile-SA/elasticsuite",
+    "keywords": [
         "magento",
         "magento2",
         "elasticsearch",
@@ -24,14 +24,14 @@
             "url": "https://repo.magento.com/"
         }
     ],
-    "require" : {
-        "magento/framework" : "*",
-        "magento/module-store" : "*",
-        "magento/module-backend" : "*",
-        "magento/module-catalog" : "*",
-        "magento/module-catalog-search" : "*",
-        "magento/magento-composer-installer" : "*",
-        "elasticsearch/elasticsearch" : "2.1.*"
+    "require": {
+        "magento/framework": "*",
+        "magento/module-store": "*",
+        "magento/module-backend": "*",
+        "magento/module-catalog": "*",
+        "magento/module-catalog-search": "*",
+        "magento/magento-composer-installer": "*",
+        "elasticsearch/elasticsearch": "2.1.*"
     },
     "replace": {
         "smile-sa/module-elasticsuite-core": "self.version",
@@ -51,8 +51,8 @@
         "lusitanian/oauth": "*",
         "squizlabs/php_codesniffer": "*"
     },
-    "autoload" : {
-        "files" : [
+    "autoload": {
+        "files": [
             "src/module-elasticsuite-core/registration.php",
             "src/module-elasticsuite-catalog/registration.php",
             "src/module-elasticsuite-catalog-rule/registration.php",
@@ -61,14 +61,14 @@
             "src/module-elasticsuite-tracker/registration.php",
             "src/module-elasticsuite-virtual-category/registration.php"
         ],
-        "psr-4" : {
-            "Smile\\ElasticSuiteCore\\" : "src/module-elasticsuite-core",
-            "Smile\\ElasticSuiteCatalog\\" : "src/module-elasticsuite-catalog",
-            "Smile\\ElasticSuiteCatalogRule\\" : "src/module-elasticsuite-catalog-rule",
-            "Smile\\ElasticSuiteSwatches\\" : "src/module-elasticsuite-swatches",
-            "Smile\\ElasticSuiteThesaurus\\" : "src/module-elasticsuite-thesaurus",
-            "Smile\\ElasticSuiteTracker\\" : "src/module-elasticsuite-tracker",
-            "Smile\\ElasticSuiteVirtualCategory\\" : "src/module-elasticsuite-virtual-category"
+        "psr-4": {
+            "Smile\\ElasticSuiteCore\\": "src/module-elasticsuite-core",
+            "Smile\\ElasticSuiteCatalog\\": "src/module-elasticsuite-catalog",
+            "Smile\\ElasticSuiteCatalogRule\\": "src/module-elasticsuite-catalog-rule",
+            "Smile\\ElasticSuiteSwatches\\": "src/module-elasticsuite-swatches",
+            "Smile\\ElasticSuiteThesaurus\\": "src/module-elasticsuite-thesaurus",
+            "Smile\\ElasticSuiteTracker\\": "src/module-elasticsuite-tracker",
+            "Smile\\ElasticSuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category"
         }
     },
     "extra": {
