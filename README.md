@@ -12,13 +12,13 @@ The project was originally created by Smile and released to the Open Source comm
     <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile.
+SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014) and two-times **Spirit of Excellence** (2015-2016) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
 Together we explore, invent, and test technologies of the future, to better serve our clients.
 
-## Where can I see it in action ? 
+## Where can I see it in action ?
 
 A demonstration store including the latest version of ElasticSuite is available here : [ElasticSuite Demo](http://demo.magento-elastic-suite.io/)
 
@@ -26,11 +26,68 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version 2.0.0 has been focused on the Magento 2 migration of our ElasticSearch search engine.
+The current version 2.1.0 has been focused on the Magento 2 migration of our existing 1.x features.
 
 We are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
 
 Actually, there are the features actually included :
+
+<br/>
+
+* **Virtual categories :**
+
+    ElasticSuite allows you to **define categories based on rules** (in addition to the standard manual selection). The rule definition is based on the Magento rules components, so you will not be disoriented.
+    You are able to define categories such as "All products for men that are currently discounted".
+
+    The engine will automatically refresh products matching the selection in Front-Office and will prevent you from having to re-assign products manually.
+
+    ![Virtual Categories](doc/static/virtual_category.png)
+
+    A dynamic preview of the results in the Back-Office is also included for more convenience.
+
+<br/>
+
+* **Categories Merchandising :**
+
+    A new **Merchandising** panel has been added into the category edition screen of Magento's Back-Office. It features a **direct preview** of the current product list according to category settings.
+
+    Inside this panel, you are also able to use a **drag-and-drop interface** to apply custom sort order on some of the category products.
+
+    This feature is compatible with "standard" categories but also with the Virtual Categories described before.
+
+    ![Virtual Categories](doc/static/virtual_categories_dnd.gif)
+
+<br/>
+
+* **Product autocomplete  :**
+
+    ElasticSuite features **enhanced content in the autocomplete box** : popular search terms and products.
+
+    The autocomplete is **fully extensible to add custom content**, such as shop pages (if your store uses a store locator), CMS pages, etc...
+
+    You can see the [wiki page](https://github.com/Smile-SA/elasticsuite/wiki) about adding custom content into the autocomplete results.
+
+    ![Products Autocomplete](doc/static/autocomplete_products.gif)
+
+<br/>
+
+* **Enhanced thesaurus management :**
+
+    Thesaurus are now managed directly by the engine instead of the legacy Magento's behavior.
+
+    Our module allows you to add complete thesauri in the Magento Back-Office. Actually, the module supports **two types of thesauri** :
+
+    - Synonyms : standard synonym feature, let you contribute a list of terms which are synonyms of each others.
+
+    ![Synonyms](doc/static/synonyms.png)
+
+    This means that adding a synonym between *"men"* and *"man"* will make it working in all queries containing *"men"* like *"men shirt"* or *"men pants"* instead of having to define a synonym for each query.
+
+    - Expansions : this kind of thesaurus allows to expand all search for a given term to an other list of terms.
+
+    ![Expansions](doc/static/expansions.png)
+
+    This means that adding an expansion between *"sport"* and *"fitness, gym, running"* will make it expanding for all queries containing *"sport"* like *"sport shoes"* (which would be expanded to "fitness shoes", "gym shoes", and "running shoes").
 
 <br/>
 
@@ -92,32 +149,14 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Enhanced synonyms management :**
-
-    Synonyms are now managed directly by the engine instead of the legacy Magento's behavior.
-
-    This means that adding a synonym between *"men"* and *"man"* will make it working in all queries containing *"men"* like *"man shirt"* or *"man pants"* instead of having to define a synonym for each query.
-
-<br/>
 
 ### And more to come !
 
 The next versions that will be coming all among this year will include the following features :
 
-* **Better autocomplete  :**
+* **Even richer autocomplete  :**
 
-    ElasticSuite will feature **enhanced content in the autocomplete box** : popular search terms, products, categories, products attributes (eg : product brand, authors for a book, actors for DVDs, etc...).
-
-    The autocomplete will be **fully extensible to add custom content**, such as shop pages (if your store uses a store locator), CMS pages, etc...
-
-<br/>
-
-* **Virtual categories :**
-
-    ElasticSuite will allow you to **define categories based on rules** (in addition to the standard manual selection). The rule definition is based on the Magento rules components, so you will not be disoriented.
-    You will be able to define categories such as "All products in stock that are currently discounted".
-
-    The engine will automatically refresh products matching the selection in Front-Office and will prevent you from having to re-assign products manually.
+    We plan to add very soon into the autocomplete results : **Categories** and **Products attributes** (eg : product brand, authors for a book, actors for DVDs, etc...).
 
 <br/>
 
@@ -148,3 +187,15 @@ The next versions that will be coming all among this year will include the follo
 ## Documentation
 
 Documentation is available [here](https://github.com/Smile-SA/elasticsuite/wiki).
+
+## Standards & Code Quality
+
+Built on top of Magento2, our module respects all its prerequisites and code quality rules.
+
+You can also find our PHPCS Standards and PHPMD rulesets in the **Resource** directory.
+
+The module is also continuously tested on :
+
+Tools                           | Results
+------------------------------- |------------
+Code Climate                    |[![Code Climate](https://codeclimate.com/github/Smile-SA/elasticsuite/badges/gpa.svg)](https://codeclimate.com/github/Smile-SA/elasticsuite)
