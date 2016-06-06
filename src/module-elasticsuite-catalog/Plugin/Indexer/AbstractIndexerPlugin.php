@@ -12,7 +12,6 @@
  */
 namespace Smile\ElasticSuiteCatalog\Plugin\Indexer;
 
-use Magento\Framework\App\ResourceConnection;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as FullIndexer;
 
 /**
