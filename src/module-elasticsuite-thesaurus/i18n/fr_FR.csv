@@ -1,5 +1,46 @@
-"Synonyms configuration","Configuration des synonymes"
+Thesaurus,Thesaurus
+"Add New Thesaurus","Add New Thesaurus"
+"Create Thesaurus","Create Thesaurus"
+"Create a Thesaurus","Create a Thesaurus"
+Synonym,Synonym
+Expansion,Expansion
+Type,Type
+"Thesarurus Type","Type de Thésaurus"
+"Save Thesaurus","Sauvegarder le Thésaurus"
+"Save and Continue Edit","Sauvegarder et continuer l'édition"
+"Delete Thesaurus","Supprimer le Thésaurus"
+"Edit a Thesaurus","Éditer le Thésaurus"
+"General Information","Informations générales"
+"Thesaurus Name","Nom du Thésaurus"
+Store,Vue magasin
+"Bag of words","Liste de termes"
+Synonyms,Synonymes
+"Reference Term","Terme de référence"
+"Expansion terms","Termes étendus"
+"Add Expansion","Ajouter une expansion"
+"Synonym terms","Termes synonymes"
+"Add Synonym","Ajouter un synonyme"
+"This thesaurus no longer exists.","Ce thésaurus n'existe plus."
+"You deleted the thesaurus %1.","Vous avez supprimé le thésaurus %1."
+"Edit %1 (%2)","Édition : %1 (%2)"
+"Something went wrong while editing the thesaurus.","Une erreur s'est produite durant l'édition du thésaurus."
+"New Thesaurus (%1)","Nouveau Thésaurus (%1)"
+"Please select searches.","Veuillez sélectionner un critère."
+"Total of %1 record(s) were deleted.","%1 enregistrement(s) ont été supprimé(s)."
+"You saved the thesaurus %1.","Thésraurus %1 sauvegardé."
+"Thesaurus configuration","Configuration du Thésaurus."
+"Synonyms configuration","Configuration des Synonymes."
 "Enable synonyms search","Activer la recherche par synonyme."
-"Synonyms weight divider","Pondérateur de poids des synonymes."
-"ElasticSuite Thesaurus Indexing","Index des synonymes ElasticSuite"
-"Reindex ElasticSuite search engine thesaurus.","Reconstruit l'index des synonymes ElasticSuite."
+"Synonyms weight divider","Pondérateur de poids pour les synonymes."
+"Query expansions configuration","Configuration de la recherche par expansion."
+"Enable search expansions","Activer la recherche par expansion."
+"Concepts weight divider","Pondérateur de poids pour les expansions."
+"ElasticSuite Thesaurus Indexing","Index de Thésaurus Elastic Suite"
+"Reindex ElasticSuite search engine thesaurus.","Réindexer le Thésaurus ElasticSuite."
+Delete,Supprimer
+"Are you sure?","Êtes-vous sûr ?"
+Name,Nom
+Expansions,Expansions
+Terms,Termes
+Action,Action
+Edit,Editer
