@@ -51,11 +51,11 @@ Actually, there are the features actually included :
 
     A new **Merchandising** panel has been added into the category edition screen of Magento's Back-Office. It features a **direct preview** of the current product list according to category settings.
 
-    Inside this panel, you are also able to use a **drag-and-drop interface** to apply custom sort order on the category products.
+    Inside this panel, you are also able to use a **drag-and-drop interface** to apply custom sort order on some of the category products.
 
     This feature is compatible with "standard" categories but also with the Virtual Categories described before.
 
-    ![Virtual Categories](doc/static/category_sorting.png)
+    ![Virtual Categories](doc/static/virtual_categories_dnd.gif)
 
 <br/>
 
