@@ -28,7 +28,7 @@ class Expansions extends AbstractRenderer
      */
     protected function _construct()
     {
-        $this->addColumn('term_id', ['label' => __('')]);
+        $this->addColumn('term_id', ['label' => '']);
         $this->addColumn('reference_term', ['label' => __('Reference Term')]);
         $this->addColumn('values', ['label' => __('Expansion terms')]);
         $this->_addAfter = false;

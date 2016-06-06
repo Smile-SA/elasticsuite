@@ -33,7 +33,7 @@ class Synonyms extends AbstractRenderer
      */
     protected function _construct()
     {
-        $this->addColumn('term_id', ['label' => __('')]);
+        $this->addColumn('term_id', ['label' => '']);
         $this->addColumn(
             'values',
             ['label' => __('Synonym terms')]
