@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Helper;
+namespace Smile\ElasticsuiteCatalog\Helper;
 
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -20,10 +20,10 @@ use Magento\Framework\App\Helper\Context;
  * Autocomplete helper for Catalog Autocomplete
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Autocomplete extends \Smile\ElasticSuiteCore\Helper\Autocomplete
+class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
 {
     /**
      * @var \Magento\CatalogInventory\Api\StockConfigurationInterface

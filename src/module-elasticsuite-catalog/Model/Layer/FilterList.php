@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Layer;
+namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
 /**
  * FilterList customization to support decimal filters.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class FilterList extends \Magento\Catalog\Model\Layer\FilterList

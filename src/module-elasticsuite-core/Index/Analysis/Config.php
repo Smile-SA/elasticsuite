@@ -5,23 +5,23 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index\Analysis;
+namespace Smile\ElasticsuiteCore\Index\Analysis;
 
-use Smile\ElasticSuiteCore\Index\Analysis\Config\Reader;
+use Smile\ElasticsuiteCore\Index\Analysis\Config\Reader;
 use Magento\Framework\Config\CacheInterface;
 
 /**
  * ElasticSuite analysis configuration.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Config extends \Magento\Framework\Config\Data

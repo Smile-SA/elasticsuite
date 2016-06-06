@@ -6,18 +6,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
 
 /**
  * Relevance Configuration Factory
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Factory extends \Magento\Config\Model\Config\Factory
@@ -42,10 +42,10 @@ class Factory extends \Magento\Config\Model\Config\Factory
      *
      * @param array $data The object data
      *
-     * @return \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig
+     * @return \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig
      */
     public function create(array $data = [])
     {
-        return $this->objectManager->create('Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig', $data);
+        return $this->objectManager->create('Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig', $data);
     }
 }

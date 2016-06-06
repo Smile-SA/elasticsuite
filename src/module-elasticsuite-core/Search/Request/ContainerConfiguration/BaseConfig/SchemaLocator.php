@@ -5,14 +5,14 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
+namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
@@ -20,8 +20,8 @@ use Magento\Framework\Config\SchemaLocatorInterface;
 /**
  * Locate schema validation for ElasticSuite search requests configuration files.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class SchemaLocator implements SchemaLocatorInterface
@@ -42,7 +42,7 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $moduleDir = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $moduleDir = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticsuiteCore');
         $this->schema = $moduleDir . '/' . self::SCHEMA_FILE;
     }
 

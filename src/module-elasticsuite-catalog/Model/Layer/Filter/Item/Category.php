@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item;
+namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item;
 
 /**
  * Category item filter override using URL rewrites.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Category extends \Magento\Catalog\Model\Layer\Filter\Item

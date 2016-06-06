@@ -7,13 +7,13 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Controller\Adminhtml\Category\Virtual;
+namespace Smile\ElasticsuiteVirtualCategory\Controller\Adminhtml\Category\Virtual;
 
 use Magento\Backend\App\Action;
 use Magento\Catalog\Api\Data\CategoryInterface;
@@ -22,13 +22,13 @@ use Magento\Catalog\Api\Data\CategoryInterface;
  * Virtual category preview controller.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Preview extends Action
 {
     /**
-     * @var \Smile\ElasticSuiteVirtualCategory\Model\PreviewFactory
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory
      */
     private $previewModelFactory;
 
@@ -46,13 +46,13 @@ class Preview extends Action
      * Constructor.
      *
      * @param \Magento\Backend\App\Action\Context                     $context             Controller context.
-     * @param \Smile\ElasticSuiteVirtualCategory\Model\PreviewFactory $previewModelFactory Preview model factory.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory $previewModelFactory Preview model factory.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface        $categoryRepository  Category repository.
      * @param \Magento\Framework\Json\Helper\Data                     $jsonHelper          JSON Helper.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Smile\ElasticSuiteVirtualCategory\Model\PreviewFactory $previewModelFactory,
+        \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory $previewModelFactory,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
         \Magento\Framework\Json\Helper\Data $jsonHelper
     ) {
@@ -86,7 +86,7 @@ class Preview extends Action
     /**
      * Load and initialize the preview model.
      *
-     * @return \Smile\ElasticSuiteVirtualCategory\Model\Preview
+     * @return \Smile\ElasticsuiteVirtualCategory\Model\Preview
      */
     private function getPreviewObject()
     {

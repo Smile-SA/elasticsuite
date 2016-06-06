@@ -7,24 +7,24 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Product category filter implementation using virtual categories.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Category extends \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
 {
     /**
      * Constructor.

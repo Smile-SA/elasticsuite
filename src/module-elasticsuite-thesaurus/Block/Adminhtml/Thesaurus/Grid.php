@@ -5,18 +5,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus;
 
 /**
  * Adminhtml Grid for Thesaurus
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Grid extends \Magento\Backend\Block\Widget\Grid

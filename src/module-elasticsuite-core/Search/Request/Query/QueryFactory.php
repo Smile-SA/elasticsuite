@@ -6,21 +6,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Search\Request\Query;
+namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Factory for search request queries.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class QueryFactory
@@ -29,16 +29,16 @@ class QueryFactory
      * @var array
      */
     private $factories = [
-        QueryInterface::TYPE_BOOL       => 'Smile\ElasticSuiteCore\Search\Request\Query\BooleanFactory',
-        QueryInterface::TYPE_FILTER     => 'Smile\ElasticSuiteCore\Search\Request\Query\FilteredFactory',
-        QueryInterface::TYPE_NESTED     => 'Smile\ElasticSuiteCore\Search\Request\Query\NestedFactory',
-        QueryInterface::TYPE_NOT        => 'Smile\ElasticSuiteCore\Search\Request\Query\NotFactory',
-        QueryInterface::TYPE_TERM       => 'Smile\ElasticSuiteCore\Search\Request\Query\TermFactory',
-        QueryInterface::TYPE_TERMS      => 'Smile\ElasticSuiteCore\Search\Request\Query\TermsFactory',
-        QueryInterface::TYPE_RANGE      => 'Smile\ElasticSuiteCore\Search\Request\Query\RangeFactory',
-        QueryInterface::TYPE_MATCH      => 'Smile\ElasticSuiteCore\Search\Request\Query\MatchFactory',
-        QueryInterface::TYPE_COMMON     => 'Smile\ElasticSuiteCore\Search\Request\Query\CommonFactory',
-        QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticSuiteCore\Search\Request\Query\MultiMatchFactory',
+        QueryInterface::TYPE_BOOL       => 'Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory',
+        QueryInterface::TYPE_FILTER     => 'Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory',
+        QueryInterface::TYPE_NESTED     => 'Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory',
+        QueryInterface::TYPE_NOT        => 'Smile\ElasticsuiteCore\Search\Request\Query\NotFactory',
+        QueryInterface::TYPE_TERM       => 'Smile\ElasticsuiteCore\Search\Request\Query\TermFactory',
+        QueryInterface::TYPE_TERMS      => 'Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory',
+        QueryInterface::TYPE_RANGE      => 'Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory',
+        QueryInterface::TYPE_MATCH      => 'Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory',
+        QueryInterface::TYPE_COMMON     => 'Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory',
+        QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory',
     ];
 
     /**

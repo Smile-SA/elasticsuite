@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Block\Navigation;
+namespace Smile\ElasticsuiteCatalog\Block\Navigation;
 
 use Magento\LayeredNavigation\Block\Navigation\FilterRendererInterface;
 use Magento\Framework\View\Element\Template;
@@ -22,7 +22,7 @@ use Magento\Catalog\Model\Layer\Filter\FilterInterface;
  * This block handle the facet rendering by choosing one or this child block or fallback to the default templates.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class FilterRenderer extends Template implements FilterRendererInterface

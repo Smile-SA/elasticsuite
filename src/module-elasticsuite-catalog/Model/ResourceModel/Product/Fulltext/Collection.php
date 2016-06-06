@@ -6,26 +6,26 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext;
+namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
-use Smile\ElasticSuiteCore\Search\RequestInterface;
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\QueryResponse;
+use Smile\ElasticsuiteCore\Search\RequestInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 
 /**
  * Search engine product collection.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
- * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -35,7 +35,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $queryResponse;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\Builder
+     * @var \Smile\ElasticsuiteCore\Search\Request\Builder
      */
     private $requestBuilder;
 
@@ -112,7 +112,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Customer\Model\Session                              $customerSession         Customer session.
      * @param \Magento\Framework\Stdlib\DateTime                           $dateTime                Datetime helper.
      * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
      * @param string                                                       $searchRequestName       Search request name.
@@ -137,7 +137,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
-        \Smile\ElasticSuiteCore\Search\Request\Builder $requestBuilder,
+        \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
@@ -222,7 +222,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      *
      * @param string $query Search query text.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addSearchFilter($query)
     {
@@ -239,7 +239,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param array  $facetConfig Facet config params.
      * @param array  $facetFilter Facet filter.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addFacet($field, $facetType, $facetConfig, $facetFilter = null)
     {
@@ -327,7 +327,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Filter in stock product.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addIsInStockFilter()
     {
@@ -344,7 +344,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param string $nestedPath   Optional nested path for the sort field.
      * @param array  $nestedFilter Optional nested filter for the sort field.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addSortFilterParameters($sortName, $sortField, $nestedPath = null, $nestedFilter = null)
     {

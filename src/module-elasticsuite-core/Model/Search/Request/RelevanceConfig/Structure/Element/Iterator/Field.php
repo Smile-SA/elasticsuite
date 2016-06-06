@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator;
 
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field as ConfigField;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field as ConfigField;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group;
 
 /**
  * Relevance configuration Field Iterator
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Field extends \Magento\Config\Model\Config\Structure\Element\Iterator\Field

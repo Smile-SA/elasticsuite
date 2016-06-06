@@ -7,24 +7,24 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product;
+namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 
 /**
  * List of attributes used in query building.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class AttributeList
@@ -40,7 +40,7 @@ class AttributeList
     private $storeManager;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface
      */
     private $indexManager;
 
@@ -60,7 +60,7 @@ class AttributeList
     private $attributeCollection = null;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Index\MappingInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\MappingInterface
      */
     private $mapping;
 
@@ -136,7 +136,7 @@ class AttributeList
      *
      * @param string $attributeName Attribute code.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getField($attributeName)
     {

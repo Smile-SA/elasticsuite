@@ -7,26 +7,26 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Model;
+namespace Smile\ElasticsuiteVirtualCategory\Model;
 
-use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
-use Smile\ElasticSuiteVirtualCategory\Model\Preview\ItemFactory;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
+use Smile\ElasticsuiteVirtualCategory\Model\Preview\ItemFactory;
 
 /**
  * Virtual category preview model.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Preview
@@ -98,7 +98,7 @@ class Preview
     /**
      * Return a collection with with products that match the category rules loaded.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     private function getAutomaticSortProductCollection()
     {
@@ -115,7 +115,7 @@ class Preview
     /**
      * Return a collection with all products manually sorted loaded.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     private function getManualSortProductCollection()
     {

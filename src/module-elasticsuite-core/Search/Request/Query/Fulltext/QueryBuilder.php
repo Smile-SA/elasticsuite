@@ -6,26 +6,26 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Query\Fulltext;
+namespace Smile\ElasticsuiteCore\Search\Request\Query\Fulltext;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 
 /**
  * Prepare a fulltext search query.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class QueryBuilder

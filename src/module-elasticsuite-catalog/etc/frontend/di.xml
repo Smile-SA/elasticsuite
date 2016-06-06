@@ -7,7 +7,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,45 +15,45 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <virtualType name="categoryFilterList" type="Smile\ElasticSuiteCatalog\Model\Layer\FilterList">
+    <virtualType name="categoryFilterList" type="Smile\ElasticsuiteCatalog\Model\Layer\FilterList">
         <arguments>
-            <argument name="filterableAttributes" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
+            <argument name="filterableAttributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
             <argument name="filters" xsi:type="array">
-                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
-                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
+                <item name="attribute" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">categoryFilterUsingRewrite</item>
-                <item name="boolean" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Boolean</item>
+                <item name="boolean" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="searchFilterList" type="Smile\ElasticSuiteCatalog\Model\Layer\FilterList">
+    <virtualType name="searchFilterList" type="Smile\ElasticsuiteCatalog\Model\Layer\FilterList">
         <arguments>
-            <argument name="filterableAttributes" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Search\FilterableAttributeList</argument>
+            <argument name="filterableAttributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Search\FilterableAttributeList</argument>
             <argument name="filters" xsi:type="array">
-                <item name="attribute" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute</item>
-                <item name="price" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price</item>
-                <item name="decimal" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal</item>
-                <item name="category" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category</item>
-                <item name="boolean" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Boolean</item>
+                <item name="attribute" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute</item>
+                <item name="price" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Price</item>
+                <item name="decimal" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal</item>
+                <item name="category" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category</item>
+                <item name="boolean" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category">
+    <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category">
         <arguments>
             <argument name="useUrlRewrites" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Category" type="Smile\ElasticSuiteCatalog\Block\Navigation">
+    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Category" type="Smile\ElasticsuiteCatalog\Block\Navigation">
         <arguments>
             <argument name="filterList" xsi:type="object">categoryFilterList</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Search" type="Smile\ElasticSuiteCatalog\Block\Navigation">
+    <virtualType name="Magento\LayeredNavigation\Block\Navigation\Search" type="Smile\ElasticsuiteCatalog\Block\Navigation">
         <arguments>
             <argument name="filterList" xsi:type="object">searchFilterList</argument>
         </arguments>
@@ -62,46 +62,46 @@
     <type name="Magento\Search\Model\Autocomplete">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
-                <item name="20" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
+                <item name="20" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
             </argument>
         </arguments>
     </type>
-    <type name="Smile\ElasticSuiteCore\Block\Search\Form\Autocomplete">
+    <type name="Smile\ElasticsuiteCore\Block\Search\Form\Autocomplete">
         <arguments>
             <argument name="rendererList" xsi:type="array">
                 <item name="product" xsi:type="array">
                     <item name="title" xsi:type="string">Products</item>
-                    <item name="template" xsi:type="string">Smile_ElasticSuiteCatalog/autocomplete/product</item>
+                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product</item>
                 </item>
                 <item name="category" xsi:type="array">
                     <item name="title" xsi:type="string">Categories</item>
-                    <item name="template" xsi:type="string">Smile_ElasticSuiteCatalog/autocomplete/category</item>
+                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/category</item>
                 </item>
             </argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
         <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\Attribute</argument>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Attribute</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute">
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute">
         <arguments>
-            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
         <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\Category</argument>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Category</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category">
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category">
         <arguments>
-            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticSuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
         </arguments>
     </type>
 </config>

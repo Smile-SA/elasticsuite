@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer;
+namespace Smile\ElasticsuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer;
 
 use Magento\Backend\Block\Template;
 use Magento\Framework\Locale\FormatInterface;
@@ -25,7 +25,7 @@ use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Sort extends Template implements RendererInterface
@@ -33,12 +33,12 @@ class Sort extends Template implements RendererInterface
     /**
      * @var string
      */
-    const JS_COMPONENT = 'Smile_ElasticSuiteCatalog/js/catalog/product/form/renderer/sort';
+    const JS_COMPONENT = 'Smile_ElasticsuiteCatalog/js/catalog/product/form/renderer/sort';
 
     /**
      * @var string
      */
-    const JS_TEMPLATE  = 'Smile_ElasticSuiteCatalog/catalog/product/form/renderer/sort';
+    const JS_TEMPLATE  = 'Smile_ElasticsuiteCatalog/catalog/product/form/renderer/sort';
 
     /**
      * @var string

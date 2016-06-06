@@ -8,7 +8,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -18,7 +18,7 @@
     <body>
         <referenceBlock name="attribute_edit_js">
             <action method="setTemplate">
-                <argument name="template" xsi:type="string">Smile_ElasticSuiteCatalog::catalog/product/attribute/js.phtml</argument>
+                <argument name="template" xsi:type="string">Smile_ElasticsuiteCatalog::catalog/product/attribute/js.phtml</argument>
             </action>
         </referenceBlock>
     </body>

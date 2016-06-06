@@ -7,13 +7,13 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product;
+namespace Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 
@@ -21,7 +21,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
  * Product position resource model.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
@@ -56,7 +56,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param CategoryInterface $category Saved category.
      *
-     * @return \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
+     * @return \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
      */
     public function saveProductPositions(CategoryInterface $category)
     {

@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope;
 
 use Magento\Backend\Block\Template;
-use Smile\ElasticSuiteCore\Model\Search\Request\Source\Containers;
+use Smile\ElasticsuiteCore\Model\Search\Request\Source\Containers;
 
 /**
  * Relevance configuration store switcher
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Switcher extends Template

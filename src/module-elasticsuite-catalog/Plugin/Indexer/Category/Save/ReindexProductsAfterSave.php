@@ -5,21 +5,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save;
+namespace Smile\ElasticsuiteCatalog\Plugin\Indexer\Category\Save;
 
-use Smile\ElasticSuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
+use Smile\ElasticsuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
 
 /**
  * Plugin that proceed products reindex after category reindexing
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ReindexProductsAfterSave extends AbstractIndexerPlugin

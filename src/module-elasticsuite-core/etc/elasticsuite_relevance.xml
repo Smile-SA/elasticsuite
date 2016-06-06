@@ -8,14 +8,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
     <default>
         <relevance>
             <fulltext_base_settings>

@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Controller\Adminhtml\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Controller\Adminhtml\Thesaurus;
 
-use Smile\ElasticSuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
+use Smile\ElasticsuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
 
 /**
  * Thesaurus creation controller
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Create extends ThesaurusController

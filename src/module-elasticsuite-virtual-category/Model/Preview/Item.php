@@ -7,13 +7,13 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Model\Preview;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Preview;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Product as ProductHelper;
@@ -23,7 +23,7 @@ use Magento\Customer\Api\Data\GroupInterface;
  * Virtual category preview item model.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Item

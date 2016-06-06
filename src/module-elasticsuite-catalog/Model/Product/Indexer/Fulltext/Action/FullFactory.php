@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Action;
+namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Action;
 
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -24,7 +24,7 @@ use Magento\CatalogSearch\Model\Indexer\Fulltext\Action\FullFactory as DefaultFa
  * Custom factory written to be able to load different indexers depending of the configured search enginge.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class FullFactory extends DefaultFactory

@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model\Search\Request;
+namespace Smile\ElasticsuiteCore\Model\Search\Request;
 
 use Magento\Config\Model\Config\Loader;
 use Magento\Config\Model\Config\Structure;
@@ -20,13 +20,13 @@ use Magento\Framework\App\Config\ValueFactory;
 use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Model\Search\Request\Source\Containers;
+use Smile\ElasticsuiteCore\Model\Search\Request\Source\Containers;
 
 /**
  * Relevance Configuration Model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class RelevanceConfig extends \Magento\Config\Model\Config

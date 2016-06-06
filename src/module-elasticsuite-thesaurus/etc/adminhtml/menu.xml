@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -18,12 +18,12 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add
-            id="Smile_ElasticSuiteThesaurus::manage"
+            id="Smile_ElasticsuiteThesaurus::manage"
             title="Thesaurus"
-            module="Smile_ElasticSuiteThesaurus"
+            module="Smile_ElasticsuiteThesaurus"
             sortOrder="10"
-            parent="Smile_ElasticSuiteCore::manage_search"
+            parent="Smile_ElasticsuiteCore::manage_search"
             action="smile_elasticsuite_thesaurus/thesaurus/index"
-            resource="Smile_ElasticSuiteThesaurus::manage"/>
+            resource="Smile_ElasticsuiteThesaurus::manage"/>
     </menu>
 </config>

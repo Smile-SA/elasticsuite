@@ -7,13 +7,13 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalogRule\Controller\Adminhtml\Product\Rule;
+namespace Smile\ElasticsuiteCatalogRule\Controller\Adminhtml\Product\Rule;
 
 use Magento\Backend\App\Action;
 use Magento\Rule\Model\Condition\AbstractCondition;
@@ -22,13 +22,13 @@ use Magento\Rule\Model\Condition\AbstractCondition;
  * Catalog search rule contribution controller action used to generate new children rules.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Conditions extends Action
 {
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\RuleFactory
+     * @var \Smile\ElasticsuiteCatalogRule\Model\RuleFactory
      */
     protected $ruleFactory;
 
@@ -41,12 +41,12 @@ class Conditions extends Action
      * Constructor.
      *
      * @param \Magento\Backend\App\Action\Context              $context     Context.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory Search engine rule factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory Search engine rule factory.
      * @param array                                            $acls        List of resource allowed to use the controller.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory,
         $acls = []
     ) {
         $this->ruleFactory = $ruleFactory;

@@ -5,26 +5,26 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Model\ResourceModel\Indexer;
+namespace Smile\ElasticsuiteThesaurus\Model\ResourceModel\Indexer;
 
-use Smile\ElasticSuiteThesaurus\Model\Index as ThesaurusIndex;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus indexer resource model.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteThesaurus
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Thesaurus extends \Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus
+class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus
 {
     /**
      * Build a list of synonyms into the Lucene format (foo,bar).

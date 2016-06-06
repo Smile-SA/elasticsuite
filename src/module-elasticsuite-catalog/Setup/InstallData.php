@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Setup;
+namespace Smile\ElasticsuiteCatalog\Setup;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Catalog\Model\Category;
@@ -25,7 +25,7 @@ use Magento\Eav\Setup\EavSetup;
  * Catalog installer
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */

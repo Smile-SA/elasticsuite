@@ -6,25 +6,25 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Magento\Config\Model\Config\Structure;
 use Magento\Framework\Cache\FrontendInterface;
 use Magento\Framework\Stdlib\StringUtils;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Factory;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Factory;
 
 /**
  * Save action for relevance configuration
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Save extends AbstractConfig

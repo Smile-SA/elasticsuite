@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Model\Config\Factory;
@@ -18,13 +18,13 @@ use Magento\Config\Model\Config\Structure;
 use Magento\Config\Model\Config\Structure\Element\Field;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\Registry;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Relevance configuration edit form
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Form extends \Magento\Config\Block\System\Config\Form

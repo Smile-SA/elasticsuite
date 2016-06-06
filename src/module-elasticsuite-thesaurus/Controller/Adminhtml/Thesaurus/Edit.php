@@ -5,26 +5,26 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Controller\Adminhtml\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Controller\Adminhtml\Thesaurus;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
-use Smile\ElasticSuiteThesaurus\Api\ThesaurusRepositoryInterface;
-use Smile\ElasticSuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
-use Smile\ElasticSuiteThesaurus\Model\ThesaurusFactory;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
+use Smile\ElasticsuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
+use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 
 /**
  * Thesaurus edition controller
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Edit extends ThesaurusController

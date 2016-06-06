@@ -5,24 +5,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Helper;
+namespace Smile\ElasticsuiteCatalog\Helper;
 
-use Smile\ElasticSuiteCore\Helper\Mapping;
+use Smile\ElasticsuiteCore\Helper\Mapping;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Attribute extends Mapping

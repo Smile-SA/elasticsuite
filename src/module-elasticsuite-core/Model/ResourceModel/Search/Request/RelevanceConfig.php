@@ -6,18 +6,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request;
+namespace Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request;
 
 /**
  * Relevance Configuration Resource model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class RelevanceConfig extends \Magento\Config\Model\ResourceModel\Config

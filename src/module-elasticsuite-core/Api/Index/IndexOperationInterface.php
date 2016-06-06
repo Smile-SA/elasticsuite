@@ -5,22 +5,22 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index;
+namespace Smile\ElasticsuiteCore\Api\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface;
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 
 /**
  * Operation on indices (create, get, install, indexing).
  *
- * @category Smile_ElasticSuite
- * @package  SSmile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  SSmile_ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface IndexOperationInterface
@@ -39,7 +39,7 @@ interface IndexOperationInterface
      * @param string                                                $indexIdentifier Index identifier.
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           Store (id, identifier or object).
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
      */
     public function getIndexByName($indexIdentifier, $store);
 
@@ -60,33 +60,33 @@ interface IndexOperationInterface
      * @param string                                                $indexIdentifier Index identifier.
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           Store (id, identifier or object).
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
      */
     public function createIndex($indexIdentifier, $store);
 
     /**
      * Switch the alias to the installed index and delete the old index.
      *
-     * @param \Smile\ElasticSuiteCore\Api\Index\IndexInterface      $index Installed index.
+     * @param \Smile\ElasticsuiteCore\Api\Index\IndexInterface      $index Installed index.
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store Store (id, identifier or object).
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
      */
     public function installIndex(IndexInterface $index, $store);
 
     /**
      * Create a new empty bulk.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function createBulk();
 
     /**
      * Execute a bulk and return the execution response.
      *
-     * @param \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface $bulk Bulk to be executed.
+     * @param \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface $bulk Bulk to be executed.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface
      */
     public function executeBulk(BulkRequestInterface $bulk);
 
@@ -95,7 +95,7 @@ interface IndexOperationInterface
      *
      * @param IndexInterface $index Index
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface
      */
     public function refreshIndex(IndexInterface $index);
 

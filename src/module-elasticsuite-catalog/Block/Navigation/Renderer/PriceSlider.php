@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Block\Navigation\Renderer;
+namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 
-use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Price;
+use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Price;
 
 /**
  * This block handle price slider rendering.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class PriceSlider extends Slider

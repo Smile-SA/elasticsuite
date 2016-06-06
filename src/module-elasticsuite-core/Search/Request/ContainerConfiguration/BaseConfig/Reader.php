@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
+namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 
 use Magento\Framework\Config\Reader\Filesystem;
 use Magento\Framework\Config\FileResolverInterface;
@@ -23,8 +23,8 @@ use Magento\Framework\Config\ValidationStateInterface;
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Reader extends Filesystem

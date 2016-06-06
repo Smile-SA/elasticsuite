@@ -7,34 +7,34 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Model\Category\Attribute\Backend;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\Backend;
 
 /**
  * Virtual category rule attribute backend model.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
 {
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory
+     * @var \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory
      */
     private $ruleFactory;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory Search rule factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory Search rule factory.
      */
-    public function __construct(\Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory)
+    public function __construct(\Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory)
     {
         $this->ruleFactory = $ruleFactory;
     }

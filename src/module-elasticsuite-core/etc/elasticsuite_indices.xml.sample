@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCore indices definition example.
+ * Smile_ElasticsuiteCore indices definition example.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -18,14 +18,14 @@
  -->
 
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_indices.xsd">
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
 
     <index identifier="catalog_product">
         <type name="product">
             <datasources>
-                <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
-                <datasource name="categories">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
-                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes</datasource>
+                <datasource name="prices">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
+                <datasource name="categories">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
+                <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\ProductAttributes</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->

@@ -5,23 +5,23 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer;
+namespace Smile\ElasticsuiteCatalog\Model\Category\Indexer;
 
 use Magento\Framework\Search\Request\DimensionFactory;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Action\Full;
+use Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Action\Full;
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 
 /**
  * Categories fulltext indexer
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\Framework\Mview\ActionInterface

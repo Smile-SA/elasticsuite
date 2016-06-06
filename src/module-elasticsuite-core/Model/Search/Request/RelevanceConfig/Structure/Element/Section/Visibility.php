@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section;
 
 /**
  * Relevance Config composite field visibility
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Visibility extends
-\Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility
+\Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility
 {
     /**
      * Check a configuration element visibility

@@ -6,15 +6,15 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Spellchecker;
+namespace Smile\ElasticsuiteCore\Search\Spellchecker;
 
-use Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface;
 
 /**
  * DISCLAIMER
@@ -22,7 +22,7 @@ use Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface;
  * Spellchecker request implementation
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Request implements RequestInterface

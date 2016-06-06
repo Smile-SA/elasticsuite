@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\ResourceModel;
+namespace Smile\ElasticsuiteCatalog\Model\ResourceModel;
 
 use Magento\CatalogSearch\Model\ResourceModel\Engine as MySqlEngine;
 
@@ -19,7 +19,7 @@ use Magento\CatalogSearch\Model\ResourceModel\Engine as MySqlEngine;
  * ElasticSearch search engine implementation.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Engine extends MySqlEngine

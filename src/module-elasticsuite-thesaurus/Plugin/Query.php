@@ -5,24 +5,24 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Plugin;
+namespace Smile\ElasticsuiteThesaurus\Plugin;
 
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Search\Model\Query as QueryModel;
-use Smile\ElasticSuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
+use Smile\ElasticsuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
 
 /**
  * Thesaurus search query model plugin.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteThesaurus
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Query

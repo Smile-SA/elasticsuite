@@ -7,30 +7,30 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition;
+namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition;
 
 /**
  * Product attribute search engine rule.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 {
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\AttributeList
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList
      */
     private $attributeList;
 
     /**
      *
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
      */
     private $queryBuilder;
 
@@ -42,8 +42,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param \Magento\Rule\Model\Condition\Context                                     $context           Rule context.
      * @param \Magento\Backend\Helper\Data                                              $backendData       Admin helper.
      * @param \Magento\Eav\Model\Config                                                 $config            EAV config.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule attribute list.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule query builder.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule attribute list.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule query builder.
      * @param \Magento\Catalog\Model\ProductFactory                                     $productFactory    Product factory.
      * @param \Magento\Catalog\Api\ProductRepositoryInterface                           $productRepository Product repository.
      * @param \Magento\Catalog\Model\ResourceModel\Product                              $productResource   Product resource model.
@@ -55,8 +55,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         \Magento\Rule\Model\Condition\Context $context,
         \Magento\Backend\Helper\Data $backendData,
         \Magento\Eav\Model\Config $config,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
@@ -106,7 +106,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     /**
      * Build a search query for the current rule.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
     public function getSearchQuery()
     {

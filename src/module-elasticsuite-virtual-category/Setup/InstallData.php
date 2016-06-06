@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Setup;
+namespace Smile\ElasticsuiteVirtualCategory\Setup;
 
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
@@ -22,7 +22,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
  * Catalog installer
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class InstallData implements InstallDataInterface
@@ -102,7 +102,7 @@ class InstallData implements InstallDataInterface
                 'type'       => 'text',
                 'label'      => 'Virtual rule',
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'backend'    => 'Smile\ElasticSuiteVirtualCategory\Model\Category\Attribute\Backend\VirtualRule',
+                'backend'    => 'Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\Backend\VirtualRule',
                 'required'   => false,
                 'default'    => null,
                 'visible'    => true,

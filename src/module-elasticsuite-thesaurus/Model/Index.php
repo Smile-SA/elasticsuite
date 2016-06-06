@@ -5,27 +5,27 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Model;
+namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticSuiteThesaurus\Config\ThesaurusConfigFactory;
-use Smile\ElasticSuiteThesaurus\Config\ThesaurusConfig;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus index.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Index

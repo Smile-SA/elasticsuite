@@ -34,7 +34,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Smile\\ElasticSuiteCore\\": ""
+            "Smile\\ElasticsuiteCore\\": ""
         }
     }
 }

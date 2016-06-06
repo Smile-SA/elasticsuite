@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Api\Search\Request\Container;
+namespace Smile\ElasticsuiteCore\Api\Search\Request\Container;
 
 /**
  * Search Relevance configuration interface.
  * Used to retrieve relevance configuration
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 interface RelevanceConfigurationInterface
@@ -61,14 +61,14 @@ interface RelevanceConfigurationInterface
     /**
      * Retrieve FuzzinessConfiguration
      *
-     * @return \Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface|null
+     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface|null
      */
     public function getFuzzinessConfiguration();
 
     /**
      * Retrieve Phonetic Configuration
      *
-     * @return \Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface|null
+     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface|null
      */
     public function getPhoneticConfiguration();
 }

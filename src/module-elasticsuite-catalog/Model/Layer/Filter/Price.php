@@ -6,14 +6,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
+namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Product price filter implementation.
@@ -21,7 +21,7 @@ use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
@@ -95,7 +95,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     /**
      * Append the facet to the product collection.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Category
+     * @return \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      */
     public function addFacetToCollection()
     {

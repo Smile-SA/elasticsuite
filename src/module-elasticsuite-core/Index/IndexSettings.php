@@ -5,19 +5,19 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticSuiteCore\Index\Analysis\Config as AnalysisConfig;
-use Smile\ElasticSuiteCore\Index\Indices\Config as IndicesConfig;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteCore\Index\Analysis\Config as AnalysisConfig;
+use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
 
 /**
  * This class provides an access to most index settings :
@@ -25,8 +25,8 @@ use Smile\ElasticSuiteCore\Index\Indices\Config as IndicesConfig;
  *   - indices by identifier and related configuration
  *   - ...
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class IndexSettings implements IndexSettingsInterface
@@ -48,17 +48,17 @@ class IndexSettings implements IndexSettingsInterface
 
 
     /**
-     * @var \Smile\ElasticSuiteCore\Helper\IndexSettings
+     * @var \Smile\ElasticsuiteCore\Helper\IndexSettings
      */
     protected $helper;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Index\Analysis\Config
+     * @var \Smile\ElasticsuiteCore\Index\Analysis\Config
      */
     protected $analysisConfig;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Index\Indices\Config
+     * @var \Smile\ElasticsuiteCore\Index\Indices\Config
      */
     protected $indicesConfig;
 

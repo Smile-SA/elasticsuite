@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
 use Magento\Framework\App\Cache\Type;
 use Magento\Framework\View\Element\Template;
@@ -20,10 +20,10 @@ use Magento\Framework\View\Element\Template;
  * Base variables block for page tracking, exposes all base tracking variables
  *
  * @category Smile
- * @package  Smile_ElasticSuiteTracker
+ * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
+class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
 {
     /**
      * @var \Magento\Framework\View\Layout\PageType\Config The page type configuration
@@ -35,7 +35,7 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
      *
      * @param Template\Context                               $context        The template context
      * @param \Magento\Framework\Json\Helper\Data            $jsonHelper     The Magento's JSON Helper
-     * @param \Smile\ElasticSuiteTracker\Helper\Data         $trackerHelper  The Smile Tracker helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data         $trackerHelper  The Smile Tracker helper
      * @param \Magento\Framework\Registry                    $registry       Magento Core Registry
      * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig The page type configuration
      * @param array                                          $data           The block data
@@ -43,7 +43,7 @@ class Base extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
     public function __construct(
         Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
+        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
         array $data = []

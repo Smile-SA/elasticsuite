@@ -8,7 +8,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -18,18 +18,18 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="catalogsearch.leftnav">
-            <block class="Smile\ElasticSuiteCatalog\Block\Navigation\FilterRenderer" 
+            <block class="Smile\ElasticsuiteCatalog\Block\Navigation\FilterRenderer" 
                    name="catalogsearch.navigation.renderer"
                    as="renderer" 
-                   template="Smile_ElasticSuiteCatalog::layer/filter/default.phtml">
+                   template="Smile_ElasticsuiteCatalog::layer/filter/default.phtml">
                    
-                    <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\Slider"
+                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Slider"
                            name="catalogsearch.navigation.renderer.slider"
-                           template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                           template="Smile_ElasticsuiteCatalog::layer/filter/slider.phtml" />
                            
-                   <block class="Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\PriceSlider"
+                   <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\PriceSlider"
                           name="catalogsearch.navigation.renderer.price.slider"
-                          template="Smile_ElasticSuiteCatalog::layer/filter/slider.phtml" />
+                          template="Smile_ElasticsuiteCatalog::layer/filter/slider.phtml" />
             </block>
         </referenceBlock>
     </body>

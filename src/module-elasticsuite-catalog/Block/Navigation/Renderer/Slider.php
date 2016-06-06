@@ -6,14 +6,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Block\Navigation\Renderer;
+namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 
-use Smile\ElasticSuiteCatalog\Model\Layer\Filter\Decimal;
+use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
@@ -24,7 +24,7 @@ use Magento\Framework\Json\EncoderInterface;
  * This block handle standard decimal slider rendering.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */

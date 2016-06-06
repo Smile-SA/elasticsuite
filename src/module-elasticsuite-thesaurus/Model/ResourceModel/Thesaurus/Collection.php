@@ -5,21 +5,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuite________
+ * @package   Smile\Elasticsuite________
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus;
 
 use Magento\Store\Model\Store;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus Collection Resource Model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
@@ -177,8 +177,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         $this->_init(
-            'Smile\ElasticSuiteThesaurus\Model\Thesaurus',
-            'Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus'
+            'Smile\ElasticsuiteThesaurus\Model\Thesaurus',
+            'Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus'
         );
     }
 

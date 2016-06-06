@@ -5,23 +5,23 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Indexer;
+namespace Smile\ElasticsuiteCore\Indexer;
 
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
 /**
  * Eav Indexing operation handling for ElasticSearch engine.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  * @author   Fanny DECLERCK <fadec@smile.fr>
@@ -29,7 +29,7 @@ use Magento\Framework\Indexer\SaveHandler\Batch;
 class GenericIndexerHandler implements IndexerInterface
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface
      */
     private $indexOperation;
 

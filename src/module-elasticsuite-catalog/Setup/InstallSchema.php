@@ -5,14 +5,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Setup;
+namespace Smile\ElasticsuiteCatalog\Setup;
 
 use \Magento\Framework\Setup\InstallSchemaInterface;
 use \Magento\Framework\Setup\ModuleContextInterface;
@@ -23,7 +23,7 @@ use \Magento\Eav\Setup\EavSetup;
  * Schema for Catalog attributes
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
@@ -143,7 +143,7 @@ class InstallSchema implements InstallSchemaInterface
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                 'nullable' => false,
-                'default'  => \Smile\ElasticSuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT,
+                'default'  => \Smile\ElasticsuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT,
                 'length'   => 25,
                 'comment'  => 'The sort order for facet values',
             ]

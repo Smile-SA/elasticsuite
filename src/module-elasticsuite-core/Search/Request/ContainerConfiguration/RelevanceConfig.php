@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration;
+namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
 /**
  * Relevance Configuration object
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class RelevanceConfig implements RelevanceConfigurationInterface

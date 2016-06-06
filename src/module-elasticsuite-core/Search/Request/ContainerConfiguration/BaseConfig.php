@@ -6,23 +6,23 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration;
+namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 
 use Magento\Framework\Config\CacheInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Reader;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Reader;
 
 /**
  * ElasticSuite Search requests configuration.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class BaseConfig extends \Magento\Framework\Config\Data

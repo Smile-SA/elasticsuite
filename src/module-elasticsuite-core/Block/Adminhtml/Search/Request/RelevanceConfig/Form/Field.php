@@ -5,18 +5,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form;
 
 /**
  * Relevance configuration form field renderer
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Field extends \Magento\Config\Block\System\Config\Form\Field

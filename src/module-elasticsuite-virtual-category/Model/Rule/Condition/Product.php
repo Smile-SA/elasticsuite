@@ -7,14 +7,14 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Product search rule condition.
@@ -22,13 +22,13 @@ use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Product extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product
+class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
 
@@ -40,28 +40,28 @@ class Product extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Produc
      * @param \Magento\Rule\Model\Condition\Context                                     $context           Rule context.
      * @param \Magento\Backend\Helper\Data                                              $backendData       Admin helper.
      * @param \Magento\Eav\Model\Config                                                 $config            EAV config.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule attribute list.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule query builder.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule attribute list.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule query builder.
      * @param \Magento\Catalog\Model\ProductFactory                                     $productFactory    Product factory.
      * @param \Magento\Catalog\Api\ProductRepositoryInterface                           $productRepository Product repository.
      * @param \Magento\Catalog\Model\ResourceModel\Product                              $productResource   Product resource model.
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection          $attrSetCollection Attribute set collection.
      * @param \Magento\Framework\Locale\FormatInterface                                 $localeFormat      Locale format.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory                 $queryFactory      Search query factory.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory      Search query factory.
      * @param array                                                                     $data              Additional data.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
         \Magento\Backend\Helper\Data $backendData,
         \Magento\Eav\Model\Config $config,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
-        \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
         parent::__construct($context, $backendData, $config, $attributeList, $queryBuilder, $productFactory, $productRepository, $productResource, $attrSetCollection, $localeFormat, $data);

@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field;
 
 /**
  * Configuration field factory
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Factory extends \Magento\Config\Block\System\Config\Form\Field\Factory
@@ -32,6 +32,6 @@ class Factory extends \Magento\Config\Block\System\Config\Form\Field\Factory
     public function create(array $data = [])
     {
         return $this->_objectManager
-            ->create('Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field', $data);
+            ->create('Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field', $data);
     }
 }

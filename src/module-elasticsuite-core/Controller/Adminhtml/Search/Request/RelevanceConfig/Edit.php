@@ -5,25 +5,25 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker;
 use Magento\Config\Model\Config\Structure;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
 
 /**
  * Relevance configuration edit action
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Edit extends AbstractScopeConfig
@@ -76,7 +76,7 @@ class Edit extends AbstractScopeConfig
 
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Smile_ElasticSuiteCore::manage_relevance');
+        $resultPage->setActiveMenu('Smile_ElasticsuiteCore::manage_relevance');
         $resultPage->getLayout()->getBlock('menu')->setAdditionalCacheKeyInfo([$current]);
         $resultPage->addBreadcrumb(__('Search Engine'), __('Relevance'));
         $resultPage->getConfig()->getTitle()->prepend(__('Relevance configuration'));

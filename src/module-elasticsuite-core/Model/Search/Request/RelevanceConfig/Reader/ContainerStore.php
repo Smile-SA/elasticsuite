@@ -5,24 +5,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader;
 
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 use Magento\Framework\App\Config\Scope\Converter;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\ScopedFactory;
+use Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\ScopedFactory;
 
 /**
  * Configuration reader for Store Container level : Configuration for a given container on a given store
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ContainerStore

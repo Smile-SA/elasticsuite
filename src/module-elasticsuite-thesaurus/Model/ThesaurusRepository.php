@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Model;
+namespace Smile\ElasticsuiteThesaurus\Model;
 
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -18,14 +18,14 @@ use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusSearchResultsInterfaceFactory;
-use Smile\ElasticSuiteThesaurus\Api\ThesaurusRepositoryInterface;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterfaceFactory;
+use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 
 /**
  * Thesaurus Repository Object
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ThesaurusRepository implements ThesaurusRepositoryInterface
@@ -61,7 +61,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     /**
      * repository cache for thesaurus, by ids
      *
-     * @var \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface[]
+     * @var \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface[]
      */
     private $thesaurusRepositoryById = [];
 
@@ -90,7 +90,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      *
      * @param int $thesaurusId id of the thesaurus
      *
-     * @return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getById($thesaurusId)
@@ -112,13 +112,13 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     /**
      * Save a thesaurus
      *
-     * @param \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
      *
-     * @return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function save(\Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    public function save(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {
         $this->validate($thesaurus);
 
@@ -132,13 +132,13 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     /**
      * Delete a thesaurus
      *
-     * @param \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
      *
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      *
-     * @return \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
      */
-    public function delete(\Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    public function delete(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {
         $thesaurusId = $thesaurus->getThesaurusId();
 
@@ -154,12 +154,12 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     /**
      * Validate thesaurus values
      *
-     * @param \Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus the thesaurus to validate
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus the thesaurus to validate
      *
      * @return void
      * @throws \Magento\Framework\Exception\InputException
      */
-    protected function validate(\Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    protected function validate(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {
         $exception = new \Magento\Framework\Exception\InputException();
 

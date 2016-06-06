@@ -62,13 +62,13 @@
             "src/module-elasticsuite-virtual-category/registration.php"
         ],
         "psr-4": {
-            "Smile\\ElasticSuiteCore\\": "src/module-elasticsuite-core",
-            "Smile\\ElasticSuiteCatalog\\": "src/module-elasticsuite-catalog",
-            "Smile\\ElasticSuiteCatalogRule\\": "src/module-elasticsuite-catalog-rule",
-            "Smile\\ElasticSuiteSwatches\\": "src/module-elasticsuite-swatches",
-            "Smile\\ElasticSuiteThesaurus\\": "src/module-elasticsuite-thesaurus",
-            "Smile\\ElasticSuiteTracker\\": "src/module-elasticsuite-tracker",
-            "Smile\\ElasticSuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category"
+            "Smile\\ElasticsuiteCore\\": "src/module-elasticsuite-core",
+            "Smile\\ElasticsuiteCatalog\\": "src/module-elasticsuite-catalog",
+            "Smile\\ElasticsuiteCatalogRule\\": "src/module-elasticsuite-catalog-rule",
+            "Smile\\ElasticsuiteSwatches\\": "src/module-elasticsuite-swatches",
+            "Smile\\ElasticsuiteThesaurus\\": "src/module-elasticsuite-thesaurus",
+            "Smile\\ElasticsuiteTracker\\": "src/module-elasticsuite-tracker",
+            "Smile\\ElasticsuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category"
         }
     },
     "extra": {

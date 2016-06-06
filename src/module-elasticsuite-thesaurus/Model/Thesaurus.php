@@ -5,15 +5,15 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Model;
+namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
-use Smile\ElasticSuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
 use Magento\Framework\Indexer\IndexerRegistry;
 
 /**
@@ -22,7 +22,7 @@ use Magento\Framework\Indexer\IndexerRegistry;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Thesaurus extends \Magento\Framework\Model\AbstractModel implements ThesaurusInterface
@@ -227,7 +227,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      */
     protected function _construct()
     {
-        $this->_init('Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus');
+        $this->_init('Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus');
     }
 
     /**

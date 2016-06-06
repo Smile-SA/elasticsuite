@@ -5,25 +5,25 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Framework\Data\FormFactory;
 use Magento\Framework\Registry;
 use Magento\Store\Model\System\Store;
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus Edit form
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
@@ -111,12 +111,12 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      *  - store id
      *
      * @param \Magento\Framework\Data\Form\Element\Fieldset     $fieldset The fieldset
-     * @param \Smile\ElasticSuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
+     * @param \Smile\ElasticsuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
      *
      * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @return \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
+     * @return \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
      */
     private function initBaseFields($fieldset, $model)
     {
@@ -160,9 +160,9 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      * Init type fields : fields are different according to thesaurus type
      *
      * @param \Magento\Framework\Data\Form\Element\Fieldset     $fieldset The fieldset
-     * @param \Smile\ElasticSuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
+     * @param \Smile\ElasticsuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
      *
-     * @return \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
+     * @return \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
      */
     private function initTypeFields($fieldset, $model)
     {
@@ -179,17 +179,17 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      * Adding expansion-related fields
      *
      * @param \Magento\Framework\Data\Form\Element\Fieldset     $fieldset The fieldset
-     * @param \Smile\ElasticSuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
+     * @param \Smile\ElasticsuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
      *
-     * @return \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
+     * @return \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
      */
     private function addExpansionFields($fieldset, $model)
     {
         $form = $fieldset->getForm();
 
-        /* @var $bagRenderer \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Expansions */
+        /* @var $bagRenderer \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Expansions */
         $bagRenderer = $this->getLayout()->createBlock(
-            'Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Expansions'
+            'Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Expansions'
         )->setForm($fieldset->getForm());
 
         $fieldset = $form->addFieldset('bag_of_words_fieldset', ['legend' => __('Bag of words')]);
@@ -208,17 +208,17 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      * Adding synonym-related fields
      *
      * @param \Magento\Framework\Data\Form\Element\Fieldset     $fieldset The fieldset
-     * @param \Smile\ElasticSuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
+     * @param \Smile\ElasticsuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
      *
-     * @return \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
+     * @return \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
      */
     private function addSynonymFields($fieldset, $model)
     {
         $form = $fieldset->getForm();
 
-        /* @var $synonymsRenderer \Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonym */
+        /* @var $synonymsRenderer \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonym */
         $synonymsRenderer = $this->getLayout()->createBlock(
-            'Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonyms'
+            'Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonyms'
         )->setForm($fieldset->getForm());
 
         $fieldset = $form->addFieldset('synonyms_fieldset', ['legend' => __('Synonyms')]);
@@ -235,11 +235,11 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * Retrieve current model if any
      *
-     * @return \Smile\ElasticSuiteThesaurus\Model\Thesaurus
+     * @return \Smile\ElasticsuiteThesaurus\Model\Thesaurus
      */
     private function getModel()
     {
-        /* @var $model \Smile\ElasticSuiteThesaurus\Model\Thesaurus */
+        /* @var $model \Smile\ElasticsuiteThesaurus\Model\Thesaurus */
         $model = $this->_coreRegistry->registry('current_thesaurus');
 
         return $model;

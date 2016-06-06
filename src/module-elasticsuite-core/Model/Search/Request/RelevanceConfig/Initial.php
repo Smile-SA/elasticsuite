@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
 
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader;
 
 /**
  * Relevance configuration Initial Reader
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Initial
@@ -45,7 +45,7 @@ class Initial
     /**
      * Class constructor
      *
-     * @param \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\Initial $reader The reader
+     * @param \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Initial $reader The reader
      * @param \Magento\Framework\App\Cache\Type\Config                                    $cache  Cache instance
      */
     public function __construct(

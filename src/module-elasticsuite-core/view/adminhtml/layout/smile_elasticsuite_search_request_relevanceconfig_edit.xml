@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -21,7 +21,7 @@
             <block class="Magento\Backend\Block\Template" template="Magento_Config::system/config/js.phtml"/>
         </referenceContainer>
         <referenceContainer name="page.main.actions">
-            <block class="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticSuiteCore::relevance/configuration/scope/switcher.phtml">
+            <block class="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticsuiteCore::relevance/configuration/scope/switcher.phtml">
                 <arguments>
                     <argument name="switch_containers" xsi:type="string">1</argument>
                     <argument name="switch_store_views" xsi:type="string">1</argument>
@@ -30,10 +30,10 @@
             </block>
         </referenceContainer>
         <referenceContainer name="left">
-            <block name="smile.elasticsuite.relevance.config.tabs" class="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Tabs" before="-"/>
+            <block name="smile.elasticsuite.relevance.config.tabs" class="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Tabs" before="-"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block name="smile.elasticsuite.relevance.config.edit" class="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Edit"/>
+            <block name="smile.elasticsuite.relevance.config.edit" class="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Edit"/>
         </referenceContainer>
     </body>
 </page>

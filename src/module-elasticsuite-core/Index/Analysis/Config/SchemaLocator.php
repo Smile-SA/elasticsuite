@@ -5,14 +5,14 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index\Analysis\Config;
+namespace Smile\ElasticsuiteCore\Index\Analysis\Config;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
@@ -20,8 +20,8 @@ use Magento\Framework\Config\SchemaLocatorInterface;
 /**
  * Locate schema validation for elasticsearch analysis configuration files.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class SchemaLocator implements SchemaLocatorInterface
@@ -40,7 +40,7 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $moduleDirectory = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $moduleDirectory = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticsuiteCore');
         $this->schema = $moduleDirectory . '/elasticsuite_analysis.xsd';
     }
 

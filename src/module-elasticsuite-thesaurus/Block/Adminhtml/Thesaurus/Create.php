@@ -5,18 +5,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus;
 
 /**
  * Thesaurus creation form container
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Create extends \Magento\Backend\Block\Widget\Form\Container
@@ -58,7 +58,7 @@ class Create extends \Magento\Backend\Block\Widget\Form\Container
     protected function _construct()
     {
         $this->_objectId = 'id';
-        $this->_blockGroup = 'Smile_ElasticSuiteThesaurus';
+        $this->_blockGroup = 'Smile_ElasticsuiteThesaurus';
         $this->_controller = 'adminhtml_thesaurus';
 
         parent::_construct();

@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
 
 /**
  * Custom Flyweight factory to instantiate custom field element
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\FlyweightFactory
@@ -28,9 +28,9 @@ class FlyweightFactory extends \Magento\Config\Model\Config\Structure\Element\Fl
      * @var array
      */
     protected $flyweightMap = [
-        'section' => 'Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section',
-        'group'   => 'Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group',
-        'field'   => 'Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field',
+        'section' => 'Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section',
+        'group'   => 'Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group',
+        'field'   => 'Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field',
     ];
 
     /**

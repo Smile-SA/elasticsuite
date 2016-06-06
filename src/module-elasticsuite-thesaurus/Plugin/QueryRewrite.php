@@ -5,27 +5,27 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Plugin;
+namespace Smile\ElasticsuiteThesaurus\Plugin;
 
-use Smile\ElasticSuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticSuiteThesaurus\Model\Index;
-use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteThesaurus\Model\Index;
+use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Plugin that handle query rewriting (synonym substitution) during fulltext query building phase.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteThesaurus
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class QueryRewrite

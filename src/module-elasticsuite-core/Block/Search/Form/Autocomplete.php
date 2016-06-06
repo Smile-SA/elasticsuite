@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Block\Search\Form;
+namespace Smile\ElasticsuiteCore\Block\Search\Form;
 
 use Magento\Framework\Locale\FormatInterface;
 
@@ -18,7 +18,7 @@ use Magento\Framework\Locale\FormatInterface;
  * Quick Form block for Autocomplete
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Autocomplete extends \Magento\Framework\View\Element\Template

@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 
 use Magento\Framework\Config\ConverterInterface;
 
@@ -18,7 +18,7 @@ use Magento\Framework\Config\ConverterInterface;
  * Default Configuration converter
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Converter implements ConverterInterface

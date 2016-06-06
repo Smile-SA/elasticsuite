@@ -5,24 +5,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource;
+namespace Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource;
 
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
-use Smile\ElasticSuiteCore\Index\Mapping\FieldFactory;
-use Smile\ElasticSuiteCatalog\Helper\Attribute as ProductAttributeHelper;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
+use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
+use Smile\ElasticsuiteCatalog\Helper\Attribute as ProductAttributeHelper;
 
 /**
  * Abstract Datasource for EAV entities
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AbstractAttributeData
@@ -38,17 +38,17 @@ class AbstractAttributeData
     protected $attributeIdsByTable = [];
 
     /**
-     * @var \Smile\ElasticSuiteCatalog\Helper\Attribute
+     * @var \Smile\ElasticsuiteCatalog\Helper\Attribute
      */
     protected $attributeHelper;
 
     /**
-     * @var \Smile\ElasticSuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
      */
     protected $resourceModel;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Index\Mapping\FieldFactory
+     * @var \Smile\ElasticsuiteCore\Index\Mapping\FieldFactory
      */
     protected $fieldFactory;
 
@@ -124,7 +124,7 @@ class AbstractAttributeData
     /**
      * Init attributes used into ES.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
+     * @return \Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
      */
     private function initAttributes()
     {
@@ -167,7 +167,7 @@ class AbstractAttributeData
      *
      * @param AttributeInterface $attribute Entity attribute.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Catalog\Indexer\Fulltext\Datasource\AbstractAttributeData
+     * @return \Smile\ElasticsuiteCatalog\Model\Catalog\Indexer\Fulltext\Datasource\AbstractAttributeData
      */
     private function initField(AttributeInterface $attribute)
     {

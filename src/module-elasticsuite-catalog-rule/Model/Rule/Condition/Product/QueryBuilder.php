@@ -7,23 +7,23 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product;
+namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
-use Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
-use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Build a search query from a search engine rule product condition.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class QueryBuilder
@@ -55,7 +55,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
     public function getSearchQuery(ProductCondition $productCondition)
     {
@@ -188,7 +188,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface
      */
     private function getSearchField(ProductCondition $productCondition)
     {

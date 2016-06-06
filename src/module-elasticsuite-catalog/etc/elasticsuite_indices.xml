@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCatalog indices configuration.
+ * Smile_ElasticsuiteCatalog indices configuration.
  *
  * DISCLAIMER
  *
@@ -10,22 +10,22 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
 <indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticSuiteCore:etc/elasticsuite_indices.xsd">
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
 
     <index identifier="catalog_product" defaultSearchType="product">
         <type name="product" idFieldName="entity_id">
             <datasources>
-                <datasource name="prices">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
-                <datasource name="categories">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
-                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
-                <datasource name="stock">Smile\ElasticSuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</datasource>
+                <datasource name="prices">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
+                <datasource name="categories">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
+                <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
+                <datasource name="stock">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->
@@ -67,7 +67,7 @@
     <index identifier="catalog_category" defaultSearchType="category">
         <type name="category" idFieldName="entity_id">
             <datasources>
-                <datasource name="attributes">Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</datasource>
+                <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->

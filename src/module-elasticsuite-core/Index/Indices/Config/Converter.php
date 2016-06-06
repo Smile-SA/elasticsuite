@@ -5,22 +5,22 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index\Indices\Config;
+namespace Smile\ElasticsuiteCore\Index\Indices\Config;
 
-use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
 /**
  * Convert indices configuration XML file.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Converter implements \Magento\Framework\Config\ConverterInterface

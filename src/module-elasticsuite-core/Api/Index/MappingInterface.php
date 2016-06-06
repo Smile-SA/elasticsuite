@@ -5,22 +5,22 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index;
+namespace Smile\ElasticsuiteCore\Api\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Representation of a ElasticSearch type mapping.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface MappingInterface
@@ -39,7 +39,7 @@ interface MappingInterface
     /**
      * List of the fields used to build the mapping.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
     public function getFields();
 
@@ -48,7 +48,7 @@ interface MappingInterface
      *
      * @param string $name Field name
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getField($name);
 
@@ -62,7 +62,7 @@ interface MappingInterface
     /**
      * Field use as unique id for the doc.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getIdField();
 }

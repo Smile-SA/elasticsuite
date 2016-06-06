@@ -5,30 +5,30 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
 
 use Magento\Config\Model\Config\Structure\Element\Iterator;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Module\Manager;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section\Visibility;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section\Visibility;
 
 /**
  * Relevance configuration section model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Section extends \Magento\Config\Model\Config\Structure\Element\Section
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section\Visibility
+     * @var \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section\Visibility
      */
     private $visibility;
 

@@ -5,26 +5,26 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Client;
+namespace Smile\ElasticsuiteCore\Client;
 
 use Psr\Log\LoggerInterface;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
-use Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 
 /**
  * Provides a simple way to retrieve an ElasticSearch client.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ClientFactory implements ClientFactoryInterface

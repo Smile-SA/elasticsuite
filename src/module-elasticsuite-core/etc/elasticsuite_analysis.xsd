@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Smile_ElasticSuiteCore analysis configguration validation.
+ * Smile_ElasticsuiteCore analysis configguration validation.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0

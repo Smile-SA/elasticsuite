@@ -6,18 +6,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteTracker\Block\Variables;
+namespace Smile\ElasticsuiteTracker\Block\Variables;
 
 /**
  * Abstract block for tracker, inherited by all other blocks
  *
  * @category Smile
- * @package  Smile_ElasticSuiteTracker
+ * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AbstractBlock extends \Magento\Framework\View\Element\Template
@@ -32,7 +32,7 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     /**
      * Generic tracker helper
      *
-     * @var \Smile\ElasticSuiteTracker\Helper\Data
+     * @var \Smile\ElasticsuiteTracker\Helper\Data
      */
     protected $trackerHelper;
 
@@ -48,14 +48,14 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
      *
      * @param \Magento\Framework\View\Element\Template\Context $context       App context
      * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticSuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
      * @param \Magento\Framework\Registry                      $registry      The Magento registry
      * @param array                                            $data          additional datas
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
+        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         array $data = []
     ) {

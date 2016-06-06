@@ -5,14 +5,14 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection;
+namespace Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection;
 
-use Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data;
+use Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactory;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
  * Scoped configuration resource collection
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Scoped extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection

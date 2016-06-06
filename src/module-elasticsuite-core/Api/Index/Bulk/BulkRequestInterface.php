@@ -5,23 +5,23 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index\Bulk;
+namespace Smile\ElasticsuiteCore\Api\Index\Bulk;
 
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
 
 /**
  * Bulk request representation interface.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface BulkRequestInterface
@@ -48,7 +48,7 @@ interface BulkRequestInterface
      * @param string|integer $docId Document id.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function addDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
 
@@ -61,7 +61,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function addDocuments(IndexInterface $index, TypeInterface $type, array $data);
 
@@ -72,7 +72,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param string|integer $docId Document id.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function deleteDocument(IndexInterface $index, TypeInterface $type, $docId);
 
@@ -83,7 +83,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type   Type of the documents to be delete.
      * @param array          $docIds Ids of the deleted documents.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
     public function deleteDocuments(IndexInterface $index, TypeInterface $type, array $docIds);
 
@@ -98,7 +98,7 @@ interface BulkRequestInterface
      * @param string|integer $docId Document id.
      * @param array          $data  Updated data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
     public function updateDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
 
@@ -111,7 +111,7 @@ interface BulkRequestInterface
      * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
+     * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
     public function updateDocuments(IndexInterface $index, TypeInterface $type, array $data);
 }

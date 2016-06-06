@@ -5,25 +5,25 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Model\Indexer;
+namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 
-use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
-use Smile\ElasticSuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
-use Smile\ElasticSuiteThesaurus\Model\Index as ThesaurusIndex;
+use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
 /**
  * Synonym index handler.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteThesaurus
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class IndexHandler

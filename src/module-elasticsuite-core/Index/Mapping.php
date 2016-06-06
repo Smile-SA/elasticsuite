@@ -5,23 +5,23 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Default implementation for ES mappings (Smile\ElasticSuiteCore\Api\Index\MappingInterface).
+ * Default implementation for ES mappings (Smile\ElasticsuiteCore\Api\Index\MappingInterface).
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Mapping implements MappingInterface
@@ -34,7 +34,7 @@ class Mapping implements MappingInterface
     /**
      * List of fields for the current mapping.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
     private $fields;
 

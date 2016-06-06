@@ -6,21 +6,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Query;
+namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * bool queries request implementation.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Boolean implements QueryInterface
@@ -108,7 +108,7 @@ class Boolean implements QueryInterface
     /**
      * Must clause queries.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getMust()
     {
@@ -118,7 +118,7 @@ class Boolean implements QueryInterface
     /**
      * Should clause queries.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getShould()
     {
@@ -128,7 +128,7 @@ class Boolean implements QueryInterface
     /**
      * Must not clause queries.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getMustNot()
     {

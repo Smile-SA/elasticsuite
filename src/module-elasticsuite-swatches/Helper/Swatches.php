@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteSwatches
+ * @package   Smile\ElasticsuiteSwatches
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteSwatches\Helper;
+namespace Smile\ElasticsuiteSwatches\Helper;
 
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 
@@ -20,7 +20,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
  * Allow to load swatche images from a multivalued attribute filter.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteSwatches
+ * @package  Smile\ElasticsuiteSwatches
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Swatches extends \Magento\Swatches\Helper\Data

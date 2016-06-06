@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -19,7 +19,7 @@
     <update handle="smile_elasticsuite_thesaurus_grid_block"/>
     <body>
         <referenceContainer name="content">
-            <block class="Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus" name="adminhtml.elasticsuite.thesaurus.grid.container"/>
+            <block class="Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus" name="adminhtml.elasticsuite.thesaurus.grid.container"/>
         </referenceContainer>
     </body>
 </page>

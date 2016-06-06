@@ -7,28 +7,28 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Combine product search rule conditions.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Combine extends \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine
+class Combine extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combine
 {
     /**
      * @var string
      */
-    protected $type = 'Smile\ElasticSuiteVirtualCategory\Model\Rule\Condition\Combine';
+    protected $type = 'Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Combine';
 
     /**
      * Build a search query for the current rule.

@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Plugin;
+namespace Smile\ElasticsuiteCatalog\Plugin;
 
 use Magento\CatalogInventory\Model\Plugin\Layer;
 
@@ -18,7 +18,7 @@ use Magento\CatalogInventory\Model\Plugin\Layer;
  * Replace is in stock native filter on layer.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer

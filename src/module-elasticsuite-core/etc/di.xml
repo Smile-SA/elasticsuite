@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCore dependency injection configuration.
+ * Smile_ElasticsuiteCore dependency injection configuration.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -19,47 +19,47 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- Client config and factory DI -->
-    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface"
-                type="Smile\ElasticSuiteCore\Client\ClientFactory" />
+    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface"
+                type="Smile\ElasticsuiteCore\Client\ClientFactory" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Client\ClientConfigurationInterface"
-                type="Smile\ElasticSuiteCore\Helper\ClientConfiguration" />
+    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />
 
     <!-- Indices namespace related DI -->
-    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexInterface"
-                type="Smile\ElasticSuiteCore\Index\Index" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\IndexInterface"
+                type="Smile\ElasticsuiteCore\Index\Index" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface"
-                type="Smile\ElasticSuiteCore\Index\IndexSettings" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface"
+                type="Smile\ElasticsuiteCore\Index\IndexSettings" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface"
-                type="Smile\ElasticSuiteCore\Index\IndexOperation" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface"
+                type="Smile\ElasticsuiteCore\Index\IndexOperation" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\TypeInterface"
-                type="Smile\ElasticSuiteCore\Index\Type" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\TypeInterface"
+                type="Smile\ElasticsuiteCore\Index\Type" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\MappingInterface"
-                type="Smile\ElasticSuiteCore\Index\Mapping" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\MappingInterface"
+                type="Smile\ElasticsuiteCore\Index\Mapping" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface"
-                type="Smile\ElasticSuiteCore\Index\Mapping\Field" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface"
+                type="Smile\ElasticsuiteCore\Index\Mapping\Field" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface"
-                type="Smile\ElasticSuiteCore\Index\Bulk\BulkRequest" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface"
+                type="Smile\ElasticsuiteCore\Index\Bulk\BulkRequest" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface"
-                type="Smile\ElasticSuiteCore\Index\Bulk\BulkResponse" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface"
+                type="Smile\ElasticsuiteCore\Index\Bulk\BulkResponse" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface"
-                type="Smile\ElasticSuiteCore\Search\Spellchecker\Request" />
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface"
+                type="Smile\ElasticsuiteCore\Search\Spellchecker\Request" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface"
-                type="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Spellchecker" />
+    <preference for="Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface"
+                type="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Spellchecker" />
 
     <type name="Magento\Search\Model\AdapterFactory">
         <arguments>
             <argument name="adapters" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Adapter</item>
+                <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Adapter</item>
             </argument>
         </arguments>
     </type>
@@ -70,7 +70,7 @@
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Search\Adapter\ElasticSuite\Response\DocumentFactory">
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\DocumentFactory">
         <arguments>
             <argument name="entityMetadata" xsi:type="object">Magento\Framework\Search\EsHitMetadata</argument>
         </arguments>
@@ -79,172 +79,172 @@
     <!-- Relevance configuration related DI -->
 
     <!-- This one is mandatory since no preference for FrontendInterface is declared elsewhere -->
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Save">
+    <type name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Save">
         <arguments>
             <argument name="cache" xsi:type="object">Magento\Framework\App\Cache\Type\Layout</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Loader" type="Magento\Config\Model\Config\Loader">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Loader" type="Magento\Config\Model\Config\Loader">
         <arguments>
-            <argument name="configValueFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory</argument>
+            <argument name="configValueFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig">
         <arguments>
-            <argument name="configValueFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory</argument>
-            <argument name="configLoader" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Loader</argument>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="configValueFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory</argument>
+            <argument name="configLoader" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Loader</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Value">
         <arguments>
-            <argument name="resource" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data</argument>
-            <argument name="resourceCollection" xsi:type="object">Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\Proxy</argument>
-            <argument name="config" xsi:type="object">Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
+            <argument name="resource" xsi:type="object">Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data</argument>
+            <argument name="resourceCollection" xsi:type="object">Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection\Proxy</argument>
+            <argument name="config" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory" type="Magento\Framework\App\Config\ValueFactory">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory" type="Magento\Framework\App\Config\ValueFactory">
         <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value</argument>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Value</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config" type="Magento\Framework\App\Config">
+    <virtualType name="Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config" type="Magento\Framework\App\Config">
         <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ScopePool</argument>
+            <argument name="scopePool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ScopePool" type="Magento\Framework\App\Config\ScopePool">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool" type="Magento\Framework\App\Config\ScopePool">
         <arguments>
-            <argument name="readerPool" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool</argument>
+            <argument name="readerPool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool" type="Magento\Store\Model\Config\Reader\ReaderPool">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool" type="Magento\Store\Model\Config\Reader\ReaderPool">
         <arguments>
             <argument name="readers" xsi:type="array">
-                <item name="default" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\DefaultReader</item>
-                <item name="container" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container</item>
-                <item name="containers" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container</item>
-                <item name="containers_stores" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\ContainerStore</item>
-                <item name="container_store" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Reader\ContainerStore</item>
+                <item name="default" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\DefaultReader</item>
+                <item name="container" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container</item>
+                <item name="containers" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container</item>
+                <item name="containers_stores" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\ContainerStore</item>
+                <item name="container_store" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\ContainerStore</item>
             </argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\Structure\Reader" type="Magento\Config\Model\Config\Structure\Reader">
+    <virtualType name="Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\Structure\Reader" type="Magento\Config\Model\Config\Structure\Reader">
         <arguments>
-            <argument name="schemaLocator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\SchemaLocator</argument>
+            <argument name="schemaLocator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\SchemaLocator</argument>
             <argument name="fileName" xsi:type="string">elasticsuite_relevance.xml</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data" type="Magento\Config\Model\Config\Structure\Data">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data" type="Magento\Config\Model\Config\Structure\Data">
         <arguments>
-            <argument name="reader" xsi:type="object">Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\Structure\Reader</argument>
+            <argument name="reader" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\Structure\Reader</argument>
             <argument name="cacheId" xsi:type="string">smile_elasticsuite_relevance_configuration_structure</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure" type="Magento\Config\Model\Config\Structure" shared="false">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure" type="Magento\Config\Model\Config\Structure" shared="false">
         <arguments>
-            <argument name="structureData" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data</argument>
-            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\FlyweightFactory</argument>
-            <argument name="scopeDefiner" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\ScopeDefiner</argument>
-            <argument name="tabIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Tab</argument>
+            <argument name="structureData" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data</argument>
+            <argument name="flyweightFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\FlyweightFactory</argument>
+            <argument name="scopeDefiner" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopeDefiner</argument>
+            <argument name="tabIterator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Tab</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker" type="Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker">
+    <virtualType name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker" type="Magento\Config\Controller\Adminhtml\System\ConfigSectionChecker">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\AbstractScopeConfig">
+    <type name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\AbstractScopeConfig">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\AbstractConfig">
+    <type name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\AbstractConfig">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Index">
+    <type name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Index">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Edit">
+    <type name="Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\Edit">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="sectionChecker" xsi:type="object">Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="sectionChecker" xsi:type="object">Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig\SectionChecker</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Block\Backend\Template\Context" type="Magento\Backend\Block\Template\Context">
+    <virtualType name="Smile\ElasticsuiteCore\Block\Backend\Template\Context" type="Magento\Backend\Block\Template\Context">
         <arguments>
-            <argument name="scopeConfig" xsi:type="object">Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
+            <argument name="scopeConfig" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
+    <virtualType name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
         <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field</argument>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form">
+    <type name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="configFactory" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Factory</argument>
-            <argument name="fieldFactory" xsi:type="object">Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field\Factory</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="configFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Factory</argument>
+            <argument name="fieldFactory" xsi:type="object">Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field\Factory</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Edit">
+    <type name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Edit">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Tabs" type="Magento\Config\Block\System\Config\Tabs">
+    <virtualType name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Tabs" type="Magento\Config\Block\System\Config\Tabs">
         <arguments>
-            <argument name="configStructure" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticSuiteCore\Block\Backend\Template\Context</argument>
+            <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </virtualType>
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface"
-                type="Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig" />
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface"
-                type="Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\FuzzinessConfig" />
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\FuzzinessConfig" />
 
-    <preference for="Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface"
-                type="Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\PhoneticConfig" />
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\PhoneticConfig" />
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader">
         <arguments>
-            <argument name="converter" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter</argument>
+            <argument name="converter" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter">
         <arguments>
             <argument name="nodeMap" xsi:type="array">
                 <item name="default" xsi:type="string">/config/default</item>
@@ -254,69 +254,69 @@
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section" shared="false">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section" shared="false">
         <arguments>
-            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Group</argument>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Group</argument>
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Group"
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Group"
                  type="Magento\Config\Model\Config\Structure\Element\Iterator\Group"
                  shared="false">
         <arguments>
-            <argument name="element" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group</argument>
+            <argument name="element" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Tab"
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Tab"
                  type="Magento\Config\Model\Config\Structure\Element\Iterator\Tab"
                  shared="false">
         <arguments>
-            <argument name="element" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Tab</argument>
+            <argument name="element" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Tab</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Tab" type="Magento\Config\Model\Config\Structure\Element\Tab" shared="false">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Tab" type="Magento\Config\Model\Config\Structure\Element\Tab" shared="false">
         <arguments>
-            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Section</argument>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Section</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Section"
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Section"
                  type="Magento\Config\Model\Config\Structure\Element\Iterator\Section"
                  shared="false">
         <arguments>
-            <argument name="element" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section</argument>
+            <argument name="element" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Section</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group" shared="false">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group" shared="false">
         <arguments>
-            <argument name="childrenIterator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Field</argument>
+            <argument name="childrenIterator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Field</argument>
             <argument name="dependencyMapper" xsi:type="object">relevanceDependencyMapper</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field" shared="false">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field" shared="false">
         <arguments>
             <argument name="dependencyMapper" xsi:type="object">relevanceDependencyMapper</argument>
         </arguments>
     </type>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Field" shared="false">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Iterator\Field" shared="false">
         <arguments>
-            <argument name="groupFlyweight" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy</argument>
-            <argument name="fieldFlyWeight" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field</argument>
+            <argument name="groupFlyweight" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy</argument>
+            <argument name="fieldFlyWeight" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Field</argument>
         </arguments>
     </type>
 
     <virtualType name="relevanceDependencyMapper"
                  type="Magento\Config\Model\Config\Structure\Element\Dependency\Mapper\Proxy">
         <arguments>
-            <argument name="fieldLocator" xsi:type="object">Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
+            <argument name="fieldLocator" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy" shared="false"/>
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy" shared="false"/>
 
 </config>

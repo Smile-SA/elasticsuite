@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Initial;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial;
 
 use Magento\Framework\Module\Dir;
 
@@ -18,7 +18,7 @@ use Magento\Framework\Module\Dir;
  * Schema Locator for initial configuration files
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class SchemaLocator extends \Magento\Framework\App\Config\Initial\SchemaLocator
@@ -35,7 +35,7 @@ class SchemaLocator extends \Magento\Framework\App\Config\Initial\SchemaLocator
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $moduleDir     = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $moduleDir     = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticsuiteCore');
         $this->_schema = $moduleDir . '/' . self::SCHEMA_FILE;
     }
 }

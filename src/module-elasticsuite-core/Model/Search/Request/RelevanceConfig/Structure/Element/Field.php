@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
 
 use Magento\Config\Model\Config\BackendFactory;
 use Magento\Config\Model\Config\CommentFactory;
@@ -19,18 +19,18 @@ use Magento\Config\Model\Config\Structure\Element\Dependency\Mapper;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\View\Element\BlockFactory;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface;
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface;
 
 /**
  * Custom field element to manager container scope visibility
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Field extends \Magento\Config\Model\Config\Structure\Element\Field implements FieldInterface
 {
-    /** @var \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility  */
+    /** @var \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility  */
     private $visibility;
 
     /**

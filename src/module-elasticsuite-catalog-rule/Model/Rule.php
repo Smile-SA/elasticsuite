@@ -7,26 +7,26 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalogRule\Model;
+namespace Smile\ElasticsuiteCatalogRule\Model;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Catalog search engine rule.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Rule extends \Magento\Rule\Model\AbstractModel
 {
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory
      */
     protected $conditionsFactory;
 
@@ -42,7 +42,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel
      * @param \Magento\Framework\Registry                                        $registry          Registry.
      * @param \Magento\Framework\Data\FormFactory                                $formFactory       Form factory.
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface               $localeDate        Locale date.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory Search engine rule condition factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory Search engine rule condition factory.
      * @param array                                                              $data              Additional data.
      */
     public function __construct(
@@ -50,7 +50,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory,
         array $data = []
     ) {
         $this->conditionsFactory = $conditionsFactory;

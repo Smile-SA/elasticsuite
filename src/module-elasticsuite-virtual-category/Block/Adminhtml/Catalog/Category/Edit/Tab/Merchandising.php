@@ -7,12 +7,12 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab;
+namespace Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab;
 
 use Magento\Catalog\Model\Category;
 use Magento\Backend\Block\Template;
@@ -22,7 +22,7 @@ use Magento\Config\Model\Config\Source\Yesno;
  * Category edit merchandising tab form implementation.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
@@ -53,7 +53,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     private $previewSize;
 
     /**
-     * @var \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
      */
     private $productPositionResource;
 
@@ -64,8 +64,8 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
      * @param \Magento\Framework\Registry                                                      $registry                Registry (used to read current category)
      * @param \Magento\Framework\Data\FormFactory                                              $formFactory             Form factory.
      * @param \Magento\Config\Model\Config\Source\Yesno                                        $booleanSource           Data source for boolean fields.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory                                 $ruleFactory             Catalog product rule factory.
-     * @param \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource Product position loading resource.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory                                 $ruleFactory             Catalog product rule factory.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource Product position loading resource.
      * @param integer                                                                          $previewSize             Preview size.
      * @param array                                                                            $data                    Additional data.
      */
@@ -74,8 +74,8 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Config\Model\Config\Source\Yesno $booleanSource,
-        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
-        \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource,
+        \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $productPositionResource,
         $previewSize = self::DEFAULT_PREVIEW_SIZE,
         array $data = []
     ) {
@@ -199,7 +199,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
     {
         // Append the virtual conditions rule renderer.
         $virtualRuleField    = $form->getElement('virtual_rule');
-        $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticSuiteCatalogRule\Block\Product\Conditions');
+        $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
         $virtualRuleField->setRenderer($virtualRuleRenderer);
 
         // Append the virtual category root chooser.
@@ -221,7 +221,7 @@ class Merchandising extends \Magento\Catalog\Block\Adminhtml\Form
             ->setSavedPositions($this->getProductSavedPositions())
             ->setPageSize($this->previewSize);
 
-        $productSortRenderer = $this->getLayout()->createBlock('Smile\ElasticSuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer\Sort');
+        $productSortRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalog\Block\Adminhtml\Catalog\Product\Form\Renderer\Sort');
         $productSortField->setRenderer($productSortRenderer);
 
         return $this;

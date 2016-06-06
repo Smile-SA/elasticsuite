@@ -5,23 +5,23 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
 
 /**
- * Default implementation for ES indices (Smile\ElasticSuiteCore\Api\Index\IndexInterface).
+ * Default implementation for ES indices (Smile\ElasticsuiteCore\Api\Index\IndexInterface).
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Index implements IndexInterface
@@ -43,7 +43,7 @@ class Index implements IndexInterface
     /**
      * Index types.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\TypeInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
      */
     private $types;
 

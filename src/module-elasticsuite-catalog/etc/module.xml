@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCatalog module loading configuration.
+ * Smile_ElasticsuiteCatalog module loading configuration.
  *
  * DISCLAIMER
  *
@@ -10,16 +10,16 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Smile_ElasticSuiteCatalog" setup_version="1.1.0">
+    <module name="Smile_ElasticsuiteCatalog" setup_version="1.1.0">
         <sequence>
-            <module name="Smile_ElasticSuiteCore" />
+            <module name="Smile_ElasticsuiteCore" />
             <module name="Magento_Search" />
             <module name="Magento_CatalogSearch" />
             <module name="Magento_LayeredNavigation" />

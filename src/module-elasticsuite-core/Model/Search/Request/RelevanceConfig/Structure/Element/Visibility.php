@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
 
 use Magento\Framework\Module\Manager;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Relevance Config field visibility
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Visibility

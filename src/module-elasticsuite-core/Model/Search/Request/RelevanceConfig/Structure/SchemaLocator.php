@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure;
 
 use Magento\Framework\Module\Dir;
 use Magento\Framework\Config\SchemaLocatorInterface;
@@ -20,7 +20,7 @@ use Magento\Framework\Config\SchemaLocatorInterface;
  * Relevance Configuration Schema Locator
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class SchemaLocator extends \Magento\Config\Model\Config\SchemaLocator implements SchemaLocatorInterface
@@ -39,7 +39,7 @@ class SchemaLocator extends \Magento\Config\Model\Config\SchemaLocator implement
      */
     public function __construct(\Magento\Framework\Module\Dir\Reader $moduleReader)
     {
-        $moduleDir    = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticSuiteCore');
+        $moduleDir    = $moduleReader->getModuleDir(Dir::MODULE_ETC_DIR, 'Smile_ElasticsuiteCore');
         $this->schema = $moduleDir . '/elasticsuite_relevance_config.xsd';
     }
 

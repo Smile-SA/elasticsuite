@@ -33,7 +33,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Smile\\ElasticSuiteCatalog\\": ""
+            "Smile\\ElasticsuiteCatalog\\": ""
         }
     }
 }

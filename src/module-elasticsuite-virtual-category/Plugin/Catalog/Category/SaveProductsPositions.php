@@ -7,22 +7,22 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteVirtualCategory\Plugin\Catalog\Category;
+namespace Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category;
 
-use Smile\ElasticSuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as FullIndexer;
+use Smile\ElasticsuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as FullIndexer;
 
 /**
  * Save the category product sorting at save time.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class SaveProductsPositions extends AbstractIndexerPlugin
@@ -33,7 +33,7 @@ class SaveProductsPositions extends AbstractIndexerPlugin
     private $jsonHelper;
 
     /**
-     * @var \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position
      */
     private $saveHandler;
 
@@ -42,13 +42,13 @@ class SaveProductsPositions extends AbstractIndexerPlugin
      *
      * @param \Magento\Framework\Indexer\IndexerRegistry                                       $indexerRegistry The indexer registry.
      * @param FullIndexer                                                                      $fullIndexer     The Full Indexer
-     * @param \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler     Product position save handler.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler     Product position save handler.
      * @param \Magento\Framework\Json\Helper\Data                                              $jsonHelper      JSON Helper.
      */
     public function __construct(
         \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry,
         FullIndexer $fullIndexer,
-        \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler,
+        \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler,
         \Magento\Framework\Json\Helper\Data $jsonHelper
     ) {
         parent::__construct($indexerRegistry, $fullIndexer);

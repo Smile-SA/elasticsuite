@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -19,7 +19,7 @@
 
     <body>
         <referenceContainer name="before.body.end">
-            <block class="Smile\ElasticSuiteTracker\Block\Variables\Page\Search" name="smile.tracker.page.search" />
+            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Search" name="smile.tracker.page.search" />
         </referenceContainer>
     </body>
 </page>

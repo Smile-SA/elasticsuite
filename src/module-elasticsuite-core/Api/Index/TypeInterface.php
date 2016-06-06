@@ -5,20 +5,20 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index;
+namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
  * Representation of a document type in an ElasticSearch index.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface TypeInterface
@@ -33,14 +33,14 @@ interface TypeInterface
     /**
      * Mapping describing all the field of the current type.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\MappingInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\MappingInterface
      */
     public function getMapping();
 
     /**
      * List of datasources used by this type.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
      */
     public function getDatasources();
 
@@ -49,14 +49,14 @@ interface TypeInterface
      *
      * @param string $name Datasource name.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface
      */
     public function getDatasource($name);
 
     /**
      * Field use as unique id for the doc.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getIdField();
 }

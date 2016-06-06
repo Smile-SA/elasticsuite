@@ -23,7 +23,7 @@ tools:
   phpcs:
     files:
       -  vendor/smile-sa/elasticsuite/src/
-    standard: vendor/smile-sa/elasticsuite/Resources/phpcs-standards/SmileElasticSuite
+    standard: vendor/smile-sa/elasticsuite/Resources/phpcs-standards/SmileElasticsuite
     ignores:
       - "lib"
       - "Resources"

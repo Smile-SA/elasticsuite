@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteVirtualCategory frontend DI.
+ * Smile_ElasticsuiteVirtualCategory frontend DI.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -19,16 +19,16 @@
  
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter\Category">
+    <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\Category">
         <arguments>
             <argument name="useUrlRewrites" xsi:type="boolean">true</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="searchFilterList" type="Smile\ElasticSuiteCatalog\Model\Layer\FilterList">
+    <virtualType name="searchFilterList" type="Smile\ElasticsuiteCatalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filters" xsi:type="array">
-                <item name="category" xsi:type="string">Smile\ElasticSuiteVirtualCategory\Model\Layer\Filter\Category</item>
+                <item name="category" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\Category</item>
             </argument>
         </arguments>
     </virtualType>

@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Price;
+namespace Smile\ElasticsuiteCatalog\Plugin\Indexer\Price;
 
-use Smile\ElasticSuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
+use Smile\ElasticsuiteCatalog\Plugin\Indexer\AbstractIndexerPlugin;
 
 /**
  * Price indexer operations related plugin.
  * Used to index products into ES after their price information are indexed by legacy Magento indexer.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ReindexProductsAfterPriceUpdate extends AbstractIndexerPlugin

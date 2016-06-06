@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element;
 
 use Magento\Config\Model\Config\BackendClone\Factory;
 use Magento\Config\Model\Config\Structure\Element\Dependency\Mapper;
@@ -22,12 +22,12 @@ use Magento\Store\Model\StoreManagerInterface;
  * Relevance configuration group model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Group extends \Magento\Config\Model\Config\Structure\Element\Group
 {
-    /** @var \Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility  */
+    /** @var \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility  */
     private $visibility;
 
     /**

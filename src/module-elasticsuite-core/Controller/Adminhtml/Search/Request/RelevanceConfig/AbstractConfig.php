@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Controller\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\App\AbstractAction;
 use Magento\Backend\App\Action\Context;
@@ -24,7 +24,7 @@ use Magento\Framework\App\RequestInterface;
  * Abstract configuration controller
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 abstract class AbstractConfig extends AbstractAction

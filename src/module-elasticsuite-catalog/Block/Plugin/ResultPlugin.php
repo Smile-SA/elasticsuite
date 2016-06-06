@@ -6,26 +6,26 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Block\Plugin;
+namespace Smile\ElasticsuiteCatalog\Block\Plugin;
 
 use Magento\CatalogSearch\Block\Result;
 use Magento\CatalogSearch\Helper\Data;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Catalog\Model\Layer;
 use Magento\Search\Model\QueryFactory;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Search\Query as QueryResource;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Search\Query as QueryResource;
 
 /**
  * Block plugin that ensures search result count saved is correct and is_spellchecked is filled into reports.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ResultPlugin

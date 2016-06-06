@@ -6,22 +6,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteSwatches
+ * @package   Smile\ElasticsuiteSwatches
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteSwatches\Block\Navigation\Renderer;
+namespace Smile\ElasticsuiteSwatches\Block\Navigation\Renderer;
 
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Swatches\Helper\Data as SwatchHelper;
-use Smile\ElasticSuiteCatalog\Block\Navigation\Renderer\AbstractRenderer;
+use Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\AbstractRenderer;
 
 /**
  * This block handle swatches slider rendering.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteSwatches
+ * @package  Smile\ElasticsuiteSwatches
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Swatches extends AbstractRenderer
@@ -29,7 +29,7 @@ class Swatches extends AbstractRenderer
     /**
      * @var string
      */
-    protected $block = 'Smile\ElasticSuiteSwatches\Block\Navigation\Renderer\Swatches\RenderLayered';
+    protected $block = 'Smile\ElasticsuiteSwatches\Block\Navigation\Renderer\Swatches\RenderLayered';
 
     /**
      * @var SwatchHelper

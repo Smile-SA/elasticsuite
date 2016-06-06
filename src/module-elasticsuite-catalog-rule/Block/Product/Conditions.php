@@ -7,13 +7,13 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalogRule\Block\Product;
+namespace Smile\ElasticsuiteCatalogRule\Block\Product;
 
 use Magento\Backend\Block\Template;
 use Magento\Framework\Data\Form\Element\AbstractElement;
@@ -25,7 +25,7 @@ use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Conditions extends Template implements RendererInterface
@@ -36,7 +36,7 @@ class Conditions extends Template implements RendererInterface
     protected $conditions;
 
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule
      */
     protected $rule;
 
@@ -66,14 +66,14 @@ class Conditions extends Template implements RendererInterface
      * @param \Magento\Backend\Block\Template\Context          $context        Templating context.
      * @param \Magento\Framework\Data\Form\Element\Factory     $elementFactory Form element factory.
      * @param \Magento\Rule\Block\Conditions                   $conditions     Rule conditions block.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory    Search rule factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory    Search rule factory.
      * @param array                                            $data           Additional data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Magento\Rule\Block\Conditions $conditions,
-        \Smile\ElasticSuiteCatalogRule\Model\RuleFactory $ruleFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory,
         array $data = []
     ) {
         $this->elementFactory = $elementFactory;

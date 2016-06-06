@@ -5,26 +5,26 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Action;
+namespace Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Action;
 
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Action\Full as ResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Action\Full as ResourceModel;
 
 /**
  * ElasticSearch categories full indexer
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Full
 {
     /**
-     * @var \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full
      */
     private $resourceModel;
 

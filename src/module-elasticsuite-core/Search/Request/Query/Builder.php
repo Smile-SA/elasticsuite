@@ -6,25 +6,25 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Query;
+namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticSuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
-use Smile\ElasticSuiteCore\Search\Request\Query\Filter\QueryBuilder as FilterQueryBuilder;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder as FilterQueryBuilder;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Builder for query part of the search request.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Builder

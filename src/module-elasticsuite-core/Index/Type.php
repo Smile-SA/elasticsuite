@@ -5,23 +5,23 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\TypeInterface;
-use Smile\ElasticSuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 
 /**
- * Default implementation for ES document types (Smile\ElasticSuiteCore\Api\Index\TypeInterface).
+ * Default implementation for ES document types (Smile\ElasticsuiteCore\Api\Index\TypeInterface).
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Type implements TypeInterface
@@ -36,14 +36,14 @@ class Type implements TypeInterface
     /**
      * Type mapping.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\MappingInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\MappingInterface
      */
     private $mapping;
 
     /**
      * Type datasources.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
      */
     private $datasources;
 
@@ -52,7 +52,7 @@ class Type implements TypeInterface
      *
      * @param string                                                  $name        Name of the type.
      * @param MappingInterface                                        $mapping     Mapping of the type.
-     * @param \Smile\ElasticSuiteCore\Api\Index\DatasourceInterface[] $datasources Datasources of the type.
+     * @param \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[] $datasources Datasources of the type.
      */
     public function __construct($name, MappingInterface $mapping, array $datasources = [])
     {

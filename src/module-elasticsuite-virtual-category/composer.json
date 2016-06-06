@@ -27,7 +27,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Smile\\ElasticSuiteVirtualCategory\\": ""
+            "Smile\\ElasticsuiteVirtualCategory\\": ""
         }
     }
 }

@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
 
 /**
  * Relevance Configuration Value class
@@ -19,7 +19,7 @@ namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Value extends \Magento\Framework\App\Config\Value

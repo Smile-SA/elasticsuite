@@ -6,7 +6,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -16,7 +16,7 @@ var config = {
     map: {
         '*': {
             mageQuickSearch : 'Magento_Search/form-mini',
-            quickSearch: 'Smile_ElasticSuiteCore/js/form-mini'
+            quickSearch: 'Smile_ElasticsuiteCore/js/form-mini'
         }
     }
 };

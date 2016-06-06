@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml;
 
 use Magento\Backend\Block\Widget\Grid\Container as GridContainer;
 
@@ -18,7 +18,7 @@ use Magento\Backend\Block\Widget\Grid\Container as GridContainer;
  * Thesaurus Grid container
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Thesaurus extends GridContainer

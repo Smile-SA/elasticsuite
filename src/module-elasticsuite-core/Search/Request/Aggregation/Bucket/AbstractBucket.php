@@ -6,22 +6,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket;
+namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Aggregation\Metric;
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Abstract bucket implementation.
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 abstract class AbstractBucket implements BucketInterface

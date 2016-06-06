@@ -6,24 +6,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Autocomplete\Terms;
+namespace Smile\ElasticsuiteCore\Model\Autocomplete\Terms;
 
 use Magento\Search\Model\ResourceModel\Query\Collection;
 use Magento\Search\Model\QueryFactory;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\Autocomplete\ItemFactory;
-use Smile\ElasticSuiteCore\Helper\Autocomplete as ConfigurationHelper;
+use Smile\ElasticsuiteCore\Helper\Autocomplete as ConfigurationHelper;
 
 /**
  * Popular search terms data provider.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class DataProvider implements DataProviderInterface

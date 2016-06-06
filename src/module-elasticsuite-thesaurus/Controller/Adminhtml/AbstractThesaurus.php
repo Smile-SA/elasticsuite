@@ -5,23 +5,23 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Controller\Adminhtml;
+namespace Smile\ElasticsuiteThesaurus\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
 use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticSuiteThesaurus\Api\ThesaurusRepositoryInterface;
-use Smile\ElasticSuiteThesaurus\Model\ThesaurusFactory;
+use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
+use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 
 /**
  * Abstract Thesaurus controller
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 abstract class AbstractThesaurus extends Action

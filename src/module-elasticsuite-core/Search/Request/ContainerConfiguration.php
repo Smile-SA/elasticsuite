@@ -5,27 +5,27 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request;
+namespace Smile\ElasticsuiteCore\Search\Request;
 
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory as RelevanceConfigFactory;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory as RelevanceConfigFactory;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
 /**
  * Search request container configuration implementation.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ContainerConfiguration implements ContainerConfigurationInterface

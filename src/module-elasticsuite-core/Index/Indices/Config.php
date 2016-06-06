@@ -5,27 +5,27 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index\Indices;
+namespace Smile\ElasticsuiteCore\Index\Indices;
 
-use Smile\ElasticSuiteCore\Index\Indices\Config\Reader;
+use Smile\ElasticsuiteCore\Index\Indices\Config\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
 /**
  * ElasticSuite indices configuration;
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Config extends \Magento\Framework\Config\Data
@@ -47,21 +47,21 @@ class Config extends \Magento\Framework\Config\Data
     /**
      * Factory used to build mapping types.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\TypeInterfaceFactory
+     * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterfaceFactory
      */
     private $typeFactory;
 
     /**
      * Factory used to build mappings.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\MappingInterfaceFactory
+     * @var \Smile\ElasticsuiteCore\Api\Index\MappingInterfaceFactory
      */
     private $mappingFactory;
 
     /**
      * Factory used to build mapping fields.
      *
-     * @var \Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterfaceFactory
+     * @var \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterfaceFactory
      */
     private $mappingFieldFactory;
 
@@ -103,15 +103,15 @@ class Config extends \Magento\Framework\Config\Data
     private function initFactories()
     {
         $this->typeFactory = $this->objectManager->get(
-            'Smile\ElasticSuiteCore\Api\Index\TypeInterfaceFactory'
+            'Smile\ElasticsuiteCore\Api\Index\TypeInterfaceFactory'
         );
 
         $this->mappingFactory = $this->objectManager->get(
-            'Smile\ElasticSuiteCore\Api\Index\MappingInterfaceFactory'
+            'Smile\ElasticsuiteCore\Api\Index\MappingInterfaceFactory'
         );
 
         $this->mappingFieldFactory = $this->objectManager->get(
-            'Smile\ElasticSuiteCore\Api\Index\Mapping\FieldInterfaceFactory'
+            'Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterfaceFactory'
         );
     }
 

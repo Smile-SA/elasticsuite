@@ -6,7 +6,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,7 +15,7 @@
 var config = {
     map: {
         '*': {
-            'Smile.ES.FormListener': 'Smile_ElasticSuiteCore/js/form-listener'
+            'Smile.ES.FormListener': 'Smile_ElasticsuiteCore/js/form-listener'
         }
     }
 };

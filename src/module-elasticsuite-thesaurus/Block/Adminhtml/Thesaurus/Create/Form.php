@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Create;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Create;
 
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus creation form
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Form extends \Magento\Backend\Block\Widget\Form\Generic

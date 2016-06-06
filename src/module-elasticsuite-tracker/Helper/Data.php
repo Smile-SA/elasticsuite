@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteTracker\Helper;
+namespace Smile\ElasticsuiteTracker\Helper;
 
 use Magento\Framework\App\Helper;
 
@@ -19,7 +19,7 @@ use Magento\Framework\App\Helper;
  * Smile Tracker helper
  *
  * @category Smile
- * @package  Smile_ElasticSuiteTracker
+ * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
@@ -102,7 +102,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$result) {
             $params = ['_secure' => $this->_getRequest()->isSecure()];
 
-            return $this->assetRepository->getUrlWithParams("Smile_ElasticSuiteTracker::hit.png", $params);
+            return $this->assetRepository->getUrlWithParams("Smile_ElasticsuiteTracker::hit.png", $params);
         }
 
         return $result;

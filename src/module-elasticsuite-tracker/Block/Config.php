@@ -6,18 +6,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteTracker\Block;
+namespace Smile\ElasticsuiteTracker\Block;
 
 /**
  * Configuration block for tracker
  *
  * @category Smile
- * @package  Smile_ElasticSuiteTracker
+ * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Config extends \Magento\Framework\View\Element\Template
@@ -39,7 +39,7 @@ class Config extends \Magento\Framework\View\Element\Template
     /**
      * Generic tracker helper
      *
-     * @var \Smile\ElasticSuiteTracker\Helper\Data
+     * @var \Smile\ElasticsuiteTracker\Helper\Data
      */
     private $trackerHelper;
 
@@ -48,13 +48,13 @@ class Config extends \Magento\Framework\View\Element\Template
      *
      * @param \Magento\Framework\View\Element\Template\Context $context       App context
      * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticSuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
      * @param array                                            $data          additional datas
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
+        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);

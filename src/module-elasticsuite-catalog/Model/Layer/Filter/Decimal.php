@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\Layer\Filter;
+namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Decimal filter model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
@@ -80,7 +80,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
     /**
      * Append the facet to the product collection.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\Layer\Filter\Attribute
+     * @return \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute
      */
     public function addFacetToCollection()
     {

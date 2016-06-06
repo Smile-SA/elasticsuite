@@ -5,27 +5,27 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model\Search\Request\Source;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\Source;
 
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 
 /**
  * Search request containers source model
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Containers implements \Magento\Framework\Data\OptionSourceInterface
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\BaseConfig
+     * @var \Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig
      */
     private $baseConfig;
 

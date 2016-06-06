@@ -7,12 +7,12 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Observer;
+namespace Smile\ElasticsuiteVirtualCategory\Observer;
 
 use Magento\Catalog\Block\Adminhtml\Category\Tabs;
 use Magento\Framework\Event\ObserverInterface;
@@ -22,7 +22,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
  * Handles additional tab for merchandising in the catagory edit page.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class CategoryProductFormObserver implements ObserverInterface
@@ -38,7 +38,7 @@ class CategoryProductFormObserver implements ObserverInterface
         $tabs = $observer->getEvent()->getTabs();
 
         $virtualCategoryFormBlock = $tabs->getLayout()->createBlock(
-            'Smile\ElasticSuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab\Merchandising',
+            'Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Edit\Tab\Merchandising',
             'category.merchandising.form'
         );
 

@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\ResourceModel\Search;
+namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Search;
 
 use Magento\Search\Model\Query as QueryModel;
 
@@ -20,7 +20,7 @@ use Magento\Search\Model\Query as QueryModel;
  * Custom search request resource model.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Query extends \Magento\Search\Model\ResourceModel\Query

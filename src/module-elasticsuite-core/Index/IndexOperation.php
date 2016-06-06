@@ -5,30 +5,30 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Index;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface;
-use Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Psr\Log\LoggerInterface;
-use Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface;
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 
 /**
- * Default implementation of operation on indices (\Smile\ElasticSuiteCore\Api\Index\IndexOperationInterface).
+ * Default implementation of operation on indices (\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface).
  *
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class IndexOperation implements IndexOperationInterface
@@ -39,12 +39,12 @@ class IndexOperation implements IndexOperationInterface
     private $objectManager;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Index\IndexInterface\IndexInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterface\IndexInterface[]
      */
     private $indicesByIdentifier = [];
 
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Index\IndexSettingsInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface
      */
     private $indexSettings;
 
@@ -176,7 +176,7 @@ class IndexOperation implements IndexOperationInterface
      */
     public function createBulk()
     {
-        return $this->objectManager->create('Smile\ElasticSuiteCore\Api\Index\Bulk\BulkRequestInterface');
+        return $this->objectManager->create('Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface');
     }
 
     /**
@@ -192,7 +192,7 @@ class IndexOperation implements IndexOperationInterface
          * @var BulkResponseInterface
          */
         $bulkResponse = $this->objectManager->create(
-            'Smile\ElasticSuiteCore\Api\Index\Bulk\BulkResponseInterface',
+            'Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface',
             ['rawResponse' => $rawBulkResponse]
         );
 
@@ -280,7 +280,7 @@ class IndexOperation implements IndexOperationInterface
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
      * @param boolean                                               $existingIndex   Is the index already existing.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\IndexInterface;
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface;
      */
     private function initIndex($indexIdentifier, $store, $existingIndex)
     {
@@ -303,7 +303,7 @@ class IndexOperation implements IndexOperationInterface
 
         $createIndexParams += $this->indicesConfiguration[$indexIdentifier];
 
-        $index = $this->objectManager->create('\Smile\ElasticSuiteCore\Api\Index\IndexInterface', $createIndexParams);
+        $index = $this->objectManager->create('\Smile\ElasticsuiteCore\Api\Index\IndexInterface', $createIndexParams);
 
         $this->indicesByIdentifier[$indexAlias] = $index;
 

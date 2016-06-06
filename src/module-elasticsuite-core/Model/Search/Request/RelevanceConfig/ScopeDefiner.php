@@ -5,21 +5,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
 
 use Magento\Framework\App\RequestInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Relevance configuration scope
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ScopeDefiner extends \Magento\Config\Model\Config\ScopeDefiner

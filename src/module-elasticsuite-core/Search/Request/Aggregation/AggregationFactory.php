@@ -6,22 +6,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Aggregation;
+namespace Smile\ElasticsuiteCore\Search\Request\Aggregation;
 
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Factory for search request aggregation buckets.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class AggregationFactory
@@ -30,9 +30,9 @@ class AggregationFactory
      * @var array
      */
     private $factories = [
-        BucketInterface::TYPE_TERM        => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\TermFactory',
-        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory',
-        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory',
+        BucketInterface::TYPE_TERM        => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory',
+        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory',
+        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory',
     ];
 
     /**

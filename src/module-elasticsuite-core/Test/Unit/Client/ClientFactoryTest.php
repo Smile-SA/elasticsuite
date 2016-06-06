@@ -8,29 +8,29 @@
  * versions in the future.
  *
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Client;
 
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
-use Smile\ElasticSuiteCore\Test\Unit\ClientConfiguration;
+use Smile\ElasticsuiteCore\Test\Unit\ClientConfiguration;
 use Psr\Log\NullLogger as Logger;
 
 /**
  * Client factory test case.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ClientFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Api\Client\ClientFactoryInterface
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface
      */
     private $clientFactory;
 
@@ -41,7 +41,7 @@ class ClientFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $objectManager = new ObjectManager($this);
         $this->clientFactory = $objectManager->getObject(
-            'Smile\ElasticSuiteCore\Client\ClientFactory',
+            'Smile\ElasticsuiteCore\Client\ClientFactory',
             [new ClientConfiguration(), new Logger()]
         );
     }

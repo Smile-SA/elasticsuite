@@ -5,26 +5,26 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
 
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerScopeInterface;
-use Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 
 /**
  * Search relevance configuration factory.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Factory
@@ -70,7 +70,7 @@ class Factory
     private $cachedConfig = [];
 
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config
+     * @var \Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config
      */
     private $scopeConfig;
 
@@ -92,9 +92,9 @@ class Factory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = 'Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface'
+        $instanceName = 'Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface'
     ) {
-        $this->scopeConfig   = $objectManager->get('Smile\ElasticSuiteCore\Search\Request\RelevanceConfig\App\Config');
+        $this->scopeConfig   = $objectManager->get('Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config');
         $this->objectManager = $objectManager;
         $this->instanceName  = $instanceName;
     }
@@ -105,7 +105,7 @@ class Factory
      * @param int    $storeId       Store id.
      * @param string $containerName Container identifier.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface
+     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface
      */
     public function create($storeId, $containerName)
     {
@@ -209,7 +209,7 @@ class Factory
             }
 
             $configuration = $this->objectManager->create(
-                '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface',
+                '\Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface',
                 $configurationParams
             );
         }
@@ -227,7 +227,7 @@ class Factory
     private function createFuzzinessConfiguration($configurationParams)
     {
         return $this->objectManager->create(
-            '\Smile\ElasticSuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface',
+            '\Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface',
             $configurationParams
         );
     }

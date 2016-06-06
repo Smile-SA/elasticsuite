@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -18,7 +18,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Edit" name="adminhtml.elasticsuite.thesaurus.create"/>
+            <block class="Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit" name="adminhtml.elasticsuite.thesaurus.create"/>
         </referenceContainer>
     </body>
 </page>

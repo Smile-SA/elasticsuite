@@ -5,26 +5,26 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteThesaurus
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteThesaurus\Config;
+namespace Smile\ElasticsuiteThesaurus\Config;
 
-use Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Thesaurus configuration factory.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteThesaurus
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ThesaurusConfigFactory extends \Smile\ElasticSuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory
+class ThesaurusConfigFactory extends \Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory
 {
     /**
      * Constructor.
@@ -34,7 +34,7 @@ class ThesaurusConfigFactory extends \Smile\ElasticSuiteCore\Search\Request\Cont
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = 'Smile\ElasticSuiteThesaurus\Config\ThesaurusConfig'
+        $instanceName = 'Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig'
     ) {
         parent::__construct($objectManager, $instanceName);
     }

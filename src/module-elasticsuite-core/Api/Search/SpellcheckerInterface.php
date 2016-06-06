@@ -6,21 +6,21 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Search;
+namespace Smile\ElasticsuiteCore\Api\Search;
 
-use Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterface;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface;
 
 /**
  * Spellchecker component interface.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface SpellcheckerInterface

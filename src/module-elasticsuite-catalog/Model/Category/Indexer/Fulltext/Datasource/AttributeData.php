@@ -6,24 +6,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext\Datasource;
+namespace Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource;
 
-use Smile\ElasticSuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
-use Smile\ElasticSuiteCore\Api\Index\DatasourceInterface;
-use Smile\ElasticSuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
+use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 
 /**
  * Datasource used to index product attributes.
  * This class is also used to generate attribute mapping since it implements DynamicFieldProviderInterface.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class AttributeData extends AbstractAttributeData implements DatasourceInterface, DynamicFieldProviderInterface

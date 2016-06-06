@@ -6,24 +6,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Model\Autocomplete\Product;
+namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\QueryFactory;
-use Smile\ElasticSuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
-use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
-use Smile\ElasticSuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
+use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
+use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
 
 /**
  * Catalog product autocomplete data provider.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class DataProvider implements DataProviderInterface
@@ -138,7 +138,7 @@ class DataProvider implements DataProviderInterface
      * Suggested products collection.
      * Returns null if no suggested search terms.
      *
-     * @return \Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection|null
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection|null
      */
     private function getProductCollection()
     {

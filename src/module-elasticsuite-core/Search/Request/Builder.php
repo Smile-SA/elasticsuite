@@ -6,24 +6,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search\Request;
+namespace Smile\ElasticsuiteCore\Search\Request;
 
 use Magento\Framework\Search\Request\DimensionFactory;
-use Smile\ElasticSuiteCore\Search\Request\Query\Builder as QueryBuilder;
-use Smile\ElasticSuiteCore\Search\Request\SortOrder\SortOrderBuilder;
-use Smile\ElasticSuiteCore\Search\Request\Aggregation\AggregationBuilder;
-use Smile\ElasticSuiteCore\Search\RequestInterface;
-use Smile\ElasticSuiteCore\Search\RequestFactory;
+use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
+use Smile\ElasticsuiteCore\Search\RequestInterface;
+use Smile\ElasticsuiteCore\Search\RequestFactory;
 use Magento\Framework\Search\Request\Dimension;
-use Smile\ElasticSuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticSuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
-use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
+use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 
 /**
  * ElasticSuite search requests builder.
@@ -31,7 +31,7 @@ use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Builder

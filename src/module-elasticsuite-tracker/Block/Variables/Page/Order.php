@@ -6,12 +6,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteTracker
+ * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteTracker\Block\Variables\Page;
+namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
 use Magento\Framework\View\Element\Template;
 
@@ -19,10 +19,10 @@ use Magento\Framework\View\Element\Template;
  * Order variables block for page tracking, exposes all order related tracking variables
  *
  * @category Smile
- * @package  Smile_ElasticSuiteTracker
+ * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Order extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBlock
+class Order extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
 {
     /**
      * Checkout session
@@ -36,7 +36,7 @@ class Order extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBloc
      *
      * @param Template\Context                       $context         The template context
      * @param \Magento\Framework\Json\Helper\Data    $jsonHelper      The Magento's JSON Helper
-     * @param \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper   The Smile Tracker helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper   The Smile Tracker helper
      * @param \Magento\Framework\Registry            $registry        Magento Core Registry
      * @param \Magento\Checkout\Model\Session        $checkoutSession The checkout session
      * @param array                                  $data            The block data
@@ -44,7 +44,7 @@ class Order extends \Smile\ElasticSuiteTracker\Block\Variables\Page\AbstractBloc
     public function __construct(
         Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticSuiteTracker\Helper\Data $trackerHelper,
+        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Checkout\Model\Session $checkoutSession,
         array $data = []

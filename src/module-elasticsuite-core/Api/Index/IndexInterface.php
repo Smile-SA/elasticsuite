@@ -5,20 +5,20 @@
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
- * @category  Smile_ElasticSuite
- * @package   Smile_ElasticSuiteCore
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Api\Index;
+namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
  * Representation of a ElasticSearch index.
  *
- * @category Smile_ElasticSuite
- * @package  Smile_ElasticSuiteCore
+ * @category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface IndexInterface
@@ -44,7 +44,7 @@ interface IndexInterface
     /**
      * List of the types handled by the index.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\TypeInterface[]
+     * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
      */
     public function getTypes();
 
@@ -53,7 +53,7 @@ interface IndexInterface
      *
      * @param string $typeName Name of the retrieved type.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\TypeInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface
      */
     public function getType($typeName);
 
@@ -61,7 +61,7 @@ interface IndexInterface
      * Each index has a default type that can be used to search.
      * This method returns this default type.
      *
-     * @return \Smile\ElasticSuiteCore\Api\Index\TypeInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface
      */
     public function getDefaultSearchType();
 

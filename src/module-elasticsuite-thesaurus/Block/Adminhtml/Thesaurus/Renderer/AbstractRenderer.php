@@ -5,18 +5,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer;
 
 /**
  * Abstract Renderer for array-composite fields
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class AbstractRenderer extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray

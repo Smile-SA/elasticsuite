@@ -7,7 +7,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteSwatches
+ * @package   Smile\ElasticsuiteSwatches
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,6 +15,6 @@
 
 \Magento\Framework\Component\ComponentRegistrar::register(
     \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    'Smile_ElasticSuiteSwatches',
+    'Smile_ElasticsuiteSwatches',
     __DIR__
 );

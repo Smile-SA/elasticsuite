@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Smile_ElasticSuiteCatalog Mview Configuration.
+ * Smile_ElasticsuiteCatalog Mview Configuration.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -23,7 +23,7 @@
             <table name="catalog_category_product" entity_column="product_id" />
         </subscriptions>
     </view>
-    <view id="elasticsuite_categories_fulltext" class="Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext" group="indexer">
+    <view id="elasticsuite_categories_fulltext" class="Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext" group="indexer">
 
     </view>
 </config>

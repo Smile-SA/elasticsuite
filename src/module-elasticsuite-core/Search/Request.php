@@ -6,25 +6,25 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Search;
+namespace Smile\ElasticsuiteCore\Search;
 
-use Smile\ElasticSuiteCore\Search\Request\SortOrderInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 use Magento\Framework\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Dimension;
-use Smile\ElasticSuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 
 /**
  * Default implementation of ElasticSuite search request.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Request extends \Magento\Framework\Search\Request implements RequestInterface

@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Apache License Version 2.0
@@ -18,10 +18,10 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="adminhtml.elasticsuite.thesaurus.grid.container">
-            <block class="Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus\Grid" name="adminhtml.elasticsuite.thesaurus.grid" as="grid">
+            <block class="Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Grid" name="adminhtml.elasticsuite.thesaurus.grid" as="grid">
                 <arguments>
                     <argument name="id" xsi:type="string">smile_elasticsuite_thesaurus_grid</argument>
-                    <argument name="dataSource" xsi:type="object">Smile\ElasticSuiteThesaurus\Model\ResourceModel\Thesaurus\Collection</argument>
+                    <argument name="dataSource" xsi:type="object">Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus\Collection</argument>
                     <argument name="default_sort" xsi:type="string">name</argument>
                     <argument name="default_dir" xsi:type="string">ASC</argument>
                     <argument name="save_parameters_in_session" xsi:type="string">1</argument>

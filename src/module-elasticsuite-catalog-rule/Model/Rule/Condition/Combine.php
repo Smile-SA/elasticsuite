@@ -7,20 +7,20 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalogRule
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalogRule\Model\Rule\Condition;
+namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Product attributes combination search engine rule.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalogRule
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Combine extends \Magento\Rule\Model\Condition\Combine
@@ -28,15 +28,15 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     /**
      * @var string
      */
-    protected $type = 'Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Combine';
+    protected $type = 'Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combine';
 
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory
      */
     protected $productConditionFactory;
 
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     protected $queryFactory;
 
@@ -44,14 +44,14 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
      * Constructor.
      *
      * @param \Magento\Rule\Model\Condition\Context                              $context          Rule context.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory Product condition factory.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory          $queryFactory     Search query factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory Product condition factory.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory          $queryFactory     Search query factory.
      * @param array                                                              $data             Additional data.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory,
-        \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
         $this->productConditionFactory = $conditionFactory;

@@ -5,19 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data;
+namespace Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data;
 
 /**
  * Relevance configuration collection
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collection
@@ -50,8 +50,8 @@ class Collection extends \Magento\Config\Model\ResourceModel\Config\Data\Collect
     protected function _construct()
     {
         $this->_init(
-            'Smile\ElasticSuiteCore\Model\Search\Request\RelevanceConfig\Value',
-            'Smile\ElasticSuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data'
+            'Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Value',
+            'Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data'
         );
     }
 }

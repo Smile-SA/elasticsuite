@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteCore frontend dependency injection configuration.
+ * Smile_ElasticsuiteCore frontend dependency injection configuration.
  *
  * DISCLAIMER
  *
@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
@@ -20,16 +20,16 @@
     <type name="Magento\Search\Model\Autocomplete">
         <arguments>
             <argument name="dataProviders" xsi:type="array">
-                <item name="10" xsi:type="object">Smile\ElasticSuiteCore\Model\Autocomplete\Terms\DataProvider</item>
+                <item name="10" xsi:type="object">Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider</item>
             </argument>
         </arguments>
     </type>
-    <type name="Smile\ElasticSuiteCore\Block\Search\Form\Autocomplete">
+    <type name="Smile\ElasticsuiteCore\Block\Search\Form\Autocomplete">
         <arguments>
             <argument name="rendererList" xsi:type="array">
                 <item name="term" xsi:type="array">
                     <item name="title" xsi:type="string">Search terms</item>
-                    <item name="template" xsi:type="string">Smile_ElasticSuiteCore/autocomplete/term</item>
+                    <item name="template" xsi:type="string">Smile_ElasticsuiteCore/autocomplete/term</item>
                 </item>
             </argument>
         </arguments>

@@ -5,18 +5,18 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCatalog\Plugin\Indexer\Category\Save;
+namespace Smile\ElasticsuiteCatalog\Plugin\Indexer\Category\Save;
 
 /**
  * Plugin that proceed category reindex in ES after category reindexing
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class ReindexCategoryAfterSave
@@ -52,7 +52,7 @@ class ReindexCategoryAfterSave
         $proceed();
 
         if ($subject->getLevel() > 1) {
-            $categoryIndexer = $this->indexerRegistry->get(\Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
+            $categoryIndexer = $this->indexerRegistry->get(\Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
             $categoryIndexer->reindexRow($subject->getId());
         }
 

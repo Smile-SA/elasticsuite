@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author    Fanny DECLERCK <fadec@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteCore\Model\ResourceModel\Indexer;
+namespace Smile\ElasticsuiteCore\Model\ResourceModel\Indexer;
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -21,7 +21,7 @@ use Magento\Store\Model\StoreManagerInterface;
  * This class provides a lot of util methods used by Eav indexer related resource models.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Fanny DECLERCK <fadec@smile.fr>
  */
 class AbstractIndexer

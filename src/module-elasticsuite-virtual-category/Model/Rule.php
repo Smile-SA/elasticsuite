@@ -7,14 +7,14 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Model;
+namespace Smile\ElasticsuiteVirtualCategory\Model;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 
 /**
@@ -23,18 +23,18 @@ use Magento\Catalog\Api\Data\CategoryInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
+class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
 {
     /**
-     * @var \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory
      */
     private $productConditionsFactory;
 
@@ -44,12 +44,12 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
     private $categoryFactory;
 
     /**
-     * @var \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory
      */
     private $categoryCollectionFactory;
 
     /**
-     * @var \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
      */
     private $queryBuilder;
 
@@ -62,12 +62,12 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      * @param \Magento\Framework\Registry                                                              $registry                  Registry.
      * @param \Magento\Framework\Data\FormFactory                                                      $formFactory               Form factory.
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface                                     $localeDate                Locale date.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory                       $combineConditionsFactory  Search engine rule (combine) condition factory.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory                       $productConditionsFactory  Search engine rule (product) condition factory.
-     * @param \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory                                $queryFactory              Search query factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory                       $combineConditionsFactory  Search engine rule (combine) condition factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory                       $productConditionsFactory  Search engine rule (product) condition factory.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                                $queryFactory              Search query factory.
      * @param \Magento\Catalog\Model\CategoryFactory                                                   $categoryFactory           Product category factorty.
-     * @param \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory Virtual categories collection factory.
-     * @param \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder                 $queryBuilder              Search rule query builder.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory Virtual categories collection factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder                 $queryBuilder              Search rule query builder.
      * @param array                                                                                    $data                      Additional data.
      */
     public function __construct(
@@ -75,12 +75,12 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\CombineFactory $combineConditionsFactory,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\ProductFactory $productConditionsFactory,
-        \Smile\ElasticSuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $combineConditionsFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory $productConditionsFactory,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Magento\Catalog\Model\CategoryFactory $categoryFactory,
-        \Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory,
-        \Smile\ElasticSuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
+        \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
         array $data = []
     ) {
         $this->queryFactory              = $queryFactory;
@@ -99,7 +99,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      * @param array                                       $excludedCategories Categories that should not be used into search query building.
      *                                                                        Used to avoid infinite recursion while building virtual categories rules.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
     public function getCategorySearchQuery($category, $excludedCategories = [])
     {
@@ -134,7 +134,7 @@ class Rule extends \Smile\ElasticSuiteCatalogRule\Model\Rule
      *
      * @param \Magento\Catalog\Api\Data\CategoryInterface $rootCategory Root category.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getSearchQueriesByChildren(CategoryInterface $rootCategory)
     {

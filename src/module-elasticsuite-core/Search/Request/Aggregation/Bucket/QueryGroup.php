@@ -2,26 +2,26 @@
 /**
  * DISCLAIMER
 *
-* Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
-* versions in the future.
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
 *
-* @category  Smile
-* @package   Smile_ElasticSuiteCore
-* @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
-* @copyright 2016 Smile
-* @license   Open Software License ("OSL") v. 3.0
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
 */
 
-namespace Smile\ElasticSuiteCore\Search\Request\Aggregation\Bucket;
+namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 
-use Smile\ElasticSuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticSuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Query group aggregations.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class QueryGroup extends AbstractBucket
@@ -72,7 +72,7 @@ class QueryGroup extends AbstractBucket
     /**
      * List of the queries of the query group.
      *
-     * @return \Smile\ElasticSuiteCore\Search\Request\QueryInterface[]
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getQueries()
     {

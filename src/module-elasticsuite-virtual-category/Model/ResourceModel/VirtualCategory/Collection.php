@@ -7,18 +7,18 @@
  *
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteVirtualCategory
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteVirtualCategory\Model\ResourceModel\VirtualCategory;
+namespace Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory;
 
 /**
  * Category collection with automatic loading of the virtual category using the attribute backend.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteVirtualCategory
+ * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collection

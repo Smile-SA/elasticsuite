@@ -5,20 +5,20 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticSuiteThesaurus\Block\Adminhtml\Thesaurus;
+namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus;
 
-use Smile\ElasticSuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
  * Thesaurus edition form container
  *
  * @category Smile
- * @package  Smile_ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Edit extends \Magento\Backend\Block\Widget\Form\Container
@@ -56,7 +56,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
     protected function _construct()
     {
         $this->_objectId = ThesaurusInterface::THESAURUS_ID;
-        $this->_blockGroup = 'Smile_ElasticSuiteThesaurus';
+        $this->_blockGroup = 'Smile_ElasticsuiteThesaurus';
         $this->_controller = 'adminhtml_thesaurus';
 
         parent::_construct();

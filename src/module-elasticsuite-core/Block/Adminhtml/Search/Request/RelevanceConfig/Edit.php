@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCore
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Model\Config\Structure;
@@ -22,12 +22,12 @@ use Magento\Config\Model\Config\Structure;
  * @SuppressWarnings(PHPMD.CamelCasePropertyName) The property _template is inherited
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Edit extends \Magento\Backend\Block\Widget
 {
-    const DEFAULT_SECTION_BLOCK = 'Smile\ElasticSuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form';
+    const DEFAULT_SECTION_BLOCK = 'Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form';
 
     /**
      * Form block class name

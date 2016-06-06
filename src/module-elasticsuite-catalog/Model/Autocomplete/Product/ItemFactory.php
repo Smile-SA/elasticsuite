@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile_ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteCatalog\Model\Autocomplete\Product;
+namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Helper\Product as ProductHelper;
@@ -21,7 +21,7 @@ use Magento\Catalog\Helper\Product as ProductHelper;
  * Create an autocomplete item from a product.
  *
  * @category Smile
- * @package  Smile_ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
