@@ -199,4 +199,3 @@ The module is also continuously tested on :
 Tools                           | Results
 ------------------------------- |------------
 Code Climate                    |[![Code Climate](https://codeclimate.com/github/Smile-SA/elasticsuite/badges/gpa.svg)](https://codeclimate.com/github/Smile-SA/elasticsuite)
-SensioLabs Insight              |[![SensioLab Insight](doc/static/sensiolab-insights.png)](https://insight.sensiolabs.com/projects/ec6c9c2c-14fe-43aa-aaf6-4502ecf02d7d)
