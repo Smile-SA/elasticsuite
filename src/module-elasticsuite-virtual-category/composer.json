@@ -1,5 +1,5 @@
 {
-    "name": "smile-sa/module-elasticsuite-virtual-category",
+    "name": "smile/module-elasticsuite-virtual-category",
     "type": "magento2-module",
     "license": "OSL-3.0",
     "authors": [{
@@ -19,7 +19,7 @@
         "setup"
     ],
     "require": {
-        "smile-sa/module-elasticsuite-catalog-rule": "self.version"
+        "smile/module-elasticsuite-catalog-rule": "self.version"
     },
     "version": "2.1.0",
     "autoload": {

@@ -1,5 +1,5 @@
 {
-    "name": "smile-sa/elasticsuite",
+    "name": "smile/elasticsuite",
     "type": "magento2-component",
     "license": "OSL-3.0",
     "authors": [{
@@ -34,13 +34,13 @@
         "elasticsearch/elasticsearch": "2.1.*"
     },
     "replace": {
-        "smile-sa/module-elasticsuite-core": "self.version",
-        "smile-sa/module-elasticsuite-catalog": "self.version",
-        "smile-sa/module-elasticsuite-catalog-rule": "self.version",
-        "smile-sa/module-elasticsuite-swatches": "self.version",
-        "smile-sa/module-elasticsuite-thesaurus": "self.version",
-        "smile-sa/module-elasticsuite-tracker": "self.version",
-        "smile-sa/module-elasticsuite-virtual-category": "self.version"
+        "smile/module-elasticsuite-core": "self.version",
+        "smile/module-elasticsuite-catalog": "self.version",
+        "smile/module-elasticsuite-catalog-rule": "self.version",
+        "smile/module-elasticsuite-swatches": "self.version",
+        "smile/module-elasticsuite-thesaurus": "self.version",
+        "smile/module-elasticsuite-tracker": "self.version",
+        "smile/module-elasticsuite-virtual-category": "self.version"
     },
     "require-dev": {
         "phpunit/phpunit": "*",
