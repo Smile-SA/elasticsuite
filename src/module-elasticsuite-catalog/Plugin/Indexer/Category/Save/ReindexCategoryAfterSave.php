@@ -51,9 +51,10 @@ class ReindexCategoryAfterSave
     ) {
         $proceed();
 
-        $categoryIndexer = $this->indexerRegistry->get(\Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
-
-        $categoryIndexer->reindexRow($subject->getId());
+        if ($subject->getLevel() > 1) {
+            $categoryIndexer = $this->indexerRegistry->get(\Smile\ElasticSuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
+            $categoryIndexer->reindexRow($subject->getId());
+        }
 
         return;
     }

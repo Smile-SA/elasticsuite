@@ -15,7 +15,7 @@ namespace Smile\ElasticSuiteCatalog\Model\Autocomplete\Product;
 
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\QueryFactory;
-use Smile\ElasticSuiteCore\Helper\Autocomplete as ConfigurationHelper;
+use Smile\ElasticSuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
 use Smile\ElasticSuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
 use Smile\ElasticSuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
 
@@ -157,6 +157,10 @@ class DataProvider implements DataProviderInterface
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('small_image')
             ->addPriceData();
+
+        if (!$this->configurationHelper->isShowOutOfStock()) {
+            $productCollection->addIsInStockFilter();
+        }
 
         return $productCollection;
     }

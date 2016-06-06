@@ -71,6 +71,8 @@ class InstallData implements InstallDataInterface
         $this->eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
         $this->addCategoryNameSearchAttribute();
         $this->updateCategoryIsAnchorAttribute();
+        $this->updateDefaultValuesForNameAttributes();
+
         $setup->endSetup();
     }
 
@@ -159,5 +161,33 @@ class InstallData implements InstallDataInterface
     private function getConnection()
     {
         return $this->eavSetup->getSetup()->getConnection();
+    }
+
+    /**
+     * Update default values for the name field of category and product entities.
+     *
+     * @return void
+     */
+    private function updateDefaultValuesForNameAttributes()
+    {
+        $setup      = $this->eavSetup->getSetup();
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        $attributeIds = [
+            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'name'),
+            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),
+        ];
+
+        foreach (['is_used_in_spellcheck', 'is_used_in_autocomplete'] as $configField) {
+            foreach ($attributeIds as $attributeId) {
+                $connection->update(
+                    $table,
+                    [$configField => 1],
+                    $connection->quoteInto('attribute_id = ?', $attributeId)
+                );
+            }
+        }
+
     }
 }
