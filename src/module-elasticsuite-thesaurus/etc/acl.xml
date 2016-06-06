@@ -19,7 +19,7 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Magento_Backend::stores">
+                <resource id="Smile_ElasticsuiteCore::menu">
                     <resource id="Smile_ElasticsuiteThesaurus::manage" title="Manage Smile ElasticSuite Thesaurus"/>
                 </resource>
             </resource>
