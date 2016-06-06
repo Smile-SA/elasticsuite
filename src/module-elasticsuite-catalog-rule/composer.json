@@ -20,6 +20,7 @@
     ],
     "require": {
         "php": "~5.5.0|~5.6.0|~7.0.0",
+        "magento/framework": "*",
         "smile/module-elasticsuite-catalog": "self.version"
     },
     "version": "2.1.0",
