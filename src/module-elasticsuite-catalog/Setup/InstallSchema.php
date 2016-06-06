@@ -58,7 +58,6 @@ class InstallSchema implements InstallSchemaInterface
     {
         $setup->startSetup();
         $this->addEavCatalogFields($setup);
-        $this->updateDefaultValues($setup);
         $this->addIsSpellcheckedToSearchQuery($setup);
         $setup->endSetup();
     }
@@ -149,35 +148,6 @@ class InstallSchema implements InstallSchemaInterface
                 'comment'  => 'The sort order for facet values',
             ]
         );
-    }
-
-    /**
-     * Update default values for the name field of category and product entities.
-     *
-     * @param SchemaSetupInterface $setup The setup interface
-     *
-     * @return void
-     */
-    private function updateDefaultValues(SchemaSetupInterface $setup)
-    {
-        $connection = $setup->getConnection();
-        $table      = $setup->getTable('catalog_eav_attribute');
-
-        $attributeIds = [
-            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'name'),
-            $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),
-        ];
-
-        foreach (['is_used_in_spellcheck', 'is_used_in_autocomplete'] as $configField) {
-            foreach ($attributeIds as $attributeId) {
-                $connection->update(
-                    $table,
-                    [$configField => 1],
-                    $connection->quoteInto('attribute_id = ?', $attributeId)
-                );
-            }
-        }
-
     }
 
     /**
