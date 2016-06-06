@@ -67,7 +67,7 @@ Actually, there are the features actually included :
 
     You can see the [wiki page](https://github.com/Smile-SA/elasticsuite/wiki) about adding custom content into the autocomplete results.
 
-    ![Products Autocomplete](doc/static/autocomplete_products.png)
+    ![Products Autocomplete](doc/static/autocomplete_products.gif)
 
 <br/>
 
