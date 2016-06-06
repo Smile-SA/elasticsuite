@@ -187,3 +187,16 @@ The next versions that will be coming all among this year will include the follo
 ## Documentation
 
 Documentation is available [here](https://github.com/Smile-SA/elasticsuite/wiki).
+
+## Standards & Code Quality
+
+Built on top of Magento2, our module respects all its prerequisites and code quality rules.
+
+You can also find our PHPCS Standards and PHPMD rulesets in the **Resource** directory.
+
+The module is also continuously tested on :
+
+Tools                           | Results
+------------------------------- |------------
+Code Climate                    |[![Code Climate](https://codeclimate.com/github/Smile-SA/elasticsuite/badges/gpa.svg)](https://codeclimate.com/github/Smile-SA/elasticsuite)
+SensioLabs Insight              |[![SensioLab Insight](doc/static/sensiolab-insights.png)](https://insight.sensiolabs.com/projects/ec6c9c2c-14fe-43aa-aaf6-4502ecf02d7d)
