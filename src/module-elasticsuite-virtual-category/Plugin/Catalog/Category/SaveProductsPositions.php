@@ -69,7 +69,7 @@ class SaveProductsPositions extends AbstractIndexerPlugin
         \Closure $proceed,
         \Magento\Framework\Model\AbstractModel $category
     ) {
-        if ($category->getSortedProducts()) {
+        if ($category->getId() && $category->getSortedProducts()) {
             $this->unserializeProductPositions($category);
 
             $categoryResource->addCommitCallback(
