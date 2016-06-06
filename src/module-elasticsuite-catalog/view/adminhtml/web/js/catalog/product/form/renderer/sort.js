@@ -240,8 +240,20 @@ define([
             }
         },
         
-        __ : function(string) {
-            return $.mage.__(string);
+        getAutomaticSortLabel : function () { 
+            return $.mage.__('Automatic Sort'); 
+        },
+
+        getManualSortLabel : function () { 
+            return $.mage.__('Manual Sort'); 
+        },
+
+        getShowMoreLabel : function () {
+            return $.mage.__('Show more');
+        },
+        
+        getEmptyListMessage : function() {
+            return $.mage.__('Your product selection is empty.');
         }
     }); 
 

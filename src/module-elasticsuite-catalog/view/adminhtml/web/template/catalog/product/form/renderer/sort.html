@@ -1,7 +1,7 @@
 <input type="hidden" data-bind="attr: { name: targetElementName, value: getSerializedSortOrder() }" />
 
 <div class="elasticsuite-admin-product-sorter-empty" data-bind="if: !hasProducts()">
-    <p data-bind="text: __('Your product selection is empty.')"></p>
+    <p data-bind="text: getEmptyListMessage()"></p>
 </div>
 
 <div class="elasticsuite-admin-product-sorter" data-bind="if: hasProducts()">
@@ -22,7 +22,7 @@
             <div class="switcher" data-bind="click: $parent.toggleSortType.bind($parent)" style="width:100%; margin:6px; text-align: center;">
                 <input type="checkbox" data-bind="{checked: hasPosition()}" />
                 <label class="switcher-label" data-bind="
-                    attr: {'data-text-on': jQuery.mage.__('Manual Sort'), 'data-text-off': jQuery.mage.__('Automatic Sort') }">
+                    attr: {'data-text-on': $parent.getManualSortLabel(), 'data-text-off': $parent.getAutomaticSortLabel() }">
                 </label>
             </div>
 
@@ -30,6 +30,6 @@
     </ul>
     
     <p style="text-align: center" data-bind="if: hasMoreProducts()">
-        <a href="#" data-bind="click: showMoreProducts, text: __('Show more')"></a>
+        <a href="#" data-bind="click: showMoreProducts, text: getShowMoreLabel()"></a>
     </p>
 </div>
