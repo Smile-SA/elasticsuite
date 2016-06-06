@@ -81,11 +81,11 @@ Actually, there are the features actually included :
 
     ![Synonyms](doc/static/synonyms.png)
 
-    This means that adding a synonym between *"men"* and *"man"* will make it working in all queries containing *"men"* like *"man shirt"* or *"man pants"* instead of having to define a synonym for each query.
+    This means that adding a synonym between *"men"* and *"man"* will make it working in all queries containing *"men"* like *"men shirt"* or *"men pants"* instead of having to define a synonym for each query.
 
     - Expansions : this kind of thesaurus allows to expand all search for a given term to an other list of terms.
 
-    ![Expansions](doc/static/expansion.png)
+    ![Expansions](doc/static/expansions.png)
 
     This means that adding an expansion between *"sport"* and *"fitness, gym, running"* will make it expanding for all queries containing *"sport"* like *"sport shoes"* (which would be expanded to "fitness shoes", "gym shoes", and "running shoes").
 
