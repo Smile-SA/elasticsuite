@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteSwatches\Helper;
 
+use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 
 /**
@@ -26,28 +27,45 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 class Swatches extends \Magento\Swatches\Helper\Data
 {
     /**
+     * @SuppressWarnings(PHPMD.ElseExpression)
      * {@inheritDoc}
      */
-    public function loadVariationByFallback($parentProduct, array $attributes)
+    public function loadVariationByFallback(Product $parentProduct, array $attributes)
     {
-        $parentProduct = $this->createSwatchProduct($parentProduct);
-        if (! $parentProduct) {
-            return false;
+        $variation = false;
+
+        if ($this->isProductHasSwatch($parentProduct) && $parentProduct->getDocumentSource() !== null) {
+            $documentSource = $parentProduct->getDocumentSource();
+            $childrenIds = isset($documentSource['children_ids']) ? $documentSource['children_ids'] : [];
+
+            if (!empty($childrenIds)) {
+                $productCollection = $this->productCollectionFactory->create();
+                $productCollection->addIdFilter($childrenIds);
+
+                $configurableAttributes = $this->getAttributesFromConfigurable($parentProduct);
+                $allAttributesArray = [];
+
+                foreach ($configurableAttributes as $attribute) {
+                    foreach ($attribute->getOptions() as $option) {
+                        $allAttributesArray[$attribute['attribute_code']][] = $option->getValue();
+                    }
+                }
+
+                $resultAttributesToFilter = array_merge($attributes, array_diff_key($allAttributesArray, $attributes));
+
+                $this->addFilterByAttributes($productCollection, $resultAttributesToFilter);
+
+                $variationProduct = $productCollection->getFirstItem();
+
+                if ($variationProduct && $variationProduct->getId()) {
+                    $variation = $this->productRepository->getById($variationProduct->getId());
+                }
+            }
+        } else {
+            $variation = parent::loadVariationByFallback($parentProduct, $attributes);
         }
 
-        $productCollection = $this->productCollectionFactory->create();
-        $this->addFilterByParent($productCollection, $parentProduct->getId());
-
-        $resultAttributesToFilter = $attributes;
-
-        $this->addFilterByAttributes($productCollection, $resultAttributesToFilter);
-
-        $variationProduct = $productCollection->getFirstItem();
-        if ($variationProduct && $variationProduct->getId()) {
-            return $this->productRepository->getById($variationProduct->getId());
-        }
-
-        return false;
+        return $variation;
     }
 
     /**

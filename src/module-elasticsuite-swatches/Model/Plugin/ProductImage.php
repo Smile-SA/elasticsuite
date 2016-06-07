@@ -52,7 +52,7 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
             if (in_array($code, $attributeCodes)) {
                 $attribute = $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $code);
                 if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
-                    $filterArray[$code] = $this->getOptionIds($attribute, $value);
+                    $filterArray[$code][] = $this->getOptionIds($attribute, $value);
                 }
             }
         }
