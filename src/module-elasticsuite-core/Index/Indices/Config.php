@@ -18,6 +18,9 @@ use Smile\ElasticsuiteCore\Index\Indices\Config\Reader;
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Api\Index\TypeInterfaceFactory as TypeFactory;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterfaceFactory as MappingFactory;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterfaceFactory as MappingFieldFactory;
 
 /**
  * ElasticSuite indices configuration;
@@ -68,19 +71,28 @@ class Config extends \Magento\Framework\Config\Data
     /**
      * Instanciate config.
      *
-     * @param Reader                 $reader        Config file reader.
-     * @param CacheInterface         $cache         Cache instance.
-     * @param ObjectManagerInterface $objectManager Object manager (used to instanciate several factories)
-     * @param string                 $cacheId       Default config cache id.
+     * @param Reader                 $reader              Config file reader.
+     * @param CacheInterface         $cache               Cache instance.
+     * @param ObjectManagerInterface $objectManager       Object manager (used to instanciate several factories)
+     * @param TypeFactory            $typeFactory         Index type factory.
+     * @param MappingFactory         $mappingFactory      Index mapping factory.
+     * @param MappingFieldFactory    $mappingFieldFactory Index mapping field factory.
+     * @param string                 $cacheId             Default config cache id.
      */
     public function __construct(
         Reader $reader,
         CacheInterface $cache,
         ObjectManagerInterface $objectManager,
+        TypeFactory $typeFactory,
+        MappingFactory $mappingFactory,
+        MappingFieldFactory $mappingFieldFactory,
         $cacheId = self::CACHE_ID
     ) {
-        $this->objectManager = $objectManager;
-        $this->initFactories();
+        $this->typeFactory         = $typeFactory;
+        $this->mappingFactory      = $mappingFactory;
+        $this->mappingFieldFactory = $mappingFieldFactory;
+        $this->objectManager       = $objectManager;
+
         parent::__construct($reader, $cache, $cacheId);
     }
 
@@ -93,26 +105,6 @@ class Config extends \Magento\Framework\Config\Data
     {
         parent::initData();
         $this->_data = array_map([$this, 'initIndexConfig'], $this->_data);
-    }
-
-    /**
-     * Init factories used by the configuration to build types, mappings and fields objects.
-     *
-     * @return void
-     */
-    private function initFactories()
-    {
-        $this->typeFactory = $this->objectManager->get(
-            'Smile\ElasticsuiteCore\Api\Index\TypeInterfaceFactory'
-        );
-
-        $this->mappingFactory = $this->objectManager->get(
-            'Smile\ElasticsuiteCore\Api\Index\MappingInterfaceFactory'
-        );
-
-        $this->mappingFieldFactory = $this->objectManager->get(
-            'Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterfaceFactory'
-        );
     }
 
     /**
