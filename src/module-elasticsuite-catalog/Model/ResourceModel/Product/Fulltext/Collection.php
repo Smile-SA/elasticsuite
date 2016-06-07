@@ -185,7 +185,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
-    public function setOrder($attribute, $dir = Select::SQL_DESC)
+    public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
         $this->_orders[$attribute] = $dir;
 
@@ -201,6 +201,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->filters[$field] = $condition;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
+    {
+        return $this->setOrder($attribute, $dir);
     }
 
     /**
@@ -348,11 +356,19 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addSortFilterParameters($sortName, $sortField, $nestedPath = null, $nestedFilter = null)
     {
-        $this->_productLimitationFilters['sortParams'][$sortName] = [
+        $sortParams = [];
+
+        if (isset($this->_productLimitationFilters['sortParams'])) {
+            $sortParams = $this->_productLimitationFilters['sortParams'];
+        }
+
+        $sortParams[$sortName] = [
             'sortField'    => $sortField,
             'nestedPath'   => $nestedPath,
             'nestedFilter' => $nestedFilter,
         ];
+
+        $this->_productLimitationFilters['sortParams'] = $sortParams;
 
         return $this;
     }
