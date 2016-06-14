@@ -39,6 +39,11 @@ class Swatches extends \Magento\Swatches\Helper\Data
             $childrenIds = isset($documentSource['children_ids']) ? $documentSource['children_ids'] : [];
 
             if (!empty($childrenIds)) {
+                $childrenIds = array_map(
+                    function($id) { return (int) $id; },
+                    $childrenIds
+                );
+
                 $productCollection = $this->productCollectionFactory->create();
                 $productCollection->addIdFilter($childrenIds);
 
@@ -47,7 +52,7 @@ class Swatches extends \Magento\Swatches\Helper\Data
 
                 foreach ($configurableAttributes as $attribute) {
                     foreach ($attribute->getOptions() as $option) {
-                        $allAttributesArray[$attribute['attribute_code']][] = $option->getValue();
+                        $allAttributesArray[$attribute['attribute_code']][] = (int) $option->getValue();
                     }
                 }
 
