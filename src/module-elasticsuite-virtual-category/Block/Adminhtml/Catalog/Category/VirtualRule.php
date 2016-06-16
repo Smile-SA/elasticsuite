@@ -25,9 +25,9 @@ namespace Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category;
 class VirtualRule extends \Magento\Backend\Block\AbstractBlock
 {
     /**
-     * @var \Magento\Catalog\Model\Category\DataProvider
+     * @var \Magento\Framework\Data\FormFactory
      */
-    private $dataProvider;
+    private $formFactory;
 
     /**
      * @var \Magento\Framework\Registry

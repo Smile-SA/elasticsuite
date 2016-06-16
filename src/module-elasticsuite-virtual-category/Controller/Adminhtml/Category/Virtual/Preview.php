@@ -103,18 +103,41 @@ class Preview extends Action
      */
     private function getCategory()
     {
+        $category = $this->loadCategory();
+
+        $this->addVirtualCategoryData($category)
+            ->addSelectedProducts($category)
+            ->setSortedProducts($category);
+
+        return $category;
+    }
+
+    /**
+     * Load current category using the request params.
+     *
+     * @return CategoryInterface
+     */
+    private function loadCategory()
+    {
+        $category   = $this->categoryFactory->create();
         $storeId    = $this->getRequest()->getParam('store');
         $categoryId = $this->getRequest()->getParam('entity_id');
 
-        $category = $this->categoryFactory->create()->setStoreId($storeId)->load($categoryId);
+        $category->setStoreId($storeId)->load($categoryId);
 
-        $selectedProducts = $this->getRequest()->getParam('selected_products', []);
-        $category->setAddedProductIds(isset($selectedProducts['added_products']) ? $selectedProducts['added_products'] : []);
-        $category->setDeletedProductIds(isset($selectedProducts['deleted_products']) ? $selectedProducts['deleted_products'] : []);
+        return $category;
+    }
 
-        $categoryPostData = $this->getRequest()->getParams();
-
-        $isVirtualCategory = (bool) $categoryPostData['is_virtual_category'];
+    /**
+     * Append virtual rule params to the category.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return $this
+     */
+    private function addVirtualCategoryData(CategoryInterface $category)
+    {
+        $isVirtualCategory = (bool) $this->getRequest()->getParam('is_virtual_category');
         $category->setIsVirtualCategory($isVirtualCategory);
 
         if ($isVirtualCategory) {
@@ -122,10 +145,42 @@ class Preview extends Action
             $category->setVirtualCategoryRoot($this->getRequest()->getParam('virtual_category_root', null));
         }
 
+        return $this;
+    }
+
+    /**
+     * Add user selected products.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return $this
+     */
+    private function addSelectedProducts(CategoryInterface $category)
+    {
+        $selectedProducts = $this->getRequest()->getParam('selected_products', []);
+
+        $addedProducts = isset($selectedProducts['added_products']) ? $selectedProducts['added_products'] : [];
+        $category->setAddedProductIds($addedProducts);
+
+        $deletedProducts = isset($selectedProducts['deleted_products']) ? $selectedProducts['deleted_products'] : [];
+        $category->setDeletedProductIds($deletedProducts);
+
+        return $this;
+    }
+
+    /**
+     * Append products sorted by the user to the category.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return $this
+     */
+    private function setSortedProducts(CategoryInterface $category)
+    {
         $productPositions = $this->getRequest()->getParam('product_position', []);
         $category->setSortedProductIds(array_keys($productPositions));
 
-        return $category;
+        return $this;
     }
 
     /**

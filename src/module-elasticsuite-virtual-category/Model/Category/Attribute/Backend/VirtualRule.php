@@ -74,7 +74,6 @@ class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
 
             if ($attributeData !== null && is_string($attributeData)) {
                 $attributeData = unserialize($attributeData);
-
             }
 
             if ($attributeData !== null && is_array($attributeData)) {
