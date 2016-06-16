@@ -125,6 +125,7 @@ class InstallData implements InstallDataInterface
      * @param integer|string $entityTypeId Target entity id.
      * @param integer|string $attributeId  Target attribute id.
      * @param mixed          $value        Value to be set.
+     * @param array          $excludedIds  List of categories that should not be updated during the process.
      *
      * @return void
      */

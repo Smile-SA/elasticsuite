@@ -38,27 +38,27 @@ class Preview extends Action
     private $jsonHelper;
 
     /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
+     * @var \Magento\Catalog\Model\CategoryFactory
      */
-    private $categoryRepository;
+    private $categoryFactory;
 
     /**
      * Constructor.
      *
      * @param \Magento\Backend\App\Action\Context                     $context             Controller context.
      * @param \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory $previewModelFactory Preview model factory.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface        $categoryRepository  Category repository.
+     * @param \Magento\Catalog\Model\CategoryFactory                  $categoryFactory     Category factory.
      * @param \Magento\Framework\Json\Helper\Data                     $jsonHelper          JSON Helper.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Smile\ElasticsuiteVirtualCategory\Model\PreviewFactory $previewModelFactory,
-        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
         \Magento\Framework\Json\Helper\Data $jsonHelper
     ) {
         parent::__construct($context);
 
-        $this->categoryRepository  = $categoryRepository;
+        $this->categoryFactory     = $categoryFactory;
         $this->previewModelFactory = $previewModelFactory;
         $this->jsonHelper          = $jsonHelper;
     }
@@ -103,18 +103,21 @@ class Preview extends Action
      */
     private function getCategory()
     {
-        $storeId  = $this->getRequest()->getParam('store');
-        $category = $this->categoryRepository->get($this->getRequest()->getParam('id'), $storeId);
+        $storeId    = $this->getRequest()->getParam('store');
+        $categoryId = $this->getRequest()->getParam('entity_id');
 
-        $categoryProductIds = $this->jsonHelper->jsonDecode($this->getRequest()->getParam('category_products'));
-        $category->setProductIds(array_keys($categoryProductIds));
+        $category = $this->categoryFactory->create()->setStoreId($storeId)->load($categoryId);
 
-        $categoryPostData = $this->getRequest()->getParam('general', []);
+        $selectedProducts = $this->getRequest()->getParam('selected_products', []);
+        $category->setAddedProductIds(isset($selectedProducts['added_products']) ? $selectedProducts['added_products'] : []);
+        $category->setDeletedProductIds(isset($selectedProducts['deleted_products']) ? $selectedProducts['deleted_products'] : []);
+
+        $categoryPostData = $this->getRequest()->getParams();
 
         $isVirtualCategory = isset($categoryPostData['is_virtual_category']) ? (bool) $categoryPostData['is_virtual_category'] : false;
+        $category->setIsVirtualCategory($isVirtualCategory);
 
         if ($isVirtualCategory) {
-            $category->setIsVirtualCategory($isVirtualCategory);
             $category->getVirtualRule()->loadPost($categoryPostData['virtual_rule']);
             $category->setVirtualCategoryRoot($categoryPostData['virtual_category_root']);
         }

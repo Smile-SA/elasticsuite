@@ -39,10 +39,7 @@ class Swatches extends \Magento\Swatches\Helper\Data
             $childrenIds = isset($documentSource['children_ids']) ? $documentSource['children_ids'] : [];
 
             if (!empty($childrenIds)) {
-                $childrenIds = array_map(
-                    function($id) { return (int) $id; },
-                    $childrenIds
-                );
+                $childrenIds = array_map('intval', $childrenIds);
 
                 $productCollection = $this->productCollectionFactory->create();
                 $productCollection->addIdFilter($childrenIds);

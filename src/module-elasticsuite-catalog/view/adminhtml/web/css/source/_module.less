@@ -1,6 +1,45 @@
+// /**
+//  * DISCLAIMER
+//  *
+//  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+//  * versions in the future.
+//  *
+//  *
+//  * @category  Smile
+//  * @package   Smile\ElasticsuiteCatalog
+//  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+//  * @copyright 2016 Smile
+//  * @license   Open Software License ("OSL") v. 3.0
+//  */
+
+
 .elasticsuite-admin-product-sorter {
 
+    margin: 40px 0;
+
+    span.title {
+        font-size: 1.7rem;
+        font-weight: 600;
+        letter-spacing: .025em;
+    }
+
+    .bottom-links {
+        width: 40%;
+        margin: 10px auto;
+        border: 1px solid #cccccc;
+        text-align: center;
+
+        a.show-more-link {
+            padding: 15px 10px;
+            width: 100%;
+            display: block;
+        }
+    }
+
     .product-list {
+
+        margin: 20px 40px 0;
+
         li.product-list-item, li.product-list-item-placeholder {
 
             display: inline-block;
@@ -13,7 +52,7 @@
             h1 {
                 font-size: 1.2em;
                 font-weight: 600;
-                line-height: 2.05em;
+                line-height: 1.9em;
                 margin: 0 0 2px;
 
                 span {
@@ -28,7 +67,7 @@
             .info {
                 position: relative;
                 background: rgba(44,44,44, 0.75);
-                width: 192px;
+                width: 100%;
                 margin-top: -31px;
                 color: #FFF;
                 padding: 4px;
@@ -45,13 +84,10 @@
             }
 
             .draggable-handle {
-                display: block;
+                &:extend(.abs-draggable-handle all);
+                padding: 0;
                 float: left;
-                margin: 10px;
-                cursor: move;
-                float: left;
-                margin: 10px 9px 0px 5px;
-                transform: scale(1.2);
+                margin: 3px 0 0 0;
             }
 
 
@@ -67,9 +103,16 @@
             }
         }
 
-        li.product-list-item.manual-sorting {
-            .draggable-handle {
-                background: none;
+        .admin__actions-switch {
+            margin: 10px;
+            font-weight: bold;
+            color: #666666;
+        }
+
+        li.product-list-item.automatic-sorting {
+            .draggable-handle::before {
+                opacity: 0;
+                cursor: default;
             }
         }
     }

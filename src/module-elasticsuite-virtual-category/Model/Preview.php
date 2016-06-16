@@ -106,7 +106,7 @@ class Preview
 
         $productCollection
             ->setStoreId($this->category->getStoreId())
-            ->addQueryFilter($this->getFilterQuery())
+            ->addQueryFilter($this->getQueryFilter())
             ->addAttributeToSelect(['name', 'small_image']);
 
         return $productCollection;
@@ -166,28 +166,43 @@ class Preview
      *
      * @return QueryInterface
      */
-    private function getFilterQuery()
+    private function getQueryFilter()
     {
-        $queryClauses = [];
+        $queryParams = [];
+        $this->category->setIsActive(true);
 
-        if ($this->category->getIsVirtualCategory()) {
-            $queryClauses['must'][] = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
-        } else {
-            if (empty($this->category->getProductIds())) {
-                $this->category->setProductIds([0]);
+        if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
+            $queryParams['must'][] = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
+        } elseif (!$this->category->getId()) {
+            $queryParams['must'][] = $this->getEntityIdFilterQuery([0]);
+        }
+
+        if ((bool) $this->category->getIsVirtualCategory() === false) {
+            $addedProductIds   = $this->category->getAddedProductIds();
+            $deletedProductIds = $this->category->getDeletedProductIds();
+
+            if ($addedProductIds && !empty($addedProductIds)) {
+                $queryParams = ['should' => $queryParams['must']];
+                $queryParams['should'][] = $this->getEntityIdFilterQuery($addedProductIds);
             }
 
-            $queryClauses['should'][] = $this->queryFactory->create(
-                QueryInterface::TYPE_TERMS,
-                ['values' => $this->category->getProductIds(), 'field' => 'entity_id']
-            );
-
-            $childrenQueries = $this->category->getVirtualRule()->getSearchQueriesByChildren($this->category);
-            foreach ($childrenQueries as $childrenQuery) {
-                $queryClauses['should'][] = $childrenQuery;
+            if ($deletedProductIds && !empty($deletedProductIds)) {
+                $queryParams['mustNot'][] = $this->getEntityIdFilterQuery($deletedProductIds);
             }
         }
 
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryClauses);
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+    }
+
+    /**
+     * Create a product id filter query.
+     *
+     * @param array $ids Id to be filtered.
+     *
+     * @return QueryInterface
+     */
+    private function getEntityIdFilterQuery($ids)
+    {
+        return $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'entity_id', 'values' => $ids]);
     }
 }

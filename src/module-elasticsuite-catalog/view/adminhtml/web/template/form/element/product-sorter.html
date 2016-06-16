@@ -1,0 +1,44 @@
+<div class="elasticsuite-admin-product-sorter">
+
+    <input type="hidden" data-bind="value: value, attr: {name: inputName}"/>
+    
+    <span class="title" data-bind="text: messages.blockTitle"></span>
+    
+    <div class="elasticsuite-admin-product-sorter-empty" data-bind="if: !hasProducts()">
+        <p data-bind="text: messages.emptyText"></p>
+    </div>
+    
+    <div data-bind="if: hasProducts()">
+        
+        <ul data-bind="foreach: products, afterRender: enableSortableList" class="product-list">
+            <li class="product-list-item" data-bind="
+                attr: {'data-product-id': getId()}, 
+                css: {'manual-sorting': hasPosition(), 'automatic-sorting': !hasPosition(), }
+            ">
+                <div class="draggable-handle" data-bind="if: hasPosition()"></div>
+                
+                <h1><span data-bind="html: getName()"></span></h1>
+                
+                <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
+    
+                <div class="info">
+                    <p class="price" data-bind="text: getFormattedPrice()"></p>
+                    <p class="stock" data-bind="text: getStockLabel()"></p>
+                </div>
+                
+                <div class="admin__actions-switch" data-role="switcher" data-bind="click: $parent.toggleSortType.bind($parent)">
+                    <input type="checkbox" class="admin__actions-switch-checkbox" simple-checked="hasPosition()" ko-value="hasPosition()" />
+                    <label class="admin__actions-switch-label">
+                        <span class="admin__actions-switch-text"
+                              attr="'data-text-on': $parent.messages.manualSort, 'data-text-off': $parent.messages.automaticSort">
+                          </span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+    
+        <p class="bottom-links" data-bind="visible: hasMoreProducts()">
+            <a href="#" data-bind="click: showMoreProducts, text: messages.showMore" class="show-more-link"></a>
+        </p>
+    </div>
+</div>

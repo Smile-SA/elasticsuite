@@ -56,4 +56,9 @@
         </arguments>
     </type>
     
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="smile_elasticsuite_virtual_categories_category_form_dataprovider"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\DataProviderPlugin" />
+    </type>
+    
 </config>
