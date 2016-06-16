@@ -82,7 +82,7 @@ class InstallData implements InstallDataInterface
             Category::ENTITY,
             'virtual_category_root',
             [
-                'type'       => 'varchar',
+                'type'       => 'int',
                 'label'      => 'Virtual category root',
                 'input'      => null,
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
