@@ -122,10 +122,11 @@ class Preview
         $productIds = $this->getSortedProductIds();
 
         $productCollection = $this->getAutomaticSortProductCollection();
-        $productCollection->setPageSize(count($productIds));
 
         $idFilter = $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['values' => $productIds, 'field' => 'entity_id']);
         $productCollection->addQueryFilter($idFilter);
+
+        $productCollection->setPageSize(count($productIds));
 
         return $productCollection;
     }

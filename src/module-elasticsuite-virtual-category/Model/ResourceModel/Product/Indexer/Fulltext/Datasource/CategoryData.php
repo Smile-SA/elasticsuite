@@ -27,11 +27,6 @@ use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Posit
 class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData
 {
     /**
-     * @var array
-     */
-    private $virtualCategoriesIds;
-
-    /**
      * {@inheritDoc}
      */
     protected function getCategoryProductSelect($productIds, $storeId)
@@ -69,7 +64,8 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
                 'category_id' => 'cpi.category_id',
                 'product_id'  => 'cpi.product_id',
                 'is_parent'   => 'cpi.is_parent',
-                'position' => 'p.position',
+                'is_virtual'  => new \Zend_Db_Expr(0),
+                'position'    => 'p.position',
             ]);
 
         return $select;
@@ -84,53 +80,19 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
      */
     private function getVirtualSelect($productIds)
     {
-        $virtualCategoriesIds = $this->getVirtualCategoriesIds();
-
         $select = $this->getConnection()->select()
             ->from(['cpi' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
-            ->where('cpi.category_id IN (?)', $virtualCategoriesIds)
             ->where('cpi.product_id IN(?)', $productIds)
             ->columns(
                 [
                     'category_id' => 'cpi.category_id',
                     'product_id'  => 'cpi.product_id',
                     'is_parent'   => new \Zend_Db_Expr('0'),
+                    'is_virtual'  => new \Zend_Db_Expr('1'),
                     'position'    => 'cpi.position',
                 ]
             );
 
         return $select;
-    }
-
-    /**
-     * List of the ids of the virtual categories of the site.
-     *
-     * @return array
-     */
-    private function getVirtualCategoriesIds()
-    {
-        if ($this->virtualCategoriesIds === null) {
-            $isVirtualAttribute = $this->getIsVirtualCategoryAttribute();
-
-            $select = $this->getConnection()->select();
-            $select->from($isVirtualAttribute->getBackendTable(), ['entity_id'])
-                ->where('attribute_id = ?', (int) $isVirtualAttribute->getAttributeId())
-                ->where('value = ?', true)
-                ->group('entity_id');
-
-            $this->virtualCategoriesIds = $this->getConnection()->fetchCol($select);
-        }
-
-        return $this->virtualCategoriesIds;
-    }
-
-    /**
-     * Retrieve the 'is_virtual_category' attribute model.
-     *
-     * @return \Magento\Eav\Model\Entity\Attribute\AbstractAttribute
-     */
-    private function getIsVirtualCategoryAttribute()
-    {
-        return $this->getEavConfig()->getAttribute(\Magento\Catalog\Model\Category::ENTITY, 'is_virtual_category');
     }
 }

@@ -110,11 +110,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
         $queryParams = [];
 
         if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
-            $parentCategory = $this->getVirtualRootCategory($category);
             $excludedCategories[]  = $category->getId();
-
             $queryParams['must'][] = $this->getVirtualCategoryQuery($category, $excludedCategories);
 
+            $parentCategory = $this->getVirtualRootCategory($category);
             if ($parentCategory && $parentCategory->getId()) {
                 $queryParams['must'][] = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
             }

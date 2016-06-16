@@ -86,6 +86,17 @@ define([
             this.products(products);
             this.countTotalProducts(parseInt(loadedData.size, 10));
             this.currentSize(Math.max(this.currentSize(), this.products().length));
+            
+            var productIds = products.map(function (product) { return product.getId() });
+            var editPositions = this.editPositions();
+            
+            for (var productId in editPositions) {
+                if ($.inArray(parseInt(productId), productIds) < 0) {
+                    delete editPositions[productId];
+                } 
+            }
+            
+            this.editPositions(editPositions);
         },
         
         createProduct: function (productData) {
