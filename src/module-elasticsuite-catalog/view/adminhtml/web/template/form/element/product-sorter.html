@@ -5,7 +5,9 @@
     <span class="title" data-bind="text: messages.blockTitle"></span>
     
     <div class="elasticsuite-admin-product-sorter-empty" data-bind="if: !hasProducts()">
-        <p data-bind="text: messages.emptyText"></p>
+        <div class="message message-info">
+            <div data-bind="text: messages.emptyText"></div>
+        </div>
     </div>
     
     <div data-bind="if: hasProducts()">

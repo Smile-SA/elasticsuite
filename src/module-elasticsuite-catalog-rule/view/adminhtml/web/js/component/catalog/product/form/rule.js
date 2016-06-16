@@ -25,7 +25,7 @@ define([
             links: {
                 value: '${ $.provider }:${ $.dataScope }'
             },
-            additionalClasses: "admin__fieldset"
+            additionalClasses: "admin__fieldset virtual-rule-fieldset"
         },
         initialize: function () {
             this._super();
