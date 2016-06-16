@@ -114,12 +114,12 @@ class Preview extends Action
 
         $categoryPostData = $this->getRequest()->getParams();
 
-        $isVirtualCategory = isset($categoryPostData['is_virtual_category']) ? (bool) $categoryPostData['is_virtual_category'] : false;
+        $isVirtualCategory = (bool) $categoryPostData['is_virtual_category'];
         $category->setIsVirtualCategory($isVirtualCategory);
 
         if ($isVirtualCategory) {
-            $category->getVirtualRule()->loadPost($categoryPostData['virtual_rule']);
-            $category->setVirtualCategoryRoot($categoryPostData['virtual_category_root']);
+            $category->getVirtualRule()->loadPost($this->getRequest()->getParam('virtual_rule', []));
+            $category->setVirtualCategoryRoot($this->getRequest()->getParam('virtual_category_root', null));
         }
 
         $productPositions = $this->getRequest()->getParam('product_position', []);
