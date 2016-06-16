@@ -15,7 +15,7 @@
 define([
     'Magento_Ui/js/form/components/html',
     'underscore',
-    'MutationObserver',
+    'MutationObserver'
 ], function (Component, _) {
     'use strict';
 
@@ -25,7 +25,7 @@ define([
             links: {
                 addedProducts: '${ $.provider }:${ $.dataScope }.added_products',
                 deletedProducts: '${ $.provider }:${ $.dataScope }.deleted_products'
-            },
+            }
         },
         initialize: function () {
             this._super();

@@ -15,7 +15,7 @@
 define([
     'Magento_Ui/js/form/components/html',
     'jquery',
-    'MutationObserver',
+    'MutationObserver'
 ], function (Component, $) {
     'use strict';
 
@@ -77,7 +77,7 @@ define([
                     currentRuleObject = currentRuleObject[currentKey];
                 }
                 
-                var currentKey = path.shift();
+                currentKey = path.shift();
                 currentRuleObject[currentKey] = $(this).val();
             });
             

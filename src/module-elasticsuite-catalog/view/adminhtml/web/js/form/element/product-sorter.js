@@ -16,7 +16,7 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'jquery',
     'Smile_ElasticsuiteCatalog/js/form/element/product-sorter/item',
-    'MutationObserver',
+    'MutationObserver'
 ], function (Component, $, Product) {
     'use strict';
 
@@ -69,7 +69,7 @@ define([
                 clearTimeout();
             }
             
-            this.refreshRateLimiter = setTimeout(function () {
+            this.refreshRateLimiter = setTimeout(function () {
                 var formData = this.formData;
                 Object.keys(this.editPositions()).each(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
@@ -191,6 +191,6 @@ define([
             
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
-        },
+        }
     });
 });
