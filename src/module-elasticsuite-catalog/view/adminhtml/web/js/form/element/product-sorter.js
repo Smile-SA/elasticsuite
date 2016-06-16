@@ -24,7 +24,7 @@ define([
         defaults: {
             template: "Smile_ElasticsuiteCatalog/form/element/product-sorter",
             refreshFields: {},
-            maxRefreshInterval: 500,
+            maxRefreshInterval: 1000,
             imports: {
                 formData: "${ $.provider }:data"
             },
@@ -70,9 +70,7 @@ define([
             }
             
             this.refreshRateLimiter = setTimeout(function () {
-                console.log('Refresh list');
                 var formData = this.formData;
-                
                 Object.keys(this.editPositions()).each(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
                 }.bind(this));
