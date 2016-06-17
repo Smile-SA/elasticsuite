@@ -84,16 +84,21 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     }
 
     /**
-     * Check if an attribute can be indexed when used as a children/
+     * Check if an attribute can be indexed when used as a children.
      *
      * @param ProductAttributeInterface $attribute          Product attribute.
-     * @param array                     $relationByChildren The relation data based on children
+     * @param array                     $relationByChildren The relation data based on children.
      * @param string                    $parentTypeId       Parent product type id.
+     * @param array                     $parentIndexData    Parent index data.
      *
      * @return boolean
      */
-    private function canAddAttributeAsChild(ProductAttributeInterface $attribute, $relationByChildren, $parentTypeId)
-    {
+    private function canAddAttributeAsChild(
+        ProductAttributeInterface $attribute,
+        array $relationByChildren,
+        $parentTypeId,
+        array $parentIndexData
+    ) {
         $canUseAsChild = !in_array($attribute->getAttributeCode(), $this->forbidenChildrenAttributeCode);
 
         if ($parentTypeId == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
@@ -101,6 +106,12 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             && (!in_array($attribute->getAttributeId(), $relationByChildren['configurable_attributes']))
             ) {
                 $canUseAsChild = false;
+            }
+            $isOnlySimpleAttribute = !in_array($attribute->getAttributeCode(), array_keys($parentIndexData));
+            $alreadyIntoParent = isset($parentIndexData['simple_attributes'])
+                && in_array($attribute->getAttributeCode(), $parentIndexData['simple_attributes']);
+            if ($isOnlySimpleAttribute || $alreadyIntoParent) {
+                return true;
             }
         }
 
@@ -137,23 +148,33 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     }
 
     /**
-     * Append children data to parent product
+     * Append children data to parent product.
      *
-     * @param array                     $parentIndexData    Index data of the parent product
-     * @param ProductAttributeInterface $attribute          The attribute
-     * @param int                       $storeId            The store Id
-     * @param array                     $relationByChildren The relation data
-     * @param array                     $row                The value row for children
+     * @param array                     $parentIndexData    Index data of the parent product.
+     * @param ProductAttributeInterface $attribute          The attribute.
+     * @param int                       $storeId            The store Id.
+     * @param array                     $relationByChildren The relation data.
+     * @param array                     $row                The value row for children.
      */
     private function addChildrenData(&$parentIndexData, $attribute, $storeId, $relationByChildren, $row)
     {
         $canIndex = $this->canAddAttributeAsChild(
             $attribute,
             $relationByChildren,
-            $parentIndexData['type_id']
+            $parentIndexData['type_id'],
+            $parentIndexData
         );
 
         if ($canIndex) {
+            $attributeCode = $attribute->getAttributeCode();
+            if (!in_array($attributeCode, $parentIndexData['configurable_attributes'])) {
+                if (!isset($parentIndexData['simple_attributes'])) {
+                    $parentIndexData['simple_attributes'] = [];
+                }
+                if (!in_array($attributeCode, $parentIndexData['simple_attributes'])) {
+                    $parentIndexData['simple_attributes'][] = $attributeCode;
+                }
+            }
             $indexValues = $this->attributeHelper->prepareIndexValue(
                 $attribute,
                 $storeId,
