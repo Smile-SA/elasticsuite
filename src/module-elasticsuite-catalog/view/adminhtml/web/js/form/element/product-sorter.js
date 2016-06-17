@@ -22,6 +22,7 @@ define([
 
     return Component.extend({
         defaults: {
+            showSpinner: true,
             template: "Smile_ElasticsuiteCatalog/form/element/product-sorter",
             refreshFields: {},
             maxRefreshInterval: 1000,
@@ -48,7 +49,7 @@ define([
             this.pageSize           = parseInt(this.pageSize, 10);
             this.currentSize        = this.pageSize;
             
-            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions']);
+            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner']);
             
             this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
         },
@@ -68,7 +69,9 @@ define([
             if (this.refreshRateLimiter !== undefined) {
                 clearTimeout();
             }
-            
+
+            this.loading(true);
+
             this.refreshRateLimiter = setTimeout(function () {
                 var formData = this.formData;
                 Object.keys(this.editPositions()).each(function (productId) {
@@ -76,7 +79,6 @@ define([
                 }.bind(this));
                 
                 formData['page_size'] = this.currentSize();
-                
                 this.loadXhr = $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
             }.bind(this), this.maxRefreshInterval);
         },
@@ -91,12 +93,13 @@ define([
             var editPositions = this.editPositions();
             
             for (var productId in editPositions) {
-                if ($.inArray(parseInt(productId), productIds) < 0) {
+                if ($.inArray(parseInt(productId, 10), productIds) < 0) {
                     delete editPositions[productId];
                 } 
             }
             
             this.editPositions(editPositions);
+            this.loading(false);
         },
         
         createProduct: function (productData) {
