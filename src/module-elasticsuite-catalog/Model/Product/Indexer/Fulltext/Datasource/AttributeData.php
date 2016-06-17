@@ -49,6 +49,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             foreach ($relations as $relation) {
                 $parentId = (int) $relation['parent_id'];
                 if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
+                    $indexData[$parentId]['children_ids'][] = $childId;
                     $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
                     $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
                 }
