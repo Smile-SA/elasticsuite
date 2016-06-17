@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Magento\Catalog\Api\Data\ProductAttributeInterface;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
@@ -40,42 +39,18 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     public function addData($storeId, array $indexData)
     {
         $productIds   = array_keys($indexData);
+        $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
-        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
-            $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
-            foreach ($attributesData as $row) {
-                $productId = (int) $row['entity_id'];
-                $attribute = $this->attributesById[$row['attribute_id']];
+        $relationsByChildId = $this->resourceModel->loadChildrens($productIds);
+        $allChildrenIds     = array_keys($relationsByChildId);
+        $childrenIndexData  = $this->addAttributeData($storeId, $allChildrenIds);
 
-                $indexValues = $this->attributeHelper->prepareIndexValue(
-                    $attribute,
-                    $storeId,
-                    $row['value']
-                );
-
-                $indexData[$productId] += $indexValues;
-            }
-        }
-
-        $relationsByChildrenId = $this->resourceModel->loadChildrens($productIds);
-        $allChildrenIds = array_keys($relationsByChildrenId);
-
-        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
-            $attributesData = $this->loadAttributesRawData($storeId, $allChildrenIds, $backendTable, $attributeIds);
-            foreach ($attributesData as $row) {
-                $attribute  = $this->attributesById[$row['attribute_id']];
-                $childId    = (int) $row['entity_id'];
-
-                foreach ($relationsByChildrenId[$childId] as $relationByChildren) {
-                    $parentId = $relationByChildren['parent_id'];
-                    $this->addRelationData($indexData[$parentId], $childId, $relationByChildren);
-                    $this->addChildrenData(
-                        $indexData[$parentId],
-                        $attribute,
-                        $storeId,
-                        $relationByChildren,
-                        $row
-                    );
+        foreach ($relationsByChildId as $childId => $relations) {
+            foreach ($relations as $relation) {
+                $parentId = (int) $relation['parent_id'];
+                if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
+                    $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
+                    $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
                 }
             }
         }
@@ -84,89 +59,108 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     }
 
     /**
-     * Check if an attribute can be indexed when used as a children/
+     * Append attribute data to the index.
      *
-     * @param ProductAttributeInterface $attribute          Product attribute.
-     * @param array                     $relationByChildren The relation data based on children
-     * @param string                    $parentTypeId       Parent product type id.
+     * @param int   $storeId    Indexed store id.
+     * @param array $productIds Indexed product ids.
+     * @param array $indexData  Original indexed data.
      *
-     * @return boolean
+     * @return array
      */
-    private function canAddAttributeAsChild(ProductAttributeInterface $attribute, $relationByChildren, $parentTypeId)
+    private function addAttributeData($storeId, $productIds, $indexData = [])
     {
-        $canUseAsChild = !in_array($attribute->getAttributeCode(), $this->forbidenChildrenAttributeCode);
+        foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
+            $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
+            foreach ($attributesData as $row) {
+                $productId    = (int) $row['entity_id'];
+                $attribute    = $this->attributesById[$row['attribute_id']];
+                $indexValues  = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                if (!isset($indexData[$productId])) {
+                    $indexData[$productId] = [];
+                }
 
-        if ($parentTypeId == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            if (isset($relationByChildren['configurable_attributes'])
-            && (!in_array($attribute->getAttributeId(), $relationByChildren['configurable_attributes']))
-            ) {
-                $canUseAsChild = false;
+                $indexData[$productId] += $indexValues;
             }
         }
 
-        return $canUseAsChild;
+        return $indexData;
     }
 
     /**
-     * Append relation data to parent product
+     * Append data of child products to the parent.
      *
-     * @param array $parentIndexData Index Data for parent product
-     * @param int   $childrenId      The Children Id
-     * @param array $relationByChild Relation data for child
-     */
-    private function addRelationData(array &$parentIndexData, $childrenId, array $relationByChild)
-    {
-        if (!isset($parentIndexData['children_ids'])) {
-            $parentIndexData['children_ids'] = [];
-        }
-        if (!in_array($childrenId, $parentIndexData['children_ids'])) {
-            $parentIndexData['children_ids'][] = $childrenId;
-        }
-
-        if (isset($relationByChild['configurable_attributes'])) {
-            foreach ($relationByChild['configurable_attributes'] as $attributeId) {
-                $attributeCode = $this->attributesById[(int) $attributeId]->getAttributeCode();
-                if (!isset($parentIndexData['configurable_attributes'])) {
-                    $parentIndexData['configurable_attributes'] = [];
-                }
-                if (!in_array($attributeCode, $parentIndexData['configurable_attributes'])) {
-                    $parentIndexData['configurable_attributes'][] = $attributeCode;
-                }
-            }
-        }
-    }
-
-    /**
-     * Append children data to parent product
+     * @param array $parentData      Parent product data.
+     * @param array $childAttributes Child product attributes data.
      *
-     * @param array                     $parentIndexData    Index data of the parent product
-     * @param ProductAttributeInterface $attribute          The attribute
-     * @param int                       $storeId            The store Id
-     * @param array                     $relationByChildren The relation data
-     * @param array                     $row                The value row for children
+     * @return void
      */
-    private function addChildrenData(&$parentIndexData, $attribute, $storeId, $relationByChildren, $row)
+    private function addChildData(&$parentData, $childAttributes)
     {
-        $canIndex = $this->canAddAttributeAsChild(
-            $attribute,
-            $relationByChildren,
-            $parentIndexData['type_id']
+        $authorizedChildAttributes = $parentData['children_attributes'];
+        $addedChildAttributesData  = array_filter(
+            $childAttributes,
+            function ($attributeCode) use ($authorizedChildAttributes) {
+                return in_array($attributeCode, $authorizedChildAttributes);
+            },
+            ARRAY_FILTER_USE_KEY
         );
 
-        if ($canIndex) {
-            $indexValues = $this->attributeHelper->prepareIndexValue(
-                $attribute,
-                $storeId,
-                $row['value']
+        foreach ($addedChildAttributesData as $attributeCode => $value) {
+            if (!isset($parentData[$attributeCode])) {
+                $parentData[$attributeCode] = [];
+            }
+
+            $parentData[$attributeCode] = array_unique(array_merge($parentData[$attributeCode], $value));
+        }
+    }
+
+    /**
+     * Append relation information to the index for composite products.
+     *
+     * @param array $parentData      Parent product data.
+     * @param array $childAttributes Child product attributes data.
+     * @param array $relation        Relation data between the child and the parent.
+     *
+     * @return void
+     */
+    private function addRelationData(&$parentData, $childAttributes, $relation)
+    {
+        $childAttributeCodes  = array_keys($childAttributes);
+        $parentAttributeCodes = array_keys($parentData);
+
+        if (!isset($parentData['children_attributes'])) {
+            $parentData['children_attributes'] = [];
+        }
+
+        $childrenAttributes = array_merge(
+            $parentData['children_attributes'],
+            array_diff($childAttributeCodes, $this->forbidenChildrenAttributeCode)
+        );
+
+        if (isset($relation['configurable_attributes']) && !empty($relation['configurable_attributes'])) {
+            $addedChildrenAttributes = array_diff(
+                $childAttributeCodes,
+                $this->forbidenChildrenAttributeCode,
+                $parentAttributeCodes
+            );
+            $childrenAttributes = array_merge($addedChildrenAttributes, $parentData['children_attributes']);
+
+            if (!isset($parentData['configurable_attributes'])) {
+                $parentData['configurable_attributes'] = [];
+            }
+
+            $configurableAttributesCodes = array_map(
+                function ($attributeId) {
+                    return $this->attributesById[(int) $attributeId]->getAttributeCode();
+                },
+                $relation['configurable_attributes']
             );
 
-            $parentIndexData = array_merge_recursive($parentIndexData, $indexValues);
-
-            foreach (array_keys($indexValues) as $fieldKey) {
-                if (isset($parentIndexData[$fieldKey])) {
-                    $parentIndexData[$fieldKey] = array_values(array_unique($parentIndexData[$fieldKey]));
-                }
-            }
+            $parentData['configurable_attributes'] = array_unique(
+                array_merge($configurableAttributesCodes, $parentData['configurable_attributes'])
+            );
         }
+
+        $parentData['children_attributes'] = array_unique($childrenAttributes);
     }
 }
