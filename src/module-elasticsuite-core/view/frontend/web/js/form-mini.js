@@ -5,7 +5,7 @@ define([
     'underscore',
     'mage/template',
     'Magento_Catalog/js/price-utils',
-    'Magento_Ui/js/lib/ko/template/loader',
+    'Magento_Ui/js/lib/knockout/template/loader',
     'jquery/ui',
     'mage/translate',
     'mageQuickSearch'
