@@ -31,7 +31,7 @@
         "magento/module-catalog": "*",
         "magento/module-catalog-search": "*",
         "magento/magento-composer-installer": "*",
-        "elasticsearch/elasticsearch": "2.1.*"
+        "elasticsearch/elasticsearch": "^2.2"
     },
     "replace": {
         "smile/module-elasticsuite-core": "self.version",
