@@ -4,8 +4,9 @@
 
 ### ⚠️ Magento 2.1 compatibility :
 
-We are still working on Magento 2.1.x compatibility since there is a lot of compa
-People using the communitity edition can start working with ElasticSuite today using the **2.2.x branch instead of the master**.
+We are still working on Magento 2.1.x compatibility since there is a lot of compatibility breaking changes in this version.
+
+The migration is now finished concerning the Community edition and people using the Communiity Edition can start working with ElasticSuite today using the **2.2.x branch instead of the master**.
 
 Concerning Magento Enterprise 2.1.0, we are very excited by some of the new features provided such as the staging one. We are working hard to make ElasticSuite compatible with Magento 2.1.0 Enterprise Edition. At the same time we still consider ElasticSuite as a major improvement over Magento standard search (which is now also built on ElasticSearch) since it provides advanced features that are not available in this version (Virtual categories, fuzzy search, multiple selection faceting, ...). We also plan to release a specific guide for the Enterprise edition users and a feature comparison matrix.
 
