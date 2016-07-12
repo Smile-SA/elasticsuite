@@ -93,7 +93,7 @@ class UpgradeData implements UpgradeDataInterface
 
         // Select old value.
         $valueSelect = $setup->getConnection()->select();
-        $valueSelect->from('catalog_category_entity_varchar', $baseFields)
+        $valueSelect->from($setup->getTable('catalog_category_entity_varchar'), $baseFields)
             ->where('attribute_id = ?', $virtualRootAttributeId)
             ->columns(['value' => new \Zend_Db_Expr('REPLACE(value, "category/", "")')]);
 

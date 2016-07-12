@@ -131,7 +131,8 @@ class InstallData implements InstallDataInterface
      */
     private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value, $excludedIds = [])
     {
-        $entityTable    = $this->eavSetup->getEntityType($entityTypeId, 'entity_table');
+        $setup          = $this->eavSetup->getSetup();
+        $entityTable    = $setup->getTable($this->eavSetup->getEntityType($entityTypeId, 'entity_table'));
         $attributeTable = $this->eavSetup->getAttributeTable($entityTypeId, $attributeId);
 
         if (!is_int($attributeId)) {

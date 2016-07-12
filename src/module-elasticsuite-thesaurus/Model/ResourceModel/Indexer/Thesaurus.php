@@ -56,7 +56,7 @@ class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaur
         $select     = $this->getBaseSelect($storeId, ThesaurusInterface::TYPE_EXPANSION);
 
         $select->join(
-            ['expanded_terms' => ThesaurusInterface::REFERENCE_TABLE_NAME],
+            ['expanded_terms' => $this->getTable(ThesaurusInterface::REFERENCE_TABLE_NAME)],
             'expanded_terms.term_id = terms.term_id AND expanded_terms.thesaurus_id = terms.thesaurus_id',
             []
         );
@@ -80,8 +80,8 @@ class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaur
         $select     = $connection->select();
 
         $select->from(['thesaurus' => $this->getMainTable()], [])
-            ->join(['terms' => ThesaurusInterface::EXPANSION_TABLE_NAME], 'thesaurus.thesaurus_id = terms.thesaurus_id', [])
-            ->join(['store' => ThesaurusInterface::STORE_TABLE_NAME], 'store.thesaurus_id = thesaurus.thesaurus_id', [])
+            ->join(['terms' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)], 'thesaurus.thesaurus_id = terms.thesaurus_id', [])
+            ->join(['store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)], 'store.thesaurus_id = thesaurus.thesaurus_id', [])
             ->group(['thesaurus.thesaurus_id', 'terms.term_id'])
             ->where("thesaurus.type = ?", $type)
             ->where('store.store_id IN (?)', [0, $storeId]);

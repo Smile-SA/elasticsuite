@@ -159,8 +159,12 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             $deleteCondition[ThesaurusInterface::STORE_ID . " NOT IN (?)"] = array_keys($storeIds);
 
-            $this->getConnection()->delete(ThesaurusInterface::STORE_TABLE_NAME, $deleteCondition);
-            $this->getConnection()->insertOnDuplicate(ThesaurusInterface::STORE_TABLE_NAME, $storeLinks, array_keys(current($storeLinks)));
+            $this->getConnection()->delete($this->getTable(ThesaurusInterface::STORE_TABLE_NAME), $deleteCondition);
+            $this->getConnection()->insertOnDuplicate(
+                $this->getTable(ThesaurusInterface::STORE_TABLE_NAME),
+                $storeLinks,
+                array_keys(current($storeLinks))
+            );
         }
     }
 
@@ -206,7 +210,7 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             // Saves expansion terms for a thesaurus. Expansion terms are used by expansion AND synonym thesauri.
             $this->getConnection()->insertOnDuplicate(
-                ThesaurusInterface::EXPANSION_TABLE_NAME,
+                $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME),
                 $expansionTermLinks,
                 array_keys(current($expansionTermLinks))
             );
@@ -227,7 +231,7 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $deleteCondition = [ThesaurusInterface::THESAURUS_ID . " = ?" => $object->getThesaurusId()];
 
         $this->getConnection()->delete(
-            ThesaurusInterface::EXPANSION_TABLE_NAME,
+            $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME),
             $deleteCondition
         );
 
@@ -246,7 +250,7 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         if ($object->getType() === ThesaurusInterface::TYPE_EXPANSION) {
             $this->getConnection()->insertOnDuplicate(
-                ThesaurusInterface::REFERENCE_TABLE_NAME,
+                $this->getTable(ThesaurusInterface::REFERENCE_TABLE_NAME),
                 $referenceTerms,
                 array_keys(current($referenceTerms))
             );
