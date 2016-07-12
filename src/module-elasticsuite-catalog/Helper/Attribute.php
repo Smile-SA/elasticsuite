@@ -171,11 +171,17 @@ class Attribute extends Mapping
             $value = [$value];
         }
 
-        $values[$attributeCode] = $value = array_filter(array_map($simpleValueMapper, $value));
+        $value = array_map($simpleValueMapper, $value);
+        $value = array_filter($value);
+        $value = array_values($value);
+        $values[$attributeCode] = $value;
 
         if ($attribute->usesSource()) {
             $optionTextFieldName = $this->getOptionTextFieldName($attributeCode);
-            $values[$optionTextFieldName] = array_filter($this->getIndexOptionsText($attribute, $storeId, $value));
+            $optionTextValues    = $this->getIndexOptionsText($attribute, $storeId, $value);
+            $optionTextValues    = array_filter($optionTextValues);
+            $optionTextValues    = array_values($optionTextValues);
+            $values[$optionTextFieldName] = $optionTextValues;
         }
 
         return array_filter($values);
