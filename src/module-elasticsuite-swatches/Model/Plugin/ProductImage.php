@@ -51,8 +51,13 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
         foreach ($request as $code => $value) {
             if (in_array($code, $attributeCodes)) {
                 $attribute = $this->eavConfig->getAttribute(\Magento\Catalog\Model\Product::ENTITY, $code);
+
+                if (isset($filterArray[$code]) && !is_array($filterArray[$code])) {
+                    $filterArray[$code] = [$filterArray[$code]];
+                }
+
                 if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
-                    $filterArray[$code] = $this->getOptionIds($attribute, $value);
+                    $filterArray[$code][] = $this->getOptionIds($attribute, $value);
                 }
             }
         }
@@ -81,7 +86,7 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
         foreach ($labels as $label) {
             foreach ($options as $option) {
                 if ($option['label'] == $label) {
-                    $optionIds[] = $option['value'];
+                    $optionIds[] = (int) $option['value'];
                 }
             }
         }

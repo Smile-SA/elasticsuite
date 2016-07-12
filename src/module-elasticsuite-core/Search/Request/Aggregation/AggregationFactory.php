@@ -29,25 +29,16 @@ class AggregationFactory
     /**
      * @var array
      */
-    private $factories = [
-        BucketInterface::TYPE_TERM        => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory',
-        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory',
-        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory',
-    ];
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
+    private $factories;
 
     /**
      * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object manager instance.
+     * @param array $factories Aggregation factories by type.
      */
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct($factories = [])
     {
-        $this->objectManager = $objectManager;
+        $this->factories = $factories;
     }
 
     /**
@@ -64,8 +55,6 @@ class AggregationFactory
             throw new \LogicException("No factory found for query of type {$bucketType}");
         }
 
-        $factory = $this->objectManager->get($this->factories[$bucketType]);
-
-        return $factory->create($bucketParams);
+        return $this->factories[$bucketType]->create($bucketParams);
     }
 }

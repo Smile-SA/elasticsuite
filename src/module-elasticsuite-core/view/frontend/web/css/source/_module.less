@@ -22,12 +22,12 @@
         .lib-list-reset-styles();
         dt {
             &:not(:empty) {
-                .lib-css(background, @autocomplete-background);
-                .lib-css(border, @autocomplete-border);
+                .lib-css(background, @autocomplete__background-color);
+                .lib-css(border, @autocomplete__border);
                 border-top: 0;
                 border-bottom: 0;
             }
-            .lib-css(border-top, @autocomplete-item-border);
+            .lib-css(border-top, @autocomplete-item__border);
             cursor: default;
             margin: 0;
             padding: @indent__xs @indent__xl @indent__xs @indent__s;
@@ -39,16 +39,16 @@
             }
             &:hover,
             &.selected {
-                .lib-css(background, @autocomplete-item-hover);
+                .lib-css(background, @autocomplete-item__hover__color);
             }
         }
         dd {
             &:not(:empty) {
-                .lib-css(background, @autocomplete-background);
-                .lib-css(border, @autocomplete-border);
+                .lib-css(background, @autocomplete__background-color);
+                .lib-css(border, @autocomplete__border);
                 border-top: 0;
             }
-            .lib-css(border-top, @autocomplete-item-border);
+            .lib-css(border-top, @autocomplete-item__border);
             cursor: pointer;
             margin: 0;
             padding: @indent__xs @indent__s;
@@ -60,10 +60,10 @@
             }
             &:hover,
             &.selected {
-                .lib-css(background, @autocomplete-item-hover);
+                .lib-css(background, @autocomplete-item__hover__color);
             }
             .amount {
-                .lib-css(color, @autocomplete-item-amount-color);
+                .lib-css(color, @autocomplete-item-amount__color);
                 position: absolute;
                 right: 7px;
                 top: @indent__xs;

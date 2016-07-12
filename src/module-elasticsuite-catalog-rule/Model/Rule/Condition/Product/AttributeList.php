@@ -105,10 +105,17 @@ class AttributeList
         if ($this->attributeCollection === null) {
             $this->attributeCollection = $this->attributeCollectionFactory->create();
 
-            $mapping = $this->getMapping();
+            $mapping              = $this->getMapping();
+            $attributeNameMapping = array_flip($this->fieldNameMapping);
 
-            $arrayNameCb = function (FieldInterface $field) {
-                return $field->getName();
+            $arrayNameCb = function (FieldInterface $field) use ($attributeNameMapping) {
+                $attributeName = $field->getName();
+
+                if (isset($attributeNameMapping[$attributeName])) {
+                    $attributeName = $attributeNameMapping[$attributeName];
+                }
+
+                return $attributeName;
             };
 
             $attributeFilterCb = function (FieldInterface $field) use ($mapping) {

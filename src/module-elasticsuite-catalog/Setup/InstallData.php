@@ -115,7 +115,7 @@ class InstallData implements InstallDataInterface
     {
         $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'frontend_input', 'hidden');
         $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'source_model', null);
-        $this->updateAttributeDefaultValue(Category::ENTITY, 'is_anchor', 1);
+        $this->updateAttributeDefaultValue(Category::ENTITY, 'is_anchor', 1, [\Magento\Catalog\Model\Category::TREE_ROOT_ID]);
     }
 
     /**
@@ -125,12 +125,14 @@ class InstallData implements InstallDataInterface
      * @param integer|string $entityTypeId Target entity id.
      * @param integer|string $attributeId  Target attribute id.
      * @param mixed          $value        Value to be set.
+     * @param array          $excludedIds  List of categories that should not be updated during the process.
      *
      * @return void
      */
-    private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value)
+    private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value, $excludedIds = [])
     {
-        $entityTable    = $this->eavSetup->getEntityType($entityTypeId, 'entity_table');
+        $setup          = $this->eavSetup->getSetup();
+        $entityTable    = $setup->getTable($this->eavSetup->getEntityType($entityTypeId, 'entity_table'));
         $attributeTable = $this->eavSetup->getAttributeTable($entityTypeId, $attributeId);
 
         if (!is_int($attributeId)) {
@@ -142,6 +144,10 @@ class InstallData implements InstallDataInterface
             $entityTable,
             [new \Zend_Db_Expr("{$attributeId} as attribute_id"), 'entity_id', new \Zend_Db_Expr("{$value} as value")]
         );
+
+        if (!empty($excludedIds)) {
+            $entitySelect->where('entity_id NOT IN(?)', $excludedIds);
+        }
 
         $insertQuery = $this->getConnection()->insertFromSelect(
             $entitySelect,
