@@ -213,13 +213,15 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         $options = $this->getAttributeModel()->getFrontend()->getSelectOptions();
         $optionPosition = 0;
 
-        foreach ($options as $option) {
-            $optionLabel = (string) $option['label'];
-            $optionPosition++;
+        if (!empty($options)) {
+            foreach ($options as $option) {
+                $optionLabel = (string) $option['label'];
+                $optionPosition++;
 
-            if ($optionLabel && isset($items[$optionLabel])) {
-                $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                $items[$optionLabel]['value']          = $option['value'];
+                if ($optionLabel && isset($items[$optionLabel])) {
+                    $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                    $items[$optionLabel]['value']          = $option['value'];
+                }
             }
         }
 
