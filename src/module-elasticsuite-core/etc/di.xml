@@ -63,6 +63,7 @@
                 <item name="filteredQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory</item>
                 <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory</item>
                 <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NotFactory</item>
+                <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory</item>
                 <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermFactory</item>
                 <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory</item>
                 <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory</item>

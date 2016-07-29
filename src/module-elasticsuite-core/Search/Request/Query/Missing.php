@@ -1,0 +1,87 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+namespace Smile\ElasticsuiteCore\Search\Request\Query;
+
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+
+/**
+ * Missing field definition implementation.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class Missing implements QueryInterface
+{
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var string
+     */
+    private $field;
+
+    /**
+     * Constructor.
+     * @param \Magento\Framework\Search\Request\QueryInterface $query Negated query.
+     * @param string                                           $name  Query name.
+     * @param integer                                          $boost Query boost.
+     */
+    public function __construct(
+        $field,
+        $name = null,
+        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+    ) {
+        $this->name      = $name;
+        $this->boost     = $boost;
+        $this->field     = $field;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getBoost()
+    {
+        return $this->boost;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return QueryInterface::TYPE_MISSING;
+    }
+
+    /**
+     * Negated query.
+     *
+     * @return string
+     */
+    public function getField()
+    {
+        return $this->field;
+    }
+}
