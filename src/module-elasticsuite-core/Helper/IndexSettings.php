@@ -64,7 +64,6 @@ class IndexSettings extends AbstractConfiguration
         $languageCode = current(explode('_', $this->getLocaleCode($store)));
 
         return $languageCode;
-
     }
 
     /**

@@ -77,6 +77,5 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
         );
 
         $this->buttonList->update('delete', 'label', __('Delete Thesaurus'));
-
     }
 }
