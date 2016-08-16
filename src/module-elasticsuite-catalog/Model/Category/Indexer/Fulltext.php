@@ -107,7 +107,6 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
             $this->indexerHandler->cleanIndex([$dimension]);
             $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId));
         }
-
     }
 
     /**
