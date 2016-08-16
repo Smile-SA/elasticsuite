@@ -185,7 +185,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
-    public function setOrder($attribute, $dir = Select::SQL_DESC)
+    public function setOrder($attribute, $dir = \Magento\Framework\DB\Select::SQL_DESC)
     {
         $this->_orders[$attribute] = $dir;
 
