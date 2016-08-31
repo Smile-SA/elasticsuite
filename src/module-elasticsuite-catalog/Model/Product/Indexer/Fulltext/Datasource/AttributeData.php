@@ -152,7 +152,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
             $configurableAttributesCodes = array_map(
                 function ($attributeId) {
-                    return $this->attributesById[(int) $attributeId]->getAttributeCode();
+                    return (
+                        isset($this->attributesById[(int) $attributeId]) ?
+                        $this->attributesById[(int) $attributeId]->getAttributeCode() :
+                        false
+                    );
                 },
                 $relation['configurable_attributes']
             );
