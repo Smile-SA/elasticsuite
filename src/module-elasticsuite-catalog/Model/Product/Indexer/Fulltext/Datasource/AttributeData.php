@@ -153,8 +153,8 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             $configurableAttributesCodes = array_map(
                 function ($attributeId) {
                     return (
-                        isset($this->attributesById[(int) $attributeId]) ?
-                        $this->attributesById[(int) $attributeId]->getAttributeCode() :
+                        isset($this->attributesById[(int) $attributeId]) ? 
+                        $this->attributesById[(int) $attributeId]->getAttributeCode() : 
                         false
                     );
                 },
