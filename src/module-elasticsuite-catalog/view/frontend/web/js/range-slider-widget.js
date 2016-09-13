@@ -48,7 +48,8 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
                 min: this.options.minValue,
                 max: this.options.maxValue,
                 values: [ this.from, this.to ],
-                slide: this._onSliderChange.bind(this)
+                slide: this._onSliderChange.bind(this),
+                step: this.options.step
             });
         },
 

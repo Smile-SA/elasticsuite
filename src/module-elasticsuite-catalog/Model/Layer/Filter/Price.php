@@ -105,6 +105,13 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
 
         $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]];
 
+        $calculation = $this->dataProvider->getRangeCalculationValue();
+        if ($calculation === \Magento\Catalog\Model\Layer\Filter\DataProvider\Price::RANGE_CALCULATION_MANUAL) {
+            if ((int) $this->dataProvider->getRangeStepValue() > 0) {
+                $facetConfig['interval'] = (int) $this->dataProvider->getRangeStepValue();
+            }
+        }
+
         $productCollection = $this->getLayer()->getProductCollection();
         $productCollection->addFacet($facetField, $facetType, $facetConfig);
 
