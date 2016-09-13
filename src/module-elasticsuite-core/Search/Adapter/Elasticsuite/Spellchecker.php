@@ -142,7 +142,6 @@ class Spellchecker implements SpellcheckerInterface
         $queryTermStats['total'] = count($statByPosition);
 
         return $queryTermStats;
-
     }
 
     /**
