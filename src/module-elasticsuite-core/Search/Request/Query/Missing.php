@@ -36,10 +36,15 @@ class Missing implements QueryInterface
     private $field;
 
     /**
+     * @var integer
+     */
+    private $boost;
+
+    /**
      * Constructor.
-     * @param \Magento\Framework\Search\Request\QueryInterface $query Negated query.
-     * @param string                                           $name  Query name.
-     * @param integer                                          $boost Query boost.
+     * @param string  $field Query field.
+     * @param string  $name  Query name.
+     * @param integer $boost Query boost.
      */
     public function __construct(
         $field,
