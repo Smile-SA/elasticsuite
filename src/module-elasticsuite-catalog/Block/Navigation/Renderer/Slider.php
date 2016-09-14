@@ -73,18 +73,7 @@ class Slider extends AbstractRenderer
      */
     public function getJsonConfig()
     {
-        $config = [
-            'minValue'         => $this->getMinValue(),
-            'maxValue'         => $this->getMaxValue(),
-            'currentValue'     => $this->getCurrentValue(),
-            'fieldFormat'      => $this->getFieldFormat(),
-            'intervals'        => $this->getIntervals(),
-            'urlTemplate'      => $this->getUrlTemplate(),
-            'messageTemplates' => [
-                'displayCount' => __('<%- count %> products'),
-                'displayEmpty' => __('No products in the selected range.'),
-            ],
-        ];
+        $config = $this->getConfig();
 
         return $this->jsonEncoder->encode($config);
     }
@@ -129,11 +118,34 @@ class Slider extends AbstractRenderer
     }
 
     /**
+     * Retrieve configuration
+     *
+     * @return array
+     */
+    protected function getConfig()
+    {
+        $config = [
+            'minValue'         => $this->getMinValue(),
+            'maxValue'         => $this->getMaxValue(),
+            'currentValue'     => $this->getCurrentValue(),
+            'fieldFormat'      => $this->getFieldFormat(),
+            'intervals'        => $this->getIntervals(),
+            'urlTemplate'      => $this->getUrlTemplate(),
+            'messageTemplates' => [
+                'displayCount' => __('<%- count %> products'),
+                'displayEmpty' => __('No products in the selected range.'),
+            ],
+        ];
+
+        return $config;
+    }
+
+    /**
      * Returns min value of the slider.
      *
      * @return int
      */
-    private function getMinValue()
+    protected function getMinValue()
     {
         return $this->getFilter()->getMinValue();
     }
@@ -143,7 +155,7 @@ class Slider extends AbstractRenderer
      *
      * @return int
      */
-    private function getMaxValue()
+    protected function getMaxValue()
     {
         return $this->getFilter()->getMaxValue() + 1;
     }
