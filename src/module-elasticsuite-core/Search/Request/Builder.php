@@ -177,19 +177,19 @@ class Builder
      */
     private function getSpellingType(ContainerConfigurationInterface $containerConfig, $queryText)
     {
-        $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
-
-        if (!is_array($queryText)) {
-            $spellcheckRequestParams = [
-                'index'           => $containerConfig->getIndexName(),
-                'type'            => $containerConfig->getTypeName(),
-                'queryText'       => $queryText,
-                'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
-            ];
-
-            $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
-            $spellingType = $this->spellchecker->getSpellingType($spellcheckRequest);
+        if (is_array($queryText)) {
+            $queryText = implode(" ", $queryText);
         }
+
+        $spellcheckRequestParams = [
+            'index'           => $containerConfig->getIndexName(),
+            'type'            => $containerConfig->getTypeName(),
+            'queryText'       => $queryText,
+            'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+        ];
+
+        $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
+        $spellingType = $this->spellchecker->getSpellingType($spellcheckRequest);
 
         return $spellingType;
     }
