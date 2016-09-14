@@ -30,21 +30,6 @@ use \Magento\Eav\Setup\EavSetup;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @var \Magento\Eav\Setup\EavSetup EAV Entity Setup
-     */
-    private $eavSetup;
-
-    /**
-     * InstallSchema constructor.
-     *
-     * @param \Magento\Eav\Setup\EavSetup $eavSetup The EAV Setup
-     */
-    public function __construct(EavSetup $eavSetup)
-    {
-        $this->eavSetup = $eavSetup;
-    }
-
-    /**
      * Installs DB schema for the module
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

@@ -24,6 +24,13 @@
         </subscriptions>
     </view>
     <view id="elasticsuite_categories_fulltext" class="Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext" group="indexer">
-
+        <subscriptions>
+            <table name="catalog_category_entity" entity_column="entity_id" />
+            <table name="catalog_category_entity_datetime" entity_column="entity_id" />
+            <table name="catalog_category_entity_decimal" entity_column="entity_id" />
+            <table name="catalog_category_entity_int" entity_column="entity_id" />
+            <table name="catalog_category_entity_text" entity_column="entity_id" />
+            <table name="catalog_category_entity_varchar" entity_column="entity_id" />
+        </subscriptions>
     </view>
 </config>
