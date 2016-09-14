@@ -221,6 +221,28 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     }
 
     /**
+     * Get Thesaurus status
+     *
+     * @return bool
+     */
+    public function isActive()
+    {
+        return (bool) $this->getData(self::IS_ACTIVE);
+    }
+
+    /**
+     * Set Thesaurus status
+     *
+     * @param bool $status The thesaurus status
+     *
+     * @return ThesaurusInterface
+     */
+    public function setIsActive($status)
+    {
+        return $this->setData(self::IS_ACTIVE, (bool) $status);
+    }
+
+    /**
      * Internal Constructor
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)

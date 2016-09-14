@@ -47,6 +47,11 @@ interface ThesaurusInterface
     const TYPE = 'type';
 
     /**
+     * Constant for field is_active
+     */
+    const IS_ACTIVE = 'is_active';
+
+    /**
      * Name of the link thesaurus/expansion terms TABLE
      */
     const STORE_TABLE_NAME = 'smile_elasticsuite_thesaurus_store';
@@ -100,6 +105,13 @@ interface ThesaurusInterface
     public function getStoreIds();
 
     /**
+     * Get Thesaurus status
+     *
+     * @return bool
+     */
+    public function isActive();
+
+    /**
      * Set Thesaurus ID
      *
      * @param int $identifier the value to save
@@ -134,4 +146,13 @@ interface ThesaurusInterface
      * @return ThesaurusInterface
      */
     public function setStoreIds($storeIds);
+
+    /**
+     * Set Thesaurus status
+     *
+     * @param bool $status The thesaurus status
+     *
+     * @return ThesaurusInterface
+     */
+    public function setIsActive($status);
 }
