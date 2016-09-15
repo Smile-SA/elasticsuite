@@ -63,6 +63,7 @@
         <arguments>
             <argument name="dataProviders" xsi:type="array">
                 <item name="20" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
+                <item name="30" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Category\DataProvider</item>
             </argument>
         </arguments>
     </type>

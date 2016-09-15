@@ -13,7 +13,8 @@
  * @license   Open Software License ("OSL") v. 3.0
 */
 -->
-<dd class="<%- data.row_class %>" id="qs-option-<%- data.index %>" role="option" href="<%- data.href %>">
+<dd class="<%- data.row_class %>" id="qs-option-<%- data.index %>" role="option" href="<%- data.url %>">
+    <span class="category-mini-crumb"><%- data.breadcrumb %></span>
     <span class="qs-option-name"><%- data.title %></span>
     <span aria-hidden="true" class="amount"><%- data.num_results %></span>
 </dd>

@@ -42,3 +42,5 @@ OK,OK
 Yes,Oui
 No,Non
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
+"Category Autocomplete","Autocomplétion des catégories"
+"Maximum number of categories to display in autocomplete results.","Nombre maximum de catégories à afficher dans les résultats de l'autocomplétion."
