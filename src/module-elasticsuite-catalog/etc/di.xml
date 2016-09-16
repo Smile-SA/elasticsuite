@@ -140,9 +140,17 @@
         </arguments>
     </type>
 
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Datasource\AttributeData"
+                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData">
+        <arguments>
+            <argument name="entityType" xsi:type="string">Magento\Catalog\Api\Data\CategoryInterface</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData">
         <arguments>
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\CategoryAttribute</argument>
+            <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Datasource\AttributeData</argument>
         </arguments>
     </type>
 

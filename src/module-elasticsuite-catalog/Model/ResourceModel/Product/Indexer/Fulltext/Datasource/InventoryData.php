@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext
 use Magento\CatalogInventory\Api\StockRegistryInterface;
 use \Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
@@ -48,19 +49,21 @@ class InventoryData extends Indexer
      *
      * @param ResourceConnection          $resource           Database adapter.
      * @param StoreManagerInterface       $storeManager       Store manager.
+     * @param MetadataPool                $metadataPool       Metadata Pool
      * @param StockRegistryInterface      $stockRegistry      Stock registry.
      * @param StockConfigurationInterface $stockConfiguration Stock configuration.
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
+        MetadataPool $metadataPool,
         StockRegistryInterface $stockRegistry,
         StockConfigurationInterface $stockConfiguration
     ) {
         $this->stockRegistry      = $stockRegistry;
         $this->stockConfiguration = $stockConfiguration;
 
-        parent::__construct($resource, $storeManager);
+        parent::__construct($resource, $storeManager, $metadataPool);
     }
 
     /**
