@@ -42,16 +42,19 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
         $relationsByChildId = $this->resourceModel->loadChildrens($productIds);
-        $allChildrenIds     = array_keys($relationsByChildId);
-        $childrenIndexData  = $this->addAttributeData($storeId, $allChildrenIds);
 
-        foreach ($relationsByChildId as $childId => $relations) {
-            foreach ($relations as $relation) {
-                $parentId = (int) $relation['parent_id'];
-                if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
-                    $indexData[$parentId]['children_ids'][] = $childId;
-                    $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
-                    $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
+        if (!empty($relationsByChildId)) {
+            $allChildrenIds = array_keys($relationsByChildId);
+            $childrenIndexData = $this->addAttributeData($storeId, $allChildrenIds);
+
+            foreach ($relationsByChildId as $childId => $relations) {
+                foreach ($relations as $relation) {
+                    $parentId = (int) $relation['parent_id'];
+                    if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
+                        $indexData[$parentId]['children_ids'][] = $childId;
+                        $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
+                        $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
+                    }
                 }
             }
         }
