@@ -45,3 +45,8 @@ No,Non
 "Category Autocomplete","Autocomplétion des catégories"
 "Maximum number of categories to display in autocomplete results.","Nombre maximum de catégories à afficher dans les résultats de l'autocomplétion."
 "Use Category Name in product search","Utiliser le nom de la catégorie dans les résultats de recherche"
+"Catalog Search","Recherche Catalogue"
+"Catalog Search Configuration","Configuration de la recherche catalogue"
+"Redirect to product page if only one result","Rediriger vers la fiche produit pour un résultat unique"
+"If there is only one product matching a given search query, the user will be redirect to this product page.","Si une recherche ne renvoie qu'un seul produit, l'utilisateur sera redirigé vers la fiche de ce produit."
+"%1 is the only product matching your '%2' research.","%1 est le seul produit correspondant à votre recherche : '%2'"
