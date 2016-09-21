@@ -36,7 +36,11 @@
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
                 <field name="type_id" type="string" />
-                <field name="sku" type="string" />
+                <field name="sku" type="string">
+                    <isReferenceField>1</isReferenceField>
+                    <isSearchable>1</isSearchable>
+                    <isUsedInSpellcheck>1</isUsedInSpellcheck>
+                </field>
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />
                 <field name="configurable_attributes" type="string" />

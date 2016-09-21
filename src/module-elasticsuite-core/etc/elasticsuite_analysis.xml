@@ -35,6 +35,15 @@
             <split_on_numerics>1</split_on_numerics>
             <preserve_original>1</preserve_original>
         </filter>
+        <filter name="reference_delimiter" type="word_delimiter" language="default">
+            <generate_word_parts>0</generate_word_parts>
+            <catenate_words>0</catenate_words>
+            <catenate_numbers>0</catenate_numbers>
+            <catenate_all>0</catenate_all>
+            <split_on_case_change>0</split_on_case_change>
+            <split_on_numerics>0</split_on_numerics>
+            <preserve_original>1</preserve_original>
+        </filter>
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
             <max_shingle_size>2</max_shingle_size>
@@ -132,6 +141,18 @@
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
                 <filter ref="phonetic" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="reference" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="reference_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="edge_ngram_front" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
