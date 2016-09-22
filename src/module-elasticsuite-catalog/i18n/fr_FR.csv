@@ -42,3 +42,11 @@ OK,OK
 Yes,Oui
 No,Non
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
+"At the top","En tête de liste"
+"At the bottom","En fin de liste"
+"After the category filter","Après le filtre de catégorie"
+"Availability","Disponibilité"
+"Inventory Settings","Gestion des stocks"
+"Display Stock Filter","Afficher le filtre de statut de stock"
+"This will work only if the store is configured to display out of stock products.","Le filtre ne s'affichera que si le magasin est configuré pour afficher les produits hors-stock."
+"Stock Filter Position","Position du filtre de stock"

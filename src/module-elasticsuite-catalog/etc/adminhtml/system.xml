@@ -26,5 +26,27 @@
                 </field>
             </group>
         </section>
+
+        <section id="smile_elasticsuite_catalogsearch_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Catalog Search</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::config_smile_elasticsuite_core_base_settings</resource>
+
+            <group id="inventory_settings" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Inventory Settings</label>
+                <field id="stock_filter_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Stock Filter</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[This will work only if the store is configured to display out of stock products.]]></comment>
+                </field>
+                <field id="stock_filter_position" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Stock Filter Position</label>
+                    <source_model>Smile\ElasticsuiteCatalog\Model\Source\StockFilter\Position</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

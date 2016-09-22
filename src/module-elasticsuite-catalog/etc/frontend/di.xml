@@ -24,6 +24,7 @@
                 <item name="decimal" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">categoryFilterUsingRewrite</item>
                 <item name="boolean" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean</item>
+                <item name="stock" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Stock</item>
             </argument>
         </arguments>
     </virtualType>
@@ -37,6 +38,7 @@
                 <item name="decimal" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal</item>
                 <item name="category" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category</item>
                 <item name="boolean" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean</item>
+                <item name="stock" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Stock</item>
             </argument>
         </arguments>
     </virtualType>
