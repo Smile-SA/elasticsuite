@@ -167,28 +167,26 @@ class AbstractAttributeData
      *
      * @param AttributeInterface $attribute Entity attribute.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\Catalog\Indexer\Fulltext\Datasource\AbstractAttributeData
+     * @return \Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
      */
     private function initField(AttributeInterface $attribute)
     {
         $fieldName = $attribute->getAttributeCode();
-        $fieldType = $this->attributeHelper->getFieldType($attribute);
-
         $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
 
         if ($attribute->usesSource()) {
-            $fieldConfig = $this->attributeHelper->getMappingFieldOptions($attribute);
-            $fieldConfig['is_searchable'] = false;
+            $optionFieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
+            $fieldType = 'string';
+            $fieldOptions = ['name' => $optionFieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
+            $this->fields[$optionFieldName] = $this->fieldFactory->create($fieldOptions);
+
+            // Reset parent field values : only the option text field should be used for spellcheck and autocomplete.
             $fieldConfig['is_used_in_spellcheck'] = false;
             $fieldConfig['is_used_in_autocomplete'] = false;
-            $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
-            $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
-            $fieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
-            $fieldType = 'string';
-
-            $fieldConfig['is_searchable'] = true;
+            $fieldConfig['is_searchable'] = false;
         }
 
+        $fieldType    = $this->attributeHelper->getFieldType($attribute);
         $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
 
         $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
