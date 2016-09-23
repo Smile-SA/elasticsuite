@@ -347,4 +347,12 @@
 
     <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy" shared="false"/>
 
+    <!-- Setting ElasticSuite to use the default (which does nothing) data provider for suggestions -->
+    <type name="Magento\AdvancedSearch\Model\SuggestedQueries">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="elasticsuite" xsi:type="string">Magento\AdvancedSearch\Model\DataProvider\Suggestions</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
