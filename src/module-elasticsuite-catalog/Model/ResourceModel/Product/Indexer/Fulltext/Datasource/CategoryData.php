@@ -14,8 +14,10 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Eav\Model\Config;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
@@ -51,14 +53,19 @@ class CategoryData extends Indexer
     /**
      * CategoryData constructor.
      *
-     * @param \Magento\Framework\App\ResourceConnection  $resource     Connection Resource
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager The store manager
-     * @param \Magento\Eav\Model\Config                  $eavConfig    EAV Configuration
+     * @param \Magento\Framework\App\ResourceConnection     $resource     Connection Resource
+     * @param \Magento\Store\Model\StoreManagerInterface    $storeManager The store manager
+     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool Metadata Pool
+     * @param \Magento\Eav\Model\Config                     $eavConfig    EAV Configuration
      */
-    public function __construct(ResourceConnection $resource, StoreManagerInterface $storeManager, Config $eavConfig)
-    {
+    public function __construct(
+        ResourceConnection $resource,
+        StoreManagerInterface $storeManager,
+        MetadataPool $metadataPool,
+        Config $eavConfig
+    ) {
         $this->eavConfig = $eavConfig;
-        parent::__construct($resource, $storeManager);
+        parent::__construct($resource, $storeManager, $metadataPool);
     }
 
     /**
@@ -162,9 +169,10 @@ class CategoryData extends Indexer
 
         if (!empty($loadCategoryIds)) {
             $select = $this->prepareCategoryNameSelect($loadCategoryIds, $storeId);
+            $entityIdField = $this->getEntityMetaData(CategoryInterface::class)->getIdentifierField();
 
             foreach ($this->getConnection()->fetchAll($select) as $row) {
-                $categoryId = (int) $row['entity_id'];
+                $categoryId = (int) $row[$entityIdField];
                 $this->categoryNameCache[$storeId][$categoryId] = '';
                 if ((bool) $row['use_name']) {
                     $this->categoryNameCache[$storeId][$categoryId] = $row['name'];
@@ -188,20 +196,23 @@ class CategoryData extends Indexer
         $rootCategoryId = (int) $this->storeManager->getStore($storeId)->getRootCategoryId();
         $this->categoryNameCache[$storeId][$rootCategoryId] = '';
 
-        $nameAttr    = $this->getCategoryNameAttribute();
-        $useNameAttr = $this->getUseNameInSearchAttribute();
+        $nameAttr      = $this->getCategoryNameAttribute();
+        $useNameAttr   = $this->getUseNameInSearchAttribute();
+        $entityIdField = $this->getEntityMetaData(CategoryInterface::class)->getIdentifierField();
+        $linkField     = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
+        $select        = $this->connection->select();
 
-        // Initialize retrieval of category name.
-        $select = $this->getConnection()->select()
-            ->from(['default_value' => $nameAttr->getBackendTable()], ['entity_id'])
-            ->where('default_value.entity_id != ?', $rootCategoryId)
+        $joinCondition = new \Zend_Db_Expr("cat.{$linkField} = default_value.{$linkField}");
+        $select->from(['cat' => $this->getEntityMetaData(CategoryInterface::class)->getEntityTable()], [$entityIdField])
+            ->joinInner(['default_value' => $nameAttr->getBackendTable()], $joinCondition, [])
+            ->where("cat.$entityIdField != ?", $rootCategoryId)
             ->where('default_value.store_id = ?', 0)
             ->where('default_value.attribute_id = ?', (int) $nameAttr->getAttributeId())
-            ->where('default_value.entity_id IN (?)', $loadCategoryIds);
+            ->where("cat.$entityIdField IN (?)", $loadCategoryIds);
 
         // Join to check for use_name_in_product_search.
         $joinUseNameCond = sprintf(
-            "default_value.entity_id = use_name_default_value.entity_id" .
+            "default_value.$linkField = use_name_default_value.$linkField" .
             " AND use_name_default_value.attribute_id = %d AND use_name_default_value.store_id = %d",
             (int) $useNameAttr->getAttributeId(),
             0
@@ -217,7 +228,7 @@ class CategoryData extends Indexer
 
         // Multi store additional join to get scoped name value.
         $joinStoreNameCond = sprintf(
-            "default_value.entity_id = store_value.entity_id" .
+            "default_value.$linkField = store_value.$linkField" .
             " AND store_value.attribute_id = %d AND store_value.store_id = %d",
             (int) $nameAttr->getAttributeId(),
             (int) $storeId
@@ -227,7 +238,7 @@ class CategoryData extends Indexer
 
         // Multi store additional join to get scoped "use_name_in_product_search" value.
         $joinUseNameStoreCond = sprintf(
-            "default_value.entity_id = use_name_store_value.entity_id" .
+            "default_value.$linkField = use_name_store_value.$linkField" .
             " AND use_name_store_value.attribute_id = %d AND use_name_store_value.store_id = %d",
             (int) $useNameAttr->getAttributeId(),
             (int) $storeId

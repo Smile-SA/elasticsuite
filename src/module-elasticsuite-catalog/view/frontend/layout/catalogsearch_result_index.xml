@@ -17,7 +17,7 @@
  
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="catalogsearch.leftnav">
+        <referenceBlock name="catalogsearch.leftnav" template="Smile_ElasticsuiteCatalog::layer/view.phtml" >
             <block class="Smile\ElasticsuiteCatalog\Block\Navigation\FilterRenderer" 
                    name="catalogsearch.navigation.renderer"
                    as="renderer" 

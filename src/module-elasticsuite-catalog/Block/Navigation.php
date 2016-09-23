@@ -14,6 +14,13 @@
 
 namespace Smile\ElasticsuiteCatalog\Block;
 
+use Magento\Catalog\Model\Layer\AvailabilityFlagInterface;
+use Magento\Catalog\Model\Layer\FilterList;
+use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Framework\Module\Manager;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Framework\View\Element\Template\Context;
+
 /**
  * Custom implementation of the navigation block to apply facet coverage rate.
  *
@@ -23,6 +30,64 @@ namespace Smile\ElasticsuiteCatalog\Block;
  */
 class Navigation extends \Magento\LayeredNavigation\Block\Navigation
 {
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
+     * @var Manager
+     */
+    private $moduleManager;
+
+    /**
+     * Navigation constructor.
+     *
+     * @param \Magento\Framework\View\Element\Template\Context       $context        Application context
+     * @param \Magento\Catalog\Model\Layer\Resolver                  $layerResolver  Layer Resolver
+     * @param \Magento\Catalog\Model\Layer\FilterList                $filterList     Filter List
+     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag Visibility Flag
+     * @param \Magento\Framework\ObjectManagerInterface              $objectManager  Object Manager
+     * @param \Magento\Framework\Module\Manager                      $moduleManager  Module Manager
+     * @param array                                                  $data           Block Data
+     */
+    public function __construct(
+        Context $context,
+        Resolver $layerResolver,
+        FilterList $filterList,
+        AvailabilityFlagInterface $visibilityFlag,
+        ObjectManagerInterface $objectManager,
+        Manager $moduleManager,
+        array $data
+    ) {
+        $this->objectManager = $objectManager;
+        $this->moduleManager = $moduleManager;
+
+        parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
+    }
+
+    /**
+     * Check if we can show this block.
+     * According to @see \Magento\LayeredNavigationStaging\Block\Navigation::canShowBlock
+     * We should not show the block if staging is enabled and if we are currently previewing the results.
+     *
+     * @return bool
+     */
+    public function canShowBlock()
+    {
+        if ($this->moduleManager->isEnabled('Magento_Staging')) {
+            try {
+                $versionManager = $this->objectManager->get('\Magento\Staging\Model\VersionManager');
+
+                return parent::canShowBlock() && !$versionManager->isPreviewVersion();
+            } catch (\Exception $exception) {
+                return parent::canShowBlock();
+            }
+        }
+
+        return parent::canShowBlock();
+    }
+
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
