@@ -29,5 +29,10 @@
                 <max_size>3</max_size>
             </category_autocomplete>
         </smile_elasticsuite_autocomplete_settings>
+        <smile_elasticsuite_catalogsearch_settings>
+            <catalogsearch>
+                <redirect_if_one_result>1</redirect_if_one_result>
+            </catalogsearch>
+        </smile_elasticsuite_catalogsearch_settings>
     </default>
 </config>
