@@ -13,6 +13,11 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
+use Magento\Catalog\Model\Layer\FilterableAttributeListInterface;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Store\Model\ScopeInterface;
+
 /**
  * FilterList customization to support decimal filters.
  *
@@ -26,6 +31,52 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
      * Boolean filter name
      */
     const BOOLEAN_FILTER = 'boolean';
+
+    /**
+     * @var \Magento\Framework\Event\ManagerInterface|null
+     */
+    private $eventManager = null;
+
+    /**
+     * FilterList constructor.
+     *
+     * @param ObjectManagerInterface           $objectManager        The object Manager
+     * @param FilterableAttributeListInterface $filterableAttributes The Filterable attributes list
+     * @param ManagerInterface                 $eventManager         The Event Manager
+     * @param array                            $filters              The filters
+     */
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        FilterableAttributeListInterface $filterableAttributes,
+        ManagerInterface $eventManager,
+        array $filters
+    ) {
+        $this->eventManager = $eventManager;
+        parent::__construct($objectManager, $filterableAttributes, $filters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters(\Magento\Catalog\Model\Layer $layer)
+    {
+        parent::getFilters($layer);
+
+        $eventData = new \Magento\Framework\DataObject();
+        $eventData->setFilters($this->filters)->setFilterTypes($this->filterTypes);
+
+        $this->eventManager->dispatch(
+            'smile_elasticsuite_layer_filterlist_get',
+            [
+                'event_data' => $eventData,
+                'layer'      => $layer,
+            ]
+        );
+
+        $this->filters = $eventData->getFilters();
+
+        return $this->filters;
+    }
 
     /**
      * {@inheritDoc}
