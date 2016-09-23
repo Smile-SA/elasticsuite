@@ -25,4 +25,5 @@
 
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false" />
 
+    <request name="category_search_container" label="Categories fulltext search" index="catalog_category" type="category" fulltext="true" />
 </requests>
