@@ -40,10 +40,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
     {
         $setup->startSetup();
 
-        $this->createThesaurusTable($setup);
-        $this->createThesaurusStoreTable($setup);
-        $this->createExpandedTermsTable($setup);
-        $this->createExpansionReferenceTable($setup);
+        if (version_compare($context->getVersion(), '0.0.2', '<')) {
+            $this->createThesaurusTable($setup);
+            $this->createThesaurusStoreTable($setup);
+            $this->createExpandedTermsTable($setup);
+            $this->createExpansionReferenceTable($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.0', '<')) {
+            $this->appendIsActiveColumn($setup);
+        }
 
         $setup->endSetup();
     }
@@ -212,5 +218,24 @@ class UpgradeSchema implements UpgradeSchemaInterface
             )->setComment('Smile Elastic Suite Thesaurus Table for link between thesauri and expanded terms');
 
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * Add an "is_active" column to the Thesaurus table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup instance
+     */
+    private function appendIsActiveColumn(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable(ThesaurusInterface::TABLE_NAME),
+            ThesaurusInterface::IS_ACTIVE,
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                'nullable' => false,
+                'default'  => 1,
+                'comment'  => 'If the Thesaurus is active',
+            ]
+        );
     }
 }

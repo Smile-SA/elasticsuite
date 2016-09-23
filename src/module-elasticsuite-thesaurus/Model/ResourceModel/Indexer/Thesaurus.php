@@ -84,6 +84,7 @@ class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaur
             ->join(['store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)], 'store.thesaurus_id = thesaurus.thesaurus_id', [])
             ->group(['thesaurus.thesaurus_id', 'terms.term_id'])
             ->where("thesaurus.type = ?", $type)
+            ->where('thesaurus.is_active = 1')
             ->where('store.store_id IN (?)', [0, $storeId]);
 
         return $select;
