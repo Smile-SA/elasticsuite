@@ -43,6 +43,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->appendDecimalDisplayConfiguration($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+            $this->appendReferenceFieldConfiguration($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -78,6 +82,29 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'nullable' => true,
                 'default'  => 0,
                 'comment'  => 'Attribute decimal precision for display',
+            ]
+        );
+    }
+
+    /**
+     * Append 'is_reference_field' to the catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The setup instance
+     */
+    private function appendReferenceFieldConfiguration(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_reference_field' into the db.
+        $connection->addColumn(
+            $table,
+            'is_reference_field',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'comment'  => 'If this attributes modelizes a technical reference field',
             ]
         );
     }

@@ -273,6 +273,18 @@ class FrontPlugin
             'search_weight'
         );
 
+        $fieldset->addField(
+            'is_reference_field',
+            'select',
+            [
+                'name'   => 'is_reference_field',
+                'label'  => __('If this field modelizes a reference'),
+                'values' => $this->booleanSource->toOptionArray(),
+                'note'   => __('Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)'),
+            ],
+            'is_used_in_spellcheck'
+        );
+
         return $this;
     }
 

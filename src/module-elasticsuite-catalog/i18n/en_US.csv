@@ -42,3 +42,5 @@ OK,OK
 Yes,Yes
 No,No
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
+"If this field modelizes a reference","If this field modelizes a reference"
+"Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)","Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)"

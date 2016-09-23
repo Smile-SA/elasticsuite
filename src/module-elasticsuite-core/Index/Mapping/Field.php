@@ -59,6 +59,7 @@ class Field implements FieldInterface
         'is_used_for_sort_by'     => false,
         'is_used_in_spellcheck'   => false,
         'is_used_in_autocomplete' => false,
+        'is_reference_field'      => false,
         'search_weight'           => 1,
     ];
 
@@ -133,6 +134,14 @@ class Field implements FieldInterface
     public function isUsedInAutocomplete()
     {
         return (bool) $this->config['is_used_in_autocomplete'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isReferenceField()
+    {
+        return (bool) $this->config['is_reference_field'];
     }
 
     /**
@@ -296,7 +305,10 @@ class Field implements FieldInterface
                 $analyzers[] = self::ANALYZER_EDGE_NGRAM;
             }
 
-            if ($this->isUsedInSpellcheck()) {
+            if ($this->isReferenceField()) {
+                $analyzers[] = self::ANALYZER_REFERENCE;
+            } elseif ($this->isUsedInSpellcheck()) {
+                // Append phonetic analyzer only if the field is not used to represent a reference.
                 $analyzers[] = self::ANALYZER_PHONETIC;
             }
         }
