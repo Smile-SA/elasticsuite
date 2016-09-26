@@ -40,6 +40,7 @@ class Builder implements BuilderInterface
         QueryInterface::TYPE_MATCH      => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match',
         QueryInterface::TYPE_COMMON     => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common',
         QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch',
+        QueryInterface::TYPE_MISSING    => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing',
     ];
 
     /**

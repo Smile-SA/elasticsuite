@@ -35,7 +35,15 @@
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product</argument>
         </arguments>
-    </type> 
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder">
+        <arguments>
+            <argument name="nestedFilters" xsi:type="array">
+                <item name="category" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product\CategoryNestedFilter</item>
+            </argument>
+        </arguments>
+    </type>
     
     <type name="Smile\ElasticsuiteCatalogRule\Controller\Adminhtml\Product\Rule\Conditions">
         <arguments>
@@ -54,6 +62,11 @@
         <arguments>
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData</argument>
         </arguments>
+    </type>
+    
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="smile_elasticsuite_virtual_categories_category_form_dataprovider"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\DataProviderPlugin" />
     </type>
     
 </config>

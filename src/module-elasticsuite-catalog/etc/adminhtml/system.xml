@@ -25,6 +25,29 @@
                     <comment><![CDATA[Maximum number of products to display in autocomplete results.]]></comment>
                 </field>
             </group>
+            <group id="category_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Category Autocomplete</label>
+                <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max size</label>
+                    <validate>integer</validate>
+                    <comment><![CDATA[Maximum number of categories to display in autocomplete results.]]></comment>
+                </field>
+            </group>
+        </section>
+
+        <section id="smile_elasticsuite_catalogsearch_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Catalog Search</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_autocomplete</resource>
+
+            <group id="catalogsearch" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Catalog Search Configuration</label>
+                <field id="redirect_if_one_result" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirect to product page if only one result</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If there is only one product matching a given search query, the user will be redirect to this product page.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

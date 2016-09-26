@@ -75,6 +75,10 @@ class SaveProductsPositions extends AbstractIndexerPlugin
         if ($category->getId() && $category->getSortedProducts()) {
             $this->unserializeProductPositions($category);
 
+            if ($category->getIsVirtualCategory()) {
+                $category->setPostedProducts([]);
+            }
+
             $categoryResource->addCommitCallback(
                 function () use ($category) {
                     $affectedProductIds = $this->getAffectedProductIds($category);

@@ -39,15 +39,22 @@ class QueryBuilder
     private $attributeList;
 
     /**
+     * @var NestedFilterInterface[]
+     */
+    private $nestedFilters;
+
+    /**
      * Constructor.
      *
-     * @param AttributeList $attributeList Search rule product attributes list
-     * @param QueryFactory  $queryFactory  Search query factory.
+     * @param AttributeList           $attributeList Search rule product attributes list
+     * @param QueryFactory            $queryFactory  Search query factory.
+     * @param NestedFilterInterface[] $nestedFilters Filters applied to nested fields during query building.
      */
-    public function __construct(AttributeList $attributeList, QueryFactory $queryFactory)
+    public function __construct(AttributeList $attributeList, QueryFactory $queryFactory, $nestedFilters = [])
     {
         $this->queryFactory  = $queryFactory;
         $this->attributeList = $attributeList;
+        $this->nestedFilters = $nestedFilters;
     }
 
     /**
@@ -59,7 +66,7 @@ class QueryBuilder
      */
     public function getSearchQuery(ProductCondition $productCondition)
     {
-        $query       = null;
+        $query = null;
 
         $this->prepareFieldValue($productCondition);
 
@@ -84,7 +91,19 @@ class QueryBuilder
             $field = $this->getSearchField($productCondition);
 
             if ($field->isNested()) {
-                $nestedQueryParams = ['query' => $query, 'path' => $field->getNestedPath()];
+                $nestedPath = $field->getNestedPath();
+                $nestedQueryParams = ['query' => $query, 'path' => $nestedPath];
+
+                if (isset($this->nestedFilters[$nestedPath])) {
+                    $nestedFilterClauses = [];
+                    $nestedFilterClauses['must'][] = $this->nestedFilters[$nestedPath]->getFilter();
+                    $nestedFilterClauses['must'][] = $nestedQueryParams['query'];
+
+                    $nestedFilter = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $nestedFilterClauses);
+
+                    $nestedQueryParams['query'] = $nestedFilter;
+                }
+
                 $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
             }
         }

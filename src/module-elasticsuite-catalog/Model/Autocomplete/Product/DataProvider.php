@@ -150,7 +150,7 @@ class DataProvider implements DataProviderInterface
             $terms = array_merge($terms, $suggestedTerms);
         }
 
-        $productCollection = $this->productCollectionFactory->create();
+        $productCollection = $this->productCollectionFactory->create(['searchRequestName' => 'quick_search_container']);
         $productCollection->addSearchFilter($terms);
         $productCollection->setPageSize($this->getResultsPageSize());
         $productCollection

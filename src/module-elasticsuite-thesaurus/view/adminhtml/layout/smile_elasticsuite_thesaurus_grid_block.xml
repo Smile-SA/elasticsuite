@@ -93,6 +93,23 @@
                             <argument name="sortable" xsi:type="string">0</argument>
                         </arguments>
                     </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="thesaurus_is_active">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Status</argument>
+                            <argument name="index" xsi:type="string">is_active</argument>
+                            <argument name="type" xsi:type="string">options</argument>
+                            <argument name="options" xsi:type="array">
+                                <item name="expansion" xsi:type="array">
+                                    <item name="value" xsi:type="string">0</item>
+                                    <item name="label" xsi:type="string" translate="true">Inactive</item>
+                                </item>
+                                <item name="synonym" xsi:type="array">
+                                    <item name="value" xsi:type="string">1</item>
+                                    <item name="label" xsi:type="string" translate="true">Active</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
                     <block class="Magento\Backend\Block\Widget\Grid\Column" as="action">
                         <arguments>
                             <argument name="type" xsi:type="string">action</argument>

@@ -63,6 +63,7 @@
         <arguments>
             <argument name="dataProviders" xsi:type="array">
                 <item name="20" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
+                <item name="30" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Category\DataProvider</item>
             </argument>
         </arguments>
     </type>
@@ -104,4 +105,19 @@
             <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
         </arguments>
     </type>
+
+    <!-- Handle compatibility with Staging for Layered Navigation -->
+    <virtualType name="Magento\LayeredNavigationStaging\Block\Navigation\Category" type="Smile\ElasticsuiteCatalog\Block\Navigation">
+        <arguments>
+            <argument name="filterList" xsi:type="object">categoryFilterList</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Magento\LayeredNavigationStaging\Block\Navigation\Search" type="Smile\ElasticsuiteCatalog\Block\Navigation">
+        <arguments>
+            <argument name="filterList" xsi:type="object">searchFilterList</argument>
+        </arguments>
+    </virtualType>
+    <!-- End of  compatibility with Staging for Layered Navigation -->
+
 </config>

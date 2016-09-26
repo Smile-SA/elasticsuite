@@ -13,6 +13,9 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource;
 
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 
@@ -36,6 +39,29 @@ class AbstractAttributeData extends Indexer
         'is_used_for_promo_rules'       => ['operator' => '=', 'value' => 1],
         'used_for_sort_by'              => ['operator' => '=', 'value' => 1],
     ];
+
+    /**
+     * @var null|string
+     */
+    private $entityTypeId = null;
+
+    /**
+     * AbstractAttributeData constructor.
+     *
+     * @param \Magento\Framework\App\ResourceConnection     $resource     Resource Connection
+     * @param \Magento\Store\Model\StoreManagerInterface    $storeManager Store Manager
+     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool Entity Metadata Pool
+     * @param string                                        $entityType   Entity Type
+     */
+    public function __construct(
+        ResourceConnection $resource,
+        StoreManagerInterface $storeManager,
+        MetadataPool $metadataPool,
+        $entityType = null
+    ) {
+        $this->entityTypeId = $entityType;
+        parent::__construct($resource, $storeManager, $metadataPool);
+    }
 
     /**
      * Allow to filter an attribute collection on attributes that are indexed into the search engine.
@@ -77,10 +103,16 @@ class AbstractAttributeData extends Indexer
      */
     public function getAttributesRawData($storeId, array $entityIds, $tableName, array $attributeIds)
     {
-        $select  = $this->connection->select();
+        $select = $this->connection->select();
+
+        // The field modelizing the link between entity table and attribute values table. Either row_id or entity_id.
+        $linkField = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
+
+        // The legacy entity_id field.
+        $entityIdField = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
 
         $joinStoreValuesConditionClauses = [
-            't_default.entity_id = t_store.entity_id',
+            "t_default.$linkField = t_store.$linkField",
             't_default.attribute_id = t_store.attribute_id',
             't_store.store_id= ?',
         ];
@@ -90,13 +122,28 @@ class AbstractAttributeData extends Indexer
             $storeId
         );
 
-        $select->from(['t_default' => $tableName], ['entity_id', 'attribute_id'])
+        $select->from(['entity' => $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable()], [$entityIdField])
+            ->joinInner(
+                ['t_default' => $tableName],
+                new \Zend_Db_Expr("entity.{$linkField} = t_default.{$linkField}"),
+                ['attribute_id']
+            )
             ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
             ->where('t_default.store_id=?', 0)
             ->where('t_default.attribute_id IN (?)', $attributeIds)
-            ->where('t_default.entity_id IN (?)', $entityIds)
+            ->where("entity.{$entityIdField} IN (?)", $entityIds)
             ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
 
         return $this->connection->fetchAll($select);
+    }
+
+    /**
+     * Get Entity Type Id.
+     *
+     * @return string
+     */
+    protected function getEntityTypeId()
+    {
+        return $this->entityTypeId;
     }
 }

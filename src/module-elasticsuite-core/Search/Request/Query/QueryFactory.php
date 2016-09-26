@@ -28,32 +28,16 @@ class QueryFactory
     /**
      * @var array
      */
-    private $factories = [
-        QueryInterface::TYPE_BOOL       => 'Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory',
-        QueryInterface::TYPE_FILTER     => 'Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory',
-        QueryInterface::TYPE_NESTED     => 'Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory',
-        QueryInterface::TYPE_NOT        => 'Smile\ElasticsuiteCore\Search\Request\Query\NotFactory',
-        QueryInterface::TYPE_TERM       => 'Smile\ElasticsuiteCore\Search\Request\Query\TermFactory',
-        QueryInterface::TYPE_TERMS      => 'Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory',
-        QueryInterface::TYPE_RANGE      => 'Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory',
-        QueryInterface::TYPE_MATCH      => 'Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory',
-        QueryInterface::TYPE_COMMON     => 'Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory',
-        QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory',
-    ];
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
+    private $factories;
 
     /**
      * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object manager.
+     * @param array $factories Query factories by type.
      */
-    public function __construct(ObjectManagerInterface $objectManager)
+    public function __construct($factories = [])
     {
-        $this->objectManager = $objectManager;
+        $this->factories = $factories;
     }
 
     /**
@@ -70,8 +54,6 @@ class QueryFactory
             throw new \LogicException("No factory found for query of type {$queryType}");
         }
 
-        $factory = $this->objectManager->get($this->factories[$queryType]);
-
-        return $factory->create($queryParams);
+        return $this->factories[$queryType]->create($queryParams);
     }
 }

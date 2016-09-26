@@ -13,7 +13,9 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\CatalogInventory\Api\StockRegistryInterface;
+use \Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
@@ -31,6 +33,12 @@ class InventoryData extends Indexer
      */
     private $stockRegistry;
 
+
+    /**
+     * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
+     */
+    private $stockConfiguration;
+
     /**
      * @var int[]
      */
@@ -39,17 +47,23 @@ class InventoryData extends Indexer
     /**
      * InventoryData constructor.
      *
-     * @param ResourceConnection     $resource      Database adapter.
-     * @param StoreManagerInterface  $storeManager  Store manager.
-     * @param StockRegistryInterface $stockRegistry Stock registry.
+     * @param ResourceConnection          $resource           Database adapter.
+     * @param StoreManagerInterface       $storeManager       Store manager.
+     * @param MetadataPool                $metadataPool       Metadata Pool
+     * @param StockRegistryInterface      $stockRegistry      Stock registry.
+     * @param StockConfigurationInterface $stockConfiguration Stock configuration.
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
-        StockRegistryInterface $stockRegistry
+        MetadataPool $metadataPool,
+        StockRegistryInterface $stockRegistry,
+        StockConfigurationInterface $stockConfiguration
     ) {
-        $this->stockRegistry = $stockRegistry;
-        parent::__construct($resource, $storeManager);
+        $this->stockRegistry      = $stockRegistry;
+        $this->stockConfiguration = $stockConfiguration;
+
+        parent::__construct($resource, $storeManager, $metadataPool);
     }
 
     /**
@@ -68,7 +82,7 @@ class InventoryData extends Indexer
         $select = $this->getConnection()->select()
             ->from(['ciss' => $this->getTable('cataloginventory_stock_status')], ['product_id', 'stock_status', 'qty'])
             ->where('ciss.stock_id = ?', $stockId)
-            ->where('ciss.website_id = ?', $websiteId)
+            ->where('ciss.website_id = ?', $this->stockConfiguration->getDefaultScopeId())
             ->where('ciss.product_id IN(?)', $productIds);
 
         return $this->getConnection()->fetchAll($select);

@@ -110,11 +110,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
         $queryParams = [];
 
         if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
-            $parentCategory = $this->getVirtualRootCategory($category);
             $excludedCategories[]  = $category->getId();
-
             $queryParams['must'][] = $this->getVirtualCategoryQuery($category, $excludedCategories);
 
+            $parentCategory = $this->getVirtualRootCategory($category);
             if ($parentCategory && $parentCategory->getId()) {
                 $queryParams['must'][] = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
             }
@@ -172,7 +171,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
         $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
 
         if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
-            $rootCategoryId = explode('/', $category->getVirtualCategoryRoot())[1];
+            $rootCategoryId = $category->getVirtualCategoryRoot();
             $rootCategory->load($rootCategoryId);
         }
 

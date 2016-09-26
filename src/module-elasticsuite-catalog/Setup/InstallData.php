@@ -13,9 +13,11 @@
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
+use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -23,6 +25,8 @@ use Magento\Eav\Setup\EavSetup;
 
 /**
  * Catalog installer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -44,12 +48,19 @@ class InstallData implements InstallDataInterface
     private $eavSetup;
 
     /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * Class Constructor
      *
      * @param EavSetupFactory $eavSetupFactory Eav setup factory.
+     * @param MetadataPool    $metadataPool    Metadata Pool.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory)
+    public function __construct(EavSetupFactory $eavSetupFactory, MetadataPool $metadataPool)
     {
+        $this->metadataPool    = $metadataPool;
         $this->eavSetupFactory = $eavSetupFactory;
     }
 
@@ -115,7 +126,7 @@ class InstallData implements InstallDataInterface
     {
         $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'frontend_input', 'hidden');
         $this->eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'source_model', null);
-        $this->updateAttributeDefaultValue(Category::ENTITY, 'is_anchor', 1);
+        $this->updateAttributeDefaultValue(Category::ENTITY, 'is_anchor', 1, [\Magento\Catalog\Model\Category::TREE_ROOT_ID]);
     }
 
     /**
@@ -125,28 +136,37 @@ class InstallData implements InstallDataInterface
      * @param integer|string $entityTypeId Target entity id.
      * @param integer|string $attributeId  Target attribute id.
      * @param mixed          $value        Value to be set.
+     * @param array          $excludedIds  List of categories that should not be updated during the process.
      *
      * @return void
      */
-    private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value)
+    private function updateAttributeDefaultValue($entityTypeId, $attributeId, $value, $excludedIds = [])
     {
-        $entityTable    = $this->eavSetup->getEntityType($entityTypeId, 'entity_table');
+        $setup          = $this->eavSetup->getSetup();
+        $entityTable    = $setup->getTable($this->eavSetup->getEntityType($entityTypeId, 'entity_table'));
         $attributeTable = $this->eavSetup->getAttributeTable($entityTypeId, $attributeId);
 
         if (!is_int($attributeId)) {
             $attributeId = $this->eavSetup->getAttributeId($entityTypeId, $attributeId);
         }
 
+        // Retrieve the primary key name. May differs if the staging module is activated or not.
+        $linkField = $this->metadataPool->getMetadata(CategoryInterface::class)->getLinkField();
+
         $entitySelect = $this->getConnection()->select();
         $entitySelect->from(
             $entityTable,
-            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), 'entity_id', new \Zend_Db_Expr("{$value} as value")]
+            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
         );
+
+        if (!empty($excludedIds)) {
+            $entitySelect->where("entity_id NOT IN(?)", $excludedIds);
+        }
 
         $insertQuery = $this->getConnection()->insertFromSelect(
             $entitySelect,
             $attributeTable,
-            ['attribute_id', 'entity_id', 'value'],
+            ['attribute_id', $linkField, 'value'],
             AdapterInterface::INSERT_ON_DUPLICATE
         );
 

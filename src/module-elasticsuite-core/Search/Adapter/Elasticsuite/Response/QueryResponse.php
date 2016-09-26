@@ -24,7 +24,7 @@ use Magento\Framework\Search\ResponseInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class QueryResponse implements ResponseInterface, \IteratorAggregate, \Countable
+class QueryResponse implements ResponseInterface
 {
     /**
      * Document Collection

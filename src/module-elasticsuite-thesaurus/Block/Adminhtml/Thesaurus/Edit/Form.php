@@ -22,6 +22,8 @@ use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 /**
  * Thesaurus Edit form
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -33,24 +35,32 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      */
     private $systemStore;
 
+    /**
+     * @var Yesno
+     */
+    private $booleanSource;
 
     /**
      * Constructor
      *
-     * @param Context                     $context     Application context
-     * @param \Magento\Framework\Registry $registry    The registry
-     * @param FormFactory                 $formFactory Form factory
-     * @param Store                       $systemStore Store Provider
-     * @param array                       $data        Object data
+     * @param Context                     $context       Application context
+     * @param \Magento\Framework\Registry $registry      The registry
+     * @param FormFactory                 $formFactory   Form factory
+     * @param Store                       $systemStore   Store Provider
+     * @param Yesno                       $booleanSource Boolean Input Source Model
+     * @param array                       $data          Object data
      */
     public function __construct(
         Context $context,
         Registry $registry,
         FormFactory $formFactory,
         Store $systemStore,
+        Yesno $booleanSource,
         array $data = []
     ) {
         $this->systemStore = $systemStore;
+        $this->booleanSource = $booleanSource;
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -128,6 +138,17 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label'    => __('Thesaurus Name'),
                 'title'    => __('Thesaurus Name'),
                 'required' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'is_active',
+            'select',
+            [
+                'name'     => 'is_active',
+                'label'    => __('Active'),
+                'title'    => __('Active'),
+                'values'   => $this->booleanSource->toOptionArray(),
             ]
         );
 

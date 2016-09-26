@@ -71,13 +71,14 @@
                     <label>Enable fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="value" translate="label, comment" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="value" translate="label, comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness value</label>
+                    <source_model>Smile\ElasticsuiteCore\Model\Config\Source\FuzzinessValue</source_model>
                     <depends>
                         <field id="enable_fuzziness">1</field>
                     </depends>
                     <!--<validate>validate-digits validate-digits-range validate-zero-or-greater</validate>-->
-                    <comment><![CDATA[Allowed values "0", "1" or "AUTO". See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information.]]></comment>
+                    <comment><![CDATA[Allowed values "1", "2" or "AUTO". See doc <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html#_parameters_7' target='_blank'>here</a> for more information.]]></comment>
                 </field>
                 <field id="prefix_length" translate="label, comment" type="text" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness Prefix Length</label>
