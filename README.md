@@ -2,15 +2,21 @@
 
 ## News
 
-### ⚠️ Magento 2.1 compatibility :
+### ⚠️ Magento versions compatibility :
 
-We are still working on Magento 2.1.x compatibility since there is a lot of compatibility breaking changes in this version.
+We had a lot of work on Magento 2.1.x compatibility since there was a lot of compatibility breaking changes in this version.
 
-The migration is now finished concerning the Community edition and people using the Communiity Edition can start working with ElasticSuite today using the **2.2.x branch instead of the master**.
+The migration is now finished concerning **both CE and EE versions**.
 
-Concerning Magento Enterprise 2.1.0, we are very excited by some of the new features provided such as the staging one. We are working hard to make ElasticSuite compatible with Magento 2.1.0 Enterprise Edition. At the same time we still consider ElasticSuite as a major improvement over Magento standard search (which is now also built on ElasticSearch) since it provides advanced features that are not available in this version (Virtual categories, fuzzy search, multiple selection faceting, ...). We also plan to release a specific guide for the Enterprise edition users and a feature comparison matrix.
+If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the **2.2.0 release**.
 
-The final 2.2.0 release will provide full compatibility with both Community and Enterprise Edition of Magento 2.1.0. So stay tuned.
+**Which version should I use ?**
+
+Magento Version         | ElasticSuite Latest Version
+------------------------|------------------------------------------------------------------------
+Magento 2.0.* CE / EE   |[ElasticSuite 2.1.1 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.1)
+Magento 2.1.* CE / EE   |[ElasticSuite 2.2.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.0)
+
 
 ## What is ElasticSuite for Magento 2 ?
 
@@ -38,9 +44,11 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version 2.1.0 has been focused on the Magento 2 migration of our existing 1.x features.
+The current version **2.2.0** has been focused on the Magento 2.1 compatibility.
 
-We are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
+This version features a full **Staging Compatibility** and can be used without issues on Magento Enterprise Edition 2.1.x.
+
+From now, we are working on the migration of all features available into the Magento 1.x .version of the module in this new version.
 
 Actually, there are the features actually included :
 
@@ -71,15 +79,15 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Product autocomplete  :**
+* **Product & Categories autocomplete  :**
 
-    ElasticSuite features **enhanced content in the autocomplete box** : popular search terms and products.
+    ElasticSuite features **enhanced content in the autocomplete box** : popular search terms, **products and categories**.
 
     The autocomplete is **fully extensible to add custom content**, such as shop pages (if your store uses a store locator), CMS pages, etc...
 
     You can see the [wiki page](https://github.com/Smile-SA/elasticsuite/wiki) about adding custom content into the autocomplete results.
 
-    ![Products Autocomplete](doc/static/autocomplete_products.gif)
+    ![Products Autocomplete](doc/static/enhanced_autocomplete.gif)
 
 <br/>
 
@@ -127,6 +135,14 @@ Actually, there are the features actually included :
 
 <br/>
 
+* **Redirect on one result :**
+
+    The module allow to redirect to the product page when a full text search matches only one product.
+
+    ![Redirect One Result](doc/static/redirect_one_result.png)
+
+<br/>
+
 * **Approaching search and spellchecking :**
 
     The module **automatically detects typing mistakes** and handles correct results for them. Don't worry about "fat-finger syndrome" anymore !
@@ -168,9 +184,7 @@ The next versions that will be coming all among this year will include the follo
 
 * **Even richer autocomplete  :**
 
-    We plan to add very soon into the autocomplete results : **Categories** and **Products attributes** (eg : product brand, authors for a book, actors for DVDs, etc...).
-
-<br/>
+    We plan to add very soon into the autocomplete results : **Products attributes** (eg : product brand, authors for a book, actors for DVDs, etc...).
 
 * **Search optimizations :**
 
@@ -180,8 +194,6 @@ The next versions that will be coming all among this year will include the follo
 
     Second part of the relevance optimization features will be the behavioral optimizers. This will allow you to build **rules matching your customer's behavior**.
     Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.
-
-<br/>
 
 * **Recommendations engine :**
 
@@ -194,6 +206,10 @@ The next versions that will be coming all among this year will include the follo
      + Per-user recommendations, based on current customer profile and its previous visits and orders.
      + Per-search recommendations, to push products that were bought by previous users that have searched for the same terms.
      + And more to come !
+
+* **And many of our users' RFCs !**
+
+    There are now many people using ElasticSuite and we are very happy to see this ! **Feel free to share you RFCs** with us by submitting issues !
 
 
 ## Documentation
