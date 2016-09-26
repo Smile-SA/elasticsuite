@@ -4,7 +4,7 @@
 
 ### ⚠️ Magento versions compatibility :
 
-We had a lot of work on Magento 2.1.x compatibility since there was a lot of compatibility breaking changes in this version.
+We had a lot of work on Magento 2.1.x compatibility since there was a lot of compatibility breaking changes in this version (introduction of the entity manager, new form based on UI components, staging for the EE edition, ...).
 
 The migration is now finished concerning **both CE and EE versions**.
 
