@@ -28,8 +28,7 @@ class Category extends \Magento\Catalog\Model\Layer\Filter\Item
     public function getUrl()
     {
         $query = [
-            $this->getFilter()->getRequestVar() => $this->getValue(),
-            // exclude current page from urls
+            $this->getFilter()->getRequestVar()      => $this->getValue(),
             $this->_htmlPagerBlock->getPageVarName() => null,
         ];
 
