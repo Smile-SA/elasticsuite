@@ -27,16 +27,25 @@ class Category extends \Magento\Catalog\Model\Layer\Filter\Item
      */
     public function getUrl()
     {
-        $query = [
-            $this->getFilter()->getRequestVar()      => $this->getValue(),
-            $this->_htmlPagerBlock->getPageVarName() => null,
+        $catRequestVar  = $this->getFilter()->getRequestVar();
+        $pageRequestVar = $this->_htmlPagerBlock->getPageVarName();
+
+        $queryParams = [
+            $catRequestVar  => $this->getValue(),
+            $pageRequestVar => null,
         ];
 
         foreach ($this->getFilter()->getLayer()->getState()->getFilters() as $currentFilterItem) {
-            $query[$currentFilterItem->getFilter()->getRequestVar()] = null;
+            $currentRequestVar = $currentFilterItem->getFilter()->getRequestVar();
+            if ($currentRequestVar != $catRequestVar) {
+                $queryParams[$currentRequestVar] = null;
+            }
         }
 
-        $url = $this->_url->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $query]);
+        $url = $this->_url->getUrl(
+            '*/*/*',
+            ['_current' => true, '_use_rewrite' => true, '_query' => $queryParams]
+        );
 
         if ($this->getUrlRewrite()) {
             $url = $this->getUrlRewrite();
