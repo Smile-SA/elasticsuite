@@ -321,15 +321,15 @@ class Field implements FieldInterface
      *
      * @return array
      */
-    private function getPropertyConfig($analyzer = null)
+    private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED)
     {
-        $fieldMapping = ['type' => $this->getType(), 'fielddata' => ['format' => 'doc_values']];
+        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true];
 
         if ($this->getType() == self::FIELD_TYPE_STRING && $analyzer == self::ANALYZER_UNTOUCHED) {
             $fieldMapping['index'] = 'not_analyzed';
         } elseif ($this->getType() == self::FIELD_TYPE_STRING) {
-            $fieldMapping['fielddata'] = ['format' => 'lazy'];
-            $fieldMapping['analyzer']  = $analyzer !== null ? $analyzer : self::ANALYZER_UNTOUCHED;
+            $fieldMapping['analyzer']   = $analyzer;
+            $fieldMapping['doc_values'] = false;
         } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
             $fieldMapping['format'] = implode('||', $this->dateFormats);
         }

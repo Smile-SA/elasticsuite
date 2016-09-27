@@ -111,6 +111,7 @@ class IndexSettings implements IndexSettingsInterface
     public function getCreateIndexSettings()
     {
         $settings = [
+            'requests.cache.enable'     => true,
             'number_of_replicas'        => 0,
             'number_of_shards'          => $this->helper->getNumberOfShards(),
             'refresh_interval'          => self::FULL_REINDEX_REFRESH_INTERVAL,
