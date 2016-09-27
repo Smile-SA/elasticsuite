@@ -91,8 +91,9 @@ class IndexHandler
     private function getIndexSettings($synonyms, $expansions)
     {
         $settings = [
-            'number_of_shards'   => $this->indexSettingsHelper->getNumberOfShards(),
-            'number_of_replicas' => $this->indexSettingsHelper->getNumberOfReplicas(),
+            'number_of_shards'      => $this->indexSettingsHelper->getNumberOfShards(),
+            'number_of_replicas'    => $this->indexSettingsHelper->getNumberOfReplicas(),
+            'requests.cache.enable' => true,
         ];
 
         $settings['analysis']['filter']['shingle'] = [
