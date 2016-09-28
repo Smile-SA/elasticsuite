@@ -103,6 +103,7 @@ class Item
         if (isset($document['stock']['is_in_stock'])) {
             $isInStock = (bool) $document['stock']['is_in_stock'];
         }
+        
         return $isInStock;
     }
 
