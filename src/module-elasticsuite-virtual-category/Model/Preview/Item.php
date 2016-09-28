@@ -100,11 +100,9 @@ class Item
     {
         $isInStock = false;
         $document = $this->getDocumentSource();
-        
         if (isset($document['stock']['is_in_stock'])) {
             $isInStock = (bool) $document['stock']['is_in_stock'];
         }
-        
         return $isInStock;
     }
 
