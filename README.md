@@ -8,14 +8,14 @@ We had a lot of work on Magento 2.1.x compatibility since there was a lot of com
 
 The migration is now finished concerning **both CE and EE versions**.
 
-If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the **2.2.0 release**.
+If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the latest **2.2.1 release**.
 
 **Which version should I use ?**
 
 Magento Version         | ElasticSuite Latest Version
 ------------------------|------------------------------------------------------------------------
 Magento 2.0.* CE / EE   |[ElasticSuite 2.1.1 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.1)
-Magento 2.1.* CE / EE   |[ElasticSuite 2.2.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.0)
+Magento 2.1.* CE / EE   |[ElasticSuite 2.2.1 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.1)
 
 
 ## What is ElasticSuite for Magento 2 ?
