@@ -22,6 +22,7 @@ use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Eav\Setup\EavSetup;
+use Magento\Framework\Indexer\IndexerInterfaceFactory;
 
 /**
  * Catalog installer
@@ -53,15 +54,22 @@ class InstallData implements InstallDataInterface
     private $metadataPool;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Setup\IndexerInterfaceFactory
+     */
+    private $indexerFactory;
+
+    /**
      * Class Constructor
      *
-     * @param EavSetupFactory $eavSetupFactory Eav setup factory.
-     * @param MetadataPool    $metadataPool    Metadata Pool.
+     * @param EavSetupFactory         $eavSetupFactory Eav setup factory.
+     * @param MetadataPool            $metadataPool    Metadata Pool.
+     * @param IndexerInterfaceFactory $indexerFactory  Indexer Factory.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory, MetadataPool $metadataPool)
+    public function __construct(EavSetupFactory $eavSetupFactory, MetadataPool $metadataPool, IndexerInterfaceFactory $indexerFactory)
     {
         $this->metadataPool    = $metadataPool;
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->indexerFactory  = $indexerFactory;
     }
 
     /**
@@ -83,6 +91,8 @@ class InstallData implements InstallDataInterface
         $this->addCategoryNameSearchAttribute();
         $this->updateCategoryIsAnchorAttribute();
         $this->updateDefaultValuesForNameAttributes();
+
+        $this->getIndexer('elasticsuite_categories_fulltext')->reindexAll();
 
         $setup->endSetup();
     }
@@ -208,5 +218,17 @@ class InstallData implements InstallDataInterface
                 );
             }
         }
+    }
+
+    /**
+     * Retrieve an indexer by its Id
+     *
+     * @param string $indexerId The indexer Id
+     *
+     * @return \Magento\Framework\Indexer\IndexerInterface
+     */
+    private function getIndexer($indexerId)
+    {
+        return $this->indexerFactory->create()->load($indexerId);
     }
 }
