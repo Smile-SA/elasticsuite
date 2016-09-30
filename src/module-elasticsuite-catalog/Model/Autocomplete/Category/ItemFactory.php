@@ -34,21 +34,6 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     const XML_PATH_CATEGORY_URL_SUFFIX = 'catalog/seo/category_url_suffix';
 
     /**
-     * The offset to display on the beginning of the Breadcrumb
-     */
-    const START_BREADCRUMB_OFFSET = 1;
-
-    /**
-     * The offset to display on the end of the Breadcrumb
-     */
-    const END_BREADCRUMB_OFFSET = 1;
-
-    /**
-     * The string used when chunking
-     */
-    const CHUNK_STRING = "...";
-
-    /**
      * @var array An array containing category names, to use as local cache
      */
     protected $categoryNames = [];
@@ -155,29 +140,6 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
      */
     private function getCategoryBreadcrumb(\Magento\Catalog\Model\Category $category)
     {
-        $chunkPath  = $this->getChunkedPath($category);
-        $breadcrumb = [];
-
-        foreach ($chunkPath as $categoryId) {
-            $breadcrumb[] = $this->getCategoryNameById($categoryId, $category->getStoreId());
-        }
-
-        return implode(' > ', $breadcrumb);
-    }
-
-    /**
-     * Return chunked (if needed) path for a category
-     *
-     * A chunked path is the first 2 highest ancestors and the 2 lowests levels of path
-     *
-     * If path is not longer than 4, complete path is used
-     *
-     * @param \Magento\Catalog\Model\Category $category The category
-     *
-     * @return array
-     */
-    private function getChunkedPath(\Magento\Catalog\Model\Category $category)
-    {
         $path    = $category->getPath();
         $rawPath = explode('/', $path);
 
@@ -187,17 +149,12 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         // Last occurence is the category displayed.
         array_pop($rawPath);
 
-        $chunkedPath = $rawPath;
-
-        if (count($rawPath) > (self::START_BREADCRUMB_OFFSET + self::END_BREADCRUMB_OFFSET)) {
-            $chunkedPath = array_merge(
-                array_slice($rawPath, 0, self::START_BREADCRUMB_OFFSET),
-                [self::CHUNK_STRING],
-                array_slice($rawPath, -self::END_BREADCRUMB_OFFSET)
-            );
+        $breadcrumb = [];
+        foreach ($rawPath as $categoryId) {
+            $breadcrumb[] = $this->getCategoryNameById($categoryId, $category->getStoreId());
         }
 
-        return $chunkedPath;
+        return $breadcrumb;
     }
 
     /**
@@ -210,10 +167,6 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
      */
     private function getCategoryNameById($categoryId, $storeId)
     {
-        if ($categoryId == self::CHUNK_STRING) {
-            return self::CHUNK_STRING;
-        }
-
         if (!isset($this->categoryNames[$categoryId])) {
             $categoryResource = $this->categoryResource;
             $this->categoryNames[$categoryId] = $categoryResource->getAttributeRawValue($categoryId, "name", $storeId);
