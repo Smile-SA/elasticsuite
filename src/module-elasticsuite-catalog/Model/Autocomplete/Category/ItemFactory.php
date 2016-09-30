@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Category;
 
-use Magento\Catalog\Model\CategoryFactory;
+use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\UrlInterface;
@@ -64,28 +64,28 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     private $categoryUrlSuffix = null;
 
     /**
-     * @var \Magento\Catalog\Model\CategoryFactory|null
+     * @var \Magento\Catalog\Model\ResourceModel\Category|null
      */
-    private $categoryFactory = null;
+    private $categoryResource = null;
 
     /**
      * ItemFactory constructor.
      *
-     * @param ObjectManagerInterface $objectManager   The Object Manager
-     * @param UrlInterface           $urlBuilder      The Url Builder
-     * @param ScopeConfigInterface   $scopeConfig     The Scope Config
-     * @param CategoryFactory        $categoryFactory Category Factory
+     * @param ObjectManagerInterface $objectManager    The Object Manager
+     * @param UrlInterface           $urlBuilder       The Url Builder
+     * @param ScopeConfigInterface   $scopeConfig      The Scope Config
+     * @param CategoryResource       $categoryResource Category Resource Model
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         UrlInterface $urlBuilder,
         ScopeConfigInterface $scopeConfig,
-        CategoryFactory $categoryFactory
+        CategoryResource $categoryResource
     ) {
         parent::__construct($objectManager);
         $this->urlBuilder = $urlBuilder;
         $this->categoryUrlSuffix = $scopeConfig->getValue(self::XML_PATH_CATEGORY_URL_SUFFIX);
-        $this->categoryFactory = $categoryFactory;
+        $this->categoryResource = $categoryResource;
     }
 
     /**
@@ -215,8 +215,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         }
 
         if (!isset($this->categoryNames[$categoryId])) {
-            $category = $this->categoryFactory->create();
-            $categoryResource = $category->getResource();
+            $categoryResource = $this->categoryResource;
             $this->categoryNames[$categoryId] = $categoryResource->getAttributeRawValue($categoryId, "name", $storeId);
         }
 
