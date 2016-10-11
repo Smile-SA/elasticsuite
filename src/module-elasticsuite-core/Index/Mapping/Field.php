@@ -291,11 +291,6 @@ class Field implements FieldInterface
             // Default search analyzer.
             $analyzers = [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE, self::ANALYZER_SHINGLE];
 
-            if ($this->isUsedInAutocomplete()) {
-                // Append edge_ngram analyzer when the field is used in autocomplete.
-                $analyzers[] = self::ANALYZER_EDGE_NGRAM;
-            }
-
             if ($this->isUsedInSpellcheck()) {
                 $analyzers[] = self::ANALYZER_PHONETIC;
             }

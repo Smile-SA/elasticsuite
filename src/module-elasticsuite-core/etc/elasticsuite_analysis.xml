@@ -40,11 +40,6 @@
             <max_shingle_size>2</max_shingle_size>
             <output_unigrams>0</output_unigrams>
         </filter>
-        <filter name="edge_ngram_front" type="edgeNGram" language="default">
-            <min_gram>1</min_gram>
-            <max_gram>32</max_gram>
-            <side>front</side>
-        </filter>
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>0</preserve_original>
         </filter>
@@ -98,18 +93,6 @@
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
                 <filter ref="shingle" />
-            </filters>
-            <char_filters>
-                <char_filter ref="html_strip" />
-            </char_filters>
-        </analyzer>
-        <analyzer name="edge_ngram_front" tokenizer="whitespace" language="default">
-            <filters>
-                <filter ref="word_delimiter" />
-                <filter ref="lowercase" />
-                <filter ref="ascii_folding" />
-                <filter ref="trim" />
-                <filter ref="edge_ngram_front" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
