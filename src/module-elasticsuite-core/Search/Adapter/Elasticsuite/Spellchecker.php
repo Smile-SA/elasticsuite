@@ -19,6 +19,7 @@ use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 
 /**
  * Spellchecker ElasticSearch implementation.
@@ -36,19 +37,47 @@ class Spellchecker implements SpellcheckerInterface
     private $client;
 
     /**
+     * @var CacheHelper
+     */
+    private $cacheHelper;
+
+    /**
      * Constructor.
      *
      * @param ClientFactoryInterface $clientFactory ES Client Factory.
+     * @param CacheHelper            $cacheHelper   ES cache helper.
      */
-    public function __construct(ClientFactoryInterface $clientFactory)
+    public function __construct(ClientFactoryInterface $clientFactory, CacheHelper $cacheHelper)
     {
-        $this->client       = $clientFactory->createClient();
+        $this->client      = $clientFactory->createClient();
+        $this->cacheHelper = $cacheHelper;
     }
 
     /**
      * {@inheritDoc}
      */
     public function getSpellingType(RequestInterface $request)
+    {
+        $cacheKey = $this->getCacheKey($request);
+
+        $spellingType = $this->cacheHelper->loadCache($cacheKey);
+
+        if ($spellingType === false) {
+            $spellingType = $this->loadSpellingType($request);
+            $this->cacheHelper->saveCache($cacheKey, $spellingType, [$request->getIndex()]);
+        }
+
+        return $spellingType;
+    }
+
+    /**
+     * Compute the spelling time using the engine.
+     *
+     * @param RequestInterface $request Spellchecking request.
+     *
+     * @return integer
+     */
+    private function loadSpellingType(RequestInterface $request)
     {
         $cutoffFrequencyLimit = $this->getCutoffrequencyLimit($request);
         $termVectors          = $this->getTermVectors($request);
@@ -67,6 +96,18 @@ class Spellchecker implements SpellcheckerInterface
         }
 
         return $spellingType;
+    }
+
+    /**
+     * Compute an unique caching key for the spellcheck request.
+     *
+     * @param RequestInterface $request Spellchecking request.
+     *
+     * @return string
+     */
+    private function getCacheKey(RequestInterface $request)
+    {
+        return implode('|', [$request->getIndex(), $request->getType(), $request->getQueryText()]);
     }
 
     /**
