@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 
 /**
  * Thesaurus index.
@@ -56,20 +57,28 @@ class Index
     private $thesaurusConfigFactory;
 
     /**
+     * @var CacheHelper
+     */
+    private $cacheHelper;
+
+    /**
      * Constructor.
      *
      * @param ClientFactoryInterface $clientFactory          ES Client Factory.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
+     * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      */
     public function __construct(
         ClientFactoryInterface $clientFactory,
         IndexSettingsHelper $indexSettingsHelper,
+        CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory
     ) {
         $this->client                 = $clientFactory->createClient();
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
+        $this->cacheHelper            = $cacheHelper;
     }
 
     /**
@@ -81,6 +90,29 @@ class Index
      * @return array
      */
     public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
+    {
+        $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
+        $cacheTags = $this->getCacheTags($containerConfig);
+
+        $queryRewrites = $this->cacheHelper->loadCache($cacheKey);
+
+        if ($queryRewrites === false) {
+            $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText);
+            $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
+        }
+
+        return $queryRewrites;
+    }
+
+    /**
+     * Compute weigthed rewrites for the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container config.
+     * @param string                          $queryText       Fulltext query.
+     *
+     * @return array
+     */
+    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
@@ -102,6 +134,47 @@ class Index
         }
 
         return $rewrites;
+    }
+
+    /**
+     * Returns the cache key of the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search container configuration.
+     * @param string                          $queryText       Fulltext query.
+     *
+     * @return string
+     */
+    private function getCacheKey(ContainerConfigurationInterface $containerConfig, $queryText)
+    {
+        $tags = $this->getCacheTags($containerConfig);
+
+        return implode('|', array_merge($tags, [$queryText]));
+    }
+
+    /**
+     * Returns cache tags associated to the request.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search container configuration.
+     *
+     * @return string[]
+     */
+    private function getCacheTags(ContainerConfigurationInterface $containerConfig)
+    {
+        $storeId = $containerConfig->getStoreId();
+
+        return [$this->getIndexAlias($storeId)];
+    }
+
+    /**
+     * Returns the index alias used by store id.
+     *
+     * @param integer $storeId Store id.
+     *
+     * @return string
+     */
+    private function getIndexAlias($storeId)
+    {
+        return $this->indexSettingsHelper->getIndexAliasFromIdentifier(self::INDEX_IDENTIER, $storeId);
     }
 
     /**
@@ -130,7 +203,7 @@ class Index
      */
     private function getSynonymRewrites($storeId, $queryText, $type)
     {
-        $indexName = $this->indexSettingsHelper->getIndexAliasFromIdentifier(self::INDEX_IDENTIER, $storeId);
+        $indexName = $this->getIndexAlias($storeId);
 
         $analysis = $this->client->indices()->analyze(
             ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
