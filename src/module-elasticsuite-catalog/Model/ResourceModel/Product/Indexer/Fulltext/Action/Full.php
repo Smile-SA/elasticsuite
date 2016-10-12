@@ -44,8 +44,6 @@ class Full extends Indexer
             $select->where('e.entity_id IN (?)', $productIds);
         }
 
-        $select->order('e.entity_id');
-
         return $this->connection->fetchAll($select);
     }
 
