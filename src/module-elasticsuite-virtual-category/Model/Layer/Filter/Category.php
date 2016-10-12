@@ -16,6 +16,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Magento\Catalog\Model\Category;
 
 /**
  * Product category filter implementation using virtual categories.
@@ -27,6 +28,12 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
 {
     /**
+     *
+     * @var \Magento\Framework\App\CacheInterface
+     */
+    private $cache;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -37,6 +44,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder     Item data builder.
      * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
+     * @param \Magento\Framework\App\CacheInterface                            $cache               Cache.
      * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                            $data                Custom data.
      */
@@ -47,6 +55,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
+        \Magento\Framework\App\CacheInterface $cache,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -60,6 +69,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $useUrlRewrites,
             $data
         );
+        $this->cache = $cache;
     }
 
     /**
@@ -67,8 +77,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      */
     public function addFacetToCollection()
     {
-        $currentCategory = $this->getDataProvider()->getCategory();
-        $facetQueries    = $currentCategory->getVirtualRule()->getSearchQueriesByChildren($currentCategory);
+        $facetQueries = $this->getFacetQueries();
 
         $facetType   = BucketInterface::TYPE_QUERY_GROUP;
         $facetField  = $this->getFilterField();
@@ -93,9 +102,57 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      */
     protected function applyCategoryFilterToCollection(\Magento\Catalog\Api\Data\CategoryInterface $category)
     {
-        $query = $category->getVirtualRule()->getCategorySearchQuery($category);
+        $query = $this->getFilterQuery();
         $this->getLayer()->getProductCollection()->addQueryFilter($query);
 
         return $this;
+    }
+
+    /**
+     * List of subcategories queries by category id.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
+     */
+    private function getFacetQueries()
+    {
+        return $this->loadUsingCache('getSearchQueriesByChildren');
+    }
+
+    /**
+     * Current category filter query.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getFilterQuery()
+    {
+        return $this->loadUsingCache('getCategorySearchQuery');
+    }
+
+    /**
+     * Load data from the cache if exits. Use a callback on the current category virtual root if not yet present into the cache.
+     *
+     * @param string $callback name of the virtual rule method to be used for actual loading.
+     *
+     * @return mixed
+     */
+    private function loadUsingCache($callback)
+    {
+        $category = $this->getDataProvider()->getCategory();
+        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
+
+        $data = $this->cache->load($cacheKey);
+
+        if ($data !== false) {
+            $data = unserialize($data);
+        }
+
+        if ($data === false) {
+            $virtualRule = $category->getVirtualRule();
+            $data = call_user_func_array([$virtualRule, $callback], [$category]);
+            $cacheData = serialize($data);
+            $this->cache->save($cacheData, $cacheKey, [Category::CACHE_TAG]);
+        }
+
+        return $data;
     }
 }
