@@ -16,6 +16,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category;
 
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
+use Magento\Store\Model\StoreManagerInterface;
 use \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position as ProductPositionResource;
 use Magento\Catalog\Model\Category;
 
@@ -45,20 +46,28 @@ class DataProviderPlugin
     private $localeFormat;
 
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * Constructor.
      *
      * @param ProductPositionResource                   $productPositionResource Product position resource model.
      * @param \Magento\Framework\Locale\FormatInterface $localeFormat            Locale formater.
      * @param \Magento\Backend\Model\UrlInterface       $urlBuilder              Admin URL Builder.
+     * @param StoreManagerInterface                     $storeManagerInterface   Store Manager.
      */
     public function __construct(
         ProductPositionResource $productPositionResource,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
-        \Magento\Backend\Model\UrlInterface $urlBuilder
+        \Magento\Backend\Model\UrlInterface $urlBuilder,
+        StoreManagerInterface $storeManagerInterface
     ) {
         $this->productPositionResource = $productPositionResource;
         $this->localeFormat            = $localeFormat;
         $this->urlBuilder              = $urlBuilder;
+        $this->storeManager            = $storeManagerInterface;
     }
 
     /**
@@ -98,7 +107,11 @@ class DataProviderPlugin
         $storeId = $category->getStoreId();
 
         if ($storeId === 0) {
-            $storeId = current(array_filter($category->getStoreIds()));
+            $defaultStoreId = $this->storeManager->getDefaultStoreView()->getId();
+            $storeId        = current(array_filter($category->getStoreIds()));
+            if (in_array($defaultStoreId, $category->getStoreIds())) {
+                $storeId = $defaultStoreId;
+            }
         }
 
         $urlParams = ['ajax' => true, 'store' => $storeId];
