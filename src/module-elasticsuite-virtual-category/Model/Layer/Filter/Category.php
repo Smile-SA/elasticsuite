@@ -16,7 +16,6 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Magento\Catalog\Model\Category;
 
 /**
  * Product category filter implementation using virtual categories.
@@ -150,7 +149,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $virtualRule = $category->getVirtualRule();
             $data = call_user_func_array([$virtualRule, $callback], [$category]);
             $cacheData = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [Category::CACHE_TAG]);
+            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
         }
 
         return $data;
