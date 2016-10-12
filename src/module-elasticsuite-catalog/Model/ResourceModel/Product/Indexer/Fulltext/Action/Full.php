@@ -98,7 +98,7 @@ class Full extends Indexer
 
         $select->useStraightJoin(true)
             ->join(['visibility' => $indexTable], $visibilityJoinCond, ['visibility'])
-            ->where('visibility.category_id = ?', $rootCategoryId);
+            ->where('visibility.category_id = ?', (int) $rootCategoryId);
 
         return $this;
     }
