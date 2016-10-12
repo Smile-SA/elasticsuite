@@ -63,8 +63,8 @@ class Full
     /**
      * Load a bulk of product data.
      *
-     * @param int     $storeId    Store id.
-     * @param string  $productIds Product ids filter.
+     * @param int    $storeId    Store id.
+     * @param string $productIds Product ids filter.
      *
      * @return array
      */
