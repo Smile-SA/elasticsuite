@@ -34,7 +34,7 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * @var string
      */
-    const FULL_REINDEX_REFRESH_INTERVAL = '10s';
+    const FULL_REINDEX_REFRESH_INTERVAL = '30s';
 
     /**
      * @var string
@@ -111,11 +111,12 @@ class IndexSettings implements IndexSettingsInterface
     public function getCreateIndexSettings()
     {
         $settings = [
-            'requests.cache.enable'     => true,
-            'number_of_replicas'        => 0,
-            'number_of_shards'          => $this->helper->getNumberOfShards(),
-            'refresh_interval'          => self::FULL_REINDEX_REFRESH_INTERVAL,
-            'merge.policy.merge_factor' => self::MERGE_FACTOR,
+            'requests.cache.enable'            => true,
+            'number_of_replicas'               => 0,
+            'number_of_shards'                 => $this->helper->getNumberOfShards(),
+            'refresh_interval'                 => self::FULL_REINDEX_REFRESH_INTERVAL,
+            'merge.scheduler.max_thread_count' => 1,
+            'translog.disable_flush'           => true,
         ];
 
         return $settings;
@@ -127,8 +128,9 @@ class IndexSettings implements IndexSettingsInterface
     public function getInstallIndexSettings()
     {
         $settings = [
-            'number_of_replicas' => $this->helper->getNumberOfReplicas(),
-            'refresh_interval'   => self::DIFF_REINDEX_REFRESH_INTERVAL,
+            'number_of_replicas'     => $this->helper->getNumberOfReplicas(),
+            'refresh_interval'       => self::DIFF_REINDEX_REFRESH_INTERVAL,
+            'translog.disable_flush' => false,
         ];
 
         return $settings;
