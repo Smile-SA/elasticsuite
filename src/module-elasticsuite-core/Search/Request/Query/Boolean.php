@@ -63,6 +63,8 @@ class Boolean implements QueryInterface
     /**
      * Constructor.
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @param QueryInterface[] $must               Must clause queries.
      * @param QueryInterface[] $should             Should clause queries.
      * @param QueryInterface[] $mustNot            Must not clause queries.

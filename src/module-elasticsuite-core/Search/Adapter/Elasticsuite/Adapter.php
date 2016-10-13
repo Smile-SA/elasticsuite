@@ -70,6 +70,8 @@ class Adapter implements AdapterInterface
     }
 
     /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
      * {@inheritdoc}
      */
     public function query(RequestInterface $request)

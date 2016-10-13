@@ -263,7 +263,6 @@ class QueryBuilder
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
-
         $analyzer           = FieldInterface::ANALYZER_PHONETIC;
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
         $fuzzyFieldCallback = [$this, 'isFuzzyFieldCallback'];
