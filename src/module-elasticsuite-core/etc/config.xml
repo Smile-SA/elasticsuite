@@ -30,7 +30,7 @@
                 <indices_pattern>{{YYYYMMdd}}_{{HHmmss}}</indices_pattern>
                 <number_of_shards>1</number_of_shards>
                 <number_of_replicas>0</number_of_replicas>
-                <batch_indexing_size>100</batch_indexing_size>
+                <batch_indexing_size>1000</batch_indexing_size>
             </indices_settings>
         </smile_elasticsuite_core_base_settings>
 
