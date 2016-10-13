@@ -132,6 +132,7 @@ class QueryBuilder
             'fields'             => $searchFields,
             'queryText'          => $queryText,
             'minimumShouldMatch' => 1,
+            'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
         ];
 
