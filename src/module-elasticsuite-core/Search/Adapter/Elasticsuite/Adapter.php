@@ -74,12 +74,16 @@ class Adapter implements AdapterInterface
      */
     public function query(RequestInterface $request)
     {
+        \Magento\Framework\Profiler::start('ES:Execute Search Query');
+
         try {
             $searchResponse = $this->doSearch($request);
         } catch (\Exception $e) {
             $searchResponse = [];
             $this->logger->error($e->getMessage());
         }
+
+        \Magento\Framework\Profiler::stop('ES:Execute Search Query');
 
         return $this->responseFactory->create(['searchResponse' => $searchResponse]);
     }
