@@ -288,17 +288,12 @@ class Field implements FieldInterface
         $analyzers = [];
 
         if ($this->isSearchable()) {
-
             // Default search analyzer.
             $analyzers = [self::ANALYZER_STANDARD];
 
             if ($this->getSearchWeight() > 1) {
                 $analyzers[] = self::ANALYZER_WHITESPACE;
                 $analyzers[] = self::ANALYZER_SHINGLE;
-
-                if ($this->isUsedInSpellcheck()) {
-                    $analyzers[] = self::ANALYZER_PHONETIC;
-                }
             }
         }
 
