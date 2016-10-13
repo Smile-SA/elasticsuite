@@ -103,10 +103,6 @@ class Attribute extends Mapping
             'is_used_for_sort_by' => $attribute->getUsedForSortBy(),
         ];
 
-        if (!$options['is_filterable'] && $attribute->getBackendType() != 'string') {
-            $options['is_filterable'] = true;
-        }
-
         if ($attribute->getIsUsedInSpellcheck()) {
             $options['is_used_in_spellcheck'] = true;
         }
