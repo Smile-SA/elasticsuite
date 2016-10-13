@@ -116,6 +116,7 @@ class IndexSettings implements IndexSettingsInterface
             'number_of_shards'                 => $this->helper->getNumberOfShards(),
             'refresh_interval'                 => self::FULL_REINDEX_REFRESH_INTERVAL,
             'merge.scheduler.max_thread_count' => 1,
+            'translog.durability'              => 'async',
             'translog.disable_flush'           => true,
         ];
 
@@ -130,6 +131,7 @@ class IndexSettings implements IndexSettingsInterface
         $settings = [
             'number_of_replicas'     => $this->helper->getNumberOfReplicas(),
             'refresh_interval'       => self::DIFF_REINDEX_REFRESH_INTERVAL,
+            'translog.durability'    => 'fsync',
             'translog.disable_flush' => false,
         ];
 
