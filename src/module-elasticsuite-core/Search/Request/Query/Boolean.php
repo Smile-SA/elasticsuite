@@ -56,7 +56,7 @@ class Boolean implements QueryInterface
     private $minimumShouldMatch;
 
     /**
-     * @var bool
+     * @var boolean
      */
     private $cached;
 
@@ -69,7 +69,7 @@ class Boolean implements QueryInterface
      * @param integer          $minimumShouldMatch Minimum should match query clause.
      * @param string           $name               Query name.
      * @param integer          $boost              Query boost.
-     * @param bool             $cached             Should the query be cached or not.
+     * @param boolean          $cached             Should the query be cached or not.
      */
     public function __construct(
         array $must = [],
@@ -156,7 +156,7 @@ class Boolean implements QueryInterface
     /**
      * Indicates if the bool query needs to be cached or not.
      *
-     * @return bool
+     * @return boolean
      */
     public function isCached()
     {
