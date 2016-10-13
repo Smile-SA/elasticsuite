@@ -54,6 +54,10 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
         $searchQuery['minimum_should_match'] = $query->getMinimumShouldMatch();
         $searchQuery['boost'] = $query->getBoost();
 
+        if ($query->isCached()) {
+            $searchQuery['_cache'] = true;
+        }
+
         return ['bool' => $searchQuery];
     }
 
