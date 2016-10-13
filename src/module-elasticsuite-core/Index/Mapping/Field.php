@@ -329,6 +329,9 @@ class Field implements FieldInterface
             if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
                 $fieldMapping['index_options'] = 'positions';
             }
+            if ($analyzer !== self::ANALYZER_SORTABLE) {
+                $fieldMapping['fielddata'] = ['format' => 'disabled'];
+            }
         } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
             $fieldMapping['format'] = implode('||', $this->dateFormats);
         }
