@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Indexer;
 
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
 /**
@@ -54,20 +55,27 @@ class GenericIndexerHandler implements IndexerInterface
     private $typeName;
 
     /**
+     * @var CacheHelper
+     */
+    private $cacheHelper;
+
+    /**
      * Cosntructor
      *
      * @param IndexOperationInterface $indexOperation Index operation service.
+     * @param CacheHelper             $cacheHelper    Index caching helper.
      * @param Batch                   $batch          Batch handler.
      * @param string                  $indexName      The index name.
      * @param string                  $typeName       The type name.
      */
-    public function __construct(IndexOperationInterface $indexOperation, Batch $batch, $indexName, $typeName)
+    public function __construct(IndexOperationInterface $indexOperation, CacheHelper $cacheHelper, Batch $batch, $indexName, $typeName)
     {
         $this->indexOperation = $indexOperation;
         $this->batchSize      = $indexOperation->getBatchIndexingSize();
         $this->batch          = $batch;
         $this->indexName      = $indexName;
         $this->typeName       = $typeName;
+        $this->cacheHelper    = $cacheHelper;
     }
 
     /**
@@ -91,6 +99,7 @@ class GenericIndexerHandler implements IndexerInterface
 
             $this->indexOperation->refreshIndex($index);
             $this->indexOperation->installIndex($index, $storeId);
+            $this->cacheHelper->cleanIndexCache($this->indexName, $storeId);
         }
 
         return $this;

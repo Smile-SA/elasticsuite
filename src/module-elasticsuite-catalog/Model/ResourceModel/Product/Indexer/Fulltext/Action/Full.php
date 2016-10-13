@@ -28,14 +28,12 @@ class Full extends Indexer
     /**
      * Load a bulk of product data.
      *
-     * @param int     $storeId    Store id.
-     * @param string  $productIds Product ids filter.
-     * @param integer $fromId     Load product with id greater than.
-     * @param integer $limit      Number of product to get loaded.
+     * @param int    $storeId    Store id.
+     * @param string $productIds Product ids filter.
      *
      * @return array
      */
-    public function getSearchableProducts($storeId, $productIds = null, $fromId = 0, $limit = 100)
+    public function getSearchableProducts($storeId, $productIds = null)
     {
         $select = $this->getConnection()->select()
             ->from(['e' => $this->getTable('catalog_product_entity')]);
@@ -45,10 +43,6 @@ class Full extends Indexer
         if ($productIds !== null) {
             $select->where('e.entity_id IN (?)', $productIds);
         }
-
-        $select->where('e.entity_id > ?', $fromId)
-            ->limit($limit)
-            ->order('e.entity_id');
 
         return $this->connection->fetchAll($select);
     }

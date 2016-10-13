@@ -132,6 +132,7 @@ class QueryBuilder
             'fields'             => $searchFields,
             'queryText'          => $queryText,
             'minimumShouldMatch' => 1,
+            'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
         ];
 
@@ -261,7 +262,6 @@ class QueryBuilder
     private function getPhoneticQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
-
 
         $analyzer           = FieldInterface::ANALYZER_PHONETIC;
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;

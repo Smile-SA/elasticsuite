@@ -58,6 +58,7 @@
                 <field name="category.name" type="string" nestedPath="category">
                     <isSearchable>1</isSearchable>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
+                    <isFilterable>0</isFilterable>
                 </field>
 
             </mapping>

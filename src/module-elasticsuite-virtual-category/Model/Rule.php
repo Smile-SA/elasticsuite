@@ -107,7 +107,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
             $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
         }
 
-        $queryParams = [];
+        $queryParams = ['cached' => true];
 
         if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
             $excludedCategories[]  = $category->getId();

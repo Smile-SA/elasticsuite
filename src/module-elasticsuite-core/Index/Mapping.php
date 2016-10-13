@@ -59,7 +59,6 @@ class Mapping implements MappingInterface
             FieldInterface::ANALYZER_STANDARD,
             FieldInterface::ANALYZER_WHITESPACE,
             FieldInterface::ANALYZER_SHINGLE,
-            FieldInterface::ANALYZER_EDGE_NGRAM,
         ],
     ];
 

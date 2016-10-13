@@ -48,6 +48,11 @@ class Attribute extends Mapping
     private $attributeOptionTextCache = [];
 
     /**
+     * @var array
+     */
+    private $attributeMappers = [];
+
+    /**
      * Object manager
      *
      * @var ObjectManagerInterface
@@ -97,10 +102,6 @@ class Attribute extends Mapping
             'search_weight'       => $attribute->getSearchWeight(),
             'is_used_for_sort_by' => $attribute->getUsedForSortBy(),
         ];
-
-        if (!$options['is_filterable'] && $attribute->getBackendType() != 'string') {
-            $options['is_filterable'] = true;
-        }
 
         if ($attribute->getIsUsedInSpellcheck()) {
             $options['is_used_in_spellcheck'] = true;
@@ -159,9 +160,13 @@ class Attribute extends Mapping
         $attributeCode = $attribute->getAttributeCode();
         $values = [];
 
-        $simpleValueMapper = function ($value) use ($attribute) {
-            return $this->prepareSimpleIndexAttributeValue($attribute, $value);
-        };
+        $mapperKey = 'simple_' . $attribute->getId();
+
+        if (!isset($this->attributeMappers[$mapperKey])) {
+            $this->attributeMappers[$mapperKey] = function ($value) use ($attribute) {
+                return $this->prepareSimpleIndexAttributeValue($attribute, $value);
+            };
+        }
 
         if ($attribute->usesSource() && !is_array($value)) {
             $value = explode(',', $value);
@@ -171,7 +176,7 @@ class Attribute extends Mapping
             $value = [$value];
         }
 
-        $value = array_map($simpleValueMapper, $value);
+        $value = array_map($this->attributeMappers[$mapperKey], $value);
         $value = array_filter($value);
         $value = array_values($value);
         $values[$attributeCode] = $value;
@@ -199,10 +204,15 @@ class Attribute extends Mapping
      */
     public function getIndexOptionsText(AttributeInterface $attribute, $storeId, array $optionIds)
     {
-        $mapper = function ($optionId) use ($attribute, $storeId) {
-            return $this->getIndexOptionText($attribute, $storeId, $optionId);
-        };
-        $optionValues = array_map($mapper, $optionIds);
+        $mapperKey = sprintf("options_%s_%s", $attribute->getId(), $storeId);
+
+        if (!isset($this->attributeMappers[$mapperKey])) {
+            $this->attributeMappers[$mapperKey] = function ($optionId) use ($attribute, $storeId) {
+                return $this->getIndexOptionText($attribute, $storeId, $optionId);
+            };
+        }
+
+        $optionValues = array_map($this->attributeMappers[$mapperKey], $optionIds);
 
         return $optionValues;
     }
@@ -222,11 +232,7 @@ class Attribute extends Mapping
         $attribute = $this->getAttributeByStore($attribute, $storeId);
         $attributeId = $attribute->getAttributeId();
 
-        if (!isset($this->attributeOptionTextCache[$storeId])) {
-            $this->attributeOptionTextCache[$storeId] = [];
-        }
-
-        if (!isset($this->attributeOptionTextCache[$storeId])) {
+        if (!isset($this->attributeOptionTextCache[$storeId]) || !isset($this->attributeOptionTextCache[$storeId][$attributeId])) {
             $this->attributeOptionTextCache[$storeId][$attributeId] = [];
         }
 

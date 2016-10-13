@@ -56,7 +56,14 @@ class Boolean implements QueryInterface
     private $minimumShouldMatch;
 
     /**
+     * @var boolean
+     */
+    private $cached;
+
+    /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @param QueryInterface[] $must               Must clause queries.
      * @param QueryInterface[] $should             Should clause queries.
@@ -64,6 +71,7 @@ class Boolean implements QueryInterface
      * @param integer          $minimumShouldMatch Minimum should match query clause.
      * @param string           $name               Query name.
      * @param integer          $boost              Query boost.
+     * @param boolean          $cached             Should the query be cached or not.
      */
     public function __construct(
         array $must = [],
@@ -71,7 +79,8 @@ class Boolean implements QueryInterface
         array $mustNot = [],
         $minimumShouldMatch = 1,
         $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        $boost = QueryInterface::DEFAULT_BOOST_VALUE,
+        $cached = false
     ) {
         $this->must    = $must;
         $this->should  = $should;
@@ -79,6 +88,7 @@ class Boolean implements QueryInterface
         $this->boost   = $boost;
         $this->name    = $name;
         $this->minimumShouldMatch = $minimumShouldMatch;
+        $this->cached  = $cached;
     }
 
     /**
@@ -143,5 +153,15 @@ class Boolean implements QueryInterface
     public function getMinimumShouldMatch()
     {
         return $this->minimumShouldMatch;
+    }
+
+    /**
+     * Indicates if the bool query needs to be cached or not.
+     *
+     * @return boolean
+     */
+    public function isCached()
+    {
+        return $this->cached;
     }
 }
