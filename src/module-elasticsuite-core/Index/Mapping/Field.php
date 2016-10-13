@@ -318,13 +318,17 @@ class Field implements FieldInterface
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED)
     {
-        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true];
+        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true, 'norms' => ['enabled' => false]];
 
         if ($this->getType() == self::FIELD_TYPE_STRING && $analyzer == self::ANALYZER_UNTOUCHED) {
             $fieldMapping['index'] = 'not_analyzed';
         } elseif ($this->getType() == self::FIELD_TYPE_STRING) {
             $fieldMapping['analyzer']   = $analyzer;
             $fieldMapping['doc_values'] = false;
+            $fieldMapping['index_options'] = 'docs';
+            if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
+                $fieldMapping['index_options'] = 'positions';
+            }
         } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
             $fieldMapping['format'] = implode('||', $this->dateFormats);
         }
