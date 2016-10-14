@@ -21,7 +21,7 @@ namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
  */
 class Attribute extends AbstractRenderer
 {
-    const JS_COMPONENT = 'Smile_ElasticSuiteCatalog/js/attribute-filter';
+    const JS_COMPONENT = 'Smile_ElasticsuiteCatalog/js/attribute-filter';
 
     /**
      * Returns true if checkox have to be enabled.
@@ -33,21 +33,24 @@ class Attribute extends AbstractRenderer
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getJsLayout()
     {
         $filterItems    = $this->getFilter()->getItems();
 
         $jsLayoutConfig = [
-            'component'     => self::JS_COMPONENT,
-            'has_more_item' => $this->getFilter()->hasMoreItems()
+            'component'    => self::JS_COMPONENT,
+            'hasMoreItems' => (bool) $this->getFilter()->hasMoreItems(),
         ];
 
         foreach ($filterItems as $item) {
             $jsLayoutConfig['items'][] = [
-                'url'         => $item->getUrl(),
-                'label'       => $item->getLabel(),
-                'count'       => $item->getCount(),
-                'is_selected' => (bool) $item->getIsSelected(),
+                'url'        => $item->getUrl(),
+                'label'      => $item->getLabel(),
+                'count'      => $item->getCount(),
+                'isSelected' => (bool) $item->getIsSelected(),
             ];
         }
 

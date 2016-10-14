@@ -15,12 +15,17 @@
 define([
     'jquery',
     'uiComponent',
-], function ($, L) {
+], function ($, Component) {
     "use strict";
 
     return Component.extend({
         defaults: {
             template: "Smile_ElasticsuiteCatalog/attribute-filter"
+        },
+        
+        initialize: function () {
+            this._super();
+            this.observe(['items']);
         }
     });
 });

@@ -56,6 +56,14 @@ class Boolean extends Attribute
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function hasMoreItems()
+    {
+        return false;
+    }
+
+    /**
      * Retrieve ES filter field.
      *
      * @return string

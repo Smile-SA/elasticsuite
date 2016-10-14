@@ -142,7 +142,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         $items     = [];
 
         if (isset($optionsFacetedData['__other_docs'])) {
-            $this->hasMoreItems = $optionsFacetedData['__other_docs'] > 0;
+            $this->hasMoreItems = $optionsFacetedData['__other_docs']['count'] > 0;
             unset($optionsFacetedData['__other_docs']);
         }
 

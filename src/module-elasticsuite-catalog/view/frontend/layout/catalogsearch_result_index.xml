@@ -25,7 +25,7 @@
                    
                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Attribute"
                            name="catalogsearch.navigation.renderer.attribute"
-                           template="Smile_ElasticsuiteCatalog::layer/filter/default.phtml"
+                           template="Smile_ElasticsuiteCatalog::layer/filter/attribute.phtml"
                            after="-" />
                            
                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Category"
