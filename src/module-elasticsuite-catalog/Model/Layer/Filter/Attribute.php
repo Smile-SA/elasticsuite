@@ -36,6 +36,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     private $tagFilter;
 
     /**
+     * @var boolean
+     */
+    private $hasMoreItems = false;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory Factory for item of the facets.
@@ -112,7 +117,18 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
+     * Indicates if the facets has more documents to be displayed.
+     *
+     * @return boolean
+     */
+    public function hasMoreItems()
+    {
+        return $this->hasMoreItems;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * {@inheritDoc}
      */
@@ -124,6 +140,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         $optionsFacetedData = $productCollection->getFacetedData($this->getFilterField());
 
         $items     = [];
+
+        if (isset($optionsFacetedData['__other_docs'])) {
+            $this->hasMoreItems = $optionsFacetedData['__other_docs'] > 0;
+            unset($optionsFacetedData['__other_docs']);
+        }
 
         foreach ($optionsFacetedData as $value => $data) {
             $items[$value] = [

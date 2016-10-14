@@ -48,7 +48,6 @@ class AggregationFactory extends \Magento\Framework\Search\Adapter\Mysql\Aggrega
             while (isset($aggregation[$bucketName])) {
                 $aggregation = $aggregation[$bucketName];
             }
-
             if (isset($aggregation['buckets'])) {
                 foreach ($aggregation['buckets'] as $key => $currentBuket) {
                     if (isset($currentBuket['key'])) {
@@ -60,6 +59,12 @@ class AggregationFactory extends \Magento\Framework\Search\Adapter\Mysql\Aggrega
                         'count' => $currentBuket['doc_count'],
                     ];
                 }
+            }
+            if (isset($aggregation['sum_other_doc_count'])) {
+                $processedAggregations[$bucketName]['__other_docs'] = [
+                    'value' => '__other_docs',
+                    'count' => $aggregation['sum_other_doc_count'],
+                ];
             }
         }
 

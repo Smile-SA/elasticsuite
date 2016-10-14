@@ -21,6 +21,8 @@ namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
  */
 class Attribute extends AbstractRenderer
 {
+    const JS_COMPONENT = 'Smile_ElasticSuiteCatalog/js/attribute-filter';
+
     /**
      * Returns true if checkox have to be enabled.
      *
@@ -29,6 +31,27 @@ class Attribute extends AbstractRenderer
     public function isMultipleSelectEnabled()
     {
         return true;
+    }
+
+    public function getJsLayout()
+    {
+        $filterItems    = $this->getFilter()->getItems();
+
+        $jsLayoutConfig = [
+            'component'     => self::JS_COMPONENT,
+            'has_more_item' => $this->getFilter()->hasMoreItems()
+        ];
+
+        foreach ($filterItems as $item) {
+            $jsLayoutConfig['items'][] = [
+                'url'         => $item->getUrl(),
+                'label'       => $item->getLabel(),
+                'count'       => $item->getCount(),
+                'is_selected' => (bool) $item->getIsSelected(),
+            ];
+        }
+
+        return json_encode($jsLayoutConfig);
     }
 
     /**
