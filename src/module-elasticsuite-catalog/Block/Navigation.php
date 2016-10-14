@@ -108,12 +108,6 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         foreach ($displayedFilters as $index => $filter) {
             if (in_array($filter->getRequestVar(), $requestParams)) {
                 $activeFilters[] = $index;
-            } else {
-                try {
-                    $attributeModel = $filter->getAttributeModel();
-                } catch (\Exception $e) {
-                    ;
-                }
             }
         }
 
