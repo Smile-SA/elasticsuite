@@ -22,14 +22,6 @@ namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 class Category extends AbstractRenderer
 {
     /**
-     * {@inheritDoc}
-     */
-    protected function canRenderFilter()
-    {
-        return $this->getFilter() instanceof \Magento\CatalogSearch\Model\Layer\Filter\Category;
-    }
-
-    /**
      * Returns true if checkox have to be enabled.
      *
      * @return boolean
@@ -37,5 +29,13 @@ class Category extends AbstractRenderer
     public function isMultipleSelectEnabled()
     {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function canRenderFilter()
+    {
+        return $this->getFilter() instanceof \Magento\CatalogSearch\Model\Layer\Filter\Category;
     }
 }

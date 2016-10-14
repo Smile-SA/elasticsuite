@@ -18,7 +18,6 @@ use Magento\Framework\View\Element\AbstractBlock;
 use Magento\LayeredNavigation\Block\Navigation\FilterRendererInterface;
 use Magento\Catalog\Model\Layer\Filter\FilterInterface;
 
-
 /**
  * This block handle the facet rendering by choosing one or this child block or fallback to the default templates.
  *
