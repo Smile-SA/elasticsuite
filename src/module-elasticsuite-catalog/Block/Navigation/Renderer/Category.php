@@ -13,20 +13,20 @@
 namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 
 /**
- * Default renderer that can render all attributes.
+ * Category filter renderer.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Attribute extends AbstractRenderer
+class Category extends AbstractRenderer
 {
     /**
      * {@inheritDoc}
      */
     protected function canRenderFilter()
     {
-        return true;
+        return $this->getFilter() instanceof \Magento\CatalogSearch\Model\Layer\Filter\Category;
     }
 
     /**
@@ -36,6 +36,6 @@ class Attribute extends AbstractRenderer
      */
     public function isMultipleSelectEnabled()
     {
-        return true;
+        return false;
     }
 }
