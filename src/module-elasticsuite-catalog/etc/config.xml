@@ -32,6 +32,7 @@
         <smile_elasticsuite_catalogsearch_settings>
             <catalogsearch>
                 <redirect_if_one_result>1</redirect_if_one_result>
+                <expanded_facets>3</expanded_facets>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
     </default>

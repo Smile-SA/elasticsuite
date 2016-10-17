@@ -29,6 +29,20 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
     /**
      * {@inheritDoc}
      */
+    protected function getFilterOption(array $filterItems, Option $swatchOption)
+    {
+        $resultOption = false;
+        $filterItem = $this->getFilterItemById($filterItems, $swatchOption->getLabel());
+        if ($filterItem && $this->isOptionVisible($filterItem)) {
+            $resultOption = $this->getOptionViewData($filterItem, $swatchOption);
+        }
+
+        return $resultOption;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function getOptionViewData(FilterItem $filterItem, Option $swatchOption)
     {
         $customStyle = '';

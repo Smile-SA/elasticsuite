@@ -14,8 +14,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Block\Navigation;
 
+use Magento\Framework\View\Element\AbstractBlock;
 use Magento\LayeredNavigation\Block\Navigation\FilterRendererInterface;
-use Magento\Framework\View\Element\Template;
 use Magento\Catalog\Model\Layer\Filter\FilterInterface;
 
 /**
@@ -25,7 +25,7 @@ use Magento\Catalog\Model\Layer\Filter\FilterInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class FilterRenderer extends Template implements FilterRendererInterface
+class FilterRenderer extends AbstractBlock implements FilterRendererInterface
 {
     /**
      * {@inheritDoc}
@@ -33,11 +33,8 @@ class FilterRenderer extends Template implements FilterRendererInterface
     public function render(FilterInterface $filter)
     {
         $this->setFilter($filter);
-        $this->assign('filterItems', $filter->getItems());
-        $html = $this->_toHtml();
-        $this->assign('filterItems', []);
 
-        return $html;
+        return $this->_toHtml();
     }
 
     /**
@@ -47,17 +44,13 @@ class FilterRenderer extends Template implements FilterRendererInterface
      */
     public function _toHtml()
     {
-        $html = false;
+        $html = '';
 
         foreach ($this->getChildNames() as $childName) {
-            if ($html === false) {
+            if ($html === '') {
                 $renderer = $this->getChildBlock($childName);
                 $html = $renderer->render($this->getFilter());
             }
-        }
-
-        if ($html === false) {
-            $html = parent::_toHtml();
         }
 
         return $html;

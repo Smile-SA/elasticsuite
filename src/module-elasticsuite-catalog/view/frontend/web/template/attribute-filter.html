@@ -1,0 +1,16 @@
+<ol class="items" data-bind="foreach: items">
+    <li class="item">
+        <a data-bind="attr: {href:url}, visible: count >= 1">
+            <input type="checkbox"
+                   data-bind="checked: isSelected" 
+                   onclick="this.parentNode.click();" />
+            <span data-bind="html: label"></span>
+            <span class="count" data-bind="text: count"></span>
+        </a>
+        
+        <div data-bind="visible: count < 1">
+            <span data-bind="html: label"></span>
+            <span class="count" data-bind="text: count"></span>
+        </div> 
+    </li>
+</ol>

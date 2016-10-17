@@ -30,6 +30,8 @@ use Magento\Framework\View\Element\Template\Context;
  */
 class Navigation extends \Magento\LayeredNavigation\Block\Navigation
 {
+    const DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/expanded_facets';
+
     /**
      * @var ObjectManagerInterface
      */
@@ -86,6 +88,47 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         }
 
         return parent::canShowBlock();
+    }
+
+    /**
+     * Return index of the facets that are expanded for the current page :
+     *
+     *  - nth first facets (depending of config)
+     *  - facets with at least one selected filter
+     *
+     * @return string
+     */
+    public function getActiveFilters()
+    {
+        $requestParams    = array_keys($this->getRequest()->getParams());
+        $displayedFilters = $this->getDisplayedFilters();
+        $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
+        $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+
+        foreach ($displayedFilters as $index => $filter) {
+            if (in_array($filter->getRequestVar(), $requestParams)) {
+                $activeFilters[] = $index;
+            }
+        }
+
+        return json_encode($activeFilters);
+    }
+
+    /**
+     * Returns facet that are displayed.
+     *
+     * @return array
+     */
+    public function getDisplayedFilters()
+    {
+        $displayedFilters = array_filter(
+            $this->getFilters(),
+            function ($filter) {
+                return $filter->getItemsCount() > 0;
+            }
+        );
+
+        return array_values($displayedFilters);
     }
 
     /**

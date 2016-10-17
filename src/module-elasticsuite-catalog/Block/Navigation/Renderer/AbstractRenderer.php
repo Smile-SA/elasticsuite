@@ -36,10 +36,14 @@ abstract class AbstractRenderer extends Template implements FilterRendererInterf
      */
     public function render(FilterInterface $filter)
     {
+        $html         = '';
         $this->filter = $filter;
-        $this->assign('filterItems', $filter->getItems());
-        $html = $this->_toHtml();
-        $this->assign('filterItems', []);
+
+        if ($this->canRenderFilter()) {
+            $this->assign('filterItems', $filter->getItems());
+            $html = $this->_toHtml();
+            $this->assign('filterItems', []);
+        }
 
         return $html;
     }
@@ -50,22 +54,6 @@ abstract class AbstractRenderer extends Template implements FilterRendererInterf
     public function getFilter()
     {
         return $this->filter;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _toHtml()
-    {
-        $html = false;
-
-        if ($this->canRenderFilter()) {
-            $html = parent::_toHtml();
-        }
-
-        return $html;
     }
 
     /**

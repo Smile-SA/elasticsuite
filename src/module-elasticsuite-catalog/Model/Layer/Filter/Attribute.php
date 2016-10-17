@@ -36,6 +36,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     private $tagFilter;
 
     /**
+     * @var boolean
+     */
+    private $hasMoreItems = false;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory Factory for item of the facets.
@@ -112,7 +117,18 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
+     * Indicates if the facets has more documents to be displayed.
+     *
+     * @return boolean
+     */
+    public function hasMoreItems()
+    {
+        return $this->hasMoreItems;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * {@inheritDoc}
      */
@@ -124,6 +140,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         $optionsFacetedData = $productCollection->getFacetedData($this->getFilterField());
 
         $items     = [];
+
+        if (isset($optionsFacetedData['__other_docs'])) {
+            $this->hasMoreItems = $optionsFacetedData['__other_docs']['count'] > 0;
+            unset($optionsFacetedData['__other_docs']);
+        }
 
         foreach ($optionsFacetedData as $value => $data) {
             $items[$value] = [
@@ -210,22 +231,22 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      */
     private function addOptionsData(array $items)
     {
-        $options = $this->getAttributeModel()->getFrontend()->getSelectOptions();
-        $optionPosition = 0;
+        if ($this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL) {
+            $options = $this->getAttributeModel()->getFrontend()->getSelectOptions();
+            $optionPosition = 0;
 
-        if (!empty($options)) {
-            foreach ($options as $option) {
-                $optionLabel = (string) $option['label'];
-                $optionPosition++;
+            if (!empty($options)) {
+                foreach ($options as $option) {
+                    $optionLabel = (string) $option['label'];
+                    $optionPosition++;
 
-                if ($optionLabel && isset($items[$optionLabel])) {
-                    $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                    $items[$optionLabel]['value']          = $option['value'];
+                    if ($optionLabel && isset($items[$optionLabel])) {
+                        $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                        $items[$optionLabel]['value']          = $option['value'];
+                    }
                 }
             }
-        }
 
-        if ($this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL) {
             usort($items, function ($item1, $item2) {
                 return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
             });

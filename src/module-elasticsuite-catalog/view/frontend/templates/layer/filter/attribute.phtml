@@ -1,0 +1,34 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+/**
+ * Template for filter items block
+ *
+ * @var $block \Smile\ElasticsuiteCatalog\Block\Navigation\FilterRenderer
+ */
+?>
+<?php
+  $datascope = $this->getFilter()->getRequestVar() . 'Filter';
+?>
+<?php if (!empty($filterItems)) : ?>
+<div data-bind="scope: '<?php echo /* @escapeNotVerified */ $datascope; ?>'">
+    <!-- ko template: getTemplate() --> <!-- /ko -->
+</div>
+
+<script type="text/x-magento-init">
+    {"*" : {"Magento_Ui/js/core/app": {"components": {"<?php echo /* @escapeNotVerified */ $datascope; ?>": <?php echo /* @escapeNotVerified */ $this->getJsLayout(); ?>}}}}
+</script>
+
+<?php endif; ?>

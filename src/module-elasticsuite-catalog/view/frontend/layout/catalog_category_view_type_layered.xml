@@ -20,12 +20,20 @@
         <referenceBlock name="catalog.leftnav" template="Smile_ElasticsuiteCatalog::layer/view.phtml">
             <block class="Smile\ElasticsuiteCatalog\Block\Navigation\FilterRenderer"
                    name="catalog.navigation.renderer"
-                   as="renderer"
-                   template="Smile_ElasticsuiteCatalog::layer/filter/default.phtml">
+                   as="renderer">
 
-                   <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Slider"
-                          name="catalog.navigation.renderer.slider"
-                          template="Smile_ElasticsuiteCatalog::layer/filter/slider.phtml" />
+                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Attribute"
+                           name="catalogsearch.navigation.renderer.attribute"
+                           template="Smile_ElasticsuiteCatalog::layer/filter/attribute.phtml"
+                           after="-" />
+                           
+                   <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Category"
+                           name="catalogsearch.navigation.renderer.category"
+                           template="Smile_ElasticsuiteCatalog::layer/filter/default.phtml" />
+
+                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\Slider"
+                           name="catalog.navigation.renderer.slider"
+                           template="Smile_ElasticsuiteCatalog::layer/filter/slider.phtml" />
 
                    <block class="Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\PriceSlider"
                           name="catalog.navigation.renderer.price.slider"
