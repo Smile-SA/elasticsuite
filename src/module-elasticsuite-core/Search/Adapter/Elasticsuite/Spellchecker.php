@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Spellchecker ElasticSearch implementation.
+ * Spellchecker Elasticsearch implementation.
  * This implementation rely on the ES term vectors API.
  *
  * @category Smile
@@ -42,7 +42,7 @@ class Spellchecker implements SpellcheckerInterface
      */
     public function __construct(ClientFactoryInterface $clientFactory)
     {
-        $this->client       = $clientFactory->createClient();
+        $this->client = $clientFactory->createClient();
     }
 
     /**

@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
- * Representation of a ElasticSearch index.
+ * Representation of a Elasticsearch index.
  *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore

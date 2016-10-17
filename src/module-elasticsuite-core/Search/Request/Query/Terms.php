@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 class Terms extends Term
 {
     /**
-     * The term query produce an ElasticSearch terms query.
+     * The term query produce an Elasticsearch terms query.
      *
      * @param string|array $values Search values. String are exploded using the comma as separator.
      * @param string       $field  Search field.

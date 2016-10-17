@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 
 /**
- * Provides a simple way to retrieve an ElasticSearch client.
+ * Provides a simple way to retrieve an Elasticsearch client.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
@@ -47,8 +47,8 @@ class ClientFactory implements ClientFactoryInterface
     /**
      * Factory constructor.
      *
-     * @param ClientConfigurationInterface $clientConfiguration ElasticSearch configuration helper.
-     * @param LoggerInterface              $logger              ElasticSearch logger.
+     * @param ClientConfigurationInterface $clientConfiguration Elasticsearch configuration helper.
+     * @param LoggerInterface              $logger              Elasticsearch logger.
      */
     public function __construct(ClientConfigurationInterface $clientConfiguration, LoggerInterface $logger)
     {

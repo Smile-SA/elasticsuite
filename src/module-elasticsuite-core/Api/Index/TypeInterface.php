@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
- * Representation of a document type in an ElasticSearch index.
+ * Representation of a document type in an Elasticsearch index.
  *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore

@@ -42,7 +42,7 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * Hits filter (does not apply to aggregations).
 
      * Filter are actually using QueryInterface since there is no differences
-     * beetween queries and filters in ElasticSearch 2.x DSL.
+     * beetween queries and filters in Elasticsearch 2.x DSL.
      *
      * @return QueryInterface
      */

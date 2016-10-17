@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Index\Mapping;
 
 /**
- * Representation of a ElasticSearch field (abstraction of mapping properties).
+ * Representation of a Elasticsearch field (abstraction of mapping properties).
  *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore

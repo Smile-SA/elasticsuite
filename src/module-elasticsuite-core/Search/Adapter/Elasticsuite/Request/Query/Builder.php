@@ -18,7 +18,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Framework\ObjectManagerInterface;
 
 /**
- * Build ElasticSearch queries from search request QueryInterface queries.
+ * Build Elasticsearch queries from search request QueryInterface queries.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore

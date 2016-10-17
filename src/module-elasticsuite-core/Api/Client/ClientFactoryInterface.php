@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Client;
 
 /**
- * Provides a simple way to retrieve an ElasticSearch client.
+ * Provides a simple way to retrieve an Elasticsearch client.
  *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore

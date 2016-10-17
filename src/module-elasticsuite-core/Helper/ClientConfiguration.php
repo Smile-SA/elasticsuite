@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 class ClientConfiguration extends AbstractConfiguration implements ClientConfigurationInterface
 {
     /**
-     * Location of ElasticSearch client configuration.
+     * Location of Elasticsearch client configuration.
      *
      * @var string
      */

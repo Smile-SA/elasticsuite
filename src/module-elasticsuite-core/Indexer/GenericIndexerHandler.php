@@ -18,7 +18,7 @@ use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
 /**
- * Eav Indexing operation handling for ElasticSearch engine.
+ * Eav Indexing operation handling for Elasticsearch engine.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog

@@ -46,7 +46,7 @@ class Term implements QueryInterface
     private $field;
 
     /**
-     * The term query produce an ElasticSearch term query.
+     * The term query produce an Elasticsearch term query.
      *
      * @param string  $value Search value.
      * @param string  $field Search field.

@@ -18,17 +18,17 @@
     <system>
         <section id="thesaurus" translate="label" type="text" sortOrder="100" showInDefault="1" showInContainer="1" showInStore="1">
             <tab>general</tab>
-            <label>Thesaurus configuration</label>
+            <label>Thesaurus Configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
 
             <group id="synonyms" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
-                <label>Synonyms configuration</label>
+                <label>Synonyms Configuration</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
-                    <label>Enable synonyms search</label>
+                    <label>Enable Synonyms Search</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="weight_divider" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
-                    <label>Synonyms weight divider</label>
+                    <label>Synonyms Weight Divider</label>
                     <depends>
                         <field id="enable">1</field>
                     </depends>
@@ -36,19 +36,18 @@
             </group>
                
             <group id="expansions" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
-                <label>Query expansions configuration</label>
+                <label>Query Expansions Configuration</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
-                    <label>Enable search expansions</label>
+                    <label>Enable Search Expansions</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="weight_divider" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
-                    <label>Concepts weight divider</label>
+                    <label>Concepts Weight Divider</label>
                     <depends>
                         <field id="enable">1</field>
                     </depends>
                 </field>
             </group>
-            
         </section>
     </system>
 </config>

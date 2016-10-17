@@ -19,7 +19,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 
 /**
- * Build ElasticSearch sort orders from search request specification interface.
+ * Build Elasticsearch sort orders from search request specification interface.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
