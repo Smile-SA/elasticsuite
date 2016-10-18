@@ -60,6 +60,11 @@ class AbstractAttributeData
     /**
      * @var array
      */
+    protected $backendTables = [];
+
+    /**
+     * @var array
+     */
     protected $indexedBackendModels = [
         'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
         'Magento\Eav\Model\Entity\Attribute\Backend\Datetime',
@@ -135,7 +140,8 @@ class AbstractAttributeData
             if ($this->canIndexAttribute($attribute)) {
                 $attributeId = (int) $attribute->getId();
                 $this->attributesById[$attributeId] = $attribute;
-                $this->attributeIdsByTable[$attribute->getBackendTable()][] = $attributeId;
+                $backendTable = $this->getAttributeBackendTable($attribute);
+                $this->attributeIdsByTable[$backendTable][] = $attributeId;
 
                 $this->initField($attribute);
             }
@@ -192,5 +198,25 @@ class AbstractAttributeData
         $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);
 
         return $this;
+    }
+
+    /**
+     * Retrieve Attribute Backend Table. Uses local cache to prevent querying
+     *
+     * @param \Magento\Eav\Model\Entity\Attribute\AttributeInterface $attribute The attribute
+     *
+     * @return mixed
+     */
+    private function getAttributeBackendTable(AttributeInterface $attribute)
+    {
+        if ($attribute->isStatic() || (null !== $attribute->getData('backend_table'))) {
+            return $attribute->getBackendTable();
+        }
+
+        if (!isset($this->backendTables[$attribute->getEntityTypeId()][$attribute->getBackendType()])) {
+            $this->backendTables[$attribute->getEntityTypeId()][$attribute->getBackendType()] = $attribute->getBackendTable();
+        }
+
+        return $this->backendTables[$attribute->getEntityTypeId()][$attribute->getBackendType()];
     }
 }
