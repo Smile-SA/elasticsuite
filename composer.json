@@ -1,0 +1,35 @@
+{
+  "name": "smile/module-elasticsuite-catalog-optimizer",
+  "type": "magento2-module",
+  "license": "OSL-3.0",
+  "authors": [{
+    "name": "Fanny DECLERCK",
+    "email": "fadec@smile.fr"
+  }
+  ],
+  "description": "Smile ElasticSuite - Catalog optimizer implementation module.",
+  "homepage": "https://github.com/Smile-SA/module-elasticsuite-catalog",
+  "keywords": [
+    "magento",
+    "magento2",
+    "elasticsearch",
+    "search",
+    "merchandising",
+    "core",
+    "setup"
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0",
+    "magento/framework": ">=100.1.0",
+    "smile/module-elasticsuite-catalog": "self.version"
+  },
+  "version": "2.1.0",
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "Smile\\ElasticsuiteCatalogOptimizer\\": ""
+    }
+  }
+}
