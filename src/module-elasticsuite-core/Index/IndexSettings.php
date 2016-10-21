@@ -131,7 +131,7 @@ class IndexSettings implements IndexSettingsInterface
         $settings = [
             'number_of_replicas'     => $this->helper->getNumberOfReplicas(),
             'refresh_interval'       => self::DIFF_REINDEX_REFRESH_INTERVAL,
-            'translog.durability'    => 'fsync',
+            'translog.durability'    => 'request',
             'translog.disable_flush' => false,
         ];
 
