@@ -155,7 +155,7 @@ class DataProvider implements DataProviderInterface
         $productCollection->setPageSize($this->getResultsPageSize());
         $productCollection
             ->addAttributeToSelect('name')
-            ->addAttributeToSelect('small_image')
+            ->addAttributeToSelect('thumbnail')
             ->addPriceData();
 
         if (!$this->configurationHelper->isShowOutOfStock()) {
