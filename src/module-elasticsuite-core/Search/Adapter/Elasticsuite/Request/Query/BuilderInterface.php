@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
- * Build ElasticSearch queries from search request QueryInterface queries.
+ * Build Elasticsearch queries from search request QueryInterface queries.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore

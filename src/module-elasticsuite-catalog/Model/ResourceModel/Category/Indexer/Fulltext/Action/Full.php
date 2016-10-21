@@ -16,7 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltex
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 
 /**
- * ElasticSearch category full indexer resource model.
+ * Elasticsearch category full indexer resource model.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog

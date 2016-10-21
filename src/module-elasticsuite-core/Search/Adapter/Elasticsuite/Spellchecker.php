@@ -22,7 +22,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 
 /**
- * Spellchecker ElasticSearch implementation.
+ * Spellchecker Elasticsearch implementation.
  * This implementation rely on the ES term vectors API.
  *
  * @category Smile

@@ -16,7 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel;
 use Magento\CatalogSearch\Model\ResourceModel\Engine as MySqlEngine;
 
 /**
- * ElasticSearch search engine implementation.
+ * Elasticsearch search engine implementation.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog

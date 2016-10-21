@@ -1,12 +1,12 @@
 Tracking,Tracking
-"Global Configuration","Configuration Générale"
+"Global Configuration","Configuration générale"
 Enabled,Activer
-"Tracking base URL","Url de base du tracker"
+"Tracking Base URL","Url de base du tracker"
 "Session Configuration","Configuration de la session"
 "Visit Cookie Name","Nom du cookie de visite"
 "Visitor Cookie Name","Nom du cookie visiteur"
 "Visit Cookie Lifetime","Durée de vie du cookie de visite"
 "Visitor Cookie Lifetime","Durée de vie du cookie visiteur"
-"In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.","En secondes (Valeur par défaut 3600 s.).</br />Sans activité durant ce délai une nouvelle visite est prise en compte."
-"In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.","En jours (Valeur par défaut 365 jours.). <br />Ce cookie permet de consolider les multiples visites d'une même personne."
+"In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.","En secondes (valeur par défaut 3600 s).</br />Si aucune activité pendant ce délai, une nouvelle visite est prise en compte."
+"In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.","En jours (valeur par défaut 365 jours). <br />Ce cookie permet de consolider les multiples visites d'une même personne."
 

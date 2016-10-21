@@ -27,7 +27,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="base_url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Tracking base URL</label>
+                    <label>Tracking Base URL</label>
                 </field>
             </group>
             <group id="session" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">

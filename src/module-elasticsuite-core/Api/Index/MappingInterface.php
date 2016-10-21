@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Api\Index;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Representation of a ElasticSearch type mapping.
+ * Representation of a Elasticsearch type mapping.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore

@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Action;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as ResourceModel;
 
 /**
- * ElasticSearch product full indexer.
+ * Elasticsearch product full indexer.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
