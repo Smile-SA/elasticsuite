@@ -34,7 +34,7 @@ interface OptimizerInterface
      * Name of the join Mysql Table
      */
     const TABLE_NAME_SEARCH_CONTAINER = 'smile_elasticsuite_optimizer_search_container';
-    
+
     /**
      * Constant for field optimizer_id
      */
@@ -214,5 +214,4 @@ interface OptimizerInterface
      * @return OptimizerInterface
      */
     public function setSearchContainer($searchContainer);
-
 }

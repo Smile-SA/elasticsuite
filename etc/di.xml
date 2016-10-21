@@ -19,6 +19,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <!-- Dependency Injection for Optimizer Models -->
+    <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\OptimizerRepository" />
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />
-    <!--<preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerQueryTypeInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\OptimizerQueryType" />-->
+    <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
 </config>
