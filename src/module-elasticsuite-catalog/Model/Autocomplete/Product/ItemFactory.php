@@ -15,7 +15,8 @@
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Catalog\Helper\Product as ProductHelper;
+use Magento\Catalog\Helper\Image as ImageHelper;
+use Magento\Catalog\Api\Data\ProductInterface;
 
 /**
  * Create an autocomplete item from a product.
@@ -27,20 +28,25 @@ use Magento\Catalog\Helper\Product as ProductHelper;
 class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
 {
     /**
-     * @var ProductHelper
+     * Autocomplete image id (used for resize)
      */
-    private $productHelper;
+    const AUTOCOMPLETE_IMAGE_ID = 'smile_elasticsuite_autocomplete_product_image';
+
+    /**
+     * @var ImageHelper
+     */
+    private $imageHelper;
 
     /**
      * Constructor.
      *
      * @param ObjectManagerInterface $objectManager Object manager used to instantiate new item.
-     * @param ProductHelper          $productHelper Catalog product helper.
+     * @param ImageHelper            $imageHelper   Catalog product image helper.
      */
-    public function __construct(ObjectManagerInterface $objectManager, ProductHelper $productHelper)
+    public function __construct(ObjectManagerInterface $objectManager, ImageHelper $imageHelper)
     {
         parent::__construct($objectManager);
-        $this->productHelper = $productHelper;
+        $this->imageHelper = $imageHelper;
     }
 
     /**
@@ -67,7 +73,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
 
         $productData = [
             'title'       => $product->getName(),
-            'image'       => $this->productHelper->getSmallImageUrl($product),
+            'image'       => $this->getImageUrl($product),
             'url'         => $product->getProductUrl(),
             'price'       => $product->getFinalPrice(),
             'final_price' => $product->getPrice(),
@@ -76,5 +82,19 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $data = array_merge($data, $productData);
 
         return $data;
+    }
+
+    /**
+     * Get resized image URL.
+     *
+     * @param ProductInterface $product Current product.
+     *
+     * @return string
+     */
+    private function getImageUrl($product)
+    {
+        $this->imageHelper->init($product, self::AUTOCOMPLETE_IMAGE_ID);
+
+        return $this->imageHelper->getUrl();
     }
 }
