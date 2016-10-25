@@ -14,7 +14,6 @@
 namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Factory for search request queries.

@@ -18,7 +18,6 @@ use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 
 /**
  * Catalog Data Upgrade
@@ -66,6 +65,15 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '1.2.0', '<')) {
             $this->updateCategorySearchableAttributes();
+        }
+
+        if (version_compare($context->getVersion(), '1.2.1', '<')) {
+            $productImageAttributeId = $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'image');
+            $setup->getConnection()->update(
+                $setup->getTable('catalog_eav_attribute'),
+                ['is_searchable' => 1],
+                $setup->getConnection()->quoteInto('attribute_id = ?', $productImageAttributeId)
+            );
         }
 
         $setup->endSetup();

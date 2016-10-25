@@ -47,6 +47,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @param \Magento\Catalog\Model\ResourceModel\Product                              $productResource   Product resource model.
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection          $attrSetCollection Attribute set collection.
      * @param \Magento\Framework\Locale\FormatInterface                                 $localeFormat      Locale format.
+     * @param \Magento\Config\Model\Config\Source\Yesno                                 $booleanSource     Data source for boolean select.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory      Search query factory.
      * @param array                                                                     $data              Additional data.
      */
@@ -61,10 +62,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
+        \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
-        parent::__construct($context, $backendData, $config, $attributeList, $queryBuilder, $productFactory, $productRepository, $productResource, $attrSetCollection, $localeFormat, $data);
+        parent::__construct($context, $backendData, $config, $attributeList, $queryBuilder, $productFactory, $productRepository, $productResource, $attrSetCollection, $localeFormat, $booleanSource, $data);
         $this->queryFactory = $queryFactory;
     }
 
