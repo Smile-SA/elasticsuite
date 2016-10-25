@@ -68,9 +68,11 @@ class QueryBuilder
     {
         $query = null;
 
+        $query = $this->getSpecialAttributesSearchQuery($productCondition);
+
         $this->prepareFieldValue($productCondition);
 
-        if (!empty($productCondition->getValue())) {
+        if ($query === null && !empty($productCondition->getValue())) {
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
@@ -109,6 +111,36 @@ class QueryBuilder
         }
 
         return $query;
+    }
+
+    /**
+     * Create a query for special attribute.
+     *
+     * @param ProductCondition $productCondition Product condition.
+     *
+     * @return NULL|\Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getSpecialAttributesSearchQuery(ProductCondition $productCondition)
+    {
+        $query = null;
+
+        if ($productCondition->getAttribute() == 'has_image' && $productCondition->getValue()) {
+            $query = $this->getHasImageQuery();
+        }
+
+        return $query;
+    }
+
+    /**
+     * Has image query.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getHasImageQuery()
+    {
+        $query = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'image']);
+
+        return $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
     }
 
     /**
@@ -225,7 +257,9 @@ class QueryBuilder
      */
     private function getSearchFieldName(ProductCondition $productCondition)
     {
-        $field    = $this->attributeList->getField($productCondition->getAttribute());
+        $attributeName = $productCondition->getAttribute();
+
+        $field    = $this->attributeList->getField($attributeName);
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
         if ($productCondition->getInputType() === "string") {

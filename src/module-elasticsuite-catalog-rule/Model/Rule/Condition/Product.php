@@ -35,6 +35,11 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     private $queryBuilder;
 
     /**
+     * @var \Magento\Config\Model\Config\Source\Yesno
+     */
+    private $booleanSource;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -49,6 +54,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param \Magento\Catalog\Model\ResourceModel\Product                              $productResource   Product resource model.
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection          $attrSetCollection Attribute set collection.
      * @param \Magento\Framework\Locale\FormatInterface                                 $localeFormat      Locale format.
+     * @param \Magento\Config\Model\Config\Source\Yesno                                 $booleanSource     Data source for boolean select.
      * @param array                                                                     $data              Additional data.
      */
     public function __construct(
@@ -62,10 +68,12 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
+        \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         array $data = []
     ) {
         $this->attributeList = $attributeList;
         $this->queryBuilder  = $queryBuilder;
+        $this->booleanSource = $booleanSource;
         parent::__construct($context, $backendData, $config, $productFactory, $productRepository, $productResource, $attrSetCollection, $localeFormat, $data);
     }
 
@@ -120,8 +128,9 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     public function getInputType()
     {
         $inputType = 'string';
+        $selectAttributes = ['attribute_set_id', 'stock.is_in_stock', 'has_image', 'price.is_discount'];
 
-        if ($this->getAttribute() === 'attribute_set_id') {
+        if (in_array($this->getAttribute(), $selectAttributes)) {
             $inputType = 'select';
         } elseif ($this->getAttribute() === 'price') {
             $inputType = 'numeric';
@@ -151,8 +160,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         $valueElementType = 'text';
 
-        if ($this->getAttribute() === 'attribute_set_id') {
+        if ($this->getAttribute() == 'attribute_set_id') {
             $valueElementType = 'select';
+        } elseif (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image'])) {
+            $valueElementType = 'hidden';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
 
@@ -166,6 +177,34 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         }
 
         return $valueElementType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getValueName()
+    {
+        $valueName = parent::getValueName();
+
+        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+            $valueName = ' ';
+        }
+
+        return $valueName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOperatorName()
+    {
+        $operatorName = parent::getOperatorName();
+
+        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+            $operatorName = ' ';
+        }
+
+        return $operatorName;
     }
 
     /**
@@ -190,5 +229,49 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         }
 
         return $this->_defaultOperatorInputByType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getValue()
+    {
+        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+            $this->setData('value', 1);
+        }
+
+        return $this->getData('value');
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
+     */
+    protected function _addSpecialAttributes(array &$attributes)
+    {
+        parent::_addSpecialAttributes($attributes);
+        $attributes['stock.is_in_stock'] = __('Only in stock products');
+        $attributes['price.is_discount'] = __('Only discounted products');
+        $attributes['has_image']         = __('Only products with image');
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * {@inheritDoc}
+     */
+    protected function _prepareValueOptions()
+    {
+        $selectReady = $this->getData('value_select_options');
+        $hashedReady = $this->getData('value_option');
+
+        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+            $selectOptions = $this->booleanSource->toOptionArray();
+            $this->_setSelectOptions($selectOptions, $selectReady, $hashedReady);
+        } else {
+            parent::_prepareValueOptions();
+        }
     }
 }

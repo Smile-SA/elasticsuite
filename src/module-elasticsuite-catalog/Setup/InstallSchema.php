@@ -17,7 +17,6 @@ namespace Smile\ElasticsuiteCatalog\Setup;
 use \Magento\Framework\Setup\InstallSchemaInterface;
 use \Magento\Framework\Setup\ModuleContextInterface;
 use \Magento\Framework\Setup\SchemaSetupInterface;
-use \Magento\Eav\Setup\EavSetup;
 
 /**
  * Schema for Catalog attributes
