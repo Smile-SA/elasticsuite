@@ -39,7 +39,7 @@ interface OptimizerInterface
      * Constant for field optimizer_id
      */
     const OPTIMIZER_ID = 'optimizer_id';
-
+    
     /**
      * Constant for field name
      */

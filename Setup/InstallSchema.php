@@ -101,7 +101,7 @@ class InstallSchema implements InstallSchemaInterface
                 ->addColumn(
                     OptimizerInterface::CONFIG,
                     \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                    '2M',
+                    '',
                     [],
                     'Optimizer serialized configuration'
                 )

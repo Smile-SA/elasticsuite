@@ -26,7 +26,16 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
  */
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
-
+    /**
+     * Internal Constructor
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _construct()
+    {
+        $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
+    }
+    
     /**
      * Get Optimizer ID.
      *
@@ -213,13 +222,4 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         return $this->setData(self::SEARCH_CONTAINER, (string) $searchContainer);
     }
 
-    /**
-     * Internal Constructor
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     */
-    protected function _construct()
-    {
-        $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
-    }
 }

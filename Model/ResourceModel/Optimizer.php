@@ -24,25 +24,6 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
-     * Retrieve Search Containers for a given optimizer.
-     *
-     * @param int $optimizerId The optimizer Id
-     *
-     * @return array
-     */
-    public function getSearchContainersFromOptimizerId($optimizerId)
-    {
-        $connection = $this->getConnection();
-
-        $select = $connection->select();
-
-        $select->from($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), OptimizerInterface::SEARCH_CONTAINER)
-            ->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
-
-        return $connection->fetchCol($select);
-    }
-
-    /**
      * Internal Constructor
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -87,6 +68,25 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         return parent::_afterLoad($object);
+    }
+
+    /**
+     * Retrieve Search Containers for a given optimizer.
+     *
+     * @param int $optimizerId The optimizer Id
+     *
+     * @return array
+     */
+    public function getSearchContainersFromOptimizerId($optimizerId)
+    {
+        $connection = $this->getConnection();
+
+        $select = $connection->select();
+
+        $select->from($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), OptimizerInterface::SEARCH_CONTAINER)
+            ->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
+
+        return $connection->fetchCol($select);
     }
 
     /**
