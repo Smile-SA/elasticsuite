@@ -27,7 +27,7 @@
         "magento/module-catalog": ">=100.1.0",
         "magento/module-catalog-search": ">=100.1.0",
         "magento/magento-composer-installer": "*",
-        "elasticsearch/elasticsearch": "^2.*"
+        "elasticsearch/elasticsearch": "^2.2.0"
     },
     "version": "2.1.0",
     "autoload": {
