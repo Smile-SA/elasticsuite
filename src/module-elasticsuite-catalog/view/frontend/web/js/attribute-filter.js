@@ -14,7 +14,7 @@
 
 define([
     'jquery',
-    'uiComponent',
+    'uiComponent'
 ], function ($, Component) {
     "use strict";
 
