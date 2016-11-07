@@ -103,7 +103,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
         $facetType       = BucketInterface::TYPE_HISTOGRAM;
         $customerGroupId = $this->customerSession->getCustomerGroupId();
 
-        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId]];
+        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId], 'minDocCount' => 1];
 
         $calculation = $this->dataProvider->getRangeCalculationValue();
         if ($calculation === \Magento\Catalog\Model\Layer\Filter\DataProvider\Price::RANGE_CALCULATION_MANUAL) {

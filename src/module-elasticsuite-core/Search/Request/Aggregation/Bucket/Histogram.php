@@ -32,6 +32,11 @@ class Histogram extends AbstractBucket
     private $interval;
 
     /**
+     * @var integer
+     */
+    private $minDocCount;
+
+    /**
      * Constructor.
      *
      * @param string         $name         Bucket name.
@@ -41,6 +46,7 @@ class Histogram extends AbstractBucket
      * @param QueryInterface $filter       Bucket filter.
      * @param QueryInterface $nestedFilter Nested filter for the bucket.
      * @param integer        $interval     Histogram interval.
+     * @param integer        $minDocCount  Histogram min doc count.
      */
     public function __construct(
         $name,
@@ -49,10 +55,12 @@ class Histogram extends AbstractBucket
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
-        $interval = 1
+        $interval = 1,
+        $minDocCount = 0
     ) {
         parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
-        $this->interval = $interval;
+        $this->interval    = $interval;
+        $this->minDocCount = $minDocCount;
     }
 
     /**
@@ -71,5 +79,15 @@ class Histogram extends AbstractBucket
     public function getInterval()
     {
         return $this->interval;
+    }
+
+    /**
+     * Histograms min doc count.
+     *
+     * @return integer
+     */
+    public function getMinDocCount()
+    {
+        return $this->minDocCount;
     }
 }
