@@ -97,8 +97,13 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
 
         $documentSource = $category->getDocumentSource();
 
+        $title = $documentSource['name'];
+        if (is_array($title)) {
+            $title = current($title);
+        }
+
         $categoryData = [
-            'title'      => $documentSource['name'],
+            'title'      => html_entity_decode($title),
             'url'        => $this->getCategoryUrl($category),
             'breadcrumb' => $this->getCategoryBreadcrumb($category),
         ];
@@ -151,7 +156,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
 
         $breadcrumb = [];
         foreach ($rawPath as $categoryId) {
-            $breadcrumb[] = $this->getCategoryNameById($categoryId, $category->getStoreId());
+            $breadcrumb[] = html_entity_decode($this->getCategoryNameById($categoryId, $category->getStoreId()));
         }
 
         return $breadcrumb;
