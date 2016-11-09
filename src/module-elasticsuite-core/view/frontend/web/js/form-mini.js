@@ -272,7 +272,84 @@ define([
                 this._updateAriaHasPopup(false);
                 this.element.removeAttr('aria-activedescendant');
             }
-        }
+        },
+
+        /**
+         * Executes when keys are pressed in the search input field. Performs specific actions
+         * depending on which keys are pressed.
+         *
+         * @private
+         * @param {Event} e - The key down event
+         * @return {Boolean} Default return type for any unhandled keys
+         */
+        _onKeyDown: function (e) {
+            var keyCode = e.keyCode || e.which;
+
+            switch (keyCode) {
+                case $.ui.keyCode.HOME:
+                    this._getFirstVisibleElement().addClass(this.options.selectClass);
+                    this.responseList.selected = this._getFirstVisibleElement();
+                    break;
+                case $.ui.keyCode.END:
+                    this._getLastElement().addClass(this.options.selectClass);
+                    this.responseList.selected = this._getLastElement();
+                    break;
+                case $.ui.keyCode.ESCAPE:
+                    this._resetResponseList(true);
+                    this.autoComplete.hide();
+                    break;
+                case $.ui.keyCode.ENTER:
+                    if (this.responseList.selected.attr('href') !== undefined) {
+                        window.location = this.responseList.selected.attr('href');
+                        e.preventDefault();
+                        return false;
+                    }
+                    this.searchForm.trigger('submit');
+                    break;
+                case $.ui.keyCode.DOWN:
+                    if (this.responseList.indexList) {
+                        if (!this.responseList.selected) {
+                            this._getFirstVisibleElement().addClass(this.options.selectClass);
+                            this.responseList.selected = this._getFirstVisibleElement();
+                        }
+                        else if (!this._getLastElement().hasClass(this.options.selectClass)) {
+                            var nextElement = this.responseList.selected.next('dd');
+                            this.responseList.selected.removeClass(this.options.selectClass);
+                            if (nextElement.length === 0) {
+                                nextElement = this.responseList.selected.parent('dl').next('dl').find('dd').first();
+                            }
+                            this.responseList.selected = nextElement.addClass(this.options.selectClass);
+                        } else {
+                            this.responseList.selected.removeClass(this.options.selectClass);
+                            this._getFirstVisibleElement().addClass(this.options.selectClass);
+                            this.responseList.selected = this._getFirstVisibleElement();
+                        }
+                        this.element.val(this.responseList.selected.find('.qs-option-name').text());
+                        this.element.attr('aria-activedescendant', this.responseList.selected.attr('id'));
+                    }
+                    break;
+                case $.ui.keyCode.UP:
+                    if (this.responseList.indexList !== null) {
+                        if (!this._getFirstVisibleElement().hasClass(this.options.selectClass)) {
+                            var prevElement = this.responseList.selected.prev('dd');
+                            this.responseList.selected.removeClass(this.options.selectClass);
+                            if (prevElement.length === 0) {
+                                prevElement = this.responseList.selected.parent('dl').prev('dl').find('dd').last();
+                            }
+                            this.responseList.selected = prevElement.addClass(this.options.selectClass);
+                        } else {
+                            this.responseList.selected.removeClass(this.options.selectClass);
+                            this._getLastElement().addClass(this.options.selectClass);
+                            this.responseList.selected = this._getLastElement();
+                        }
+                        this.element.val(this.responseList.selected.find('.qs-option-name').text());
+                        this.element.attr('aria-activedescendant', this.responseList.selected.attr('id'));
+                    }
+                    break;
+                default:
+                    return true;
+            }
+        },
     });
 
     return $.smileEs.quickSearch;
