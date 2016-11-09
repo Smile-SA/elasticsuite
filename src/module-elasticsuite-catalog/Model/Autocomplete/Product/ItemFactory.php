@@ -72,7 +72,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $product = $data['product'];
 
         $productData = [
-            'title'       => $product->getName(),
+            'title'       => html_entity_decode($product->getName()),
             'image'       => $this->getImageUrl($product),
             'url'         => $product->getProductUrl(),
             'price'       => $product->getFinalPrice(),
