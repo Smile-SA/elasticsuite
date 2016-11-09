@@ -299,6 +299,11 @@ define([
                     this.autoComplete.hide();
                     break;
                 case $.ui.keyCode.ENTER:
+                    if (this.responseList.selected.attr('href') !== undefined) {
+                        window.location = this.responseList.selected.attr('href');
+                        e.preventDefault();
+                        return false;
+                    }
                     this.searchForm.trigger('submit');
                     break;
                 case $.ui.keyCode.DOWN:
