@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 
 /**
  * Virtual category rule.
@@ -26,7 +27,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule
+class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualRuleInterface
 {
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
