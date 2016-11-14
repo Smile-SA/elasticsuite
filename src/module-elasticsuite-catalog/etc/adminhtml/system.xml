@@ -25,7 +25,7 @@
                     <comment><![CDATA[Maximum number of products to display in autocomplete results.]]></comment>
                 </field>
             </group>
-            <group id="category_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="product_attribute_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Product Attributes Autocomplete</label>
                 <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Max Size</label>
