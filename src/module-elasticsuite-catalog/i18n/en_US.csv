@@ -50,3 +50,6 @@ No,No
 "Redirect to product page if only one result","Redirect to product page if only one result"
 "If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
 "%1 is the only product matching your '%2' research.","%1 is the only product matching your '%2' research."
+Products,Products
+Categories,Categories
+Attributes,Attributes
