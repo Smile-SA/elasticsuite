@@ -63,16 +63,40 @@
         <arguments>
             <argument name="dataProviders" xsi:type="array">
                 <item name="20" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider</item>
-                <item name="30" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Category\DataProvider</item>
+                <item name="30" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Attribute\DataProvider</item>
+                <item name="40" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Category\DataProvider</item>
             </argument>
         </arguments>
     </type>
+ 
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+        </arguments>
+    </virtualType>
+ 
+    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider">
+        <arguments>
+            <argument name="productCollection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
+        </arguments>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Attribute\DataProvider">
+        <arguments>
+            <argument name="productCollection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
+        </arguments>
+    </type>
+ 
     <type name="Smile\ElasticsuiteCore\Block\Search\Form\Autocomplete">
         <arguments>
             <argument name="rendererList" xsi:type="array">
                 <item name="product" xsi:type="array">
                     <item name="title" xsi:type="string">Products</item>
                     <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product</item>
+                </item>
+                <item name="product_attribute" xsi:type="array">
+                    <item name="title" xsi:type="string">Attributes</item>
+                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product_attribute</item>
                 </item>
                 <item name="category" xsi:type="array">
                     <item name="title" xsi:type="string">Categories</item>

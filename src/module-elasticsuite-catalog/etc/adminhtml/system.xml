@@ -26,6 +26,14 @@
                 </field>
             </group>
             <group id="category_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Product Attributes Autocomplete</label>
+                <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Max Size</label>
+                    <validate>integer</validate>
+                    <comment><![CDATA[Maximum number of product attributes to display in autocomplete results.]]></comment>
+                </field>
+            </group>
+            <group id="category_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Category Autocomplete</label>
                 <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Max Size</label>

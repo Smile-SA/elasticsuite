@@ -25,6 +25,9 @@
             <product_autocomplete>
                 <max_size>5</max_size>
             </product_autocomplete>
+            <product_attribute_autocomplete>
+                <max_size>3</max_size>
+            </product_attribute_autocomplete>
             <category_autocomplete>
                 <max_size>3</max_size>
             </category_autocomplete>
