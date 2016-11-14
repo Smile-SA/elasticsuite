@@ -70,12 +70,6 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
      */
     public function getSuggestRenderers()
     {
-        foreach ($this->rendererList as &$renderer) {
-            if (isset($renderer['title'])) {
-                $renderer['title'] = __($renderer['title']);
-            }
-        }
-
         return $this->rendererList;
     }
 

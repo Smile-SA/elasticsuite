@@ -91,16 +91,16 @@
         <arguments>
             <argument name="rendererList" xsi:type="array">
                 <item name="product" xsi:type="array">
-                    <item name="title" xsi:type="string">Products</item>
+                    <item name="title" xsi:type="string" translate="true">Products</item>
                     <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product</item>
                 </item>
                 <item name="product_attribute" xsi:type="array">
-                    <item name="title" xsi:type="string">Attributes</item>
+                    <item name="title" xsi:type="string" translate="true">Attributes</item>
                     <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product-attribute</item>
                     <item name="titleRenderer" xsi:type="string">Smile_ElasticsuiteCatalog/js/autocomplete/product-attribute</item>
                 </item>
                 <item name="category" xsi:type="array">
-                    <item name="title" xsi:type="string">Categories</item>
+                    <item name="title" xsi:type="string" translate="true">Categories</item>
                     <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/category</item>
                 </item>
             </argument>
