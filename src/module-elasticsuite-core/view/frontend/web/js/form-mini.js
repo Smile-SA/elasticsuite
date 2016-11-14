@@ -31,6 +31,7 @@ define([
             this.templateCache = [];
             this.currentRequest = null;
             this._initTemplates();
+            this._initTitleRenderer();
             this._super();
         },
 
@@ -46,9 +47,25 @@ define([
                 }
             }
         },
+        
+        /**
+         * Init templates used for rendering when instantiating the widget
+         *
+         * @private
+         */
+        _initTitleRenderer: function() {
+            this.titleRenderers = {};
+            for (var typeIdentifier in this.options.templates) {
+                if (this.options.templates[typeIdentifier]['titleRenderer']) {
+                   require([this.options.templates[typeIdentifier]['titleRenderer']], function (renderer) {
+                       this.component.titleRenderers[this.type] = renderer;
+                   }.bind({component: this, type: typeIdentifier}));
+                }
+            }
+        },
 
         /**
-         * Load a template for render
+         * Load a renderer for title when configured for a type.
          *
          * @param type The type to render
          *
@@ -131,12 +148,12 @@ define([
          *
          * @private
          */
-        _getSectionHeader: function(type) {
+        _getSectionHeader: function(type, data) {
             var title = '';
             var header = $('<dl role="listbox" class="autocomplete-list"></dl>');
 
             if (type !== undefined) {
-                title = this._getSectionTitle(type);
+                title = this._getSectionTitle(type, data);
                 header.append(title);
             }
 
@@ -152,9 +169,12 @@ define([
          *
          * @private
          */
-        _getSectionTitle: function(type) {
+        _getSectionTitle: function(type, data) {
             var title = '';
-            if (this.options.templates && this.options.templates[type].title) {
+
+            if (this.titleRenderers && this.titleRenderers[type]) {
+                title = $('<dt role="listbox" class="autocomplete-list-title title-' + type + '">' + this.titleRenderers[type].render(data) + '</dt>');
+            } else if (this.options.templates && this.options.templates[type].title) {
                 title = $('<dt role="listbox" class="autocomplete-list-title title-' + type + '">' + this.options.templates[type].title + '</dt>');
             }
 
@@ -215,7 +235,7 @@ define([
                         $.each(data, function(index, element) {
 
                             if (!lastElement || (lastElement && lastElement.type !== element.type)) {
-                                sectionDropdown = this._getSectionHeader(element.type);
+                                sectionDropdown = this._getSectionHeader(element.type, data);
                             }
 
                             var elementHtml = this._renderItem(element, index);
