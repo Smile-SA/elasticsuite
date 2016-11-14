@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
+class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implements FilterInterface
 {
     use DecimalFilterTrait;
 
@@ -78,11 +78,9 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
     }
 
     /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute
+     * {@inheritDoc}
      */
-    public function addFacetToCollection()
+    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request)
     {
         $facetField = $this->getFilterField();
         $facetType = BucketInterface::TYPE_HISTOGRAM;

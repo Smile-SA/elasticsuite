@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
+class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute implements FilterInterface
 {
     /**
      * @var array
@@ -100,11 +100,9 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute
+     * {@inheritDoc}
      */
-    public function addFacetToCollection()
+    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request)
     {
         $facetField  = $this->getFilterField();
         $facetType   = BucketInterface::TYPE_TERM;
