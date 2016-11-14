@@ -7,3 +7,5 @@ Enabled,Enabled
 "Visit Cookie Lifetime","Visit Cookie Lifetime"
 "Visitor Cookie Name","Visitor Cookie Name"
 "Visitor Cookie Lifetime","Visitor Cookie Lifetime"
+"In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.","In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit."
+"In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.","In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation."

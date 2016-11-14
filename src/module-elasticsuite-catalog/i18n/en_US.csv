@@ -22,36 +22,39 @@ Relevance,Relevance
 "No search results for: <b>'%1'</b>. We propose you approaching results.","No exact results found for: <b>'%1'</b>. The displayed items are the closest matches."
 "%1 and above","%1 and above"
 "%1 - %2","%1 - %2"
+"%1 is the only product matching your '%2' research.","%1 is the only product matching your '%2' research."
 item,item
 items,items
 OK,OK
 "Shop By","Shop By"
 "Clear All","Clear All"
 "Shopping Options","Shopping Options"
-"In Stock","In Stock"
-"Out Of Stock","Out Of Stock"
+"Product Preview and Sorting","Product Preview and Sorting"
+"Your product selection is empty.","Your product selection is empty."
 "Automatic Sort","Automatic Sort"
 "Manual Sort","Manual Sort"
 "Show more","Show more"
-"Your product selection is empty.","Your product selection is empty."
+"In Stock","In Stock"
+"Out Of Stock","Out Of Stock"
 "Product Autocomplete","Product Autocomplete"
 "Max Size","Max Size"
+"Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."
+"Product Attributes Autocomplete","Product Attributes Autocomplete"
+"Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."
+"Category Autocomplete","Category Autocomplete"
+"Maximum number of categories to display in autocomplete results.","Maximum number of categories to display in autocomplete results."
+"Catalog Search","Catalog Search"
+"Catalog Search Configuration","Catalog Search Configuration"
+"Redirect to product page if only one result","Redirect to product page if only one result"
+"If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
+"Expanded facets","Expanded facets"
+"Number of facets to display expanded by default.","Number of facets to display expanded by default."
+Products,Products
+Categories,Categories
+Attributes,Attributes
 "ElasticSuite Category Indexing","ElasticSuite Category Indexing"
 "Reindex ElasticSuite catalog categories.","Reindex ElasticSuite catalog categories."
 "Is Spellchecked","Is Spellchecked"
 Yes,Yes
 No,No
-"Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."
-"Category Autocomplete","Category Autocomplete"
-"Maximum number of categories to display in autocomplete results.","Maximum number of categories to display in autocomplete results."
 "Use Category Name in product search","Use Category Name in product search"
-"Catalog Search","Catalog Search"
-"Catalog Search Configuration","Catalog Search Configuration"
-"Redirect to product page if only one result","Redirect to product page if only one result"
-"If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
-"%1 is the only product matching your '%2' research.","%1 is the only product matching your '%2' research."
-Products,Products
-Categories,Categories
-Attributes,Attributes
-"Product Attributes Autocomplete","Product Attributes Autocomplete"
-"Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."

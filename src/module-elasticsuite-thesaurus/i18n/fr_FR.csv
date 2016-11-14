@@ -12,6 +12,7 @@ Type,Type
 "Edit a Thesaurus","Modifier le thésaurus"
 "General Information","Informations générales"
 "Thesaurus Name","Nom du thésaurus"
+Active,Activé
 Store,Vue magasin
 "Bag of words","Liste de termes"
 Synonyms,Synonymes
@@ -42,7 +43,7 @@ Delete,Supprimer
 Name,Nom
 Expansions,Expansions
 Terms,Termes
+Status,Status
 Action,Action
 Edit,Editer
-Active,Activé
 Inactive,Désactivé
