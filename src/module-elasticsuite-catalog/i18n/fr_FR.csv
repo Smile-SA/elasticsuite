@@ -53,3 +53,5 @@ No,Non
 Products,Produits
 Categories,Catégories
 Attributes,Attributs
+"Product Attributes Autocomplete","Autocomplétion des attributs de produits"
+"Maximum number of product attributes to display in autocomplete results.","Nombre maximum d'attributs produits à afficher dans les résultats de l'autocomplétion."

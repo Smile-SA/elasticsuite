@@ -53,3 +53,5 @@ No,No
 Products,Products
 Categories,Categories
 Attributes,Attributes
+"Product Attributes Autocomplete","Product Attributes Autocomplete"
+"Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."
