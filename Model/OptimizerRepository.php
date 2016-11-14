@@ -12,11 +12,12 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
-use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection as OptimizerCollection;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer as ResourceOptimizer;
+use Magento\Framework\Exception\CouldNotSaveException;
 
 /**
  * Optimizer Repository Object
@@ -27,6 +28,12 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection 
  */
 class OptimizerRepository implements OptimizerRepositoryInterface
 {
+    /**
+     * @var ResourceOptimizer
+     */
+    protected $resource;
+
+
     /**
      * Optimizer Factory
      *
@@ -59,17 +66,20 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      * PHP Constructor
      *
      * @param OptimizerFactory                       $optimizerFactory           Optimizer Factory.
+     * @param ResourceOptimizer                      $resource                   Resource optimizer.
      * @param OptimizerSearchResultsInterfaceFactory $searchResultsFactory       Search Results Factory.
      * @param OptimizerCollection                    $optimizerCollectionFactory Optimizer Collection Factory.
      */
     public function __construct(
         OptimizerFactory $optimizerFactory,
+        ResourceOptimizer $resource,
         OptimizerSearchResultsInterfaceFactory $searchResultsFactory,
         OptimizerCollection $optimizerCollectionFactory
     ) {
         $this->optimizerFactory           = $optimizerFactory;
         $this->searchResultsFactory       = $searchResultsFactory;
         $this->optimizerCollectionFactory = $optimizerCollectionFactory;
+        $this->resource                   = $resource;
     }
 
     /**
@@ -90,9 +100,8 @@ class OptimizerRepository implements OptimizerRepositoryInterface
                 throw $exception->singleField('optimizerId', $optimizerId);
             }
 
-            $this->optimizerRepositoryById[$optimizerId] = $optimizerId;
+            $this->optimizerRepositoryById[$optimizerId] = $optimizer;
         }
-
         return $this->optimizerRepositoryById[$optimizerId];
     }
 
@@ -142,11 +151,18 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      * @param \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface $optimizer Optimizer
      *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\CouldNotSaveException
      */
     public function save(\Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface $optimizer)
     {
-        $optimizer->save();
+        try {
+            $this->resource->save($optimizer);
+        } catch (\Exception $exception) {
+            throw new CouldNotSaveException(__(
+                'Could not save the optimizer: %1',
+                $exception->getMessage()
+            ));
+        }
 
         $this->optimizerRepositoryById[$optimizer->getOptimizerId()] = $optimizer;
 
@@ -163,9 +179,9 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      */
     public function delete(\Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface $optimizer)
     {
-        $optimizerId = $optimizer->getThesaurusId();
+        $optimizerId = $optimizer->getOptimizerId();
 
-        $optimizer->delete();
+        $this->resource->delete($optimizer);
 
         if (isset($this->optimizerRepositoryById[$optimizerId])) {
             unset($this->optimizerRepositoryById[$optimizerId]);

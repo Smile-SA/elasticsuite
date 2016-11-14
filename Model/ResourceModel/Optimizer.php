@@ -62,12 +62,33 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
-        if ($object->getId()) {
-            $searchContainers = $this->getSearchContainersFromOptimizerId($object->getId());
-            $object->setData('search_containers', $searchContainers);
+        if ($object->getOptimizerId()) {
+            $searchContainers = $this->getSearchContainersFromOptimizerId($object->getOptimizerId());
+            $object->setSearchContainer(implode(';', $searchContainers));
+        }
+
+        if ($object->getConfig()) {
+            $object->setConfig(unserialize($object->getConfig()));
         }
 
         return parent::_afterLoad($object);
+    }
+
+    /**
+     * Perform operations before object save, serialize optimizer configuration
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object Optimizer being loaded
+     *
+     * @return $this
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
+    {
+        if (is_array($object->getConfig())) {
+            $object->setConfig(serialize($object->getConfig()));
+        }
+
+        return parent::_beforeSave($object);
     }
 
     /**
@@ -101,28 +122,20 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $searchContainers = $object->getSearchContainers();
 
         if (is_array($searchContainers) && (count($searchContainers) > 0)) {
-            if (in_array(0, $searchContainers)) {
-                $searchContainers = [0];
-            }
-
             $searchContainerLinks = [];
-            $deleteCondition = [OptimizerInterface::OPTIMIZER_ID . " = ?" => $object->getOptimizerId()];
+            $deleteCondition = OptimizerInterface::OPTIMIZER_ID . " = " . $object->getOptimizerId();
 
-            foreach ($searchContainers as $key => $searchContainer) {
+            foreach ($searchContainers as $searchContainer) {
                 $searchContainerLinks[] = [
                     OptimizerInterface::OPTIMIZER_ID     => (int) $object->getOptimizerId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,
                 ];
-                $searchContainers[$key] = (int) $searchContainer;
             }
-
-            $deleteCondition[OptimizerInterface::SEARCH_CONTAINER . " NOT LIKE (?)"] = array_keys($searchContainers);
 
             $this->getConnection()->delete($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), $deleteCondition);
             $this->getConnection()->insertOnDuplicate(
                 $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER),
-                $searchContainerLinks,
-                array_keys(current($searchContainers))
+                $searchContainerLinks
             );
         }
     }

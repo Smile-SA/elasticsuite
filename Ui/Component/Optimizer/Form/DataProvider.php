@@ -156,8 +156,6 @@ class DataProvider extends AbstractDataProvider
         $this->storeManager = $storeManager;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
-
-//        $this->meta = $this->prepareMeta($this->meta);
     }
 
     /**
@@ -175,82 +173,12 @@ class DataProvider extends AbstractDataProvider
 
         if ($optimizer) {
             $optimizerData = $optimizer->getData();
-            $optimizerData = $this->filterFields($optimizerData);
             if (!empty($optimizerData)) {
-                $this->loadedData[$optimizer->getId()] = $optimizerData;
+                $this->loadedData[$optimizer->getOptimizerId()] = $optimizerData;
             }
         }
-
         return $this->loadedData;
     }
-
-    /**
-     * Prepare meta data
-     *
-     * @param array $meta The meta data
-     *
-     * @return array
-     */
-//    private function prepareMeta($meta)
-//    {
-//        $meta = array_replace_recursive(
-//            $meta,
-//            $this->prepareFieldsMeta(
-//                $this->getFieldsMap(),
-//                $this->getAttributesMeta($this->eavConfig->getEntityType(SellerInterface::ENTITY))
-//            )
-//        );
-//
-//        return $meta;
-//    }
-
-    /**
-     * Get attributes meta
-     *
-     * @param Type $entityType The entity type
-     *
-     * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
-//    private function getAttributesMeta(Type $entityType)
-//    {
-//        $meta = [];
-//        $attributes = $entityType->getAttributeCollection();
-//
-//        /* @var \Smile\Seller\Model\ResourceModel\Seller\Attribute $attribute */
-//        foreach ($attributes as $attribute) {
-//            $code = $attribute->getAttributeCode();
-//            // Use getDataUsingMethod, since some getters are defined and apply additional processing of returning value.
-//            foreach ($this->metaProperties as $metaName => $origName) {
-//                $value = $attribute->getDataUsingMethod($origName);
-//                $meta[$code][$metaName] = $value;
-//
-//                if ('frontend_input' === $origName) {
-//                    $meta[$code]['formElement'] = isset($this->formElement[$value]) ? $this->formElement[$value] : $value;
-//                }
-//
-//                if ($attribute->usesSource()) {
-//                    $meta[$code]['options'] = $attribute->getSource()->getAllOptions();
-//                }
-//            }
-//
-//            $rules = $this->eavValidationRules->build($attribute, $meta[$code]);
-//            if (!empty($rules)) {
-//                $meta[$code]['validation'] = $rules;
-//            }
-//
-//            $meta[$code]['scopeLabel'] = $this->getScopeLabel($attribute);
-//            $meta[$code]['componentType'] = Field::NAME;
-//        }
-//
-//        $result = [];
-//        foreach ($meta as $key => $item) {
-//            $result[$key] = $item;
-//            $result[$key]['sortOrder'] = 0;
-//        }
-//
-//        return $result;
-//    }
 
     /**
      * Get current optimizer
@@ -260,69 +188,21 @@ class DataProvider extends AbstractDataProvider
      */
     private function getCurrentOptimizer()
     {
-        $seller = $this->registry->registry('current_optimizer');
-        if ($seller) {
-            return $seller;
+        $optimizer = $this->registry->registry('current_optimizer');
+
+        if ($optimizer) {
+            return $optimizer;
         }
 
-        $requestId    = $this->request->getParam($this->requestFieldName);
-
+        $requestId = $this->request->getParam($this->requestFieldName);
         if ($requestId) {
             $optimizer = $this->optimizerRepository->getById($requestId);
         }
 
-        if (!$optimizer || !$optimizer->getId()) {
+        if (!$optimizer || !$optimizer->getOptimizerId()) {
             $optimizer = $this->collection->getNewEmptyItem();
         }
 
         return $optimizer;
-    }
-
-    /**
-     * Filter fields
-     *
-     * @param array $sellerData The seller data
-     *
-     * @return array
-     */
-    private function filterFields($sellerData)
-    {
-        return array_diff_key($sellerData, array_flip($this->ignoreFields));
-    }
-
-    /**
-     * @return array
-     */
-    private function getFieldsMap()
-    {
-        return [
-            'general' => [
-                'seller_code',
-                'name',
-                'is_active',
-            ],
-        ];
-    }
-
-    /**
-     * Prepare fields meta based on xml declaration of form and fields metadata
-     *
-     * @param array $fieldsMap  The field Map
-     * @param array $fieldsMeta The fields meta
-     *
-     * @return array
-     */
-    private function prepareFieldsMeta($fieldsMap, $fieldsMeta)
-    {
-        $result = [];
-        foreach ($fieldsMap as $fieldSet => $fields) {
-            foreach ($fields as $field) {
-                if (isset($fieldsMeta[$field])) {
-                    $result[$fieldSet]['children'][$field]['arguments']['data']['config'] = $fieldsMeta[$field];
-                }
-            }
-        }
-
-        return $result;
     }
 }

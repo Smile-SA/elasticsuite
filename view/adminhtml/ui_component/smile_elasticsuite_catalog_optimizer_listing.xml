@@ -177,23 +177,24 @@
                 </item>
             </argument>
         </column>
-        <!--<column name="store_id" class="Magento\Store\Ui\Component\Listing\Column\Store">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>-->
-                    <!--<item name="visible" xsi:type="boolean">false</item>-->
-                    <!--<item name="sortable" xsi:type="boolean">false</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Store</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
+        <column name="store_id" class="Magento\Store\Ui\Component\Listing\Column\Store">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>
+                    <item name="sortable" xsi:type="boolean">false</item>
+                    <item name="label" xsi:type="string" translate="true">Store View</item>
+                    <item name="add_field" xsi:type="boolean">true</item>
+                    <item name="sortOrder" xsi:type="number">50</item>
+                </item>
+            </argument>
+        </column>
         <actionsColumn name="actions" class="Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Listing\Column\OptimizerActions">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="resizeEnabled" xsi:type="boolean">false</item>
                     <item name="resizeDefaultWidth" xsi:type="string">107</item>
                     <item name="indexField" xsi:type="string">optimizer_id</item>
-                    <item name="sortOrder" xsi:type="number">500</item>
+                    <item name="sortOrder" xsi:type="number">60</item>
                 </item>
             </argument>
         </actionsColumn>

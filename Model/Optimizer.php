@@ -35,7 +35,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     {
         $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
     }
-    
+
     /**
      * Get Optimizer ID.
      *
@@ -79,11 +79,11 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Get Optimizer config.
      *
-     * @return string
+     * @return array|string
      */
     public function getConfig()
     {
-        return (string) $this->getData(self::CONFIG);
+        return $this->getData(self::CONFIG);
     }
 
     /**
@@ -165,13 +165,13 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Set Optimizer config.
      *
-     * @param string $config The Optimizer config.
+     * @param string|array $config The Optimizer config.
      *
      * @return Optimizer
      */
     public function setConfig($config)
     {
-        return $this->setData(self::CONFIG, (string) $config);
+        return $this->setData(self::CONFIG, $config);
     }
 
     /**
