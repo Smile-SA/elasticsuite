@@ -42,6 +42,7 @@ class Attribute extends AbstractRenderer
 
         $jsLayoutConfig = [
             'component'    => self::JS_COMPONENT,
+            'maxSize'      => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
             'hasMoreItems' => (bool) $this->getFilter()->hasMoreItems(),
         ];
 

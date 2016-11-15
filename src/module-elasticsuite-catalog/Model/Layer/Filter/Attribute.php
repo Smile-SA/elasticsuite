@@ -106,7 +106,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     {
         $facetField  = $this->getFilterField();
         $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = $this->getFacetConfig();
+        $facetConfig = $this->getFacetConfig($request);
 
         $productCollection = $this->getLayer()->getProductCollection();
         $productCollection->addFacet($facetField, $facetType, $facetConfig);
@@ -202,22 +202,42 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     /**
      * Retrieve configuration of the facet added to the collection.
      *
+     * @param \Magento\Framework\App\RequestInterface $request User request.
+     *
      * @return array
      */
-    private function getFacetConfig()
+    private function getFacetConfig(\Magento\Framework\App\RequestInterface $request)
     {
         $attribute = $this->getAttributeModel();
 
         $facetConfig = [
-            'size'      => $attribute->getFacetMaxSize(),
+            'size'      => $this->getFacetSize($request),
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];
 
-        if (!empty($this->currentFilterValue)) {
-            $facetConfig['size'] = 0;
+        return $facetConfig;
+    }
+
+    /**
+     * Current facet size.
+     *
+     * @param \Magento\Framework\App\RequestInterface $request User request.
+     *
+     * @return integer
+     */
+    private function getFacetSize(\Magento\Framework\App\RequestInterface $request)
+    {
+        $size = (int) $this->getAttributeModel()->getFacetMaxSize();
+
+        $hasValue      = !empty($this->currentFilterValue);
+        $isShowMore    = (bool) $request->getParam($this->getRequestVar() . '_all', false);
+        $isManualOrder = $this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL;
+
+        if ($hasValue || $isShowMore || $isManualOrder) {
+            $size = 0;
         }
 
-        return $facetConfig;
+        return $size;
     }
 
     /**
