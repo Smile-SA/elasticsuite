@@ -161,12 +161,12 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 },
                 $relation['configurable_attributes']
             );
-
-            $parentData['configurable_attributes'] = array_unique(
-                array_merge($configurableAttributesCodes, $parentData['configurable_attributes'])
+            
+            $parentData['configurable_attributes'] = array_values(
+                array_unique(array_merge($configurableAttributesCodes, $parentData['configurable_attributes']))
             );
         }
 
-        $parentData['children_attributes'] = array_unique($childrenAttributes);
+        $parentData['children_attributes'] = array_values(array_unique($childrenAttributes));
     }
 }
