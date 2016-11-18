@@ -13,7 +13,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-
+use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
 /**
  * Optimizer Resource Model
  *
@@ -23,6 +23,47 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
  */
 class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     * @var RuleFactory
+     */
+    private $ruleFactory;
+
+    /**
+     * Class constructor
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
+     * @param RuleFactory $ruleFactory
+     * @param string $connectionName
+     */
+    public function __construct(
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        RuleFactory $ruleFactory,
+        $connectionName = null
+    )
+    {
+        parent::__construct($context, $connectionName);
+        $this->ruleFactory = $ruleFactory;
+    }
+
+    /**
+     * Retrieve Search Containers for a given optimizer.
+     *
+     * @param int $optimizerId The optimizer Id
+     *
+     * @return array
+     */
+    public function getSearchContainersFromOptimizerId($optimizerId)
+    {
+        $connection = $this->getConnection();
+
+        $select = $connection->select();
+
+        $select->from($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), OptimizerInterface::SEARCH_CONTAINER)
+            ->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
+
+        return $connection->fetchCol($select);
+    }
+
     /**
      * Internal Constructor
      *
@@ -64,11 +105,25 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         if ($object->getOptimizerId()) {
             $searchContainers = $this->getSearchContainersFromOptimizerId($object->getOptimizerId());
-            $object->setSearchContainer(implode(';', $searchContainers));
+            $object->setSearchContainer($searchContainers);
         }
 
         if ($object->getConfig()) {
             $object->setConfig(unserialize($object->getConfig()));
+        }
+
+        if (!is_object($object->getRuleCondition())) {
+            $ruleData = $object->getRuleCondition();
+            $rule     = $this->ruleFactory->create();
+
+            if (is_string($ruleData)) {
+                $ruleData = unserialize($ruleData);
+            }
+
+            if (is_array($ruleData)) {
+                $rule->getConditions()->loadArray($ruleData);
+            }
+            $object->setRuleCondition($rule);
         }
 
         return parent::_afterLoad($object);
@@ -88,26 +143,17 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $object->setConfig(serialize($object->getConfig()));
         }
 
+        $rule = $this->ruleFactory->create();
+        if (is_object($object->getRuleCondition())) {
+            $rule = $object->getRuleCondition();
+        } elseif (is_array($object->getRuleCondition())) {
+            $conditionData = $object->getRuleCondition();
+            $rule->loadPost($conditionData);
+        }
+        $object->setRuleCondition(serialize($rule->getConditions()->asArray()));
+
+
         return parent::_beforeSave($object);
-    }
-
-    /**
-     * Retrieve Search Containers for a given optimizer.
-     *
-     * @param int $optimizerId The optimizer Id
-     *
-     * @return array
-     */
-    public function getSearchContainersFromOptimizerId($optimizerId)
-    {
-        $connection = $this->getConnection();
-
-        $select = $connection->select();
-
-        $select->from($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), OptimizerInterface::SEARCH_CONTAINER)
-            ->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
-
-        return $connection->fetchCol($select);
     }
 
     /**
@@ -119,7 +165,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function saveSearchContainerRelation(\Magento\Framework\Model\AbstractModel $object)
     {
-        $searchContainers = $object->getSearchContainers();
+        $searchContainers = $object->getSearchContainer();
 
         if (is_array($searchContainers) && (count($searchContainers) > 0)) {
             $searchContainerLinks = [];

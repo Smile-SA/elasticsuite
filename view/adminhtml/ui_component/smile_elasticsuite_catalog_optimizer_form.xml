@@ -179,7 +179,7 @@
                 </item>
             </argument>
         </field>
-        <field name="search_containers">
+        <field name="search_container">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="array">
                     <item name="0" xsi:type="array">
@@ -187,16 +187,8 @@
                         <item name="label" xsi:type="string" translate="true">Catalog Product Search</item>
                     </item>
                     <item name="1" xsi:type="array">
-                        <item name="value" xsi:type="string">advanced_search_container</item>
-                        <item name="label" xsi:type="string" translate="true">Advanced Product Search</item>
-                    </item>
-                    <item name="2" xsi:type="array">
                         <item name="value" xsi:type="string">catalog_view_container</item>
                         <item name="label" xsi:type="string" translate="true">Category Product View</item>
-                    </item>
-                    <item name="3" xsi:type="array">
-                        <item name="value" xsi:type="string">category_search_container</item>
-                        <item name="label" xsi:type="string" translate="true">Categories fulltext search</item>
                     </item>
                 </item>
                 <item name="config" xsi:type="array">
@@ -204,8 +196,11 @@
                     <item name="label" xsi:type="string" translate="true">Request type</item>
                     <item name="formElement" xsi:type="string">multiselect</item>
                     <item name="source" xsi:type="string">optimizer</item>
-                    <item name="dataScope" xsi:type="string">search_containers</item>
+                    <item name="dataScope" xsi:type="string">search_container</item>
                     <item name="sortOrder" xsi:type="number">70</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
                 </item>
             </argument>
         </field>
@@ -215,7 +210,8 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
-                <!--<item name="visible" xsi:type="string">${ $.provider }:data.model=='constant_score'</item>-->
+                <item name="visible" xsi:type="boolean">true</item>
+                <!--${ $.provider }:data.model=='constant_score'-->
             </item>
         </argument>
         <field name="config">
@@ -315,5 +311,32 @@
                 </item>
             </argument>
         </field>
+    </fieldset>
+
+    <fieldset name="optimizer_rule_fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Apply to products</item>
+            </item>
+        </argument>
+
+        <container name="optimizer_rule_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+            </argument>
+            <htmlContent name="rule_condition">
+                <argument name="block" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\RuleCondition</argument>
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogRule/js/component/catalog/product/form/rule</item>
+                        <item name="dataScope" xsi:type="string">rule_condition</item>
+                    </item>
+                </argument>
+            </htmlContent>
+        </container>
+
     </fieldset>
 </form>

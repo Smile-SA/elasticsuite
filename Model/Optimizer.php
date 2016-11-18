@@ -12,8 +12,8 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
-use Smile\ElasticsuiteCatalogOptimizer\Api\Data\date;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Rule;
 
 /**
  * Optimizer Model
@@ -123,7 +123,17 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      */
     public function getSearchContainer()
     {
-        return (string) $this->getData(self::SEARCH_CONTAINER);
+        return $this->getData(self::SEARCH_CONTAINER);
+    }
+
+    /**
+     * Get Optimizer rule condition.
+     *
+     * @return Rule
+     */
+    public function getRuleCondition()
+    {
+        return $this->getData(self::RULE_CONDITION);
     }
 
     /**
@@ -219,7 +229,19 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      */
     public function setSearchContainer($searchContainer)
     {
-        return $this->setData(self::SEARCH_CONTAINER, (string) $searchContainer);
+        return $this->setData(self::SEARCH_CONTAINER, $searchContainer);
+    }
+
+    /**
+     * Set Optimizer rule condition.
+     *
+     * @param string $ruleCondition The Optimizer rule condition.
+     *
+     * @return Optimizer
+     */
+    public function setRuleCondition($ruleCondition)
+    {
+        return $this->setData(self::RULE_CONDITION, $ruleCondition);
     }
 
 }

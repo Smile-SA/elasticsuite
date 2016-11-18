@@ -39,7 +39,7 @@ interface OptimizerInterface
      * Constant for field optimizer_id
      */
     const OPTIMIZER_ID = 'optimizer_id';
-    
+
     /**
      * Constant for field name
      */
@@ -79,6 +79,11 @@ interface OptimizerInterface
      * Constant for field search_container
      */
     const SEARCH_CONTAINER = 'search_container';
+
+    /**
+     * Constant for field rule_condition
+     */
+    const RULE_CONDITION = 'rule_condition';
 
     /**
      * Get Optimizer ID
@@ -135,6 +140,20 @@ interface OptimizerInterface
      * @return date
      */
     public function getToDate();
+
+    /**
+     * Get search_container
+     *
+     * @return string
+     */
+    public function getSearchContainer();
+
+    /**
+     * Get rule_condition
+     *
+     * @return string
+     */
+    public function getRuleCondition();
 
     /**
      * Set name
@@ -200,13 +219,6 @@ interface OptimizerInterface
     public function setToDate($toDate);
 
     /**
-     * Get search_container
-     *
-     * @return string
-     */
-    public function getSearchContainer();
-
-    /**
      * Set search container.
      *
      * @param string $searchContainer The value to search container.
@@ -214,4 +226,13 @@ interface OptimizerInterface
      * @return OptimizerInterface
      */
     public function setSearchContainer($searchContainer);
+
+    /**
+     * Set rule_condition
+     *
+     * @param string $ruleCondition The value to rule_condition.
+     *
+     * @return string
+     */
+    public function setRuleCondition($ruleCondition);
 }
