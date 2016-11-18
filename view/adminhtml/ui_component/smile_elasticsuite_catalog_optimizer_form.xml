@@ -111,14 +111,10 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="array">
                     <item name="0" xsi:type="array">
-                        <item name="value" xsi:type="string">0</item>
-                        <item name="label" xsi:type="string" translate="true">-</item>
-                    </item>
-                    <item name="1" xsi:type="array">
                         <item name="value" xsi:type="string">constant_score</item>
                         <item name="label" xsi:type="string" translate="true">Constant</item>
                     </item>
-                    <item name="2" xsi:type="array">
+                    <item name="1" xsi:type="array">
                         <item name="value" xsi:type="string">popularity</item>
                         <item name="label" xsi:type="string" translate="true">Popularity</item>
                     </item>
@@ -153,7 +149,7 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">50</item>
-                    <item name="label" xsi:type="string" translate="true">From</item>
+                    <item name="label" xsi:type="string" translate="true">Active from</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">date</item>
                     <item name="source" xsi:type="string">optimizer</item>
@@ -168,7 +164,7 @@
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">60</item>
-                    <item name="label" xsi:type="string" translate="true">To</item>
+                    <item name="label" xsi:type="string" translate="true">Active to</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">date</item>
                     <item name="source" xsi:type="string">optimizer</item>
@@ -210,8 +206,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
-                <item name="visible" xsi:type="boolean">true</item>
-                <!--${ $.provider }:data.model=='constant_score'-->
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
             </item>
         </argument>
         <field name="config">
@@ -229,6 +224,9 @@
                     <item name="tooltip" xsi:type="array">
                         <item name="description" xsi:type="string" translate="true">From -99 to 10000</item>
                     </item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
+                    </item>
                 </item>
             </argument>
         </field>
@@ -238,7 +236,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
-                <item name="visible" xsi:type="boolean">true</item>
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
             </item>
         </argument>
         <field name="type">
@@ -261,6 +259,9 @@
                     <item name="dataScope" xsi:type="string">config.popularity_type</item>
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
                     </item>
                 </item>
             </argument>
@@ -290,6 +291,9 @@
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
                     </item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
+                    </item>
                 </item>
             </argument>
         </field>
@@ -307,6 +311,9 @@
                     </item>
                     <item name="tooltip" xsi:type="array">
                         <item name="description" xsi:type="string" translate="true">Multiplier applied to the value before the function</item>
+                    </item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
                     </item>
                 </item>
             </argument>
