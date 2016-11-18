@@ -215,25 +215,29 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];
 
+        $requestConfig = $request->getParam('facetConfig');
+
+        if (isset($requestConfig[$this->getRequestVar()]) && is_array($requestConfig[$this->getRequestVar()])) {
+            $facetConfig = array_merge($facetConfig, $requestConfig[$this->getRequestVar()]);
+        }
+
         return $facetConfig;
     }
 
     /**
      * Current facet size.
      *
-     * @param \Magento\Framework\App\RequestInterface $request User request.
-     *
      * @return integer
      */
-    private function getFacetSize(\Magento\Framework\App\RequestInterface $request)
+    private function getFacetSize()
     {
-        $size = (int) $this->getAttributeModel()->getFacetMaxSize();
+        $attribute = $this->getAttributeModel();
+        $size      = (int) $attribute->getFacetMaxSize();
 
         $hasValue      = !empty($this->currentFilterValue);
-        $isShowMore    = (bool) $request->getParam($this->getRequestVar() . '_all', false);
-        $isManualOrder = $this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL;
+        $isManualOrder = $attribute->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL;
 
-        if ($hasValue || $isShowMore || $isManualOrder) {
+        if ($hasValue || $isManualOrder) {
             $size = 0;
         }
 

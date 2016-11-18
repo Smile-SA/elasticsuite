@@ -44,6 +44,7 @@ class Attribute extends AbstractRenderer
             'component'    => self::JS_COMPONENT,
             'maxSize'      => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
             'hasMoreItems' => (bool) $this->getFilter()->hasMoreItems(),
+            'ajaxLoadUrl'  => $this->getAjaxLoadUrl(),
         ];
 
         foreach ($filterItems as $item) {
@@ -64,5 +65,28 @@ class Attribute extends AbstractRenderer
     protected function canRenderFilter()
     {
         return true;
+    }
+
+    /**
+     * Get the AJAX load URL (used by the show more and the search features).
+     *
+     * @return string
+     */
+    private function getAjaxLoadUrl()
+    {
+        $qsParams = [];
+
+        $currentCategory = $this->getFilter()->getLayer()->getCurrentCategory();
+
+        if ($currentCategory && $currentCategory->getId() && $currentCategory->getLevel() > 1) {
+            $qsParams['cat'] = $currentCategory->getId();
+        }
+
+        $requestVar = $this->getFilter()->getRequestVar();
+        $qsParams['facetConfig'] = [$requestVar => ['size' => 0]];
+
+        $urlParams = ['_current' => true, '_use_rewrite' => true, '_query' => $qsParams];
+
+        return $this->_urlBuilder->getUrl('catalog/navigation_filter/ajax', $urlParams);
     }
 }

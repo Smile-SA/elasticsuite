@@ -12,9 +12,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Controller\Navigation\Filter;
 
-use \Magento\Framework\App\Action\Context;
-use \Magento\Framework\Controller\Result\JsonFactory;
-
 /**
  * Navigation layer filters AJAX loading.
  *
@@ -25,18 +22,20 @@ use \Magento\Framework\Controller\Result\JsonFactory;
 class Ajax extends \Magento\Framework\App\Action\Action
 {
     /**
-     * @var JsonFactory
+     * @var \Magento\Framework\Controller\Result\JsonFactory
      */
     private $jsonResultFactory;
 
     /**
      * Constructor.
      *
-     * @param Context     $context           Context.
-     * @param JsonFactory $jsonResultFactory JSON result factory.
+     * @param \Magento\Framework\App\Action\Context            $context           Controller action context.
+     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory JSON result factory.
      */
-    public function __construct(Context $context, JsonFactory $jsonResultFactory)
-    {
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory
+    ) {
         parent::__construct($context);
         $this->jsonResultFactory = $jsonResultFactory;
     }
