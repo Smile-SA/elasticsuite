@@ -65,10 +65,7 @@ class ClientFactory implements ClientFactoryInterface
     {
         if ($this->client === null) {
             $clientBuilder = ClientBuilder::create();
-            if ($this->clientConfiguration->isDebugModeEnabled()) {
-                $clientBuilder->setLogger($this->logger);
-            }
-
+            $clientBuilder->setHosts($this->clientConfiguration->getServerList());
             if ($this->clientConfiguration->isHttpAuthEnabled()
                 && !empty($this->clientConfiguration->getHttpAuthUser())
                 && !empty($this->clientConfiguration->getHttpAuthPassword()) ) {
@@ -81,11 +78,12 @@ class ClientFactory implements ClientFactoryInterface
                         $host
                     );
                 }
-            } else {
-                $hosts = $this->clientConfiguration->getServerList();
+                $clientBuilder->setHosts($hosts);
             }
 
-            $clientBuilder->setHosts($hosts);
+            if ($this->clientConfiguration->isDebugModeEnabled()) {
+                $clientBuilder->setLogger($this->logger);
+            }
 
             $this->client = $clientBuilder->build();
         }
