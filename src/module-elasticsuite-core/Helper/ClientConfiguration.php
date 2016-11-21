@@ -16,6 +16,9 @@ namespace Smile\ElasticsuiteCore\Helper;
 
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 
+// TODO add password and user configs
+
+
 /**
  * Smile_ElasticsuiteCore search engine client configuration configuration default implementation.
  *
@@ -54,6 +57,38 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     public function getConnectionTimeout()
     {
         return (int) $this->getElasticsearchClientConfigParam('connection_timeout');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isHttpsEnabled()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('enable_https_mode');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isHttpAuthEnabled()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('enable_http_auth');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHttpAuthUser()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('http_auth_user');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHttpAuthPassword()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('http_auth_pwd');
     }
 
     /**

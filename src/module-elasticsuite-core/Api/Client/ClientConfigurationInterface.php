@@ -43,4 +43,33 @@ interface ClientConfigurationInterface
      * @return integer
      */
     public function getConnectionTimeout();
+
+    /**
+     * Indicates whether HTTPS is enabled for the ES client.
+     *
+     * @return boolean
+     */
+    public function isHttpsEnabled();
+
+
+    /**
+     * Indicates whether basic HTTP authentication on the node is enabled or not.
+     *
+     * @return boolean
+     */
+    public function isHttpAuthEnabled();
+
+    /**
+     * Return the basic HTTP authentication user.
+     *
+     * @return string
+     */
+    public function getHttpAuthUser();
+
+    /**
+     * Return the basic HTTP authentication password.
+     *
+     * @return string
+     */
+    public function getHttpAuthPassword();
 }

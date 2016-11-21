@@ -35,12 +35,34 @@
                     <label>Elasticsearch Servers List</label>
                     <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
                 </field>
-                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Use HTTPS</label>
+                    <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable basic HTTP authentication</label>
+                    <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Basic HTTP authentication user</label>
+                    <depends>
+                        <field id="enable_http_auth">1</field>
+                    </depends>
+                </field>
+                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Basic HTTP authentication password</label>
+                    <depends>
+                        <field id="enable_http_auth">1</field>
+                    </depends>
+                </field>
+                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enable Debug Mode</label>
                     <comment>When enabled the module will produce logs through Magento logging system.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="connection_timeout" translate="label" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="connection_timeout" translate="label" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Server Connection Timeout</label>
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
@@ -49,17 +71,17 @@
 
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Indices Settings</label>
-                <field id="alias" translate="label" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="alias" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Indices Alias Name</label>
                 </field>
-                <field id="indices_pattern" translate="label" type="text" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="indices_pattern" translate="label" type="text" sortOrder="58" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Indices Name Pattern</label>
                 </field>
-                <field id="number_of_shards" translate="label" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="number_of_replicas" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Number of Replicas per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
