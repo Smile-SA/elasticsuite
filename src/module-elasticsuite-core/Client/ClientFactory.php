@@ -90,5 +90,4 @@ class ClientFactory implements ClientFactoryInterface
 
         return $this->client;
     }
-
 }
