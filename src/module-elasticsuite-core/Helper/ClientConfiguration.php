@@ -16,9 +16,6 @@ namespace Smile\ElasticsuiteCore\Helper;
 
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 
-// TODO add password and user configs
-
-
 /**
  * Smile_ElasticsuiteCore search engine client configuration configuration default implementation.
  *
