@@ -59,9 +59,9 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     /**
      * {@inheritdoc}
      */
-    public function isHttpsEnabled()
+    public function getScheme()
     {
-        return (int) $this->getElasticsearchClientConfigParam('enable_https_mode');
+        return (bool) $this->getElasticsearchClientConfigParam('enable_https_mode') ? 'https' : 'http';
     }
 
     /**
@@ -69,7 +69,9 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function isHttpAuthEnabled()
     {
-        return (int) $this->getElasticsearchClientConfigParam('enable_http_auth');
+        $authEnabled = (bool) $this->getElasticsearchClientConfigParam('enable_http_auth');
+
+        return $authEnabled && !empty($this->getHttpAuthUser()) && !empty($this->getHttpAuthPassword());
     }
 
     /**

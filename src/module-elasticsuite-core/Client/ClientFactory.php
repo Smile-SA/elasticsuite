@@ -65,21 +65,8 @@ class ClientFactory implements ClientFactoryInterface
     {
         if ($this->client === null) {
             $clientBuilder = ClientBuilder::create();
-            $clientBuilder->setHosts($this->clientConfiguration->getServerList());
-            if ($this->clientConfiguration->isHttpAuthEnabled()
-                && !empty($this->clientConfiguration->getHttpAuthUser())
-                && !empty($this->clientConfiguration->getHttpAuthPassword()) ) {
-                foreach ($this->clientConfiguration->getServerList() as $host) {
-                    $hosts[] = sprintf(
-                        '%s://%s:%s@%s',
-                        ($this->clientConfiguration->isHttpsEnabled() ? 'https' : 'http'),
-                        $this->clientConfiguration->getHttpAuthUser(),
-                        $this->clientConfiguration->getHttpAuthPassword(),
-                        $host
-                    );
-                }
-                $clientBuilder->setHosts($hosts);
-            }
+            $hosts         = $this->getHosts();
+            $clientBuilder->setHosts($hosts);
 
             if ($this->clientConfiguration->isDebugModeEnabled()) {
                 $clientBuilder->setLogger($this->logger);
@@ -89,5 +76,34 @@ class ClientFactory implements ClientFactoryInterface
         }
 
         return $this->client;
+    }
+
+    /**
+     * Return hosts config used to connect to the cluster.
+     *
+     * @return array
+     */
+    private function getHosts()
+    {
+        $hosts               = [];
+        $clientConfiguration = $this->clientConfiguration;
+
+        foreach ($clientConfiguration->getServerList() as $host) {
+            list($hostname, $port) = explode(':', $host);
+            $currentHostConfig = [
+                'host'   => $hostname,
+                'port'   => $port,
+                'scheme' => $clientConfiguration->getScheme(),
+            ];
+
+            if ($clientConfiguration->isHttpAuthEnabled()) {
+                $currentHostConfig['user'] = $clientConfiguration->getHttpAuthUser();
+                $currentHostConfig['pass'] = $clientConfiguration->getHttpAuthPassword();
+            }
+
+            $hosts[] = $currentHostConfig;
+        }
+
+        return $hosts;
     }
 }

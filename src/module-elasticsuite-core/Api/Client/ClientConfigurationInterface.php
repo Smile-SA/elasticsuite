@@ -45,12 +45,11 @@ interface ClientConfigurationInterface
     public function getConnectionTimeout();
 
     /**
-     * Indicates whether HTTPS is enabled for the ES client.
+     * Indicates the protocol scheme used (http/https).
      *
-     * @return boolean
+     * @return string
      */
-    public function isHttpsEnabled();
-
+    public function getScheme();
 
     /**
      * Indicates whether basic HTTP authentication on the node is enabled or not.
