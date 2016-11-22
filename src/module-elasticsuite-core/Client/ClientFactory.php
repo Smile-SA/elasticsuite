@@ -66,9 +66,25 @@ class ClientFactory implements ClientFactoryInterface
         if ($this->client === null) {
             $clientBuilder = ClientBuilder::create();
             $clientBuilder->setHosts($this->clientConfiguration->getServerList());
+            if ($this->clientConfiguration->isHttpAuthEnabled()
+                && !empty($this->clientConfiguration->getHttpAuthUser())
+                && !empty($this->clientConfiguration->getHttpAuthPassword()) ) {
+                foreach ($this->clientConfiguration->getServerList() as $host) {
+                    $hosts[] = sprintf(
+                        '%s://%s:%s@%s',
+                        ($this->clientConfiguration->isHttpsEnabled() ? 'https' : 'http'),
+                        $this->clientConfiguration->getHttpAuthUser(),
+                        $this->clientConfiguration->getHttpAuthPassword(),
+                        $host
+                    );
+                }
+                $clientBuilder->setHosts($hosts);
+            }
+
             if ($this->clientConfiguration->isDebugModeEnabled()) {
                 $clientBuilder->setLogger($this->logger);
             }
+
             $this->client = $clientBuilder->build();
         }
 

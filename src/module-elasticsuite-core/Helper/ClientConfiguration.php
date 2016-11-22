@@ -57,6 +57,38 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isHttpsEnabled()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('enable_https_mode');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isHttpAuthEnabled()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('enable_http_auth');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHttpAuthUser()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('http_auth_user');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHttpAuthPassword()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('http_auth_pwd');
+    }
+
+    /**
      * Read config under the path smile_elasticsuite_core_base_settings/es_client.
      *
      * @param string $configField Field name.
