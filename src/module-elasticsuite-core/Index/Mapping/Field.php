@@ -233,7 +233,7 @@ class Field implements FieldInterface
         $isAnalyzerCorrect = true;
 
         if ($property['type'] == self::FIELD_TYPE_STRING) {
-            $isAnalyzed        = $expectedAnalyzer !== self::ANALYZER_UNTOUCHED;
+            $isAnalyzed = $expectedAnalyzer !== self::ANALYZER_UNTOUCHED;
 
             if ($isAnalyzed && (!isset($property['analyzer']) || $property['analyzer'] != $expectedAnalyzer)) {
                 $isAnalyzerCorrect = false;
