@@ -49,7 +49,7 @@
         <filter name="standard" type="stemmer" language="fr">
             <language>french</language>
         </filter>
-        <filter name="elision" type="elision" language="default">
+        <filter name="elision" type="elision" language="fr">
             <articles>["l", "m", "t", "qu", "n", "s", "j"]</articles>
         </filter>
         <filter name="phonetic" type="phonetic" language="default">
