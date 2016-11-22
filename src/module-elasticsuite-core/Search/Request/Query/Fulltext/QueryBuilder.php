@@ -117,7 +117,7 @@ class QueryBuilder
         $searchableCallback = [$this, 'isSearchableFieldCallback'];
 
 
-        $standardAnalyzer   = FieldInterface::ANALYZER_STANDARD;
+        $standardAnalyzer = FieldInterface::ANALYZER_STANDARD;
         $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
@@ -340,7 +340,7 @@ class QueryBuilder
      */
     private function isSearchableFieldCallback(FieldInterface $field)
     {
-        return $field->isSearchable();
+        return $field->isSearchable() && $field->getType() == FieldInterface::FIELD_TYPE_STRING;
     }
 
     /**
