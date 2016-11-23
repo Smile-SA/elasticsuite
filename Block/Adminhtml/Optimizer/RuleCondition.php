@@ -44,17 +44,17 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\Block\Context      $context     Block context.
-     * @param \Magento\Framework\Data\FormFactory $formFactory Form factory.
-     * @param \Magento\Framework\Registry         $registry    Registry.
-     * @param array                               $data        Additional data.
+     * @param \Magento\Backend\Block\Context                   $context     Block context.
+     * @param \Magento\Framework\Data\FormFactory              $formFactory Form factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory Rule factory.
+     * @param \Magento\Framework\Registry                      $registry    Registry.
+     * @param array                                            $data        Additional data.
      */
     public function __construct(
         \Magento\Backend\Block\Context $context,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Smile\ElasticsuiteCatalogRule\Model\RuleFactory $ruleFactory,
         \Magento\Framework\Registry $registry,
-
         array $data = []
     ) {
         $this->formFactory = $formFactory;

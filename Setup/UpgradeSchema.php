@@ -16,6 +16,7 @@ use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+
 /**
  * Install Schema for Thesaurus Module
  *
@@ -30,7 +31,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param SchemaSetupInterface $setup Setup
+     * @param SchemaSetupInterface   $setup   Setup
      * @param ModuleContextInterface $context Context
      *
      * @return void

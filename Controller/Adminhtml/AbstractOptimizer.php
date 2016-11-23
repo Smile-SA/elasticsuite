@@ -49,15 +49,15 @@ abstract class AbstractOptimizer extends Action
      * @var OptimizerFactory
      */
     protected $optimizerFactory;
-    
+
     /**
      * Abstract constructor.
      *
-     * @param \Magento\Backend\App\Action\Context $context              Application context
-     * @param PageFactory                         $resultPageFactory    Result Page factory
-     * @param \Magento\Framework\Registry         $coreRegistry         Application registry
-     * @param OptimizerRepositoryInterface        $optimizerRepository  Optimizer Repository
-     * @param OptimizerFactory                    $optimizerFactory     Optimizer Factory
+     * @param \Magento\Backend\App\Action\Context $context             Application context
+     * @param PageFactory                         $resultPageFactory   Result Page factory
+     * @param \Magento\Framework\Registry         $coreRegistry        Application registry
+     * @param OptimizerRepositoryInterface        $optimizerRepository Optimizer Repository
+     * @param OptimizerFactory                    $optimizerFactory    Optimizer Factory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,

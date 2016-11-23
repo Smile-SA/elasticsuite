@@ -35,11 +35,9 @@ interface OptimizerRepositoryInterface
     /**
      * Retrieve list of optimizer
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria Search criteria.
-     *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria);
+    public function getList();
 
     /**
      * save a optimizer

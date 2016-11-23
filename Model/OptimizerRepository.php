@@ -14,7 +14,6 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection as OptimizerCollection;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer as ResourceOptimizer;
 use Magento\Framework\Exception\CouldNotSaveException;
@@ -33,7 +32,6 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      */
     protected $resource;
 
-
     /**
      * Optimizer Factory
      *
@@ -49,13 +47,6 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     private $optimizerRepositoryById = [];
 
     /**
-     * Search Result Factory
-     *
-     * @var OptimizerSearchResultsInterfaceFactory
-     */
-    private $searchResultsFactory;
-
-    /**
      * Optimizer Collection Factory
      *
      * @var OptimizerCollection
@@ -65,19 +56,18 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     /**
      * PHP Constructor
      *
-     * @param OptimizerFactory                       $optimizerFactory           Optimizer Factory.
-     * @param ResourceOptimizer                      $resource                   Resource optimizer.
-     * @param OptimizerSearchResultsInterfaceFactory $searchResultsFactory       Search Results Factory.
-     * @param OptimizerCollection                    $optimizerCollectionFactory Optimizer Collection Factory.
+     * @param OptimizerFactory    $optimizerFactory           Optimizer Factory.
+     * @param ResourceOptimizer   $resource                   Resource optimizer.
+     * @param OptimizerCollection $optimizerCollectionFactory Optimizer Collection Factory.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
         OptimizerFactory $optimizerFactory,
         ResourceOptimizer $resource,
-        OptimizerSearchResultsInterfaceFactory $searchResultsFactory,
         OptimizerCollection $optimizerCollectionFactory
     ) {
         $this->optimizerFactory           = $optimizerFactory;
-        $this->searchResultsFactory       = $searchResultsFactory;
         $this->optimizerCollectionFactory = $optimizerCollectionFactory;
         $this->resource                   = $resource;
     }
@@ -102,47 +92,21 @@ class OptimizerRepository implements OptimizerRepositoryInterface
 
             $this->optimizerRepositoryById[$optimizerId] = $optimizer;
         }
+
         return $this->optimizerRepositoryById[$optimizerId];
     }
 
     /**
      * Retrieve list of optimizer
      *
-     * @param \Magento\Framework\Api\SearchCriteriaInterface $searchCriteria Search criteria.
-     *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterface
      */
-    public function getList(\Magento\Framework\Api\SearchCriteriaInterface $searchCriteria)
+    public function getList()
     {
-        $searchResults = $this->searchResultsFactory->create();
-        $searchResults->setSearchCriteria($searchCriteria);
-
         $collection = $this->optimizerCollectionFactory->create();
-        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
-                $condition = $filter->getConditionType() ?: 'eq';
-                $collection->addFieldToFilter($filter->getField(), [$condition => $filter->getValue()]);
-            }
-        }
-
-        $searchResults->setTotalCount($collection->getSize());
-        $sortOrders = $searchCriteria->getSortOrders();
-
-        if ($sortOrders) {
-            foreach ($sortOrders as $sortOrder) {
-                $collection->addOrder(
-                    $sortOrder->getField(),
-                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
-                );
-            }
-        }
-
-        $collection->setCurPage($searchCriteria->getCurrentPage());
-        $collection->setPageSize($searchCriteria->getPageSize());
         $optimizers = $collection->getItems();
-        $searchResults->setItems($optimizers);
 
-        return $searchResults;
+        return $optimizers;
     }
 
     /**

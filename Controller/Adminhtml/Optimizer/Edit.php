@@ -34,7 +34,7 @@ class Edit extends OptimizerController
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
 
-        $optimizerId = (int)$this->getRequest()->getParam('id');
+        $optimizerId = (int) $this->getRequest()->getParam('id');
         $optimizer = null;
 
         try {

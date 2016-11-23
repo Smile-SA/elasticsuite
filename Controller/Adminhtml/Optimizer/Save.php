@@ -34,7 +34,7 @@ class Save extends OptimizerController
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
 
-        $data         =  $this->getRequest()->getPostValue();
+        $data         = $this->getRequest()->getPostValue();
         $redirectBack = $this->getRequest()->getParam('back', false);
 
         if ($data) {

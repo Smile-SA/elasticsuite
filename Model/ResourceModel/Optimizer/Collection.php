@@ -39,32 +39,15 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     private $date;
 
     /**
-     * Init model for collection
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * Collection constructor.
+     * @param \Magento\Framework\Data\Collection\EntityFactoryInterface    $entityFactory Entity factory.
+     * @param \Psr\Log\LoggerInterface                                     $logger        Logger.
+     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy Fetch strategy.
+     * @param \Magento\Framework\Event\ManagerInterface                    $eventManager  Event manager.
+     * @param \Magento\Framework\Stdlib\DateTime\DateTime                  $date          Date.
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection    Connection.
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null    $resource      Resource.
      */
-    protected function _construct()
-    {
-        $this->_init(
-            'Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer',
-            'Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer'
-        );
-    }
-
-    /**
-     * Perform operations after collection load
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * @return $this
-     */
-    protected function _afterLoad()
-    {
-//        $this->loadSearchContainers();
-
-        return parent::_afterLoad();
-    }
-
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
         \Psr\Log\LoggerInterface $logger,
@@ -106,7 +89,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         return $this->storeId;
     }
 
-
     /**
      * Add search containers filer.
      *
@@ -120,34 +102,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $searchContainers = array($searchContainers);
         }
         $this->addFilter(OptimizerInterface::SEARCH_CONTAINER, array('in' => $searchContainers));
+
         return $this;
     }
-
-
-    /**
-     * Filter collection by specified store ids
-     *
-     * @param array|int $searchContainers Search containers.
-     *
-     * @return $this
-     */
-//    public function addStoreFilter($searchContainers)
-//    {
-//        if (!is_array($searchContainers)) {
-//            $searchContainers = [$searchContainers];
-//        }
-//
-//        $this->getSelect()
-//            ->join(
-//                ['search_container_table' => $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER)],
-//                'main_table.' . OptimizerInterface::OPTIMIZER_ID . ' = search_container_table.' . OptimizerInterface::OPTIMIZER_ID,
-//                []
-//            )
-//            ->where('search_container_table.search_container IN (?)', $searchContainers)
-//            ->group('main_table.' . OptimizerInterface::OPTIMIZER_ID);
-//
-//        return $this;
-//    }
 
     /**
      * Returns only active optimizers.
@@ -160,7 +117,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         $this->addFieldToFilter('is_active', true);
 
-        if (is_null($date)) {
+        if ($date == null) {
             $date = $this->date->date('Y-m-d');
         }
 
@@ -172,30 +129,27 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
+     * Init model for collection
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _construct()
+    {
+        $this->_init(
+            'Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer',
+            'Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer'
+        );
+    }
+
+    /**
      * Perform operations after collection load
      *
-     * @return array
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * @return $this
      */
-//    private function loadSearchContainers()
-//    {
-//        $select = $this->getConnection()->select();
-//
-//        $itemIds = array_keys($this->_items);
-//
-//        $select->from(['main' => $this->getTable(OptimizerInterface::TABLE_NAME)], [])
-//            ->joinLeft(
-//                ['search_container_table' => $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER)],
-//                "main.".OptimizerInterface::OPTIMIZER_ID." = search_container_table.".OptimizerInterface::OPTIMIZER_ID,
-//                []
-//            )
-//            ->where('main.'.OptimizerInterface::OPTIMIZER_ID.' IN (?)', $itemIds)
-//            ->group(["main.".OptimizerInterface::OPTIMIZER_ID, "search_container_table.".OptimizerInterface::OPTIMIZER_ID])
-//            ->columns(
-//                [
-//                    OptimizerInterface::OPTIMIZER_ID => 'main.'.OptimizerInterface::OPTIMIZER_ID,
-//                ]
-//            );
-//
-//        return $this->getConnection()->fetchAll($select);
-//    }
+    protected function _afterLoad()
+    {
+        return parent::_afterLoad();
+    }
 }

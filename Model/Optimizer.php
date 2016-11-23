@@ -27,16 +27,6 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule;
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
     /**
-     * Internal Constructor
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     */
-    protected function _construct()
-    {
-        $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
-    }
-
-    /**
      * Get Optimizer ID.
      *
      * @return int|null
@@ -244,4 +234,13 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         return $this->setData(self::RULE_CONDITION, $ruleCondition);
     }
 
+    /**
+     * Internal Constructor
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _construct()
+    {
+        $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
+    }
 }

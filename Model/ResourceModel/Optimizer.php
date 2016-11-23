@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
+
 /**
  * Optimizer Resource Model
  *
@@ -31,16 +32,15 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Class constructor
      *
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
-     * @param RuleFactory $ruleFactory
-     * @param string $connectionName
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Context.
+     * @param RuleFactory                                       $ruleFactory    Rule factory.
+     * @param string                                            $connectionName Connection name.
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         RuleFactory $ruleFactory,
         $connectionName = null
-    )
-    {
+    ) {
         parent::__construct($context, $connectionName);
         $this->ruleFactory = $ruleFactory;
     }
