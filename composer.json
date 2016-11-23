@@ -56,6 +56,7 @@
         "files": [
             "src/module-elasticsuite-core/registration.php",
             "src/module-elasticsuite-catalog/registration.php",
+            "src/module-elasticsuite-catalog-optimizer/registration.php",
             "src/module-elasticsuite-catalog-rule/registration.php",
             "src/module-elasticsuite-swatches/registration.php",
             "src/module-elasticsuite-thesaurus/registration.php",
