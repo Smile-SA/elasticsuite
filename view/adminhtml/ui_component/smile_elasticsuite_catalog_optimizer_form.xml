@@ -114,10 +114,6 @@
                         <item name="value" xsi:type="string">constant_score</item>
                         <item name="label" xsi:type="string" translate="true">Constant</item>
                     </item>
-                    <item name="1" xsi:type="array">
-                        <item name="value" xsi:type="string">popularity</item>
-                        <item name="label" xsi:type="string" translate="true">Popularity</item>
-                    </item>
                 </item>
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">text</item>
@@ -236,7 +232,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
-                <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
+                <item name="visible" xsi:type="boolean">false</item>
             </item>
         </argument>
         <field name="type">
