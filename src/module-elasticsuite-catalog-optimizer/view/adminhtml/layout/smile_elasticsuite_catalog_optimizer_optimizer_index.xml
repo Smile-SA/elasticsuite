@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ElasticsuiteCatalogOptimizer grid layout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles"/>
+    <body>
+        <referenceContainer name="content">
+            <uiComponent name="smile_elasticsuite_catalog_optimizer_listing"/>
+        </referenceContainer>
+    </body>
+</page>
