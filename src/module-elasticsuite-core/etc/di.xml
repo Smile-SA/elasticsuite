@@ -70,10 +70,11 @@
                 <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory</item>
                 <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory</item>
                 <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory</item>
+                <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory</item>
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
