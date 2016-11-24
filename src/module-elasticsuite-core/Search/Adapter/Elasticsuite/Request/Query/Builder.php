@@ -30,17 +30,18 @@ class Builder implements BuilderInterface
      * @var array
      */
     private $queryBuilderClasses = [
-        QueryInterface::TYPE_BOOL       => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boolean',
-        QueryInterface::TYPE_FILTER     => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Filtered',
-        QueryInterface::TYPE_NOT        => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Not',
-        QueryInterface::TYPE_NESTED     => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nested',
-        QueryInterface::TYPE_TERM       => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term',
-        QueryInterface::TYPE_TERMS      => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms',
-        QueryInterface::TYPE_RANGE      => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range',
-        QueryInterface::TYPE_MATCH      => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match',
-        QueryInterface::TYPE_COMMON     => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common',
-        QueryInterface::TYPE_MULTIMATCH => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch',
-        QueryInterface::TYPE_MISSING    => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing',
+        QueryInterface::TYPE_BOOL          => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boolean',
+        QueryInterface::TYPE_FILTER        => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Filtered',
+        QueryInterface::TYPE_NOT           => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Not',
+        QueryInterface::TYPE_NESTED        => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nested',
+        QueryInterface::TYPE_TERM          => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term',
+        QueryInterface::TYPE_TERMS         => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms',
+        QueryInterface::TYPE_RANGE         => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range',
+        QueryInterface::TYPE_MATCH         => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match',
+        QueryInterface::TYPE_COMMON        => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common',
+        QueryInterface::TYPE_MULTIMATCH    => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch',
+        QueryInterface::TYPE_MISSING       => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing',
+        QueryInterface::TYPE_FUNCTIONSCORE => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore',
     ];
 
     /**
