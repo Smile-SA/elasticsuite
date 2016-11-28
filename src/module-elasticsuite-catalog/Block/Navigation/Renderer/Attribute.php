@@ -48,12 +48,7 @@ class Attribute extends AbstractRenderer
         ];
 
         foreach ($filterItems as $item) {
-            $jsLayoutConfig['items'][] = [
-                'url'        => $item->getUrl(),
-                'label'      => $item->getLabel(),
-                'count'      => $item->getCount(),
-                'isSelected' => (bool) $item->getIsSelected(),
-            ];
+            $jsLayoutConfig['items'][] = $item->toArray(['label', 'count', 'url', 'is_selected']);
         }
 
         return json_encode($jsLayoutConfig);
@@ -74,7 +69,7 @@ class Attribute extends AbstractRenderer
      */
     private function getAjaxLoadUrl()
     {
-        $qsParams = [];
+        $qsParams = ['filterName' => $this->getFilter()->getRequestVar()];
 
         $currentCategory = $this->getFilter()->getLayer()->getCurrentCategory();
 
@@ -82,10 +77,7 @@ class Attribute extends AbstractRenderer
             $qsParams['cat'] = $currentCategory->getId();
         }
 
-        $requestVar = $this->getFilter()->getRequestVar();
-        $qsParams['facetConfig'] = [$requestVar => ['size' => 0]];
-
-        $urlParams = ['_current' => true, '_use_rewrite' => true, '_query' => $qsParams];
+        $urlParams = ['_current' => true, '_query' => $qsParams];
 
         return $this->_urlBuilder->getUrl('catalog/navigation_filter/ajax', $urlParams);
     }

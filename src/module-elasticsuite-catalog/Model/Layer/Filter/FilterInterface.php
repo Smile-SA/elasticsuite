@@ -28,9 +28,9 @@ interface FilterInterface extends \Magento\Catalog\Model\Layer\Filter\FilterInte
     /**
      * Add facet to the current layer products collection.
      *
-     * @param \Magento\Framework\App\RequestInterface $request User request.
+     * @param array $config Facet config.
      *
      * @return $this
      */
-    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request);
+    public function addFacetToCollection($config = []);
 }

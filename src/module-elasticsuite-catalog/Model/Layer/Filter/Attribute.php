@@ -102,11 +102,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     /**
      * {@inheritDoc}
      */
-    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request)
+    public function addFacetToCollection($config = [])
     {
         $facetField  = $this->getFilterField();
         $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = $this->getFacetConfig($request);
+        $facetConfig = $this->getFacetConfig($config);
 
         $productCollection = $this->getLayer()->getProductCollection();
         $productCollection->addFacet($facetField, $facetType, $facetConfig);
@@ -202,26 +202,20 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     /**
      * Retrieve configuration of the facet added to the collection.
      *
-     * @param \Magento\Framework\App\RequestInterface $request User request.
+     * @param array $config Config override.
      *
      * @return array
      */
-    private function getFacetConfig(\Magento\Framework\App\RequestInterface $request)
+    private function getFacetConfig($config = [])
     {
         $attribute = $this->getAttributeModel();
 
-        $facetConfig = [
-            'size'      => $this->getFacetSize($request),
+        $defaultConfig = [
+            'size'      => $this->getFacetSize(),
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];
 
-        $requestConfig = $request->getParam('facetConfig');
-
-        if (isset($requestConfig[$this->getRequestVar()]) && is_array($requestConfig[$this->getRequestVar()])) {
-            $facetConfig = array_merge($facetConfig, $requestConfig[$this->getRequestVar()]);
-        }
-
-        return $facetConfig;
+        return array_merge($defaultConfig, $config);
     }
 
     /**

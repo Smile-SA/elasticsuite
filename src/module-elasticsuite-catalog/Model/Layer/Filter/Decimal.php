@@ -80,7 +80,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
     /**
      * {@inheritDoc}
      */
-    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request)
+    public function addFacetToCollection($config = [])
     {
         $facetField = $this->getFilterField();
         $facetType = BucketInterface::TYPE_HISTOGRAM;

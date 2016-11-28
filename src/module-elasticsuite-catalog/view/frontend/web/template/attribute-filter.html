@@ -7,11 +7,11 @@
 </div>
  -->
  
-<ol class="items" data-bind="foreach: displayedItems">
+<ol class="items" data-bind="foreach: getDisplayedItems()">
     <li class="item">
         <a data-bind="attr: {href:url}, visible: count >= 1">
             <input type="checkbox"
-                   data-bind="checked: isSelected" 
+                   data-bind="checked: is_selected" 
                    onclick="this.parentNode.click();" />
             <span data-bind="html: label"></span>
             <span class="count" data-bind="text: count"></span>
@@ -24,7 +24,9 @@
     </li>
 </ol>
 
-<div class="actions" data-bind="if: displayShowMore() || displayShowLess()">
-    <span class="show-more" data-bind="visible: displayShowMore()"><a data-bind="text: showMoreLabel, event: {click: onShowMore}"></a></span>
-    <span class="show-less" data-bind="visible: displayShowLess()"><a data-bind="text: showLessLabel, event: {click: onShowLess}"></a></span>
+<div class="actions" data-bind="if: enableExpansion()">
+    <div class="secondary" data-bind="">
+        <a class="action show-more" data-bind="visible: displayShowMore(), event: {click: onShowMore}"><span data-bind="text: showMoreLabel"></span></a>
+        <a class="action show-less" data-bind="visible: displayShowLess(), event: {click: onShowLess}"><span data-bind="text: showLessLabel"></span></a>
+    </div>
 </div>

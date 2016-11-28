@@ -77,27 +77,30 @@
         text-align: right;
         margin: 10px 0 0;
 
-        span {
+        div.secondary {
             display: inline-block;
 
             a {
                 text-decoration: underline;
                 cursor: pointer;
+                color: @link__color;
 
                 &:hover {
                     background: transparent;
                 }
+
+                &.show-more {
+                    span:after {
+                        content: " +";
+                    }
+                }
+
+                &.show-less {
+                    span:after {
+                        content: " -";
+                    }
+                }
             }
-        }
-
-        span.show-less:before {
-            padding: 0 4px;
-            content: "-"
-        }
-
-        span.show-more:before {
-            padding: 0 4px;
-            content: "+"
         }
     }
 }

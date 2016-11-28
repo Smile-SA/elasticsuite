@@ -151,7 +151,6 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     private function addFacets()
     {
-        $request           = $this->getRequest();
         $productCollection = $this->getLayer()->getProductCollection();
         $countBySetId      = $productCollection->getProductCountByAttributeSetId();
         $totalCount        = $productCollection->getSize();
@@ -164,10 +163,10 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
                 $currentCoverageRate      = $attributeCountCandidates / $totalCount * 100;
 
                 if ($facetCoverageRate < $currentCoverageRate) {
-                    $filter->addFacetToCollection($request);
+                    $filter->addFacetToCollection();
                 }
             } catch (\Exception $e) {
-                $filter->addFacetToCollection($request);
+                $filter->addFacetToCollection();
             }
         }
     }

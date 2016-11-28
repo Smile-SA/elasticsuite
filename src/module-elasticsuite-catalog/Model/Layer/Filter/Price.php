@@ -95,7 +95,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
     /**
      * {@inheritDoc}
      */
-    public function addFacetToCollection(\Magento\Framework\App\RequestInterface $request)
+    public function addFacetToCollection($config = [])
     {
         $facetField      = $this->getFilterField();
         $facetType       = BucketInterface::TYPE_HISTOGRAM;
