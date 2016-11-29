@@ -61,7 +61,13 @@ class QueryBuilder
 
         $fuzzySpellingTypes = [SpellcheckerInterface::SPELLING_TYPE_FUZZY, SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY];
 
-        if ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
+        if (is_array($queryText)) {
+            $queries = [];
+            foreach ($queryText as $currentQueryText) {
+                $queries[] = $this->create($containerConfig, $currentQueryText, $spellingType);
+            }
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries, 'boost' => $boost]);
+        } elseif ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
             $query = $this->getPureStopwordsQuery($containerConfig, $queryText, $boost);
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
             $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType, $boost);
