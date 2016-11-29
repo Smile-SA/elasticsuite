@@ -37,6 +37,7 @@ class Category extends \Magento\Catalog\Model\Layer\Filter\Item
 
         foreach ($this->getFilter()->getLayer()->getState()->getFilters() as $currentFilterItem) {
             $currentRequestVar = $currentFilterItem->getFilter()->getRequestVar();
+
             if ($currentRequestVar != $catRequestVar) {
                 $queryParams[$currentRequestVar] = null;
             }

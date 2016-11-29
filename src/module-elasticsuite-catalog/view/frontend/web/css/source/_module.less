@@ -57,9 +57,52 @@
     }
 }
 
-.filter .block-subtitle {
-    border-bottom: none;
-    font-weight: bold;
+.filter {
+    .filter-content .item {
+        margin: 10px 0 0 10px;
+    }
+
+    .block-subtitle {
+        border-bottom: none;
+        font-weight: bold;
+    }
+
+    .field.search {
+        input[type="text"] {
+            font-size: 85%;
+        }
+    }
+
+    .actions {
+        text-align: right;
+        margin: 10px 0 0;
+
+        div.secondary {
+            display: inline-block;
+
+            a {
+                text-decoration: underline;
+                cursor: pointer;
+                color: @link__color;
+
+                &:hover {
+                    background: transparent;
+                }
+
+                &.show-more {
+                    span:after {
+                        content: " +";
+                    }
+                }
+
+                &.show-less {
+                    span:after {
+                        content: " \2212";
+                    }
+                }
+            }
+        }
+    }
 }
 
 .smile-elasticsuite-autocomplete-result {

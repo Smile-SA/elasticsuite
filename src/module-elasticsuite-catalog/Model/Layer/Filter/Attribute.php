@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
+class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute implements FilterInterface
 {
     /**
      * @var array
@@ -100,15 +100,13 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     }
 
     /**
-     * Append the facet to the product collection.
-     *
-     * @return \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute
+     * {@inheritDoc}
      */
-    public function addFacetToCollection()
+    public function addFacetToCollection($config = [])
     {
         $facetField  = $this->getFilterField();
         $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = $this->getFacetConfig();
+        $facetConfig = $this->getFacetConfig($config);
 
         $productCollection = $this->getLayer()->getProductCollection();
         $productCollection->addFacet($facetField, $facetType, $facetConfig);
@@ -204,22 +202,40 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     /**
      * Retrieve configuration of the facet added to the collection.
      *
+     * @param array $config Config override.
+     *
      * @return array
      */
-    private function getFacetConfig()
+    private function getFacetConfig($config = [])
     {
         $attribute = $this->getAttributeModel();
 
-        $facetConfig = [
-            'size'      => $attribute->getFacetMaxSize(),
+        $defaultConfig = [
+            'size'      => $this->getFacetSize(),
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];
 
-        if (!empty($this->currentFilterValue)) {
-            $facetConfig['size'] = 0;
+        return array_merge($defaultConfig, $config);
+    }
+
+    /**
+     * Current facet size.
+     *
+     * @return integer
+     */
+    private function getFacetSize()
+    {
+        $attribute = $this->getAttributeModel();
+        $size      = (int) $attribute->getFacetMaxSize();
+
+        $hasValue      = !empty($this->currentFilterValue);
+        $isManualOrder = $attribute->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL;
+
+        if ($hasValue || $isManualOrder) {
+            $size = 0;
         }
 
-        return $facetConfig;
+        return $size;
     }
 
     /**
