@@ -15,6 +15,30 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Attribute</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute">
+        <arguments>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Category</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category">
+        <arguments>
+            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
+        </arguments>
+    </type>
+
     <virtualType name="categoryFilterList" type="Smile\ElasticsuiteCatalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filterableAttributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
@@ -58,6 +82,15 @@
             <argument name="filterList" xsi:type="object">searchFilterList</argument>
         </arguments>
     </virtualType>
+    
+    <type name="Smile\ElasticsuiteCatalog\Controller\Navigation\Filter\Ajax">
+        <arguments>
+            <argument name="filterListPool" xsi:type="array">
+                <item name="category" xsi:type="object">categoryFilterList</item>
+                <item name="search" xsi:type="object">searchFilterList</item>
+            </argument> 
+        </arguments> 
+    </type>
 
     <type name="Magento\Search\Model\Autocomplete">
         <arguments>
@@ -104,30 +137,6 @@
                     <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/category</item>
                 </item>
             </argument>
-        </arguments>
-    </type>
-
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Attribute</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute">
-        <arguments>
-            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
-        </arguments>
-    </type>
-
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory" type="Magento\Catalog\Model\Layer\Filter\ItemFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\Category</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category">
-        <arguments>
-            <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\CategoryFactory</argument>
         </arguments>
     </type>
 

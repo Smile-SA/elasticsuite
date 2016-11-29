@@ -42,16 +42,13 @@ class Attribute extends AbstractRenderer
 
         $jsLayoutConfig = [
             'component'    => self::JS_COMPONENT,
+            'maxSize'      => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
             'hasMoreItems' => (bool) $this->getFilter()->hasMoreItems(),
+            'ajaxLoadUrl'  => $this->getAjaxLoadUrl(),
         ];
 
         foreach ($filterItems as $item) {
-            $jsLayoutConfig['items'][] = [
-                'url'        => $item->getUrl(),
-                'label'      => $item->getLabel(),
-                'count'      => $item->getCount(),
-                'isSelected' => (bool) $item->getIsSelected(),
-            ];
+            $jsLayoutConfig['items'][] = $item->toArray(['label', 'count', 'url', 'is_selected']);
         }
 
         return json_encode($jsLayoutConfig);
@@ -63,5 +60,25 @@ class Attribute extends AbstractRenderer
     protected function canRenderFilter()
     {
         return true;
+    }
+
+    /**
+     * Get the AJAX load URL (used by the show more and the search features).
+     *
+     * @return string
+     */
+    private function getAjaxLoadUrl()
+    {
+        $qsParams = ['filterName' => $this->getFilter()->getRequestVar()];
+
+        $currentCategory = $this->getFilter()->getLayer()->getCurrentCategory();
+
+        if ($currentCategory && $currentCategory->getId() && $currentCategory->getLevel() > 1) {
+            $qsParams['cat'] = $currentCategory->getId();
+        }
+
+        $urlParams = ['_current' => true, '_query' => $qsParams];
+
+        return $this->_urlBuilder->getUrl('catalog/navigation_filter/ajax', $urlParams);
     }
 }

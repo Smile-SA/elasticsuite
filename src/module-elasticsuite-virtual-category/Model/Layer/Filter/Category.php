@@ -74,7 +74,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     /**
      * {@inheritDoc}
      */
-    public function addFacetToCollection()
+    public function addFacetToCollection($config = [])
     {
         $facetQueries = $this->getFacetQueries();
 
