@@ -47,7 +47,7 @@ class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
         $attributeCode = $this->getAttributeCode();
         $attributeData = $object->getData($attributeCode);
 
-        if ($attributeData !== null ) {
+        if ($attributeData !== null) {
             $rule = $this->ruleFactory->create();
 
             if (is_object($attributeData)) {
