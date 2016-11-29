@@ -37,21 +37,22 @@ class QueryBuilder
      * @var array
      */
     private $mappedConditions = [
-        'eq'    => 'values',
-        'seq'   => 'values',
-        'in'    => 'values',
-        'from'  => 'gte',
-        'moreq' => 'gte',
-        'gteq'  => 'gte',
-        'to'    => 'lte',
-        'lteq'  => 'lte',
+        'eq'     => 'values',
+        'seq'    => 'values',
+        'in'     => 'values',
+        'from'   => 'gte',
+        'moreq'  => 'gte',
+        'gteq'   => 'gte',
+        'to'     => 'lte',
+        'lteq'   => 'lte',
+        'like'   => 'queryText',
+        'in_set' => 'values',
     ];
 
     /**
      * @var array
      */
     private $unsupportedConditions = [
-        'like',
         'nin',
         'notnull',
         'null',
@@ -92,12 +93,7 @@ class QueryBuilder
                 $queries[] = $condition;
             } else {
                 $mappingField = $mapping->getField($fieldName);
-
-                if ($mappingField->isFilterable() === false) {
-                    throw new \LogicException("Field {$fieldName} is not filterable.");
-                }
-
-                $queries[] = $this->prepareFieldCondition($mappingField, $condition);
+                $queries[]    = $this->prepareFieldCondition($mappingField, $condition);
             }
         }
 
@@ -129,6 +125,14 @@ class QueryBuilder
         }
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
+        if ($condition['field'] === null) {
+            $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD);
+        }
+
+        if (in_array('queryText', array_keys($condition))) {
+            $queryType = QueryInterface::TYPE_MATCH;
+            $condition['minimumShouldMatch'] = '100%';
+        }
 
         $query = $this->queryFactory->create($queryType, $condition);
 
