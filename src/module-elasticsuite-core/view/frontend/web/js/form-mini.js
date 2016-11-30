@@ -119,7 +119,7 @@ define([
             var template = this._getTemplate(element);
             element.index = index;
 
-            if (element.price) {
+            if (element.price && (!isNaN(element.price))) {
                 element.price = priceUtil.formatPrice(element.price, this.options.priceFormat);
             }
 
