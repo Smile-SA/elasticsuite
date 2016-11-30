@@ -21,7 +21,7 @@
     <script type="text/javascript">
     <!--
     <?php foreach ($variables as $varName => $value) : ?>
-        smileTracker.addPageVar('<?php /* @noEscape */ echo $this->escapeJsQuote($varName)?>', '<?php /* @noEscape */ echo $this->escapeJsQuote($value)?>')
+        smileTracker.addPageVar('<?php /* @noEscape */ echo $this->escapeJsQuote($varName)?>', '<?php /* @noEscape */ echo $block->stripTags($this->escapeJsQuote($value), null, true) ?>')
     <?php endforeach; ?>
     //-->
     </script>
