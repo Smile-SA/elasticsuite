@@ -38,6 +38,7 @@ class Collection extends FulltextCollection
             foreach ($fields as $fieldByType) {
                 foreach ($fieldByType as $attributeId => $condition) {
                     $attributeCode = $this->getEntity()->getAttribute($attributeId)->getAttributeCode();
+                    $condition     = array_filter($condition, 'strlen');
                     $this->addFieldToFilter($attributeCode, $condition);
                 }
             }

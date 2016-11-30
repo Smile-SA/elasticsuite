@@ -119,7 +119,7 @@ class QueryBuilder
         $queryType = QueryInterface::TYPE_TERMS;
         $condition = $this->prepareCondition($condition);
 
-        if (count(array_intersect(['gt', 'gte', 'lt', 'lte'], array_keys($condition))) > 1) {
+        if (count(array_intersect(['gt', 'gte', 'lt', 'lte'], array_keys($condition))) >= 1) {
             $queryType = QueryInterface::TYPE_RANGE;
             $condition = ['bounds' => $condition];
         }
