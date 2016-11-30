@@ -49,6 +49,11 @@ class Url
     private $scopeConfig;
 
     /**
+     * @var CategoryRepositoryInterface
+     */
+    private $categoryRepository;
+
+    /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
@@ -57,6 +62,7 @@ class Url
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
     private $categoryFactory;
+    private $categoryCollectionFactory;
 
     /**
      * @var \Magento\UrlRewrite\Model\UrlFinderInterface
@@ -73,24 +79,27 @@ class Url
     /**
      * ProductPlugin constructor.
      *
-     * @param ScopeConfigInterface  $scopeConfig     Scope Configuration
-     * @param StoreManagerInterface $storeManager    Store Manager Interface
-     * @param CategoryFactory       $categoryFactory Category Collection Factory
-     * @param UrlFinderInterface    $urlFinder       URL Finder
-     * @param UrlInterface          $urlInterface    URL Interface
+     * @param ScopeConfigInterface        $scopeConfig               Scope Configuration
+     * @param CategoryRepositoryInterface $categoryRepository        Category Repository
+     * @param StoreManagerInterface       $storeManager              Store Manager Interface
+     * @param CategoryCollectionFactory   $categoryCollectionFactory Category Collection Factory
+     * @param UrlFinderInterface          $urlFinder                 URL Finder
+     * @param UrlInterface                $urlInterface              URL Interface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
+        CategoryRepositoryInterface $categoryRepository,
         StoreManagerInterface $storeManager,
-        CategoryFactory $categoryFactory,
+        CategoryCollectionFactory $categoryCollectionFactory,
         UrlFinderInterface $urlFinder,
         UrlInterface $urlInterface
     ) {
-        $this->scopeConfig = $scopeConfig;
-        $this->storeManager = $storeManager;
-        $this->categoryFactory = $categoryFactory;
-        $this->urlFinder = $urlFinder;
-        $this->urlBuilder = $urlInterface;
+        $this->scopeConfig               = $scopeConfig;
+        $this->categoryRepository        = $categoryRepository;
+        $this->storeManager              = $storeManager;
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->urlFinder                 = $urlFinder;
+        $this->urlBuilder                = $urlInterface;
     }
 
     /**
@@ -142,6 +151,7 @@ class Url
     /**
      * Retrieve request path for the product and a virtual category.
      *
+<<<<<<< 08ac95b6fb53565a51900bdefa19661cfbe36957
      * @param Product  $product  The product
      * @param Category $category The category
      *
@@ -154,10 +164,14 @@ class Url
         if ($this->isVirtualCategory($category) && $this->useCategoryPath()) {
             $categoryUrlPath = $category->getUrlPath();
             $productUrlKey = $product->getUrlKey();
+
             if ($productUrlKey) {
                 $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
                 $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
             }
+
+            $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
+            $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
         }
 
         return $requestPath;

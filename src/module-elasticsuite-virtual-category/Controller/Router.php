@@ -76,25 +76,30 @@ class Router implements RouterInterface
     /**
      * Validate and match Product Page and modify request
      *
-     * @param RequestInterface $request The Request
+     * @param \Magento\Framework\App\RequestInterface $request The Request
      *
-     * @return ActionInterface|null
+     * @return bool
      */
-    public function match(RequestInterface $request): ?ActionInterface
+    public function match(\Magento\Framework\App\RequestInterface $request)
     {
         $action = null;
+
         $identifier = trim($request->getPathInfo(), '/');
-        $condition = new DataObject(['identifier' => $identifier]);
+        $condition = new \Magento\Framework\DataObject(['identifier' => $identifier]);
+
         $chunks = explode('/', $identifier);
         $productPath = array_pop($chunks);
         $categoryPath = implode('/', $chunks);
+
         if (!empty($categoryPath) && !empty($productPath)) {
             $this->eventManager->dispatch(
                 'smile_elasticsuite_virtualcategory_controller_router_match_before',
                 ['router' => $this, 'condition' => $condition]
             );
+
             $storeId = $this->storeManager->getStore()->getId();
             $productRewrite = $this->urlModel->getProductRewrite($productPath, $categoryPath, $storeId);
+
             if ($productRewrite) {
                 $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $productRewrite->getRequestPath());
                 $request->setPathInfo('/' . $productRewrite->getTargetPath());
