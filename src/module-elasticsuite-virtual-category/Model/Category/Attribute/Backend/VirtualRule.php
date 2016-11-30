@@ -47,15 +47,20 @@ class VirtualRule extends \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBa
         $attributeCode = $this->getAttributeCode();
         $attributeData = $object->getData($attributeCode);
 
-        $rule = $this->ruleFactory->create();
+        if ($attributeData !== null) {
+            $rule = $this->ruleFactory->create();
 
-        if ($attributeData !== null && is_object($attributeData)) {
-            $rule = $attributeData;
-        } elseif ($attributeData !== null && is_array($attributeData)) {
-            $rule->loadPost($attributeData);
+            if (is_object($attributeData)) {
+                $rule = $attributeData;
+            } elseif (is_array($attributeData)) {
+                $rule->loadPost($attributeData);
+            } elseif (is_string($attributeData)) {
+                $attributeData = unserialize($attributeData);
+                $rule->getConditions()->loadArray($attributeData);
+            }
+
+            $object->setData($attributeCode, serialize($rule->getConditions()->asArray()));
         }
-
-        $object->setData($attributeCode, serialize($rule->getConditions()->asArray()));
 
         return $this;
     }
