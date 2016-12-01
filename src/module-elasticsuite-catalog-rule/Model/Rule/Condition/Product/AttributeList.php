@@ -19,6 +19,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as A
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
 
 /**
  * List of attributes used in query building.
@@ -65,6 +66,11 @@ class AttributeList
     private $mapping;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Helper\Mapping
+     */
+    private $mappingHelper;
+
+    /**
      * @var @array
      */
     private $fieldNameMapping = [
@@ -78,6 +84,7 @@ class AttributeList
      * @param AttributeCollectionFactory $attributeCollectionFactory Product attribute collection factory.
      * @param StoreManagerInterface      $storeManager               Store manager.
      * @param IndexOperationInterface    $indexManager               Search engine index manager.
+     * @param MappingHelper              $mappingHelper              Mapping helper.
      * @param string                     $indexName                  Search engine index name.
      * @param string                     $typeName                   Search engine type name.
      */
@@ -85,6 +92,7 @@ class AttributeList
         AttributeCollectionFactory $attributeCollectionFactory,
         StoreManagerInterface $storeManager,
         IndexOperationInterface $indexManager,
+        MappingHelper $mappingHelper,
         $indexName = 'catalog_product',
         $typeName = 'product'
     ) {
@@ -93,6 +101,7 @@ class AttributeList
         $this->indexManager               = $indexManager;
         $this->indexName                  = $indexName;
         $this->typeName                   = $typeName;
+        $this->mappingHelper              = $mappingHelper;
     }
 
     /**
@@ -120,8 +129,9 @@ class AttributeList
 
             $attributeFilterCb = function (FieldInterface $field) use ($mapping) {
                 try {
-                    $optionTextFieldName = 'option_text_' . $field->getName();
-                    $field = $mapping->getField($optionTextFieldName);
+                    $fieldName           = $field->getName();
+                    $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
+                    $field               = $mapping->getField($optionTextFieldName);
                 } catch (\Exception $e) {
                     ;
                 }

@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalog\Helper;
 use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\Context;
+use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
 
 /**
  * Autocomplete helper for Catalog Autocomplete
@@ -31,18 +32,29 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
     private $stockConfiguration;
 
     /**
+     * @var MappingHelper
+     */
+    private $mappingHelper;
+
+    /**
      * Constructor.
      *
      * @param Context                     $context            Helper context.
      * @param StoreManagerInterface       $storeManager       Store manager.
      * @param StockConfigurationInterface $stockConfiguration Stock Configuration Interface.
+     * @param MappingHelper               $mappingHelper      Mapping helper.
      */
-    public function __construct(Context $context, StoreManagerInterface $storeManager, StockConfigurationInterface $stockConfiguration)
-    {
+    public function __construct(
+        Context $context,
+        StoreManagerInterface $storeManager,
+        StockConfigurationInterface $stockConfiguration,
+        MappingHelper $mappingHelper
+    ) {
+        parent::__construct($context, $storeManager);
+
         $this->storeManager       = $storeManager;
         $this->stockConfiguration = $stockConfiguration;
-
-        parent::__construct($context, $storeManager);
+        $this->mappingHelper      = $mappingHelper;
     }
 
     /**
@@ -55,5 +67,23 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
     public function isShowOutOfStock($storeId = null)
     {
         return $this->stockConfiguration->isShowOutOfStock($storeId);
+    }
+
+    /**
+     * ES field used in attribute autocomplete.
+     *
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute $attribute Attribute.
+     *
+     * @return string
+     */
+    public function getAttributeAutocompleteField(\Magento\Catalog\Api\Data\ProductAttributeInterface $attribute)
+    {
+        $fieldName = $attribute->getAttributeCode();
+
+        if ($attribute->usesSource()) {
+            $fieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
+        }
+
+        return $fieldName;
     }
 }
