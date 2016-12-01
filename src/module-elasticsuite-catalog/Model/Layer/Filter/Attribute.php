@@ -41,6 +41,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private $hasMoreItems = false;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Helper\Mapping
+     */
+    private $mappingHelper;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory Factory for item of the facets.
@@ -48,6 +53,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
      * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
+     * @param \Smile\ElasticsuiteCore\Helper\Mapping               $mappingHelper     Mapping helper.
      * @param array                                                $data              Custom data.
      */
     public function __construct(
@@ -56,6 +62,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
+        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
         array $data = []
     ) {
         parent::__construct(
@@ -67,7 +74,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             $data
         );
 
-        $this->tagFilter = $tagFilter;
+        $this->tagFilter     = $tagFilter;
+        $this->mappingHelper = $mappingHelper;
     }
 
     /**
@@ -193,7 +201,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         $field = $this->getAttributeModel()->getAttributeCode();
 
         if ($this->getAttributeModel()->usesSource()) {
-            $field = 'option_text_' . $field;
+            $field = $this->mappingHelper->getOptionTextFieldName($field);
         }
 
         return $field;
