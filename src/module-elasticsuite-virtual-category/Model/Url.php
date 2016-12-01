@@ -1,5 +1,4 @@
 <?php
-
 /**
  * DISCLAIMER
  *
@@ -62,7 +61,6 @@ class Url
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
     private $categoryFactory;
-    private $categoryCollectionFactory;
 
     /**
      * @var \Magento\UrlRewrite\Model\UrlFinderInterface
@@ -151,7 +149,6 @@ class Url
     /**
      * Retrieve request path for the product and a virtual category.
      *
-<<<<<<< 08ac95b6fb53565a51900bdefa19661cfbe36957
      * @param Product  $product  The product
      * @param Category $category The category
      *
@@ -159,19 +156,19 @@ class Url
      */
     public function getProductRequestPath($product, $category): ?string
     {
-        $requestPath = null;
-
+        $requestPath     = null;
+        $categoryUrlPath = null;
+        $productUrlKey   = $product->getUrlKey();
         if ($this->isVirtualCategory($category) && $this->useCategoryPath()) {
             $categoryUrlPath = $category->getUrlPath();
-            $productUrlKey = $product->getUrlKey();
-
-            if ($productUrlKey) {
-                $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
-                $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
-            }
-
-            $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
-            $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
+        } elseif ($this->virtualCategoryRoot->getAppliedRootCategory() && $this->useCategoryPath()) {
+            $categoryUrlPath = $this->virtualCategoryRoot->getVirtualCategorySubtreePath(
+                $this->virtualCategoryRoot->getAppliedRootCategory(),
+                $category
+            );
+        }
+        if ($categoryUrlPath && $productUrlKey) {
+            $requestPath = $categoryUrlPath . '/' . $productUrlKey . $this->getProductUrlSuffix();
         }
 
         return $requestPath;
