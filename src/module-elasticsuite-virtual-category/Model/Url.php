@@ -159,8 +159,10 @@ class Url
         if ($this->isVirtualCategory($category) && $this->useCategoryPath()) {
             $categoryUrlPath = $category->getUrlPath();
             $productUrlKey = $product->getUrlKey();
-            $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
-            $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
+            if ($productUrlKey) {
+                $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
+                $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
+            }
         }
 
         return $requestPath;
