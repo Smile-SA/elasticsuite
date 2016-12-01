@@ -32,4 +32,10 @@
             </argument>
         </arguments>
     </virtualType>
+
+    <type name="Magento\Catalog\Model\ResourceModel\Category\Flat">
+        <plugin name="smile_elasticsuite_virtual_categories_flat"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\FlatPlugin" />
+    </type>
+
 </config>
