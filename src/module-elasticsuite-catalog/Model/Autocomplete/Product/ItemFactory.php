@@ -14,9 +14,11 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Helper\Image as ImageHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\Pricing\Render;
 
 /**
  * Create an autocomplete item from a product.
@@ -38,15 +40,28 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     private $imageHelper;
 
     /**
+     * @var \Magento\Framework\Pricing\Render
+     */
+    private $priceRenderer;
+
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * Constructor.
      *
      * @param ObjectManagerInterface $objectManager Object manager used to instantiate new item.
      * @param ImageHelper            $imageHelper   Catalog product image helper.
+     * @param Render                 $priceRenderer Catalog product price renderer.
      */
-    public function __construct(ObjectManagerInterface $objectManager, ImageHelper $imageHelper)
+    public function __construct(ObjectManagerInterface $objectManager, ImageHelper $imageHelper, Render $priceRenderer)
     {
         parent::__construct($objectManager);
         $this->imageHelper = $imageHelper;
+        $this->priceRenderer = $priceRenderer;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -72,11 +87,10 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $product = $data['product'];
 
         $productData = [
-            'title'       => html_entity_decode($product->getName()),
+            'title'       => $product->getName(),
             'image'       => $this->getImageUrl($product),
             'url'         => $product->getProductUrl(),
-            'price'       => $product->getFinalPrice(),
-            'final_price' => $product->getPrice(),
+            'price'       => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
         ];
 
         $data = array_merge($data, $productData);
@@ -96,5 +110,59 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $this->imageHelper->init($product, self::AUTOCOMPLETE_IMAGE_ID);
 
         return $this->imageHelper->getUrl();
+    }
+
+
+    /**
+     * Renders product price.
+     *
+     * @param \Magento\Catalog\Model\Product $product   The product
+     * @param string                         $priceCode The Price Code to render
+     *
+     * @return string
+     */
+    private function renderProductPrice(\Magento\Catalog\Model\Product $product, $priceCode)
+    {
+        $priceRender = $this->getPriceRenderer();
+
+        $price = $product->getData($priceCode);
+
+        if ($priceRender) {
+            $price = $priceRender->render(
+                $priceCode,
+                $product,
+                [
+                    'include_container' => false,
+                    'display_minimal_price' => true,
+                    'zone' => Render::ZONE_ITEM_LIST,
+                    'list_category_page' => true,
+                ]
+            );
+        }
+
+        return $price;
+    }
+
+    /**
+     * Retrieve Price Renderer Block
+     *
+     * @return bool|\Magento\Framework\View\Element\BlockInterface
+     */
+    private function getPriceRenderer()
+    {
+        /** @var \Magento\Framework\View\LayoutInterface $layout */
+        $layout = $this->objectManager->get('\Magento\Framework\View\LayoutInterface');
+        $layout->getUpdate()->addHandle('default');
+        $priceRenderer = $layout->getBlock('product.price.render.default');
+
+        if (!$priceRenderer) {
+            $priceRenderer = $layout->createBlock(
+                'Magento\Framework\Pricing\Render',
+                'product.price.render.default',
+                ['data' => ['price_render_handle' => 'catalog_product_prices']]
+            );
+        }
+
+        return $priceRenderer;
     }
 }

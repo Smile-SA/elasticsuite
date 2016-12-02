@@ -173,4 +173,12 @@
         </arguments>
     </virtualType>
 
+    <!-- Advanced Search Compatibility -->
+    <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
+                 type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Advanced\Collection</argument>
+        </arguments>
+    </virtualType>
+
 </config>

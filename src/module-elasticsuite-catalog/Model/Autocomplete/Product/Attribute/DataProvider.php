@@ -20,7 +20,7 @@ use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as A
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
+use Smile\ElasticsuiteCatalog\Helper\Autocomplete as AutocompleteHelper;
 
 /**
  * Catalog product attributes autocomplete data provider.
@@ -64,9 +64,9 @@ class DataProvider implements DataProviderInterface
     private $storeManager;
 
     /**
-     * @var ConfigurationHelper
+     * @var AutocompleteHelper
      */
-    private $configurationHelper;
+    private $autocompleteHelper;
 
     /**
      * Constructor.
@@ -74,7 +74,7 @@ class DataProvider implements DataProviderInterface
      * @param ItemFactory                $itemFactory                Autocomplete item factory.
      * @param ProductCollection          $productCollection          Autocomplete product collection.
      * @param AttributeCollectionFactory $attributeCollectionFactory Product attribute collection factory.
-     * @param ConfigurationHelper        $configurationHelper        Autocomplete configuration helper.
+     * @param AutocompleteHelper         $autocompleteHelper         Autocomplete configuration helper.
      * @param StoreManagerInterface      $storeManager               Store manager.
      * @param string                     $type                       Autocomplete type code.
      */
@@ -82,7 +82,7 @@ class DataProvider implements DataProviderInterface
         ItemFactory $itemFactory,
         ProductCollection $productCollection,
         AttributeCollectionFactory $attributeCollectionFactory,
-        ConfigurationHelper $configurationHelper,
+        AutocompleteHelper $autocompleteHelper,
         StoreManagerInterface $storeManager,
         $type = self::AUTOCOMPLETE_TYPE
     ) {
@@ -91,7 +91,8 @@ class DataProvider implements DataProviderInterface
         $this->storeManager        = $storeManager;
         $this->productCollection   = $productCollection;
         $this->attributeCollection = $attributeCollectionFactory->create();
-        $this->configurationHelper = $configurationHelper;
+        $this->autocompleteHelper  = $autocompleteHelper;
+
         $this->loadAttributeCollection();
         $this->prepareProductCollection();
     }
@@ -173,7 +174,7 @@ class DataProvider implements DataProviderInterface
      */
     private function getFilterField($attribute)
     {
-        return $attribute->usesSource() ? 'option_text_' . $attribute->getAttributeCode() : $attribute->getAttributeCode();
+        return $this->autocompleteHelper->getAttributeAutocompleteField($attribute);
     }
 
     /**
@@ -183,7 +184,7 @@ class DataProvider implements DataProviderInterface
      */
     private function getResultsPageSize()
     {
-        return $this->configurationHelper->getMaxSize($this->getType());
+        return $this->autocompleteHelper->getMaxSize($this->getType());
     }
 
     /**

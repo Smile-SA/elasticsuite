@@ -37,21 +37,22 @@ class QueryBuilder
      * @var array
      */
     private $mappedConditions = [
-        'eq'    => 'values',
-        'seq'   => 'values',
-        'in'    => 'values',
-        'from'  => 'gte',
-        'moreq' => 'gte',
-        'gteq'  => 'gte',
-        'to'    => 'lte',
-        'lteq'  => 'lte',
+        'eq'     => 'values',
+        'seq'    => 'values',
+        'in'     => 'values',
+        'from'   => 'gte',
+        'moreq'  => 'gte',
+        'gteq'   => 'gte',
+        'to'     => 'lte',
+        'lteq'   => 'lte',
+        'like'   => 'queryText',
+        'in_set' => 'values',
     ];
 
     /**
      * @var array
      */
     private $unsupportedConditions = [
-        'like',
         'nin',
         'notnull',
         'null',
@@ -92,12 +93,7 @@ class QueryBuilder
                 $queries[] = $condition;
             } else {
                 $mappingField = $mapping->getField($fieldName);
-
-                if ($mappingField->isFilterable() === false) {
-                    throw new \LogicException("Field {$fieldName} is not filterable.");
-                }
-
-                $queries[] = $this->prepareFieldCondition($mappingField, $condition);
+                $queries[]    = $this->prepareFieldCondition($mappingField, $condition);
             }
         }
 
@@ -123,12 +119,20 @@ class QueryBuilder
         $queryType = QueryInterface::TYPE_TERMS;
         $condition = $this->prepareCondition($condition);
 
-        if (count(array_intersect(['gt', 'gte', 'lt', 'lte'], array_keys($condition))) > 1) {
+        if (count(array_intersect(['gt', 'gte', 'lt', 'lte'], array_keys($condition))) >= 1) {
             $queryType = QueryInterface::TYPE_RANGE;
             $condition = ['bounds' => $condition];
         }
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
+        if ($condition['field'] === null) {
+            $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD);
+        }
+
+        if (in_array('queryText', array_keys($condition))) {
+            $queryType = QueryInterface::TYPE_MATCH;
+            $condition['minimumShouldMatch'] = '100%';
+        }
 
         $query = $this->queryFactory->create($queryType, $condition);
 
