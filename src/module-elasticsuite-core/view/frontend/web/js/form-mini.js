@@ -1,4 +1,20 @@
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
 /*jshint browser:true jquery:true*/
+/*global alert*/
+
 define([
     'ko',
     'jquery',
@@ -307,69 +323,145 @@ define([
 
             switch (keyCode) {
                 case $.ui.keyCode.HOME:
-                    this._getFirstVisibleElement().addClass(this.options.selectClass);
-                    this.responseList.selected = this._getFirstVisibleElement();
+                    this._selectElement(this._getFirstVisibleElement());
                     break;
                 case $.ui.keyCode.END:
-                    this._getLastElement().addClass(this.options.selectClass);
-                    this.responseList.selected = this._getLastElement();
+                    this._selectElement(this._getLastElement());
                     break;
                 case $.ui.keyCode.ESCAPE:
                     this._resetResponseList(true);
                     this.autoComplete.hide();
                     break;
                 case $.ui.keyCode.ENTER:
-                    if (this.responseList.selected.attr('href') !== undefined) {
-                        window.location = this.responseList.selected.attr('href');
-                        e.preventDefault();
-                        return false;
-                    }
-                    this.searchForm.trigger('submit');
+                    this._validateElement();
                     break;
                 case $.ui.keyCode.DOWN:
-                    if (this.responseList.indexList) {
-                        if (!this.responseList.selected) {
-                            this._getFirstVisibleElement().addClass(this.options.selectClass);
-                            this.responseList.selected = this._getFirstVisibleElement();
-                        }
-                        else if (!this._getLastElement().hasClass(this.options.selectClass)) {
-                            var nextElement = this.responseList.selected.next('dd');
-                            this.responseList.selected.removeClass(this.options.selectClass);
-                            if (nextElement.length === 0) {
-                                nextElement = this.responseList.selected.parent('dl').next('dl').find('dd').first();
-                            }
-                            this.responseList.selected = nextElement.addClass(this.options.selectClass);
-                        } else {
-                            this.responseList.selected.removeClass(this.options.selectClass);
-                            this._getFirstVisibleElement().addClass(this.options.selectClass);
-                            this.responseList.selected = this._getFirstVisibleElement();
-                        }
-                        this.element.val(this.responseList.selected.find('.qs-option-name').text());
-                        this.element.attr('aria-activedescendant', this.responseList.selected.attr('id'));
-                    }
+                    this._navigateDown();
                     break;
                 case $.ui.keyCode.UP:
-                    if (this.responseList.indexList !== null) {
-                        if (!this._getFirstVisibleElement().hasClass(this.options.selectClass)) {
-                            var prevElement = this.responseList.selected.prev('dd');
-                            this.responseList.selected.removeClass(this.options.selectClass);
-                            if (prevElement.length === 0) {
-                                prevElement = this.responseList.selected.parent('dl').prev('dl').find('dd').last();
-                            }
-                            this.responseList.selected = prevElement.addClass(this.options.selectClass);
-                        } else {
-                            this.responseList.selected.removeClass(this.options.selectClass);
-                            this._getLastElement().addClass(this.options.selectClass);
-                            this.responseList.selected = this._getLastElement();
-                        }
-                        this.element.val(this.responseList.selected.find('.qs-option-name').text());
-                        this.element.attr('aria-activedescendant', this.responseList.selected.attr('id'));
-                    }
+                    this._navigateUp();
                     break;
                 default:
                     return true;
             }
         },
+
+        /**
+         * Validate selection of an element (eg : when ENTER is pressed)
+         *
+         * @returns {boolean}
+         *
+         * @private
+         */
+        _validateElement: function() {
+            if (this.responseList.selected.attr('href') !== undefined) {
+                window.location = this.responseList.selected.attr('href');
+                e.preventDefault();
+                return false;
+            }
+            this.searchForm.trigger('submit');
+        },
+
+        /**
+         * Process down navigation on autocomplete box
+         *
+         * @private
+         */
+        _navigateDown: function() {
+            if (this.responseList.indexList) {
+                if (!this.responseList.selected) {
+                    this._getFirstVisibleElement().addClass(this.options.selectClass);
+                    this.responseList.selected = this._getFirstVisibleElement();
+                }
+                else if (!this._getLastElement().hasClass(this.options.selectClass)) {
+                    var nextElement = this._getNextElement();
+                    this.responseList.selected.removeClass(this.options.selectClass);
+                    this.responseList.selected = nextElement.addClass(this.options.selectClass);
+                } else {
+                    this.responseList.selected.removeClass(this.options.selectClass);
+                    this._getFirstVisibleElement().addClass(this.options.selectClass);
+                    this.responseList.selected = this._getFirstVisibleElement();
+                }
+                this._activateElement();
+            }
+        },
+
+        /**
+         * Process up navigation on autocomplete box
+         *
+         * @private
+         */
+        _navigateUp: function() {
+            if (this.responseList.indexList !== null) {
+                if (!this._getFirstVisibleElement().hasClass(this.options.selectClass)) {
+                    var prevElement = this._getPrevElement();
+                    this.responseList.selected.removeClass(this.options.selectClass);
+                    this.responseList.selected = prevElement.addClass(this.options.selectClass);
+                } else {
+                    this.responseList.selected.removeClass(this.options.selectClass);
+                    this._getLastElement().addClass(this.options.selectClass);
+                    this.responseList.selected = this._getLastElement();
+                }
+                this._activateElement();
+            }
+        },
+
+        /**
+         * Toggles an element as currently selected
+         *
+         * @param {Element} e - The DOM element
+         *
+         * @private
+         */
+        _selectElement: function(element) {
+            element.addClass(this.options.selectClass);
+            this.responseList.selected = element;
+        },
+
+        /**
+         * Toggles an element as active
+         *
+         * @param {Element} e - The DOM element
+         *
+         * @private
+         */
+        _activateElement: function() {
+            this.element.val(this.responseList.selected.find('.qs-option-name').text());
+            this.element.attr('aria-activedescendant', this.responseList.selected.attr('id'));
+        },
+
+        /**
+         * Retrieve the next element when navigating through keyboard
+         *
+         * @private
+         *
+         * @return Element
+         */
+        _getNextElement: function() {
+            var nextElement = this.responseList.selected.next('dd');
+            if (nextElement.length === 0) {
+                nextElement = this.responseList.selected.parent('dl').next('dl').find('dd').first();
+            }
+
+            return nextElement;
+        },
+
+        /**
+         * Retrieve the previous element when navigating through keyboard
+         *
+         * @private
+         *
+         * @return Element
+         */
+        _getPrevElement: function() {
+            var prevElement = this.responseList.selected.prev('dd');
+            this.responseList.selected.removeClass(this.options.selectClass);
+            if (prevElement.length === 0) {
+                prevElement = this.responseList.selected.parent('dl').prev('dl').find('dd').last();
+            }
+
+            return prevElement;
+        }
     });
 
     return $.smileEs.quickSearch;
