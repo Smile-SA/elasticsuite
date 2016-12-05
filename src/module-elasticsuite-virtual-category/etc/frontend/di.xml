@@ -54,4 +54,22 @@
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\CategoryFactory"
+                 type="Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\Category</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\Category">
+        <arguments>
+            <argument name="dataProviderFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\CategoryFactory</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Helper\Data">
+        <plugin name="smile_elasticsuite_virtual_categories_breadcrumb"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Helper\BreadcrumbPlugin" />
+    </type>
 </config>

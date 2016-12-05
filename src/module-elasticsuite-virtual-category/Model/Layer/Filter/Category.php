@@ -15,6 +15,7 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
@@ -33,6 +34,11 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     private $cache;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Url
+     */
+    private $urlModel;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -44,6 +50,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
      * @param \Magento\Framework\App\CacheInterface                            $cache               Cache.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Url                     $urlModel            Virtual Categories URL Model
      * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                            $data                Custom data.
      */
@@ -55,6 +62,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
         \Magento\Framework\App\CacheInterface $cache,
+        \Smile\ElasticsuiteVirtualCategory\Model\Url $urlModel,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -68,6 +76,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $useUrlRewrites,
             $data
         );
+        $this->urlModel = $urlModel;
         $this->cache = $cache;
     }
 
@@ -111,13 +120,94 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     }
 
     /**
+     * Retrieve currently selected category children categories.
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
+     */
+    protected function getChildrenCategories()
+    {
+        if ($this->childrenCategories === null) {
+            $currentCategory = $this->getDataProvider()->getCategory();
+            // Use the root category to retrieve children if needed.
+            if ($this->useVirtualRootCategorySubtree($currentCategory)) {
+                $currentCategory = $this->getVirtualRootCategory($currentCategory);
+            }
+            $this->childrenCategories = $currentCategory->getChildrenCategories();
+        }
+
+        return $this->childrenCategories;
+    }
+
+    /**
+     * Retrieve Category Url to build filter
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $childCategory Category.
+     *
+     * @return string
+     */
+    protected function getCategoryFilterUrl($childCategory)
+    {
+        $url = parent::getCategoryFilterUrl($childCategory);
+
+        $currentCategory = $this->getDataProvider()->getCategory();
+
+        $appliedRootCategory = $this->getDataProvider()->getAppliedRootCategory();
+
+        // Use the root category to retrieve children categories Url if needed.
+        if ($this->useVirtualRootCategorySubtree($currentCategory)) {
+            $url = $this->urlModel->getVirtualCategorySubtreeUrl($currentCategory, $childCategory);
+        } elseif ($appliedRootCategory) {
+            // Occurs when navigating through the subtree of a virtual root category.
+            $url = $this->urlModel->getVirtualCategorySubtreeUrl($appliedRootCategory, $childCategory);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Retrieve the Virtual Root Category of a category.
+     *
+     * @param CategoryInterface $category The category
+     *
+     * @return CategoryInterface
+     */
+    private function getVirtualRootCategory($category)
+    {
+        $virtualRule  = $category->getVirtualRule();
+        $rootCategory = $virtualRule->getVirtualRootCategory($category);
+
+        return $rootCategory;
+    }
+
+    /**
+     * Check if a category is configured to use its "virtual root category" to display facets
+     *
+     * @param CategoryInterface $category The category
+     *
+     * @return bool
+     */
+    private function useVirtualRootCategorySubtree($category)
+    {
+        $rootCategory = $this->getVirtualRootCategory($category);
+
+        return ($rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree());
+    }
+
+    /**
      * List of subcategories queries by category id.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     private function getFacetQueries()
     {
-        return $this->loadUsingCache('getSearchQueriesByChildren');
+        $category = $this->getDataProvider()->getCategory();
+
+        // Use the root category to display facets if configured this way.
+        if ($this->useVirtualRootCategorySubtree($category) && $this->useUrlRewrites()) {
+            $category = $this->getVirtualRootCategory($category);
+        }
+
+        return $this->loadUsingCache($category, 'getSearchQueriesByChildren');
     }
 
     /**
@@ -127,19 +217,27 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      */
     private function getFilterQuery()
     {
-        return $this->loadUsingCache('getCategorySearchQuery');
+        $category            = $this->getDataProvider()->getCategory();
+        $appliedRootCategory = $this->getDataProvider()->getAppliedRootCategory();
+        $categoryFilter      = $this->loadUsingCache($category, 'getCategorySearchQuery');
+
+        if ($appliedRootCategory && $appliedRootCategory->getId()) {
+            $categoryFilter = $category->getVirtualRule()->mergeCategoryQueries([$category, $appliedRootCategory]);
+        }
+
+        return $categoryFilter;
     }
 
     /**
      * Load data from the cache if exits. Use a callback on the current category virtual root if not yet present into the cache.
      *
-     * @param string $callback name of the virtual rule method to be used for actual loading.
+     * @param CategoryInterface $category The category
+     * @param string            $callback name of the virtual rule method to be used for actual loading.
      *
      * @return mixed
      */
-    private function loadUsingCache($callback)
+    private function loadUsingCache($category, $callback)
     {
-        $category = $this->getDataProvider()->getCategory();
         $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
 
         $data = $this->cache->load($cacheKey);

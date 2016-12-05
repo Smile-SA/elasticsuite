@@ -165,7 +165,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return CategoryInterface
      */
-    private function getVirtualRootCategory(CategoryInterface $category)
+    public function getVirtualRootCategory(CategoryInterface $category)
     {
         $storeId      = $this->getStoreId();
         $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
@@ -180,6 +180,24 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $rootCategory;
+    }
+
+    /**
+     * Combine several category queries
+     *
+     * @param CategoryInterface[] $categories The categories
+     *
+     * @return QueryInterface
+     */
+    public function mergeCategoryQueries(array $categories)
+    {
+        $queries = [];
+
+        foreach ($categories as $category) {
+            $queries[] = $this->getCategorySearchQuery($category);
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queries]);
     }
 
     /**
@@ -227,7 +245,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * Append children queries to the rule.
      *
      * @param QueryInterface|NULL $query              Base query.
-     * @param CategoryInterface   $category           Current cayegory.
+     * @param CategoryInterface   $category           Current category.
      * @param array               $excludedCategories Category already used into the building stack. Avoid short circuit.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
