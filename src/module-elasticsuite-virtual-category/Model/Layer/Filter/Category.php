@@ -102,7 +102,10 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     protected function applyCategoryFilterToCollection(\Magento\Catalog\Api\Data\CategoryInterface $category)
     {
         $query = $this->getFilterQuery();
-        $this->getLayer()->getProductCollection()->addQueryFilter($query);
+
+        if ($query !== null) {
+            $this->getLayer()->getProductCollection()->addQueryFilter($query);
+        }
 
         return $this;
     }

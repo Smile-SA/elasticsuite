@@ -87,48 +87,69 @@ class Preview
      */
     public function getData()
     {
-        $manualSortProductCollection = $this->getManualSortProductCollection();
-        $automaticProductCollection  = $this->getAutomaticSortProductCollection()->setPageSize($this->size);
+        $data = $this->getUnsortedProductData();
 
-        $loadedProducts = array_merge($automaticProductCollection->getItems(), $manualSortProductCollection->getItems());
+        $sortedProducts = $this->getSortedProducts();
+        $data['products'] = $this->preparePreviewItems(array_merge($sortedProducts, $data['products']));
 
-        return ['products' => $this->loadItems($loadedProducts), 'size' => $automaticProductCollection->getSize()];
+        return $data;
+    }
+
+    /**
+     * Preview base product collection.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    private function getProductCollection()
+    {
+        $productCollection = $this->productCollectionFactory->create();
+        $queryFilter       = $this->getQueryFilter();
+
+        $productCollection->setStoreId($this->category->getStoreId())
+            ->addAttributeToSelect(['name', 'small_image']);
+
+        if ($queryFilter !== null) {
+            $productCollection->addQueryFilter($queryFilter);
+        }
+
+        return $productCollection;
     }
 
     /**
      * Return a collection with with products that match the category rules loaded.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return array
      */
-    private function getAutomaticSortProductCollection()
+    private function getUnsortedProductData()
     {
-        $productCollection = $this->productCollectionFactory->create();
+        $productCollection = $this->getProductCollection()->setPageSize($this->size);
 
-        $productCollection
-            ->setStoreId($this->category->getStoreId())
-            ->addQueryFilter($this->getQueryFilter())
-            ->addAttributeToSelect(['name', 'small_image']);
-
-        return $productCollection;
+        return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
     }
 
     /**
      * Return a collection with all products manually sorted loaded.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return \Magento\Catalog\Api\Data\ProductInterface[]
      */
-    private function getManualSortProductCollection()
+    private function getSortedProducts()
     {
+        $products   = [];
         $productIds = $this->getSortedProductIds();
 
-        $productCollection = $this->getAutomaticSortProductCollection();
+        if ($productIds && count($productIds)) {
+            $productCollection = $this->getProductCollection()->setPageSize(count($productIds));
 
-        $idFilter = $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['values' => $productIds, 'field' => 'entity_id']);
-        $productCollection->addQueryFilter($idFilter);
+            $idFilterParams = ['values' => $productIds, 'field' => 'entity_id'];
+            $idFilter       = $this->queryFactory->create(QueryInterface::TYPE_TERMS, $idFilterParams);
+            $productCollection->addQueryFilter($idFilter);
 
-        $productCollection->setPageSize(count($productIds));
+            $productCollection->setPageSize(count($productIds));
 
-        return $productCollection;
+            $products = $productCollection->getItems();
+        }
+
+        return $products;
     }
 
     /**
@@ -148,7 +169,7 @@ class Preview
      *
      * @return Preview\Item[]
      */
-    private function loadItems($products = [])
+    private function preparePreviewItems($products = [])
     {
         $items = [];
 
@@ -169,30 +190,36 @@ class Preview
      */
     private function getQueryFilter()
     {
-        $queryParams = [];
+        $query = null;
+
         $this->category->setIsActive(true);
 
         if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
-            $queryParams['must'][] = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
-        } elseif (!$this->category->getId()) {
-            $queryParams['must'][] = $this->getEntityIdFilterQuery([0]);
+            $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
         }
 
         if ((bool) $this->category->getIsVirtualCategory() === false) {
-            $addedProductIds   = $this->category->getAddedProductIds();
-            $deletedProductIds = $this->category->getDeletedProductIds();
+            $queryParams = [];
 
-            if ($addedProductIds && !empty($addedProductIds)) {
-                $queryParams = ['should' => $queryParams['must']];
-                $queryParams['should'][] = $this->getEntityIdFilterQuery($addedProductIds);
+            if ($query !== null) {
+                $queryParams['should'][] = $query;
             }
 
-            if ($deletedProductIds && !empty($deletedProductIds)) {
-                $queryParams['mustNot'][] = $this->getEntityIdFilterQuery($deletedProductIds);
+            $idFilters = [
+                'should'  => $this->category->getAddedProductIds(),
+                'mustNot' => $this->category->getDeletedProductIds(),
+            ];
+
+            foreach ($idFilters as $clause => $productIds) {
+                if ($productIds && !empty($productIds)) {
+                    $queryParams[$clause][] = $this->getEntityIdFilterQuery($productIds);
+                }
             }
+
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
         }
 
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+        return $query;
     }
 
     /**

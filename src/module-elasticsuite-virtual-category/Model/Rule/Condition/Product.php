@@ -101,13 +101,18 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         $subQueries  = [];
 
         foreach ($categoryIds as $categoryId) {
-            $subQueries[] = $this->getRule()->getCategorySearchQuery($categoryId, $excludedCategories);
+            $subQuery = $this->getRule()->getCategorySearchQuery($categoryId, $excludedCategories);
+            if ($subQuery !== null) {
+                $subQueries[] = $subQuery;
+            }
         }
 
-        $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $subQueries]);
+        $query = null;
 
         if (count($subQueries) === 1) {
             $query = current($subQueries);
+        } elseif (count($subQueries) > 1) {
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $subQueries]);
         }
 
         return $query;
