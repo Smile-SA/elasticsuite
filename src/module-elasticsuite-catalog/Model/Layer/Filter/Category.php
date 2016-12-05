@@ -49,7 +49,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
      */
-    private $childrenCategories;
+    protected $childrenCategories;
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
@@ -161,7 +161,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
                             'label' => $this->escaper->escapeHtml($category->getName()),
                             'value' => $category->getId(),
                             'count' => $optionsFacetedData[$category->getId()]['count'],
-                            'url'   => $category->getUrl(),
+                            'url'   => $this->getCategoryFilterUrl($category),
                         ];
 
                         $items[] = $item;
@@ -252,5 +252,17 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     protected function getDataProvider()
     {
         return $this->dataProvider;
+    }
+
+    /**
+     * Retrieve Category Url to build filter
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category.
+     *
+     * @return string
+     */
+    protected function getCategoryFilterUrl($category)
+    {
+        return $category->getUrl();
     }
 }
