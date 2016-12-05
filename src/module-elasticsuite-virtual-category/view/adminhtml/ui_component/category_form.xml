@@ -108,6 +108,30 @@
                 </argument>
             </field>
 
+            <field name="generate_root_category_subtree">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string" translate="true">Generate Virtual Category Root Subtree</item>
+                        <item name="dataType" xsi:type="string">boolean</item>
+                        <item name="formElement" xsi:type="string">checkbox</item>
+                        <item name="source" xsi:type="string">category</item>
+                        <item name="prefer" xsi:type="string">toggle</item>
+                        <item name="sortOrder" xsi:type="number">15</item>
+                        <item name="required" xsi:type="boolean">false</item>
+                        <item name="valueMap" xsi:type="array">
+                            <item name="true" xsi:type="string">1</item>
+                            <item name="false" xsi:type="string">0</item>
+                        </item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="default" xsi:type="string">0</item>
+                        <item name="imports" xsi:type="array">
+                            <item name="visible" xsi:type="string">category_form.category_form.assign_products.is_virtual_category:checked</item>
+                        </item>
+                    </item>
+                </argument>
+            </field>
             <htmlContent name="virtual_rule">
                 <argument name="block" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\VirtualRule</argument>
                 <argument name="data" xsi:type="array">

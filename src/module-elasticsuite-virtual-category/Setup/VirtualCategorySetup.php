@@ -149,6 +149,7 @@ class VirtualCategorySetup
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_rule', 'frontend_input', null);
 
         $this->addUseStorePositionsAttribute($eavSetup);
+        $this->addGenerateVirtualCategorySubtreeAttribute($eavSetup);
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
         $this->eavConfig->clear();
@@ -477,6 +478,31 @@ class VirtualCategorySetup
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
         $this->eavConfig->clear();
+    }
+
+    /**
+     * Append the "generate_root_category_subtree" attribute to categories
+     *
+     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup Setup.
+     */
+    public function addGenerateVirtualCategorySubtreeAttribute(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            'generate_root_category_subtree',
+            [
+                'type'       => 'int',
+                'label'      => 'Generate Virtual Category Subtree',
+                'input'      => null,
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'   => false,
+                'default'    => 0,
+                'visible'    => true,
+                'note'       => "If the subtree of this virtual category should be displayed into category search filter",
+                'sort_order' => 200,
+                'group'      => 'General Information',
+            ]
+        );
     }
 
     /**

@@ -14,9 +14,8 @@ namespace Smile\ElasticsuiteVirtualCategory\Plugin\Catalog;
 
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Model\Product;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Model\ScopeInterface;
+use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCategoryRoot;
 use Smile\ElasticsuiteVirtualCategory\Model\Url;
 
 /**
@@ -39,15 +38,25 @@ class ProductPlugin
     private $categoryRepository;
 
     /**
+     * @var VirtualCategoryRoot
+     */
+    private $virtualCategoryRoot;
+
+    /**
      * ProductPlugin constructor.
      *
-     * @param Url                         $urlModel           Virtual Categories URL Model
-     * @param CategoryRepositoryInterface $categoryRepository Category Repository
+     * @param Url                         $urlModel            Virtual Categories URL Model
+     * @param CategoryRepositoryInterface $categoryRepository  Category Repository
+     * @param VirtualCategoryRoot         $virtualCategoryRoot Virtual Category Root Model
      */
-    public function __construct(Url $urlModel, CategoryRepositoryInterface $categoryRepository)
-    {
+    public function __construct(
+        Url $urlModel,
+        CategoryRepositoryInterface $categoryRepository,
+        VirtualCategoryRoot $virtualCategoryRoot
+    ) {
         $this->urlModel           = $urlModel;
         $this->categoryRepository = $categoryRepository;
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
     }
 
     /**
@@ -62,7 +71,7 @@ class ProductPlugin
     public function aroundGetProductUrl(Product $product, \Closure $proceed, $useSid = null)
     {
         $requestPath = $product->getRequestPath();
-        if (empty($requestPath)) {
+        if (empty($requestPath) || $this->getAppliedRootCategory()) {
             $requestPath = $this->getRequestPath($product);
             if (null !== $requestPath) {
                 $product->setRequestPath($requestPath);
@@ -113,5 +122,15 @@ class ProductPlugin
         }
 
         return $requestPath;
+    }
+
+    /**
+     * Retrieve the currently applied root category, if any.
+     *
+     * @return \Magento\Catalog\Model\Category|null
+     */
+    private function getAppliedRootCategory()
+    {
+        return $this->virtualCategoryRoot->getAppliedRootCategory();
     }
 }

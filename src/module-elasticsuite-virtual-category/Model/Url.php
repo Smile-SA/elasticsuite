@@ -17,14 +17,13 @@ namespace Smile\ElasticsuiteVirtualCategory\Model;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\DataObject;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryFactory;
+use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory as CategoryFactory;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCategoryRoot;
 
 /**
  * Url Model for Virtual Categories
@@ -41,16 +40,16 @@ class Url
     public const XML_PATH_PRODUCT_URL_SUFFIX = 'catalog/seo/product_url_suffix';
 
     /**
+     * XML path for product url suffix
+     */
+    public const XML_PATH_CATEGORY_URL_SUFFIX = 'catalog/seo/category_url_suffix';
+
+    /**
      * Store config
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     private $scopeConfig;
-
-    /**
-     * @var CategoryRepositoryInterface
-     */
-    private $categoryRepository;
 
     /**
      * @var \Magento\Store\Model\StoreManagerInterface
@@ -75,29 +74,34 @@ class Url
     private $urlBuilder;
 
     /**
-     * ProductPlugin constructor.
+     * @var VirtualCategoryRoot
+     */
+    private $virtualCategoryRoot;
+
+    /**
+     * Virtual Category URL model constructor.
      *
-     * @param ScopeConfigInterface        $scopeConfig               Scope Configuration
-     * @param CategoryRepositoryInterface $categoryRepository        Category Repository
-     * @param StoreManagerInterface       $storeManager              Store Manager Interface
-     * @param CategoryCollectionFactory   $categoryCollectionFactory Category Collection Factory
-     * @param UrlFinderInterface          $urlFinder                 URL Finder
-     * @param UrlInterface                $urlInterface              URL Interface
+     * @param ScopeConfigInterface  $scopeConfig               Scope Configuration
+     * @param StoreManagerInterface $storeManager              Store Manager Interface
+     * @param CategoryFactory       $categoryCollectionFactory Category Collection Factory
+     * @param UrlFinderInterface    $urlFinder                 URL Finder
+     * @param UrlInterface          $urlInterface              URL Interface
+     * @param VirtualCategoryRoot   $virtualCategoryRoot       Virtual Category Root
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        CategoryRepositoryInterface $categoryRepository,
         StoreManagerInterface $storeManager,
-        CategoryCollectionFactory $categoryCollectionFactory,
+        CategoryFactory $categoryCollectionFactory,
         UrlFinderInterface $urlFinder,
-        UrlInterface $urlInterface
+        UrlInterface $urlInterface,
+        VirtualCategoryRoot $virtualCategoryRoot
     ) {
-        $this->scopeConfig               = $scopeConfig;
-        $this->categoryRepository        = $categoryRepository;
-        $this->storeManager              = $storeManager;
-        $this->categoryCollectionFactory = $categoryCollectionFactory;
-        $this->urlFinder                 = $urlFinder;
-        $this->urlBuilder                = $urlInterface;
+        $this->scopeConfig         = $scopeConfig;
+        $this->storeManager        = $storeManager;
+        $this->categoryFactory     = $categoryCollectionFactory;
+        $this->urlFinder           = $urlFinder;
+        $this->urlBuilder          = $urlInterface;
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
     }
 
     /**
@@ -116,7 +120,8 @@ class Url
 
     /**
      * Retrieve rewrite object for a given product/category request path couple.
-     * Will only succeed if the category path is related to a virtual one.
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param string   $productRequestPath  A product Request Path
      * @param string   $categoryRequestPath A category Request Path
@@ -127,15 +132,26 @@ class Url
     public function getProductRewrite($productRequestPath, $categoryRequestPath, $storeId = null): ?UrlRewrite
     {
         $productRewrite = null;
+
         if (null === $storeId) {
             $storeId = $this->storeManager->getStore()->getId();
         }
-        $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
+
+        if (!$this->virtualCategoryRoot->getAppliedRootCategory()) {
+            $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
+        } else {
+            $urlKeys = explode('/', $categoryRequestPath);
+            $urlKey  = array_pop($urlKeys);
+            $category = $this->loadCategoryByUrlKey($urlKey);
+            $categoryId = $category->getId();
+        }
+
         if ($categoryId) {
             $productRewrite = $this->urlFinder->findOneByData([
                 UrlRewrite::REQUEST_PATH => trim($productRequestPath, '/'),
-                UrlRewrite::STORE_ID => $storeId,
+                UrlRewrite::STORE_ID     => $storeId,
             ]);
+
             if (null !== $productRewrite) {
                 $targetPath = $productRewrite->getTargetPath();
                 $targetPath .= "/category/{$categoryId}";
@@ -167,11 +183,57 @@ class Url
                 $category
             );
         }
+
         if ($categoryUrlPath && $productUrlKey) {
             $requestPath = $categoryUrlPath . '/' . $productUrlKey . $this->getProductUrlSuffix();
         }
 
         return $requestPath;
+    }
+
+    /**
+     * Build an url for a category being viewed under the subtree of a virtual category
+     *
+     * @param CategoryInterface $appliedRootCategory The applied root category
+     * @param CategoryInterface $childCategory       The child category to retrieve Url for.
+     *
+     * @return string
+     */
+    public function getVirtualCategorySubtreeUrl($appliedRootCategory, $childCategory)
+    {
+        $path = $this->virtualCategoryRoot->getVirtualCategorySubtreePath($appliedRootCategory, $childCategory);
+        $url  = $path . $this->getCategoryUrlSuffix();
+
+        $baseUrl = $childCategory->getUrlInstance()->getBaseUrl();
+
+        return $baseUrl . $url;
+    }
+
+    /**
+     * Retrieve Category Url Rewrite by path and Store.
+     *
+     * @param string $categoryPath A category Path
+     * @param int    $storeId      The Store Id
+     *
+     * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
+     */
+    public function getCategoryRewrite($categoryPath, $storeId)
+    {
+        $categoryPath = str_replace($this->getCategoryUrlSuffix(), '', $categoryPath);
+        $category = $this->loadCategoryByUrlKey($categoryPath);
+        $rewrite  = null;
+
+        if ($category && $category->getId()) {
+            $rewrite = $this->urlFinder->findOneByData([
+                UrlRewrite::ENTITY_ID   => $category->getId(),
+                UrlRewrite::STORE_ID    => $storeId,
+                UrlRewrite::ENTITY_TYPE => 'category',
+            ]);
+
+            $rewrite->setRequestPath($rewrite->getTargetPath());
+        }
+
+        return $rewrite;
     }
 
     /**
@@ -189,6 +251,24 @@ class Url
         }
 
         return false;
+    }
+
+    /**
+     * Load a category by Url key.
+     *
+     * @param string $requestPath The Request Path
+     *
+     * @return \Magento\Framework\DataObject
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function loadCategoryByUrlKey($requestPath)
+    {
+        $collection = $this->categoryCollectionFactory->create();
+
+        $collection->setStoreId($this->storeManager->getStore()->getId())
+            ->addAttributeToFilter('url_key', ['eq' => $requestPath]);
+
+        return $collection->getFirstItem();
     }
 
     /**
@@ -230,7 +310,27 @@ class Url
     {
         return (bool) $this->scopeConfig->getValue(
             \Magento\Catalog\Helper\Product::XML_PATH_PRODUCT_URL_USE_CATEGORY,
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * Retrieve Product Url suffix
+     *
+     * @return string
+     */
+    private function getProductUrlSuffix()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Retrieve Category Url suffix
+     *
+     * @return string
+     */
+    private function getCategoryUrlSuffix()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_CATEGORY_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
     }
 }
