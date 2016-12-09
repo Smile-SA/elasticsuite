@@ -19,4 +19,8 @@
     <event name="page_block_html_topmenu_gethtml_before">
         <observer name="fix-category-has-active" instance="Smile\ElasticsuiteVirtualCategory\Observer\Topmenu"/>
     </event>
+
+    <event name="catalog_controller_category_init_after">
+        <observer name="fix-category-subtree-display-mode" instance="Smile\ElasticsuiteVirtualCategory\Observer\DisplaySubtreeCategoryAsProductOnly"/>
+    </event>
 </config>
