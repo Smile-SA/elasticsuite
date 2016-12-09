@@ -154,8 +154,7 @@ class Root
         array_pop($rootPathIds);
         array_push($rootPathIds, $appliedRoot->getId());
 
-        $pathInStore = $category->getPathInStore();
-        $pathIds     = array_reverse(explode(',', $pathInStore));
+        $pathIds     = $category->getPathIds();
         $pivotIndex  = array_search($appliedRootId, $pathIds);
         $pathIds     = array_slice($pathIds, $pivotIndex + 1);
         $categoryIds = array_merge($rootPathIds, $pathIds);
