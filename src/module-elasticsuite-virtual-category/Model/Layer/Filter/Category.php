@@ -128,11 +128,12 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     {
         if ($this->childrenCategories === null) {
             $currentCategory = $this->getDataProvider()->getCategory();
+            $this->childrenCategories = $currentCategory->getChildrenCategories();
             // Use the root category to retrieve children if needed.
             if ($this->useVirtualRootCategorySubtree($currentCategory)) {
-                $currentCategory = $this->getVirtualRootCategory($currentCategory);
+                $this->childrenCategories = $this->getVirtualRootCategory($currentCategory)->getChildrenCategories();
+                $this->childrenCategories->clear()->addFieldToFilter('entity_id', ['neq' => $currentCategory->getId()]);
             }
-            $this->childrenCategories = $currentCategory->getChildrenCategories();
         }
 
         return $this->childrenCategories;
