@@ -97,7 +97,7 @@ class FunctionScore implements QueryInterface
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE,
         $scoreMode = self::SCORE_MODE_SUM,
-        $boostMode = self::BOOST_MODE_MULTIPLY,
+        $boostMode = self::BOOST_MODE_SUM,
         $functions = []
     ) {
         $this->name      = $name;
