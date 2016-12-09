@@ -168,7 +168,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
      */
     private function isSearch()
     {
-        return (bool) $this->getRequest()->getParam('q') !== null;
+        return (bool) ($this->getRequest()->getParam('q') !== null);
     }
 
     /**
