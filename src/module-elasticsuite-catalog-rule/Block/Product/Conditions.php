@@ -142,7 +142,10 @@ class Conditions extends Template implements RendererInterface
              *        can not be done in afterLoad of the backend model
              *        since we do not know yet the form structure
              */
-            $conditions = $this->element->getValue()->getConditions()->asArray();
+            $conditions = $this->element->getValue();
+            if (!is_array($conditions)) {
+                $conditions = $conditions->getConditions()->asArray();
+            }
             $this->rule->getConditions()->loadArray($conditions);
             $this->element->setRule($this->rule);
         }
