@@ -108,23 +108,9 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $object->setSearchContainer($searchContainers);
         }
 
-        if ($object->getConfig()) {
-            $object->setConfig(unserialize($object->getConfig()));
-        }
-
-        if (!is_object($object->getRuleCondition())) {
-            $ruleData = $object->getRuleCondition();
-            $rule     = $this->ruleFactory->create();
-
-            if (is_string($ruleData)) {
-                $ruleData = unserialize($ruleData);
-            }
-
-            if (is_array($ruleData)) {
-                $rule->getConditions()->loadArray($ruleData);
-            }
-            $object->setRuleCondition($rule);
-        }
+         /* Using getter to force unserialize*/
+        $object->getConfig();
+        $object->getRuleCondition();
 
         return parent::_afterLoad($object);
     }
@@ -144,14 +130,14 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         $rule = $this->ruleFactory->create();
-        if (is_object($object->getRuleCondition())) {
-            $rule = $object->getRuleCondition();
-        } elseif (is_array($object->getRuleCondition())) {
-            $conditionData = $object->getRuleCondition();
-            $rule->loadPost($conditionData);
+        $ruleCondition = $object->getRuleCondition();
+
+        if (is_object($ruleCondition)) {
+            $rule = $ruleCondition;
+        } elseif (is_array($ruleCondition)) {
+            $rule->loadPost($ruleCondition);
         }
         $object->setRuleCondition(serialize($rule->getConditions()->asArray()));
-
 
         return parent::_beforeSave($object);
     }

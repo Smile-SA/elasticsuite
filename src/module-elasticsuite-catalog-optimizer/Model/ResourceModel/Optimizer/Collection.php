@@ -101,6 +101,13 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         if (!is_array($searchContainers)) {
             $searchContainers = array($searchContainers);
         }
+
+        $cond = OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER. '.'
+            . OptimizerInterface::OPTIMIZER_ID
+            .' =  main_table.'
+            . OptimizerInterface::OPTIMIZER_ID;
+
+        $this->join(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER, $cond);
         $this->addFilter(OptimizerInterface::SEARCH_CONTAINER, array('in' => $searchContainers));
 
         return $this;

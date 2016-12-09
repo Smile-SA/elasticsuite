@@ -53,14 +53,14 @@ class FunctionScore implements QueryInterface
     /**
      * @var array
      */
-    private $functionScore;
+    private $functions;
 
     /**
      * Score mode functions.
      */
     const SCORE_MODE_MULTIPLY = 'multiply';
     const SCORE_MODE_SUM      = 'sum';
-    const SCORE_MODE_AVG      = 'AVG';
+    const SCORE_MODE_AVG      = 'avg';
     const SCORE_MODE_FIRST    = 'first';
     const SCORE_MODE_MAX      = 'max';
     const SCORE_MODE_MIN      = 'min';
@@ -70,7 +70,7 @@ class FunctionScore implements QueryInterface
      */
     const BOOST_MODE_MULTIPLY = 'multiply';
     const BOOST_MODE_SUM      = 'sum';
-    const BOOST_MODE_AVG      = 'AVG';
+    const BOOST_MODE_AVG      = 'avg';
     const BOOST_MODE_FIRST    = 'first';
     const BOOST_MODE_MAX      = 'max';
     const BOOST_MODE_MIN      = 'min';
@@ -85,12 +85,12 @@ class FunctionScore implements QueryInterface
 
     /**
      * Constructor.
-     * @param \Magento\Framework\Search\Request\QueryInterface $query         Negated query.
-     * @param string                                           $name          Query name.
-     * @param integer                                          $boost         Query boost.
-     * @param string                                           $scoreMode     Score mode.
-     * @param string                                           $boostMode     Boost mode.
-     * @param array                                            $functionScore Function score.
+     * @param \Magento\Framework\Search\Request\QueryInterface $query     Negated query.
+     * @param string                                           $name      Query name.
+     * @param integer                                          $boost     Query boost.
+     * @param string                                           $scoreMode Score mode.
+     * @param string                                           $boostMode Boost mode.
+     * @param array                                            $functions Function score.
      */
     public function __construct(
         \Magento\Framework\Search\Request\QueryInterface $query = null,
@@ -98,14 +98,14 @@ class FunctionScore implements QueryInterface
         $boost = QueryInterface::DEFAULT_BOOST_VALUE,
         $scoreMode = self::SCORE_MODE_SUM,
         $boostMode = self::BOOST_MODE_MULTIPLY,
-        $functionScore = []
+        $functions = []
     ) {
-        $this->name          = $name;
-        $this->boost         = $boost;
-        $this->query         = $query;
-        $this->scoreMode     = $scoreMode;
-        $this->boostMode     = $boostMode;
-        $this->functionScore = $functionScore;
+        $this->name      = $name;
+        $this->boost     = $boost;
+        $this->query     = $query;
+        $this->scoreMode = $scoreMode;
+        $this->boostMode = $boostMode;
+        $this->functions = $functions;
     }
 
     /**
@@ -153,12 +153,22 @@ class FunctionScore implements QueryInterface
     }
 
     /**
+     * Return function score base query.
+     *
+     * @return \Magento\Framework\Search\Request\QueryInterface|QueryInterface
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
      * Returns function score.
      *
      * @return array
      */
-    public function getFunctionScore()
+    public function getFunctions()
     {
-        return $this->functionScore;
+        return $this->functions;
     }
 }

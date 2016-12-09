@@ -22,4 +22,11 @@
         <plugin name="queryRewriteOptimizers" type="\Smile\ElasticsuiteCatalogOptimizer\Plugin\QueryRewrite" />
     </type>
 
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="constant_score" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\ConstantScore</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

@@ -12,11 +12,10 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Plugin;
 
-use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList;
 
 /**
  * Plugin that handle query rewriting (synonym substitution) during fulltext query building phase.
@@ -28,18 +27,18 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 class QueryRewrite
 {
     /**
-     * @var QueryFactory
+     * @var ApplierList
      */
-    private $queryFactory;
+    private $applierList;
 
     /**
      * Constructor.
      *
-     * @param QueryFactory $queryFactory Search request query factory.
+     * @param ApplierList $applierList Applier list.
      */
-    public function __construct(QueryFactory $queryFactory)
+    public function __construct(ApplierList $applierList)
     {
-        $this->queryFactory = $queryFactory;
+        $this->applierList = $applierList;
     }
 
     /**
@@ -47,13 +46,14 @@ class QueryRewrite
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param QueryBuilder                    $subject         Original query builder.
-     * @param \Closure                        $proceed         Original create func.
-     * @param ContainerConfigurationInterface $containerConfig Search request container config.
-     * @param string                          $queryText       Current query text.
-     * @param array                           $filters         Filters.
-     * @param string                          $spellingType    Spelling type of the query.
+     * @param QueryBuilder                    $subject                Original query builder.
+     * @param \Closure                        $proceed                Original create func.
+     * @param ContainerConfigurationInterface $containerConfiguration Search request container config.
+     * @param string                          $queryText              Current query text.
+     * @param array                           $filters                Filters.
+     * @param string                          $spellingType           Spelling type of the query.
      *
+     * @SuppressWarnings(PHPMD.LongVariable)
      * @return QueryInterface
      */
     public function aroundCreateQuery(
@@ -61,12 +61,11 @@ class QueryRewrite
         \Closure $proceed,
         ContainerConfigurationInterface $containerConfiguration,
         $queryText,
-        $filters,
+        array $filters,
         $spellingType
     ) {
-        $storeId     = $containerConfiguration->getStoreId();
-        $requestName = $containerConfiguration->getName();
+        $query = $proceed($containerConfiguration, $queryText, $filters, $spellingType);
 
-var_dump('okey66');die;
+        return $this->applierList->applyOptimizers($containerConfiguration, $query);
     }
 }

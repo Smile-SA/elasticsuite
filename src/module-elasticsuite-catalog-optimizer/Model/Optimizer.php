@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule;
+use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
 
 /**
  * Optimizer Model
@@ -26,6 +27,34 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule;
  */
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
+
+    /**
+     * @var RuleFactory
+     */
+    private $ruleFactory;
+
+    /**
+     * Class constructor
+     *
+     * @param \Magento\Framework\Model\Context                        $context            Context.
+     * @param \Magento\Framework\Registry                             $registry           Registry.
+     * @param RuleFactory                                             $ruleFactory        Rule factory.
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Resource.
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Resource collection.
+     * @param array                                                   $data               Data.
+     */
+    public function __construct(
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        RuleFactory $ruleFactory,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
+        $this->ruleFactory = $ruleFactory;
+    }
+
     /**
      * Get Optimizer ID.
      *
@@ -69,11 +98,23 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Get Optimizer config.
      *
+     * @param Key $key Key in array.
+     *
      * @return array|string
      */
-    public function getConfig()
+    public function getConfig($key = null)
     {
-        return $this->getData(self::CONFIG);
+        if (is_string($this->getData(self::CONFIG))) {
+            $this->setData(self::CONFIG, unserialize($this->getData(self::CONFIG)));
+        }
+
+        $result = $this->getData(self::CONFIG);
+
+        if ($key !== null) {
+            $result = isset($result[$key]) ? $result[$key] : null;
+        }
+
+        return $result;
     }
 
     /**
@@ -123,6 +164,20 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      */
     public function getRuleCondition()
     {
+        if (!is_object($this->getData(self::RULE_CONDITION))) {
+            $ruleData = $this->getData(self::RULE_CONDITION);
+            $rule     = $this->ruleFactory->create();
+
+            if (is_string($ruleData)) {
+                $ruleData = unserialize($ruleData);
+            }
+
+            if (is_array($ruleData)) {
+                $rule->getConditions()->loadArray($ruleData);
+            }
+            $this->setData(self::RULE_CONDITION, $rule);
+        }
+
         return $this->getData(self::RULE_CONDITION);
     }
 

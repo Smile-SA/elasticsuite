@@ -32,12 +32,21 @@ class FunctionScore extends AbstractComplexBuilder implements BuilderInterface
     public function buildQuery(QueryInterface $query)
     {
         $searchQueryParams = [
-            'query'      => $this->parentBuilder->buildQuery($query->getQuery()),
             'boost'      => $query->getBoost(),
             'score_mode' => $query->getScoreMode(),
             'boost_mode' => $query->getBoostMode(),
-            'functions'  => $query->getFunctionScore(),
+            'functions'  => $query->getFunctions(),
         ];
+
+        if ($query->getQuery()) {
+            $searchQueryParams['query'] = $this->parentBuilder->buildQuery($query->getQuery());
+        }
+
+        foreach ($searchQueryParams['functions'] as &$function) {
+            if (isset($function['filter'])) {
+                $function['filter'] = $this->parentBuilder->buildQuery($function['filter']);
+            }
+        }
 
         return ['function_score' => $searchQueryParams];
     }
