@@ -23,4 +23,19 @@
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
+    <!-- Apply boost plugin -->
+    
+        <!-- Plugin -->
+    <type name="\Smile\ElasticsuiteCore\Search\Request\Query\Builder">
+        <plugin name="queryRewriteOptimizers" type="\Smile\ElasticsuiteCatalogOptimizer\Plugin\QueryRewrite" />
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList">
+        <arguments>
+            <argument name="appliers" xsi:type="array">
+                <item name="constant_score" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\ConstantScore</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
