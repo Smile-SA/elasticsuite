@@ -87,4 +87,9 @@
         <plugin name="smile_elasticsuite_virtual_categories_breadcrumb"
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Helper\BreadcrumbPlugin" />
     </type>
+
+    <type name="Magento\Catalog\Model\Design">
+        <plugin name="smile_elasticsuite_virtual_categories_design"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\DesignPlugin" />
+    </type>
 </config>
