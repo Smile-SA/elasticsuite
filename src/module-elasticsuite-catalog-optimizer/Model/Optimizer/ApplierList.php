@@ -18,6 +18,7 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 
 /**
  * ApplierList Model
@@ -78,7 +79,12 @@ class ApplierList
         $functions = $this->getFunctions($containerConfiguration);
 
         if (!empty($functions)) {
-            $queryParams = ['query' => $query, 'functions' => $functions];
+            $queryParams = [
+                'query'     => $query,
+                'functions' => $functions,
+                'scoreMode' => FunctionScore::SCORE_MODE_MULTIPLY,
+                'boostMode' => FunctionScore::BOOST_MODE_MULTIPLY,
+            ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FUNCTIONSCORE, $queryParams);
         }
 
