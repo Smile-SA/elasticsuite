@@ -13,9 +13,6 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\OptimizerFactory;
 
 /**
  * Abstract Retailer controller
@@ -39,32 +36,32 @@ abstract class AbstractOptimizer extends Action
     protected $coreRegistry;
 
     /**
-     * @var OptimizerRepositoryInterface
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface
      */
     protected $optimizerRepository;
 
     /**
      * Optimizer Factory
      *
-     * @var OptimizerFactory
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory
      */
     protected $optimizerFactory;
 
     /**
      * Abstract constructor.
      *
-     * @param \Magento\Backend\App\Action\Context $context             Application context
-     * @param PageFactory                         $resultPageFactory   Result Page factory
-     * @param \Magento\Framework\Registry         $coreRegistry        Application registry
-     * @param OptimizerRepositoryInterface        $optimizerRepository Optimizer Repository
-     * @param OptimizerFactory                    $optimizerFactory    Optimizer Factory
+     * @param \Magento\Backend\App\Action\Context                                    $context             Application context.
+     * @param \Magento\Framework\View\Result\PageFactory                             $resultPageFactory   Result Page factory.
+     * @param \Magento\Framework\Registry                                            $coreRegistry        Application registry.
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface   $optimizerRepository Optimizer Repository.
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory $optimizerFactory    Optimizer Factory.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        PageFactory $resultPageFactory,
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Framework\Registry $coreRegistry,
-        OptimizerRepositoryInterface $optimizerRepository,
-        OptimizerFactory $optimizerFactory
+        \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface $optimizerRepository,
+        \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory $optimizerFactory
     ) {
         parent::__construct($context);
 

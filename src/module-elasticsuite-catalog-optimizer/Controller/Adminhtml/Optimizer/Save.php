@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\Optimizer;
 
 use Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\AbstractOptimizer as OptimizerController;
-use Magento\Framework\Exception\NoSuchEntityException;
 
 /**
  * Optimizer Adminhtml Index controller.
@@ -55,6 +54,8 @@ class Save extends OptimizerController
             }
 
             $model->setData($data);
+            $ruleConditionPost = $this->getRequest()->getParam('rule_condition', []);
+            $model->getRuleCondition()->loadPost($ruleConditionPost);
 
             try {
                 $this->optimizerRepository->save($model);

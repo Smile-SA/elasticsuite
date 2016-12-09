@@ -135,7 +135,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         if (is_object($ruleCondition)) {
             $rule = $ruleCondition;
         } elseif (is_array($ruleCondition)) {
-            $rule->loadPost($ruleCondition);
+            $rule->getConditions()->loadArray($ruleCondition);
         }
         $object->setRuleCondition(serialize($rule->getConditions()->asArray()));
 
