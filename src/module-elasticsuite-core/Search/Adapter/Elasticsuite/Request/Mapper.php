@@ -91,8 +91,6 @@ class Mapper
             $searchRequest['aggregations'] = $aggregations;
         }
 
-        var_dump(json_encode($searchRequest));
-
         return $searchRequest;
     }
 
