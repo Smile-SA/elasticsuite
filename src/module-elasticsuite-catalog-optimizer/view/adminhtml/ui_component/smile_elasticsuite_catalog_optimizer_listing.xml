@@ -81,9 +81,7 @@
             <item name="config" xsi:type="array">
                 <item name="childDefaults" xsi:type="array">
                     <item name="fieldAction" xsi:type="array">
-                        <item name="provider" xsi:type="string">
-                            smile_elasticsuite_catalog_optimizer_listing.smile_elasticsuite_catalog_optimizer_listing.smile_elasticsuite_catalog_optimizer_columns.actions
-                        </item>
+                        <item name="provider" xsi:type="string">smile_elasticsuite_catalog_optimizer_listing.smile_elasticsuite_catalog_optimizer_listing.smile_elasticsuite_catalog_optimizer_columns.actions</item>
                         <item name="target" xsi:type="string">applyAction</item>
                         <item name="params" xsi:type="array">
                             <item name="0" xsi:type="string">edit</item>
