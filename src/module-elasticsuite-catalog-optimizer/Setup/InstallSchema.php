@@ -16,7 +16,6 @@ use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerQueryTypeInterface;
 
 /**
  * Install Schema for Catalog Optimizer Module
@@ -104,6 +103,13 @@ class InstallSchema implements InstallSchemaInterface
                     '',
                     [],
                     'Optimizer serialized configuration'
+                )
+                ->addColumn(
+                    OptimizerInterface::RULE_CONDITION,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    '',
+                    [],
+                    'Optimizer rule condition configuration'
                 )
                 ->setComment('Search optimizer Table');
 
