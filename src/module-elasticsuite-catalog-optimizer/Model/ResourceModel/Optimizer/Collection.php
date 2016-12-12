@@ -99,7 +99,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     public function addSearchContainersFilter($searchContainers)
     {
         if (!is_array($searchContainers)) {
-            $searchContainers = array($searchContainers);
+            $searchContainers = [$searchContainers];
         }
 
         $cond = OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER. '.'
@@ -108,7 +108,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             . OptimizerInterface::OPTIMIZER_ID;
 
         $this->join(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER, $cond);
-        $this->addFilter(OptimizerInterface::SEARCH_CONTAINER, array('in' => $searchContainers));
+        $this->addFilter(OptimizerInterface::SEARCH_CONTAINER, ['in' => $searchContainers]);
 
         return $this;
     }
