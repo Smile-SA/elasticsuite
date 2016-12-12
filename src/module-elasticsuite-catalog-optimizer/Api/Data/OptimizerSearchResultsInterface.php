@@ -24,16 +24,16 @@ use \Magento\Framework\Api\SearchResultsInterface;
 interface OptimizerSearchResultsInterface extends SearchResultsInterface
 {
     /**
-     * Get seller list.
+     * Get Optimizers list.
      *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface[]
      */
     public function getItems();
 
     /**
-     * Set seller list.
+     * Set Optimizers list.
      *
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface[] $items list of thesaurus
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface[] $items list of optimizers
      *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterface
      */

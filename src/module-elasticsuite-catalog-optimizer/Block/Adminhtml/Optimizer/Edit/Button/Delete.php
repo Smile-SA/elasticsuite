@@ -13,7 +13,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button;
 
 /**
- * Delete button for retailer edition
+ * Delete button for optimizer edition
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer

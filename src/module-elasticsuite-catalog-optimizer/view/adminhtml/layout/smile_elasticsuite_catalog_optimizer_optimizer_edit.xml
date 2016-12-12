@@ -20,7 +20,7 @@
     <update handle="editor"/>
     <body>
         <referenceContainer name="page.main.actions">
-            <block class="Magento\Backend\Block\Store\Switcher" name="retailer.store.switcher" template="Magento_Backend::store/switcher.phtml"/>
+            <block class="Magento\Backend\Block\Store\Switcher" name="optimizer.store.switcher" template="Magento_Backend::store/switcher.phtml"/>
         </referenceContainer>
         <referenceBlock name="page.title">
             <action method="setTitleClass">
