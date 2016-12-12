@@ -28,10 +28,11 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 class ConstantScore implements ApplierInterface
 {
     /**
-     * @param ContainerConfigurationInterface                     $containerConfiguration Contrainer configuration.
+     * @param ContainerConfigurationInterface                     $containerConfiguration Container configuration.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer $optimizer              Optimizer.
      *
      * @SuppressWarnings(PHPMD.LongVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @return mixed
      */
     public function getFunction(ContainerConfigurationInterface $containerConfiguration, Optimizer $optimizer)
