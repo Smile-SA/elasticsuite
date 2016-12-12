@@ -1,4 +1,4 @@
-"Optimizers List","Liste des boots"
+"Optimizers List","Liste des boosts"
 "Name","Nom"
 "Model","Modèle"
 "Status","Statut"
@@ -32,3 +32,4 @@
 "Active to","Actif jusque"
 "Active from","Actif depuis"
 "Optimizers","Optimiseurs"
+"Add New Optimizer","Ajouter un optimiseur"
