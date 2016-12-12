@@ -116,7 +116,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     /**
      * Returns only active optimizers.
      *
-     * @param string|Zend_Date $date Date the filter need to be active (UTC).
+     * @param string $date Date the filter need to be active (UTC).
      *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection
      */
@@ -146,17 +146,5 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             'Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer',
             'Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer'
         );
-    }
-
-    /**
-     * Perform operations after collection load
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * @return $this
-     */
-    protected function _afterLoad()
-    {
-        return parent::_afterLoad();
     }
 }
