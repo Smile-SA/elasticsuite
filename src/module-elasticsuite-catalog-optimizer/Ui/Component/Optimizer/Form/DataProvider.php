@@ -12,20 +12,18 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form;
 
-use Magento\Eav\Model\Config;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Magento\Ui\DataProvider\EavValidationRules;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory as OptimizerCollectionFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory as OptimizerCollectionFactory;
 
 /**
- * Seller Data provider for adminhtml edit form
+ * Optimizer Data provider for adminhtml edit form
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
