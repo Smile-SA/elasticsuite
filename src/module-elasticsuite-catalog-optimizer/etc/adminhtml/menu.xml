@@ -19,7 +19,7 @@
     <menu>
         <add
             id="ElasticsuiteCatalogOptimizer::manage"
-            title="Optimizer"
+            title="Optimizers"
             module="Smile_ElasticsuiteCatalogOptimizer"
             sortOrder="30"
             parent="Smile_ElasticsuiteCore::manage_search"
