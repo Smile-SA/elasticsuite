@@ -18,7 +18,7 @@ use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
- * Install Schema for Thesaurus Module
+ * Upgrade Schema for Optimizers Module
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer

@@ -15,7 +15,7 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml;
 use Magento\Backend\App\Action;
 
 /**
- * Abstract Retailer controller
+ * Abstract Optimizer controller
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer

@@ -19,7 +19,7 @@ use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Framework\UrlInterface;
 
 /**
- * Retailer Actions for Ui Component
+ * Optimizers Actions for Ui Component
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
