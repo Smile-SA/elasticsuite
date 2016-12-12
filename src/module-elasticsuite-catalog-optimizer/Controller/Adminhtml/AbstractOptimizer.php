@@ -87,7 +87,7 @@ abstract class AbstractOptimizer extends Action
     }
 
     /**
-     * Check if allowed to manage retailer
+     * Check if allowed to manage optimizer
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return bool
