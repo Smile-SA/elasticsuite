@@ -14,7 +14,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Api;
 
 /**
- * Thesaurus Repository interface
+ * Optimizer Repository interface
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer

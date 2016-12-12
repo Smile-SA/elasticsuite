@@ -16,7 +16,7 @@ use Magento\Store\Model\Store;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
- * Thesaurus Collection Resource Model
+ * Optimizers Collection Resource Model
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
