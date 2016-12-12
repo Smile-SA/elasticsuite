@@ -130,7 +130,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Get Optimizer from date.
      *
-     * @return date
+     * @return string
      */
     public function getFromDate()
     {
@@ -140,7 +140,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Get Optimizer to date.
      *
-     * @return date
+     * @return string
      */
     public function getToDate()
     {

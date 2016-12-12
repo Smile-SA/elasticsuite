@@ -130,14 +130,14 @@ interface OptimizerInterface
     /**
      * Get from_date
      *
-     * @return date
+     * @return string
      */
     public function getFromDate();
 
     /**
      * Get to_date
      *
-     * @return date
+     * @return string
      */
     public function getToDate();
 
