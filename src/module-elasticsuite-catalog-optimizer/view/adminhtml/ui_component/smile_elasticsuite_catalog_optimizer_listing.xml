@@ -136,7 +136,16 @@
         </column>
         <column name="model">
             <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="array">
+                    <item name="constant_score" xsi:type="array">
+                        <item name="value" xsi:type="string">constant_score</item>
+                        <item name="label" xsi:type="string" translate="true">Constant Score</item>
+                    </item>
+                </item>
                 <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
+                    <item name="dataType" xsi:type="string">select</item>
                     <item name="add_field" xsi:type="boolean">true</item>
                     <item name="label" xsi:type="string" translate="true">Model</item>
                     <item name="sortOrder" xsi:type="number">30</item>
@@ -156,6 +165,7 @@
                     </item>
                 </item>
                 <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">select</item>
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/select</item>
                     <item name="dataType" xsi:type="string">select</item>
                     <item name="label" xsi:type="string" translate="true">Status</item>
