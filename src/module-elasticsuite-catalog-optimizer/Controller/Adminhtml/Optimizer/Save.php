@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade this module to newer
  * versions in the future.
  *
@@ -32,13 +31,13 @@ class Save extends OptimizerController
     {
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
+        $data = $this->getRequest()->getPostValue();
 
-        $data         = $this->getRequest()->getPostValue();
         $redirectBack = $this->getRequest()->getParam('back', false);
 
         if ($data) {
             $identifier = $this->getRequest()->getParam('id');
-            $model      = $this->optimizerFactory->create();
+            $model = $this->optimizerFactory->create();
 
             if ($identifier) {
                 $model = $this->optimizerRepository->getById($identifier);
@@ -51,6 +50,16 @@ class Save extends OptimizerController
 
             if (empty($data['optimizer_id'])) {
                 $data['optimizer_id'] = null;
+            }
+
+            $validateResult = $model->validateData(new \Magento\Framework\DataObject($data));
+            if ($validateResult !== true) {
+                foreach ($validateResult as $errorMessage) {
+                    $this->messageManager->addErrorMessage($errorMessage);
+                }
+                $this->_objectManager->get('Magento\Backend\Model\Session')->setFormData($data);
+
+                return $resultRedirect->setPath('*/*/edit', ['id' => $identifier]);
             }
 
             $model->setData($data);

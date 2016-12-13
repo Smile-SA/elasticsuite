@@ -13,8 +13,8 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogRule\Model\Rule;
 use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
+use Magento\Framework\Stdlib\DateTime\Filter\Date;
 
 /**
  * Optimizer Model
@@ -27,11 +27,15 @@ use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
  */
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
-
     /**
      * @var RuleFactory
      */
     private $ruleFactory;
+
+    /**
+     * @var \Magento\Framework\Stdlib\DateTime\Filter\Date
+     */
+    private $dateFilter;
 
     /**
      * Class constructor
@@ -39,6 +43,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      * @param \Magento\Framework\Model\Context                        $context            Context.
      * @param \Magento\Framework\Registry                             $registry           Registry.
      * @param RuleFactory                                             $ruleFactory        Rule factory.
+     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter         Date Filter.
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Resource.
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Resource collection.
      * @param array                                                   $data               Data.
@@ -47,12 +52,24 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         RuleFactory $ruleFactory,
+        Date $dateFilter,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->ruleFactory = $ruleFactory;
+        $this->dateFilter  = $dateFilter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function beforeSave()
+    {
+        $this->parseDateFields();
+
+        parent::beforeSave();
     }
 
     /**
@@ -244,7 +261,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Set Optimizer from date.
      *
-     * @param date $fromDate The Optimizer from date.
+     * @param string|null $fromDate The Optimizer from date.
      *
      * @return Optimizer
      */
@@ -256,7 +273,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Set Optimizer to date.
      *
-     * @param date $toDate The Optimizer to date.
+     * @param string|null $toDate The Optimizer to date.
      *
      * @return Optimizer
      */
@@ -290,6 +307,35 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
+     * Validate optimizer data
+     *
+     * @param \Magento\Framework\DataObject $dataObject The Optimizer
+     *
+     * @return bool|string[] - return true if validation passed successfully. Array with errors description otherwise
+     */
+    public function validateData(\Magento\Framework\DataObject $dataObject)
+    {
+        $result = [];
+        $fromDate = $toDate = null;
+
+        if ($dataObject->hasFromDate() && $dataObject->hasToDate()) {
+            $fromDate = $dataObject->getFromDate();
+            $toDate = $dataObject->getToDate();
+        }
+
+        if ($fromDate && $toDate) {
+            $fromDate = new \DateTime($fromDate);
+            $toDate = new \DateTime($toDate);
+
+            if ($fromDate > $toDate) {
+                $result[] = __('End Date must follow Start Date.');
+            }
+        }
+
+        return !empty($result) ? $result : true;
+    }
+
+    /**
      * Internal Constructor
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -297,5 +343,27 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     protected function _construct()
     {
         $this->_init('Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer');
+    }
+
+    /**
+     * Parse date related fields
+     *
+     * @throws \Exception
+     */
+    private function parseDateFields()
+    {
+        if ('' === $this->getFromDate()) {
+            $this->unsFromDate();
+        }
+
+        if ('' === $this->getToDate()) {
+            $this->unsToDate();
+        }
+
+        foreach ([self::FROM_DATE, self::TO_DATE] as $dateField) {
+            if ($this->hasData($dateField) && is_string($this->getData($dateField))) {
+                $this->setData($dateField, $this->dateFilter->filter($this->getData($dateField)));
+            }
+        }
     }
 }
