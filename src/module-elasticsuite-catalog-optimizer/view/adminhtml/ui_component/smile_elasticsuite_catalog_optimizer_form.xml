@@ -173,16 +173,7 @@
         </field>
         <field name="search_container">
             <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="array">
-                    <item name="0" xsi:type="array">
-                        <item name="value" xsi:type="string">quick_search_container</item>
-                        <item name="label" xsi:type="string" translate="true">Catalog Product Search</item>
-                    </item>
-                    <item name="1" xsi:type="array">
-                        <item name="value" xsi:type="string">catalog_view_container</item>
-                        <item name="label" xsi:type="string" translate="true">Category Product View</item>
-                    </item>
-                </item>
+                <item name="options" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\Source\Containers</item>
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="label" xsi:type="string" translate="true">Request type</item>
