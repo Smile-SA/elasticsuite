@@ -151,7 +151,7 @@ interface OptimizerInterface
     /**
      * Get rule_condition
      *
-     * @return string
+     * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
      */
     public function getRuleCondition();
 

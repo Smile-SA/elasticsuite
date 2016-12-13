@@ -160,7 +160,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Get Optimizer rule condition.
      *
-     * @return Rule
+     * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
      */
     public function getRuleCondition()
     {

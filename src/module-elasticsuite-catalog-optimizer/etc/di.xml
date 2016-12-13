@@ -18,6 +18,33 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <type name="Magento\Framework\Model\Entity\RepositoryFactory">
+        <arguments>
+            <argument name="entities" xsi:type="array">
+                <item name="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">smile_elasticsuite_optimizer</item>
+                    <item name="identifierField" xsi:type="string">optimizer_id</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\EntityManager\HydratorPool">
+        <arguments>
+            <argument name="hydrators" xsi:type="array">
+                <item name="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" xsi:type="string">Magento\Framework\EntityManager\AbstractModelHydrator</item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- Dependency Injection for Optimizer Models -->
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\OptimizerRepository" />
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />

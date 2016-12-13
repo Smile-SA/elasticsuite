@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
+use Magento\Framework\EntityManager\EntityManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection as OptimizerCollection;
@@ -54,22 +55,28 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     private $optimizerCollectionFactory;
 
     /**
+     * @var \Magento\Framework\EntityManager\EntityManager
+     */
+    private $entityManager;
+
+    /**
      * PHP Constructor
      *
      * @param OptimizerFactory    $optimizerFactory           Optimizer Factory.
      * @param ResourceOptimizer   $resource                   Resource optimizer.
      * @param OptimizerCollection $optimizerCollectionFactory Optimizer Collection Factory.
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @param EntityManager       $entityManager              Entity Manager.
      */
     public function __construct(
         OptimizerFactory $optimizerFactory,
         ResourceOptimizer $resource,
-        OptimizerCollection $optimizerCollectionFactory
+        OptimizerCollection $optimizerCollectionFactory,
+        EntityManager $entityManager
     ) {
         $this->optimizerFactory           = $optimizerFactory;
         $this->optimizerCollectionFactory = $optimizerCollectionFactory;
         $this->resource                   = $resource;
+        $this->entityManager              = $entityManager;
     }
 
     /**
@@ -83,8 +90,8 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     public function getById($optimizerId)
     {
         if (!isset($this->optimizerRepositoryById[$optimizerId])) {
-            /** @var OptimizerInterface $optimizer */
-            $optimizer = $this->optimizerFactory->create()->load($optimizerId);
+            $optimizerModel = $this->optimizerFactory->create();
+            $optimizer = $this->entityManager->load($optimizerModel, $optimizerId);
             if (!$optimizer->getOptimizerId()) {
                 $exception = new NoSuchEntityException();
                 throw $exception->singleField('optimizerId', $optimizerId);
@@ -120,7 +127,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     public function save(\Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface $optimizer)
     {
         try {
-            $this->resource->save($optimizer);
+            $this->entityManager->save($optimizer);
         } catch (\Exception $exception) {
             throw new CouldNotSaveException(__(
                 'Could not save the optimizer: %1',
@@ -145,7 +152,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     {
         $optimizerId = $optimizer->getOptimizerId();
 
-        $this->resource->delete($optimizer);
+        $this->entityManager->delete($optimizer);
 
         if (isset($this->optimizerRepositoryById[$optimizerId])) {
             unset($this->optimizerRepositoryById[$optimizerId]);

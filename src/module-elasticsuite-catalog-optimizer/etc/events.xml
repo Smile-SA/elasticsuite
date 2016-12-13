@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogOptimizer Events configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- Implementation of "legacy" events -->
+    <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_save_before">
+        <observer name="legacy_optimizer_save" instance="Magento\Framework\EntityManager\Observer\BeforeEntitySave" />
+    </event>
+    <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_save_after">
+        <observer name="legacy_optimizer_save" instance="Magento\Framework\EntityManager\Observer\AfterEntitySave" />
+    </event>
+    <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_delete_before">
+        <observer name="legacy_optimizer_delete" instance="Magento\Framework\EntityManager\Observer\BeforeEntityDelete" />
+    </event>
+    <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_delete_after">
+        <observer name="legacy_optimizer_delete" instance="Magento\Framework\EntityManager\Observer\AfterEntityDelete" />
+    </event>
+    <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_load_after">
+        <observer name="legacy_optimizer_load" instance="Magento\Framework\EntityManager\Observer\AfterEntityLoad" />
+    </event>
+</config>
