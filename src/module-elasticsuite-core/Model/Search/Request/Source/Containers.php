@@ -48,7 +48,7 @@ class Containers implements \Magento\Framework\Data\OptionSourceInterface
     {
         $options = [];
         foreach ($this->getContainers() as $container) {
-            $options[] = ['value' => $container['code'], 'label' => $container['label']];
+            $options[] = ['value' => $container['name'], 'label' => __($container['label'])];
         }
 
         return $options;
