@@ -203,7 +203,7 @@ interface OptimizerInterface
     /**
      * Set from_date
      *
-     * @param date $fromDate The from date.
+     * @param string|null $fromDate The from date.
      *
      * @return OptimizerInterface
      */
@@ -212,7 +212,7 @@ interface OptimizerInterface
     /**
      * Set to_date
      *
-     * @param date $toDate The to date
+     * @param string|null $toDate The to date
      *
      * @return OptimizerInterface
      */
