@@ -173,7 +173,7 @@
         </field>
         <field name="search_container">
             <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\Source\Containers</item>
+                <item name="options" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Containers</item>
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="label" xsi:type="string" translate="true">Request type</item>
