@@ -29,11 +29,6 @@ use Magento\Framework\Exception\CouldNotSaveException;
 class OptimizerRepository implements OptimizerRepositoryInterface
 {
     /**
-     * @var ResourceOptimizer
-     */
-    protected $resource;
-
-    /**
      * Optimizer Factory
      *
      * @var OptimizerFactory
@@ -63,19 +58,16 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      * PHP Constructor
      *
      * @param OptimizerFactory    $optimizerFactory           Optimizer Factory.
-     * @param ResourceOptimizer   $resource                   Resource optimizer.
      * @param OptimizerCollection $optimizerCollectionFactory Optimizer Collection Factory.
      * @param EntityManager       $entityManager              Entity Manager.
      */
     public function __construct(
         OptimizerFactory $optimizerFactory,
-        ResourceOptimizer $resource,
         OptimizerCollection $optimizerCollectionFactory,
         EntityManager $entityManager
     ) {
         $this->optimizerFactory           = $optimizerFactory;
         $this->optimizerCollectionFactory = $optimizerCollectionFactory;
-        $this->resource                   = $resource;
         $this->entityManager              = $entityManager;
     }
 
