@@ -154,7 +154,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool" type="Magento\Store\Model\Config\Reader\ReaderPool">
+    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool" type="Magento\Framework\App\Config\Scope\ReaderPoolInterface">
         <arguments>
             <argument name="readers" xsi:type="array">
                 <item name="default" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\DefaultReader</item>
