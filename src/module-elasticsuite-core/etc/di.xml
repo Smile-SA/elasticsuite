@@ -154,7 +154,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool" type="Magento\Framework\Config\ReaderPool">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool">
         <arguments>
             <argument name="readers" xsi:type="array">
                 <item name="default" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\DefaultReader</item>
@@ -164,7 +164,7 @@
                 <item name="container_store" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\ContainerStore</item>
             </argument>
         </arguments>
-    </virtualType>
+    </type>
 
     <virtualType name="Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\Structure\Reader" type="Magento\Config\Model\Config\Structure\Reader">
         <arguments>
@@ -223,12 +223,6 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticsuiteCore\Block\Backend\Template\Context" type="Magento\Backend\Block\Template\Context">
-        <arguments>
-            <argument name="scopeConfig" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
-        </arguments>
-    </virtualType>
-
     <virtualType name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\FieldFactory" type="Magento\Config\Block\System\Config\Form\Field\Factory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field</argument>
@@ -240,21 +234,19 @@
             <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
             <argument name="configFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Factory</argument>
             <argument name="fieldFactory" xsi:type="object">Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Form\Field\Factory</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
+            <argument name="relevanceConfig" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config</argument>
         </arguments>
     </type>
 
     <type name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Edit">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </type>
 
     <virtualType name="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Tabs" type="Magento\Config\Block\System\Config\Tabs">
         <arguments>
             <argument name="configStructure" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure</argument>
-            <argument name="context" xsi:type="object">Smile\ElasticsuiteCore\Block\Backend\Template\Context</argument>
         </arguments>
     </virtualType>
 
