@@ -182,5 +182,6 @@ class RelevanceConfig extends \Magento\Config\Model\Config
 
         $this->setScope($scope);
         $this->setScopeCode($scopeCode);
+        $this->setScopeId($scopeCode);
     }
 }
