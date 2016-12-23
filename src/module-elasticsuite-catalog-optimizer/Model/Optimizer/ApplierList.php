@@ -12,18 +12,13 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
-use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer;
-use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory as OptimizerCollectionFactory;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 
 /**
- * ApplierList Model
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * Apply the list of optimizations to a query for a given container.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -32,12 +27,12 @@ use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 class ApplierList
 {
     /**
-     * @var QueryFactory
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var OptimizerCollectionFactory
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory
      */
     private $optimizerCollectionFactory;
 
@@ -49,15 +44,13 @@ class ApplierList
     /**
      * Constructor.
      *
-     * @param QueryFactory               $queryFactory               Search request query factory.
-     * @param OptimizerCollectionFactory $optimizerCollectionFactory Optimizer collection factory.
-     * @param ApplierInterface[]         $appliers                   Appliers interface.
-     *
-     * @SuppressWarnings(PHPMD.LongVariable)
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                           $queryFactory               Search request query factory.
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory $optimizerCollectionFactory Optimizer collection factory.
+     * @param ApplierInterface[]                                                                  $appliers                   Appliers interface.
      */
     public function __construct(
-        QueryFactory $queryFactory,
-        OptimizerCollectionFactory $optimizerCollectionFactory,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory $optimizerCollectionFactory,
         array $appliers = []
     ) {
         $this->queryFactory               = $queryFactory;
@@ -68,13 +61,12 @@ class ApplierList
     /**
      * Returns query.
      *
-     * @param ContainerConfiguration $containerConfiguration Container configuration.
-     * @param QueryInterface         $query                  Query.
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     * @param QueryInterface                  $query                  Query.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
      * @return QueryInterface
      */
-    public function applyOptimizers(ContainerConfiguration $containerConfiguration, QueryInterface $query)
+    public function applyOptimizers(ContainerConfigurationInterface $containerConfiguration, QueryInterface $query)
     {
         $functions = $this->getFunctions($containerConfiguration);
 
@@ -91,16 +83,14 @@ class ApplierList
         return $query;
     }
 
-
     /**
-     * Returns functions.
+     * Returns functions applied to the container.
      *
-     * @param ContainerConfiguration $containerConfiguration Container configuration.
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
      * @return array
      */
-    private function getFunctions($containerConfiguration)
+    private function getFunctions(ContainerConfigurationInterface $containerConfiguration)
     {
         $functions = [];
 
@@ -118,13 +108,14 @@ class ApplierList
     }
 
     /**
-     * @param ContainerConfiguration $containerConfiguration Container configuration.
-     * @param Optimizer              $optimizer              Optimizer.
+     * Build function score for a container / optimizer.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     * @param OptimizerInterface              $optimizer              Optimizer.
+     *
      * @return  mixed
      */
-    private function getFunction($containerConfiguration, $optimizer)
+    private function getFunction(ContainerConfigurationInterface $containerConfiguration, OptimizerInterface $optimizer)
     {
         $function = null;
         $type     = $optimizer->getModel();
@@ -137,18 +128,20 @@ class ApplierList
     }
 
     /**
-     * @param ContainerConfiguration $containerConfiguration Container configuration.
+     * Get optimizers applied by container.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     *
      * @return OptimizerCollectionFactory
      */
-    private function getOptimizersCollection($containerConfiguration)
+    private function getOptimizersCollection(ContainerConfigurationInterface $containerConfiguration)
     {
         $collection = $this->optimizerCollectionFactory->create();
 
-        return $collection
-            ->addFieldToFilter(OptimizerInterface::STORE_ID, $containerConfiguration->getStoreId())
+        $collection->addFieldToFilter(OptimizerInterface::STORE_ID, $containerConfiguration->getStoreId())
             ->addSearchContainersFilter($containerConfiguration->getName())
             ->addIsActiveFilter();
+
+        return $collection;
     }
 }

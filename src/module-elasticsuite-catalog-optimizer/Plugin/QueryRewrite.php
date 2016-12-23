@@ -53,7 +53,6 @@ class QueryRewrite
      * @param array                           $filters                Filters.
      * @param string                          $spellingType           Spelling type of the query.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
      * @return QueryInterface
      */
     public function aroundCreateQuery(

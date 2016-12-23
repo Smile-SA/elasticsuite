@@ -20,7 +20,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
- * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @author   Fanny DECLERCK <fadec@smile.fr>
  */
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
@@ -40,6 +40,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
     /**
      * Collection constructor.
+     *
      * @param \Magento\Framework\Data\Collection\EntityFactoryInterface    $entityFactory Entity factory.
      * @param \Psr\Log\LoggerInterface                                     $logger        Logger.
      * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy Fetch strategy.
@@ -65,7 +66,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     /**
      * Set Store ID for filter
      *
-     * @param Store|int $store The store
+     * @param Store|int $store The store.
      *
      * @return $this
      */
@@ -80,7 +81,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
-     * Retrieve Store ID Filter
+     * Retrieve Store ID Filter.
      *
      * @return int|null
      */
@@ -136,9 +137,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
-     * Init model for collection
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
      */
     protected function _construct()
     {

@@ -65,9 +65,9 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Internal Constructor
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
      */
     protected function _construct()
     {
@@ -75,13 +75,9 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Saves optimizer linking to search container after save
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
-     * @param \Magento\Framework\Model\AbstractModel $object Optimizer to save
-     *
-     * @return $this
+     * {@inheritDoc}
      */
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
@@ -93,13 +89,9 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Perform operations after object load, restore linking with optimizer and search container
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
-     * @param \Magento\Framework\Model\AbstractModel $object Optimizer being loaded
-     *
-     * @return $this
+     * {@inheritDoc}
      */
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
@@ -116,12 +108,9 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Perform operations before object save, serialize optimizer configuration
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object Optimizer being loaded
-     *
-     * @return $this
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
      */
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
