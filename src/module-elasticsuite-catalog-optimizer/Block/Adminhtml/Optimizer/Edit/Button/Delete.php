@@ -27,7 +27,7 @@ class Delete extends AbstractButton
     public function getButtonData()
     {
         $data = [];
-        if ($this->getOptimizer() && $this->getOptimizer()->getOptimizerId()) {
+        if ($this->getOptimizer() && $this->getOptimizer()->getId()) {
             $data = [
                 'label' => __('Delete'),
                 'class' => 'delete',
@@ -46,6 +46,6 @@ class Delete extends AbstractButton
      */
     private function getDeleteUrl()
     {
-        return $this->getUrl('*/*/delete', ['id' => $this->getOptimizer()->getOptimizerId()]);
+        return $this->getUrl('*/*/delete', ['id' => $this->getOptimizer()->getId()]);
     }
 }

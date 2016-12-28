@@ -80,6 +80,7 @@ abstract class AbstractOptimizer extends Action
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
+
         $resultPage->setActiveMenu('Smile_ElasticsuiteCatalogOptimizer::optimizer')
             ->addBreadcrumb(__('Optimizer'), __('Optimizer'));
 
@@ -87,7 +88,8 @@ abstract class AbstractOptimizer extends Action
     }
 
     /**
-     * Check if allowed to manage optimizer
+     * Check if allowed to manage optimizer.
+     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * @return bool

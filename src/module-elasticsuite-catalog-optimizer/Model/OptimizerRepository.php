@@ -16,7 +16,6 @@ use Magento\Framework\EntityManager\EntityManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection as OptimizerCollection;
-use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer as ResourceOptimizer;
 use Magento\Framework\Exception\CouldNotSaveException;
 
 /**
@@ -84,7 +83,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
         if (!isset($this->optimizerRepositoryById[$optimizerId])) {
             $optimizerModel = $this->optimizerFactory->create();
             $optimizer = $this->entityManager->load($optimizerModel, $optimizerId);
-            if (!$optimizer->getOptimizerId()) {
+            if (!$optimizer->getId()) {
                 $exception = new NoSuchEntityException();
                 throw $exception->singleField('optimizerId', $optimizerId);
             }
@@ -127,7 +126,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
             ));
         }
 
-        $this->optimizerRepositoryById[$optimizer->getOptimizerId()] = $optimizer;
+        $this->optimizerRepositoryById[$optimizer->getId()] = $optimizer;
 
         return $optimizer;
     }
@@ -142,7 +141,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
      */
     public function delete(\Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface $optimizer)
     {
-        $optimizerId = $optimizer->getOptimizerId();
+        $optimizerId = $optimizer->getId();
 
         $this->entityManager->delete($optimizer);
 

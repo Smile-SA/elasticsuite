@@ -66,6 +66,7 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
 
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
      * {@inheritDoc}
      */
     protected function _toHtml()
@@ -87,7 +88,6 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
      * Create the form containing the rule field.
      *
      * @return \Magento\Framework\Data\Form
-     * @SuppressWarnings(PHPMD.LongVariable)
      */
     private function getForm()
     {

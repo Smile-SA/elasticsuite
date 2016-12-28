@@ -37,7 +37,7 @@ class Delete extends OptimizerController
         $model = $this->optimizerFactory->create();
         if ($identifier) {
             $model = $this->optimizerRepository->getById($identifier);
-            if (!$model->getOptimizerId()) {
+            if (!$model->getId()) {
                 $this->messageManager->addErrorMessage(__('This optimizer no longer exists.'));
 
                 return $resultRedirect->setPath('*/*/index');

@@ -90,7 +90,7 @@ interface OptimizerInterface
      *
      * @return int|null
      */
-    public function getOptimizerId();
+    public function getId();
 
     /**
      * Get name
@@ -154,6 +154,17 @@ interface OptimizerInterface
      * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
      */
     public function getRuleCondition();
+
+    /**
+     * Set id
+     *
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     *
+     * @param int $id Optimizer id.
+     *
+     * @return OptimizerInterface
+     */
+    public function setId($id);
 
     /**
      * Set name

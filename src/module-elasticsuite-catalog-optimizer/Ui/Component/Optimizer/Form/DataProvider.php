@@ -101,7 +101,7 @@ class DataProvider extends AbstractDataProvider
         if ($optimizer) {
             $optimizerData = $optimizer->getData();
             if (!empty($optimizerData)) {
-                $this->loadedData[$optimizer->getOptimizerId()] = $optimizerData;
+                $this->loadedData[$optimizer->getId()] = $optimizerData;
             }
         }
 
@@ -127,7 +127,7 @@ class DataProvider extends AbstractDataProvider
             $optimizer = $this->optimizerRepository->getById($requestId);
         }
 
-        if (!$optimizer || !$optimizer->getOptimizerId()) {
+        if (!$optimizer || !$optimizer->getId()) {
             $optimizer = $this->collection->getNewEmptyItem();
         }
 

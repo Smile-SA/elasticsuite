@@ -13,13 +13,11 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
-use Magento\Framework\Stdlib\DateTime\Filter\Date;
 
 /**
  * Optimizer Model
  *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(CamelCasePropertyName)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -28,7 +26,12 @@ use Magento\Framework\Stdlib\DateTime\Filter\Date;
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
     /**
-     * @var RuleFactory
+     * @var string
+     */
+    const CACHE_TAG = 'smile_optimizer';
+
+    /**
+     * @var \Smile\ElasticsuiteCatalogRule\Model\RuleFactory
      */
     private $ruleFactory;
 
@@ -38,11 +41,16 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     private $dateFilter;
 
     /**
+     * @var string
+     */
+    protected $_cacheTag = self::CACHE_TAG;
+
+    /**
      * Class constructor
      *
      * @param \Magento\Framework\Model\Context                        $context            Context.
      * @param \Magento\Framework\Registry                             $registry           Registry.
-     * @param RuleFactory                                             $ruleFactory        Rule factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory        $ruleFactory        Rule factory.
      * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter         Date Filter.
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Resource.
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Resource collection.
@@ -51,8 +59,8 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        RuleFactory $ruleFactory,
-        Date $dateFilter,
+        \Smile\ElasticsuiteCatalogRule\Model\RuleFactory  $ruleFactory,
+        \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -73,19 +81,15 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer ID.
-     *
-     * @return int|null
+     * {@inheritDoc}
      */
-    public function getOptimizerId()
+    public function getId()
     {
-        return $this->getId();
+        return $this->getData(self::OPTIMIZER_ID);
     }
 
     /**
-     * Retrieve Optimizer name.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -93,9 +97,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer status.
-     *
-     * @return bool
+     * {@inheritDoc}
      */
     public function isActive()
     {
@@ -103,9 +105,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer model.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getModel()
     {
@@ -113,11 +113,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer config.
-     *
-     * @param Key $key Key in array.
-     *
-     * @return array|string
+     * {@inheritDoc}
      */
     public function getConfig($key = null)
     {
@@ -135,9 +131,8 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer store id.
      *
-     * @return int
+     * {@inheritDoc}
      */
     public function getStoreId()
     {
@@ -145,9 +140,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer from date.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getFromDate()
     {
@@ -155,9 +148,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer to date.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getToDate()
     {
@@ -165,9 +156,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer search container.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getSearchContainer()
     {
@@ -175,9 +164,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Get Optimizer rule condition.
-     *
-     * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
+     * {@inheritDoc}
      */
     public function getRuleCondition()
     {
@@ -199,11 +186,17 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set name.
+     * @SuppressWarnings(PHPMD.ShortVariable)
      *
-     * @param string $name the value to save.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
+     */
+    public function setId($id)
+    {
+        return $this->setData(self::OPTIMIZER_ID, $id);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function setName($name)
     {
@@ -211,11 +204,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer status.
-     *
-     * @param bool $status The Optimizer status.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setIsActive($status)
     {
@@ -223,11 +212,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer model.
-     *
-     * @param string $model The Optimizer model.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setModel($model)
     {
@@ -235,11 +220,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer config.
-     *
-     * @param string|array $config The Optimizer config.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setConfig($config)
     {
@@ -247,11 +228,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer store id.
-     *
-     * @param int $storeId The Optimizer store id.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setStoreId($storeId)
     {
@@ -259,11 +236,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer from date.
-     *
-     * @param string|null $fromDate The Optimizer from date.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setFromDate($fromDate)
     {
@@ -271,11 +244,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer to date.
-     *
-     * @param string|null $toDate The Optimizer to date.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setToDate($toDate)
     {
@@ -283,11 +252,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer search container.
-     *
-     * @param string $searchContainer The Optimizer search container.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setSearchContainer($searchContainer)
     {
@@ -295,11 +260,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Set Optimizer rule condition.
-     *
-     * @param string $ruleCondition The Optimizer rule condition.
-     *
-     * @return Optimizer
+     * {@inheritDoc}
      */
     public function setRuleCondition($ruleCondition)
     {
@@ -336,9 +297,9 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     }
 
     /**
-     * Internal Constructor
-     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
      */
     protected function _construct()
     {
@@ -349,6 +310,8 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      * Parse date related fields
      *
      * @throws \Exception
+     *
+     * @return void
      */
     private function parseDateFields()
     {

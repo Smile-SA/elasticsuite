@@ -41,7 +41,7 @@ class Save extends OptimizerController
 
             if ($identifier) {
                 $model = $this->optimizerRepository->getById($identifier);
-                if (!$model->getOptimizerId()) {
+                if (!$model->getId()) {
                     $this->messageManager->addErrorMessage(__('This optimizer no longer exists.'));
 
                     return $resultRedirect->setPath('*/*/');
@@ -72,7 +72,7 @@ class Save extends OptimizerController
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setFormData(false);
 
                 if ($redirectBack) {
-                    $redirectParams = ['id' => $model->getOptimizerId()];
+                    $redirectParams = ['id' => $model->getId()];
 
                     return $resultRedirect->setPath('*/*/edit', $redirectParams);
                 }
@@ -82,7 +82,7 @@ class Save extends OptimizerController
                 $this->messageManager->addErrorMessage($e->getMessage());
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setFormData($data);
 
-                $returnParams = ['id' => $model->getOptimizerId()];
+                $returnParams = ['id' => $model->getId()];
 
                 return $resultRedirect->setPath('*/*/edit', $returnParams);
             }

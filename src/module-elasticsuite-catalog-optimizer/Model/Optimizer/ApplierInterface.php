@@ -13,12 +13,10 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
  * ApplierInterface Model
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -27,11 +25,12 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 interface ApplierInterface
 {
     /**
-     * @param ContainerConfigurationInterface                     $containerConfiguration Contrainer configuration.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer $optimizer              Optimizer.
+     * Build the function applied to the container.
      *
-     * @SuppressWarnings(PHPMD.LongVariable)
+     * @param ContainerConfigurationInterface $containerConfiguration Contrainer configuration.
+     * @param OptimizerInterface              $optimizer              Optimizer.
+     *
      * @return mixed
      */
-    public function getFunction(ContainerConfigurationInterface $containerConfiguration, Optimizer $optimizer);
+    public function getFunction(ContainerConfigurationInterface $containerConfiguration, OptimizerInterface $optimizer);
 }

@@ -14,12 +14,10 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier;
 
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
  * Applier ConstantScore Model
- *
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -28,14 +26,9 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 class ConstantScore implements ApplierInterface
 {
     /**
-     * @param ContainerConfigurationInterface                     $containerConfiguration Container configuration.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer $optimizer              Optimizer.
-     *
-     * @SuppressWarnings(PHPMD.LongVariable)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @return mixed
+     * {@inheritDoc}
      */
-    public function getFunction(ContainerConfigurationInterface $containerConfiguration, Optimizer $optimizer)
+    public function getFunction(ContainerConfigurationInterface $containerConfiguration, OptimizerInterface $optimizer)
     {
         $function = [
             'weight' => 1 + ((float) $optimizer->getConfig('constant_score_value') / 100),
