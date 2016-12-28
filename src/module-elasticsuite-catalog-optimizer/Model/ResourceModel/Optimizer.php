@@ -95,8 +95,8 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _afterLoad(\Magento\Framework\Model\AbstractModel $object)
     {
-        if ($object->getOptimizerId()) {
-            $searchContainers = $this->getSearchContainersFromOptimizerId($object->getOptimizerId());
+        if ($object->getId()) {
+            $searchContainers = $this->getSearchContainersFromOptimizerId($object->getId());
             $object->setSearchContainer($searchContainers);
         }
 
@@ -144,11 +144,11 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         if (is_array($searchContainers) && (count($searchContainers) > 0)) {
             $searchContainerLinks = [];
-            $deleteCondition = OptimizerInterface::OPTIMIZER_ID . " = " . $object->getOptimizerId();
+            $deleteCondition = OptimizerInterface::OPTIMIZER_ID . " = " . $object->getId();
 
             foreach ($searchContainers as $searchContainer) {
                 $searchContainerLinks[] = [
-                    OptimizerInterface::OPTIMIZER_ID     => (int) $object->getOptimizerId(),
+                    OptimizerInterface::OPTIMIZER_ID     => (int) $object->getId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,
                 ];
             }

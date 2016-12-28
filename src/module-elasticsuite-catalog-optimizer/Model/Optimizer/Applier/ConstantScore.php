@@ -28,7 +28,8 @@ class ConstantScore implements ApplierInterface
     /**
      * {@inheritDoc}
      */
-    public function getFunction(ContainerConfigurationInterface $containerConfiguration, OptimizerInterface $optimizer) {
+    public function getFunction(ContainerConfigurationInterface $containerConfiguration, OptimizerInterface $optimizer)
+    {
         $function = [
             'weight' => 1 + ((float) $optimizer->getConfig('constant_score_value') / 100),
             'filter' => $optimizer->getRuleCondition()->getSearchQuery(),

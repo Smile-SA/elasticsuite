@@ -17,12 +17,19 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 /**
  * Optimizer Model
  *
+ * @SuppressWarnings(CamelCasePropertyName)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Fanny DECLERCK <fadec@smile.fr>
  */
 class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
 {
+    /**
+     * @var string
+     */
+    const CACHE_TAG = 'smile_optimizer';
+
     /**
      * @var \Smile\ElasticsuiteCatalogRule\Model\RuleFactory
      */
@@ -32,6 +39,11 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      * @var \Magento\Framework\Stdlib\DateTime\Filter\Date
      */
     private $dateFilter;
+
+    /**
+     * @var string
+     */
+    protected $_cacheTag = self::CACHE_TAG;
 
     /**
      * Class constructor
@@ -71,9 +83,9 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * {@inheritDoc}
      */
-    public function getOptimizerId()
+    public function getId()
     {
-        return $this->getId();
+        return $this->getData(self::OPTIMIZER_ID);
     }
 
     /**
@@ -171,6 +183,16 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         }
 
         return $this->getData(self::RULE_CONDITION);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     *
+     * {@inheritDoc}
+     */
+    public function setId($id)
+    {
+        return $this->setData(self::OPTIMIZER_ID, $id);
     }
 
     /**
