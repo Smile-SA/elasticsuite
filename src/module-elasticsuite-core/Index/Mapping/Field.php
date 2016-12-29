@@ -79,6 +79,10 @@ class Field implements FieldInterface
         $this->type       = (string) $type;
         $this->config     = $fieldConfig + $this->config;
         $this->nestedPath = $nestedPath;
+
+        if ($nestedPath !== null && strpos($name, $nestedPath . '.') !== 0) {
+            throw new \InvalidArgumentException('Invalid nested path or field name');
+        }
     }
 
     /**
