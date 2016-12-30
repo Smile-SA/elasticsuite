@@ -25,6 +25,7 @@
             <directory suffix=".php">../../../vendor/smile/elasticsuite/src/*</directory>
             <exclude>
                 <directory>../../../vendor/smile/elasticsuite/src/*/Test</directory>
+                <directory>../../../vendor/smile/elasticsuite/src/*/Setup</directory>
             </exclude>
         </whitelist>
     </filter>
