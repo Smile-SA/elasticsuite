@@ -32,7 +32,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
     private $index;
 
     /**
-     * Create a minimal type to run the tests.
+     * Create a minimal index to run the tests.
      *
      * {@inheritDoc}
      */
