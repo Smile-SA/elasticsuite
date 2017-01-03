@@ -26,6 +26,7 @@
             <exclude>
                 <directory>../../../vendor/smile/elasticsuite/src/*/Test</directory>
                 <directory>../../../vendor/smile/elasticsuite/src/*/Setup</directory>
+                <file>../../../vendor/smile/elasticsuite/src/*/registration.php</file>
             </exclude>
         </whitelist>
     </filter>
