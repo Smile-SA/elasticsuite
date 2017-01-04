@@ -80,7 +80,8 @@
             
             <field name="virtual_category_root">
                 <argument name="data" xsi:type="array">
-                    <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
+                    <!-- Options provider is a virtualType defined in DI -->
+                    <item name="options" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Ui\Component\Category\Form\VirtualCategoryRoot\Options</item>
                     <item name="config" xsi:type="array">
                         <item name="label" xsi:type="string" translate="true">Virtual Category Root</item>
                         <item name="componentType" xsi:type="string">field</item>
