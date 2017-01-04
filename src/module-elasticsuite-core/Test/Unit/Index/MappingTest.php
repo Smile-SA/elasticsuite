@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
@@ -120,8 +120,8 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $fields     = $this->mapping->getFields();
         $properties = $this->mapping->getProperties();
 
-        $this->assertEquals(6, count($fields));
-        $this->assertEquals(7, count($properties));
+        $this->assertCount(6, $fields);
+        $this->assertCount(7, $properties);
 
         $this->assertEquals('entity_id', $this->mapping->getIdField()->getName());
         $this->assertArrayHasKey('entity_id', $fields);
@@ -180,7 +180,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         $mapping = $this->mapping->asArray();
         $this->assertArrayHasKey('_all', $mapping);
         $this->assertArrayHasKey('properties', $mapping);
-        $this->assertEquals(7, count($mapping['properties']));
+        $this->assertCount(7, $mapping['properties']);
     }
 
     /**

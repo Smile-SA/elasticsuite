@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
 use \Smile\ElasticsuiteCore\Index\Type;
 use Smile\ElasticsuiteCore\Api\Index\FieldInterface;
@@ -58,7 +58,7 @@ class TypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('typeName', $this->type->getName());
         $this->assertInstanceOf(MappingInterface::class, $this->type->getMapping());
         $this->assertInstanceOf(FieldInterface::class, $this->type->getIdField());
-        $this->assertEquals(1, count($this->type->getDatasources()));
+        $this->assertCount(1, $this->type->getDatasources());
         $this->assertInstanceOf(DatasourceInterface::class, $this->type->getDatasource('datasource'));
     }
 

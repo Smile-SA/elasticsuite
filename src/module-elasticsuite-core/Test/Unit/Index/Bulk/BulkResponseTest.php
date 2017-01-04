@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index\Bulk;
 
 use Smile\ElasticsuiteCore\Index\Bulk\BulkResponse;
 
@@ -88,14 +88,14 @@ class BulkResponseTest extends \PHPUnit_Framework_TestCase
     public function testErrorAggregation()
     {
         $aggregatedErrors = $this->bulkResponse->aggregateErrorsByReason();
-        $this->assertEquals(2, count($aggregatedErrors));
+        $this->assertCount(2, $aggregatedErrors);
 
         foreach ($aggregatedErrors as $currentError) {
             $this->assertEquals('index', $currentError['index']);
             $this->assertEquals('type', $currentError['document_type']);
             $this->assertEquals('index', $currentError['operation']);
             $this->assertEquals(2, $currentError['count']);
-            $this->assertEquals(2, count($currentError['document_ids']));
+            $this->assertCount(2, $currentError['document_ids']);
         }
     }
 }

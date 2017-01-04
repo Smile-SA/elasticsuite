@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
 use \Smile\ElasticsuiteCore\Index\Index;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
@@ -53,7 +53,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('name', $this->index->getName());
         $this->assertEquals('identifier', $this->index->getIdentifier());
         $this->assertEquals(false, $this->index->needInstall());
-        $this->assertEquals(1, count($this->index->getTypes()));
+        $this->assertCount(1, $this->index->getTypes());
         $this->assertInstanceOf(TypeInterface::class, $this->index->getType('type'));
         $this->assertInstanceOf(TypeInterface::class, $this->index->getDefaultSearchType());
     }

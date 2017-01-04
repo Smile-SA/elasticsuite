@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index\Mapping;
 
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;

@@ -12,7 +12,7 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Client;
+namespace Smile\ElasticsuiteCore\Test\Unit\Index\Bulk;
 
 use Smile\ElasticsuiteCore\Index\Bulk\BulkRequest;
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
@@ -72,7 +72,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
         $bulkRequest->addDocument($this->index, $this->type, 'docId', ['foo' => 'bar']);
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals(2, count($bulkRequest->getOperations()));
+        $this->assertCount(2, $bulkRequest->getOperations());
 
         list($head, $data) = $bulkRequest->getOperations();
 
@@ -101,7 +101,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals($docCount * 2, count($operations));
+        $this->assertCount($docCount * 2, $operations);
 
         for ($i = 1; $i <= $docCount; $i++) {
             $head = current($operations);
@@ -127,7 +127,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
         $bulkRequest->deleteDocument($this->index, $this->type, 'docId');
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals(1, count($bulkRequest->getOperations()));
+        $this->assertCount(1, $bulkRequest->getOperations());
 
         $head = current($bulkRequest->getOperations());
 
@@ -155,7 +155,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals($docCount, count($operations));
+        $this->assertCount($docCount, $operations);
 
         foreach ($docIds as $currentId) {
             $head = current($operations);
@@ -178,7 +178,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
         $bulkRequest->updateDocument($this->index, $this->type, 'docId', ['foo' => 'bar']);
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals(2, count($bulkRequest->getOperations()));
+        $this->assertCount(2, $bulkRequest->getOperations());
 
         list($head, $data) = $bulkRequest->getOperations();
 
@@ -207,7 +207,7 @@ class BulkRequestTest extends \PHPUnit_Framework_TestCase
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
-        $this->assertEquals($docCount * 2, count($operations));
+        $this->assertCount($docCount * 2, $operations);
 
         for ($i = 1; $i <= $docCount; $i++) {
             $head = current($operations);
