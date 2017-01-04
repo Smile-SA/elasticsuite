@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCore default analysis configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<analysis xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_analysis.xsd">
+
+    <char_filters>
+        <char_filter name="char_filter" type="char_filter_type" language="default"/>
+        <char_filter name="char_filter_with_params" type="char_filter_with_params_type" language="default">
+            <simpleParam>paramValue</simpleParam>
+            <jsonParamObject>{"key": "value"}</jsonParamObject>
+            <jsonParamArray>["item1", "item2"]</jsonParamArray>
+        </char_filter>
+        <char_filter name="dummy" type="dummy" language="char_filter_generated_language"/>
+        <char_filter name="char_filter" type="char_filter_type_language_override" language="override_language" />
+    </char_filters>
+
+    <filters>
+        <filter name="filter" type="filter_type" language="default"/>
+        <filter name="filter_with_params" type="filter_with_params_type" language="default">
+            <simpleParam>paramValue</simpleParam>
+            <jsonParamObject>{"key": "value"}</jsonParamObject>
+            <jsonParamArray>["item1", "item2"]</jsonParamArray>
+        </filter>
+        <filter name="dummy" type="dummy" language="filter_generated_language"/>
+        <filter name="filter" type="filter_type_language_override" language="override_language" />
+    </filters>
+
+    <analyzers>
+        <analyzer name="analyzer" tokenizer="tokenizer" language="default">
+            <char_filters>
+                <char_filter ref="char_filter" />
+                <char_filter ref="char_filter_with_params" />
+            </char_filters>
+            <filters>
+                <filter ref="filter" />
+                <filter ref="filter_with_params" />
+            </filters>
+        </analyzer>
+        <analyzer name="dummy" tokenizer="dummy" language="analyzer_generated_language">
+            <char_filters>
+                <char_filter ref="char_filter" />
+                <char_filter ref="char_filter_with_params" />
+            </char_filters>
+            <filters>
+                <filter ref="filter" />
+                <filter ref="filter_with_params" />
+            </filters>
+        </analyzer>
+    </analyzers>
+</analysis>
