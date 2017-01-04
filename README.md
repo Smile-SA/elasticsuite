@@ -14,8 +14,8 @@ If your project is based on Magento 2.1.x you can start working with ElasticSuit
 
 Magento Version         | ElasticSuite Latest Version
 ------------------------|------------------------------------------------------------------------
-Magento 2.0.* CE / EE   |[ElasticSuite 2.1.3 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.3)
-Magento 2.1.* CE / EE   |[ElasticSuite 2.2.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.4)
+Magento 2.0.* CE / EE   |[ElasticSuite 2.1.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.4)
+Magento 2.1.* CE / EE   |[ElasticSuite 2.2.6 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.6)
 
 
 ## What is ElasticSuite for Magento 2 ?
