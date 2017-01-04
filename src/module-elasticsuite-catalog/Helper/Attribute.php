@@ -284,9 +284,7 @@ class Attribute extends Mapping
              * @var EavAttributeInterface
              */
             $storeAttribute = $this->attributeFactory->create();
-            $storeAttribute->setStoreId($storeId)
-                ->load($attributeId);
-
+            $storeAttribute->load($attributeId)->setStoreId($storeId);
             $this->storeAttributes[$storeId][$attributeId] = $storeAttribute;
         }
 
