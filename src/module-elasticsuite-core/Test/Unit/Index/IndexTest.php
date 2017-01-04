@@ -38,7 +38,7 @@ class IndexTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $typeStub = $this->getMock(TypeInterface::class);
+        $typeStub = $this->getMockBuilder(TypeInterface::class)->getMock();
         $typeStub->method('getName')->will($this->returnValue('type'));
         $this->index = new Index('identifier', 'name', [$typeStub], 'type');
     }

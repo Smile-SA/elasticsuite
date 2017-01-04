@@ -50,7 +50,7 @@ class MappingTest extends \PHPUnit_Framework_TestCase
         ];
 
         // Stubing a dynanyc data provider.
-        $dynamicDataProvider       = $this->getMock(DynamicFieldProviderInterface::class);
+        $dynamicDataProvider       = $this->getMockBuilder(DynamicFieldProviderInterface::class)->getMock();
         $dynamicDataProviderFields = [
             new Field('title', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
         ];

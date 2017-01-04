@@ -40,12 +40,14 @@ class TypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $mappingStub = $this->getMock(MappingInterface::class);
-        $mappingStub->method('getIdField')->will($this->returnValue($this->getMock(FieldInterface::class)));
+        $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
 
-        $datasourcesStub = ['datasource' => $this->getMock(DatasourceInterface::class)];
+        $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
+        $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
 
-        $this->type = new \Smile\ElasticsuiteCore\Index\Type('typeName', $mappingStub, $datasourcesStub);
+        $datasourcesMock = ['datasource' => $this->getMockBuilder(DatasourceInterface::class)->getMock()];
+
+        $this->type = new \Smile\ElasticsuiteCore\Index\Type('typeName', $mappingMock, $datasourcesMock);
     }
 
     /**
