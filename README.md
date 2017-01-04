@@ -17,7 +17,6 @@ Magento Version         | ElasticSuite Latest Version
 Magento 2.0.* CE / EE   |[ElasticSuite 2.1.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.4)
 Magento 2.1.* CE / EE   |[ElasticSuite 2.3.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
 
-
 ## What is ElasticSuite for Magento 2 ?
 
 ElasticSuite is a merchandising suite for Magento which aims to provide out the box a lot of features usually only available with proprietary merchandising tools.
