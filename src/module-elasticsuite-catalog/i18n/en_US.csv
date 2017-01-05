@@ -36,6 +36,8 @@ OK,OK
 "Show more","Show more"
 "In Stock","In Stock"
 "Out Of Stock","Out Of Stock"
+"Show less","Show less"
+"Search (%s)","Search (%s)"
 "Product Autocomplete","Product Autocomplete"
 "Max Size","Max Size"
 "Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."

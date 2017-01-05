@@ -36,6 +36,8 @@ OK,OK
 "Show more","Voir plus"
 "In Stock","En Stock"
 "Out Of Stock","Épuisé"
+"Show less","Voir moins"
+"Search (%s)","Rechercher (%s)"
 "Product Autocomplete","Autocomplétion des produits"
 "Max Size","Taille maximum"
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
