@@ -6,3 +6,4 @@
 "Preview and sorting","Prévisualisation et tri"
 "Select category ...","Choisissez une catégorie ..."
 Merchandising,Merchandising
+"Cannot move the category : '%2' is using '%1' as virtual root category.","Impossible de déplacer la catégorie : '%2' utilise actuellement '%1' comme racine."
