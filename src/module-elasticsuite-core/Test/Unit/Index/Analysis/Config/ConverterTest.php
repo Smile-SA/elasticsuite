@@ -25,8 +25,16 @@ use Smile\ElasticsuiteCore\Index\Analysis\Config\Converter;
  */
 class ConverterTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var array
+     */
     private $parsedData;
 
+    /**
+     * Test available language list is OK for the sample test file.
+     *
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $xml = new \DOMDocument();
@@ -35,6 +43,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->parsedData = $converter->convert($xml);
     }
 
+    /**
+     * Test available language list is OK for the sample test file.
+     *
+     * @return void
+     */
     public function testAvailableLanguages()
     {
         $this->assertCount(5, $this->parsedData);
@@ -45,6 +58,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('analyzer_generated_language', $this->parsedData);
     }
 
+    /**
+     * Test available char filters for the default language in the sample test file.
+     *
+     * @return void
+     */
     public function testCharFilters()
     {
         $defaultCharFilters = $this->parsedData['default']['char_filter'];
@@ -62,6 +80,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $charFilter['jsonParamArray']);
     }
 
+    /**
+     * Test available char filters by language in the sample test file.
+     *
+     * @return void
+     */
     public function testLanguageCharFilters()
     {
         $this->assertArrayHasKey('char_filter_generated_language', $this->parsedData);
@@ -72,6 +95,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('char_filter_type_language_override', $charFilterOverrides['char_filter']['type']);
     }
 
+    /**
+     * Test available filters for the default language in the sample test file.
+     *
+     * @return void
+     */
     public function testFilters()
     {
         $defaultFilters = $this->parsedData['default']['filter'];
@@ -89,6 +117,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $filter['jsonParamArray']);
     }
 
+    /**
+     * Test available filters by language in the sample test file.
+     *
+     * @return void
+     */
     public function testLanguageFilters()
     {
         $this->assertArrayHasKey('filter_generated_language', $this->parsedData);
@@ -99,6 +132,11 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('filter_type_language_override', $filterOverrides['filter']['type']);
     }
 
+    /**
+     * Test analyzers for the default language in the sample test file.
+     *
+     * @return void
+     */
     public function testAnalyzers()
     {
         $defaultAnalyzers = $this->parsedData['default']['analyzer'];
