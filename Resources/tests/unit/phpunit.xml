@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Copyright © 2016 Magento. All rights reserved.
- * See COPYING.txt for license details.
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\Elasticsuite
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
  */
 -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
          colors="true"
-         bootstrap="../../../vendor/autoload.php"
+         bootstrap="./framework/bootstrap.php"
+         backupGlobals="false"
         >
 
     <testsuite name="ElasticSuite Unit Tests">
@@ -31,14 +41,4 @@
         </whitelist>
     </filter>
 
-    <logging>
-        <log type="coverage-html"
-             target="../../..//build/log/elasticsuite-code-coverage"
-             charset="UTF-8"
-             yui="true"
-             highlight="true"
-             lowUpperBound="80"
-             highLowerBound="100"
-        />
-    </logging>
 </phpunit>

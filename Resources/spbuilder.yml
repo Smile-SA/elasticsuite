@@ -1,75 +1,78 @@
 # Contains global Spbuilder configuration
 global:
-  log_dir: build/logs
-  package_dir: build/dist
+  log_dir: "build/logs"
+  package_dir: "build/dist"
   clean: false
 
 # Quality tools configuration
 tools:
 
   # Runs PHPUnit tests
-  # phpunit:
-  #   configuration: dev/tests/local/phpunit.xml
-  #   coverage: true                # (Optional) If set to true, will generate a XML clover coverage report
+  phpunit:
+    configuration: "vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml"
+    coverage: true
 
   # Will recursively run 'php -l' on directories and matching file extensions
   phplint:
     files:
-      -  vendor/smile/elasticsuite/src/
+      - "vendor/smile/elasticsuite/src/"
     extensions:
-      - php
+      - "php"
 
   # Runs PHP_CodeSniffer
   phpcs:
     files:
-      -  vendor/smile/elasticsuite/src/
-    standard: vendor/smile/elasticsuite/Resources/phpcs-standards/SmileElasticsuite
+      - "vendor/smile/elasticsuite/src/"
+    standard: "vendor/smile/elasticsuite/Resources/phpcs-standards/SmileElasticsuite"
     ignores:
       - "lib"
       - "Resources"
+      - ".git"
 
   # Runs PHPMD
   phpmd:
     files:
-      -  vendor/smile/elasticsuite/src/
+      - "vendor/smile/elasticsuite/src/"
     rulesets:
-      - vendor/smile/elasticsuite/Resources/phpmd-rulesets/rulset.xml
+      - "vendor/smile/elasticsuite/Resources/phpmd-rulesets/rulset.xml"
     extensions:
-      - php
+      - "php"
     ignores:
-      - Resources
-      - .git
+      - "Resources"
+      - ".git"
 
   # Runs PDepend
   pdepend:
     files:
-      -  vendor/smile/elasticsuite/src/
+      - "vendor/smile/elasticsuite/src/"
     enable:
-      - jdepend-xml
-      - jdepend-chart
-      - summary-xml
-      - overview-pyramid
+      - "jdepend-xml"
+      - "jdepend-chart"
+      - "summary-xml"
+      - "overview-pyramid"
     extensions:
       - php
     ignores:
-      - Resources
-      - .git
+      - "Test"
+      - "Resources"
+      - ".git"
 
   # Runs phpcpd
   phpcpd:
     files:
-      -  vendor/smile/elasticsuite/src/
+      - "vendor/smile/elasticsuite/src/"
     fuzzy: false
     patterns:
       - "*.php"
     ignores:
-      - Resources
-      - .git
+      - "Resources"
+      - ".git"
+      - "Test"
     min_lines: 5
     min_tokens: 70
 
   # Runs Qafoo Quality Analyzer
   visualization:
-    files: vendor/smile/elasticsuite/src/
-    hostname: localhost
+    files: "vendor/smile/elasticsuite/src/"
+    hostname: "localhost"
     port: 8080
