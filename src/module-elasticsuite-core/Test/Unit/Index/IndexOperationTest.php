@@ -19,6 +19,8 @@ use Smile\ElasticsuiteCore\Index\IndexOperation;
 /**
  * Index operation test case.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -41,7 +43,7 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
     private $logRows = [];
 
     /**
-     * Init stubs.
+     * Init mocks used by the test case.
      *
      * {@inheritDoc}
      */
@@ -55,18 +57,33 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
         $this->indexOperation = new IndexOperation($objectManager, $clientFactory, $indexSettings, $logger);
     }
 
+    /**
+     * Test the is available method returns true if client ping is OK.
+     *
+     * @return void
+     */
     public function testIsAvailable()
     {
         $this->clientMock->method('ping')->will($this->returnValue(true));
         $this->assertEquals(true, $this->indexOperation->isAvailable());
     }
 
+    /**
+     * Test the is available method returns false if client ping raised an exception.
+     *
+     * @return void
+     */
     public function testIsNotAvailable()
     {
         $this->clientMock->method('ping')->willThrowException(new \Exception());
         $this->assertEquals(false, $this->indexOperation->isAvailable());
     }
 
+    /**
+     * Test index getter by identifier / store code.
+     *
+     * @return void
+     */
     public function testGetIndexByName()
     {
         $index = $this->indexOperation->getIndexByName('index_identifier', 'store_code');
@@ -74,8 +91,12 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test accessing a not existing index throws an exception.
+     *
      * @expectedException \LogicException
      * @expectedExceptionMessage invalid_index_identifier index does not exist yet. Make sure everything is reindexed.
+     *
+     * @return void
      */
     public function testGetIndexInvalidByName()
     {
@@ -83,12 +104,22 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\Smile\ElasticsuiteCore\Api\Index\IndexInterface::class, $index);
     }
 
+    /**
+     * Bulk creation test.
+     *
+     * @return void
+     */
     public function testCreateBulk()
     {
         $bulk = $this->indexOperation->createBulk();
         $this->assertInstanceOf(\Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface::class, $bulk);
     }
 
+    /**
+     * Bulk execution test.
+     *
+     * @return void
+     */
     public function testExecuteBulk()
     {
         $this->clientMock->method('bulk')->will($this->returnValue([
@@ -96,14 +127,22 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
             'items'  => [
                 ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc1']],
                 ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc2']],
-            ]
+            ],
         ]));
+
         $bulkMock = $this->indexOperation->createBulk();
         $bulkMock->method('getOperations')->will($this->returnValue([]));
+
         $this->indexOperation->executeBulk($bulkMock);
+
         $this->assertArrayNotHasKey('errors', $this->logRows);
     }
 
+    /**
+     * Bulk execution test with error logging.
+     *
+     * @return void
+     */
     public function testExecuteBulkWithErrors()
     {
         $error1 = ['type' => 'reason1', 'reason' => 'Reason 1'];
@@ -117,11 +156,14 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
                 ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc4', 'error' => $error1]],
                 ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc5', 'error' => $error2]],
                 ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc6', 'error' => $error2]],
-            ]
+            ],
         ]));
+
         $bulkMock = $this->indexOperation->createBulk();
         $bulkMock->method('getOperations')->will($this->returnValue([]));
+
         $this->indexOperation->executeBulk($bulkMock);
+
         $this->assertArrayHasKey('errors', $this->logRows);
         $this->assertCount(2, $this->logRows['errors']);
         $this->assertEquals(
@@ -131,8 +173,12 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test empty bulk execution throws an exception.
+     *
      * @expectedException \LogicException
      * @expectedExceptionMessage Can not execute empty bulk.
+     *
+     * @return void
      */
     public function testExecuteEmptyBulk()
     {
@@ -140,87 +186,108 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
         $this->indexOperation->executeBulk($bulk);
     }
 
+    /**
+     * Test getting batch indexing size.
+     *
+     * @return void
+     */
     public function testGetBatchIndexingSize()
     {
         $this->assertEquals(100, $this->indexOperation->getBatchIndexingSize());
     }
 
+    /**
+     * Object manager mocking.
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function getObjectManagerMock()
     {
-        $objectManagerMockBuilder = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class);
-        $objectManagerMockBuilder->disableOriginalConstructor();
+        $objectManagerMock = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $objectManagerMock = $objectManagerMockBuilder->getMock();
+        $createObjectStub = function ($className, $args) {
+            $instance = null;
 
-        $objectManagerMock->method('create')->will(
-            $this->returnCallback(function ($className, $args) {
-                $instance = null;
+            if ($className === 'Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface') {
+                $reflect = new \ReflectionClass(\Smile\ElasticsuiteCore\Index\Bulk\BulkResponse::class);
+                $instance = $reflect->newInstanceArgs($args);
+            }
 
-                if ($className === 'Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface') {
-                    $reflect = new \ReflectionClass(\Smile\ElasticsuiteCore\Index\Bulk\BulkResponse::class);
-                    $instance = $reflect->newInstanceArgs($args);
-                }
+            if ($instance === null) {
+                $mockBuilder = $this->getMockBuilder($className);
+                $mockBuilder->disableOriginalConstructor();
+                $instance = $mockBuilder->getMock();
+            }
 
-                if ($instance === null) {
-                    $mockBuilder = $this->getMockBuilder($className);
-                    $mockBuilder->disableOriginalConstructor();
-                    $instance = $mockBuilder->getMock();
-                }
+            return $instance;
+        };
 
-                return $instance;
-            })
-        );
+        $objectManagerMock->method('create')->will($this->returnCallback($createObjectStub));
 
         return $objectManagerMock;
     }
 
+    /**
+     * Client factory mocking.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function getClientFactoryMock()
     {
-        $clientFactoryMockBuilder = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface::class);
+        $this->clientMock = $this->getMockBuilder(\Elasticsearch\Client::class)->disableOriginalConstructor()->getMock();
 
-        $clientMockBuilder = $this->getMockBuilder(\Elasticsearch\Client::class);
-        $clientMockBuilder->disableOriginalConstructor();
-        $this->clientMock = $clientMockBuilder->getMock();
+        $indicesNamespaceMock = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class)->disableOriginalConstructor()->getMock();
 
-        $indicesNamespaceMockBuilder = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class);
-        $indicesNamespaceMockBuilder->disableOriginalConstructor();
-        $indicesNamespaceMock = $indicesNamespaceMockBuilder->getMock();
-
-        $indicesNamespaceMock->method('exists')
-            ->will($this->returnCallback(function ($index) { return $index['index'] === 'index_identifier_store_code'; }));
+        $indicesExistsMethodStub = function ($index) {
+            return $index['index'] === 'index_identifier_store_code';
+        };
+        $indicesNamespaceMock->method('exists')->will($this->returnCallback($indicesExistsMethodStub));
         $this->clientMock->method('indices')->will($this->returnValue($indicesNamespaceMock));
 
-        $clientFactoryMock = $clientFactoryMockBuilder->getMock();
+        $clientFactoryMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface::class)->getMock();
         $clientFactoryMock->method('createClient')->will($this->returnValue($this->clientMock));
 
         return $clientFactoryMock;
     }
 
+    /**
+     * Index settings mocking.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function getIndexSettingsMock()
     {
-        $indexSettingsMockBuilder = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface::class);
+        $indexSettingsMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface::class)->getMock();
+        $getIndexIdentiferMethodStub = function ($indexIdentifier, $store) {
+            return "{$indexIdentifier}_{$store}";
+        };
 
-        $indexSettingsMock = $indexSettingsMockBuilder->getMock();
-        $indexSettingsMock->method('getIndexAliasFromIdentifier')->will(
-            $this->returnCallback(function ($indexIdentifier, $store) { return "{$indexIdentifier}_{$store}"; })
-        );
-
+        $indexSettingsMock->method('getIndexAliasFromIdentifier')->will($this->returnCallback($getIndexIdentiferMethodStub));
         $indexSettingsMock->method('getIndicesConfig')->will($this->returnValue(['index_identifier' => []]));
         $indexSettingsMock->method('getBatchIndexingSize')->will($this->returnValue(100));
 
         return $indexSettingsMock;
     }
 
+    /**
+     * Logger mocking.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function getLoggerMock()
     {
-        $loggerMockBuilder = $this->getMockBuilder(\Psr\Log\LoggerInterface::class);
-        $loggerMock = $loggerMockBuilder->getMock();
+        $loggerMock = $this->getMockBuilder(\Psr\Log\LoggerInterface::class)->getMock();
 
-        $loggerMock->method('error')->will(
-            $this->returnCallback(function ($message, $context = '') {
-                $this->logRows['errors'][] = $message;
-            })
-        );
+        $errorLoggerStub = function ($message, $context = '') {
+
+            if ($context !== '') {
+                $this->logRows['context']['errors'][] = $message;
+            }
+
+            $this->logRows['errors'][] = $message;
+        };
+        $loggerMock->method('error')->will($this->returnCallback($errorLoggerStub));
 
         return $loggerMock;
     }
