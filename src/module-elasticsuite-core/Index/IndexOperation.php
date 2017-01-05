@@ -123,7 +123,7 @@ class IndexOperation implements IndexOperationInterface
         if (!isset($this->indicesByIdentifier[$indexAlias])) {
             if (!$this->indexExists($indexIdentifier, $store)) {
                 throw new \LogicException(
-                    "{$indexIdentifier} index does not exist yet. Make sure everything is reindexed"
+                    "{$indexIdentifier} index does not exist yet. Make sure everything is reindexed."
                 );
             }
             $this->initIndex($indexIdentifier, $store, true);
@@ -184,6 +184,10 @@ class IndexOperation implements IndexOperationInterface
      */
     public function executeBulk(BulkRequestInterface $bulk)
     {
+        if ($bulk->isEmpty()) {
+            throw new \LogicException('Can not execute empty bulk.');
+        }
+
         $bulkParams = ['body' => $bulk->getOperations()];
 
         $rawBulkResponse = $this->client->bulk($bulkParams);
@@ -201,19 +205,19 @@ class IndexOperation implements IndexOperationInterface
                 $sampleDocumentIds = implode(', ', array_slice($error['document_ids'], 0, 10));
                 $errorMessages = [
                     sprintf(
-                        "Bulk %s operation failed %d times in index %s for type %s",
+                        "Bulk %s operation failed %d times in index %s for type %s.",
                         $error['operation'],
                         $error['count'],
                         $error['index'],
                         $error['document_type']
                     ),
                     sprintf(
-                        "Error (%s) : %s",
+                        "Error (%s) : %s.",
                         $error['error']['type'],
                         $error['error']['reason']
                     ),
                     sprintf(
-                        "Failed doc ids sample : %s",
+                        "Failed doc ids sample : %s.",
                         $sampleDocumentIds
                     ),
                 ];
@@ -286,7 +290,7 @@ class IndexOperation implements IndexOperationInterface
     {
         if (!isset($this->indicesConfiguration[$indexIdentifier])) {
             throw new \LogicException(
-                "No index found with identifier {$indexIdentifier} into elasticsuite_indices.xml"
+                "No index found with identifier {$indexIdentifier} into elasticsuite_indices.xml."
             );
         }
 

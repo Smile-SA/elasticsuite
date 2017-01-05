@@ -81,5 +81,7 @@
                 "lib/web/fonts/elasticsuite"
             ]
         ]
-    }
+    },
+   "minimum-stability": "dev",
+   "prefer-stable": true
 }

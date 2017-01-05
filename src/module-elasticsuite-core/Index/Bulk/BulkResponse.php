@@ -45,7 +45,7 @@ class BulkResponse implements BulkResponseInterface
      */
     public function hasErrors()
     {
-        return $this->rawResponse['errors'];
+        return (bool) $this->rawResponse['errors'];
     }
 
     /**
@@ -111,7 +111,6 @@ class BulkResponse implements BulkResponseInterface
                     'error'         => ['type' => $errorData['type'], 'reason' => $errorData['reason']],
                     'count'         => 0,
                 ];
-                $errorByReason[$errorKey]['count'] = 0;
             }
 
             $errorByReason[$errorKey]['count']++;
