@@ -30,6 +30,11 @@ use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 class ClientFactory implements ClientFactoryInterface
 {
     /**
+     * @var ClientBuilder
+     */
+    private $clientBuilderFactory;
+
+    /**
      * @var ClientConfigurationInterface
      */
     private $clientConfiguration;
@@ -47,24 +52,27 @@ class ClientFactory implements ClientFactoryInterface
     /**
      * Factory constructor.
      *
-     * @param ClientConfigurationInterface $clientConfiguration Elasticsearch configuration helper.
-     * @param LoggerInterface              $logger              Elasticsearch logger.
+     * @param ClientBuilder                $clientBuilderFactory Elasticsearch client builder.
+     * @param ClientConfigurationInterface $clientConfiguration  Elasticsearch configuration helper.
+     * @param LoggerInterface              $logger               Elasticsearch logger.
      */
-    public function __construct(ClientConfigurationInterface $clientConfiguration, LoggerInterface $logger)
-    {
-        $this->clientConfiguration = $clientConfiguration;
-        $this->logger = $logger;
+    public function __construct(
+        ClientBuilder $clientBuilderFactory,
+        ClientConfigurationInterface $clientConfiguration,
+        LoggerInterface $logger
+    ) {
+        $this->clientBuilderFactory = $clientBuilderFactory;
+        $this->clientConfiguration  = $clientConfiguration;
+        $this->logger               = $logger;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function createClient()
     {
         if ($this->client === null) {
-            $clientBuilder = ClientBuilder::create();
+            $clientBuilder = $this->clientBuilderFactory->create();
             $hosts         = $this->getHosts();
             $clientBuilder->setHosts($hosts);
 
