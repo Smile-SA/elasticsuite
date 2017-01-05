@@ -4,11 +4,12 @@ php:
 - '5.6'
 - '7.0'
 
-install:
-    - mkdir -p app/etc var
-    - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
-    - composer require "magento/magento2-base"
-    - composer install --prefer-dist
+install: [
+  "mkdir -p app/etc var",
+  "echo \"{\\\"http-basic\\\":{\\\"repo.magento.com\\\":{\\\"username\\\":\\\"${MAGENTO_USERNAME}\\\",\\\"password\\\":\\\"${MAGENTO_PASSWORD}\\\"}}}\" > auth.json",
+  "composer require magento/magento2-base --no-update",
+  "composer install --prefer-dist"
+]
 
 cache:
   directories:
