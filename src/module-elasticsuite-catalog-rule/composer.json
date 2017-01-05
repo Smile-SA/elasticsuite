@@ -23,7 +23,7 @@
         "magento/framework": ">=100.1.0",
         "smile/module-elasticsuite-catalog": "self.version"
     },
-    "version": "2.1.0",
+    "version": "2.3.0",
     "autoload": {
         "files": [
             "registration.php"
