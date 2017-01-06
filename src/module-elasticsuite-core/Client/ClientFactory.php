@@ -14,10 +14,6 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Psr\Log\LoggerInterface;
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
-use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 
 /**
@@ -30,17 +26,17 @@ use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 class ClientFactory implements ClientFactoryInterface
 {
     /**
-     * @var ClientBuilder
+     * @var \Elasticsearch\ClientBuilder
      */
-    private $clientBuilderFactory;
+    private $clientBuilder;
 
     /**
-     * @var ClientConfigurationInterface
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface
      */
     private $clientConfiguration;
 
     /**
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
@@ -52,16 +48,16 @@ class ClientFactory implements ClientFactoryInterface
     /**
      * Factory constructor.
      *
-     * @param ClientBuilder                $clientBuilderFactory Elasticsearch client builder.
-     * @param ClientConfigurationInterface $clientConfiguration  Elasticsearch configuration helper.
-     * @param LoggerInterface              $logger               Elasticsearch logger.
+     * @param \Elasticsearch\ClientBuilder                                    $clientBuilder       Elasticsearch client builder.
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration Elasticsearch configuration helper.
+     * @param \Psr\Log\LoggerInterface                                        $logger              Elasticsearch logger.
      */
     public function __construct(
-        ClientBuilder $clientBuilderFactory,
-        ClientConfigurationInterface $clientConfiguration,
-        LoggerInterface $logger
+        \Elasticsearch\ClientBuilder $clientBuilder,
+        \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration,
+        \Psr\Log\LoggerInterface $logger
     ) {
-        $this->clientBuilderFactory = $clientBuilderFactory;
+        $this->clientBuilder        = $clientBuilder;
         $this->clientConfiguration  = $clientConfiguration;
         $this->logger               = $logger;
     }
@@ -72,15 +68,14 @@ class ClientFactory implements ClientFactoryInterface
     public function createClient()
     {
         if ($this->client === null) {
-            $clientBuilder = $this->clientBuilderFactory->create();
             $hosts         = $this->getHosts();
-            $clientBuilder->setHosts($hosts);
+            $this->clientBuilder->setHosts($hosts);
 
             if ($this->clientConfiguration->isDebugModeEnabled()) {
-                $clientBuilder->setLogger($this->logger);
+                $this->clientBuilder->setLogger($this->logger);
             }
 
-            $this->client = $clientBuilder->build();
+            $this->client = $this->clientBuilder->build();
         }
 
         return $this->client;
