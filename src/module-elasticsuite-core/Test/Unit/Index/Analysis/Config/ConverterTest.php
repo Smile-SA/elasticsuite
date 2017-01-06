@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Index\Analysis\Config;
 use Smile\ElasticsuiteCore\Index\Analysis\Config\Converter;
 
 /**
- * Index configuration filte converter test case.
+ * Analysis configuration file converter test case.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
