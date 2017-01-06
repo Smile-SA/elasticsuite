@@ -8,14 +8,14 @@ We had a lot of work on Magento 2.1.x compatibility since there was a lot of com
 
 The migration is now finished concerning **both CE and EE versions**.
 
-If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the latest **2.2.4 release**.
+If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the latest **2.3.0 release**.
 
 **Which version should I use ?**
 
 Magento Version         | ElasticSuite Latest Version
 ------------------------|------------------------------------------------------------------------
 Magento 2.0.* CE / EE   |[ElasticSuite 2.1.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.4)
-Magento 2.1.* CE / EE   |[ElasticSuite 2.2.6 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.2.6)
+Magento 2.1.* CE / EE   |[ElasticSuite 2.3.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
 
 
 ## What is ElasticSuite for Magento 2 ?
@@ -44,11 +44,13 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version **2.2.0** has been focused on the Magento 2.1 compatibility.
+The current version **2.3.0** has been focused on the **Search Optimizers** feature and on various performances improvements.
 
-This version features a full **Staging Compatibility** and can be used without issues on Magento Enterprise Edition 2.1.x.
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
 
-From now, we are working on the migration of all features available into the Magento 1.x .version of the module in this new version.
+This version also features a full **Staging Compatibility** and can be used without issues on Magento Enterprise Edition 2.1.x.
+
+From now, we are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
 
 Actually, there are the features actually included :
 
@@ -67,6 +69,16 @@ Actually, there are the features actually included :
 
 <br/>
 
+* **Search optimizations :**
+
+    ElasticSuite also features several ways to **optimize the search engine relevance**. This part is again based on rules that can be defined in the Magento's back-office.
+
+    This allows you to create rules like "Boost all products that are in stock", "Boost all new products", "Boost men products", etc ...
+
+    ![Search Optimizers](doc/static/search_optimizers.png)
+
+    On the next version, a preview for all optimizer rules will be available in the back-office so that you will be able to **preview each fine-tuning before publishing it**.
+
 * **Categories Merchandising :**
 
     A new **Merchandising** panel has been added into the category edition screen of Magento's Back-Office. It features a **direct preview** of the current product list according to category settings.
@@ -79,9 +91,9 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Product & Categories autocomplete  :**
+* **Products, Categories & Attributes autocomplete  :**
 
-    ElasticSuite features **enhanced content in the autocomplete box** : popular search terms, **products and categories**.
+    ElasticSuite features **enhanced content in the autocomplete box** : popular search terms, **products and categories**, and also **attributes**.
 
     The autocomplete is **fully extensible to add custom content**, such as shop pages (if your store uses a store locator), CMS pages, etc...
 
@@ -182,15 +194,7 @@ Actually, there are the features actually included :
 
 The next versions that will be coming all among this year will include the following features :
 
-* **Even richer autocomplete  :**
-
-    We plan to add very soon into the autocomplete results : **Products attributes** (eg : product brand, authors for a book, actors for DVDs, etc...).
-
-* **Search optimizations :**
-
-    ElasticSuite will also feature several ways to **optimize the search engine relevance**. This part will again be based on rules that can be defined in the Magento's back-office.
-    This will allow you to create rules like "Boost all products that are in stock" or "Boost all new products". A preview for all optimizer rules will be available in the back-office so that you will be able to **preview each fine-tuning before publishing it**.
-    This part of the module will be fully customizable and extensible for all your needs.
+* **Behavioral Search optimizations :**
 
     Second part of the relevance optimization features will be the behavioral optimizers. This will allow you to build **rules matching your customer's behavior**.
     Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.

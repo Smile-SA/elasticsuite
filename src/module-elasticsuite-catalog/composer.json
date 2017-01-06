@@ -27,7 +27,7 @@
         "magento/module-catalog-search": ">=100.1.0",
         "magento/magento-composer-installer": "*"
     },
-    "version": "2.1.0",
+    "version": "2.3.0",
     "autoload": {
         "files": [
             "registration.php"

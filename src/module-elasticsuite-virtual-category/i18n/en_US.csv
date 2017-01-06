@@ -6,3 +6,5 @@
 "Preview and sorting","Preview and sorting"
 "Select category ...","Select category ..."
 Merchandising,Merchandising
+"Cannot move the category : '%2' is using '%1' as virtual root category.","Cannot move the category : '%2' is using '%1' as virtual root category."
+"Your product selection is empty for the selected Store View. If you are running a multi-store setup, please check this <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>manual page</a> for more informations.","Your product selection is empty for the selected Store View. If you are running a multi-store setup, please check this <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>manual page</a> for more informations."

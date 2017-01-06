@@ -18,6 +18,7 @@ use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
 use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
+use Magento\Catalog\Model\Product\Visibility;
 
 /**
  * Catalog product autocomplete data provider.
@@ -119,9 +120,8 @@ class DataProvider implements DataProviderInterface
 
     /**
      * Init suggested products collection.
-     * Returns null if no suggested search terms.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\Autocomplete\Product
+     * @return \Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider
      */
     private function prepareProductCollection()
     {
@@ -131,6 +131,7 @@ class DataProvider implements DataProviderInterface
         $this->productCollection
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('thumbnail')
+            ->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
             ->addPriceData();
 
         if (!$this->configurationHelper->isShowOutOfStock()) {
@@ -141,7 +142,7 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * List of search terms suggested by the search terms data daprovider.
+     * List of search terms suggested by the search terms data provider.
      *
      * @return array
      */

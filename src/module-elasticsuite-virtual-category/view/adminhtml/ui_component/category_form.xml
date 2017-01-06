@@ -80,7 +80,8 @@
             
             <field name="virtual_category_root">
                 <argument name="data" xsi:type="array">
-                    <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
+                    <!-- Options provider is a virtualType defined in DI -->
+                    <item name="options" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Ui\Component\Category\Form\VirtualCategoryRoot\Options</item>
                     <item name="config" xsi:type="array">
                         <item name="label" xsi:type="string" translate="true">Virtual Category Root</item>
                         <item name="componentType" xsi:type="string">field</item>
@@ -141,6 +142,9 @@
                         <item name="label" xsi:type="string" translate="true">Products List Preview and Sorting</item>
                         <item name="dataScope" xsi:type="string">sorted_products</item>
                         <item name="pageSize" xsi:type="string">20</item>
+                        <item name="messages" xsi:type="array">
+                            <item name="emptyText" xsi:type="string" translate="true"><![CDATA[Your product selection is empty for the selected Store View. If you are running a multi-store setup, please check this <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>manual page</a> for more informations.]]></item>
+                        </item>
                         <item name="refreshFields" xsi:type="array">
                             <item name="is_virtual_category" xsi:type="string">is_virtual_category</item>
                             <item name="virtual_rule" xsi:type="string">virtual_rule</item>
