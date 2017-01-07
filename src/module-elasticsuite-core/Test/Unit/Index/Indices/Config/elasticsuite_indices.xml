@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_Elasticsuite indices testing configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
+
+    <index identifier="index1" defaultSearchType="simpleType">
+        <type name="simpleType" idFieldName="idField">
+            <mapping>
+                <field name="idField" type="integer" />
+                <field name="stringField" type="string" />
+            </mapping>
+        </type>
+        <type name="complexType" idFieldName="idField">
+            <mapping>
+                <field name="idField" type="integer" />
+                <field name="nested.child" type="string" nestedPath="nested" />
+                <field name="fieldWithParams">
+                    <param1>value1</param1>
+                    <param2>value2</param2>
+                </field>
+            </mapping>
+            <datasources>
+                <datasource name="ds1">DatasourceClass1</datasource>
+                <datasource name="ds2">DatasourceClass2</datasource>
+            </datasources>
+        </type>
+    </index>
+    
+    <index identifier="index2" defaultSearchType="simpleType">
+        <type name="simpleType" idFieldName="idField">
+            <mapping>
+                <field name="idField" type="integer" />
+                <field name="stringField" type="string" />
+            </mapping>
+        </type>
+    </index>
+
+</indices>
