@@ -52,15 +52,7 @@ class QueryBuilder
     /**
      * @var array
      */
-    private $unsupportedConditions = [
-        'nin',
-        'notnull',
-        'null',
-        'finset',
-        'regexp',
-        'sneq',
-        'neq',
-    ];
+    private $rangeConditions = ['gt', 'gte', 'lt', 'lte'];
 
     /**
      * Constructor.
@@ -119,7 +111,7 @@ class QueryBuilder
         $queryType = QueryInterface::TYPE_TERMS;
         $condition = $this->prepareCondition($condition);
 
-        if (count(array_intersect(['gt', 'gte', 'lt', 'lte'], array_keys($condition))) >= 1) {
+        if (count(array_intersect($this->rangeConditions, array_keys($condition))) >= 1) {
             $queryType = QueryInterface::TYPE_RANGE;
             $condition = ['bounds' => $condition];
         }
@@ -159,17 +151,17 @@ class QueryBuilder
     private function prepareCondition($condition)
     {
         if (!is_array($condition)) {
-            $condition = ['values' => [$condition]];
+            $condition = ['in' => [$condition]];
         }
 
         $conditionKeys = array_keys($condition);
 
         if (is_integer(current($conditionKeys))) {
-            $condition = ['values' => $condition];
+            $condition = ['in' => $condition];
         }
 
         foreach ($condition as $key => $value) {
-            if (in_array($key, $this->unsupportedConditions)) {
+            if (!isset($this->mappedConditions[$key]) && !in_array($key, $this->rangeConditions)) {
                 throw new \LogicException("Condition {$key} is not supported.");
             }
 
