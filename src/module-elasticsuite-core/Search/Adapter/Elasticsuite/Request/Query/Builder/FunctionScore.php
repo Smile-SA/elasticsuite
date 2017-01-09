@@ -31,11 +31,14 @@ class FunctionScore extends AbstractComplexBuilder implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_FUNCTIONSCORE) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $searchQueryParams = [
-            'boost'      => $query->getBoost(),
             'score_mode' => $query->getScoreMode(),
             'boost_mode' => $query->getBoostMode(),
-            'functions'  => $query->getFunctions(),
+            'functions'  => array_values($query->getFunctions()),
         ];
 
         if ($query->getQuery()) {
@@ -46,6 +49,10 @@ class FunctionScore extends AbstractComplexBuilder implements BuilderInterface
             if (isset($function['filter'])) {
                 $function['filter'] = $this->parentBuilder->buildQuery($function['filter']);
             }
+        }
+
+        if ($query->getName()) {
+            $searchQueryParams['_name'] = $query->getName();
         }
 
         return ['function_score' => $searchQueryParams];

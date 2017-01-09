@@ -31,6 +31,10 @@ class Common implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_COMMON) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $searchQueryParams = [
             'query'                => $query->getQueryText(),
             'minimum_should_match' => $query->getMinimumShouldMatch(),
@@ -38,6 +42,12 @@ class Common implements BuilderInterface
             'boost'                => $query->getBoost(),
         ];
 
-        return ['common' => [$query->getField() => $searchQueryParams]];
+        $searchQuery = ['common' => [$query->getField() => $searchQueryParams]];
+
+        if ($query->getName()) {
+            $searchQuery['common']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

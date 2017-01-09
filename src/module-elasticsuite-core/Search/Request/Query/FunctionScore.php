@@ -31,11 +31,6 @@ class FunctionScore implements QueryInterface
     private $name;
 
     /**
-     * @var integer
-     */
-    private $boost;
-
-    /**
      * @var QueryInterface
      */
     private $query;
@@ -86,22 +81,19 @@ class FunctionScore implements QueryInterface
     /**
      * Constructor.
      * @param \Magento\Framework\Search\Request\QueryInterface $query     Negated query.
+     * @param array                                            $functions Function score.
      * @param string                                           $name      Query name.
-     * @param integer                                          $boost     Query boost.
      * @param string                                           $scoreMode Score mode.
      * @param string                                           $boostMode Boost mode.
-     * @param array                                            $functions Function score.
      */
     public function __construct(
-        \Magento\Framework\Search\Request\QueryInterface $query = null,
+        \Magento\Framework\Search\Request\QueryInterface $query,
+        $functions = [],
         $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE,
         $scoreMode = self::SCORE_MODE_SUM,
-        $boostMode = self::BOOST_MODE_SUM,
-        $functions = []
+        $boostMode = self::BOOST_MODE_SUM
     ) {
         $this->name      = $name;
-        $this->boost     = $boost;
         $this->query     = $query;
         $this->scoreMode = $scoreMode;
         $this->boostMode = $boostMode;
@@ -121,7 +113,7 @@ class FunctionScore implements QueryInterface
      */
     public function getBoost()
     {
-        return $this->boost;
+        return null;
     }
 
     /**

@@ -16,8 +16,9 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
+
 /**
- * Term search request query test case.
+ * Filter query builder test case.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
@@ -53,10 +54,10 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->fields = [
-            Field('idField', 'integer'),
-            Field('simpleTextField', 'string'),
-            Field('analyzedField', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
-            Field('nested.child', 'string', 'nested'),
+            new Field('idField', 'integer'),
+            new Field('simpleTextField', 'string'),
+            new Field('analyzedField', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('nested.child', 'string', 'nested'),
         ];
     }
 
