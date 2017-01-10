@@ -20,5 +20,6 @@ ratings:
   - "**.js"
   - "**.php"
 exclude_paths:
+  - src/*/Test
   - vendor/*
   - Resources/*

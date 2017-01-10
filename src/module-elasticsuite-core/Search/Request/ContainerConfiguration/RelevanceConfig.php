@@ -13,7 +13,6 @@
 namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
-use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
 /**
@@ -51,23 +50,22 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $fuzzinessConfiguration;
 
     /**
-     * @var PhoneticConfigurationInterface
+     * @var boolean
      */
-    private $phoneticConfiguration;
+    private $enablePhoneticSearch;
 
     /**
      * RelevanceConfiguration constructor.
      *
-     * @param string                               $minimumShouldMatch Minimum should match clause of the text query.
-     * @param float                                $tieBreaker         Tie breaker for multimatch queries.
-     * @param int|null                             $phraseMatchBoost   The Phrase match boost value, or null if not
-     *                                                                 enabled
-     * @param float                                $cutOffFrequency    The cutoff Frequency value
-     * @param FuzzinessConfigurationInterface|null $fuzziness          The fuzziness Configuration, or null
-     * @param PhoneticConfigurationInterface|null  $phonetic           The phonetic Configuration, or null
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @internal param $fuzziness
-     * @internal param $phonetic
+     * @param string                               $minimumShouldMatch   Minimum should match clause of the text query.
+     * @param float                                $tieBreaker           Tie breaker for multimatch queries.
+     * @param int|null                             $phraseMatchBoost     The Phrase match boost value, or null if not
+     *                                                                   enabled
+     * @param float                                $cutOffFrequency      The cutoff Frequency value
+     * @param FuzzinessConfigurationInterface|null $fuzziness            The fuzziness Configuration, or null
+     * @param boolean                              $enablePhoneticSearch The phonetic Configuration, or null
      */
     public function __construct(
         $minimumShouldMatch,
@@ -75,14 +73,14 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $phraseMatchBoost,
         $cutOffFrequency,
         FuzzinessConfigurationInterface $fuzziness = null,
-        PhoneticConfigurationInterface $phonetic = null
+        $enablePhoneticSearch = false
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
         $this->phraseMatchBoost       = $phraseMatchBoost;
         $this->cutOffFrequency        = $cutOffFrequency;
         $this->fuzzinessConfiguration = $fuzziness;
-        $this->phoneticConfiguration  = $phonetic;
+        $this->enablePhoneticSearch   = $enablePhoneticSearch;
     }
 
     /**
@@ -128,32 +126,22 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     }
 
     /**
-     * Retrieve Phonetic Configuration
-     *
-     * @return PhoneticConfigurationInterface|null
-     */
-    public function getPhoneticConfiguration()
-    {
-        return $this->phoneticConfiguration;
-    }
-
-    /**
      * Check if fuzziness is enabled
      *
-     * @return bool
+     * @return boolean
      */
     public function isFuzzinessEnabled()
     {
-        return ($this->fuzzinessConfiguration !== null);
+        return (bool) $this->fuzzinessConfiguration;
     }
 
     /**
      * Check if phonetic search is enabled
      *
-     * @return bool
+     * @return boolean
      */
     public function isPhoneticSearchEnabled()
     {
-        return ($this->phoneticConfiguration !== null);
+        return ($this->enablePhoneticSearch !== null);
     }
 }
