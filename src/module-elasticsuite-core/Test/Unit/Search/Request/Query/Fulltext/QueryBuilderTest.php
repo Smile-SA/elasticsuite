@@ -12,11 +12,12 @@
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Filter;
+namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
 
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Filter query builder test case.
@@ -31,27 +32,16 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     private $mockedQueryTypes = [
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_TERMS,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_RANGE,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_MATCH,
+        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_COMMON,
+        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_MULTIMATCH,
+        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_FILTER,
         \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_BOOL,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_NESTED,
     ];
 
     /**
      * @var array
      */
     private $fields = [];
-
-    public function testExactSpellingQueryBuilder()
-    {
-        $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
-        $containerConfig = $this->getContainerConfigMock($this->fields);
-
-        $builder = new QueryBuilder($queryFactory);
-
-        $builder->create($containerConfig, 'foo', SpellcheckerInterface::SPELLING_TYPE_EXACT);
-    }
 
     /**
      * Constructor.
@@ -65,24 +55,94 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->fields = [
-            new Field('idField', 'integer')
+            new Field('idField', 'integer'),
+            new Field('fulltextSearch1', 'string', null, ['is_searchable' => true]),
+            new Field('fulltextSearch2', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('fulltextSearch3', 'string', null, ['is_searchable' => true, 'is_used_in_spellcheck' => true]),
         ];
     }
 
-//     /**
-//      * Generate a query from conditions using mocked objects.
-//      *
-//      * @param array $conditions Conditions.
-//      *
-//      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-//      */
-//     private function buildQuery($conditions)
-//     {
-//         $builder = new QueryBuilder($this->getQueryFactory($this->mockedQueryTypes));
-//         $config  = $this->getContainerConfigMock($this->fields);
+    /**
+     * Test running the query builder using only correctly spelled terms.
+     *
+     * @return void
+     */
+    public function testExactSpellingQueryBuilder()
+    {
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_EXACT, QueryInterface::TYPE_FILTER);
+    }
 
-//         return $builder->create($config, $conditions);
-//     }
+    /**
+     * Test running the query builder using mostly correctly spelled terms.
+     *
+     * @return void
+     */
+    public function testMostExactSpellingQueryBuilder()
+    {
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_MOST_EXACT, QueryInterface::TYPE_FILTER);
+    }
+
+    /**
+     * Test running the query builder using mostly mispelled terms.
+     *
+     * @return void
+     */
+    public function testMostFuzzySpellingQueryBuilder()
+    {
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY, QueryInterface::TYPE_BOOL);
+    }
+
+    /**
+     * Test running the query builder using only mispelled terms.
+     *
+     * @return void
+     */
+    public function testFuzzySpellingQueryBuilder()
+    {
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_FUZZY, QueryInterface::TYPE_BOOL);
+    }
+
+    /**
+     * Test running the query builder using only stopwords.
+     *
+     * @return void
+     */
+    public function testPureStopWordsSpellingQueryBuilder()
+    {
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS, QueryInterface::TYPE_MULTIMATCH);
+    }
+
+    /**
+     * Test running the query builder using an array as search query.
+     *
+     * @return void
+     */
+    public function testMulipleSearchQueryBuilder()
+    {
+        $this->runTestQueryBuilder(['foo', 'bar'], SpellcheckerInterface::SPELLING_TYPE_EXACT, QueryInterface::TYPE_BOOL);
+    }
+
+    /**
+     * Build a query and assert the query type is the expected one.
+     *
+     * @param string|string[] $searchTerms       Query search terms.
+     * @param integer         $spellingType      Query spelling type.
+     * @param string          $expectedQueryType Expected built query type.
+     *
+     * @return void
+     */
+    private function runTestQueryBuilder($searchTerms, $spellingType, $expectedQueryType)
+    {
+        $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
+        $containerConfig = $this->getContainerConfigMock($this->fields);
+
+        $builder = new QueryBuilder($queryFactory);
+
+        $query = $builder->create($containerConfig, $searchTerms, $spellingType);
+
+        $this->assertInstanceOf(QueryInterface::class, $query);
+        $this->assertEquals($expectedQueryType, $query->getType());
+    }
 
     /**
      * Mock the query factory used by the builder.
@@ -96,7 +156,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $factories = [];
 
         foreach ($queryTypes as $currentType) {
-            $queryMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class)->getMock();
+            $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
             $queryMock->method('getType')->will($this->returnValue($currentType));
 
             $factory = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)->getMock();
@@ -118,12 +178,30 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
     private function getContainerConfigMock($fields)
     {
         $config = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface::class)
-            ->disableOriginalConstructor()
             ->getMock();
 
-        $mapping = new \Smile\ElasticsuiteCore\Index\Mapping('idField', $fields);
+        $mapping         = new \Smile\ElasticsuiteCore\Index\Mapping('idField', $fields);
         $config->method('getMapping')->will($this->returnValue($mapping));
 
+        $relevanceConfig = $this->getRelevanceConfig();
+        $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
+
         return $config;
+    }
+
+    /**
+     * Mock the relevace configuration object used by the query builder.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getRelevanceConfig()
+    {
+        $relevanceConfig = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface::class)
+            ->getMock();
+
+        $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
+        $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
+
+        return $relevanceConfig;
     }
 }
