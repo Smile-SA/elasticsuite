@@ -256,9 +256,6 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\FuzzinessConfig" />
 
-    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface"
-                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\PhoneticConfig" />
-
     <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader">
         <arguments>
             <argument name="converter" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter</argument>

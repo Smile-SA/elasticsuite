@@ -39,10 +39,6 @@
             </fuzziness>
             <phonetic>
                 <enable>1</enable>
-                <enable_fuzziness>1</enable_fuzziness>
-                <fuzziness_value>AUTO</fuzziness_value>
-                <fuzziness_prefix_length>1</fuzziness_prefix_length>
-                <fuzziness_max_expansion>2</fuzziness_max_expansion>
             </phonetic>
         </spellchecking>
     </default>

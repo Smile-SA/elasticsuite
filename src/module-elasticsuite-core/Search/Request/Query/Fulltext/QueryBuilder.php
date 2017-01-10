@@ -283,10 +283,6 @@ class QueryBuilder
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
         ];
 
-        if ($relevanceConfig->getPhoneticConfiguration()->isFuzzinessEnabled()) {
-            $queryParams['fuzzinessConfig'] = $relevanceConfig->getPhoneticConfiguration()->getFuzzinessConfiguration();
-        }
-
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
 

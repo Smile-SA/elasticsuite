@@ -64,11 +64,4 @@ interface RelevanceConfigurationInterface
      * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface|null
      */
     public function getFuzzinessConfiguration();
-
-    /**
-     * Retrieve Phonetic Configuration
-     *
-     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface|null
-     */
-    public function getPhoneticConfiguration();
 }
