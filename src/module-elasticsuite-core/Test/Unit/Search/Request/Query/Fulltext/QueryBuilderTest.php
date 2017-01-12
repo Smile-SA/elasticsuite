@@ -20,7 +20,7 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
- * Filter query builder test case.
+ * Fulltext query builder test case.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
