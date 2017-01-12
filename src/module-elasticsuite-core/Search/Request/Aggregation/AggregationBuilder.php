@@ -104,7 +104,7 @@ class AggregationBuilder
      */
     private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters)
     {
-        return $this->queryBuilder->createFilters($containerConfiguration, $filters);
+        return $this->queryBuilder->createFilterQuery($containerConfiguration, $filters);
     }
 
     /**
