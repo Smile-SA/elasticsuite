@@ -266,8 +266,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $storeId            = $category->getStoreId();
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
-        $categoryCollection->addAttributeToFilter('is_active', ['neq' => 0])
-            ->addPathFilter(sprintf('%s/.*', $category->getPath()));
+        $categoryCollection->addIsActiveFilter()->addPathFilter(sprintf('%s/.*', $category->getPath()));
 
         if (!empty($excludedCategories)) {
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
