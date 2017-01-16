@@ -35,7 +35,7 @@ class Builder implements BuilderInterface
      *
      * @param BuilderInterface[] $builders Builders implementations.
      */
-    public function __construct(array $builders)
+    public function __construct(array $builders = [])
     {
         $this->builders = $builders;
     }

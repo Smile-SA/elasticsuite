@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 
 /**
  * Build an ES Term aggregation.
@@ -24,7 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Term
+class Term implements BuilderInterface
 {
     /**
      * Build the aggregation.

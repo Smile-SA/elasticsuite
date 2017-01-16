@@ -47,11 +47,11 @@ class Standard implements SortOrderInterface
      * @param string $direction Sort order direction.
      * @param string $name      Sort order name.
      */
-    public function __construct($field, $direction, $name = null)
+    public function __construct($field, $direction = self::SORT_ASC, $name = null)
     {
-        $this->name      = $name;
         $this->field     = $field;
         $this->direction = $direction;
+        $this->name      = $name;
     }
 
     /**

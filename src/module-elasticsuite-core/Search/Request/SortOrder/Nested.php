@@ -59,6 +59,7 @@ class Nested extends Standard
         $name = null
     ) {
         parent::__construct($field, $direction, $name);
+
         $this->nestedFilter = $nestedFilter;
         $this->nestedPath   = $nestedPath;
         $this->scoreMode    = $scoreMode;

@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 
 /**
  * Build an ES filters aggregation.
@@ -24,7 +25,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as 
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class QueryGroup
+class QueryGroup implements BuilderInterface
 {
     /**
      * @var QueryBuilder

@@ -112,6 +112,16 @@
             </argument>
         </arguments>
     </type>
+    
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term\Proxy</item>
+                <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram\Proxy</item>
+                <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
 
     <type name="Magento\Search\Model\AdapterFactory">
         <arguments>

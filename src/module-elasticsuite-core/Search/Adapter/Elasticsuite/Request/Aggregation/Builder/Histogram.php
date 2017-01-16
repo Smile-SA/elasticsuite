@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 
 /**
  * Build an ES histogram aggregation.
@@ -23,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Histogram
+class Histogram implements BuilderInterface
 {
     /**
      * Build the aggregation.
