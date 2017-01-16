@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Acti
 class Full
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Action\Full
      */
     private $resourceModel;
 
