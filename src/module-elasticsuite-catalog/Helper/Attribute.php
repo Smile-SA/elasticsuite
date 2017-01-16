@@ -111,6 +111,10 @@ class Attribute extends Mapping
             $options['is_used_in_autocomplete'] = true;
         }
 
+        if ($attribute->getIsDisplayedInAutocomplete()) {
+            $options['is_filterable'] = true;
+        }
+
         return $options;
     }
 
