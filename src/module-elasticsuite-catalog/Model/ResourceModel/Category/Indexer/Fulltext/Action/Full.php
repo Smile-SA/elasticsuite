@@ -14,6 +14,10 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Indexer\Fulltext\Action;
 
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 /**
  * Elasticsearch category full indexer resource model.
@@ -24,6 +28,29 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
  */
 class Full extends Indexer
 {
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
+     */
+    private $categoryCollectionFactory;
+
+    /**
+     * Constructor.
+     *
+     * @param ResourceConnection        $resource                  Resource connection.
+     * @param StoreManagerInterface     $storeManager              Store manager.
+     * @param MetadataPool              $metadataPool              Metadata pool.
+     * @param CategoryCollectionFactory $categoryCollectionFactory Category collection factory.
+     */
+    public function __construct(
+        ResourceConnection $resource,
+        StoreManagerInterface $storeManager,
+        MetadataPool $metadataPool,
+        CategoryCollectionFactory $categoryCollectionFactory
+    ) {
+        parent::__construct($resource, $storeManager, $metadataPool);
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
+    }
+
     /**
      * Load a bulk of category data.
      *
@@ -36,8 +63,12 @@ class Full extends Indexer
      */
     public function getSearchableCategories($storeId, $categoryIds = null, $fromId = 0, $limit = 100)
     {
-        $select = $this->getConnection()->select()
-            ->from(['e' => $this->getTable('catalog_category_entity')]);
+        /**
+         * @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection
+         */
+        $categoryCollection = $this->categoryCollectionFactory->create();
+        $categoryCollection->addIsActiveFilter();
+        $select = $categoryCollection->getSelect();
 
         $this->addIsVisibleInStoreFilter($select, $storeId);
 
@@ -48,6 +79,8 @@ class Full extends Indexer
         $select->where('e.entity_id > ?', $fromId)
             ->limit($limit)
             ->order('e.entity_id');
+
+        $select = $this->addActiveFilterCategoriesFilter($select);
 
         return $this->connection->fetchAll($select);
     }
