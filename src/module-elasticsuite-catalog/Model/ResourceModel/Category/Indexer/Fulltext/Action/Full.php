@@ -80,8 +80,6 @@ class Full extends Indexer
             ->limit($limit)
             ->order('e.entity_id');
 
-        $select = $this->addActiveFilterCategoriesFilter($select);
-
         return $this->connection->fetchAll($select);
     }
 
