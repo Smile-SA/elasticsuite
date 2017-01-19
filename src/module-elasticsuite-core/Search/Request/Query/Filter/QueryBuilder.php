@@ -126,7 +126,8 @@ class QueryBuilder
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
         if ($condition['field'] === null) {
-            $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD);
+            $analyzer           = $field->getDefaultSearchAnalyzer();
+            $condition['field'] = $field->getMappingProperty($analyzer);
         }
 
         if (in_array('queryText', array_keys($condition))) {

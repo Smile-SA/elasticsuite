@@ -86,6 +86,34 @@ class QueryBuilder
     }
 
     /**
+     * Indicates if a field is searchable.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
+     * @param FieldInterface $field Mapping field.
+     *
+     * @return boolean
+     */
+    public function isSearchableFieldCallback(FieldInterface $field)
+    {
+        return $field->isSearchable() && $field->getType() == FieldInterface::FIELD_TYPE_STRING && $field->isNested() === false;
+    }
+
+    /**
+     * Indicates if a field is used in fuzzy search.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
+     * @param FieldInterface $field Mapping field.
+     *
+     * @return boolean
+     */
+    public function isFuzzyFieldCallback(FieldInterface $field)
+    {
+        return $field->isSearchable() && $field->isUsedInSpellcheck() && $field->isNested() === false;
+    }
+
+    /**
      * Provides a common search query for the searched text.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
@@ -122,15 +150,13 @@ class QueryBuilder
         $defaultSearchField = MappingInterface::DEFAULT_SEARCH_FIELD;
         $searchableCallback = [$this, 'isSearchableFieldCallback'];
 
-
-        $standardAnalyzer = FieldInterface::ANALYZER_STANDARD;
         $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
         $searchFields = array_merge(
-            $this->getWeightedFields($containerConfig, $standardAnalyzer, $searchableCallback, $defaultSearchField),
+            $this->getWeightedFields($containerConfig, null, $searchableCallback, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableCallback, $defaultSearchField, $phraseMatchBoost)
         );
 
@@ -300,62 +326,14 @@ class QueryBuilder
      */
     private function getWeightedFields(
         ContainerConfigurationInterface $containerConfig,
-        $analyzer = FieldInterface::ANALYZER_STANDARD,
+        $analyzer = null,
         $filterCallback = null,
         $defaultField = null,
         $boost = 1
     ) {
-        $weightedFields = [];
 
-        if ($defaultField !== null) {
-            if ($analyzer != FieldInterface::ANALYZER_STANDARD) {
-                $defaultField = sprintf("%s.%s", $defaultField, $analyzer);
-            }
-            $weightedFields[$defaultField] = 1;
-        }
+        $mapping = $containerConfig->getMapping();
 
-        $fields = $containerConfig->getMapping()->getFields();
-
-        if ($filterCallback) {
-            $fields = array_filter($fields, $filterCallback);
-        }
-
-        foreach ($fields as $field) {
-            $mappingProperty = $field->getMappingProperty($analyzer);
-
-            if ($mappingProperty && ($defaultField === null || $field->getSearchWeight() != 1)) {
-                $weightedFields[$mappingProperty] = $field->getSearchWeight() * $boost;
-            }
-        }
-
-        return $weightedFields;
-    }
-
-    /**
-     * Indicates if a field is searchable.
-     *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
-     * @param FieldInterface $field Mapping field.
-     *
-     * @return boolean
-     */
-    private function isSearchableFieldCallback(FieldInterface $field)
-    {
-        return $field->isSearchable() && $field->getType() == FieldInterface::FIELD_TYPE_STRING;
-    }
-
-    /**
-     * Indicates if a field is used in fuzzy search.
-     *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
-     * @param FieldInterface $field Mapping field.
-     *
-     * @return boolean
-     */
-    private function isFuzzyFieldCallback(FieldInterface $field)
-    {
-        return $field->isSearchable() && $field->isUsedInSpellcheck();
+        return $mapping->getWeightedSearchProperties($analyzer, $defaultField, $boost, $filterCallback);
     }
 }

@@ -263,7 +263,7 @@ class QueryBuilder
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
         if ($productCondition->getInputType() === "string") {
-            $analyzer = FieldInterface::ANALYZER_STANDARD;
+            $analyzer = $field->getDefaultSearchAnalyzer();
         }
 
         return $field->getMappingProperty($analyzer);
