@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Index;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 
 /**
  * Default implementation for ES mappings (Smile\ElasticsuiteCore\Api\Index\MappingInterface).
@@ -148,17 +149,22 @@ class Mapping implements MappingInterface
     /**
      * {@inheritDoc}
      */
-    public function getWeightedSearchProperties($analyzer = null, $defaultField = null, $boost = 1, $filterCallback = null)
-    {
+    public function getWeightedSearchProperties(
+        $analyzer = null,
+        $defaultField = null,
+        $boost = 1,
+        FieldFilterInterface $fieldFilter = null
+    ) {
         $weightedFields = [];
+        $fields         = $this->getFields();
 
         if ($defaultField) {
             $defaultSearchProperty = $this->getDefaultSearchProperty($defaultField, $analyzer);
             $weightedFields[$defaultSearchProperty] = $boost;
         }
 
-        if ($filterCallback) {
-            $fields = array_filter($this->getFields(), $filterCallback);
+        if ($fieldFilter !== null) {
+            $fields = array_filter($fields, [$fieldFilter, 'filterField']);
         }
 
         foreach ($fields as $field) {
