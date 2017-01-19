@@ -142,16 +142,18 @@ class DataProvider implements DataProviderInterface
     private function getCategoryCollection()
     {
         $categoryCollection = null;
-        $suggestedTerms = $this->getSuggestedTerms();
-        $terms          = [$this->queryFactory->get()->getQueryText()];
+        if ($this->getResultsPageSize() > 0) {
+            $suggestedTerms = $this->getSuggestedTerms();
+            $terms          = [$this->queryFactory->get()->getQueryText()];
 
-        if (!empty($suggestedTerms)) {
-            $terms = array_merge($terms, $suggestedTerms);
+            if (!empty($suggestedTerms)) {
+                $terms = array_merge($terms, $suggestedTerms);
+            }
+
+            $categoryCollection = $this->categoryCollectionFactory->create();
+            $categoryCollection->addSearchFilter($terms);
+            $categoryCollection->setPageSize($this->getResultsPageSize());
         }
-
-        $categoryCollection = $this->categoryCollectionFactory->create();
-        $categoryCollection->addSearchFilter($terms);
-        $categoryCollection->setPageSize($this->getResultsPageSize());
 
         return $categoryCollection;
     }
