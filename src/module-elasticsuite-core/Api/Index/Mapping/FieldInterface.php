@@ -140,4 +140,12 @@ interface FieldInterface
      * @return string|null
      */
     public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED);
+
+
+    /**
+     * Return the search analyzer used by default for fulltext searches.
+     *
+     * @return string
+     */
+    public function getDefaultSearchAnalyzer();
 }

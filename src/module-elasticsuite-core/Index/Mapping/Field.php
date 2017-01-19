@@ -62,6 +62,7 @@ class Field implements FieldInterface
         'is_used_in_spellcheck'   => false,
         'is_used_in_autocomplete' => false,
         'search_weight'           => 1,
+        'default_search_analyzer' => self::ANALYZER_STANDARD,
     ];
 
     /**
@@ -209,7 +210,7 @@ class Field implements FieldInterface
         $property     = $this->getMappingPropertyConfig();
 
         if ($property['type'] == self::FIELD_TYPE_MULTI) {
-            $isDefaultAnalyzer = $analyzer == self::ANALYZER_STANDARD;
+            $isDefaultAnalyzer = $analyzer == $this->getDefaultSearchAnalyzer();
             $subFieldName = $isDefaultAnalyzer ? $fieldName : $analyzer;
             $propertyName = null;
 
@@ -224,6 +225,14 @@ class Field implements FieldInterface
         }
 
         return $propertyName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDefaultSearchAnalyzer()
+    {
+        return $this->config['default_search_analyzer'];
     }
 
     /**
@@ -270,10 +279,10 @@ class Field implements FieldInterface
             // Using the analyzer name as subfield name by default.
             $subFieldName = $analyzer;
 
-            if ($analyzer == self::ANALYZER_STANDARD && $this->isNested()) {
+            if ($analyzer == $this->getDefaultSearchAnalyzer() && $this->isNested()) {
                 // Using the field suffix as default subfield name for nested fields.
                 $subFieldName = $this->getNestedFieldName();
-            } elseif ($analyzer == self::ANALYZER_STANDARD) {
+            } elseif ($analyzer == $this->getDefaultSearchAnalyzer()) {
                 // Using the field name as default subfield name for normal fields.
                 $subFieldName = $this->getName();
             }
@@ -295,7 +304,7 @@ class Field implements FieldInterface
 
         if ($this->isSearchable() || $this->isUsedForSortBy()) {
             // Default search analyzer.
-            $analyzers = [self::ANALYZER_STANDARD];
+            $analyzers = [$this->getDefaultSearchAnalyzer()];
 
             if ($this->isSearchable() && $this->getSearchWeight() > 1) {
                 $analyzers[] = self::ANALYZER_WHITESPACE;

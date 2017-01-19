@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Index;
 
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 
 /**
  * Representation of a Elasticsearch type mapping.
@@ -65,4 +66,17 @@ interface MappingInterface
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getIdField();
+
+    /**
+     * Return array of indexed by mapping properties used in search and weight as values.
+     *
+     * @param string|NULL          $analyzer     Search analyzer.
+     * @param string|NULL          $defaultField Default field added to the list of fields.
+     *                                           All field weighted with 1 will be ignored if present.
+     * @param integer              $boost        A multiplier applied to fields default weight.
+     * @param FieldFilterInterface $fieldFilter  A filter applied to fields.
+     *
+     * @return float[]
+     */
+    public function getWeightedSearchProperties($analyzer = null, $defaultField = null, $boost = 1, FieldFilterInterface $fieldFilter = null);
 }

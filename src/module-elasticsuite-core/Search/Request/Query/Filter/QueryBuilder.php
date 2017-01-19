@@ -125,11 +125,16 @@ class QueryBuilder
         }
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
-        if ($condition['field'] === null) {
-            $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD);
+
+        if ($condition['field'] === null || 'queryText' === $condition) {
+            $analyzer           = $field->getDefaultSearchAnalyzer();
+            $property           = $field->getMappingProperty($analyzer);
+            if ($property) {
+                $condition['field'] = $property;
+            }
         }
 
-        if (in_array('queryText', array_keys($condition))) {
+        if ('queryText' === $condition) {
             $queryType = QueryInterface::TYPE_MATCH;
             $condition['minimumShouldMatch'] = '100%';
         }
