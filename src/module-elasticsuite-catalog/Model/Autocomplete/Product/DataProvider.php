@@ -69,14 +69,22 @@ class DataProvider implements DataProviderInterface
     private $productCollection;
 
     /**
+     * Additional product attributes required.
+     *
+     * @var array
+     */
+    private $additionalAttributes;
+
+    /**
      * Constructor.
      *
-     * @param ItemFactory         $itemFactory         Suggest item factory.
-     * @param QueryFactory        $queryFactory        Search query factory.
-     * @param TermDataProvider    $termDataProvider    Search terms suggester.
-     * @param ProductCollection   $productCollection   Product collection.
-     * @param ConfigurationHelper $configurationHelper Autocomplete configuration helper.
-     * @param string              $type                Autocomplete provider type.
+     * @param ItemFactory         $itemFactory          Suggest item factory.
+     * @param QueryFactory        $queryFactory         Search query factory.
+     * @param TermDataProvider    $termDataProvider     Search terms suggester.
+     * @param ProductCollection   $productCollection    Product collection.
+     * @param ConfigurationHelper $configurationHelper  Autocomplete configuration helper.
+     * @param string              $type                 Autocomplete provider type.
+     * @param array               $additionalAttributes Additional product attributes required.
      */
     public function __construct(
         ItemFactory $itemFactory,
@@ -84,7 +92,8 @@ class DataProvider implements DataProviderInterface
         TermDataProvider $termDataProvider,
         ProductCollection $productCollection,
         ConfigurationHelper $configurationHelper,
-        $type = self::AUTOCOMPLETE_TYPE
+        $type = self::AUTOCOMPLETE_TYPE,
+        array $additionalAttributes = []
     ) {
         $this->itemFactory              = $itemFactory;
         $this->queryFactory             = $queryFactory;
@@ -92,6 +101,7 @@ class DataProvider implements DataProviderInterface
         $this->productCollection        = $productCollection;
         $this->configurationHelper      = $configurationHelper;
         $this->type                     = $type;
+        $this->additionalAttributes     = $additionalAttributes;
 
         $this->prepareProductCollection();
     }
@@ -112,7 +122,11 @@ class DataProvider implements DataProviderInterface
         $result = [];
 
         foreach ($this->productCollection as $product) {
-            $result[] = $this->itemFactory->create(['product' => $product, 'type' => $this->getType()]);
+            $result[] = $this->itemFactory->create([
+                'product'               => $product,
+                'type'                  => $this->getType(),
+                'additional_attributes' => $this->additionalAttributes,
+            ]);
         }
 
         return $result;
@@ -133,6 +147,10 @@ class DataProvider implements DataProviderInterface
             ->addAttributeToSelect('thumbnail')
             ->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
             ->addPriceData();
+
+        if ($this->additionalAttributes) {
+            $this->productCollection->addAttributeToSelect($this->additionalAttributes);
+        }
 
         if (!$this->configurationHelper->isShowOutOfStock()) {
             $this->productCollection->addIsInStockFilter();
