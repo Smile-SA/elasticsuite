@@ -56,9 +56,10 @@ class FunctionScoreTest extends AbstractComplexQueryBuilderTest
 
         $this->assertArrayHasKey('functions', $query['function_score']);
         $this->assertCount(2, $query['function_score']['functions']);
-        $this->assertEquals('filterFunctionQuery', current($query['function_score']['functions'])['filter']);
-        $this->assertEquals('filteredFunction', current($query['function_score']['functions'])['functionName']);
-        $this->assertEquals('unfilteredFunction', end($query['function_score']['functions'])['functionName']);
+
+        $this->assertEquals('filterFunctionQuery', $query['function_score']['functions'][0]['filter']);
+        $this->assertEquals('filteredFunction', $query['function_score']['functions'][0]['functionName']);
+        $this->assertEquals('unfilteredFunction', $query['function_score']['functions'][1]['functionName']);
 
         $this->assertEquals(FunctionScoreQuery::SCORE_MODE_SUM, $query['function_score']['score_mode']);
         $this->assertEquals(FunctionScoreQuery::BOOST_MODE_SUM, $query['function_score']['boost_mode']);
