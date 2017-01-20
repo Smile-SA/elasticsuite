@@ -27,21 +27,27 @@ class Autocomplete extends AbstractConfiguration
     const AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX = 'smile_elasticsuite_autocomplete_settings';
 
     /**
-     * Retrieve Max Size for a given type of autocomplete results
+     * Returns max size for a given type of autocomplete results
      *
-     * @param string $type The type of autocomplete element
+     * @param string $type The type of autocomplete element.
      *
      * @return int
      */
-    public function getMaxSize($type = null)
+    public function getMaxSize($type)
     {
-        if ($type === null) {
-            throw new \LogicException('Autocomplete type is missing');
-        }
+        return (int) $this->getConfigValue(sprintf("%s_autocomplete/max_size", $type));
+    }
 
-        $configPath = sprintf("%s_autocomplete/max_size", $type);
-
-        return (int) $this->getConfigValue($configPath);
+    /**
+     * Returns if an autocomplete type is enabled or not.
+     *
+     * @param string $type The type of autocomplete element.
+     *
+     * @return boolean
+     */
+    public function isEnabled($type)
+    {
+        return $this->getMaxSize($type) > 0;
     }
 
     /**
