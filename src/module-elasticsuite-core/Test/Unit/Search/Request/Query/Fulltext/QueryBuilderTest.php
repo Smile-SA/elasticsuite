@@ -18,6 +18,12 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Magento\Framework\ObjectManagerInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Index\Mapping;
 
 /**
  * Fulltext query builder test case.
@@ -32,10 +38,10 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     private $mockedQueryTypes = [
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_COMMON,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_MULTIMATCH,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_FILTER,
-        \Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_BOOL,
+        QueryInterface::TYPE_COMMON,
+        QueryInterface::TYPE_MULTIMATCH,
+        QueryInterface::TYPE_FILTER,
+        QueryInterface::TYPE_BOOL,
     ];
 
     /**
@@ -134,9 +140,10 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
     private function runTestQueryBuilder($searchTerms, $spellingType, $expectedQueryType)
     {
         $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
+        $fieldFilters    = $this->getFieldFilters();
         $containerConfig = $this->getContainerConfigMock($this->fields);
 
-        $builder = new QueryBuilder($queryFactory);
+        $builder = new QueryBuilder($queryFactory, $fieldFilters);
 
         $query = $builder->create($containerConfig, $searchTerms, $spellingType);
 
@@ -159,13 +166,13 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
             $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
             $queryMock->method('getType')->will($this->returnValue($currentType));
 
-            $factory = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)->getMock();
+            $factory = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
             $factory->method('create')->will($this->returnValue($queryMock));
 
             $factories[$currentType] = $factory;
         }
 
-        return new \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory($factories);
+        return new QueryFactory($factories);
     }
 
     /**
@@ -177,10 +184,10 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private function getContainerConfigMock($fields)
     {
-        $config = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface::class)
+        $config = $this->getMockBuilder(ContainerConfigurationInterface::class)
             ->getMock();
 
-        $mapping         = new \Smile\ElasticsuiteCore\Index\Mapping('idField', $fields);
+        $mapping         = new Mapping('idField', $fields);
         $config->method('getMapping')->will($this->returnValue($mapping));
 
         $relevanceConfig = $this->getRelevanceConfig();
@@ -196,12 +203,26 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private function getRelevanceConfig()
     {
-        $relevanceConfig = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface::class)
+        $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)
             ->getMock();
 
         $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
         $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
 
         return $relevanceConfig;
+    }
+
+    /**
+     * Prepare field filters used to retrieve weighted search properties during search.
+     *
+     * @return FieldFilterInterface[]
+     */
+    private function getFieldFilters()
+    {
+        $fieldFilterMock = $this->getMockBuilder(FieldFilterInterface::class)->getMock();
+
+        $fieldFilterMock->method('filterField')->will($this->returnValue(true));
+
+        return ['searchableFieldFilter' => $fieldFilterMock, 'fuzzyFieldFilter' => $fieldFilterMock];
     }
 }
