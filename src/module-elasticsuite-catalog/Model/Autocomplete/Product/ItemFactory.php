@@ -70,7 +70,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     public function create(array $data)
     {
         $data = $this->addProductData($data);
-        unset($data['product']);
+        unset($data['product'], $data['additional_attributes']);
 
         return parent::create($data);
     }
@@ -92,6 +92,10 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
             'url'         => $product->getProductUrl(),
             'price'       => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
         ];
+        $additionalAttributes = $data['additional_attributes'];
+        foreach ($additionalAttributes as $additionalAttributeKey => $additionalAttribute) {
+            $productData[$additionalAttributeKey] = $product->getData($additionalAttribute);
+        }
 
         $data = array_merge($data, $productData);
 
