@@ -161,7 +161,9 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
      */
     private function getFactory($name, $class)
     {
-        $factory = $this->getMock($name . 'Factory', ['create']);
+        $factory = $this->getMockBuilder($name . 'Factory')
+            ->setMethods(['create'])
+            ->getMock();
 
         $createMethod = function ($args) use ($class) {
             $class = new \ReflectionClass($class);
