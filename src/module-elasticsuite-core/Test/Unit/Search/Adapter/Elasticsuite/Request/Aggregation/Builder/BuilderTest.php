@@ -46,8 +46,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 1; $i <= 2; $i++) {
             $aggregationName = sprintf('aggregation%s', $i);
-            $aggregation     = $this->getAggregationByName($aggregations, $aggregationName);
-            $this->assertEquals(['type' => 'bucketType'], $aggregation);
+            $this->processSimpleAggregartionAssertions($aggregationName, $aggregations);
         }
     }
 
@@ -68,8 +67,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
-        $this->assertEquals(['type' => 'bucketType'], $aggregation);
+        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -94,8 +92,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
-        $this->assertEquals(['type' => 'bucketType'], $aggregation);
+        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -114,8 +111,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
-        $this->assertEquals(['type' => 'bucketType'], $aggregation);
+        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -238,13 +234,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
      * Run assertion on a simple bucket.
      *
      * @param string $aggregationName Aggregation name.
+     * @param array  $aggregations    Parent aggregation.
      *
      * @return void
      */
-    private function processSimpleAggregartionAssertions($aggregationName)
+    private function processSimpleAggregartionAssertions($aggregationName, $aggregations)
     {
-        $this->assertArrayHasKey($aggregationName, $subAggregations);
-        $this->assertEquals(['type' => 'bucketType'], $subAggregations[$aggregationName]);
+        $this->assertArrayHasKey($aggregationName, $aggregations);
+        $this->assertEquals(['type' => 'bucketType'], $aggregations[$aggregationName]);
     }
 
     /**
