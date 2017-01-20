@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter;
 /**
  * Mapping test case.
  *
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
