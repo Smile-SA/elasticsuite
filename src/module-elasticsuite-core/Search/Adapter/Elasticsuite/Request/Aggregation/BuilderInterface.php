@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation;
 
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
@@ -27,9 +26,9 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 interface BuilderInterface
 {
     /**
-     * Build the ES query from a Query
+     * Build the ES aggregation from a search request bucket.
      *
-     * @param QueryInterface $query Query to be built.
+     * @param BucketInterface $bucket Bucketto be built.
      *
      * @return array
      */

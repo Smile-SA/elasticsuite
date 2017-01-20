@@ -54,7 +54,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test building simple sort order.
+     * Test building simple sort order (desc direction).
      *
      * @return void
      */
@@ -72,8 +72,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('_first', $currentSortOrder['field']['missing']);
     }
 
-
-
+    /**
+     * Test building multiple sort order.
+     *
+     * @return void
+     */
     public function testMultipleSortOrder()
     {
         $requestSortOrders = [
@@ -88,6 +91,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('field2', $sortOrders[1]);
     }
 
+    /**
+     * Test building a nested filter sort order.
+     *
+     * @return void
+     */
     public function testNestedSortOrder()
     {
         $requestSortOrders = [
@@ -106,6 +114,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
     }
 
+    /**
+     * Test building a nested filter sort order.
+     *
+     * @return void
+     */
     public function testNestedFilterSortOrder()
     {
         $filterQuery       = $this->getMockBuilder(QueryInterface::class)->getMock();
@@ -126,6 +139,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('query', $currentSortOrder['parent.child']['nested_filter']);
     }
 
+    /**
+     * Init the sort order builder used in tests.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\SortOrder\Builder
+     */
     private function getSortOrderBuilder()
     {
         $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->getMock();

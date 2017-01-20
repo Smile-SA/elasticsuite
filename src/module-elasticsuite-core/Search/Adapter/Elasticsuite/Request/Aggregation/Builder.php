@@ -38,8 +38,8 @@ class Builder
     /**
      * Constructor.
      *
-     * @param QueryBuilder       $queryBuilder  Query builder used to build queries inside sort orders.
-     * @param \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[] $builders
+     * @param QueryBuilder                                                  $queryBuilder Query builder used to build queries inside sort orders.
+     * @param \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[] $builders     Aggregation builder implementations
      */
     public function __construct(QueryBuilder $queryBuilder, array $builders = [])
     {

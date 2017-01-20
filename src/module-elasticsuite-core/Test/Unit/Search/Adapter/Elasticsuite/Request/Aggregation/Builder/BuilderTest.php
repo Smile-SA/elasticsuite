@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
- * Search adapter query builder test case.
+ * Search adapter aggregation builder test case.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
@@ -29,6 +29,11 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  */
 class BuilderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Test building a simple aggregation.
+     *
+     * @return void
+     */
     public function testBuildSimpleAggregations()
     {
         $buckets = [
@@ -39,13 +44,18 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $aggregations = $this->getAggregationBuilder()->buildAggregations($buckets);
         $this->assertCount(2, $aggregations);
 
-        for ($i = 1; $i <=2; $i++) {
+        for ($i = 1; $i <= 2; $i++) {
             $aggregationName = sprintf('aggregation%s', $i);
             $aggregation     = $this->getAggregationByName($aggregations, $aggregationName);
             $this->assertEquals(['type' => 'bucketType'], $aggregation);
         }
     }
 
+    /**
+     * Test building a nested aggregation.
+     *
+     * @return void
+     */
     public function testBuildNestedAggregation()
     {
         $buckets = [$this->createNestedBucket('aggregation', 'bucketType')];
@@ -57,11 +67,16 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('parent', $aggregation['nested']['path']);
         $this->assertCount(2, $aggregation);
 
-        $aggregations = $this->getSubAggregartions($aggregation);
+        $aggregations = $this->getSubAggregations($aggregation);
         $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
         $this->assertEquals(['type' => 'bucketType'], $aggregation);
     }
 
+    /**
+     * Test building a nested filter aggregation.
+     *
+     * @return void
+     */
     public function testBuildFilteredNestedAggregation()
     {
         $buckets = [$this->createFilteredNestedBucket('aggregation', 'bucketType')];
@@ -72,17 +87,22 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('path', $aggregation['nested']);
         $this->assertEquals('parent', $aggregation['nested']['path']);
 
-        $aggregations = $this->getSubAggregartions($aggregation);
+        $aggregations = $this->getSubAggregations($aggregation);
         $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
         $this->assertArrayHasKey('filter', $aggregation);
         $this->assertEquals('query', $aggregation['filter']);
         $this->assertCount(2, $aggregation);
 
-        $aggregations = $this->getSubAggregartions($aggregation);
+        $aggregations = $this->getSubAggregations($aggregation);
         $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
         $this->assertEquals(['type' => 'bucketType'], $aggregation);
     }
 
+    /**
+     * Test building a filtered aggregation.
+     *
+     * @return void
+     */
     public function testBuildFilteredAggregation()
     {
         $buckets = [$this->createFilteredBucket('aggregation', 'bucketType')];
@@ -93,7 +113,7 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('query', $aggregation['filter']);
         $this->assertCount(2, $aggregation);
 
-        $aggregations = $this->getSubAggregartions($aggregation);
+        $aggregations = $this->getSubAggregations($aggregation);
         $aggregation  = $this->getAggregationByName($aggregations, 'aggregation');
         $this->assertEquals(['type' => 'bucketType'], $aggregation);
     }
@@ -113,6 +133,8 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Prepare the aggregation builder used by the test case.
+     *
      * @return AggregationBuilder
      */
     private function getAggregationBuilder()
@@ -129,11 +151,11 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Create a simple bucket.
      *
-     * @param unknown $name
-     * @param unknown $type
-     * @param unknown $nestedPath
-     * @param string $filtered
+     * @param string $name Bucket name.
+     * @param string $type Bucket type.
+     *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     private function createBucket($name, $type)
@@ -146,6 +168,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         return $bucket;
     }
 
+    /**
+     * Create a nested bucket.
+     *
+     * @param string $name Bucket name.
+     * @param string $type Bucket type.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function createNestedBucket($name, $type)
     {
         $bucket = $this->createBucket($name, $type);
@@ -155,6 +185,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         return $bucket;
     }
 
+    /**
+     * Create a nested filtered bucket.
+     *
+     * @param string $name Bucket name.
+     * @param string $type Bucket type.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function createFilteredNestedBucket($name, $type)
     {
         $filter = $this->getMockBuilder(QueryInterface::class)->getMock();
@@ -166,6 +204,14 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         return $bucket;
     }
 
+    /**
+     * Create a filtered bucket.
+     *
+     * @param string $name Bucket name.
+     * @param string $type Bucket type.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
     private function createFilteredBucket($name, $type)
     {
         $filter = $this->getMockBuilder(QueryInterface::class)->getMock();
@@ -188,12 +234,27 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         return $queryBuilderMock;
     }
 
+    /**
+     * Run assertion on a simple bucket.
+     *
+     * @param string $aggregationName Aggregation name.
+     *
+     * @return void
+     */
     private function processSimpleAggregartionAssertions($aggregationName)
     {
         $this->assertArrayHasKey($aggregationName, $subAggregations);
         $this->assertEquals(['type' => 'bucketType'], $subAggregations[$aggregationName]);
     }
 
+    /**
+     * Return an aggregation by name.
+     *
+     * @param array  $aggregations    Aggregations.
+     * @param string $aggregationName Aggregation name.
+     *
+     * @return array
+     */
     private function getAggregationByName($aggregations, $aggregationName)
     {
         $this->assertArrayHasKey($aggregationName, $aggregations);
@@ -201,7 +262,15 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
         return $aggregations[$aggregationName];
     }
 
-    private function getSubAggregartions($aggregation, $expectedCount = 1)
+    /**
+     * Return all subaggregations of parent aggregation.
+     *
+     * @param string $aggregation   Parent aggregation.
+     * @param number $expectedCount Expected number of subaggregation.
+     *
+     * @return string
+     */
+    private function getSubAggregations($aggregation, $expectedCount = 1)
     {
         $this->assertArrayHasKey('aggregations', $aggregation);
         $this->assertCount($expectedCount, $aggregation['aggregations']);
