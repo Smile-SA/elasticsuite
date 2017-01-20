@@ -118,17 +118,17 @@ class QueryBuilder
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
 
-        if ($condition['field'] === null || 'queryText' === $condition) {
-            $analyzer           = $field->getDefaultSearchAnalyzer();
-            $property           = $field->getMappingProperty($analyzer);
+        if ($condition['field'] === null || isset($condition['queryText'])) {
+            $analyzer = $field->getDefaultSearchAnalyzer();
+            $property = $field->getMappingProperty($analyzer);
             if ($property) {
                 $condition['field'] = $property;
-            }
-        }
 
-        if ('queryText' === $condition) {
-            $queryType = QueryInterface::TYPE_MATCH;
-            $condition['minimumShouldMatch'] = '100%';
+                if (isset($condition['queryText'])) {
+                    $queryType = QueryInterface::TYPE_MATCH;
+                    $condition['minimumShouldMatch'] = '100%';
+                }
+            }
         }
 
         $query = $this->queryFactory->create($queryType, $condition);

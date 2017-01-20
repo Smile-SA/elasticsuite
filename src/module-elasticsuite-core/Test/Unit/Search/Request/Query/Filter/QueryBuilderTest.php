@@ -114,7 +114,7 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $query = $this->buildQuery(['simpleTextField' => ['like' => 'fulltext']]);
         $this->assertInstanceOf(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class, $query);
-        $this->assertEquals(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_MATCH, $query->getType());
+        $this->assertEquals(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::TYPE_TERMS, $query->getType());
 
         $query = $this->buildQuery(['analyzedField' => ['like' => 'fulltext']]);
         $this->assertInstanceOf(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class, $query);
