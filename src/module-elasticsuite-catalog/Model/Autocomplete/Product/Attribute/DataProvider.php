@@ -114,23 +114,27 @@ class DataProvider implements DataProviderInterface
     {
         $items = [];
 
-        foreach ($this->attributeCollection as $attribute) {
-            $filterField = $this->getFilterField($attribute);
-            $facetData   = $this->productCollection->getFacetedData($filterField);
+        if ($this->autocompleteHelper->isEnabled($this->getType())) {
+            foreach ($this->attributeCollection as $attribute) {
+                $filterField = $this->getFilterField($attribute);
+                $facetData   = $this->productCollection->getFacetedData($filterField);
 
-            foreach ($facetData as $currentFilter) {
-                if ($currentFilter['value'] != '__other_docs') {
-                    $currentFilter['attribute_code']  = $attribute->getAttributeCode();
-                    $currentFilter['attribute_label'] = $attribute->getStoreLabel();
-                    $currentFilter['type']            = $this->getType();
-                    $items[] = $this->itemFactory->create($currentFilter);
+                foreach ($facetData as $currentFilter) {
+                    if ($currentFilter['value'] != '__other_docs') {
+                        $currentFilter['attribute_code']  = $attribute->getAttributeCode();
+                        $currentFilter['attribute_label'] = $attribute->getStoreLabel();
+                        $currentFilter['type']            = $this->getType();
+                        $items[] = $this->itemFactory->create($currentFilter);
+                    }
                 }
             }
+
+            uasort($items, [$this, 'resultSorterCallback']);
+
+            $items = array_slice($items, 0, $this->getResultsPageSize());
         }
 
-        uasort($items, [$this, 'resultSorterCallback']);
-
-        return array_slice($items, 0, $this->getResultsPageSize());
+        return $items;
     }
 
     /**

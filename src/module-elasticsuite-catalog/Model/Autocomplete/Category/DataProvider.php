@@ -106,10 +106,13 @@ class DataProvider implements DataProviderInterface
     public function getItems()
     {
         $result = [];
-        $categoryCollection = $this->getCategoryCollection();
-        if ($categoryCollection) {
-            foreach ($categoryCollection as $category) {
-                $result[] = $this->itemFactory->create(['category' => $category, 'type' => $this->getType()]);
+
+        if ($this->configurationHelper->isEnabled($this->getType())) {
+            $categoryCollection = $this->getCategoryCollection();
+            if ($categoryCollection) {
+                foreach ($categoryCollection as $category) {
+                    $result[] = $this->itemFactory->create(['category' => $category, 'type' => $this->getType()]);
+                }
             }
         }
 
@@ -142,18 +145,17 @@ class DataProvider implements DataProviderInterface
     private function getCategoryCollection()
     {
         $categoryCollection = null;
-        if ($this->getResultsPageSize() > 0) {
-            $suggestedTerms = $this->getSuggestedTerms();
-            $terms          = [$this->queryFactory->get()->getQueryText()];
 
-            if (!empty($suggestedTerms)) {
-                $terms = array_merge($terms, $suggestedTerms);
-            }
+        $suggestedTerms = $this->getSuggestedTerms();
+        $terms          = [$this->queryFactory->get()->getQueryText()];
 
-            $categoryCollection = $this->categoryCollectionFactory->create();
-            $categoryCollection->addSearchFilter($terms);
-            $categoryCollection->setPageSize($this->getResultsPageSize());
+        if (!empty($suggestedTerms)) {
+            $terms = array_merge($terms, $suggestedTerms);
         }
+
+        $categoryCollection = $this->categoryCollectionFactory->create();
+        $categoryCollection->addSearchFilter($terms);
+        $categoryCollection->setPageSize($this->getResultsPageSize());
 
         return $categoryCollection;
     }

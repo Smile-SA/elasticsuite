@@ -111,8 +111,10 @@ class DataProvider implements DataProviderInterface
     {
         $result = [];
 
-        foreach ($this->productCollection as $product) {
-            $result[] = $this->itemFactory->create(['product' => $product, 'type' => $this->getType()]);
+        if ($this->configurationHelper->isEnabled($this->getType())) {
+            foreach ($this->productCollection as $product) {
+                $result[] = $this->itemFactory->create(['product' => $product, 'type' => $this->getType()]);
+            }
         }
 
         return $result;
