@@ -35,7 +35,7 @@ class Missing implements BuilderInterface
             throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
         }
 
-        $searchQuery = ['missing' => ['field' => $query->getField(), 'boost' => $query->getBoost()]];
+        $searchQuery = ['missing' => ['field' => $query->getField()]];
 
         if ($query->getName()) {
             $searchQuery['missing']['_name'] = $query->getName();

@@ -40,8 +40,6 @@ class MissingTest extends AbstractSimpleQueryBuilderTest
 
         $this->assertArrayHasKey('missing', $query);
         $this->assertArrayHasKey('field', $query['missing']);
-        $this->assertEquals(MissingQuery::DEFAULT_BOOST_VALUE, $query['missing']['boost']);
-
         $this->assertArrayNotHasKey('_name', $query['missing']);
     }
 
