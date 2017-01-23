@@ -36,6 +36,10 @@ class Term implements BuilderInterface
      */
     public function buildBucket(BucketInterface $bucket)
     {
+        if ($bucket->getType() !== BucketInterface::TYPE_TERM) {
+            throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
+        }
+
         $aggregation = ['terms' => ['field' => $bucket->getField(), 'size' => $bucket->getSize()]];
 
         if (in_array($bucket->getSortOrder(), [$bucket::SORT_ORDER_COUNT, $bucket::SORT_ORDER_MANUAL])) {

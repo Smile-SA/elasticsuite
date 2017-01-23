@@ -35,7 +35,15 @@ class Histogram implements BuilderInterface
      */
     public function buildBucket(BucketInterface $bucket)
     {
-        $aggParams = ['field' => $bucket->getField(), 'interval' => $bucket->getInterval(), 'min_doc_count' => $bucket->getMinDocCount()];
+        if ($bucket->getType() !== BucketInterface::TYPE_HISTOGRAM) {
+            throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
+        }
+
+        $aggParams = [
+            'field'         => $bucket->getField(),
+            'interval'      => $bucket->getInterval(),
+            'min_doc_count' => $bucket->getMinDocCount(),
+        ];
 
         return ['histogram' => $aggParams];
     }
