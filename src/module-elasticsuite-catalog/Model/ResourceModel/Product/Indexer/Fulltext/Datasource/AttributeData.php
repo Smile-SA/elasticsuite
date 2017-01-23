@@ -85,34 +85,12 @@ class AttributeData extends AbstractAttributeData
             $relation = $typeInstance->getRelationInfo();
 
             if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
-                $relationTable   = $this->getTable($relation->getTable());
-                $parentFieldName = $relation->getParentFieldName();
-                $childFieldName  = $relation->getChildFieldName();
-
-                $select = $this->getConnection()->select()
-                    ->from(['main' => $relationTable], [$parentFieldName, $childFieldName])
-                    ->where("main.{$parentFieldName} in (?)", $productIds);
-
-                if ($relation->getWhere() !== null) {
-                    $select->where($relation->getWhere());
-                }
-
-                $configurationTable   = $this->getTable("catalog_product_super_attribute");
-                $configurableAttrExpr = "GROUP_CONCAT(DISTINCT super_table.attribute_id SEPARATOR ',')";
-
-                $select->joinLeft(
-                    ["super_table" => $configurationTable],
-                    "super_table.product_id = main.{$parentFieldName}",
-                    ["configurable_attributes" => new \Zend_Db_Expr($configurableAttrExpr)]
-                );
-
-                $select->group("main.{$childFieldName}");
-
-                $data = $this->getConnection()->fetchAll($select);
+                $select = $this->getRelationQuery($relation, $productIds);
+                $data   = $this->getConnection()->fetchAll($select);
 
                 foreach ($data as $relationRow) {
-                    $parentId = (int) $relationRow[$parentFieldName];
-                    $childId  = (int) $relationRow[$childFieldName];
+                    $parentId = (int) $relationRow['parent_id'];
+                    $childId  = (int) $relationRow['child_id'];
                     $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"]));
                     $children[$childId][] = [
                         "parent_id"               => $parentId,
@@ -169,5 +147,54 @@ class AttributeData extends AbstractAttributeData
     protected function getEntityTypeId()
     {
         return ProductInterface::class;
+    }
+
+    /**
+     * Retrieve
+     *
+     * @param \Magento\Framework\DataObject $relation  Relation Instance
+     * @param array                         $parentIds The parent product Ids (array of entity_id)
+     *
+     * @return \Magento\Framework\DB\Select
+     */
+    private function getRelationQuery($relation, $parentIds)
+    {
+        $linkField       = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
+        $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
+        $entityTable     = $this->getTable($this->getEntityMetaData($this->getEntityTypeId())->getEntityTable());
+        $relationTable   = $this->getTable($relation->getTable());
+        $parentFieldName = $relation->getParentFieldName();
+        $childFieldName  = $relation->getChildFieldName();
+
+        $select = $this->getConnection()->select()
+            ->from(['main' => $relationTable], [])
+            ->joinInner(
+                ['parent' => $entityTable],
+                new \Zend_Db_Expr("parent.{$linkField} = main.{$parentFieldName}"),
+                ['parent_id' => $entityIdField]
+            )
+            ->joinInner(
+                ['child' => $entityTable],
+                new \Zend_Db_Expr("child.{$entityIdField} = main.{$childFieldName}"),
+                ['child_id' => $entityIdField]
+            )
+            ->where("parent.{$entityIdField} in (?)", $parentIds);
+
+        if ($relation->getWhere() !== null) {
+            $select->where($relation->getWhere());
+        }
+
+        $configurationTable   = $this->getTable("catalog_product_super_attribute");
+        $configurableAttrExpr = "GROUP_CONCAT(DISTINCT super_table.attribute_id SEPARATOR ',')";
+
+        $select->joinLeft(
+            ["super_table" => $configurationTable],
+            "super_table.product_id = main.{$parentFieldName}",
+            ["configurable_attributes" => new \Zend_Db_Expr($configurableAttrExpr)]
+        );
+
+        $select->group("main.{$childFieldName}");
+
+        return $select;
     }
 }
