@@ -14,7 +14,7 @@ engines:
     enabled: true
     config:
       file_extensions: php
-      rulesets: Resources/phpmd-rulesets/rulset.xml
+      rulesets: vendor/smile/magento2-coding-standards/phpmd-rulesets/rulset.xml
 ratings:
   paths:
   - "**.js"
