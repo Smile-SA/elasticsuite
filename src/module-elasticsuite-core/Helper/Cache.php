@@ -68,7 +68,7 @@ class Cache extends AbstractHelper
      * @param string[] $cacheTags Cache tags.
      * @param integer  $lifetime  Cache lifetime.
      */
-    public function saveCache($cacheKey, $data, $cacheTags, $lifetime = self::DEFAULT_LIFETIME)
+    public function saveCache($cacheKey, $data, $cacheTags = [], $lifetime = self::DEFAULT_LIFETIME)
     {
         $this->localCache[$cacheKey] = $data;
 
@@ -111,8 +111,8 @@ class Cache extends AbstractHelper
      */
     public function cleanIndexCache($indexIdentifier, $storeId)
     {
-        $cacheTags = $this->getCacheTags($indexIdentifier, $storeId);
-
+        $cacheTags        = $this->getCacheTags($indexIdentifier, $storeId);
+        $this->localCache = [];
         $this->cache->clean($cacheTags);
     }
 
