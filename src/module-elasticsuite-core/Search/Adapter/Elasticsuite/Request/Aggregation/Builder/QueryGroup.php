@@ -51,6 +51,10 @@ class QueryGroup implements BuilderInterface
      */
     public function buildBucket(BucketInterface $bucket)
     {
+        if ($bucket->getType() !== BucketInterface::TYPE_QUERY_GROUP) {
+            throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
+        }
+
         $filters    = [];
 
         foreach ($bucket->getQueries() as $value => $query) {

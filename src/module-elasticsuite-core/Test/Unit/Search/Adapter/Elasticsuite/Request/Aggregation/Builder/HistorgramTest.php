@@ -32,7 +32,7 @@ class HistogramTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testBasicTermAggregationBuild()
+    public function testHistogramAggregationBuild()
     {
         $aggBuilder = $this->getHistogramAggregationBuilder();
         $bucket     = new HistogramBucket('aggregationName', 'fieldName', []);
