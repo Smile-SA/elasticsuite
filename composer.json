@@ -48,9 +48,10 @@
         "phpmd/phpmd": "*",
         "pdepend/pdepend": "*",
         "sjparkinson/static-review": "*",
-        "fabpot/php-cs-fixer": "*",
-        "lusitanian/oauth": "*",
-        "squizlabs/php_codesniffer": "*"
+        "friendsofphp/php-cs-fixer": "*",
+        "squizlabs/php_codesniffer": "*",
+        "smile/magento2-smilelab-phpmd": "*",
+        "smile/magento2-smilelab-phpcs": "*"
     },
     "autoload": {
         "files": [
