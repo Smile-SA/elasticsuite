@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteCore\Search\Request\Aggregation;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Factory for search request aggregation buckets.
@@ -52,7 +51,7 @@ class AggregationFactory
     public function create($bucketType, $bucketParams)
     {
         if (!isset($this->factories[$bucketType])) {
-            throw new \LogicException("No factory found for query of type {$bucketType}");
+            throw new \LogicException("No factory found for aggregation of type {$bucketType}");
         }
 
         return $this->factories[$bucketType]->create($bucketParams);

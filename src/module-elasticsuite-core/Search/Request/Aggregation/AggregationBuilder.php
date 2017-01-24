@@ -137,9 +137,9 @@ class AggregationBuilder
             unset($bucketParams['filter']);
         }
 
-        if ($field->isNested() && !isset($bucketParams['nestedPath'])) {
+        if ($field->isNested()) {
             $bucketParams['nestedPath'] = $field->getNestedPath();
-        } elseif ($field->isNested() === false && isset($bucketParams['nestedPath'])) {
+        } elseif (isset($bucketParams['nestedPath'])) {
             unset($bucketParams['nestedPath']);
         }
 
