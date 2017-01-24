@@ -10,11 +10,10 @@ engines:
     enabled: true
   fixme:
     enabled: true
-  phpmd:
+  phan:
     enabled: true
     config:
       file_extensions: php
-      rulesets: vendor/smile/magento2-coding-standards/phpmd-rulesets/rulset.xml
 ratings:
   paths:
   - "**.js"
