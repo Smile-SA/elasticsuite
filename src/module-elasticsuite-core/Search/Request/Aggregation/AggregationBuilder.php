@@ -104,7 +104,7 @@ class AggregationBuilder
      */
     private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters)
     {
-        return $this->queryBuilder->createFilters($containerConfiguration, $filters);
+        return $this->queryBuilder->createFilterQuery($containerConfiguration, $filters);
     }
 
     /**
@@ -137,9 +137,9 @@ class AggregationBuilder
             unset($bucketParams['filter']);
         }
 
-        if ($field->isNested() && !isset($bucketParams['nestedPath'])) {
+        if ($field->isNested()) {
             $bucketParams['nestedPath'] = $field->getNestedPath();
-        } elseif ($field->isNested() === false && isset($bucketParams['nestedPath'])) {
+        } elseif (isset($bucketParams['nestedPath'])) {
             unset($bucketParams['nestedPath']);
         }
 

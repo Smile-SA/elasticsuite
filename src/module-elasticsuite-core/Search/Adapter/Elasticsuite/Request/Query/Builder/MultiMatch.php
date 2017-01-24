@@ -31,6 +31,10 @@ class MultiMatch implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_MULTIMATCH) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $fields = [];
 
         foreach ($query->getFields() as $field => $weight) {
@@ -43,11 +47,8 @@ class MultiMatch implements BuilderInterface
             'minimum_should_match' => $query->getMinimumShouldMatch(),
             'tie_breaker'          => $query->getTieBreaker(),
             'boost'                => $query->getBoost(),
+            'type'                 => $query->getMatchType(),
         ];
-
-        if ($query->getMatchType()) {
-            $searchQueryParams['type'] = $query->getMatchType();
-        }
 
         if ($query->getCutoffFrequency()) {
             $searchQueryParams['cutoff_frequency'] = $query->getCutoffFrequency();
@@ -57,6 +58,10 @@ class MultiMatch implements BuilderInterface
             $searchQueryParams['fuzziness'] = $query->getFuzzinessConfiguration()->getValue();
             $searchQueryParams['prefix_length'] = $query->getFuzzinessConfiguration()->getPrefixLength();
             $searchQueryParams['max_expansions'] = $query->getFuzzinessConfiguration()->getMaxExpansion();
+        }
+
+        if ($query->getName()) {
+            $searchQueryParams['_name'] = $query->getName();
         }
 
         return ['multi_match' => $searchQueryParams];

@@ -76,12 +76,12 @@ class Builder
     {
         $queryParams = [];
 
-        if (!empty($filters)) {
-            $queryParams = ['filter' => $this->filterQueryBuilder->create($containerConfiguration, $filters)];
+        if ($queryText) {
+            $queryParams['query'] = $this->createFulltextQuery($containerConfiguration, $queryText, $spellingType);
         }
 
-        if ($queryText) {
-            $queryParams['query'] = $this->fulltextQueryBuilder->create($containerConfiguration, $queryText, $spellingType);
+        if (!empty($filters)) {
+            $queryParams['filter'] = $this->createFilterQuery($containerConfiguration, $filters);
         }
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
@@ -95,8 +95,37 @@ class Builder
      *
      * @return QueryInterface
      */
-    public function createFilters(ContainerConfigurationInterface $containerConfiguration, array $filters)
+    public function createFilterQuery(ContainerConfigurationInterface $containerConfiguration, array $filters)
     {
         return $this->filterQueryBuilder->create($containerConfiguration, $filters);
+    }
+
+    /**
+     * Create a query from a search text query.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
+     * @param string|null                     $queryText              Fulltext query.
+     * @param string                          $spellingType           For fulltext query : the type of spellchecked applied.
+     *
+     * @return QueryInterface
+     */
+    public function createFulltextQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, $spellingType)
+    {
+        return $this->fulltextQueryBuilder->create($containerConfiguration, $queryText, $spellingType);
+    }
+
+    /**
+     * Create a query from filters passed as arguments.
+     *
+     * @deprecated
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
+     * @param array                           $filters                Filters used to build the query.
+     *
+     * @return QueryInterface
+     */
+    public function createFilters(ContainerConfigurationInterface $containerConfiguration, array $filters)
+    {
+        return $this->createFilterQuery($containerConfiguration, $filters);
     }
 }

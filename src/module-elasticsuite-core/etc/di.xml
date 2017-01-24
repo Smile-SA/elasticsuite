@@ -84,12 +84,41 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="boolQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boolean\Proxy</item>
+                <item name="filteredQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Filtered\Proxy</item>
+                <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nested\Proxy</item>
+                <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Not\Proxy</item>
+                <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing\Proxy</item>
+                <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term\Proxy</item>
+                <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms\Proxy</item>
+                <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range\Proxy</item>
+                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match\Proxy</item>
+                <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common\Proxy</item>
+                <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
+                <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
                 <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory</item>
                 <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory</item>
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory</item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term\Proxy</item>
+                <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram\Proxy</item>
+                <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
             </argument>
         </arguments>
     </type>

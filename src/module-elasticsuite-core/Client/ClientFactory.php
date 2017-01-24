@@ -14,10 +14,6 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Psr\Log\LoggerInterface;
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
-use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 
 /**
@@ -30,12 +26,17 @@ use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 class ClientFactory implements ClientFactoryInterface
 {
     /**
-     * @var ClientConfigurationInterface
+     * @var \Elasticsearch\ClientBuilder
+     */
+    private $clientBuilder;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface
      */
     private $clientConfiguration;
 
     /**
-     * @var LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
@@ -47,32 +48,34 @@ class ClientFactory implements ClientFactoryInterface
     /**
      * Factory constructor.
      *
-     * @param ClientConfigurationInterface $clientConfiguration Elasticsearch configuration helper.
-     * @param LoggerInterface              $logger              Elasticsearch logger.
+     * @param \Elasticsearch\ClientBuilder                                    $clientBuilder       Elasticsearch client builder.
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration Elasticsearch configuration helper.
+     * @param \Psr\Log\LoggerInterface                                        $logger              Elasticsearch logger.
      */
-    public function __construct(ClientConfigurationInterface $clientConfiguration, LoggerInterface $logger)
-    {
-        $this->clientConfiguration = $clientConfiguration;
-        $this->logger = $logger;
+    public function __construct(
+        \Elasticsearch\ClientBuilder $clientBuilder,
+        \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration,
+        \Psr\Log\LoggerInterface $logger
+    ) {
+        $this->clientBuilder        = $clientBuilder;
+        $this->clientConfiguration  = $clientConfiguration;
+        $this->logger               = $logger;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function createClient()
     {
         if ($this->client === null) {
-            $clientBuilder = ClientBuilder::create();
             $hosts         = $this->getHosts();
-            $clientBuilder->setHosts($hosts);
+            $this->clientBuilder->setHosts($hosts);
 
             if ($this->clientConfiguration->isDebugModeEnabled()) {
-                $clientBuilder->setLogger($this->logger);
+                $this->clientBuilder->setLogger($this->logger);
             }
 
-            $this->client = $clientBuilder->build();
+            $this->client = $this->clientBuilder->build();
         }
 
         return $this->client;

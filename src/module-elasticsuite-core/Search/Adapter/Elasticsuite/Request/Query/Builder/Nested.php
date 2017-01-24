@@ -31,13 +31,21 @@ class Nested extends AbstractComplexBuilder implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        $searchQuery = [
+        if ($query->getType() !== QueryInterface::TYPE_NESTED) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
+        $queryParams = [
             'path'       => $query->getPath(),
             'score_mode' => $query->getScoreMode(),
             'query'      => $this->parentBuilder->buildQuery($query->getQuery()),
             'boost'      => $query->getBoost(),
         ];
 
-        return ['nested' => $searchQuery];
+        if ($query->getName()) {
+            $queryParams['_name'] = $query->getName();
+        }
+
+        return ['nested' => $queryParams];
     }
 }

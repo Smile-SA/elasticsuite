@@ -16,7 +16,6 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Magento\Framework\ObjectManagerInterface;
 
 /**
  *
@@ -32,30 +31,20 @@ class Builder
     private $queryBuilder;
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[]
      */
-    private $objectManager;
-
-    /**
-     * @var array
-     */
-    private $bucketBuilderClasses = [
-        BucketInterface::TYPE_TERM        => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term',
-        BucketInterface::TYPE_HISTOGRAM   => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram',
-        BucketInterface::TYPE_QUERY_GROUP => 'Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup',
-    ];
-
+    private $builders;
 
     /**
      * Constructor.
      *
-     * @param ObjectManager $objectManager Object manager instance.
-     * @param QueryBuilder  $queryBuilder  Query builder used to build queries inside sort orders.
+     * @param QueryBuilder                                                  $queryBuilder Query builder used to build queries inside sort orders.
+     * @param \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[] $builders     Aggregation builder implementations
      */
-    public function __construct(ObjectManagerInterface $objectManager, QueryBuilder $queryBuilder)
+    public function __construct(QueryBuilder $queryBuilder, array $builders = [])
     {
-        $this->objectManager = $objectManager;
-        $this->queryBuilder  = $queryBuilder;
+        $this->queryBuilder = $queryBuilder;
+        $this->builders     = $builders;
     }
 
     /**
@@ -106,15 +95,14 @@ class Builder
      *
      * @param string $bucketType Bucket type to be built.
      *
-     * @return object
+     * @return \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface
      */
     private function getBuilder($bucketType)
     {
-        if (isset($this->bucketBuilderClasses[$bucketType])) {
-            $builderClass = $this->bucketBuilderClasses[$bucketType];
-            $builder = $this->objectManager->get($builderClass, ['builder' => $this]);
+        if (!isset($this->builders[$bucketType])) {
+            throw new \InvalidArgumentException("No builder found for aggregation type {$bucketType}.");
         }
 
-        return $builder;
+        return $this->builders[$bucketType];
     }
 }

@@ -212,7 +212,7 @@ class Mapping implements MappingInterface
             $property = sprintf("%s.%s", $field, $analyzer);
         }
 
-        return $field;
+        return $property;
     }
 
     /**

@@ -18,9 +18,12 @@ use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter;
 
 /**
  * Mapping test case.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
@@ -194,5 +197,94 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     public function testInvalidIdField()
     {
         new Mapping('missingField');
+    }
+
+    /**
+     * Test weighted field generation.
+     *
+     * @return void
+     */
+    public function testGetWeightedSearchProperties()
+    {
+        $mapping     = $this->getSearchWeightedMapping();
+        $fieldFilter = new SearchableFieldFilter();
+
+        $properties = $mapping->getWeightedSearchProperties(null, null, 2, $fieldFilter);
+        $this->assertCount(4, $properties);
+        $this->assertEquals(2, $properties['standardField']);
+        $this->assertEquals(4, $properties['weightedField']);
+        $this->assertEquals(2, $properties['whitespaceField']);
+        $this->assertEquals(4, $properties['whitespaceWeightedField']);
+
+        $properties = $mapping->getWeightedSearchProperties(Field::ANALYZER_STANDARD, null, 1, $fieldFilter);
+        $this->assertCount(2, $properties);
+        $this->assertEquals(1, $properties['standardField']);
+        $this->assertEquals(2, $properties['weightedField']);
+
+        $properties = $mapping->getWeightedSearchProperties(Field::ANALYZER_WHITESPACE, null, 1, $fieldFilter);
+        $this->assertCount(3, $properties);
+        $this->assertEquals(2, $properties['weightedField.whitespace']);
+        $this->assertEquals(1, $properties['whitespaceField']);
+        $this->assertEquals(2, $properties['whitespaceWeightedField']);
+
+        $properties = $mapping->getWeightedSearchProperties(null, Mapping::DEFAULT_SEARCH_FIELD, 1, $fieldFilter);
+        $this->assertCount(4, $properties);
+        $this->assertEquals(1, $properties['search']);
+        $this->assertEquals(2, $properties['weightedField']);
+        $this->assertEquals(1, $properties['whitespaceField']);
+        $this->assertEquals(2, $properties['whitespaceWeightedField']);
+
+        $properties = $mapping->getWeightedSearchProperties(Field::ANALYZER_WHITESPACE, Mapping::DEFAULT_SEARCH_FIELD, 1, $fieldFilter);
+        $this->assertCount(3, $properties);
+        $this->assertEquals(1, $properties['search.whitespace']);
+        $this->assertEquals(2, $properties['weightedField.whitespace']);
+        $this->assertEquals(2, $properties['whitespaceWeightedField']);
+    }
+
+    /**
+     * Test an exception is thrown when using an invalid default field.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unable to find field invalidDefaultField.
+     *
+     * @return void
+     */
+    public function testInvalidDefaultField()
+    {
+        $this->getSearchWeightedMapping()->getWeightedSearchProperties(null, 'invalidDefaultField');
+    }
+
+    /**
+     * Test an exception is thrown when using an invalid analyzer.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unable to find analyzer invalidAnalyzer for field search.
+     *
+     * @return void
+     */
+    public function testInvalidDefaultFieldAnalyzer()
+    {
+        $this->getSearchWeightedMapping()->getWeightedSearchProperties('invalidAnalyzer', Mapping::DEFAULT_SEARCH_FIELD);
+    }
+
+    /**
+     * Return mapping used in weighted search field tests.
+     *
+     * @return \Smile\ElasticsuiteCore\Index\Mapping
+     */
+    private function getSearchWeightedMapping()
+    {
+        $fields = [
+            new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+            new Field('ignoredField', FieldInterface::FIELD_TYPE_STRING),
+            new Field('standardField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
+            new Field('weightedField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 2]),
+            new Field('whitespaceField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 1, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]),
+            new Field('whitespaceWeightedField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 2, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]),
+            new Field('nested.subfield', FieldInterface::FIELD_TYPE_STRING, 'nested'),
+            new Field('object.subfield', FieldInterface::FIELD_TYPE_STRING),
+        ];
+
+        return new Mapping('entity_id', $fields);
     }
 }

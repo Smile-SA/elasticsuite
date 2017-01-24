@@ -35,6 +35,10 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_BOOL) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $searchQuery = [];
 
         $clauses = [
@@ -56,6 +60,10 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
 
         if ($query->isCached()) {
             $searchQuery['_cache'] = true;
+        }
+
+        if ($query->getName()) {
+            $searchQuery['_name'] = $query->getName();
         }
 
         return ['bool' => $searchQuery];

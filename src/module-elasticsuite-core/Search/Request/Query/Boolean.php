@@ -82,13 +82,13 @@ class Boolean implements QueryInterface
         $boost = QueryInterface::DEFAULT_BOOST_VALUE,
         $cached = false
     ) {
-        $this->must    = $must;
-        $this->should  = $should;
-        $this->mustNot = $mustNot;
-        $this->boost   = $boost;
-        $this->name    = $name;
+        $this->must               = $must;
+        $this->should             = $should;
+        $this->mustNot            = $mustNot;
+        $this->boost              = $boost;
+        $this->name               = $name;
         $this->minimumShouldMatch = $minimumShouldMatch;
-        $this->cached  = $cached;
+        $this->cached             = $cached;
     }
 
     /**

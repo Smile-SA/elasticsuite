@@ -159,7 +159,7 @@ class Builder
         ];
 
         if (!empty($facetFilters)) {
-            $requestParams['filter'] = $this->queryBuilder->createFilters($containerConfig, $facetFilters);
+            $requestParams['filter'] = $this->queryBuilder->createFilterQuery($containerConfig, $facetFilters);
         }
 
         $request = $this->requestFactory->create($requestParams);
