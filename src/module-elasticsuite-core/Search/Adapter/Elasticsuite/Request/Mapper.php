@@ -81,7 +81,6 @@ class Mapper
         }
 
         $filter = $this->getRootFilter($request);
-
         if ($filter) {
             $searchRequest['filter'] = $filter;
         }
@@ -104,13 +103,7 @@ class Mapper
      */
     private function getRootQuery(RequestInterface $request)
     {
-        $query = null;
-
-        if ($request->getQuery()) {
-            $query = $this->queryBuilder->buildQuery($request->getQuery());
-        }
-
-        return $query;
+        return $this->queryBuilder->buildQuery($request->getQuery());
     }
 
     /**
