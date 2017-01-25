@@ -35,10 +35,14 @@ class Collection extends FulltextCollection
     public function addFieldsToFilter($fields)
     {
         if ($fields) {
+            $callback = function ($element) {
+                return is_array($element) ? true : strlen($element);
+            };
+
             foreach ($fields as $fieldByType) {
                 foreach ($fieldByType as $attributeId => $condition) {
                     $attributeCode = $this->getEntity()->getAttribute($attributeId)->getAttributeCode();
-                    $condition     = array_filter($condition, 'strlen');
+                    $condition     = array_filter($condition, $callback);
                     $this->addFieldToFilter($attributeCode, $condition);
                 }
             }
