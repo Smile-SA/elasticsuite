@@ -50,8 +50,8 @@
         "sjparkinson/static-review": "*",
         "friendsofphp/php-cs-fixer": "*",
         "squizlabs/php_codesniffer": "*",
-        "smile/magento2-smilelab-phpmd": "*",
-        "smile/magento2-smilelab-phpcs": "*"
+        "smile/magento2-smilelab-phpmd": "1.0.0",
+        "smile/magento2-smilelab-phpcs": "1.0.0"
     },
     "autoload": {
         "files": [
