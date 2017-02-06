@@ -219,7 +219,7 @@ The next versions that will be coming all among this year will include the follo
 
 Documentation is available [here](https://github.com/Smile-SA/elasticsuite/wiki).
 
-The User Guide is also available on PDF format [here](doc/static/User Guide - ElasticSuite for Magento 2-v2.1.pdf)
+The User Guide is also available on PDF format [here](doc/static/User Guide-ElasticSuite for Magento 2-v2.3.pdf)
 
 ## Standards & Code Quality
 
