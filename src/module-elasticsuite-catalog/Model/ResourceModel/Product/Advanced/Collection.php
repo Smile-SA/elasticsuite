@@ -35,19 +35,38 @@ class Collection extends FulltextCollection
     public function addFieldsToFilter($fields)
     {
         if ($fields) {
-            $callback = function ($element) {
-                return is_array($element) ? true : strlen($element);
-            };
-
             foreach ($fields as $fieldByType) {
                 foreach ($fieldByType as $attributeId => $condition) {
                     $attributeCode = $this->getEntity()->getAttribute($attributeId)->getAttributeCode();
-                    $condition     = array_filter($condition, $callback);
-                    $this->addFieldToFilter($attributeCode, $condition);
+                    $condition     = $this->cleanCondition($condition);
+
+                    if (null !== $condition) {
+                        $this->addFieldToFilter($attributeCode, $condition);
+                    }
                 }
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Ensure proper building of condition
+     *
+     * @param array|string $condition The condition to apply
+     *
+     * @return array|string|null
+     */
+    private function cleanCondition($condition)
+    {
+        if (is_array($condition)) {
+            if (empty($condition)) {
+                return null;
+            }
+
+            return array_filter($condition);
+        }
+
+        return $condition;
     }
 }
