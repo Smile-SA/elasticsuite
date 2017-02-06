@@ -23,7 +23,7 @@ tools:
   phpcs:
     files:
       - "vendor/smile/elasticsuite/src/"
-    standard: "vendor/smile/elasticsuite/Resources/phpcs-standards/SmileElasticsuite"
+    standard: "vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab"
     ignores:
       - "lib"
       - "Resources"
@@ -34,7 +34,7 @@ tools:
     files:
       - "vendor/smile/elasticsuite/src/"
     rulesets:
-      - "vendor/smile/elasticsuite/Resources/phpmd-rulesets/rulset.xml"
+      - "vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml"
     extensions:
       - "php"
     ignores:

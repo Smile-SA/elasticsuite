@@ -16,6 +16,6 @@ cache:
     - $HOME/.composer/cache
 
 script:
-    - vendor/bin/phpcs --standard=Resources/phpcs-standards/SmileElasticsuite --extensions=php src/
-    - vendor/bin/phpmd src text Resources/phpmd-rulesets/rulset.xml
+    - vendor/bin/phpcs --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php src/
+    - vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
     - vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
