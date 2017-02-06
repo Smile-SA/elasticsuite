@@ -44,14 +44,7 @@
         "smile/module-elasticsuite-virtual-category": "self.version"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "phpmd/phpmd": "~2.0",
-        "pdepend/pdepend": "~2.1",
-        "sjparkinson/static-review": "~4.1",
-        "fabpot/php-cs-fixer": "~1.2",
-        "squizlabs/php_codesniffer": "^2.6.1",
-        "smile/magento2-smilelab-phpmd": "1.0.0",
-        "smile/magento2-smilelab-phpcs": "1.0.0"
+        "smile/magento2-smilelab-quality-suite": "1.0.0"
     },
     "autoload": {
         "files": [
