@@ -42,7 +42,6 @@ class FieldTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $field->isFilterable());
         $this->assertEquals(false, $field->isUsedForSortBy());
         $this->assertEquals(false, $field->isUsedInSpellcheck());
-        $this->assertEquals(false, $field->isUsedInAutocomplete());
         $this->assertEquals(false, $field->isNested());
         $this->assertEquals(null, $field->getNestedFieldName());
         $this->assertEquals(null, $field->getNestedPath());

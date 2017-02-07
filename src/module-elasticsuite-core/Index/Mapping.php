@@ -72,7 +72,6 @@ class Mapping implements MappingInterface
     private $copyFieldMap = [
         'isSearchable'         => self::DEFAULT_SEARCH_FIELD,
         'isUsedInSpellcheck'   => self::DEFAULT_SPELLING_FIELD,
-        'isUsedInAutocomplete' => self::DEFAULT_AUTOCOMPLETE_FIELD,
     ];
 
     /**

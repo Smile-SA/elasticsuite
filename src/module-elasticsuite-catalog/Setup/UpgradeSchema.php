@@ -43,6 +43,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->appendDecimalDisplayConfiguration($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.2.2', '<')) {
+            $this->removeIsUsedInAutocompleteField($setup);
+        }
+
         $setup->endSetup();
     }
 
@@ -80,5 +84,18 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment'  => 'Attribute decimal precision for display',
             ]
         );
+    }
+
+    /**
+     * Remove the "is_used_in_autocomplete"
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The setup instance
+     */
+    private function removeIsUsedInAutocompleteField(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        $connection->dropColumn($table, 'is_used_in_autocomplete');
     }
 }
