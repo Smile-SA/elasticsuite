@@ -90,13 +90,6 @@ interface FieldInterface
     public function isUsedInSpellcheck();
 
     /**
-     * Is the field used for autocomplete.
-     *
-     * @return boolean
-     */
-    public function isUsedInAutocomplete();
-
-    /**
      * Weight of the fields in search.
      *
      * @return integer

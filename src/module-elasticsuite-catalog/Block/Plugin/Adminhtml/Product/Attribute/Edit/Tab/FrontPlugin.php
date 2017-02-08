@@ -92,8 +92,6 @@ class FrontPlugin
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setValue(1);
         }
 
         return $block;
@@ -164,17 +162,6 @@ class FrontPlugin
     private function addAutocompleteFields(Fieldset $fieldset)
     {
         $fieldset->addField(
-            'is_used_in_autocomplete',
-            'select',
-            [
-                'name'   => 'is_used_in_autocomplete',
-                'label'  => __('Used in autocomplete'),
-                'values' => $this->booleanSource->toOptionArray(),
-            ],
-            'is_used_in_spellcheck'
-        );
-
-        $fieldset->addField(
             'is_displayed_in_autocomplete',
             'select',
             [
@@ -182,7 +169,7 @@ class FrontPlugin
                 'label'  => __('Display in autocomplete'),
                 'values' => $this->booleanSource->toOptionArray(),
             ],
-            'is_used_in_autocomplete'
+            'is_used_in_spellcheck'
         );
 
         return $this;

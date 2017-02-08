@@ -182,7 +182,6 @@ class AbstractAttributeData
 
             // Reset parent field values : only the option text field should be used for spellcheck and autocomplete.
             $fieldConfig['is_used_in_spellcheck'] = false;
-            $fieldConfig['is_used_in_autocomplete'] = false;
             $fieldConfig['is_searchable'] = false;
         }
 
