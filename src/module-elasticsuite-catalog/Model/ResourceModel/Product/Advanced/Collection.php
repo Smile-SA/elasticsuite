@@ -38,12 +38,34 @@ class Collection extends FulltextCollection
             foreach ($fields as $fieldByType) {
                 foreach ($fieldByType as $attributeId => $condition) {
                     $attributeCode = $this->getEntity()->getAttribute($attributeId)->getAttributeCode();
-                    $condition     = array_filter($condition, 'strlen');
-                    $this->addFieldToFilter($attributeCode, $condition);
+                    $condition     = $this->cleanCondition($condition);
+
+                    if (null !== $condition) {
+                        $this->addFieldToFilter($attributeCode, $condition);
+                    }
                 }
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Ensure proper building of condition
+     *
+     * @param array|string $condition The condition to apply
+     *
+     * @return array|string|null
+     */
+    private function cleanCondition($condition)
+    {
+        if (is_array($condition)) {
+            $condition = array_filter($condition);
+            if (empty($condition)) {
+                $condition = null;
+            }
+        }
+
+        return $condition;
     }
 }
