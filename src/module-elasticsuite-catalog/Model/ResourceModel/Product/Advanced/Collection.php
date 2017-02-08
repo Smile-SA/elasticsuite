@@ -60,11 +60,10 @@ class Collection extends FulltextCollection
     private function cleanCondition($condition)
     {
         if (is_array($condition)) {
+            $condition = array_filter($condition);
             if (empty($condition)) {
-                return null;
+                $condition = null;
             }
-
-            return array_filter($condition);
         }
 
         return $condition;
