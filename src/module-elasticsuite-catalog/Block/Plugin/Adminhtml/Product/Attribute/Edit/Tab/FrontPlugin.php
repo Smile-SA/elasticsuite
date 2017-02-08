@@ -96,6 +96,8 @@ class FrontPlugin
             $form->getElement('is_used_in_autocomplete')->setValue(1);
         }
 
+        $this->appendFieldsDependency($form, $subject);
+
         return $block;
     }
 
@@ -349,6 +351,28 @@ class FrontPlugin
         if ($isAttributeDecimal && ($attribute->getFrontendInput() !== 'price')) {
             $displayFieldset = $this->createDisplayFieldset($form, $subject);
             $this->addDisplayFields($displayFieldset);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Manage dependency between fields.
+     *
+     * @param Front $subject The StoreFront tab
+     *
+     * @return FrontPlugin
+     */
+    private function appendFieldsDependency($subject)
+    {
+        /** @var \Magento\Backend\Block\Widget\Form\Element\Dependence $dependencyBlock */
+        $dependencyBlock = $subject->getChildBlock('form_after');
+
+        if ($dependencyBlock) {
+            $dependencyBlock
+                ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
+                ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
+                ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1');
         }
 
         return $this;
