@@ -62,7 +62,13 @@
         {
             checkOptionsPanelVisibility();
             switchDefaultValueField();
-            if($('frontend_input') && ($('frontend_input').value=='select' || $('frontend_input').value=='multiselect' || $('frontend_input').value=='price' || $('frontend_input').value=='text')) {
+            if($('frontend_input') &&
+                ($('frontend_input').value == 'select'
+                || $('frontend_input').value == 'multiselect'
+                || $('frontend_input').value == 'price'
+                || $('frontend_input').value == 'text')
+                || $('frontend_input').value == 'boolean')
+            ) {
                 if($('is_filterable') && !$('is_filterable').getAttribute('readonly')){
                     $('is_filterable').disabled = false;
                 }

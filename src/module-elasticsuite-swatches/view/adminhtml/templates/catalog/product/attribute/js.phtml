@@ -104,7 +104,7 @@
             checkOptionsPanelVisibility();
             switchDefaultValueField();
             if (frontendInput
-                && (jQuery.inArray(frontendInput.value, selectFields) >= 0 || (frontendInput.value == "text"))
+                && (jQuery.inArray(frontendInput.value, selectFields) >= 0 || (frontendInput.value == "text") || frontendInput.value == "boolean")
             ) {
                 if (isFilterable && !isFilterable.getAttribute('readonly')) {
                     isFilterable.disabled = false;
