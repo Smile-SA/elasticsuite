@@ -49,6 +49,10 @@
                 <field name="price.original_price" type="double" nestedPath="price" />
                 <field name="price.is_discount" type="boolean" nestedPath="price" />
                 <field name="price.customer_group_id" type="integer" nestedPath="price" />
+                <field name="price.tax_class_id" type="integer" nestedPath="price" />
+                <field name="price.final_price" type="double" nestedPath="price" />
+                <field name="price.min_price" type="double" nestedPath="price" />
+                <field name="price.max_price" type="double" nestedPath="price" />
 
                 <!-- Static fields handled by the "stock" datasource -->
                 <field name="stock.is_in_stock" type="boolean" />
