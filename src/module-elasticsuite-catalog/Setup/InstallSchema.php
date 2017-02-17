@@ -58,18 +58,6 @@ class InstallSchema implements InstallSchemaInterface
         $connection = $setup->getConnection();
         $table      = $setup->getTable('catalog_eav_attribute');
 
-        // Append a column 'is_used_in_autocomplete' into the db.
-        $connection->addColumn(
-            $table,
-            'is_used_in_autocomplete',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '1',
-                'comment'  => 'If attribute is used in autocomplete',
-            ]
-        );
-
         // Append a column 'is_displayed_in_autocomplete' into the db.
         $connection->addColumn(
             $table,
