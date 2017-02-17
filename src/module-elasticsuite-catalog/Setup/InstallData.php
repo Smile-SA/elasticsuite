@@ -209,14 +209,12 @@ class InstallData implements InstallDataInterface
             $this->eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),
         ];
 
-        foreach (['is_used_in_spellcheck', 'is_used_in_autocomplete'] as $configField) {
-            foreach ($attributeIds as $attributeId) {
-                $connection->update(
-                    $table,
-                    [$configField => 1],
-                    $connection->quoteInto('attribute_id = ?', $attributeId)
-                );
-            }
+        foreach ($attributeIds as $attributeId) {
+            $connection->update(
+                $table,
+                ['is_used_in_spellcheck' => true],
+                $connection->quoteInto('attribute_id = ?', $attributeId)
+            );
         }
     }
 
