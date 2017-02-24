@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticSuiteSearch module dependancy injection configuration.
+ * Smile_ElasticsuiteSearch module dependancy injection configuration.
  *
  * DISCLAIMER
  *
@@ -10,7 +10,7 @@
  *
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteSearch
+ * @package   Smile\ElasticsuiteSearch
  * @author    David Dattée <david.dattee@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -20,6 +20,6 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <preference for="Magento\Search\Api\SearchInterface"
-                type="Smile\ElasticSuiteSearch\Search\Search" />
+                type="Smile\ElasticsuiteSearch\Search\Search" />
 
 </config>

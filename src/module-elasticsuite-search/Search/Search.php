@@ -6,13 +6,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteSearch\Search
+ * @package   Smile\ElasticsuiteSearch\Search
  * @author    David Dattée <david.dattee@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticSuiteSearch\Search;
+namespace Smile\ElasticsuiteSearch\Search;
 
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogInventory\Model\Stock\Status;
@@ -22,13 +22,13 @@ use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\Search\SearchEngineInterface;
 use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Search\Model\SearchEngine;
-use Smile\ElasticSuiteCore\Search\Request\Builder;
+use Smile\ElasticsuiteCore\Search\Request\Builder;;
 
 /**
  * Substitution Search class for Magento\Search\Search
  *
  * @category Smile
- * @package  Smile\ElasticSuiteSearch\Search
+ * @package  Smile\ElasticsuiteSearch\Search
  * @author   David Dattée <david.dattee@smile.fr>
  */
 class Search implements SearchInterface
