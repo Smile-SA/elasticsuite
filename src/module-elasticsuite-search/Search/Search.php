@@ -22,7 +22,9 @@ use Magento\Framework\App\ScopeResolverInterface;
 use Magento\Framework\Search\SearchEngineInterface;
 use Magento\Framework\Search\SearchResponseBuilder;
 use Magento\Search\Model\SearchEngine;
-use Smile\ElasticsuiteCore\Search\Request\Builder;;
+
+use Smile\ElasticsuiteCore\Search\Request\Builder;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Substitution Search class for Magento\Search\Search
@@ -42,6 +44,11 @@ class Search implements SearchInterface
      * @var ScopeResolverInterface
      */
     protected $scopeResolver;
+
+    /**
+     * @var QueryInterface[]
+     */
+    protected $queryFilters = [];
 
     /**
      * @var SearchEngine
@@ -83,6 +90,7 @@ class Search implements SearchInterface
     public function search(SearchCriteriaInterface $searchCriteria)
     {
         $scope = $this->scopeResolver->getScope();
+
         $searchRequest = $this->requestBuilder->create(
             $scope->getId(),
             $searchCriteria->getRequestName(),
@@ -91,11 +99,27 @@ class Search implements SearchInterface
             $this->getQueryText($searchCriteria),
             (array) $searchCriteria->getSortOrders(),
             $this->getRootFilters(),
+            $this->getQueryFilters(),
             $this->getFacets()
         );
+
         $searchResponse = $this->searchEngine->search($searchRequest);
 
         return $this->searchResponseBuilder->build($searchResponse)->setSearchCriteria($searchCriteria);
+    }
+
+    /**
+     * Append a prebuilt (QueryInterface) query filter to the collection.
+     *
+     * @param QueryInterface $queryFilter Query filter.
+     *
+     * @return $this
+     */
+    public function addQueryFilter(QueryInterface $queryFilter)
+    {
+        $this->queryFilters[] = $queryFilter;
+
+        return $this;
     }
 
     /**
@@ -105,9 +129,10 @@ class Search implements SearchInterface
      *
      * @return string
      */
-    private function getQueryText(SearchCriteriaInterface $searchCriteria)
+    protected function getQueryText(SearchCriteriaInterface $searchCriteria)
     {
         $queryText = '';
+
         foreach ($searchCriteria->getFilterGroups() as $group) {
             foreach ($group->getFilters() as $filter) {
                 $queryText .= (strlen($queryText) > 0 ? ',' : '') . $filter->getValue();
@@ -122,7 +147,7 @@ class Search implements SearchInterface
      *
      * @return array
      */
-    private function getRootFilters()
+    protected function getRootFilters()
     {
         return [
             'stock.is_in_stock' => Status::STATUS_IN_STOCK,
@@ -131,11 +156,21 @@ class Search implements SearchInterface
     }
 
     /**
+     * Get query filters
+     *
+     * @return mixed
+     */
+    protected function getQueryFilters()
+    {
+        return $this->queryFilters;
+    }
+
+    /**
      * Get facets
      *
      * @return array
      */
-    private function getFacets()
+    protected function getFacets()
     {
         return [];
     }
