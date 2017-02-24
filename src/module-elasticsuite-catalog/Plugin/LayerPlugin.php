@@ -53,7 +53,10 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
         \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection $collection
     ) {
         if ($this->_isEnabledShowOutOfStock() === false) {
-            $collection->addIsInStockFilter();
+            // Occurs when viewing a category not properly set to is_anchor=1.
+            if (method_exists($collection, 'addIsInStockFilter')) {
+                $collection->addIsInStockFilter();
+            }
         }
 
         $this->setSortParams($layer, $collection);
@@ -75,7 +78,11 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
 
         if (!$searchQuery->getQueryText() && $layer->getCurrentCategory()) {
             $categoryId = $layer->getCurrentCategory()->getId();
-            $collection->addSortFilterParameters('position', 'category.position', 'category', ['category.category_id' => $categoryId]);
+
+            // Occurs when viewing a category not properly set to is_anchor=1.
+            if (method_exists($collection, 'addSortFilterParameters')) {
+                $collection->addSortFilterParameters('position', 'category.position', 'category', ['category.category_id' => $categoryId]);
+            }
         }
 
         return $this;
