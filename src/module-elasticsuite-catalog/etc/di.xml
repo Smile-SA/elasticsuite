@@ -177,4 +177,9 @@
         <plugin name="smile_elasticsuite_prevent_wrong_is_anchor_value"
                 type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Category\SetIsAnchor" />
     </type>
+
+    <type name="\Magento\Catalog\Model\Indexer\Category\Product">
+        <plugin name="smile_elasticsuite_set_category_is_anchor_before_reindex"
+                type="\Smile\ElasticsuiteCatalog\Plugin\Indexer\Category\Product\SetIsAnchorBeforeIndexing" />
+    </type>
 </config>
