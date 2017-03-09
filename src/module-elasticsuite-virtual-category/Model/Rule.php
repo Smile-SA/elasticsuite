@@ -94,6 +94,18 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Implementation of __toString().
+     * This one is mandatory to ensure the object is properly handled when it get sent "as is" to a DB query.
+     * This occurs especially in @see \Magento\Catalog\Model\Indexer\Category\Flat\Action\Rows::reindex() (line 86 & 98)
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return serialize($this->getConditions()->asArray());
+    }
+
+    /**
      * Build search query by category.
      *
      * @param \Magento\Catalog\Api\Data\CategoryInterface $category           Search category.
