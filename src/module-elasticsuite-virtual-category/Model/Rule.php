@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\TestFramework\Inspection\Exception;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
