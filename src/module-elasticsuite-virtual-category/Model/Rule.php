@@ -118,8 +118,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             } elseif ($category->getId() && $category->getIsActive()) {
                 $query = $this->getStandardCategoryQuery($category, $excludedCategories);
             }
-
-            $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            if ($query && $category->hasChildren()) {
+                $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            }
         }
 
         return $query;
