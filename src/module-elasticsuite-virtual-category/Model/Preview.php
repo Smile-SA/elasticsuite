@@ -184,8 +184,6 @@ class Preview
     /**
      * Return the filter applied to the query.
      *
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     *
      * @return QueryInterface
      */
     private function getQueryFilter()
