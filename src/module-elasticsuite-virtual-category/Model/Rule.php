@@ -291,7 +291,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
 
             if (!empty($childrenCategoriesIds)) {
-                $queryParams['should'][] = $this->getChildrenCategories($childrenCategoriesIds, $excludedCategories);
+                $queryParams['should'][] = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
             }
 
             if (count($queryParams['should']) > 1) {
