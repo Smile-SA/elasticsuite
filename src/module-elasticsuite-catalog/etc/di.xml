@@ -181,4 +181,14 @@
         </arguments>
     </virtualType>
 
+    <!-- Set reserved nested fields of elasticsuite as reserved to prevent anyone creating an attribute with the same name. -->
+    <type name="Magento\Catalog\Model\Product\ReservedAttributeList">
+        <arguments>
+            <argument name="reservedAttributes" xsi:type="array">
+                <item name="stock" xsi:type="string">stock</item>
+                <item name="category" xsi:type="string">category</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
