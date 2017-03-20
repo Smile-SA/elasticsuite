@@ -154,4 +154,24 @@
     </virtualType>
     <!-- End of  compatibility with Staging for Layered Navigation -->
 
+    <!-- Ensure navigation block is using fulltext collection, to prevent error when it sends it through the Layer -->
+    <type name="Magento\Catalog\Block\Navigation">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- Ensure standard promotion block is using fulltext collection, to prevent error when it sends it through the Layer -->
+    <type name="Magento\Catalog\Block\Product\ProductList\Promotion">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </type>
+
+    <!-- Ensure standard random products block is using fulltext collection, to prevent error when it sends it through the Layer -->
+    <type name="Magento\Catalog\Block\Product\ProductList\Random">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </type>
 </config>
