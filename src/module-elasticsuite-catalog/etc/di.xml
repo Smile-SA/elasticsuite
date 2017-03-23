@@ -191,20 +191,4 @@
         </arguments>
     </type>
 
-    <!-- Ensure automatic instantiation of layer will properly use a fulltext product collection -->
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Context">
-        <arguments>
-            <!-- This provider uses the Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory as Collection Factory -->
-            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider</argument>
-            <argument name="stateKey" xsi:type="object">Magento\Catalog\Model\Layer\Category\StateKey</argument>
-            <argument name="collectionFilter" xsi:type="object">Magento\Catalog\Model\Layer\Category\CollectionFilter</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Magento\Catalog\Model\Layer\Category">
-        <arguments>
-            <argument name="context" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\Context</argument>
-        </arguments>
-    </type>
-
 </config>
