@@ -26,6 +26,21 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 class UpgradeSchema implements UpgradeSchemaInterface
 {
     /**
+     * @var \Smile\ElasticsuiteCatalog\Setup\CatalogSetup
+     */
+    private $catalogSetup;
+
+    /**
+     * InstallSchema constructor.
+     *
+     * @param \Smile\ElasticsuiteCatalog\Setup\CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
+     */
+    public function __construct(CatalogSetupFactory $catalogSetupFactory)
+    {
+        $this->catalogSetup = $catalogSetupFactory->create();
+    }
+
+    /**
      * Installs DB schema for a module
      *
      * @param SchemaSetupInterface   $setup   Setup
@@ -40,62 +55,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
         $setup->startSetup();
 
         if (version_compare($context->getVersion(), '1.1.0', '<')) {
-            $this->appendDecimalDisplayConfiguration($setup);
+            $this->catalogSetup->appendDecimalDisplayConfiguration($setup);
         }
 
         if (version_compare($context->getVersion(), '1.2.2', '<')) {
-            $this->removeIsUsedInAutocompleteField($setup);
+            $this->catalogSetup->removeIsUsedInAutocompleteField($setup);
         }
 
         $setup->endSetup();
-    }
-
-    /**
-     * Append decimal display related columns to attribute table
-     *
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The setup instance
-     */
-    private function appendDecimalDisplayConfiguration(SchemaSetupInterface $setup)
-    {
-        $connection = $setup->getConnection();
-        $table      = $setup->getTable('catalog_eav_attribute');
-
-        // Append a column 'display_pattern' into the db.
-        $connection->addColumn(
-            $table,
-            'display_pattern',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                'nullable' => true,
-                'default'  => null,
-                'length'   => 10,
-                'comment'  => 'The pattern to display facet values',
-            ]
-        );
-
-        // Append a column 'display_precision' into the db.
-        $connection->addColumn(
-            $table,
-            'display_precision',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                'nullable' => true,
-                'default'  => 0,
-                'comment'  => 'Attribute decimal precision for display',
-            ]
-        );
-    }
-
-    /**
-     * Remove the "is_used_in_autocomplete"
-     *
-     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The setup instance
-     */
-    private function removeIsUsedInAutocompleteField(SchemaSetupInterface $setup)
-    {
-        $connection = $setup->getConnection();
-        $table      = $setup->getTable('catalog_eav_attribute');
-
-        $connection->dropColumn($table, 'is_used_in_autocomplete');
     }
 }
