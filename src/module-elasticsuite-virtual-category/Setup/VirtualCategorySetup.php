@@ -26,6 +26,21 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 class VirtualCategorySetup
 {
     /**
+     * @var \Magento\Eav\Model\Config $eavConfig
+     */
+    private $eavConfig;
+
+    /**
+     * VirtualCategorySetup constructor.
+     *
+     * @param \Magento\Eav\Model\Config $eavConfig EAV Config.
+     */
+    public function __construct(\Magento\Eav\Model\Config $eavConfig)
+    {
+        $this->eavConfig = $eavConfig;
+    }
+
+    /**
      * Create virtual categories attributes.
      *
      * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
@@ -87,6 +102,9 @@ class VirtualCategorySetup
         $eavSetup->updateAttribute(Category::ENTITY, 'is_virtual_category', 'frontend_input', null);
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_category_root', 'frontend_input', null);
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_rule', 'frontend_input', null);
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
     }
 
     /**

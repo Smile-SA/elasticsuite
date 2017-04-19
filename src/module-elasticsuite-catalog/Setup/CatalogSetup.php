@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalog\Setup;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
+use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Indexer\IndexerInterfaceFactory;
 use Magento\Framework\Setup\SchemaSetupInterface;
@@ -33,13 +34,20 @@ class CatalogSetup
     private $metadataPool;
 
     /**
+     * @var Config
+     */
+    private $eavConfig;
+
+    /**
      * Class Constructor
      *
      * @param MetadataPool $metadataPool Metadata Pool.
+     * @param Config       $eavConfig    EAV Config.
      */
-    public function __construct(MetadataPool $metadataPool)
+    public function __construct(MetadataPool $metadataPool, Config $eavConfig)
     {
         $this->metadataPool    = $metadataPool;
+        $this->eavConfig       = $eavConfig;
     }
 
     /**
@@ -72,6 +80,9 @@ class CatalogSetup
 
         // Set the attribute value to 1 for all existing categories.
         $this->updateCategoryAttributeDefaultValue($eavSetup, Category::ENTITY, 'use_name_in_product_search', 1);
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
     }
 
     /**
