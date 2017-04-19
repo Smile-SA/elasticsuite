@@ -13,6 +13,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Setup;
 
 use Magento\Catalog\Model\Category;
+use Magento\Eav\Model\Config;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -35,13 +36,20 @@ class InstallData implements InstallDataInterface
     private $eavSetupFactory;
 
     /**
+     * @var \Magento\Eav\Model\Config
+     */
+    private $eavConfig;
+
+    /**
      * Class Constructor
      *
      * @param EavSetupFactory $eavSetupFactory Eav setup factory.
+     * @param Config          $eavConfig       EAV Config.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory)
+    public function __construct(EavSetupFactory $eavSetupFactory, Config $eavConfig)
     {
         $this->eavSetupFactory = $eavSetupFactory;
+        $this->eavConfig       = $eavConfig;
     }
 
     /**
@@ -116,6 +124,9 @@ class InstallData implements InstallDataInterface
         $eavSetup->updateAttribute(Category::ENTITY, 'is_virtual_category', 'frontend_input', null);
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_category_root', 'frontend_input', null);
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_rule', 'frontend_input', null);
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
 
         $setup->endSetup();
     }
