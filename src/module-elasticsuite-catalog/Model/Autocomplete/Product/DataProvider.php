@@ -98,12 +98,12 @@ class DataProvider implements DataProviderInterface
         $this->itemFactory              = $itemFactory;
         $this->queryFactory             = $queryFactory;
         $this->termDataProvider         = $termDataProvider;
-        $this->productCollection        = $productCollection;
         $this->configurationHelper      = $configurationHelper;
         $this->type                     = $type;
         $this->additionalAttributes     = $additionalAttributes;
+        $this->productCollection        = $productCollection;
 
-        $this->prepareProductCollection();
+        $this->prepareProductCollection($productCollection);
     }
 
     /**
@@ -137,26 +137,30 @@ class DataProvider implements DataProviderInterface
     /**
      * Init suggested products collection.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider
+     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection Product Collection
+     *
+     * @return DataProvider
      */
-    private function prepareProductCollection()
+    public function prepareProductCollection($collection)
     {
         $terms = $this->getQueryText();
-        $this->productCollection->addSearchFilter($terms);
-        $this->productCollection->setPageSize($this->getResultsPageSize());
-        $this->productCollection
-            ->addAttributeToSelect('name')
+        $collection->addSearchFilter($terms);
+        $collection->setPageSize($this->getResultsPageSize());
+
+        $collection->addAttributeToSelect('name')
             ->addAttributeToSelect('thumbnail')
             ->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
             ->addPriceData();
 
         if ($this->additionalAttributes) {
-            $this->productCollection->addAttributeToSelect($this->additionalAttributes);
+            $collection->addAttributeToSelect($this->additionalAttributes);
         }
 
         if (!$this->configurationHelper->isShowOutOfStock()) {
-            $this->productCollection->addIsInStockFilter();
+            $collection->addIsInStockFilter();
         }
+
+        $this->productCollection = $collection;
 
         return $this;
     }
