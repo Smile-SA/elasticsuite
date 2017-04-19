@@ -94,7 +94,7 @@ class DataProvider implements DataProviderInterface
         $this->autocompleteHelper  = $autocompleteHelper;
 
         $this->loadAttributeCollection();
-        $this->prepareProductCollection();
+        $this->prepareProductCollection($productCollection);
     }
 
     /**
@@ -140,14 +140,18 @@ class DataProvider implements DataProviderInterface
     /**
      * Append facets used to select suggested attributes.
      *
+     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection Product Collection
+     *
      * @return \Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Attribute\DataProvider
      */
-    private function prepareProductCollection()
+    public function prepareProductCollection($collection)
     {
         foreach ($this->attributeCollection as $attribute) {
             $facetSize   = $this->getResultsPageSize();
             $filterField = $this->getFilterField($attribute);
-            $this->productCollection->addFacet($filterField, BucketInterface::TYPE_TERM, ['size' => $facetSize]);
+            $collection->addFacet($filterField, BucketInterface::TYPE_TERM, ['size' => $facetSize]);
+
+            $this->productCollection = $collection;
         }
 
         return $this;
