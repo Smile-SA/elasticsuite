@@ -77,7 +77,11 @@ class GenericIndexerHandler implements IndexerInterface
     {
         foreach ($dimensions as $dimension) {
             $storeId = $dimension->getValue();
-            $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            try {
+                $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            } catch (\LogicException $e) {
+                continue;
+            }
             $type  = $index->getType($this->typeName);
 
             foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {
@@ -103,7 +107,11 @@ class GenericIndexerHandler implements IndexerInterface
     {
         foreach ($dimensions as $dimension) {
             $storeId = $dimension->getValue();
-            $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            try {
+                $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            } catch (\LogicException $e) {
+                continue;
+            }
             $type  = $index->getType($this->typeName);
 
             foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {

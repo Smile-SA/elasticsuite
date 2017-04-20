@@ -123,7 +123,7 @@ class IndexOperation implements IndexOperationInterface
         if (!isset($this->indicesByIdentifier[$indexAlias])) {
             if (!$this->indexExists($indexIdentifier, $store)) {
                 throw new \LogicException(
-                    "{$indexIdentifier} index does not exist yet. Make sure everything is reindexed"
+                    "{$indexIdentifier} index does not exist yet. Make sure everything is reindexed."
                 );
             }
             $this->initIndex($indexIdentifier, $store, true);
