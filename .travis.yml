@@ -16,6 +16,8 @@ cache:
     - $HOME/.composer/cache
 
 script:
+    - vendor/bin/phpcs --config-set installed_paths vendor/magento/marketplace-eqp/
+    - vendor/bin/phpcs --standard=vendor/magento/marketplace-eqp/MEQP2 --severity=10 src/
     - vendor/bin/phpcs --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php src/
     - vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
     - vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
