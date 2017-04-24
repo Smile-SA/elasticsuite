@@ -39,7 +39,7 @@ class IndexOperation implements IndexOperationInterface
     private $objectManager;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterface\IndexInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterface[]
      */
     private $indicesByIdentifier = [];
 
