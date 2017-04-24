@@ -71,6 +71,9 @@ class InstallData implements InstallDataInterface
 
         $this->virtualCategorySetup->createVirtualCategoriesAttributes($eavSetup);
 
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
+
         $setup->endSetup();
     }
 }

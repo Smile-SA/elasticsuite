@@ -17,7 +17,6 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
 
 /**

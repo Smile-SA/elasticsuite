@@ -99,10 +99,16 @@
     
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider</argument>
         </arguments>
     </virtualType>
-    
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider" type="Magento\Catalog\Model\Layer\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context" type="Magento\Catalog\Model\Layer\Search\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
