@@ -14,8 +14,6 @@ namespace Smile\ElasticsuiteThesaurus\Model;
 
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterfaceFactory;

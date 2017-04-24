@@ -16,7 +16,6 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Framework\Indexer\IndexerInterfaceFactory;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**

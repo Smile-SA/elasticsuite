@@ -13,7 +13,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
 
-use Magento\Eav\Model\Config;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\InstallDataInterface;
@@ -52,11 +51,6 @@ class InstallData implements InstallDataInterface
     private $indexerFactory;
 
     /**
-     * @var Config
-     */
-    private $eavConfig;
-
-    /**
      * Class Constructor
      *
      * @param EavSetupFactory         $eavSetupFactory     Eav setup factory.
@@ -68,7 +62,6 @@ class InstallData implements InstallDataInterface
         $this->catalogSetup    = $catalogSetupFactory->create();
         $this->eavSetupFactory = $eavSetupFactory;
         $this->indexerFactory  = $indexerFactory;
-        $this->eavConfig       = $eavConfig;
     }
 
     /**

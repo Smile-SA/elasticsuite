@@ -14,7 +14,6 @@ namespace Smile\ElasticsuiteThesaurus\Setup;
 
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
-use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 
 /**
