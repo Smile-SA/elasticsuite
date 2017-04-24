@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalog\Setup;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Eav\Model\Config;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
@@ -59,17 +60,28 @@ class InstallData implements InstallDataInterface
     private $indexerFactory;
 
     /**
+     * @var Config
+     */
+    private $eavConfig;
+
+    /**
      * Class Constructor
      *
      * @param EavSetupFactory         $eavSetupFactory Eav setup factory.
      * @param MetadataPool            $metadataPool    Metadata Pool.
      * @param IndexerInterfaceFactory $indexerFactory  Indexer Factory.
+     * @param Config                  $eavConfig       EAV Config.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory, MetadataPool $metadataPool, IndexerInterfaceFactory $indexerFactory)
-    {
+    public function __construct(
+        EavSetupFactory $eavSetupFactory,
+        MetadataPool $metadataPool,
+        IndexerInterfaceFactory $indexerFactory,
+        Config $eavConfig
+    ) {
         $this->metadataPool    = $metadataPool;
         $this->eavSetupFactory = $eavSetupFactory;
         $this->indexerFactory  = $indexerFactory;
+        $this->eavConfig       = $eavConfig;
     }
 
     /**
@@ -125,6 +137,9 @@ class InstallData implements InstallDataInterface
 
         // Set the attribute value to 1 for all existing categories.
         $this->updateAttributeDefaultValue(Category::ENTITY, 'use_name_in_product_search', 1);
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
     }
 
     /**
