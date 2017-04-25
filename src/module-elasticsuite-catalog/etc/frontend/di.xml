@@ -108,7 +108,7 @@
         </arguments>
     </virtualType>
     
-    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Provider">
+    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Provider" shared="true">
         <arguments>
             <argument name="collection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
             <argument name="collectionProcessors" xsi:type="array">
