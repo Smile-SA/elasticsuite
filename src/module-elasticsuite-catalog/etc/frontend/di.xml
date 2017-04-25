@@ -107,16 +107,15 @@
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
- 
-    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider">
-        <arguments>
-            <argument name="productCollection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
-        </arguments>
-    </type>
     
-    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Attribute\DataProvider">
+    <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Provider">
         <arguments>
             <argument name="productCollection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
+            <argument name="collectionProcessors" xsi:type="array">
+                <item name="filters" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Filter</item>
+                <item name="attributeSelect" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeSelector</item>
+                <item name="attributeAggregations" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeAggregation</item>
+            </argument>
         </arguments>
     </type>
  

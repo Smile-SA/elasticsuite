@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Helper\Image as ImageHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
@@ -50,16 +49,27 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     private $objectManager;
 
     /**
+     * @var array
+     */
+    private $attributes;
+
+    /**
      * Constructor.
      *
-     * @param ObjectManagerInterface $objectManager Object manager used to instantiate new item.
-     * @param ImageHelper            $imageHelper   Catalog product image helper.
-     * @param Render                 $priceRenderer Catalog product price renderer.
+     * @param ObjectManagerInterface $objectManager   Object manager used to instantiate new item.
+     * @param ImageHelper            $imageHelper     Catalog product image helper.
+     * @param Render                 $priceRenderer   Catalog product price renderer.
+     * @param AttributeConfig        $attributeConfig Autocomplete attribute config.
      */
-    public function __construct(ObjectManagerInterface $objectManager, ImageHelper $imageHelper, Render $priceRenderer)
-    {
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ImageHelper $imageHelper,
+        Render $priceRenderer,
+        AttributeConfig $attributeConfig
+    ) {
         parent::__construct($objectManager);
-        $this->imageHelper = $imageHelper;
+        $this->attributes    = $attributeConfig->getAdditionalSelectedAttributes();
+        $this->imageHelper   = $imageHelper;
         $this->priceRenderer = $priceRenderer;
         $this->objectManager = $objectManager;
     }
@@ -70,7 +80,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     public function create(array $data)
     {
         $data = $this->addProductData($data);
-        unset($data['product'], $data['additional_attributes']);
+        unset($data['product']);
 
         return parent::create($data);
     }
@@ -87,14 +97,16 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $product = $data['product'];
 
         $productData = [
-            'title'       => $product->getName(),
-            'image'       => $this->getImageUrl($product),
-            'url'         => $product->getProductUrl(),
-            'price'       => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
+            'title' => $product->getName(),
+            'image' => $this->getImageUrl($product),
+            'url'   => $product->getProductUrl(),
+            'price' => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
         ];
-        $additionalAttributes = $data['additional_attributes'];
-        foreach ($additionalAttributes as $additionalAttributeKey => $additionalAttribute) {
-            $productData[$additionalAttributeKey] = $product->getData($additionalAttribute);
+
+        foreach ($this->attributes as $attributeCode) {
+            if ($product->hasData($attributeCode)) {
+                $productData[$attributeCode] = $product->getData($attributeCode);
+            }
         }
 
         $data = array_merge($data, $productData);
