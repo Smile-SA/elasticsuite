@@ -188,7 +188,8 @@ class Attribute extends Mapping
         if ($attribute->usesSource()) {
             $optionTextFieldName = $this->getOptionTextFieldName($attributeCode);
             $optionTextValues    = $this->getIndexOptionsText($attribute, $storeId, $value);
-            $optionTextValues    = array_filter($optionTextValues);
+            // Filter empty values. Not using array_filter here because it could remove "0" string from values.
+            $optionTextValues    = array_diff(array_map('trim', $optionTextValues), ['', null, false]);
             $optionTextValues    = array_values($optionTextValues);
             $values[$optionTextFieldName] = $optionTextValues;
         }
