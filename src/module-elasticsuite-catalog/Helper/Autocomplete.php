@@ -27,11 +27,6 @@ use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
 class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
 {
     /**
-     * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
-     */
-    private $stockConfiguration;
-
-    /**
      * @var MappingHelper
      */
     private $mappingHelper;
@@ -39,34 +34,15 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
     /**
      * Constructor.
      *
-     * @param Context                     $context            Helper context.
-     * @param StoreManagerInterface       $storeManager       Store manager.
-     * @param StockConfigurationInterface $stockConfiguration Stock Configuration Interface.
-     * @param MappingHelper               $mappingHelper      Mapping helper.
+     * @param Context               $context       Helper context.
+     * @param StoreManagerInterface $storeManager  Store manager.
+     * @param MappingHelper         $mappingHelper Mapping helper.
      */
-    public function __construct(
-        Context $context,
-        StoreManagerInterface $storeManager,
-        StockConfigurationInterface $stockConfiguration,
-        MappingHelper $mappingHelper
-    ) {
+    public function __construct(Context $context, StoreManagerInterface $storeManager, MappingHelper $mappingHelper)
+    {
         parent::__construct($context, $storeManager);
 
-        $this->storeManager       = $storeManager;
-        $this->stockConfiguration = $stockConfiguration;
-        $this->mappingHelper      = $mappingHelper;
-    }
-
-    /**
-     * Check if Stock configuration allows to display out of stock products
-     *
-     * @param int $storeId The store Id. Will use current store if null.
-     *
-     * @return bool
-     */
-    public function isShowOutOfStock($storeId = null)
-    {
-        return $this->stockConfiguration->isShowOutOfStock($storeId);
+        $this->mappingHelper = $mappingHelper;
     }
 
     /**
