@@ -82,7 +82,7 @@ class Filter implements PreProcessorInterface
             ->addSearchFilter($terms);
 
         if (!$this->stockConfiguration->isShowOutOfStock()) {
-            $this->productCollection->addIsInStockFilter();
+            $collection->addIsInStockFilter();
         }
 
         return $collection;
