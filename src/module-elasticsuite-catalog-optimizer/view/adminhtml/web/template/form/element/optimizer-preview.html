@@ -1,0 +1,17 @@
+<fieldset class="admin__fieldset">
+    <div class="admin__field">
+        <label class="admin__field-label" for="optimizer-preview-query-text">
+            <span data-bind="i18n: 'Search Query'"></span>
+        </label>
+        <div class="admin__field-control _with-tooltip">
+            <input name="queryText" data-bind="value: queryText" id="optimizer-preview-query-text" class="input-text admin__control-text" type="text"/>
+            <div class="admin__field-tooltip" style="margin-top:0;">
+                <button id="add_new_option_button"
+                        data-bind="{ click : refreshProductList, attr: { title: $t('Preview') }}"
+                        type="button" class="action- scalable add primary">
+                    <span data-bind="i18n: 'Preview'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</fieldset>

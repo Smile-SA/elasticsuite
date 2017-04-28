@@ -13,6 +13,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
@@ -90,6 +91,82 @@ class ApplierList
     {
         $functions = $this->getFunctions($containerConfiguration);
 
+        return $this->applyFunctions($query, $functions);
+    }
+
+    /**
+     * Apply a new optimizer to the current existing ones.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
+     * @param QueryInterface                  $query                  Query
+     * @param OptimizerInterface              $optimizer              Optimizer to apply
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    public function applyNewOptimizer(
+        ContainerConfigurationInterface $containerConfiguration,
+        QueryInterface $query,
+        OptimizerInterface $optimizer
+    ) {
+        $optimizers  = $this->getOptimizersCollection($containerConfiguration);
+        $optimizers->addFieldToFilter('main_table.' . OptimizerInterface::OPTIMIZER_ID, ['neq' => $optimizer->getId()]);
+        $functions   = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
+        $functions[] = $this->getFunction($containerConfiguration, $optimizer);
+
+        return $this->applyFunctions($query, $functions);
+    }
+
+    /**
+     * Apply only one optimizer to the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
+     * @param QueryInterface                  $query                  Query
+     * @param OptimizerInterface              $optimizer              Optimizer to apply
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    public function applyOnly(
+        ContainerConfigurationInterface $containerConfiguration,
+        QueryInterface $query,
+        OptimizerInterface $optimizer
+    ) {
+        $functions  = $this->getOptimizersFunctions($containerConfiguration, [$optimizer]);
+
+        return $this->applyFunctions($query, $functions);
+    }
+
+    /**
+     * Apply all existing optimizers except the one passed in parameter.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
+     * @param QueryInterface                  $query                  Query
+     * @param OptimizerInterface              $optimizer              Optimizer to apply
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    public function applyAllExcept(
+        ContainerConfigurationInterface $containerConfiguration,
+        QueryInterface $query,
+        OptimizerInterface $optimizer
+    ) {
+        $optimizers = $this->getOptimizersCollection($containerConfiguration);
+        $optimizers->addFieldToFilter('main_table.' . OptimizerInterface::OPTIMIZER_ID, ['neq' => $optimizer->getId()]);
+
+        $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
+
+        return $this->applyFunctions($query, $functions);
+    }
+
+    /**
+     * Apply boost functions to a given query.
+     *
+     * @param \Smile\ElasticsuiteCore\Search\Request\QueryInterface $query     The Query
+     * @param array                                                 $functions The boost functions
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function applyFunctions(QueryInterface $query, $functions = [])
+    {
         if (!empty($functions)) {
             $queryParams = [
                 'query'     => $query,
@@ -123,16 +200,8 @@ class ApplierList
             if ($functions = $this->cache->load($cacheKey)) {
                 $functions = unserialize($functions);
             } else {
-                $functions = [];
                 $optimizers = $this->getOptimizersCollection($containerConfiguration);
-
-                foreach ($optimizers as $optimizer) {
-                    $function = $this->getFunction($containerConfiguration, $optimizer);
-
-                    if ($function !== null) {
-                        $functions[] = $function;
-                    }
-                }
+                $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
 
                 $this->cache->save(serialize($functions), $cacheKey, [Optimizer::CACHE_TAG], 7200);
             }
@@ -141,6 +210,29 @@ class ApplierList
         }
 
         return $this->functions[$cacheKey];
+    }
+
+    /**
+     * Retrieve optimizers functions for a given container
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
+     * @param Collection|OptimizerInterface[] $optimizers             Optimizers list
+     *
+     * @return array
+     */
+    private function getOptimizersFunctions(ContainerConfigurationInterface $containerConfiguration, $optimizers)
+    {
+        $functions = [];
+
+        foreach ($optimizers as $optimizer) {
+            $function = $this->getFunction($containerConfiguration, $optimizer);
+
+            if ($function !== null) {
+                $functions[] = $function;
+            }
+        }
+
+        return $functions;
     }
 
     /**
@@ -168,7 +260,7 @@ class ApplierList
      *
      * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
      *
-     * @return OptimizerCollectionFactory
+     * @return Collection
      */
     private function getOptimizersCollection(ContainerConfigurationInterface $containerConfiguration)
     {

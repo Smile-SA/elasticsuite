@@ -219,8 +219,6 @@
         </field>
     </fieldset>
 
-
-
     <fieldset name="optimizer_rule_fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -244,6 +242,37 @@
                     </item>
                 </argument>
             </htmlContent>
+        </container>
+    </fieldset>
+
+    <fieldset name="optimizer_preview_fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Preview</item>
+            </item>
+        </argument>
+
+        <container name="optimizer_preview_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">50</item>
+                </item>
+            </argument>
+            <field name="optimizer_preview">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="formElement" xsi:type="string">text</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview</item>
+                        <item name="pageSize" xsi:type="string">20</item>
+                        <item name="imports" xsi:type="array">
+                            <item name="loadUrl" xsi:type="string">${ $.provider }:data.preview_url</item>
+                        </item>
+                    </item>
+                </argument>
+            </field>
         </container>
 
     </fieldset>

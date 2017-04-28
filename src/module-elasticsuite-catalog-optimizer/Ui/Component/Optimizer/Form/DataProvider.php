@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form;
 
+use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Registry;
@@ -50,6 +51,11 @@ class DataProvider extends AbstractDataProvider
     private $optimizerRepository;
 
     /**
+     * @var \Magento\Backend\Model\UrlInterface
+     */
+    private $urlBuilder;
+
+    /**
      * DataProvider constructor
      *
      * @param string                       $name                       Component Name
@@ -59,6 +65,7 @@ class DataProvider extends AbstractDataProvider
      * @param Registry                     $registry                   The Registry
      * @param RequestInterface             $request                    The Request
      * @param OptimizerRepositoryInterface $optimizerRepository        The Optimizer Repository
+     * @param UrlInterface                 $urlBuilder                 URL Builder
      * @param array                        $meta                       Component Metadata
      * @param array                        $data                       Component Data
      *
@@ -72,6 +79,7 @@ class DataProvider extends AbstractDataProvider
         Registry $registry,
         RequestInterface $request,
         OptimizerRepositoryInterface $optimizerRepository,
+        UrlInterface $urlBuilder,
         array $meta = [],
         array $data = []
     ) {
@@ -79,6 +87,7 @@ class DataProvider extends AbstractDataProvider
         $this->registry            = $registry;
         $this->request             = $request;
         $this->optimizerRepository = $optimizerRepository;
+        $this->urlBuilder          = $urlBuilder;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
@@ -101,6 +110,7 @@ class DataProvider extends AbstractDataProvider
             if (!empty($optimizerData)) {
                 $this->loadedData[$optimizer->getId()] = $optimizerData;
             }
+            $this->loadedData[$optimizer->getId()]['preview_url'] = $this->getPreviewUrl($optimizer);
         }
 
         return $this->loadedData;
@@ -130,5 +140,17 @@ class DataProvider extends AbstractDataProvider
         }
 
         return $optimizer;
+    }
+
+    /**
+     * Retrieve the optimizer Preview URL.
+     *
+     * @return string
+     */
+    private function getPreviewUrl()
+    {
+        $urlParams = ['ajax' => true];
+
+        return $this->urlBuilder->getUrl('smile_elasticsuite_catalog_optimizer/optimizer/preview', $urlParams);
     }
 }

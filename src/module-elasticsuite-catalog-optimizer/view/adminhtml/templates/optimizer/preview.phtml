@@ -1,0 +1,38 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2017 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ *
+ * Product search rule admin form rendering.
+ */
+?>
+
+<?php
+/** @var \Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Preview $block */
+?>
+<fieldset class="admin__fieldset">
+    <div class="admin__field">
+        <label class="admin__field-label" for="optimizer-preview-query-text">
+            <span data-bind="attr: {'data-config-scope': $data.scopeLabel}, text: label"><?php echo $block->escapeHtml(__('Search Query')); ?></span>
+        </label>
+        <div class="admin__field-control _with-tooltip">
+            <input name="queryText" id="optimizer-preview-query-text" value="" class="input-text admin__control-text" type="text"/>
+            <div class="admin__field-tooltip" style="margin-top:0;">
+                <button id="add_new_option_button"
+                        title="<?php echo $block->escapeHtml(__('Preview')); ?>"
+                        type="button" class="action- scalable add primary">
+                    <span><?php echo $block->escapeHtml(__('Preview')); ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</fieldset>
