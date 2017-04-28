@@ -85,7 +85,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     {
         $attributeValue = $request->getParam($this->_requestVar);
 
-        if (!empty($attributeValue)) {
+        if (null !== $attributeValue) {
             if (!is_array($attributeValue)) {
                 $attributeValue = [$attributeValue];
             }

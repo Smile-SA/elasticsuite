@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Attribute;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\Autocomplete\Item as AutocompleteItem;
 use Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\AttributeConfig;
+use Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Provider;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
 use Smile\ElasticsuiteCatalog\Helper\Autocomplete as AutocompleteHelper;
 
@@ -49,6 +50,7 @@ class DataProvider implements DataProviderInterface
      * @var AttributeConfig
      */
     private $attributeConfig;
+
     /**
      * @var ProductCollection
      */
@@ -62,23 +64,23 @@ class DataProvider implements DataProviderInterface
     /**
      * Constructor.
      *
-     * @param ItemFactory        $itemFactory        Autocomplete item factory.
-     * @param AttributeConfig    $attributeConfig    Autocomplete attribute config.
-     * @param ProductCollection  $productCollection  Autocomplete product collection.
-     * @param AutocompleteHelper $autocompleteHelper Autocomplete configuration helper.
-     * @param string             $type               Autocomplete type code.
+     * @param ItemFactory        $itemFactory               Autocomplete item factory.
+     * @param AttributeConfig    $attributeConfig           Autocomplete attribute config.
+     * @param Provider           $productCollectionProvider Autocomplete product collection provider.
+     * @param AutocompleteHelper $autocompleteHelper        Autocomplete configuration helper.
+     * @param string             $type                      Autocomplete type code.
      */
     public function __construct(
         ItemFactory $itemFactory,
         AttributeConfig $attributeConfig,
-        ProductCollection $productCollection,
+        Provider $productCollectionProvider,
         AutocompleteHelper $autocompleteHelper,
         $type = self::AUTOCOMPLETE_TYPE
     ) {
         $this->itemFactory         = $itemFactory;
         $this->type                = $type;
         $this->attributeConfig     = $attributeConfig;
-        $this->productCollection   = $productCollection;
+        $this->productCollection   = $productCollectionProvider->getProductCollection();
         $this->autocompleteHelper  = $autocompleteHelper;
     }
 
