@@ -51,13 +51,16 @@ class Full
      */
     public function rebuildStoreIndex($storeId, $productIds = null)
     {
+        $productId = 0;
 
-        $products = $this->getSearchableProducts($storeId, $productIds);
+        do {
+            $products = $this->getSearchableProducts($storeId, $productIds, $productId);
 
-        foreach ($products as $productData) {
-            $productId = (int) $productData['entity_id'];
-            yield $productId => $productData;
-        }
+            foreach ($products as $productData) {
+                $productId = (int)$productData['entity_id'];
+                yield $productId => $productData;
+            }
+        } while (!empty($products));
     }
 
     /**
@@ -65,11 +68,13 @@ class Full
      *
      * @param int    $storeId    Store id.
      * @param string $productIds Product ids filter.
+     * @param integer $fromId     Load product with id greater than.
+     * @param integer $limit      Number of product to get loaded.
      *
      * @return array
      */
-    private function getSearchableProducts($storeId, $productIds = null)
+    private function getSearchableProducts($storeId, $productIds = null, $fromId = 0, $limit = 10000)
     {
-        return $this->resourceModel->getSearchableProducts($storeId, $productIds);
+        return $this->resourceModel->getSearchableProducts($storeId, $productIds, $fromId, $limit);
     }
 }
