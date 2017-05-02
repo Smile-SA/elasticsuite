@@ -107,21 +107,10 @@ class Preview
             ['containerName' => 'quick_search_container', 'storeId' => $this->optimizer->getStoreId()]
         );
 
-        $baseProducts = $this->preparePreviewItems(
-            $this->getBaseProductsResults(
-                $containerConfig,
-                $this->optimizer,
-                $this->queryText
-            )
-        );
-
-        $optimizedProducts = $this->preparePreviewItems(
-            $this->getOptimizedProductsResults(
-                $containerConfig,
-                $this->optimizer,
-                $this->queryText
-            )
-        );
+        $baseResults       = $this->getBaseProductsResults($containerConfig, $this->optimizer, $this->queryText);
+        $baseProducts      = $this->preparePreviewItems($baseResults);
+        $optimizedResults  = $this->getOptimizedProductsResults($containerConfig, $this->optimizer, $this->queryText);
+        $optimizedProducts = $this->preparePreviewItems($optimizedResults);
 
         $effectFunction = function ($document) use ($baseProducts, $optimizedProducts) {
             $document['effect'] = $this->getEffectOnProduct(
@@ -133,12 +122,12 @@ class Preview
             return $document;
         };
 
-        $baseProducts      = array_map($effectFunction, $baseProducts);
         $optimizedProducts = array_map($effectFunction, $optimizedProducts);
 
         $data = [
-            'base_products'      => $baseProducts,
-            'optimized_products' => $optimizedProducts,
+            'base_products'      => array_values($baseProducts),
+            'optimized_products' => array_values($optimizedProducts),
+            'size'               => max($baseResults->count(), $optimizedResults->count()), // Should be the same.
         ];
 
         return $data;
@@ -215,7 +204,7 @@ class Preview
             $items[$document->getId()] = $item->getData();
         }
 
-        return $items;
+        return $items; //['products' => $items, 'size' => $queryResponse->count()];
     }
 
     /**

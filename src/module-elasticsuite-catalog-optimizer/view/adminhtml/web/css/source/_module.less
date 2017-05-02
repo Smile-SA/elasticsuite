@@ -1,0 +1,80 @@
+// /**
+//  * DISCLAIMER
+//  *
+//  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+//  * versions in the future.
+//  *
+//  *
+//  * @category  Smile
+//  * @package   Smile\ElasticsuiteCatalog
+//  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+//  * @copyright 2016 Smile
+//  * @license   Open Software License ("OSL") v. 3.0
+//  */
+
+
+.elasticsuite-optimizer-preview {
+
+    .bottom-links {
+        clear: both;
+    }
+
+    .product-list-container {
+        max-width: 48%;
+        float:left;
+        margin-bottom: 20px;
+
+        .product-list-title {
+            text-align:center;
+        }
+    }
+
+    .product-list {
+        width: 100%;
+        margin: 0 40px 0;
+
+        li.product-list-item, li.product-list-item-placeholder {
+            width: 90%;
+            overflow: hidden;
+            position: relative;
+
+            h1 {
+                margin: 0px 0 2px 10px;
+                span {
+                    width: 80%;
+                }
+            }
+
+            .score-container {
+                position: absolute;
+                right: 0;
+                margin-top:-30px;
+                width: 140px;
+
+                .effect {
+                    display: block;
+                    height: 20px;
+                    width: 20px;
+                    font-size: 300%;
+                    margin-bottom: 35px;
+                    margin-left:70px;
+
+                    &.up:after {
+                        color: rgb(63, 190, 57);
+                        content: "↗";
+                    }
+
+                    &.down:after {
+                        color: rgb(255, 0, 0);
+                        content: "↘";
+                    }
+                }
+
+                .effect:after {
+                    color: rgb(0, 0, 0);
+                    content: "→";
+                }
+            }
+        }
+    }
+}

@@ -269,6 +269,7 @@
                         <item name="pageSize" xsi:type="string">20</item>
                         <item name="imports" xsi:type="array">
                             <item name="loadUrl" xsi:type="string">${ $.provider }:data.preview_url</item>
+                            <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>
                         </item>
                     </item>
                 </argument>

@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Registry;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
@@ -56,6 +57,11 @@ class DataProvider extends AbstractDataProvider
     private $urlBuilder;
 
     /**
+     * @var \Magento\Framework\Locale\FormatInterface
+     */
+    private $localeFormat;
+
+    /**
      * DataProvider constructor
      *
      * @param string                       $name                       Component Name
@@ -66,6 +72,7 @@ class DataProvider extends AbstractDataProvider
      * @param RequestInterface             $request                    The Request
      * @param OptimizerRepositoryInterface $optimizerRepository        The Optimizer Repository
      * @param UrlInterface                 $urlBuilder                 URL Builder
+     * @param FormatInterface              $localeFormat               Locale Format
      * @param array                        $meta                       Component Metadata
      * @param array                        $data                       Component Data
      *
@@ -80,6 +87,7 @@ class DataProvider extends AbstractDataProvider
         RequestInterface $request,
         OptimizerRepositoryInterface $optimizerRepository,
         UrlInterface $urlBuilder,
+        FormatInterface $localeFormat,
         array $meta = [],
         array $data = []
     ) {
@@ -88,6 +96,7 @@ class DataProvider extends AbstractDataProvider
         $this->request             = $request;
         $this->optimizerRepository = $optimizerRepository;
         $this->urlBuilder          = $urlBuilder;
+        $this->localeFormat        = $localeFormat;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
@@ -110,7 +119,8 @@ class DataProvider extends AbstractDataProvider
             if (!empty($optimizerData)) {
                 $this->loadedData[$optimizer->getId()] = $optimizerData;
             }
-            $this->loadedData[$optimizer->getId()]['preview_url'] = $this->getPreviewUrl($optimizer);
+            $this->loadedData[$optimizer->getId()]['preview_url']  = $this->getPreviewUrl($optimizer);
+            $this->loadedData[$optimizer->getId()]['price_format'] = $this->localeFormat->getPriceFormat();
         }
 
         return $this->loadedData;
