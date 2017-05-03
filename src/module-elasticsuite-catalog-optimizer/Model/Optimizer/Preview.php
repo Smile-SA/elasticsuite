@@ -12,12 +12,9 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
-use Magento\Search\Model\SearchEngine;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ItemFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 
 /**
@@ -30,7 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 class Preview
 {
     /**
-     * @var ItemFactory
+     * @var Preview\ItemFactory
      */
     private $previewItemFactory;
 
@@ -40,24 +37,14 @@ class Preview
     private $optimizer;
 
     /**
-     * @var integer
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory
      */
-    private $size;
+    private $providerFactory;
 
     /**
-     * @var SearchEngine
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder
      */
-    private $searchEngine;
-
-    /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\RequestBuilder
-     */
-    private $requestBuilder;
-
-    /**
-     * @var ApplierList
-     */
-    private $applier;
+    private $previewResultsBuilder;
 
     /**
      * @var null|string
@@ -65,24 +52,29 @@ class Preview
     private $queryText = null;
 
     /**
+     * @var integer
+     */
+    private $size;
+
+    /**
      * Constructor.
      *
-     * @param OptimizerInterface            $optimizer              The optimizer to preview.
-     * @param ItemFactory                   $previewItemFactory     Preview item factory.
-     * @param SearchEngine                  $searchEngine           Search Engine
-     * @param Preview\RequestBuilder        $requestBuilder         Request Builder
-     * @param ApplierList                   $applier                Preview Applier
-     * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration
+     * @param OptimizerInterface            $optimizer              The optimizer topreview.
+     * @param Preview\ItemFactory           $previewItemFactory     Preview item factory.
+     * @param ApplierListFactory            $applier                Preview Applier
+     * @param Collection\ProviderFactory    $providerFactory        Optimizer Provider Factory
+     * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration Factory
+     * @param Preview\ResultsBuilder        $previewResultsBuilder  Preview Results Builder
      * @param string                        $queryText              Query Text.
      * @param int                           $size                   Preview size.
      */
     public function __construct(
         OptimizerInterface $optimizer,
-        ItemFactory $previewItemFactory,
-        SearchEngine $searchEngine,
-        Preview\RequestBuilder $requestBuilder,
-        ApplierList $applier,
+        Preview\ItemFactory $previewItemFactory,
+        ApplierListFactory $applier,
+        Collection\ProviderFactory $providerFactory,
         ContainerConfigurationFactory $containerConfigFactory,
+        Preview\ResultsBuilder $previewResultsBuilder,
         $queryText = null,
         $size = 10
     ) {
@@ -90,10 +82,10 @@ class Preview
         $this->previewItemFactory     = $previewItemFactory;
         $this->optimizer              = $optimizer;
         $this->queryText              = $queryText;
-        $this->searchEngine           = $searchEngine;
-        $this->requestBuilder         = $requestBuilder;
-        $this->applier                = $applier;
+        $this->applierListFactory     = $applier;
+        $this->providerFactory        = $providerFactory;
         $this->containerConfigFactory = $containerConfigFactory;
+        $this->previewResultsBuilder  = $previewResultsBuilder;
     }
 
     /**
@@ -107,9 +99,12 @@ class Preview
             ['containerName' => 'quick_search_container', 'storeId' => $this->optimizer->getStoreId()]
         );
 
-        $baseResults       = $this->getBaseProductsResults($containerConfig, $this->optimizer, $this->queryText);
-        $baseProducts      = $this->preparePreviewItems($baseResults);
-        $optimizedResults  = $this->getOptimizedProductsResults($containerConfig, $this->optimizer, $this->queryText);
+        $baseApplier  = $this->getApplier($this->optimizer, ProviderInterface::TYPE_EXCLUDE);
+        $baseResults  = $this->getPreviewResults($containerConfig, $baseApplier);
+        $baseProducts = $this->preparePreviewItems($baseResults);
+
+        $optimizedApplier  = $this->getApplier($this->optimizer, ProviderInterface::TYPE_REPLACE);
+        $optimizedResults  = $this->getPreviewResults($containerConfig, $optimizedApplier);
         $optimizedProducts = $this->preparePreviewItems($optimizedResults);
 
         $effectFunction = function ($document) use ($baseProducts, $optimizedProducts) {
@@ -134,57 +129,19 @@ class Preview
     }
 
     /**
-     * Retrieve results without this optimizer.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
-     * @param OptimizerInterface              $optimizer              Optimizer
-     * @param string                          $queryText              Query Text
+     * @param ContainerConfigurationInterface $containerConfig Container Configuration
+     * @param ApplierList                     $applier         Optimizer Applier
      *
      * @return \Magento\Framework\Search\ResponseInterface
      */
-    private function getBaseProductsResults(
-        ContainerConfigurationInterface $containerConfiguration,
-        OptimizerInterface $optimizer,
-        $queryText = ''
-    ) {
-        $params = $this->requestBuilder->buildSearchRequestParams(
-            $containerConfiguration,
-            $queryText,
+    private function getPreviewResults($containerConfig, $applier)
+    {
+        return $this->previewResultsBuilder->getPreviewResults(
+            $containerConfig,
+            $applier,
+            $this->queryText,
             $this->size
         );
-
-        if (isset($params['query'])) {
-            $params['query'] = $this->applier->applyAllExcept($containerConfiguration, $params['query'], $optimizer);
-        }
-
-        return $this->getSearchResults($params);
-    }
-
-    /**
-     * Retrieve results with this optimizer.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
-     * @param OptimizerInterface              $optimizer              Optimizer
-     * @param string                          $queryText              Query Text
-     *
-     * @return \Magento\Framework\Search\ResponseInterface
-     */
-    private function getOptimizedProductsResults(
-        ContainerConfigurationInterface $containerConfiguration,
-        OptimizerInterface $optimizer,
-        $queryText = ''
-    ) {
-        $params = $this->requestBuilder->buildSearchRequestParams(
-            $containerConfiguration,
-            $queryText,
-            $this->size
-        );
-
-        if (isset($params['query'])) {
-            $params['query'] = $this->applier->applyNewOptimizer($containerConfiguration, $params['query'], $optimizer);
-        }
-
-        return $this->getSearchResults($params);
     }
 
     /**
@@ -198,13 +155,12 @@ class Preview
     {
         $items = [];
 
-        /** @var \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Document $document */
         foreach ($queryResponse->getIterator() as $document) {
             $item                      = $this->previewItemFactory->create(['document' => $document]);
             $items[$document->getId()] = $item->getData();
         }
 
-        return $items; //['products' => $items, 'size' => $queryResponse->count()];
+        return $items;
     }
 
     /**
@@ -239,17 +195,17 @@ class Preview
     }
 
     /**
-     * Execute search.
+     * Retrieve applier of a given type for an optimizer.
      *
-     * @param array $parameters Search Request Parameters
+     * @param OptimizerInterface $optimizer    The optimizer
+     * @param string             $providerType The provider type
      *
-     * @return \Magento\Framework\Search\ResponseInterface
+     * @return \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList
      */
-    private function getSearchResults($parameters)
+    private function getApplier(OptimizerInterface $optimizer, $providerType)
     {
-        $searchRequest  = $this->requestBuilder->getSearchRequest($parameters);
-        $searchResponse = $this->searchEngine->search($searchRequest);
+        $provider = $this->providerFactory->create($providerType, ['optimizer' => $optimizer]);
 
-        return $searchResponse;
+        return $this->applierListFactory->create(['collectionProvider' => $provider]);
     }
 }

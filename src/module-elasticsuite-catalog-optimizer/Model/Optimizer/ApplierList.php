@@ -12,9 +12,12 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
+use Magento\Framework\App\CacheInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
@@ -34,23 +37,22 @@ class ApplierList
     const CACHE_KEY_PREFIX = 'optimizer_boost_function';
 
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface
      */
-    private $optimizerCollectionFactory;
+    private $collectionProvider;
 
     /**
      * @var ApplierInterface[]
      */
     private $appliers;
 
-
     /**
-     * @var \Magento\Framework\App\CacheInterface
+     * @var CacheInterface
      */
     private $cache;
 
@@ -62,21 +64,21 @@ class ApplierList
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                           $queryFactory               Search request query factory.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory $optimizerCollectionFactory Optimizer collection factory.
-     * @param \Magento\Framework\App\CacheInterface                                               $cache                      Application cache.
-     * @param ApplierInterface[]                                                                  $appliers                   Appliers interface.
+     * @param QueryFactory       $queryFactory       Search request query factory.
+     * @param ProviderInterface  $collectionProvider Optimizer Collection Provider
+     * @param CacheInterface     $cache              Application cache.
+     * @param ApplierInterface[] $appliers           Appliers interface.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory $optimizerCollectionFactory,
-        \Magento\Framework\App\CacheInterface $cache,
+        QueryFactory $queryFactory,
+        ProviderInterface $collectionProvider,
+        CacheInterface $cache,
         array $appliers = []
     ) {
-        $this->queryFactory               = $queryFactory;
-        $this->optimizerCollectionFactory = $optimizerCollectionFactory;
-        $this->cache                      = $cache;
-        $this->appliers                   = $appliers;
+        $this->queryFactory       = $queryFactory;
+        $this->collectionProvider = $collectionProvider;
+        $this->cache              = $cache;
+        $this->appliers           = $appliers;
     }
 
     /**
@@ -90,69 +92,6 @@ class ApplierList
     public function applyOptimizers(ContainerConfigurationInterface $containerConfiguration, QueryInterface $query)
     {
         $functions = $this->getFunctions($containerConfiguration);
-
-        return $this->applyFunctions($query, $functions);
-    }
-
-    /**
-     * Apply a new optimizer to the current existing ones.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
-     * @param QueryInterface                  $query                  Query
-     * @param OptimizerInterface              $optimizer              Optimizer to apply
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-     */
-    public function applyNewOptimizer(
-        ContainerConfigurationInterface $containerConfiguration,
-        QueryInterface $query,
-        OptimizerInterface $optimizer
-    ) {
-        $optimizers  = $this->getOptimizersCollection($containerConfiguration);
-        $optimizers->addFieldToFilter('main_table.' . OptimizerInterface::OPTIMIZER_ID, ['neq' => $optimizer->getId()]);
-        $functions   = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
-        $functions[] = $this->getFunction($containerConfiguration, $optimizer);
-
-        return $this->applyFunctions($query, $functions);
-    }
-
-    /**
-     * Apply only one optimizer to the query.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
-     * @param QueryInterface                  $query                  Query
-     * @param OptimizerInterface              $optimizer              Optimizer to apply
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-     */
-    public function applyOnly(
-        ContainerConfigurationInterface $containerConfiguration,
-        QueryInterface $query,
-        OptimizerInterface $optimizer
-    ) {
-        $functions  = $this->getOptimizersFunctions($containerConfiguration, [$optimizer]);
-
-        return $this->applyFunctions($query, $functions);
-    }
-
-    /**
-     * Apply all existing optimizers except the one passed in parameter.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
-     * @param QueryInterface                  $query                  Query
-     * @param OptimizerInterface              $optimizer              Optimizer to apply
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-     */
-    public function applyAllExcept(
-        ContainerConfigurationInterface $containerConfiguration,
-        QueryInterface $query,
-        OptimizerInterface $optimizer
-    ) {
-        $optimizers = $this->getOptimizersCollection($containerConfiguration);
-        $optimizers->addFieldToFilter('main_table.' . OptimizerInterface::OPTIMIZER_ID, ['neq' => $optimizer->getId()]);
-
-        $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
 
         return $this->applyFunctions($query, $functions);
     }
@@ -182,7 +121,6 @@ class ApplierList
 
     /**
      * Returns functions applied to the container.
-     *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
@@ -197,13 +135,15 @@ class ApplierList
         $cacheKey = sprintf("%s_%s_%s", self::CACHE_KEY_PREFIX, $containerName, $storeId);
 
         if (!isset($this->functions[$cacheKey])) {
-            if ($functions = $this->cache->load($cacheKey)) {
+            if ($this->collectionProvider->useCache() && ($functions = $this->cache->load($cacheKey))) {
                 $functions = unserialize($functions);
             } else {
                 $optimizers = $this->getOptimizersCollection($containerConfiguration);
                 $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
 
-                $this->cache->save(serialize($functions), $cacheKey, [Optimizer::CACHE_TAG], 7200);
+                if ($this->collectionProvider->useCache()) {
+                    $this->cache->save(serialize($functions), $cacheKey, [Optimizer::CACHE_TAG], 7200);
+                }
             }
 
             $this->functions[$cacheKey] = $functions;
@@ -264,12 +204,6 @@ class ApplierList
      */
     private function getOptimizersCollection(ContainerConfigurationInterface $containerConfiguration)
     {
-        $collection = $this->optimizerCollectionFactory->create();
-
-        $collection->addFieldToFilter(OptimizerInterface::STORE_ID, $containerConfiguration->getStoreId())
-            ->addSearchContainersFilter($containerConfiguration->getName())
-            ->addIsActiveFilter();
-
-        return $collection;
+        return $this->collectionProvider->getCollection($containerConfiguration);
     }
 }

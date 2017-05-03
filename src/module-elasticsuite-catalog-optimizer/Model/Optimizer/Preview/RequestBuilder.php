@@ -110,7 +110,7 @@ class RequestBuilder
      *
      * @return array
      */
-    public function buildSearchRequestParams(ContainerConfigurationInterface $containerConfig, $queryText, $size = 20)
+    public function getSearchRequestParams(ContainerConfigurationInterface $containerConfig, $queryText, $size = 20)
     {
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 

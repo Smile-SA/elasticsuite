@@ -6,9 +6,9 @@
  *
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2017 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
