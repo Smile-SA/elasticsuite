@@ -12,14 +12,14 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Search\Model\SearchEngine;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
-use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder;
 use Smile\ElasticsuiteCore\Search\RequestFactory;
 
 /**
@@ -37,21 +37,6 @@ class RequestBuilder
     private $queryBuilder;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory
-     */
-    private $spellcheckRequestFactory;
-
-    /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface
-     */
-    private $spellchecker;
-
-    /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory
-     */
-    private $containerConfigFactory;
-
-    /**
      * @var \Smile\ElasticsuiteCore\Search\RequestFactory
      */
     private $requestFactory;
@@ -62,29 +47,44 @@ class RequestBuilder
     private $queryFactory;
 
     /**
+     * @var CategoryQuery
+     */
+    private $categoryQueryBuilder;
+
+    /**
+     * @var SearchQuery
+     */
+    private $searchQueryBuilder;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder
+     */
+    private $sortOrderBuilder;
+
+    /**
      * RequestBuilder constructor.
      *
-     * @param RequestFactory                $requestFactory           Request Factory
-     * @param QueryBuilder                  $queryBuilder             Query Builder
-     * @param SpellcheckRequestFactory      $spellcheckRequestFactory Spellcheck Request Factory
-     * @param SpellcheckerInterface         $spellchecker             Spellchecker
-     * @param ContainerConfigurationFactory $containerConfigFactory   Container Configuration
-     * @param QueryFactory                  $queryFactory             Query Factory
+     * @param RequestFactory   $requestFactory   Request Factory
+     * @param QueryBuilder     $queryBuilder     Query Builder
+     * @param QueryFactory     $queryFactory     Query Factory
+     * @param CategoryQuery    $categoryQuery    Category Query
+     * @param SearchQuery      $searchQuery      Search Query
+     * @param SortOrderBuilder $sortOrderBuilder Sort Order Builder
      */
     public function __construct(
         RequestFactory $requestFactory,
         QueryBuilder $queryBuilder,
-        SpellcheckRequestFactory $spellcheckRequestFactory,
-        SpellcheckerInterface $spellchecker,
-        ContainerConfigurationFactory $containerConfigFactory,
-        QueryFactory $queryFactory
+        QueryFactory $queryFactory,
+        CategoryQuery $categoryQuery,
+        SearchQuery $searchQuery,
+        SortOrderBuilder $sortOrderBuilder
     ) {
-        $this->queryBuilder             = $queryBuilder;
-        $this->spellcheckRequestFactory = $spellcheckRequestFactory;
-        $this->spellchecker             = $spellchecker;
-        $this->containerConfigFactory   = $containerConfigFactory;
-        $this->requestFactory           = $requestFactory;
-        $this->queryFactory             = $queryFactory;
+        $this->queryBuilder         = $queryBuilder;
+        $this->requestFactory       = $requestFactory;
+        $this->queryFactory         = $queryFactory;
+        $this->sortOrderBuilder     = $sortOrderBuilder;
+        $this->categoryQueryBuilder = $categoryQuery;
+        $this->searchQueryBuilder   = $searchQuery;
     }
 
     /**
@@ -105,80 +105,41 @@ class RequestBuilder
      * Prepare the Search Request Params
      *
      * @param ContainerConfigurationInterface $containerConfig Container Configuration
+     * @param CategoryInterface               $category        The category
      * @param string                          $queryText       The query text
      * @param int                             $size            Query Size
      *
      * @return array
      */
-    public function getSearchRequestParams(ContainerConfigurationInterface $containerConfig, $queryText, $size = 20)
-    {
-        $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
+    public function getSearchRequestParams(
+        ContainerConfigurationInterface $containerConfig,
+        $category = null,
+        $queryText = null,
+        $size = 20
+    ) {
+        $sortOrders = [];
 
-        if ($queryText) {
-            $spellingType = $this->getSpellingType($containerConfig, $queryText);
+        $query = $this->queryFactory->create(\Magento\Framework\Search\Request\QueryInterface::TYPE_BOOL, []);
+
+        if ($queryText !== null) {
+            $query = $this->searchQueryBuilder->getFullTextQuery($containerConfig, $queryText);
+        } elseif ($category !== null) {
+            $query      = $this->categoryQueryBuilder->getCategorySearchQuery($containerConfig, $category);
+            $sortOrders = $this->categoryQueryBuilder->getCategorySortOrders($category);
         }
 
         $requestParams = [
-            'name'         => $containerConfig->getName(),
-            'indexName'    => $containerConfig->getIndexName(),
-            'type'         => $containerConfig->getTypeName(),
-            'from'         => 0,
-            'size'         => $size,
-            'dimensions'   => [],
-            'query'        => $this->createQuery($containerConfig, $queryText, $spellingType),
-            'sortOrders'   => null,
-            'buckets'      => [],
-            'spellingType' => $spellingType,
+            'name'       => $containerConfig->getName(),
+            'indexName'  => $containerConfig->getIndexName(),
+            'type'       => $containerConfig->getTypeName(),
+            'from'       => 0,
+            'size'       => $size,
+            'dimensions' => [],
+            'query'      => $query,
+            'sortOrders' => $this->sortOrderBuilder->buildSordOrders($containerConfig, $sortOrders),
+            'buckets'    => [],
         ];
 
         return $requestParams;
-    }
-
-    /**
-     * Create a filtered query with an optional fulltext query part.
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Search request container configuration.
-     * @param string|null                     $queryText              Fulltext query.
-     * @param string                          $spellingType           For fulltext query : the type of spellchecked
-     *                                                                applied.
-     *
-     * @return QueryInterface
-     */
-    private function createQuery(ContainerConfigurationInterface $containerConfiguration, $queryText, $spellingType)
-    {
-        $queryParams = [];
-
-        if ($queryText) {
-            $queryParams['query'] = $this->queryBuilder->createFulltextQuery($containerConfiguration, $queryText, $spellingType);
-        }
-
-        return $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
-    }
-
-    /**
-     * Retireve the spelling type for a fulltext query.
-     *
-     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
-     * @param string                          $queryText       Query text.
-     *
-     * @return int
-     */
-    private function getSpellingType(ContainerConfigurationInterface $containerConfig, $queryText)
-    {
-        if (is_array($queryText)) {
-            $queryText = implode(" ", $queryText);
-        }
-
-        $spellcheckRequestParams = [
-            'index'           => $containerConfig->getIndexName(),
-            'type'            => $containerConfig->getTypeName(),
-            'queryText'       => $queryText,
-            'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
-        ];
-
-        $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
-        $spellingType      = $this->spellchecker->getSpellingType($spellcheckRequest);
-
-        return $spellingType;
     }
 }

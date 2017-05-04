@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
@@ -41,19 +42,22 @@ class ResultsBuilder
     /**
      * @param ContainerConfigurationInterface $containerConfiguration Container Configuration
      * @param ApplierList                     $applier                Optimizers appliers
-     * @param string                          $queryText              Query text
      * @param int                             $size                   Size
+     * @param string                          $queryText              Query text
+     * @param CategoryInterface               $category               Category, if any
      *
      * @return \Magento\Framework\Search\ResponseInterface
      */
     public function getPreviewResults(
         ContainerConfigurationInterface $containerConfiguration,
         ApplierList $applier,
-        $queryText,
-        $size
+        $size,
+        $queryText = null,
+        $category = null
     ) {
         $params = $this->requestBuilder->getSearchRequestParams(
             $containerConfiguration,
+            $category,
             $queryText,
             $size
         );

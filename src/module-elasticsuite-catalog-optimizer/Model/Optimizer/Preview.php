@@ -12,10 +12,10 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 
 /**
  * Preview Model for Optimizer
@@ -35,6 +35,16 @@ class Preview
      * @var OptimizerInterface
      */
     private $optimizer;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface
+     */
+    private $containerConfiguration;
+
+    /**
+     * @var \Magento\Catalog\Api\Data\CategoryInterface
+     */
+    private $category;
 
     /**
      * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory
@@ -59,23 +69,25 @@ class Preview
     /**
      * Constructor.
      *
-     * @param OptimizerInterface            $optimizer              The optimizer topreview.
-     * @param Preview\ItemFactory           $previewItemFactory     Preview item factory.
-     * @param ApplierListFactory            $applier                Preview Applier
-     * @param Collection\ProviderFactory    $providerFactory        Optimizer Provider Factory
-     * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration Factory
-     * @param Preview\ResultsBuilder        $previewResultsBuilder  Preview Results Builder
-     * @param string                        $queryText              Query Text.
-     * @param int                           $size                   Preview size.
+     * @param OptimizerInterface              $optimizer             The optimizer to preview.
+     * @param Preview\ItemFactory             $previewItemFactory    Preview item factory.
+     * @param ApplierListFactory              $applier               Preview Applier
+     * @param Collection\ProviderFactory      $providerFactory       Optimizer Provider Factory
+     * @param ContainerConfigurationInterface $containerConfig       Container Configuration
+     * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder
+     * @param CategoryInterface               $category              Category Id to preview, if any.
+     * @param string                          $queryText             Query Text.
+     * @param int                             $size                  Preview size.
      */
     public function __construct(
         OptimizerInterface $optimizer,
         Preview\ItemFactory $previewItemFactory,
         ApplierListFactory $applier,
         Collection\ProviderFactory $providerFactory,
-        ContainerConfigurationFactory $containerConfigFactory,
+        ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
-        $queryText = null,
+        CategoryInterface $category = null,
+        $queryText = '',
         $size = 10
     ) {
         $this->size                   = $size;
@@ -84,8 +96,9 @@ class Preview
         $this->queryText              = $queryText;
         $this->applierListFactory     = $applier;
         $this->providerFactory        = $providerFactory;
-        $this->containerConfigFactory = $containerConfigFactory;
+        $this->containerConfiguration = $containerConfig;
         $this->previewResultsBuilder  = $previewResultsBuilder;
+        $this->category               = $category;
     }
 
     /**
@@ -95,16 +108,12 @@ class Preview
      */
     public function getData()
     {
-        $containerConfig = $this->containerConfigFactory->create(
-            ['containerName' => 'quick_search_container', 'storeId' => $this->optimizer->getStoreId()]
-        );
-
         $baseApplier  = $this->getApplier($this->optimizer, ProviderInterface::TYPE_EXCLUDE);
-        $baseResults  = $this->getPreviewResults($containerConfig, $baseApplier);
+        $baseResults  = $this->getPreviewResults($baseApplier);
         $baseProducts = $this->preparePreviewItems($baseResults);
 
         $optimizedApplier  = $this->getApplier($this->optimizer, ProviderInterface::TYPE_REPLACE);
-        $optimizedResults  = $this->getPreviewResults($containerConfig, $optimizedApplier);
+        $optimizedResults  = $this->getPreviewResults($optimizedApplier);
         $optimizedProducts = $this->preparePreviewItems($optimizedResults);
 
         $effectFunction = function ($document) use ($baseProducts, $optimizedProducts) {
@@ -129,18 +138,18 @@ class Preview
     }
 
     /**
-     * @param ContainerConfigurationInterface $containerConfig Container Configuration
-     * @param ApplierList                     $applier         Optimizer Applier
+     * @param ApplierList $applier Optimizer Applier
      *
      * @return \Magento\Framework\Search\ResponseInterface
      */
-    private function getPreviewResults($containerConfig, $applier)
+    private function getPreviewResults($applier)
     {
         return $this->previewResultsBuilder->getPreviewResults(
-            $containerConfig,
+            $this->containerConfiguration,
             $applier,
+            $this->size,
             $this->queryText,
-            $this->size
+            $this->category
         );
     }
 

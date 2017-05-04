@@ -25,7 +25,7 @@ define([
             showSpinner: true,
             template: "Smile_ElasticsuiteCatalogOptimizer/form/element/optimizer-preview",
             refreshFields: {},
-            maxRefreshInterval: 1000,
+            maxRefreshInterval: 200,
             imports: {
                 formData: "${ $.provider }:data"
             },
@@ -60,10 +60,10 @@ define([
                 clearTimeout();
             }
 
-            this.value({queryText : this.queryText()});
-            this.loading(true);
-
             this.refreshRateLimiter = setTimeout(function () {
+                this.value({queryText : this.queryText()});
+                this.loading(true);
+
                 var formData = this.formData;
                 formData['page_size'] = this.currentSize();
 
