@@ -14,5 +14,5 @@ cache:
     - $HOME/.composer/cache
 
 script:
-    - vendor/squizlabs/php_codesniffer/scripts/phpcs --standard=Resources/phpcs-standards/SmileElasticsuite --extensions=php src/
-    - vendor/phpmd/phpmd/src/bin/phpmd src text Resources/phpmd-rulesets/rulset.xml
+    - vendor/bin/phpcs --standard=Resources/phpcs-standards/SmileElasticsuite --extensions=php src/
+    - vendor/bin/phpmd src text Resources/phpmd-rulesets/rulset.xml
