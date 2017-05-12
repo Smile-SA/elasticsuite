@@ -57,7 +57,7 @@ class Full
             $products = $this->getSearchableProducts($storeId, $productIds, $productId);
 
             foreach ($products as $productData) {
-                $productId = (int)$productData['entity_id'];
+                $productId = (int) $productData['entity_id'];
                 yield $productId => $productData;
             }
         } while (!empty($products));
@@ -66,8 +66,8 @@ class Full
     /**
      * Load a bulk of product data.
      *
-     * @param int    $storeId    Store id.
-     * @param string $productIds Product ids filter.
+     * @param int     $storeId    Store id.
+     * @param string  $productIds Product ids filter.
      * @param integer $fromId     Load product with id greater than.
      * @param integer $limit      Number of product to get loaded.
      *

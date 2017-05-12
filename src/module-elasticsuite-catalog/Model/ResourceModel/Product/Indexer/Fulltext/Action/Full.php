@@ -28,14 +28,14 @@ class Full extends Indexer
     /**
      * Load a bulk of product data.
      *
-     * @param int    $storeId    Store id.
-     * @param string $productIds Product ids filter.
+     * @param int     $storeId    Store id.
+     * @param string  $productIds Product ids filter.
      * @param integer $fromId     Load product with id greater than.
      * @param integer $limit      Number of product to get loaded.
      *
      * @return array
      */
-    public function getSearchableProducts($storeId, $productIds = null,  $fromId = 0, $limit = 1000)
+    public function getSearchableProducts($storeId, $productIds = null, $fromId = 0, $limit = 1000)
     {
         $select = $this->getConnection()->select()
             ->from(['e' => $this->getTable('catalog_product_entity')]);
