@@ -192,11 +192,9 @@ class Preview
 
         $this->category->setIsActive(true);
 
-        if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
+        if ((bool) $this->category->getIsVirtualCategory() && $this->category->getIsActive()) {
             $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
-        }
-
-        if ((bool) $this->category->getIsVirtualCategory() === false) {
+        } else if ($this->category->getIsActive()) {
             $queryParams = [];
 
             if ($query !== null) {
