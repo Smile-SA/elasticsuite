@@ -58,7 +58,15 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
     ) {
         $this->jsonHelper   = $jsonHelper;
         $this->localeFormat = $localeFormat;
-        $this->rendererList = $rendererList;
+
+        // Handle the translation of the titles.
+        $this->rendererList = [];
+        foreach ($rendererList as $key => $renderer) {
+            if (is_array($renderer)) {
+                $renderer['title'] = __($renderer['title']);
+            }
+            $this->rendererList[$key] = $renderer;
+        }
 
         parent::__construct($context, $data);
     }
