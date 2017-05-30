@@ -64,35 +64,70 @@ div.optimizer-preview-fieldset {
     }
 
     .product-list-container {
-        max-width: 48%;
+        width: 48%;
         float:left;
         margin-bottom: 20px;
 
         .product-list-title {
             text-align:center;
+            h1 {
+                font-size: 2rem;
+            }
         }
     }
 
     .product-list {
         width: 100%;
         margin: 0 40px 0;
+        border-width: 1px 0 0 0;
+        border-color: #dadfe0;
+        border-style: solid;
 
         li.product-list-item, li.product-list-item-placeholder {
-            width: 90%;
+            width: 100%;
             overflow: hidden;
             position: relative;
+            border-width: 0 1px 1px 1px;
+            border-color: #dadfe0;
+            border-style: solid;
+            padding: 10px;
+            vertical-align: top;
+            list-style-type: none;
+            display:inline-block;
 
             h1 {
                 margin: 0px 0 2px 10px;
+                font-size: 1em;
+                font-weight:bold;
+                margin-bottom: 5px;
                 span {
                     width: 80%;
                 }
             }
 
+            div.product-details {
+                p {
+                    margin: 0 0 0em;
+                }
+            }
+
+            div.product-image {
+                text-align: left;
+                width: 50px;
+                height: 50px;
+                margin: 0 10px;
+                float: left;
+
+                img {
+                    max-width: 50px;
+                    max-height: 50px;
+                }
+            }
+
             .score-container {
                 position: absolute;
-                right: 0;
-                margin-top:-30px;
+                right: -15px;
+                margin-top: -60px;
                 width: 140px;
 
                 .effect {
@@ -102,6 +137,7 @@ div.optimizer-preview-fieldset {
                     font-size: 300%;
                     margin-bottom: 35px;
                     margin-left:70px;
+                    margin-top: -10px;
 
                     &.up:after {
                         color: rgb(63, 190, 57);

@@ -7,7 +7,7 @@
 
 <div class="admin__fieldset">
 
-    <div class="elasticsuite-admin-product-sorter elasticsuite-optimizer-preview">
+    <div class="elasticsuite-optimizer-preview">
 
         <div data-bind="if: hasProducts()">
 
@@ -19,7 +19,13 @@
                     <li class="product-list-item" data-bind="
                         attr: {'data-product-id': getId()},
                     ">
-                        <h1><span data-bind="html: getName()"></span></h1>
+                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
+
+                        <div class="product-details">
+                            <h1><span data-bind="html: getName()"></span></h1>
+                            <p class="price" data-bind="text: getFormattedPrice()"></p>
+                            <p class="stock" data-bind="text: getStockLabel()"></p>
+                        </div>
 
                         <div class="score-container">
                             <p>
@@ -27,14 +33,6 @@
                                 <span data-bind="text: getScore()"></span>
                             </p>
                         </div>
-
-                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
-
-                        <div class="info">
-                            <p class="price" data-bind="text: getFormattedPrice()"></p>
-                            <p class="stock" data-bind="text: getStockLabel()"></p>
-                        </div>
-
                     </li>
                 </ul>
             </div>
@@ -47,7 +45,13 @@
                     <li class="product-list-item" data-bind="
                         attr: {'data-product-id': getId()},
                     ">
-                        <h1><span data-bind="html: getName()"></span></h1>
+                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
+
+                        <div class="product-details">
+                            <h1><span data-bind="html: getName()"></span></h1>
+                            <p class="price" data-bind="text: getFormattedPrice()"></p>
+                            <p class="stock" data-bind="text: getStockLabel()"></p>
+                        </div>
 
                         <div class="score-container">
                             <p>
@@ -55,14 +59,6 @@
                                 <span data-bind="text: getScore()"></span>
                             </p>
                             <span class="effect" data-bind="css: getEffectClass()"></span>
-                        </div>
-
-
-                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
-
-                        <div class="info">
-                            <p class="price" data-bind="text: getFormattedPrice()"></p>
-                            <p class="stock" data-bind="text: getStockLabel()"></p>
                         </div>
 
                     </li>
