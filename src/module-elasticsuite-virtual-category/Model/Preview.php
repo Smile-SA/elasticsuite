@@ -192,7 +192,7 @@ class Preview
 
         $this->category->setIsActive(true);
 
-        if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
+        if ($this->category->getIsVirtualCategory()) {
             $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
         }
 
