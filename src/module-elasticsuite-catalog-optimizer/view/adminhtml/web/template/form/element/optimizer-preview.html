@@ -1,13 +1,13 @@
-<fieldset class="admin__fieldset">
+<div class="preview-button-container">
+    <button data-bind="{ click : refreshProductList, attr: { title: $t('Preview') }}"
+            type="button" class="action- scalable add primary">
+        <span data-bind="i18n: 'Preview'"></span>
+    </button>
+</div>
+
+<div class="admin__fieldset">
 
     <div class="elasticsuite-admin-product-sorter elasticsuite-optimizer-preview">
-
-        <div class="preview-button-container">
-            <button data-bind="{ click : refreshProductList, attr: { title: $t('Preview') }}"
-                    type="button" class="action- scalable add primary">
-                <span data-bind="i18n: 'Preview'"></span>
-            </button>
-        </div>
 
         <div data-bind="if: hasProducts()">
 
@@ -73,4 +73,4 @@
             </p>
         </div>
     </div>
-</fieldset>
+</div>
