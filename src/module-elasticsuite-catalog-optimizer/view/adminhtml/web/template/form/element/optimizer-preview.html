@@ -1,0 +1,72 @@
+<div class="preview-button-container">
+    <button data-bind="{ click : refreshProductList, attr: { title: $t('Preview') }}"
+            type="button" class="action- scalable add primary">
+        <span data-bind="i18n: 'Preview'"></span>
+    </button>
+</div>
+
+<div class="admin__fieldset">
+
+    <div class="elasticsuite-optimizer-preview">
+
+        <div data-bind="if: hasProducts()">
+
+            <div class="product-list-container">
+                <div class="product-list-title">
+                    <h1><span data-bind="i18n: 'Base Results'"></span></h1>
+                </div>
+                <ul data-bind="foreach: baseProducts" class="product-list">
+                    <li class="product-list-item" data-bind="
+                        attr: {'data-product-id': getId()},
+                    ">
+                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
+
+                        <div class="product-details">
+                            <h1><span data-bind="html: getName()"></span></h1>
+                            <p class="price" data-bind="text: getFormattedPrice()"></p>
+                            <p class="stock" data-bind="text: getStockLabel()"></p>
+                        </div>
+
+                        <div class="score-container">
+                            <p>
+                                <span class="score-label" data-bind="text: getScoreLabel()"></span>
+                                <span data-bind="text: getScore()"></span>
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="product-list-container">
+                <div class="product-list-title">
+                    <h1><span data-bind="i18n: 'Optimized Results'"></span></h1>
+                </div>
+                <ul data-bind="foreach: optimizedProducts" class="product-list">
+                    <li class="product-list-item" data-bind="
+                        attr: {'data-product-id': getId()},
+                    ">
+                        <div class="product-image"><img data-bind="attr: { src: getImageUrl() }"/></div>
+
+                        <div class="product-details">
+                            <h1><span data-bind="html: getName()"></span></h1>
+                            <p class="price" data-bind="text: getFormattedPrice()"></p>
+                            <p class="stock" data-bind="text: getStockLabel()"></p>
+                        </div>
+
+                        <div class="score-container">
+                            <p>
+                                <span class="score-label" data-bind="text: getScoreLabel()"></span>
+                                <span data-bind="text: getScore()"></span>
+                            </p>
+                            <span class="effect" data-bind="css: getEffectClass()"></span>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+            <p class="bottom-links" data-bind="visible: hasMoreProducts()">
+                <a href="#" data-bind="click: showMoreProducts, text: messages.showMore" class="show-more-link"></a>
+            </p>
+        </div>
+    </div>
+</div>

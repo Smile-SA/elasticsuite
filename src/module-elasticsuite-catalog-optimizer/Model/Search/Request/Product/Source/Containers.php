@@ -36,7 +36,11 @@ class Containers extends \Smile\ElasticsuiteCore\Model\Search\Request\Source\Con
         $options = [];
         foreach ($this->getContainers() as $container) {
             if (isset($container['type']) && ($container['type'] === self::TYPE_PRODUCT)) {
-                $options[] = ['value' => $container['name'], 'label' => __($container['label'])];
+                $options[] = [
+                    'value'    => $container['name'],
+                    'label'    => __($container['label']),
+                    'fulltext' => isset($container['fulltext']) && $container['fulltext'] == "true" ? true : false,
+                ];
             }
         }
 
