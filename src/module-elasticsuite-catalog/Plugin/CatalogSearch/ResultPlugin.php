@@ -7,27 +7,27 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2017 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCatalog\Observer;
+namespace Smile\ElasticsuiteCatalog\Plugin\CatalogSearch;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogSearch\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Event\Observer;
-use Magento\Framework\Event\ObserverInterface;
-use \Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Message\ManagerInterface;
 
 /**
- * Observer that redirect to the product page if this is the only search result.
+ * Plugin which is responsible to redirect to a product page when only one result is found.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class RedirectIfOneResult implements ObserverInterface
+class ResultPlugin
 {
     /**
      * Constant for configuration field location.
@@ -57,35 +57,49 @@ class RedirectIfOneResult implements ObserverInterface
     private $helper;
 
     /**
+     * @var ResultFactory
+     */
+    private $resultFactory;
+
+    /**
      * RedirectIfOneResult constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Resolver              $layerResolver       Layer Resolver
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig         Scope Configuration
      * @param \Magento\CatalogSearch\Helper\Data                 $catalogSearchHelper Catalog Search Helper
      * @param \Magento\Framework\Message\ManagerInterface        $messageManager      Message Manager
+     * @param \Magento\Framework\Controller\ResultFactory        $resultFactory       Result Interface Factory
      */
     public function __construct(
         Resolver $layerResolver,
         ScopeConfigInterface $scopeConfig,
         Data $catalogSearchHelper,
-        ManagerInterface $messageManager
+        ManagerInterface $messageManager,
+        ResultFactory $resultFactory
     ) {
         $this->layerResolver  = $layerResolver;
         $this->scopeConfig    = $scopeConfig;
         $this->messageManager = $messageManager;
         $this->helper         = $catalogSearchHelper;
+        $this->resultFactory  = $resultFactory;
     }
 
     /**
-     * Process redirect to the product page if this is the only search result.
+     * Process a redirect to the product page if there is only one result for a given search.
      *
-     * @param Observer $observer The observer
-     * @event controller_action_postdispatch_catalogsearch_result_index
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @return void
+     * @param \Magento\CatalogSearch\Controller\Result\Index $subject The CatalogSearch Result Controller
+     * @param \Closure                                       $proceed The execute method
+     *
+     * @return \Magento\Framework\Controller\ResultInterface
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
-    {
+    public function aroundExecute(
+        \Magento\CatalogSearch\Controller\Result\Index $subject,
+        \Closure $proceed
+    ) {
+        $proceed();
+
         if ($this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG)) {
             $layer      = $this->layerResolver->get();
             $layerState = $layer->getState();
@@ -97,7 +111,10 @@ class RedirectIfOneResult implements ObserverInterface
                     $product = $productCollection->getFirstItem();
                     if ($product->getId()) {
                         $this->addRedirectMessage($product);
-                        $observer->getControllerAction()->getResponse()->setRedirect($product->getProductUrl());
+                        $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+                        $result->setUrl($product->getProductUrl());
+
+                        return $result;
                     }
                 }
             }
@@ -111,7 +128,7 @@ class RedirectIfOneResult implements ObserverInterface
      */
     private function addRedirectMessage(ProductInterface $product)
     {
-        $message = __("%1 is the only product matching your '%2' research.", $product->getName(), $this->helper->getEscapedQueryText());
+        $message = __("%1 is the only product matching your '%2' search.", $product->getName(), $this->helper->getEscapedQueryText());
         $this->messageManager->addSuccessMessage($message);
     }
 }

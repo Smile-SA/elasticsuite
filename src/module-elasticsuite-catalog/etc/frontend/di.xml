@@ -173,4 +173,8 @@
             <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
         </arguments>
     </type>
+
+    <type name="Magento\CatalogSearch\Controller\Result\Index">
+        <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
+    </type>
 </config>
