@@ -76,7 +76,7 @@ class QueryBuilder
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
-            if ($productCondition->getInputType() === 'string') {
+            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()'])) {
                 $queryType = QueryInterface::TYPE_MATCH;
                 $queryParams = $this->getMatchQueryParams($productCondition);
             } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
@@ -262,7 +262,7 @@ class QueryBuilder
         $field    = $this->attributeList->getField($attributeName);
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
-        if ($productCondition->getInputType() === "string") {
+        if ($productCondition->getInputType() === "string" && !in_array($productCondition->getOperator(), ['()', '!()'])) {
             $analyzer = FieldInterface::ANALYZER_STANDARD;
         }
 
