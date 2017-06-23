@@ -24,14 +24,4 @@
             </argument>
         </arguments>
     </type>
-    <type name="Smile\ElasticsuiteCore\Block\Search\Form\Autocomplete">
-        <arguments>
-            <argument name="rendererList" xsi:type="array">
-                <item name="term" xsi:type="array">
-                    <item name="title" xsi:type="string">Search terms</item>
-                    <item name="template" xsi:type="string">Smile_ElasticsuiteCore/autocomplete/term</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
 </config>

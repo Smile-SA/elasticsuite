@@ -89,6 +89,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $isSpellchecked = false;
 
     /**
+     * Pager page size backup variable.
+     * Page size is always set to false in _renderFiltersBefore() after executing the query to Elasticsearch,
+     * to be sure to pull correctly all matched products from the DB.
+     * But it needs to be reset so low-level methods like getLastPageNumber() still work.
+     *
+     * @var integer|false
+     */
+    private $originalPageSize = false;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -400,6 +410,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
+        $this->originalPageSize = $this->_pageSize;
         $this->_pageSize = false;
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
@@ -448,6 +459,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $orginalItems[$documentId]->setDocumentSource($document->getSource());
                 $this->_items[$documentId] = $orginalItems[$documentId];
             }
+        }
+
+        if (false === $this->_pageSize && false !== $this->originalPageSize) {
+            $this->_pageSize = $this->originalPageSize;
         }
 
         return parent::_afterLoad();
