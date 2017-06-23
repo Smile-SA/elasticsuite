@@ -202,12 +202,16 @@ class CategoryData extends Indexer
         $linkField     = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
         $select        = $this->connection->select();
 
-        $joinCondition = new \Zend_Db_Expr("cat.{$linkField} = default_value.{$linkField}");
+        $conditions    = [
+            "cat.{$linkField} = default_value.{$linkField}",
+            "default_value.store_id=0",
+            "default_value.attribute_id = " . (int) $nameAttr->getAttributeId(),
+        ];
+
+        $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
         $select->from(['cat' => $this->getEntityMetaData(CategoryInterface::class)->getEntityTable()], [$entityIdField])
-            ->joinInner(['default_value' => $nameAttr->getBackendTable()], $joinCondition, [])
+            ->joinLeft(['default_value' => $nameAttr->getBackendTable()], $joinCondition, [])
             ->where("cat.$entityIdField != ?", $rootCategoryId)
-            ->where('default_value.store_id = ?', 0)
-            ->where('default_value.attribute_id = ?', (int) $nameAttr->getAttributeId())
             ->where("cat.$entityIdField IN (?)", $loadCategoryIds);
 
         // Join to check for use_name_in_product_search.
@@ -228,17 +232,17 @@ class CategoryData extends Indexer
 
         // Multi store additional join to get scoped name value.
         $joinStoreNameCond = sprintf(
-            "default_value.$linkField = store_value.$linkField" .
+            "cat.$linkField = store_value.$linkField" .
             " AND store_value.attribute_id = %d AND store_value.store_id = %d",
             (int) $nameAttr->getAttributeId(),
             (int) $storeId
         );
         $select->joinLeft(['store_value' => $nameAttr->getBackendTable()], $joinStoreNameCond, [])
-            ->columns(['name' => 'COALESCE(store_value.value,default_value.value)']);
+            ->columns(['name' => 'COALESCE(store_value.value,default_value.value, "")']);
 
         // Multi store additional join to get scoped "use_name_in_product_search" value.
         $joinUseNameStoreCond = sprintf(
-            "default_value.$linkField = use_name_store_value.$linkField" .
+            "cat.$linkField = use_name_store_value.$linkField" .
             " AND use_name_store_value.attribute_id = %d AND use_name_store_value.store_id = %d",
             (int) $useNameAttr->getAttributeId(),
             (int) $storeId
