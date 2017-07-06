@@ -115,7 +115,11 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testPureStopWordsSpellingQueryBuilder()
     {
-        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS, QueryInterface::TYPE_MULTIMATCH);
+        $this->runTestQueryBuilder(
+            'search text',
+            SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS,
+            QueryInterface::TYPE_MULTIMATCH
+        );
     }
 
     /**

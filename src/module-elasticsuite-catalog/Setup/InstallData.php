@@ -57,8 +57,11 @@ class InstallData implements InstallDataInterface
      * @param CatalogSetupFactory     $catalogSetupFactory Catalog Setup factory.
      * @param IndexerInterfaceFactory $indexerFactory      Indexer Factory.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory, CatalogSetupFactory $catalogSetupFactory, IndexerInterfaceFactory $indexerFactory)
-    {
+    public function __construct(
+        EavSetupFactory $eavSetupFactory,
+        CatalogSetupFactory $catalogSetupFactory,
+        IndexerInterfaceFactory $indexerFactory
+    ) {
         $this->catalogSetup    = $catalogSetupFactory->create();
         $this->eavSetupFactory = $eavSetupFactory;
         $this->indexerFactory  = $indexerFactory;

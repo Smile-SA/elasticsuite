@@ -95,7 +95,8 @@ class CatalogSetup
     {
         $eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'frontend_input', 'hidden');
         $eavSetup->updateAttribute(Category::ENTITY, 'is_anchor', 'source_model', null);
-        $this->updateCategoryAttributeDefaultValue($eavSetup, Category::ENTITY, 'is_anchor', 1, [\Magento\Catalog\Model\Category::TREE_ROOT_ID]);
+        $categoryTreeRootId = \Magento\Catalog\Model\Category::TREE_ROOT_ID;
+        $this->updateCategoryAttributeDefaultValue($eavSetup, Category::ENTITY, 'is_anchor', 1, [$categoryTreeRootId]);
     }
 
     /**

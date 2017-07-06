@@ -47,8 +47,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param \Magento\Rule\Model\Condition\Context                                     $context           Rule context.
      * @param \Magento\Backend\Helper\Data                                              $backendData       Admin helper.
      * @param \Magento\Eav\Model\Config                                                 $config            EAV config.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule attribute list.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule query builder.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList $attributeList     Product search rule
+     *                                                                                                     attribute list.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder  $queryBuilder      Product search rule
+     *                                                                                                     query builder.
      * @param \Magento\Catalog\Model\ProductFactory                                     $productFactory    Product factory.
      * @param \Magento\Catalog\Api\ProductRepositoryInterface                           $productRepository Product repository.
      * @param \Magento\Catalog\Model\ResourceModel\Product                              $productResource   Product resource model.
@@ -71,10 +73,21 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         array $data = []
     ) {
+        parent::__construct(
+            $context,
+            $backendData,
+            $config,
+            $productFactory,
+            $productRepository,
+            $productResource,
+            $attrSetCollection,
+            $localeFormat,
+            $data
+        );
+
         $this->attributeList = $attributeList;
         $this->queryBuilder  = $queryBuilder;
         $this->booleanSource = $booleanSource;
-        parent::__construct($context, $backendData, $config, $productFactory, $productRepository, $productResource, $attrSetCollection, $localeFormat, $data);
     }
 
     /**

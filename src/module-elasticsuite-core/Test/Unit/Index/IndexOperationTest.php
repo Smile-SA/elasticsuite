@@ -166,10 +166,13 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('errors', $this->logRows);
         $this->assertCount(2, $this->logRows['errors']);
-        $this->assertEquals(
-            'Bulk index operation failed 2 times in index index for type type. Error (reason2) : Reason 2. Failed doc ids sample : doc5, doc6.',
-            end($this->logRows['errors'])
-        );
+        $errMessages = [
+            'Bulk index operation failed 2 times in index index for type type.',
+            'Error (reason2) : Reason 2.',
+            'Failed doc ids sample : doc5, doc6.',
+        ];
+
+        $this->assertEquals(implode(' ', $errMessages), end($this->logRows['errors']));
     }
 
     /**
@@ -235,9 +238,13 @@ class IndexOperationTest extends \PHPUnit_Framework_TestCase
      */
     private function getClientFactoryMock()
     {
-        $this->clientMock = $this->getMockBuilder(\Elasticsearch\Client::class)->disableOriginalConstructor()->getMock();
+        $this->clientMock = $this->getMockBuilder(\Elasticsearch\Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $indicesNamespaceMock = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class)->disableOriginalConstructor()->getMock();
+        $indicesNamespaceMock = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $indicesExistsMethodStub = function ($index) {
             return $index['index'] === 'index_identifier_store_code';
