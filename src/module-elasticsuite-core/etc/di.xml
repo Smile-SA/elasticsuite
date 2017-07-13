@@ -142,18 +142,6 @@
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config">
-        <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool</argument>
-        </arguments>
-    </type>
-
-    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool" type="Magento\Framework\App\Config\ScopePool">
-        <arguments>
-            <argument name="readerPool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool</argument>
-        </arguments>
-    </virtualType>
-
     <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool">
         <arguments>
             <argument name="readers" xsi:type="array">
