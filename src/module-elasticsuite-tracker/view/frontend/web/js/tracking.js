@@ -154,12 +154,10 @@ var smileTracker = (function () {
                 this.vars = {};
             }
 
-            if (window.location.protocol === "http:") {
-                var extImgNode = document.createElement('img');
-                extImgNode.setAttribute('src', "http://t.smile.eu/h.png?magento2");
-                setTrackerStyle(extImgNode);
-                bodyNode.appendChild(extImgNode);
-            }
+            var extImgNode = document.createElement('img');
+            extImgNode.setAttribute('src', "http://t.smile.eu/h.png?magento2");
+            setTrackerStyle(extImgNode);
+            bodyNode.appendChild(extImgNode);
         }
     }
 
