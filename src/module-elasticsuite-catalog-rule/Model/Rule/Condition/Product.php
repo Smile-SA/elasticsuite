@@ -73,6 +73,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         array $data = []
     ) {
+        $this->attributeList = $attributeList;
+        $this->queryBuilder  = $queryBuilder;
+        $this->booleanSource = $booleanSource;
+
         parent::__construct(
             $context,
             $backendData,
@@ -84,10 +88,6 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $localeFormat,
             $data
         );
-
-        $this->attributeList = $attributeList;
-        $this->queryBuilder  = $queryBuilder;
-        $this->booleanSource = $booleanSource;
     }
 
     /**
