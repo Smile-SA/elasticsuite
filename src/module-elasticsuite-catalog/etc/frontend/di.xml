@@ -24,6 +24,13 @@
     <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute">
         <arguments>
             <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
+            <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
+        </arguments>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean">
+        <arguments>
+            <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
 
@@ -156,5 +163,11 @@
 
     <type name="Magento\CatalogSearch\Controller\Result\Index">
         <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalog\Helper\Autocomplete">
+        <arguments>
+            <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
+        </arguments>
     </type>
 </config>

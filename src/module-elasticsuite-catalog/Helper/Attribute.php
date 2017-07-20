@@ -249,6 +249,24 @@ class Attribute extends Mapping
     }
 
     /**
+     * Returns field use for filtering for an attribute.
+     *
+     * @param AttributeInterface $attribute Attribute.
+     *
+     * @return string
+     */
+    public function getFilterField(AttributeInterface $attribute)
+    {
+        $field = $attribute->getAttributeCode();
+
+        if ($attribute->usesSource()) {
+            $field = $this->getOptionTextFieldName($field);
+        }
+
+        return $field;
+    }
+
+    /**
      * Ensure types of numerical values is correct before indexing.
      *
      * @param AttributeInterface $attribute Product attribute.
