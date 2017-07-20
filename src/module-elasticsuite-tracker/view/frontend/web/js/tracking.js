@@ -142,14 +142,17 @@ var smileTracker = (function () {
     // Append a transparent pixel to the body
     function sendTag(forceCollect) {
         if (this.trackerSent === false || forceCollect === true) {
-            var trackingUrl = getTrackerUrl.bind(this)();
             var bodyNode = document.getElementsByTagName('body')[0];
-            var imgNode = document.createElement('img');
-            imgNode.setAttribute('src', trackingUrl);
-            setTrackerStyle(imgNode);
-            bodyNode.appendChild(imgNode);
-            this.trackerSent = true;
-            this.vars = {};
+
+            if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+                var trackingUrl = getTrackerUrl.bind(this)();
+                var imgNode = document.createElement('img');
+                imgNode.setAttribute('src', trackingUrl);
+                setTrackerStyle(imgNode);
+                bodyNode.appendChild(imgNode);
+                this.trackerSent = true;
+                this.vars = {};
+            }
 
             if (window.location.protocol === "http:") {
                 var extImgNode = document.createElement('img');
@@ -179,24 +182,26 @@ var smileTracker = (function () {
     }
 
     function initSession() {
-        var config = this.config.sessionConfig;
-        var expireAt = new Date();
+        if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+            var config = this.config.sessionConfig;
+            var expireAt = new Date();
 
-        if (getCookie(config['visit_cookie_name']) === null) {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-            setCookie(config['visit_cookie_name'], guid(), expireAt);
-        } else {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-            setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt);
+            if (getCookie(config['visit_cookie_name']) === null) {
+                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                setCookie(config['visit_cookie_name'], guid(), expireAt);
+            } else {
+                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt);
+            }
+
+            if (getCookie(config['visitor_cookie_name']) === null) {
+                expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
+                setCookie(config['visitor_cookie_name'], guid(), expireAt);
+            }
+
+            addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
+            addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
         }
-
-        if (getCookie(config['visitor_cookie_name']) === null) {
-            expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
-            setCookie(config['visitor_cookie_name'], guid(), expireAt);
-        }
-
-        addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
-        addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
     }
 
     // Implementation of the tracker
