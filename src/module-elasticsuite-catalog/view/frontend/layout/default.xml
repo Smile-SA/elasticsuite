@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2017 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="top.search">
+            <arguments>
+                <argument name="rendererList" xsi:type="array">
+                    <item name="product" xsi:type="array">
+                        <item name="title" xsi:type="string" translate="true">Products</item>
+                        <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product</item>
+                    </item>
+                    <item name="category" xsi:type="array">
+                        <item name="title" xsi:type="string" translate="true">Categories</item>
+                        <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/category</item>
+                    </item>
+                    <item name="product_attribute" xsi:type="array">
+                        <item name="title" xsi:type="string" translate="true">Attributes</item>
+                        <item name="template" xsi:type="string">Smile_ElasticsuiteCore/autocomplete/term</item>
+                        <item name="titleRenderer" xsi:type="string">Smile_ElasticsuiteCatalog/js/autocomplete/product-attribute</item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

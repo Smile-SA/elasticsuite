@@ -13,6 +13,13 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+/**
+ * Decimal filter model methods.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ */
 trait DecimalFilterTrait
 {
     /**

@@ -73,6 +73,9 @@ class OptimizerRepository implements OptimizerRepositoryInterface
     /**
      * Retrieve a optimizer by its ID
      *
+     * @SuppressWarnings(PHPMD.StaticAccess) Mandatory to throw the exception via static access to be compliant
+     * with Magento Extension Quality Program
+     *
      * @param int $optimizerId Id of the optimizer.
      *
      * @return \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface
@@ -84,8 +87,7 @@ class OptimizerRepository implements OptimizerRepositoryInterface
             $optimizerModel = $this->optimizerFactory->create();
             $optimizer = $this->entityManager->load($optimizerModel, $optimizerId);
             if (!$optimizer->getId()) {
-                $exception = new NoSuchEntityException();
-                throw $exception->singleField('optimizerId', $optimizerId);
+                throw NoSuchEntityException::singleField('optimizerId', $optimizerId);
             }
 
             $this->optimizerRepositoryById[$optimizerId] = $optimizer;

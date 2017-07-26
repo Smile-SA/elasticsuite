@@ -1,0 +1,160 @@
+// /**
+//  * DISCLAIMER
+//  *
+//  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+//  * versions in the future.
+//  *
+//  *
+//  * @category  Smile
+//  * @package   Smile\ElasticsuiteCatalog
+//  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+//  * @copyright 2016 Smile
+//  * @license   Open Software License ("OSL") v. 3.0
+//  */
+
+
+div.admin__fieldset.elasticsuite-optimizer-preview {
+    float:left;
+    padding-bottom:0;
+    padding-top:0;
+}
+
+div.optimizer-preview-fieldset {
+    .category {
+        float:left;
+        margin-bottom: 0;
+        margin-top: 0;
+        min-width: 450px;
+        .admin__field-label {
+            width: auto;
+        }
+    }
+
+    .query-text {
+        float:left;
+        margin-bottom: 0;
+        margin-top: 0;
+        min-width: 450px;
+        .admin__field-label {
+            width: auto;
+        }
+    }
+
+    .search-container {
+        float:left;
+        .admin__field-label {
+            width: auto;
+        }
+    }
+
+    fieldset {
+        margin-left: 50px;
+    }
+}
+
+.elasticsuite-optimizer-preview {
+
+    .preview-button-container {
+        width: 40%;
+        text-align: center;
+    }
+
+    .bottom-links {
+        clear: both;
+    }
+
+    .product-list-container {
+        width: 48%;
+        float:left;
+        margin-bottom: 20px;
+
+        .product-list-title {
+            text-align:center;
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    }
+
+    .product-list {
+        width: 100%;
+        margin: 0 40px 0;
+        border-width: 1px 0 0 0;
+        border-color: #dadfe0;
+        border-style: solid;
+
+        li.product-list-item, li.product-list-item-placeholder {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            border-width: 0 1px 1px 1px;
+            border-color: #dadfe0;
+            border-style: solid;
+            padding: 10px;
+            vertical-align: top;
+            list-style-type: none;
+            display:inline-block;
+
+            h1 {
+                margin: 0px 0 2px 10px;
+                font-size: 1em;
+                font-weight:bold;
+                margin-bottom: 5px;
+                span {
+                    width: 80%;
+                }
+            }
+
+            div.product-details {
+                p {
+                    margin: 0 0 0em;
+                }
+            }
+
+            div.product-image {
+                text-align: left;
+                width: 50px;
+                height: 50px;
+                margin: 0 10px;
+                float: left;
+
+                img {
+                    max-width: 50px;
+                    max-height: 50px;
+                }
+            }
+
+            .score-container {
+                position: absolute;
+                right: -15px;
+                margin-top: -60px;
+                width: 140px;
+
+                .effect {
+                    display: block;
+                    height: 20px;
+                    width: 20px;
+                    font-size: 300%;
+                    margin-bottom: 35px;
+                    margin-left:70px;
+                    margin-top: -10px;
+
+                    &.up:after {
+                        color: rgb(63, 190, 57);
+                        content: "↗";
+                    }
+
+                    &.down:after {
+                        color: rgb(255, 0, 0);
+                        content: "↘";
+                    }
+                }
+
+                .effect:after {
+                    color: rgb(0, 0, 0);
+                    content: "→";
+                }
+            }
+        }
+    }
+}
