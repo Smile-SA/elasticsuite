@@ -38,7 +38,9 @@
                 <field name="type_id" type="string" />
                 <field name="sku" type="string">
                     <isSearchable>1</isSearchable>
-                    <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
+		     <isReferenceField>1</isReferenceField>
+                    <defaultSearchAnalyzer>reference</defaultSearchAnalyzer>
+                    <isUsedInSpellcheck>1</isUsedInSpellcheck>
                 </field>
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />

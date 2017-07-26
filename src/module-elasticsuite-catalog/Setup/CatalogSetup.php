@@ -117,12 +117,14 @@ class CatalogSetup
             $eavSetup->getAttributeId(\Magento\Catalog\Model\Category::ENTITY, 'name'),
         ];
 
-        foreach ($attributeIds as $attributeId) {
-            $connection->update(
-                $table,
-                ['is_used_in_spellcheck' => true],
-                $connection->quoteInto('attribute_id = ?', $attributeId)
-            );
+        foreach (['is_used_in_spellcheck', 'is_used_in_autocomplete'] as $configField) {
+            foreach ($attributeIds as $attributeId) {
+                $connection->update(
+                    $table,
+                    [$configField => 1],
+                    $connection->quoteInto('attribute_id = ?', $attributeId)
+                );
+            }
         }
     }
 
@@ -137,6 +139,18 @@ class CatalogSetup
     {
         $connection = $setup->getConnection();
         $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_used_in_autocomplete' into the db.
+        $connection->addColumn(
+            $table,
+            'is_used_in_autocomplete',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => '1',
+                'comment'  => 'If attribute is used in autocomplete',
+            ]
+        );
 
         // Append a column 'is_displayed_in_autocomplete' into the db.
         $connection->addColumn(
@@ -378,4 +392,27 @@ class CatalogSetup
 
         $connection->query($insertQuery);
     }
+    
+    /**
+     * Append 'is_reference_field' to the catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup The setup instance
+     */
+    public function appendReferenceFieldConfiguration(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_reference_field' into the db.
+        $connection->addColumn(
+            $table,
+            'is_reference_field',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'comment'  => 'If this attributes modelizes a technical reference field',
+            ]
+        );
+    }    
 }

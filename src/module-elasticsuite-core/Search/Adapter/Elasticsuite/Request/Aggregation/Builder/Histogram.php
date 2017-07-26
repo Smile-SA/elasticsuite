@@ -42,7 +42,7 @@ class Histogram implements BuilderInterface
         $aggParams = [
             'field'         => $bucket->getField(),
             'interval'      => $bucket->getInterval(),
-            'min_doc_count' => $bucket->getMinDocCount(),
+            'min_doc_count' => 1,
         ];
 
         return ['histogram' => $aggParams];
