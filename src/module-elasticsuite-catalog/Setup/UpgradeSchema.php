@@ -62,6 +62,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->removeIsUsedInAutocompleteField($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+            $this->catalogSetup->appendReferenceFieldConfiguration($setup);
+        }
+
         $setup->endSetup();
     }
+
+
 }

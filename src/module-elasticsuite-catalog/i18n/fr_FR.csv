@@ -41,6 +41,8 @@ OK,OK
 "Product Autocomplete","Autocomplétion des produits"
 "Max Size","Taille maximum"
 "Maximum number of products to display in autocomplete results.","Nombre maximum de produits à afficher dans les résultats de l'autocomplétion."
+"If this field modelizes a reference","Cet attribut est une référence"
+"Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)","Utiliser pour les champs représentant une référence type SKU, EAN13 etc... (ex : contenant des valeurs comme MH08, 3459379414678 ...)"
 "Product Attributes Autocomplete","Autocomplétion des attributs de produits"
 "Maximum number of product attributes to display in autocomplete results.","Nombre maximum d'attributs produits à afficher dans les résultats de l'autocomplétion."
 "Category Autocomplete","Autocomplétion des catégories"

@@ -47,7 +47,7 @@ interface FieldInterface
     const ANALYZER_SORTABLE   = 'sortable';
     const ANALYZER_PHONETIC   = 'phonetic';
     const ANALYZER_UNTOUCHED  = 'untouched';
-
+    const ANALYZER_REFERENCE  = 'reference';
     /**
      * Field name.
      *
@@ -88,6 +88,20 @@ interface FieldInterface
      * @return boolean
      */
     public function isUsedInSpellcheck();
+
+    /**
+     * Is the field used for autocomplete.
+     *
+     * @return boolean
+     */
+    public function isUsedInAutocomplete();
+
+    /**
+     * Is the field modelizes a technical reference (SKU, EAN13, etc...).
+     *
+     * @return boolean
+     */
+    public function isReferenceField();
 
     /**
      * Weight of the fields in search.
@@ -133,12 +147,4 @@ interface FieldInterface
      * @return string|null
      */
     public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED);
-
-
-    /**
-     * Return the search analyzer used by default for fulltext searches.
-     *
-     * @return string
-     */
-    public function getDefaultSearchAnalyzer();
 }
