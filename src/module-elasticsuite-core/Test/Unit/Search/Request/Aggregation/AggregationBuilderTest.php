@@ -143,7 +143,10 @@ class AggregationBuilderTest extends \PHPUnit_Framework_TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations    = [
-            'nested.simpleField' => ['type' => 'aggType', 'config' => ['nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter']]],
+            'nested.simpleField' => [
+                'type' => 'aggType',
+                'config' => ['nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter']],
+            ],
         ];
 
         $filters = ['simpleField' => 'simpleFieldFilter'];

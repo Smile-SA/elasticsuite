@@ -99,10 +99,16 @@
     
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider</argument>
         </arguments>
     </virtualType>
-    
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider" type="Magento\Catalog\Model\Layer\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context" type="Magento\Catalog\Model\Layer\Search\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
@@ -180,5 +186,15 @@
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Advanced\Collection</argument>
         </arguments>
     </virtualType>
+
+    <!-- Set reserved nested fields of elasticsuite as reserved to prevent anyone creating an attribute with the same name. -->
+    <type name="Magento\Catalog\Model\Product\ReservedAttributeList">
+        <arguments>
+            <argument name="reservedAttributes" xsi:type="array">
+                <item name="stock" xsi:type="string">stock</item>
+                <item name="category" xsi:type="string">category</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>

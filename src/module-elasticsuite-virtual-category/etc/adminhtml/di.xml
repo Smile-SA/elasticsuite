@@ -22,4 +22,8 @@
             <argument name="categoryCollectionFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\Source\VirtualCategoryRoot\CollectionFactory</argument>
         </arguments>
     </virtualType>
+
+    <!-- Overridden directly because this block is called via hardcoded calls -->
+    <preference for="\Magento\Catalog\Block\Adminhtml\Category\Tab\Product" type="Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Tab\Product"/>
+
 </config>

@@ -78,5 +78,10 @@ interface MappingInterface
      *
      * @return float[]
      */
-    public function getWeightedSearchProperties($analyzer = null, $defaultField = null, $boost = 1, FieldFilterInterface $fieldFilter = null);
+    public function getWeightedSearchProperties(
+        $analyzer = null,
+        $defaultField = null,
+        $boost = 1,
+        FieldFilterInterface $fieldFilter = null
+    );
 }

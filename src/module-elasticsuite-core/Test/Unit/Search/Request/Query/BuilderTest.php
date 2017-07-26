@@ -37,7 +37,12 @@ class BuilderTest extends \PHPUnit_Framework_TestCase
     public function testCreateQuery()
     {
         $builder = new Builder($this->getQueryFactory(), $this->getFulltextQueryBuilder(), $this->getFilterQueryBuilder());
-        $query = $builder->createQuery($this->getContainerConfiguration(), 'test', ['filter'], SpellcheckerInterface::SPELLING_TYPE_EXACT);
+        $query = $builder->createQuery(
+            $this->getContainerConfiguration(),
+            'test',
+            ['filter'],
+            SpellcheckerInterface::SPELLING_TYPE_EXACT
+        );
 
         $this->assertInstanceOf(QueryInterface::class, $query);
         $this->assertEquals(QueryInterface::TYPE_FILTER, $query->getType());
