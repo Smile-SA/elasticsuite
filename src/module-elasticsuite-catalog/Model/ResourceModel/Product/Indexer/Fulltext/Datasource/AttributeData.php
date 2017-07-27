@@ -197,11 +197,11 @@ class AttributeData extends AbstractAttributeData
 
         $select->group("main.{$childFieldName}");
 
-        return $this->addVisibilityFilter($select, "main", $childFieldName, $storeId);
+        return $this->addWebsiteFilter($select, "main", $childFieldName, $storeId);
     }
 
     /**
-     * Add visibility clauses to products selected.
+     * Add website clauses to products selected.
      *
      * @param \Magento\Framework\DB\Select $select           Original select.
      * @param string                       $productTableName Product table name in the original select.
@@ -210,20 +210,17 @@ class AttributeData extends AbstractAttributeData
      *
      * @return \Magento\Framework\DB\Select $select
      */
-    private function addVisibilityFilter(\Magento\Framework\DB\Select $select, $productTableName, $productFieldName, $storeId)
+    private function addWebsiteFilter(\Magento\Framework\DB\Select $select, $productTableName, $productFieldName, $storeId)
     {
-
-        $rootCategoryId = $this->getRootCategoryId($storeId);
-        $indexTable = $this->getTable('catalog_category_product_index');
+        $websiteId  = $this->getStore($storeId)->getWebsiteId();
+        $indexTable = $this->getTable('catalog_product_website');
 
         $visibilityJoinCond = $this->getConnection()->quoteInto(
-            "visibility.product_id = ${productTableName}.${productFieldName} AND visibility.store_id = ?",
-            $storeId
+            "websites.product_id = $productTableName.$productFieldName AND websites.website_id = ?",
+            $websiteId
         );
 
-        $select->useStraightJoin(true)
-            ->join(['visibility' => $indexTable], $visibilityJoinCond, [])
-            ->where('visibility.category_id = ?', (int) $rootCategoryId);
+        $select->useStraightJoin(true)->join(['websites' => $indexTable], $visibilityJoinCond, []);
 
         return $select;
     }
