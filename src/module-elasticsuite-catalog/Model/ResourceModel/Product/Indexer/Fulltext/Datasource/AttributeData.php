@@ -197,7 +197,7 @@ class AttributeData extends AbstractAttributeData
 
         $select->group("main.{$childFieldName}");
 
-        return $select;
+        return $this->addVisibilityFilter($select, "main", $childFieldName, $storeId);
     }
 
     /**
@@ -217,7 +217,7 @@ class AttributeData extends AbstractAttributeData
         $indexTable = $this->getTable('catalog_category_product_index');
 
         $visibilityJoinCond = $this->getConnection()->quoteInto(
-            "visibility.product_id = ${$productTableName}.$productFieldName AND visibility.store_id = ?",
+            "visibility.product_id = ${productTableName}.${productFieldName} AND visibility.store_id = ?",
             $storeId
         );
 
