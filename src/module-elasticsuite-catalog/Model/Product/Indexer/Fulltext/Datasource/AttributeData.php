@@ -41,7 +41,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
-        $relationsByChildId = $this->resourceModel->loadChildrens($productIds);
+        $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
         if (!empty($relationsByChildId)) {
             $allChildrenIds = array_keys($relationsByChildId);

@@ -73,10 +73,11 @@ class AttributeData extends AbstractAttributeData
      * Warning the result use children ids as a key and list of parents as value
      *
      * @param array $productIds List of parent product ids.
+     * @param int   $storeId    Store id.
      *
      * @return array
      */
-    public function loadChildrens($productIds)
+    public function loadChildrens($productIds, $storeId)
     {
         $children = [];
 
@@ -85,7 +86,7 @@ class AttributeData extends AbstractAttributeData
             $relation = $typeInstance->getRelationInfo();
 
             if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
-                $select = $this->getRelationQuery($relation, $productIds);
+                $select = $this->getRelationQuery($relation, $productIds, $storeId);
                 $data   = $this->getConnection()->fetchAll($select);
 
                 foreach ($data as $relationRow) {
@@ -154,10 +155,11 @@ class AttributeData extends AbstractAttributeData
      *
      * @param \Magento\Framework\DataObject $relation  Relation Instance
      * @param array                         $parentIds The parent product Ids (array of entity_id)
+     * @param int                           $storeId   Store id.
      *
      * @return \Magento\Framework\DB\Select
      */
-    private function getRelationQuery($relation, $parentIds)
+    private function getRelationQuery($relation, $parentIds, $storeId)
     {
         $linkField       = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
@@ -194,6 +196,34 @@ class AttributeData extends AbstractAttributeData
         );
 
         $select->group("main.{$childFieldName}");
+
+        return $select;
+    }
+
+    /**
+     * Add visibility clauses to products selected.
+     *
+     * @param \Magento\Framework\DB\Select $select           Original select.
+     * @param string                       $productTableName Product table name in the original select.
+     * @param string                       $productFieldName Product id field name in the original select.
+     * @param int                          $storeId          Store id.
+     *
+     * @return \Magento\Framework\DB\Select $select
+     */
+    private function addVisibilityFilter(\Magento\Framework\DB\Select $select, $productTableName, $productFieldName, $storeId)
+    {
+
+        $rootCategoryId = $this->getRootCategoryId($storeId);
+        $indexTable = $this->getTable('catalog_category_product_index');
+
+        $visibilityJoinCond = $this->getConnection()->quoteInto(
+            "visibility.product_id = ${$productTableName}.$productFieldName AND visibility.store_id = ?",
+            $storeId
+        );
+
+        $select->useStraightJoin(true)
+            ->join(['visibility' => $indexTable], $visibilityJoinCond, [])
+            ->where('visibility.category_id = ?', (int) $rootCategoryId);
 
         return $select;
     }
