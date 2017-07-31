@@ -206,7 +206,7 @@ class Spellchecker implements SpellcheckerInterface
                         $positionKey = sprintf("%s_%s", $token['start_offset'], $token['end_offset']);
 
                         if (!isset($termStats['doc_freq'])) {
-                            $termStats['doc_freq'] = 0;
+                            $termStats['doc_freq'] = 1;
                         }
 
                         if (!isset($statByPosition[$positionKey])) {
