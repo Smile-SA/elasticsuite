@@ -43,6 +43,7 @@
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>0</preserve_original>
         </filter>
+        <filter name="standard" type="standard" language="default" />
         <filter name="standard" type="stemmer" language="en">
             <language>english</language>
         </filter>
