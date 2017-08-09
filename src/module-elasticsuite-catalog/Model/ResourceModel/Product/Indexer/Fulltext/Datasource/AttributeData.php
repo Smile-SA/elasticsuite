@@ -73,10 +73,11 @@ class AttributeData extends AbstractAttributeData
      * Warning the result use children ids as a key and list of parents as value
      *
      * @param array $productIds List of parent product ids.
+     * @param int   $storeId    Store id.
      *
      * @return array
      */
-    public function loadChildrens($productIds)
+    public function loadChildrens($productIds, $storeId)
     {
         $children = [];
 
@@ -85,7 +86,7 @@ class AttributeData extends AbstractAttributeData
             $relation = $typeInstance->getRelationInfo();
 
             if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
-                $select = $this->getRelationQuery($relation, $productIds);
+                $select = $this->getRelationQuery($relation, $productIds, $storeId);
                 $data   = $this->getConnection()->fetchAll($select);
 
                 foreach ($data as $relationRow) {
@@ -154,10 +155,11 @@ class AttributeData extends AbstractAttributeData
      *
      * @param \Magento\Framework\DataObject $relation  Relation Instance
      * @param array                         $parentIds The parent product Ids (array of entity_id)
+     * @param int                           $storeId   Store id.
      *
      * @return \Magento\Framework\DB\Select
      */
-    private function getRelationQuery($relation, $parentIds)
+    private function getRelationQuery($relation, $parentIds, $storeId)
     {
         $linkField       = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
@@ -194,6 +196,31 @@ class AttributeData extends AbstractAttributeData
         );
 
         $select->group("main.{$childFieldName}");
+
+        return $this->addWebsiteFilter($select, "main", $childFieldName, $storeId);
+    }
+
+    /**
+     * Add website clauses to products selected.
+     *
+     * @param \Magento\Framework\DB\Select $select           Original select.
+     * @param string                       $productTableName Product table name in the original select.
+     * @param string                       $productFieldName Product id field name in the original select.
+     * @param int                          $storeId          Store id.
+     *
+     * @return \Magento\Framework\DB\Select $select
+     */
+    private function addWebsiteFilter(\Magento\Framework\DB\Select $select, $productTableName, $productFieldName, $storeId)
+    {
+        $websiteId  = $this->getStore($storeId)->getWebsiteId();
+        $indexTable = $this->getTable('catalog_product_website');
+
+        $visibilityJoinCond = $this->getConnection()->quoteInto(
+            "websites.product_id = $productTableName.$productFieldName AND websites.website_id = ?",
+            $websiteId
+        );
+
+        $select->useStraightJoin(true)->join(['websites' => $indexTable], $visibilityJoinCond, []);
 
         return $select;
     }

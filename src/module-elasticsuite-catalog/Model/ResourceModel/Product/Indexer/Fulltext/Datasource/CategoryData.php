@@ -90,7 +90,10 @@ class CategoryData extends Indexer
         $storeCategoryName = $this->loadCategoryNames(array_unique($categoryIds), $storeId);
 
         foreach ($categoryData as &$categoryDataRow) {
-            $categoryDataRow['name'] = $storeCategoryName[(int) $categoryDataRow['category_id']];
+            $categoryDataRow['name'] = '';
+            if (isset($storeCategoryName[(int) $categoryDataRow['category_id']])) {
+                $categoryDataRow['name'] = $storeCategoryName[(int) $categoryDataRow['category_id']];
+            }
         }
 
         return $categoryData;
