@@ -57,6 +57,11 @@
         <plugin name="smile_elasticsuite_virtual_categories_save_products_positions" 
                 type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\SaveProductsPositions" />
     </type>
+
+    <type name="\Magento\Catalog\Model\Category">
+        <plugin name="smile_elasticsuite_virtual_categories_reindex_on_change"
+                type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ReindexOnChange" />
+    </type>
     
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData">
         <arguments>
