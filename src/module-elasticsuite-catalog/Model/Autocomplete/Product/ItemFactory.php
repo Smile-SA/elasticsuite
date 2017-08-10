@@ -106,6 +106,9 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         foreach ($this->attributes as $attributeCode) {
             if ($product->hasData($attributeCode)) {
                 $productData[$attributeCode] = $product->getData($attributeCode);
+                if ($product->getResource()->getAttribute($attributeCode)->usesSource()) {
+                    $productData[$attributeCode] = $product->getAttributeText($attributeCode);
+                }
             }
         }
 
