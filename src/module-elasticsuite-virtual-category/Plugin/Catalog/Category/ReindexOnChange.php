@@ -46,10 +46,13 @@ class ReindexOnChange
     {
         $proceed();
 
-        if ($category->dataHasChangedFor('is_virtual_category')) {
+        // Reindex only if attached product list has changed.
+        // This prevent reindexing if the category is just created and set to virtual.
+        if ($category->dataHasChangedFor('is_virtual_category') && ($category->getIsChangedProductList() === true)) {
             if (((bool) $category->getIsVirtualCategory() === true) && ($category->getId())) {
                 if (!$this->getIndexer()->isScheduled()) {
-                    $this->getIndexer()->reindexList($category->getPathIds());
+                    // Remove default root category (1) and Store Root.
+                    $this->getIndexer()->reindexList(array_slice($category->getPathIds(), 2));
                 }
             }
         }
