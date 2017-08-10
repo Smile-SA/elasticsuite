@@ -99,11 +99,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $originalPageSize = false;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Helper\Mapping
-     */
-    private $mappingHelper;
-
-    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -129,7 +124,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping                       $mappingHelper           Mapping Helper
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
      * @param string                                                       $searchRequestName       Search request name.
      */
@@ -155,7 +149,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
-        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
     ) {
@@ -185,7 +178,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->requestBuilder    = $requestBuilder;
         $this->searchEngine      = $searchEngine;
         $this->searchRequestName = $searchRequestName;
-        $this->mappingHelper     = $mappingHelper;
     }
 
     /**
@@ -525,6 +517,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
+            $sortField  = $this->mapFieldName($attribute);
 
             if ($useProductuctLimitation && isset($this->_productLimitationFilters['sortParams'][$attribute])) {
                 $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
@@ -536,13 +529,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 // Ensure we sort on the position field of the current customer group.
                 $customerGroupId = $this->_productLimitationFilters['customer_group_id'];
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
-            }
-
-            $sortField = $this->mapFieldName($attribute);
-
-            $attributeModel = $this->getAttribute($attribute);
-            if ($attributeModel && $attributeModel->usesSource()) {
-                $sortField = $this->mappingHelper->getOptionTextFieldName($sortField);
             }
 
             $sortOrders[$sortField] = $sortParams;
