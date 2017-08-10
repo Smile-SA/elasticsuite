@@ -12,10 +12,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Helper;
 
-use Magento\CatalogInventory\Api\StockConfigurationInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\App\Helper\Context;
-use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
 
 /**
  * Autocomplete helper for Catalog Autocomplete
@@ -27,22 +25,22 @@ use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
 class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
 {
     /**
-     * @var MappingHelper
+     * @var Attribute
      */
-    private $mappingHelper;
+    private $attributeHelper;
 
     /**
      * Constructor.
      *
-     * @param Context               $context       Helper context.
-     * @param StoreManagerInterface $storeManager  Store manager.
-     * @param MappingHelper         $mappingHelper Mapping helper.
+     * @param Context               $context         Helper context.
+     * @param StoreManagerInterface $storeManager    Store manager.
+     * @param Attribute             $attributeHelper Attribute helper.
      */
-    public function __construct(Context $context, StoreManagerInterface $storeManager, MappingHelper $mappingHelper)
+    public function __construct(Context $context, StoreManagerInterface $storeManager, Attribute $attributeHelper)
     {
         parent::__construct($context, $storeManager);
 
-        $this->mappingHelper = $mappingHelper;
+        $this->attributeHelper = $attributeHelper;
     }
 
     /**
@@ -54,12 +52,6 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
      */
     public function getAttributeAutocompleteField(\Magento\Catalog\Api\Data\ProductAttributeInterface $attribute)
     {
-        $fieldName = $attribute->getAttributeCode();
-
-        if ($attribute->usesSource()) {
-            $fieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
-        }
-
-        return $fieldName;
+        return $this->attributeHelper->getFilterField($attribute);
     }
 }

@@ -17,7 +17,6 @@ use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogSearch\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Event\Observer;
 use Magento\Framework\Message\ManagerInterface;
 
 /**
