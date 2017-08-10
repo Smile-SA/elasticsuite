@@ -65,11 +65,11 @@
     <analyzers>
         <analyzer name="standard" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
                 <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="standard" />
             </filters>
             <char_filters>
@@ -78,10 +78,11 @@
         </analyzer>
         <analyzer name="whitespace" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -89,10 +90,11 @@
         </analyzer>
         <analyzer name="shingle" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>
@@ -111,10 +113,11 @@
         </analyzer>
         <analyzer name="phonetic" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="phonetic" />
             </filters>
             <char_filters>
