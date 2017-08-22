@@ -18,6 +18,7 @@ namespace Smile\ElasticsuiteVirtualCategory\Model\Preview;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Helper\Product as ProductHelper;
 use Magento\Customer\Api\Data\GroupInterface;
+use Magento\Catalog\Helper\Image as ImageHelper;
 
 /**
  * Virtual category preview item model.
@@ -34,21 +35,20 @@ class Item
     private $product;
 
     /**
-     *
-     * @var ProductHelper $productHelper
+     * @var ImageHelper
      */
-    private $productHelper;
+    private $imageHelper;
 
     /**
      * Constructor.
      *
-     * @param ProductInterface $product       Item product.
-     * @param ProductHelper    $productHelper Product helper.
+     * @param ProductInterface $product     Item product.
+     * @param ImageHelper      $imageHelper Image helper.
      */
-    public function __construct(ProductInterface $product, ProductHelper $productHelper)
+    public function __construct(ProductInterface $product, ImageHelper $imageHelper)
     {
-        $this->product            = $product;
-        $this->productHelper      = $productHelper;
+        $this->product     = $product;
+        $this->imageHelper = $imageHelper;
     }
 
     /**
@@ -62,7 +62,7 @@ class Item
             'id'          => $this->product->getId(),
             'name'        => $this->product->getName(),
             'price'       => $this->getProductPrice(),
-            'image'       => $this->productHelper->getSmallImageUrl($this->product),
+            'image'       => $this->getImageUrl($this->product),
             'score'       => $this->product->getDocumentScore(),
             'is_in_stock' => $this->isInStockProduct(),
         ];
@@ -105,6 +105,20 @@ class Item
         }
 
         return $isInStock;
+    }
+
+    /**
+     * Get resized image URL.
+     *
+     * @param ProductInterface $product Current product.
+     *
+     * @return string
+     */
+    private function getImageUrl($product)
+    {
+        $this->imageHelper->init($product, 'smile_elasticsuitevirtualcategory_preview');
+
+        return $this->imageHelper->getUrl();
     }
 
     /**
