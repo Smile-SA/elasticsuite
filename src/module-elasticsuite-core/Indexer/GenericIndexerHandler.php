@@ -40,11 +40,6 @@ class GenericIndexerHandler implements IndexerInterface
     private $batch;
 
     /**
-     * @var integer
-     */
-    private $batchSize;
-
-    /**
      * @var string
      */
     private $indexName;
@@ -71,7 +66,6 @@ class GenericIndexerHandler implements IndexerInterface
     public function __construct(IndexOperationInterface $indexOperation, CacheHelper $cacheHelper, Batch $batch, $indexName, $typeName)
     {
         $this->indexOperation = $indexOperation;
-        $this->batchSize      = $indexOperation->getBatchIndexingSize();
         $this->batch          = $batch;
         $this->indexName      = $indexName;
         $this->typeName       = $typeName;
@@ -84,17 +78,22 @@ class GenericIndexerHandler implements IndexerInterface
     public function saveIndex($dimensions, \Traversable $documents)
     {
         foreach ($dimensions as $dimension) {
-            $storeId = $dimension->getValue();
-            $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
-            $type  = $index->getType($this->typeName);
+            $storeId   = $dimension->getValue();
+            $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            $type      = $index->getType($this->typeName);
+            $batchSize = $this->indexOperation->getBatchIndexingSize();
 
-            foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {
+            foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
                 foreach ($type->getDatasources() as $datasource) {
-                    $batchDocuments = $datasource->addData($storeId, $batchDocuments);
+                    if (!empty($batchDocuments)) {
+                        $batchDocuments = $datasource->addData($storeId, $batchDocuments);
+                    }
                 }
 
-                $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
-                $this->indexOperation->executeBulk($bulk);
+                if (!empty($batchDocuments)) {
+                    $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
+                    $this->indexOperation->executeBulk($bulk);
+                }
             }
 
             $this->indexOperation->refreshIndex($index);
@@ -111,11 +110,12 @@ class GenericIndexerHandler implements IndexerInterface
     public function deleteIndex($dimensions, \Traversable $documents)
     {
         foreach ($dimensions as $dimension) {
-            $storeId = $dimension->getValue();
-            $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
-            $type  = $index->getType($this->typeName);
+            $storeId   = $dimension->getValue();
+            $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            $type      = $index->getType($this->typeName);
+            $batchSize = $this->indexOperation->getBatchIndexingSize();
 
-            foreach ($this->batch->getItems($documents, $this->batchSize) as $batchDocuments) {
+            foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
                 $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $type, $batchDocuments);
                 $this->indexOperation->executeBulk($bulk);
             }
