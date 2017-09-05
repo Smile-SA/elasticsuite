@@ -517,6 +517,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
+            $sortField  = $this->mapFieldName($attribute);
 
             if ($useProductuctLimitation && isset($this->_productLimitationFilters['sortParams'][$attribute])) {
                 $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
@@ -530,7 +531,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
             }
 
-            $sortField = $this->mapFieldName($attribute);
             $sortOrders[$sortField] = $sortParams;
         }
 

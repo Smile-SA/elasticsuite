@@ -29,19 +29,37 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
     protected $queryFactory;
 
     /**
+     * Catalog config
+     *
+     * @var \Magento\Catalog\Model\Config
+     */
+    private $catalogConfig;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Helper\Mapping
+     */
+    private $mappingHelper;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\CatalogInventory\Helper\Stock             $stockHelper  Stock helper.
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig  Configuration.
-     * @param \Magento\Search\Model\QueryFactory                 $queryFactory Search query factory.
+     * @param \Magento\CatalogInventory\Helper\Stock             $stockHelper   Stock helper.
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig   Configuration.
+     * @param \Magento\Search\Model\QueryFactory                 $queryFactory  Search query factory.
+     * @param \Magento\Catalog\Model\Config                      $catalogConfig Catalog Configuration.
+     * @param \Smile\ElasticsuiteCore\Helper\Mapping             $mappingHelper Mapping Helper.
      */
     public function __construct(
         \Magento\CatalogInventory\Helper\Stock $stockHelper,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Search\Model\QueryFactory $queryFactory
+        \Magento\Search\Model\QueryFactory $queryFactory,
+        \Magento\Catalog\Model\Config $catalogConfig,
+        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper
     ) {
         parent::__construct($stockHelper, $scopeConfig);
-        $this->queryFactory = $queryFactory;
+        $this->queryFactory  = $queryFactory;
+        $this->catalogConfig = $catalogConfig;
+        $this->mappingHelper = $mappingHelper;
     }
 
 
@@ -76,6 +94,13 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
         if (!$searchQuery->getQueryText() && $layer->getCurrentCategory()) {
             $categoryId = $layer->getCurrentCategory()->getId();
             $collection->addSortFilterParameters('position', 'category.position', 'category', ['category.category_id' => $categoryId]);
+        }
+
+        foreach ($this->catalogConfig->getAttributesUsedForSortBy() as $attributeCode => $attribute) {
+            if ($attribute->usesSource()) {
+                $sortField = $this->mappingHelper->getOptionTextFieldName($attributeCode);
+                $collection->addSortFilterParameters($attributeCode, $sortField);
+            }
         }
 
         return $this;
