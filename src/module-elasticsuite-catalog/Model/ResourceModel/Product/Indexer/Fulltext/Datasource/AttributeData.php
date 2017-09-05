@@ -68,6 +68,16 @@ class AttributeData extends AbstractAttributeData
     }
 
     /**
+     * List of composite product types.
+     *
+     * @return string[]
+     */
+    public function getCompositeTypes()
+    {
+        return $this->catalogProductType->getCompositeTypes();
+    }
+
+    /**
      * Retrieve list of children ids for a product list.
      *
      * Warning the result use children ids as a key and list of parents as value
