@@ -107,7 +107,7 @@ class IndexSettings extends AbstractConfiguration
      */
     public function getIndexAliasFromIdentifier($indexIdentifier, $store)
     {
-        $store = $this->getStoreCode($store);
+        $store = strtolower($this->getStoreCode($store));
 
         return sprintf('%s_%s_%s', $this->getIndexAlias(), $store, $indexIdentifier);
     }
