@@ -66,6 +66,8 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             }
         }
 
+        $indexData = $this->filterCompositeProducts($indexData);
+
         return $indexData;
     }
 
@@ -175,5 +177,27 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         $parentData['children_attributes'] = array_values(array_unique($childrenAttributes));
+    }
+
+    /**
+     * Filter out composite product when no enabled children are attached.
+     *
+     * @param array $indexData Indexed data.
+     *
+     * @return array
+     */
+    private function filterCompositeProducts($indexData)
+    {
+        $compositeProductTypes = $this->resourceModel->getCompositeTypes();
+
+        foreach ($indexData as $productId => $productData) {
+            $isComposite = in_array($productData['type_id'], $compositeProductTypes);
+            $hasChildren = isset($productData['children_ids']) && !empty($productData['children_ids']);
+            if ($isComposite && !$hasChildren) {
+                unset($indexData[$productId]);
+            }
+        }
+
+        return $indexData;
     }
 }

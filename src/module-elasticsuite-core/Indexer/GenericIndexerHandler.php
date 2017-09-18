@@ -85,11 +85,15 @@ class GenericIndexerHandler implements IndexerInterface
 
             foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
                 foreach ($type->getDatasources() as $datasource) {
-                    $batchDocuments = $datasource->addData($storeId, $batchDocuments);
+                    if (!empty($batchDocuments)) {
+                        $batchDocuments = $datasource->addData($storeId, $batchDocuments);
+                    }
                 }
 
-                $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
-                $this->indexOperation->executeBulk($bulk);
+                if (!empty($batchDocuments)) {
+                    $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
+                    $this->indexOperation->executeBulk($bulk);
+                }
             }
 
             $this->indexOperation->refreshIndex($index);
