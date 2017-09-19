@@ -123,7 +123,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 $parentData[$attributeCode] = [];
             }
 
-            $parentData[$attributeCode] = array_unique(array_merge($parentData[$attributeCode], $value));
+            $parentData[$attributeCode] = array_values(array_unique(array_merge($parentData[$attributeCode], $value)));
         }
     }
 
