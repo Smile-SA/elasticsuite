@@ -205,9 +205,13 @@ class Index
     {
         $indexName = $this->getIndexAlias($storeId);
 
-        $analysis = $this->client->indices()->analyze(
-            ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
-        );
+        try {
+            $analysis = $this->client->indices()->analyze(
+                ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
+        }
 
         $synonymByPositions = [];
 
