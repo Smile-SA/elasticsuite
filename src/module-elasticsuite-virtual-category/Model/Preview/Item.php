@@ -60,6 +60,7 @@ class Item
     {
         $productItemData = [
             'id'          => $this->product->getId(),
+            'sku'         => $this->product->getSku(),
             'name'        => $this->product->getName(),
             'price'       => $this->getProductPrice(),
             'image'       => $this->getImageUrl($this->product),
