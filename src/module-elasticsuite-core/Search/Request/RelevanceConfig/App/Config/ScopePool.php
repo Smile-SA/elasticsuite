@@ -120,6 +120,6 @@ class ScopePool
     public function clean()
     {
         $this->scopes = [];
-        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [self::CACHE_TAG]);
+        $this->cache->clean([self::CACHE_TAG]);
     }
 }
