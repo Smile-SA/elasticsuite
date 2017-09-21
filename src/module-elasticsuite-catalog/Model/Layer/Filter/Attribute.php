@@ -256,16 +256,16 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private function addOptionsData(array $items)
     {
         if ($this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL) {
-            $options = $this->getAttributeModel()->getFrontend()->getSelectOptions();
+            $options = $this->getAttributeModel()->getFrontend()->getAttribute()->getSource()->getAllOptions(false);
             $optionPosition = 0;
 
             if (!empty($options)) {
                 foreach ($options as $option) {
                     if (isset($option['label'])) {
-                        $optionLabel = (string) $option['label'];
+                        $optionLabel = (string) trim($option['label']);
                         $optionPosition++;
 
-                        if ($optionLabel && isset($items[$optionLabel])) {
+                        if (($optionLabel === '0' || $optionLabel) && isset($items[$optionLabel])) {
                             $items[$optionLabel]['adminSortIndex'] = $optionPosition;
                             $items[$optionLabel]['value']          = $option['value'];
                         }
