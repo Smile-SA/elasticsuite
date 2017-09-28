@@ -61,6 +61,8 @@ define([
         getImageUrl       : function () { return this.data.image; },
 
         getName           : function () { return this.data.name; },
+        
+        getSku            : function () { return this.data.sku; },
 
         getIsInStock      : function () { return Boolean(this.data['is_in_stock']) },
 
