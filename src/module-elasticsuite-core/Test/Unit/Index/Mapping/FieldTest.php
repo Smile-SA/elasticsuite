@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class FieldTest extends \PHPUnit_Framework_TestCase
+class FieldTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test default values used when creating a new field without params.

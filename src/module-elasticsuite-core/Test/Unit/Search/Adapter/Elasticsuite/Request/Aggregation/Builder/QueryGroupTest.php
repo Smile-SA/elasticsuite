@@ -27,7 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class QueryGroupTest extends \PHPUnit_Framework_TestCase
+class QueryGroupTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Build an query group aggregation from a bucket.

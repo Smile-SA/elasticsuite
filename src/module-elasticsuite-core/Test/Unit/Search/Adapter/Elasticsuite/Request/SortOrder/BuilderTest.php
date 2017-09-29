@@ -28,7 +28,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test building simple sort order.
