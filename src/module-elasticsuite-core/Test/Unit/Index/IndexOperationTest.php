@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCore\Index\IndexOperation;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class IndexOperationTest extends \PHPUnit_Framework_TestCase
+class IndexOperationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Smile\ElasticsuiteCore\Index\IndexOperation

@@ -21,7 +21,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Q
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-abstract class AbstractSimpleQueryBuilderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractSimpleQueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test using the query builder with an invalid query type throws an exception.

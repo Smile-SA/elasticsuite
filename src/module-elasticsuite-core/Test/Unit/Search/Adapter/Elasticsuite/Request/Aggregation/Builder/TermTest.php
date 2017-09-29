@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class TermTest extends \PHPUnit_Framework_TestCase
+class TermTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test the standard term aggregation building.
