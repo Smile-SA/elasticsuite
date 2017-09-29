@@ -21,6 +21,7 @@ use Magento\Framework\DB\TransactionFactory;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCore\Model\Search\Request\Source\Containers;
+use Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool;
 
 /**
  * Relevance Configuration Model
@@ -42,7 +43,14 @@ class RelevanceConfig extends \Magento\Config\Model\Config
     protected $fullConfig;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool
+     */
+    private $scopePool;
+
+    /**
      * Class constructor
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList) The parent method has already 9.
      *
      * @param ReinitableConfigInterface $config             Configuration interface
      * @param ManagerInterface          $eventManager       Event Manager
@@ -52,6 +60,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
      * @param ValueFactory              $configValueFactory Configuration Value Factory
      * @param StoreManagerInterface     $storeManager       Store Manager
      * @param Containers                $containersSource   The Containers source model
+     * @param ScopePool                 $scopePool          RelevanceConfiguration Scope Pool
      * @param array                     $data               The data
      */
     public function __construct(
@@ -63,10 +72,12 @@ class RelevanceConfig extends \Magento\Config\Model\Config
         ValueFactory $configValueFactory,
         StoreManagerInterface $storeManager,
         Containers $containersSource,
+        ScopePool $scopePool,
         array $data = []
     ) {
         $this->containersSource = $containersSource;
         $this->fullConfig = true;
+        $this->scopePool = $scopePool;
         parent::__construct(
             $config,
             $eventManager,
@@ -120,6 +131,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             $deleteTransaction->delete();
             $saveTransaction->save();
             $this->_appConfig->reinit();
+            $this->scopePool->clean();
             $this->_eventManager->dispatch(
                 "smile_elasticsuite_relevance_config_changed_section_{$this->getSection()}",
                 ['container' => $this->getContainer(), 'store' => $this->getStore()]
