@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\AggregationInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class AggregationFactoryTest extends \PHPUnit_Framework_TestCase
+class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test the aggregation creation using the factory.

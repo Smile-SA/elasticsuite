@@ -29,7 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class MappingTest extends \PHPUnit_Framework_TestCase
+class MappingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Smile\ElasticsuiteCore\Index\Mapping

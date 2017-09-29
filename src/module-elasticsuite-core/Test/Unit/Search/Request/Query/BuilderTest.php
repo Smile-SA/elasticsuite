@@ -27,7 +27,7 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class BuilderTest extends \PHPUnit_Framework_TestCase
+class BuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test creating a query from a fulltext search and filters.
