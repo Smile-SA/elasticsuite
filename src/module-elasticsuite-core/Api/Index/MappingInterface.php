@@ -84,4 +84,11 @@ interface MappingInterface
         $boost = 1,
         FieldFilterInterface $fieldFilter = null
     );
+
+    /**
+     * Retrieve all fields which are not using the default search analyzer.
+     *
+     * @return FieldInterface[]
+     */
+    public function getNonDefaultAnalyzerFields();
 }

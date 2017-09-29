@@ -186,6 +186,22 @@ class Mapping implements MappingInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getNonDefaultAnalyzerFields()
+    {
+        $nonDefaultFields = [];
+
+        foreach ($this->getFields() as $field) {
+            if ($field->isSearchable() && ($field->getDefaultSearchAnalyzer() !== FieldInterface::ANALYZER_STANDARD)) {
+                $nonDefaultFields[] = $field;
+            }
+        }
+
+        return $nonDefaultFields;
+    }
+
+    /**
      * Return the search property for a field present in defaultMappingFields.
      *
      * @throws \InvalidArgument If the field / analyzer does not exists.

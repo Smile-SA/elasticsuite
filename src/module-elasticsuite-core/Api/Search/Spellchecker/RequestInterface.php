@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Api\Search\Spellchecker;
 
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+
 /**
  * Spellchecking request interface.
  *
@@ -36,6 +38,13 @@ interface RequestInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * Spellcheck request document type.
+     *
+     * @return FieldInterface[]
+     */
+    public function getFields();
 
     /**
      * Spellcheck fulltext query.
