@@ -41,7 +41,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private $hasMoreItems = false;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Helper\Mapping
+     * @var \Smile\ElasticsuiteCatalog\Helper\Attribute
      */
     private $mappingHelper;
 
@@ -53,7 +53,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
      * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping               $mappingHelper     Mapping helper.
+     * @param \Smile\ElasticsuiteCatalog\Helper\Attribute          $mappingHelper     Mapping helper.
      * @param array                                                $data              Custom data.
      */
     public function __construct(
@@ -62,7 +62,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
-        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
+        \Smile\ElasticsuiteCatalog\Helper\Attribute $mappingHelper,
         array $data = []
     ) {
         parent::__construct(
@@ -85,7 +85,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     {
         $attributeValue = $request->getParam($this->_requestVar);
 
-        if (!empty($attributeValue)) {
+        if (null !== $attributeValue) {
             if (!is_array($attributeValue)) {
                 $attributeValue = [$attributeValue];
             }
@@ -198,13 +198,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      */
     protected function getFilterField()
     {
-        $field = $this->getAttributeModel()->getAttributeCode();
-
-        if ($this->getAttributeModel()->usesSource()) {
-            $field = $this->mappingHelper->getOptionTextFieldName($field);
-        }
-
-        return $field;
+        return $this->mappingHelper->getFilterField($this->getAttributeModel());
     }
 
     /**
@@ -261,12 +255,14 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
 
             if (!empty($options)) {
                 foreach ($options as $option) {
-                    $optionLabel = (string) $option['label'];
-                    $optionPosition++;
+                    if (isset($option['label'])) {
+                        $optionLabel = (string) $option['label'];
+                        $optionPosition++;
 
-                    if ($optionLabel && isset($items[$optionLabel])) {
-                        $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                        $items[$optionLabel]['value']          = $option['value'];
+                        if ($optionLabel && isset($items[$optionLabel])) {
+                            $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                            $items[$optionLabel]['value']          = $option['value'];
+                        }
                     }
                 }
             }

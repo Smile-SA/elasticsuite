@@ -67,6 +67,7 @@ class AbstractAttributeData
         'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
         'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend',
         'Magento\Catalog\Model\Product\Attribute\Backend\Weight',
+        'Magento\Catalog\Model\Product\Attribute\Backend\Price',
     ];
 
     /**
@@ -153,7 +154,8 @@ class AbstractAttributeData
      */
     private function canIndexAttribute(AttributeInterface $attribute)
     {
-        $canIndex = $attribute->getBackendType() != 'static';
+        // 'price' attribute is declared as nested field into the indices file.
+        $canIndex = $attribute->getBackendType() != 'static' && $attribute->getAttributeCode() !== 'price';
 
         if ($canIndex && $attribute->getBackendModel()) {
             $canIndex = in_array($attribute->getBackendModel(), $this->indexedBackendModels);

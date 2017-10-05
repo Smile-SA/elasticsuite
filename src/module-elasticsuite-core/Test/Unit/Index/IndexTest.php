@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class IndexTest extends \PHPUnit_Framework_TestCase
+class IndexTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Smile\ElasticsuiteCore\Index\Index

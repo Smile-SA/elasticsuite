@@ -18,6 +18,16 @@ use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
+use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Magento\Catalog\Model\CategoryFactory;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory as ProductConditionFactory;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory as CombineConditionFactory;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use Magento\Framework\Data\FormFactory;
+use Magento\Framework\Registry;
+use Magento\Framework\Model\Context;
 
 /**
  * Virtual category rule.
@@ -31,32 +41,32 @@ use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualRuleInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory
+     * @var ProductConditionFactory
      */
     private $productConditionsFactory;
 
     /**
-     * @var \Magento\Catalog\Model\CategoryFactory
+     * @var CategoryFactory
      */
     private $categoryFactory;
 
     /**
-     * @var \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory
+     * @var CollectionFactory
      */
     private $categoryCollectionFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder
+     * @var QueryBuilder
      */
     private $queryBuilder;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     private $storeManager;
 
@@ -65,30 +75,30 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Framework\Model\Context                                                         $context                   Context.
-     * @param \Magento\Framework\Registry                                                              $registry                  Registry.
-     * @param \Magento\Framework\Data\FormFactory                                                      $formFactory               Form factory.
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface                                     $localeDate                Locale date.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory                       $combineConditionsFactory  Search engine rule (combine) condition factory.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory                       $productConditionsFactory  Search engine rule (product) condition factory.
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                                $queryFactory              Search query factory.
-     * @param \Magento\Catalog\Model\CategoryFactory                                                   $categoryFactory           Product category factorty.
-     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory Virtual categories collection factory.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder                 $queryBuilder              Search rule query builder.
-     * @param StoreManagerInterface                                                                    $storeManagerInterface     Store Manager
-     * @param array                                                                                    $data                      Additional data.
+     * @param Context                 $context                   Context.
+     * @param Registry                $registry                  Registry.
+     * @param FormFactory             $formFactory               Form factory.
+     * @param TimezoneInterface       $localeDate                Locale date.
+     * @param CombineConditionFactory $combineConditionsFactory  Search engine rule (combine) condition factory.
+     * @param ProductConditionFactory $productConditionsFactory  Search engine rule (product) condition factory.
+     * @param QueryFactory            $queryFactory              Search query factory.
+     * @param CategoryFactory         $categoryFactory           Product category factorty.
+     * @param CollectionFactory       $categoryCollectionFactory Virtual categories collection factory.
+     * @param QueryBuilder            $queryBuilder              Search rule query builder.
+     * @param StoreManagerInterface   $storeManagerInterface     Store Manager
+     * @param array                   $data                      Additional data.
      */
     public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $combineConditionsFactory,
-        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory $productConditionsFactory,
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
-        \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory $categoryCollectionFactory,
-        \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder $queryBuilder,
+        Context $context,
+        Registry $registry,
+        FormFactory $formFactory,
+        TimezoneInterface $localeDate,
+        CombineConditionFactory $combineConditionsFactory,
+        ProductConditionFactory $productConditionsFactory,
+        QueryFactory $queryFactory,
+        CategoryFactory $categoryFactory,
+        CollectionFactory $categoryCollectionFactory,
+        QueryBuilder $queryBuilder,
         StoreManagerInterface $storeManagerInterface,
         array $data = []
     ) {
@@ -118,8 +128,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * Build search query by category.
      *
      * @param \Magento\Catalog\Api\Data\CategoryInterface $category           Search category.
-     * @param array                                       $excludedCategories Categories that should not be used into search query building.
-     *                                                                        Used to avoid infinite recursion while building virtual categories rules.
+     * @param array                                       $excludedCategories Categories that should not be used into search
+     *                                                                        query building. Used to avoid infinite recursion
+     *                                                                        while building virtual categories rules.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */

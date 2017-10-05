@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class TypeTest extends \PHPUnit_Framework_TestCase
+class TypeTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Smile\ElasticsuiteCore\Index\Type

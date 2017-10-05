@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Index\Analysis\Config\SchemaLocator;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class SchemaLocatorTest extends \PHPUnit_Framework_TestCase
+class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test the schema file path is correct.

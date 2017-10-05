@@ -13,12 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
-use Magento\Search\Model\Autocomplete\DataProviderInterface;
-use Magento\Search\Model\QueryFactory;
-use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
-use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
-use Magento\Catalog\Model\Product\Visibility;
+use Magento\Search\Model\Autocomplete\DataProviderInterface;
+use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
 
 /**
  * Catalog product autocomplete data provider.
@@ -42,18 +39,6 @@ class DataProvider implements DataProviderInterface
     private $itemFactory;
 
     /**
-     * Query factory
-     *
-     * @var QueryFactory
-     */
-    private $queryFactory;
-
-    /**
-     * @var TermDataProvider
-     */
-    private $termDataProvider;
-
-    /**
      * @var ConfigurationHelper
      */
     private $configurationHelper;
@@ -69,41 +54,23 @@ class DataProvider implements DataProviderInterface
     private $productCollection;
 
     /**
-     * Additional product attributes required.
-     *
-     * @var array
-     */
-    private $additionalAttributes;
-
-    /**
      * Constructor.
      *
-     * @param ItemFactory         $itemFactory          Suggest item factory.
-     * @param QueryFactory        $queryFactory         Search query factory.
-     * @param TermDataProvider    $termDataProvider     Search terms suggester.
-     * @param ProductCollection   $productCollection    Product collection.
-     * @param ConfigurationHelper $configurationHelper  Autocomplete configuration helper.
-     * @param string              $type                 Autocomplete provider type.
-     * @param array               $additionalAttributes Additional product attributes required.
+     * @param ItemFactory         $itemFactory               Suggest item factory.
+     * @param Collection\Provider $productCollectionProvider Product collection provider.
+     * @param ConfigurationHelper $configurationHelper       Autocomplete configuration helper.
+     * @param string              $type                      Autocomplete provider type.
      */
     public function __construct(
         ItemFactory $itemFactory,
-        QueryFactory $queryFactory,
-        TermDataProvider $termDataProvider,
-        ProductCollection $productCollection,
+        Collection\Provider $productCollectionProvider,
         ConfigurationHelper $configurationHelper,
-        $type = self::AUTOCOMPLETE_TYPE,
-        array $additionalAttributes = []
+        $type = self::AUTOCOMPLETE_TYPE
     ) {
-        $this->itemFactory              = $itemFactory;
-        $this->queryFactory             = $queryFactory;
-        $this->termDataProvider         = $termDataProvider;
-        $this->productCollection        = $productCollection;
-        $this->configurationHelper      = $configurationHelper;
-        $this->type                     = $type;
-        $this->additionalAttributes     = $additionalAttributes;
-
-        $this->prepareProductCollection();
+        $this->itemFactory         = $itemFactory;
+        $this->configurationHelper = $configurationHelper;
+        $this->type                = $type;
+        $this->productCollection   = $this->prepareProductCollection($productCollectionProvider->getProductCollection());
     }
 
     /**
@@ -123,11 +90,7 @@ class DataProvider implements DataProviderInterface
 
         if ($this->configurationHelper->isEnabled($this->getType())) {
             foreach ($this->productCollection as $product) {
-                $result[] = $this->itemFactory->create([
-                    'product'               => $product,
-                    'type'                  => $this->getType(),
-                    'additional_attributes' => $this->additionalAttributes,
-                ]);
+                $result[] = $this->itemFactory->create(['product' => $product, 'type' => $this->getType()]);
             }
         }
 
@@ -137,49 +100,15 @@ class DataProvider implements DataProviderInterface
     /**
      * Init suggested products collection.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\DataProvider
-     */
-    private function prepareProductCollection()
-    {
-        $terms = $this->getQueryText();
-        $this->productCollection->addSearchFilter($terms);
-        $this->productCollection->setPageSize($this->getResultsPageSize());
-        $this->productCollection
-            ->addAttributeToSelect('name')
-            ->addAttributeToSelect('thumbnail')
-            ->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
-            ->addPriceData();
-
-        if ($this->additionalAttributes) {
-            $this->productCollection->addAttributeToSelect($this->additionalAttributes);
-        }
-
-        if (!$this->configurationHelper->isShowOutOfStock()) {
-            $this->productCollection->addIsInStockFilter();
-        }
-
-        return $this;
-    }
-
-    /**
-     * List of search terms suggested by the search terms data provider.
+     * @param ProductCollection $productCollection Product collection
      *
-     * @return array
+     * @return ProductCollection
      */
-    private function getQueryText()
+    private function prepareProductCollection(ProductCollection $productCollection)
     {
-        $terms = array_map(
-            function (\Magento\Search\Model\Autocomplete\Item $termItem) {
-                return $termItem->getTitle();
-            },
-            $this->termDataProvider->getItems()
-        );
+        $productCollection->setPageSize($this->getResultsPageSize());
 
-        if (empty($terms)) {
-            $terms = [$this->queryFactory->get()->getQueryText()];
-        }
-
-        return $terms;
+        return $productCollection;
     }
 
     /**

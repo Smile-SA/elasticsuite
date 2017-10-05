@@ -29,6 +29,21 @@ use \Magento\Framework\Setup\SchemaSetupInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
+     * @var \Smile\ElasticsuiteCatalog\Setup\CatalogSetup
+     */
+    private $catalogSetup;
+
+    /**
+     * InstallSchema constructor.
+     *
+     * @param \Smile\ElasticsuiteCatalog\Setup\CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
+     */
+    public function __construct(CatalogSetupFactory $catalogSetupFactory)
+    {
+        $this->catalogSetup = $catalogSetupFactory->create();
+    }
+
+    /**
      * Installs DB schema for the module
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -41,107 +56,12 @@ class InstallSchema implements InstallSchemaInterface
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
-        $this->addEavCatalogFields($setup);
-        $this->addIsSpellcheckedToSearchQuery($setup);
+        $this->catalogSetup->addEavCatalogFields($setup);
+        $this->catalogSetup->addIsSpellcheckedToSearchQuery($setup);
+
+        // Introduced in version 1.1.0.
+        $this->catalogSetup->appendDecimalDisplayConfiguration($setup);
+
         $setup->endSetup();
-    }
-
-    /**
-     * Add custom fields to catalog_eav_attribute table.
-     *
-     * @param SchemaSetupInterface $setup The setup interface
-     *
-     * @return void
-     */
-    private function addEavCatalogFields(SchemaSetupInterface $setup)
-    {
-        $connection = $setup->getConnection();
-        $table      = $setup->getTable('catalog_eav_attribute');
-
-        // Append a column 'is_displayed_in_autocomplete' into the db.
-        $connection->addColumn(
-            $table,
-            'is_displayed_in_autocomplete',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '0',
-                'comment'  => 'If attribute is displayed in autocomplete',
-            ]
-        );
-
-        // Append a column 'is_used_in_spellcheck' to the table.
-        $connection->addColumn(
-            $table,
-            'is_used_in_spellcheck',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '1',
-                'comment'  => 'If fuzziness is used on attribute',
-            ]
-        );
-
-        // Append facet_min_coverage_rate to the table.
-        $connection->addColumn(
-            $table,
-            'facet_min_coverage_rate',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                'unsigned' => true,
-                'nullable' => false,
-                'default'  => 90,
-                'comment'  => 'Facet min coverage rate',
-            ]
-        );
-
-        // Append facet_max_size to the table.
-        $connection->addColumn(
-            $table,
-            'facet_max_size',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                'unsigned' => true,
-                'nullable' => false,
-                'default'  => '10',
-                'comment'  => 'Facet max size',
-            ]
-        );
-
-        // Append facet_sort_order to the table.
-        $connection->addColumn(
-            $table,
-            'facet_sort_order',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
-                'nullable' => false,
-                'default'  => \Smile\ElasticsuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT,
-                'length'   => 25,
-                'comment'  => 'The sort order for facet values',
-            ]
-        );
-    }
-
-    /**
-     * Append is spellchecked to the search query report table.
-     *
-     * @param SchemaSetupInterface $setup The setup interface
-     *
-     * @return void
-     */
-    private function addIsSpellcheckedToSearchQuery(SchemaSetupInterface $setup)
-    {
-        $connection = $setup->getConnection();
-        $table      = $setup->getTable('search_query');
-        $connection->addColumn(
-            $table,
-            'is_spellchecked',
-            [
-                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
-                'nullable' => false,
-                'default'  => '0',
-                'comment'  => 'Is the query spellchecked',
-            ]
-        );
     }
 }

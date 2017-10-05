@@ -141,6 +141,7 @@ class Spellchecker implements SpellcheckerInterface
             'type'            => $request->getType(),
             'id'              => '',
             'term_statistics' => true,
+            'dfs'             => true,
         ];
 
         $termVectorsQuery['body']['doc'] = [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()];

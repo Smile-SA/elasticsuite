@@ -17,7 +17,7 @@ use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\DB\Adapter\AdapterInterface;
+use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
 
 /**
  * Catalog data upgrade.
@@ -36,13 +36,20 @@ class UpgradeData implements UpgradeDataInterface
     private $eavSetupFactory;
 
     /**
+     * @var VirtualCategorySetup
+     */
+    private $virtualCategorySetup;
+
+    /**
      * Class Constructor
      *
-     * @param EavSetupFactory $eavSetupFactory Eav setup factory.
+     * @param EavSetupFactory             $eavSetupFactory             Eav setup factory.
+     * @param VirtualCategorySetupFactory $virtualCategorySetupFactory Virtual category Setup.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory)
+    public function __construct(EavSetupFactory $eavSetupFactory, VirtualCategorySetupFactory $virtualCategorySetupFactory)
     {
-        $this->eavSetupFactory = $eavSetupFactory;
+        $this->eavSetupFactory      = $eavSetupFactory;
+        $this->virtualCategorySetup = $virtualCategorySetupFactory->create();
     }
 
     /**
@@ -58,57 +65,9 @@ class UpgradeData implements UpgradeDataInterface
         $setup->startSetup();
 
         if (version_compare($context->getVersion(), '1.1.0', '<')) {
-            $this->updateVirtualCategoryRootTypeToInt($setup);
+            $this->virtualCategorySetup->updateVirtualCategoryRootTypeToInt($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
         $setup->endSetup();
-    }
-
-    /**
-     * Migration from 1.0.0 to 1.1.0 :
-     *   - Updating the attribute virtual_category_root from type varchar to type int
-     *   - Updating the value of the attribute from 'category/13' to '13.
-     *
-     * @param ModuleDataSetupInterface $setup Setup.
-     *
-     * @return $this
-     */
-    private function updateVirtualCategoryRootTypeToInt(ModuleDataSetupInterface $setup)
-    {
-        /**
-         * @var \Magento\Eav\Setup\EavSetup $eavSetup
-         */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-
-        // Fix the attribute type.
-        $eavSetup->updateAttribute(Category::ENTITY, 'virtual_category_root', 'backend_type', 'int');
-
-        // Retrieve information about the attribute and storage config.
-        $virtualRootAttributeId = $eavSetup->getAttribute(Category::ENTITY, 'virtual_category_root', 'attribute_id');
-
-        $originalTable = $setup->getTable('catalog_category_entity_varchar');
-        $targetTable   = $setup->getTable('catalog_category_entity_int');
-
-        $baseFields = array_slice(array_keys($setup->getConnection()->describeTable($originalTable)), 1, -1);
-
-        // Select old value.
-        $valueSelect = $setup->getConnection()->select();
-        $valueSelect->from($setup->getTable('catalog_category_entity_varchar'), $baseFields)
-            ->where('attribute_id = ?', $virtualRootAttributeId)
-            ->columns(['value' => new \Zend_Db_Expr('REPLACE(value, "category/", "")')]);
-
-        // Insert old values into the new table.
-        $query = $setup->getConnection()->insertFromSelect(
-            $valueSelect,
-            $targetTable,
-            array_merge($baseFields, ['value']),
-            AdapterInterface::INSERT_IGNORE
-        );
-        $setup->getConnection()->query($query);
-
-        // Delete old value.
-        $setup->getConnection()->delete($originalTable, "attribute_id = {$virtualRootAttributeId}");
-
-        return $this;
     }
 }
