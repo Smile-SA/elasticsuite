@@ -99,10 +99,16 @@
     
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
+            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider</argument>
         </arguments>
     </virtualType>
-    
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider" type="Magento\Catalog\Model\Layer\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Magento\CatalogSearch\Model\Layer\Search\Context" type="Magento\Catalog\Model\Layer\Search\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\ItemCollectionProvider</argument>
@@ -188,22 +194,6 @@
                 <item name="stock" xsi:type="string">stock</item>
                 <item name="category" xsi:type="string">category</item>
             </argument>
-        </arguments>
-    </type>
-
-    <!-- Ensure automatic instantiation of layer will properly use a fulltext product collection -->
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Context">
-        <arguments>
-            <!-- This provider uses the Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory as Collection Factory -->
-            <argument name="collectionProvider" xsi:type="object">Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider</argument>
-            <argument name="stateKey" xsi:type="object">Magento\Catalog\Model\Layer\Category\StateKey</argument>
-            <argument name="collectionFilter" xsi:type="object">Magento\Catalog\Model\Layer\Category\CollectionFilter</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Magento\Catalog\Model\Layer\Category">
-        <arguments>
-            <argument name="context" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\Context</argument>
         </arguments>
     </type>
 

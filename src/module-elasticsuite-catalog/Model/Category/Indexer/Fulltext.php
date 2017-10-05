@@ -31,9 +31,6 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
      */
     const INDEXER_ID = 'elasticsuite_categories_fulltext';
 
-    /** @var array index structure */
-    protected $data;
-
     /**
      * @var IndexerInterface
      */
@@ -59,20 +56,17 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
      * @param IndexerInterface      $indexerHandler   The index handler
      * @param StoreManagerInterface $storeManager     The Store Manager
      * @param DimensionFactory      $dimensionFactory The dimension factory
-     * @param array                 $data             The data
      */
     public function __construct(
         Full $fullAction,
         IndexerInterface $indexerHandler,
         StoreManagerInterface $storeManager,
-        DimensionFactory $dimensionFactory,
-        array $data
+        DimensionFactory $dimensionFactory
     ) {
         $this->fullAction = $fullAction;
         $this->indexerHandler = $indexerHandler;
         $this->storeManager = $storeManager;
         $this->dimensionFactory = $dimensionFactory;
-        $this->data = $data;
     }
 
     /**

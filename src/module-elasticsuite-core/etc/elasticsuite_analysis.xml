@@ -43,6 +43,7 @@
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>0</preserve_original>
         </filter>
+        <filter name="standard" type="standard" language="default" />
         <filter name="standard" type="stemmer" language="en">
             <language>english</language>
         </filter>
@@ -64,11 +65,11 @@
     <analyzers>
         <analyzer name="standard" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
                 <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="standard" />
             </filters>
             <char_filters>
@@ -77,10 +78,11 @@
         </analyzer>
         <analyzer name="whitespace" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -88,10 +90,11 @@
         </analyzer>
         <analyzer name="shingle" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>
@@ -110,10 +113,11 @@
         </analyzer>
         <analyzer name="phonetic" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
                 <filter ref="phonetic" />
             </filters>
             <char_filters>

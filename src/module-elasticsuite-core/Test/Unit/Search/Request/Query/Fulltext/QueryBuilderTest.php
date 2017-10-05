@@ -32,7 +32,7 @@ use Smile\ElasticsuiteCore\Index\Mapping;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class QueryBuilderTest extends \PHPUnit_Framework_TestCase
+class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array
@@ -115,7 +115,11 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testPureStopWordsSpellingQueryBuilder()
     {
-        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS, QueryInterface::TYPE_MULTIMATCH);
+        $this->runTestQueryBuilder(
+            'search text',
+            SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS,
+            QueryInterface::TYPE_MULTIMATCH
+        );
     }
 
     /**

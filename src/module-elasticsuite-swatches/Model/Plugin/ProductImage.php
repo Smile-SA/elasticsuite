@@ -19,33 +19,21 @@ use Magento\Eav\Model\Entity\Attribute;
 /**
  * Plugin that allow to select the right product image when a filter is selected.
  *
- * @category Smile
- * @package  Smile\ElasticsuiteSwatches
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @category   Smile
+ * @package    Smile\ElasticsuiteSwatches
+ * @author     Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @deprecated since Magento 2.1.6
  */
 class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
 {
     /**
-     * Constructor.
-     *
-     * @param \Smile\ElasticsuiteSwatches\Helper\Swatches $swatchesHelperData Swatch helper.
-     * @param \Magento\Eav\Model\Config                   $eavConfig          Product EAV configuration.
-     * @param \Magento\Framework\App\Request\Http         $request            HTTP Request.
-     */
-    public function __construct(
-        \Smile\ElasticsuiteSwatches\Helper\Swatches $swatchesHelperData,
-        \Magento\Eav\Model\Config $eavConfig,
-        \Magento\Framework\App\Request\Http $request
-    ) {
-        parent::__construct($swatchesHelperData, $eavConfig, $request);
-    }
-
-    /**
-     * {@inheritDoc}
+     * {@inheritdoc}
+     * @deprecated since Magento 2.1.6
      */
     protected function getFilterArray(array $request)
     {
         $filterArray = parent::getFilterArray($request);
+
         $attributeCodes = $this->eavConfig->getEntityAttributeCodes(\Magento\Catalog\Model\Product::ENTITY);
 
         foreach ($request as $code => $value) {
@@ -57,40 +45,11 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
                 }
 
                 if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
-                    $filterArray[$code][] = $this->getOptionIds($attribute, $value);
+                    $filterArray[$code][] = $this->swatchHelperData->getOptionIds($attribute, $value);
                 }
             }
         }
 
         return $filterArray;
-    }
-
-    /**
-     * Retrive options ids from a labels array.
-     *
-     * @param Attribute $attribute Attribute.
-     * @param string[]  $labels    Labels
-     *
-     * @return integer[]
-     */
-    private function getOptionIds(Attribute $attribute, $labels)
-    {
-        $optionIds = [];
-
-        if (!is_array($labels)) {
-            $labels = [$labels];
-        }
-
-        $options = $attribute->getSource()->getAllOptions();
-
-        foreach ($labels as $label) {
-            foreach ($options as $option) {
-                if ($option['label'] == $label) {
-                    $optionIds[] = (int) $option['value'];
-                }
-            }
-        }
-
-        return $optionIds;
     }
 }

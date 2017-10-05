@@ -31,7 +31,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class AggregationBuilderTest extends \PHPUnit_Framework_TestCase
+class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test building aggregations for simple fields.
@@ -143,7 +143,10 @@ class AggregationBuilderTest extends \PHPUnit_Framework_TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations    = [
-            'nested.simpleField' => ['type' => 'aggType', 'config' => ['nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter']]],
+            'nested.simpleField' => [
+                'type' => 'aggType',
+                'config' => ['nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter']],
+            ],
         ];
 
         $filters = ['simpleField' => 'simpleFieldFilter'];

@@ -41,11 +41,18 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
-        $relationsByChildId = $this->resourceModel->loadChildrens($productIds);
+        $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
         if (!empty($relationsByChildId)) {
-            $allChildrenIds = array_keys($relationsByChildId);
-            $childrenIndexData = $this->addAttributeData($storeId, $allChildrenIds);
+            $allChildrenIds      = array_keys($relationsByChildId);
+            $childrenIndexData   = $this->addAttributeData($storeId, $allChildrenIds);
+
+            foreach ($childrenIndexData as $childrenId => $childrenData) {
+                $enabled = current($childrenData['status']) == 1;
+                if ($enabled === false) {
+                    unset($childrenIndexData[$childrenId]);
+                }
+            }
 
             foreach ($relationsByChildId as $childId => $relations) {
                 foreach ($relations as $relation) {
@@ -58,6 +65,8 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 }
             }
         }
+
+        $indexData = $this->filterCompositeProducts($indexData);
 
         return $indexData;
     }
@@ -114,7 +123,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 $parentData[$attributeCode] = [];
             }
 
-            $parentData[$attributeCode] = array_unique(array_merge($parentData[$attributeCode], $value));
+            $parentData[$attributeCode] = array_values(array_unique(array_merge($parentData[$attributeCode], $value)));
         }
     }
 
@@ -168,5 +177,27 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         $parentData['children_attributes'] = array_values(array_unique($childrenAttributes));
+    }
+
+    /**
+     * Filter out composite product when no enabled children are attached.
+     *
+     * @param array $indexData Indexed data.
+     *
+     * @return array
+     */
+    private function filterCompositeProducts($indexData)
+    {
+        $compositeProductTypes = $this->resourceModel->getCompositeTypes();
+
+        foreach ($indexData as $productId => $productData) {
+            $isComposite = in_array($productData['type_id'], $compositeProductTypes);
+            $hasChildren = isset($productData['children_ids']) && !empty($productData['children_ids']);
+            if ($isComposite && !$hasChildren) {
+                unset($indexData[$productId]);
+            }
+        }
+
+        return $indexData;
     }
 }

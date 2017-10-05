@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Index\Bulk\BulkResponse;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class BulkResponseTest extends \PHPUnit_Framework_TestCase
+class BulkResponseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var BulkResponse

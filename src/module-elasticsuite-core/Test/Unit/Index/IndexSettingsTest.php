@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class IndexSettingsTest extends \PHPUnit_Framework_TestCase
+class IndexSettingsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var IndexSettings

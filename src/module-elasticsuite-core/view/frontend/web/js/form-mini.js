@@ -221,7 +221,7 @@ define([
          *
          * @private
          */
-        _onPropertyChange: function () {
+        _onPropertyChange: _.debounce(function () {
             var searchField = this.element,
                 clonePosition = {
                     position: 'absolute',
@@ -308,7 +308,7 @@ define([
                 this._updateAriaHasPopup(false);
                 this.element.removeAttr('aria-activedescendant');
             }
-        },
+        }, 250),
 
         /**
          * Executes when keys are pressed in the search input field. Performs specific actions
@@ -333,7 +333,7 @@ define([
                     this.autoComplete.hide();
                     break;
                 case $.ui.keyCode.ENTER:
-                    this._validateElement();
+                    this._validateElement(e);
                     break;
                 case $.ui.keyCode.DOWN:
                     this._navigateDown();
@@ -349,14 +349,16 @@ define([
         /**
          * Validate selection of an element (eg : when ENTER is pressed)
          *
+         * @param event The keydown event
+         *
          * @returns {boolean}
          *
          * @private
          */
-        _validateElement: function() {
+        _validateElement: function(event) {
             if (this.responseList.selected.attr('href') !== undefined) {
                 window.location = this.responseList.selected.attr('href');
-                e.preventDefault();
+                event.preventDefault();
                 return false;
             }
             this.searchForm.trigger('submit');

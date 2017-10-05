@@ -42,7 +42,8 @@ class SaveProductsPositions extends AbstractIndexerPlugin
      *
      * @param \Magento\Framework\Indexer\IndexerRegistry                                       $indexerRegistry The indexer registry.
      * @param FullIndexer                                                                      $fullIndexer     The Full Indexer
-     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler     Product position save handler.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler     Product position
+     *                                                                                                          save handler.
      * @param \Magento\Framework\Json\Helper\Data                                              $jsonHelper      JSON Helper.
      */
     public function __construct(

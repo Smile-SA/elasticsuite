@@ -29,7 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class MappingTest extends \PHPUnit_Framework_TestCase
+class MappingTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Smile\ElasticsuiteCore\Index\Mapping
@@ -275,14 +275,47 @@ class MappingTest extends \PHPUnit_Framework_TestCase
     private function getSearchWeightedMapping()
     {
         $fields = [
-            new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
-            new Field('ignoredField', FieldInterface::FIELD_TYPE_STRING),
-            new Field('standardField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
-            new Field('weightedField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 2]),
-            new Field('whitespaceField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 1, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]),
-            new Field('whitespaceWeightedField', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true, 'search_weight' => 2, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]),
-            new Field('nested.subfield', FieldInterface::FIELD_TYPE_STRING, 'nested'),
-            new Field('object.subfield', FieldInterface::FIELD_TYPE_STRING),
+            new Field(
+                'entity_id',
+                FieldInterface::FIELD_TYPE_INTEGER
+            ),
+            new Field(
+                'ignoredField',
+                FieldInterface::FIELD_TYPE_STRING
+            ),
+            new Field(
+                'standardField',
+                FieldInterface::FIELD_TYPE_STRING,
+                null,
+                ['is_searchable' => true]
+            ),
+            new Field(
+                'weightedField',
+                FieldInterface::FIELD_TYPE_STRING,
+                null,
+                ['is_searchable' => true, 'search_weight' => 2]
+            ),
+            new Field(
+                'whitespaceField',
+                FieldInterface::FIELD_TYPE_STRING,
+                null,
+                ['is_searchable' => true, 'search_weight' => 1, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]
+            ),
+            new Field(
+                'whitespaceWeightedField',
+                FieldInterface::FIELD_TYPE_STRING,
+                null,
+                ['is_searchable' => true, 'search_weight' => 2, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]
+            ),
+            new Field(
+                'nested.subfield',
+                FieldInterface::FIELD_TYPE_STRING,
+                'nested'
+            ),
+            new Field(
+                'object.subfield',
+                FieldInterface::FIELD_TYPE_STRING
+            ),
         ];
 
         return new Mapping('entity_id', $fields);

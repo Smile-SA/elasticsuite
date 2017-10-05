@@ -28,7 +28,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class MapperTest extends \PHPUnit_Framework_TestCase
+class MapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test mapping a base query.
