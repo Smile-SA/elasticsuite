@@ -111,7 +111,11 @@ class DataProvider implements DataProviderInterface
             $categoryCollection = $this->getCategoryCollection();
             if ($categoryCollection) {
                 foreach ($categoryCollection as $category) {
-                    $result[] = $this->itemFactory->create(['category' => $category, 'type' => $this->getType()]);
+                    if ($category->getIsActive() && !$category->getIsHidden()) {
+                        $result[] = $this->itemFactory->create(
+                            ['category' => $category, 'type' => $this->getType()]
+                        );
+                    }
                 }
             }
         }
@@ -154,6 +158,7 @@ class DataProvider implements DataProviderInterface
         }
 
         $categoryCollection = $this->categoryCollectionFactory->create();
+        $categoryCollection->addAttributeToSelect("is_active");
         $categoryCollection->addSearchFilter($terms);
         $categoryCollection->setPageSize($this->getResultsPageSize());
 
