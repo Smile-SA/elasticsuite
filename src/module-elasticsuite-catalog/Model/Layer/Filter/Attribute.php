@@ -274,6 +274,9 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             }
 
             usort($items, function ($item1, $item2) {
+                isset($item1['adminSortIndex']) ? $item1['adminSortIndex'] : PHP_INT_MAX;
+                isset($item2['adminSortIndex']) ? $item2['adminSortIndex'] : PHP_INT_MAX;
+
                 return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
             });
         }
