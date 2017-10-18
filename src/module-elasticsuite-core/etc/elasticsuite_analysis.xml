@@ -44,14 +44,95 @@
             <preserve_original>0</preserve_original>
         </filter>
         <filter name="standard" type="standard" language="default" />
+        <filter name="standard" type="stemmer" language="ar">
+            <language>arabic</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="eu">
+            <language>basque</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="bg">
+            <language>bulgarian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="ca">
+            <language>catalan</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="cs">
+            <language>czech</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="da">
+            <language>danish</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="de">
+            <language>german2</language>
+        </filter>
         <filter name="standard" type="stemmer" language="en">
             <language>english</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="es">
+            <language>spanish</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="el">
+            <language>greek</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="fi">
+            <language>finnish</language>
         </filter>
         <filter name="standard" type="stemmer" language="fr">
             <language>french</language>
         </filter>
+        <filter name="standard" type="stemmer" language="gl">
+            <language>galician</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="hi">
+            <language>hindi</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="hu">
+            <language>hungarian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="id">
+            <language>indonesian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="it">
+            <language>italian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="lv">
+            <language>latvian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="lt">
+            <language>lithuanian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="nb">
+            <language>norwegian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="nn">
+            <language>light_nynorsk</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="nl">
+            <language>dutch</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="pt">
+            <language>portuguese</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="ro">
+            <language>romanian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="ru">
+            <language>russian</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="sv">
+            <language>swedish</language>
+        </filter>
+        <filter name="standard" type="stemmer" language="tr">
+            <language>turkish</language>
+        </filter>
+        <filter name="elision" type="elision" language="ca">
+            <articles>["d", "l", "m", "n", "s", "t"]</articles>
+        </filter>
         <filter name="elision" type="elision" language="fr">
-            <articles>["l", "m", "t", "qu", "n", "s", "j"]</articles>
+            <articles>["l", "m", "t", "qu", "n", "s","j", "d", "c"]</articles>
+        </filter>
+        <filter name="elision" type="elision" language="it">
+            <articles>["c", "l", "all", "dall", "dell","nell", "sull", "coll", "pell","gl", "agl", "dagl", "degl", "negl","sugl", "un", "m", "t", "s", "v", "d"]</articles>
         </filter>
         <filter name="phonetic" type="phonetic" language="default">
             <encoder>metaphone</encoder>
