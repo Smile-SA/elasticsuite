@@ -56,7 +56,6 @@ class ContainerStore
      * @param Container             $containerReader   Parent level configuration reader
      * @param StoreManagerInterface $storeManager      Magento Store Manager interface
      *
-     * @internal param \Magento\Framework\App\Config\ScopePool $scopePool Scoped Configuration reader
      */
     public function __construct(
         Initial $initialConfig,
