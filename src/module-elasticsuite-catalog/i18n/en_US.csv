@@ -43,6 +43,8 @@ OK,OK
 "Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."
 "Product Attributes Autocomplete","Product Attributes Autocomplete"
 "Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."
+"If this field modelizes a reference","If this field modelizes a reference"
+"Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)","Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)"
 "Category Autocomplete","Category Autocomplete"
 "Maximum number of categories to display in autocomplete results.","Maximum number of categories to display in autocomplete results."
 "Catalog Search","Catalog Search"

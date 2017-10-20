@@ -107,8 +107,16 @@ class Attribute extends Mapping
             $options['is_used_in_spellcheck'] = true;
         }
 
+        if ($attribute->getIsUsedInAutocomplete()) {
+            $options['is_used_in_autocomplete'] = true;
+        }
+
         if ($attribute->getIsDisplayedInAutocomplete()) {
             $options['is_filterable'] = true;
+        }
+
+        if ($attribute->getIsReferenceField()) {
+            $options['is_reference_field'] = true;
         }
 
         return $options;

@@ -58,10 +58,17 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->appendDecimalDisplayConfiguration($setup);
         }
 
-        if (version_compare($context->getVersion(), '1.2.2', '<')) {
-            $this->catalogSetup->removeIsUsedInAutocompleteField($setup);
+        // erisler - this causes setup:upgrade error as the field is referenced later.
+//        if (version_compare($context->getVersion(), '1.2.2', '<')) {
+//            $this->catalogSetup->removeIsUsedInAutocompleteField($setup);
+//        }
+
+        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+            $this->catalogSetup->appendReferenceFieldConfiguration($setup);
         }
 
         $setup->endSetup();
     }
+
+
 }

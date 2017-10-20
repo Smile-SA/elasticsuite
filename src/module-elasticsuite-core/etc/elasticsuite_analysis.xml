@@ -35,9 +35,31 @@
             <split_on_numerics>1</split_on_numerics>
             <preserve_original>1</preserve_original>
         </filter>
+        <filter name="reference_delimiter" type="word_delimiter" language="default">
+            <generate_word_parts>0</generate_word_parts>
+            <catenate_words>0</catenate_words>
+            <catenate_numbers>0</catenate_numbers>
+            <catenate_all>0</catenate_all>
+            <split_on_case_change>0</split_on_case_change>
+            <split_on_numerics>0</split_on_numerics>
+            <preserve_original>1</preserve_original>
+        </filter>
+    
+	<filter name="edge_ngram_front" type="edgeNGram" language="default">
+                <min_gram>2</min_gram>
+                <max_gram>15</max_gram>
+                <side>front</side>
+                </filter>
+	<filter name="edge_ngram_back" type="edgeNGram" language="default">
+                <min_gram>2</min_gram>
+                <max_gram>15</max_gram>
+                <side>back</side>
+                </filter>
+	
+    
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
-            <max_shingle_size>2</max_shingle_size>
+            <max_shingle_size>12</max_shingle_size>
             <output_unigrams>0</output_unigrams>
         </filter>
         <filter name="ascii_folding" type="asciifolding" language="default">
@@ -200,6 +222,21 @@
                 <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="phonetic" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+<analyzer name="reference" tokenizer="keyword" language="default">
+            <filters>
+               <filter ref="keyword_repeat"/>
+                <filter ref="reference_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="edge_ngram_front" />
+                <filter ref="edge_ngram_back" />
+               <filter ref="ngram_filter"/>
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />

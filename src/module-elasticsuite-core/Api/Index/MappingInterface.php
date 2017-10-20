@@ -29,7 +29,7 @@ interface MappingInterface
     const DEFAULT_SEARCH_FIELD       = 'search';
     const DEFAULT_SPELLING_FIELD     = 'spelling';
     const DEFAULT_AUTOCOMPLETE_FIELD = 'autocomplete';
-
+    const DEFAULT_REFERENCE_FIELD    = 'reference';
     /**
      * List of the properties of the mapping.
      *

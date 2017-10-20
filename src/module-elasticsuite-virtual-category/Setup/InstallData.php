@@ -18,6 +18,7 @@ use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
+use Magento\Eav\Model\Config;
 
 /**
  * Catalog installer
@@ -28,6 +29,11 @@ use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
  */
 class InstallData implements InstallDataInterface
 {
+    /**
+     * @var Config
+     */
+    private $eavConfig;
+ 
     /**
      * EAV setup factory
      *
@@ -45,11 +51,13 @@ class InstallData implements InstallDataInterface
      *
      * @param EavSetupFactory             $eavSetupFactory             Eav setup factory.
      * @param VirtualCategorySetupFactory $virtualCategorySetupFactory Virtual Category setup factory.
+     * @param Config                  $eavConfig       EAV Config.
      */
-    public function __construct(EavSetupFactory $eavSetupFactory, VirtualCategorySetupFactory $virtualCategorySetupFactory)
+    public function __construct(EavSetupFactory $eavSetupFactory, VirtualCategorySetupFactory $virtualCategorySetupFactory, Config $eavConfig)
     {
         $this->eavSetupFactory      = $eavSetupFactory;
         $this->virtualCategorySetup = $virtualCategorySetupFactory->create();
+        $this->eavConfig       = $eavConfig;
     }
 
     /**

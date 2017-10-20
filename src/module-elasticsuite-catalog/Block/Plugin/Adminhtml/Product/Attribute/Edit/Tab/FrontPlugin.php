@@ -92,6 +92,8 @@ class FrontPlugin
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
+            $form->getElement('is_used_in_autocomplete')->setDisabled(1);
+            $form->getElement('is_used_in_autocomplete')->setValue(1);
         }
 
         $this->appendFieldsDependency($form, $subject);
@@ -164,6 +166,17 @@ class FrontPlugin
     private function addAutocompleteFields(Fieldset $fieldset)
     {
         $fieldset->addField(
+            'is_used_in_autocomplete',
+            'select',
+            [
+                'name'   => 'is_used_in_autocomplete',
+                'label'  => __('Used in autocomplete'),
+                'values' => $this->booleanSource->toOptionArray(),
+            ],
+            'is_used_in_spellcheck'
+        );
+
+        $fieldset->addField(
             'is_displayed_in_autocomplete',
             'select',
             [
@@ -171,7 +184,7 @@ class FrontPlugin
                 'label'  => __('Display in autocomplete'),
                 'values' => $this->booleanSource->toOptionArray(),
             ],
-            'is_used_in_spellcheck'
+            'is_used_in_autocomplete'
         );
 
         return $this;
@@ -260,6 +273,18 @@ class FrontPlugin
                 'values' => $this->booleanSource->toOptionArray(),
             ],
             'search_weight'
+        );
+
+        $fieldset->addField(
+            'is_reference_field',
+            'select',
+            [
+                'name'   => 'is_reference_field',
+                'label'  => __('If this field modelizes a reference'),
+                'values' => $this->booleanSource->toOptionArray(),
+                'note'   => __('Should be used on fields like SKU, EAN, references containing technical identifier (eg : containing values like MH08, 3459379414678 ...)'),
+            ],
+            'is_used_in_spellcheck'
         );
 
         return $this;
