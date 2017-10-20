@@ -148,7 +148,15 @@ class Spellchecker implements SpellcheckerInterface
             'dfs'             => true,
         ];
 
-        $termVectorsQuery['body']['doc'] = [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()];
+        $termVectorsParams = [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()];
+
+        foreach ($request->getFields() as $field) {
+            if ($field->getType() === 'string') { // Non-string fields cannot work with term vectors.
+                $termVectorsParams[$field->getName()] = $request->getQueryText();
+            }
+        }
+
+        $termVectorsQuery['body']['doc'] = $termVectorsParams;
 
         return $this->client->termvectors($termVectorsQuery);
     }

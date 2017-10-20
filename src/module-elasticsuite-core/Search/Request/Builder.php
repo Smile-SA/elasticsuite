@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Search\Request;
 
 use Magento\Framework\Search\Request\DimensionFactory;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
@@ -186,6 +187,7 @@ class Builder
             'type'            => $containerConfig->getTypeName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            'fields'          => $containerConfig->getMapping()->getNonDefaultAnalyzerFields(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);

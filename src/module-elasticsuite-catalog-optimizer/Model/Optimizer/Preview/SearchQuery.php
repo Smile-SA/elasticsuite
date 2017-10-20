@@ -144,6 +144,7 @@ class SearchQuery
             'type'            => $containerConfig->getTypeName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            'fields'          => $containerConfig->getMapping()->getNonDefaultAnalyzerFields(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
