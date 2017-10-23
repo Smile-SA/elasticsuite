@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Api\Index\Mapping;
 
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
+
 /**
  * Representation of a Elasticsearch field (abstraction of mapping properties).
  *
@@ -132,7 +134,6 @@ interface FieldInterface
      */
     public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED);
 
-
     /**
      * Return the search analyzer used by default for fulltext searches.
      *
@@ -148,4 +149,13 @@ interface FieldInterface
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function mergeConfig(array $config = []);
+
+    /**
+     * Retrieve the directive to apply for "missing" when the field is used for sort by.
+     *
+     * @param string $direction The direction used to sort
+     *
+     * @return mixed
+     */
+    public function getSortMissing($direction = SortOrderInterface::SORT_ASC);
 }

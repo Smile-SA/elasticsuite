@@ -99,6 +99,11 @@ abstract class AbstractAttribute extends Mapping
             $options['is_filterable'] = true;
         }
 
+        if ($attribute->getUsedForSortBy()) {
+            $options['sort_order_asc_missing']  = $attribute->getSortOrderAscMissing();
+            $options['sort_order_desc_missing'] = $attribute->getSortOrderDescMissing();
+        }
+
         return $options;
     }
 

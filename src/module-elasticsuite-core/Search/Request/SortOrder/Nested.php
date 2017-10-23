@@ -49,6 +49,7 @@ class Nested extends Standard
      * @param QueryInterface $nestedFilter The filter applied to the nested sort.
      * @param string         $scoreMode    Method used to aggregate the sort if there is many match for the filter.
      * @param string         $name         Sort order name.
+     * @param string         $missing      How to treat missing values.
      */
     public function __construct(
         $field,
@@ -56,9 +57,10 @@ class Nested extends Standard
         $nestedPath,
         QueryInterface $nestedFilter = null,
         $scoreMode = self::SCORE_MODE_MIN,
-        $name = null
+        $name = null,
+        $missing = null
     ) {
-        parent::__construct($field, $direction, $name);
+        parent::__construct($field, $direction, $name, $missing);
 
         $this->nestedFilter = $nestedFilter;
         $this->nestedPath   = $nestedPath;

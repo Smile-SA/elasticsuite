@@ -26,6 +26,9 @@ interface SortOrderInterface
     const SORT_ASC  = 'asc';
     const SORT_DESC = 'desc';
 
+    const MISSING_FIRST  = '_first';
+    const MISSING_LAST   = '_last';
+
     const TYPE_STANDARD = 'standardSortOrder';
     const TYPE_NESTED   = 'nestedSortOrder';
 
@@ -66,4 +69,11 @@ interface SortOrderInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * Sort order 'missing' directive.
+     *
+     * @return string
+     */
+    public function getMissing();
 }
