@@ -73,6 +73,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->catalogSetup->updateImageAttribute($eavSetup);
         }
 
+        if (version_compare($context->getVersion(), '1.2.4', '<')) {
+            $this->catalogSetup->updateNewsFromToAttribute($eavSetup);
+        }
+
         $setup->endSetup();
     }
 }

@@ -21,6 +21,8 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 /**
  * Generic Setup for ElasticsuiteCatalog module.
  *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -291,6 +293,26 @@ class CatalogSetup
         );
     }
 
+    /**
+     * Update Product 'new_from_date' and 'news_to_date' attribute and set it searchable.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     */
+    public function updateNewsFromToAttribute($eavSetup)
+    {
+        $attributeCodes = ['news_from_date', 'news_to_date'];
+        foreach ($attributeCodes as $attributeCode) {
+            $attributeId = $eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, $attributeCode);
+            if ($attributeId) {
+                $setup = $eavSetup->getSetup();
+                $setup->getConnection()->update(
+                    $setup->getTable('catalog_eav_attribute'),
+                    ['is_searchable' => 1],
+                    $setup->getConnection()->quoteInto('attribute_id = ?', $attributeId)
+                );
+            }
+        }
+    }
 
     /**
      * Update some categories attributes to have them indexed into ES.

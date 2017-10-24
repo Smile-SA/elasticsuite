@@ -128,6 +128,10 @@ class QueryBuilder
             $query = $this->getHasImageQuery();
         }
 
+        if ($productCondition->getAttribute() == 'is_new_product' && $productCondition->getValue()) {
+            $query = $this->getIsNewQuery();
+        }
+
         return $query;
     }
 
@@ -141,6 +145,52 @@ class QueryBuilder
         $query = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'image']);
 
         return $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
+    }
+
+    /**
+     * "is new" query.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getIsNewQuery()
+    {
+        $now = (new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT);
+
+        $clauses = [];
+
+        $newFromDateEarlier = $this->queryFactory->create(
+            QueryInterface::TYPE_RANGE,
+            ['field' => 'news_from_date', 'bounds' => ['lte' => $now]]
+        );
+
+        $newsToDateLater = $this->queryFactory->create(
+            QueryInterface::TYPE_RANGE,
+            ['field' => 'news_to_date', 'bounds' => ['gte' => $now]]
+        );
+
+        $missingNewsFromDate = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'news_from_date']);
+        $missingNewsToDate   = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'news_to_date']);
+
+        // Product is new if "news_from_date" is earlier than now and he has no "news_to_date".
+        $clauses[] = $this->queryFactory->create(
+            QueryInterface::TYPE_BOOL,
+            ['must' => [$newFromDateEarlier, $missingNewsToDate]]
+        );
+
+        // Product is new if "news_to_date" is later than now and he has no "news_from_date".
+        $clauses[] = $this->queryFactory->create(
+            QueryInterface::TYPE_BOOL,
+            ['must' => [$missingNewsFromDate, $newsToDateLater]]
+        );
+
+        // Product is new if now is between "news_from_date" and "news_to_date".
+        $clauses[] = $this->queryFactory->create(
+            QueryInterface::TYPE_BOOL,
+            ['must' => [$newFromDateEarlier, $newsToDateLater]]
+        );
+
+        // Product is new if one of previously built queries match.
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $clauses]);
     }
 
     /**
