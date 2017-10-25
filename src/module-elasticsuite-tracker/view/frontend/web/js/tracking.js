@@ -80,7 +80,7 @@ var smileTracker = (function () {
                 // Append the GA param to the tracker
                 this.addPageVar(paramName, paramValue);
             }
-        });
+        }.bind(this));
     }
 
     function addReferrerVars() {
