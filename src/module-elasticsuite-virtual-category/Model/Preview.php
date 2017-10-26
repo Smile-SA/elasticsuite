@@ -15,6 +15,7 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
+use Magento\Catalog\Model\Product\Visibility;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
@@ -111,6 +112,8 @@ class Preview
         if ($queryFilter !== null) {
             $productCollection->addQueryFilter($queryFilter);
         }
+
+        $productCollection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
 
         return $productCollection;
     }
