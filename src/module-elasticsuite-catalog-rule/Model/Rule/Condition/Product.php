@@ -141,7 +141,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     public function getInputType()
     {
         $inputType = 'string';
-        $selectAttributes = ['attribute_set_id', 'stock.is_in_stock', 'has_image', 'price.is_discount'];
+        $selectAttributes = ['attribute_set_id'] + array_keys($this->getSpecialAttributes());
 
         if (in_array($this->getAttribute(), $selectAttributes)) {
             $inputType = 'select';
@@ -175,7 +175,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
 
         if ($this->getAttribute() == 'attribute_set_id') {
             $valueElementType = 'select';
-        } elseif (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image'])) {
+        } elseif (in_array($this->getAttribute(), array_keys($this->getSpecialAttributes()))) {
             $valueElementType = 'hidden';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
@@ -199,7 +199,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         $valueName = parent::getValueName();
 
-        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+        if (in_array($this->getAttribute(), array_keys($this->getSpecialAttributes()))) {
             $valueName = ' ';
         }
 
@@ -213,7 +213,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         $operatorName = parent::getOperatorName();
 
-        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+        if (in_array($this->getAttribute(), array_keys($this->getSpecialAttributes()))) {
             $operatorName = ' ';
         }
 
@@ -249,7 +249,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      */
     public function getValue()
     {
-        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+        if (in_array($this->getAttribute(), array_keys($this->getSpecialAttributes()))) {
             $this->setData('value', 1);
         }
 
@@ -264,9 +264,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     protected function _addSpecialAttributes(array &$attributes)
     {
         parent::_addSpecialAttributes($attributes);
-        $attributes['stock.is_in_stock'] = __('Only in stock products');
-        $attributes['price.is_discount'] = __('Only discounted products');
-        $attributes['has_image']         = __('Only products with image');
+        $attributes += $this->getSpecialAttributes();
     }
 
     /**
@@ -280,11 +278,26 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         $selectReady = $this->getData('value_select_options');
         $hashedReady = $this->getData('value_option');
 
-        if (in_array($this->getAttribute(), ['stock.is_in_stock', 'has_image', 'price.is_discount'])) {
+        if (in_array($this->getAttribute(), array_keys($this->getSpecialAttributes()))) {
             $selectOptions = $this->booleanSource->toOptionArray();
             $this->_setSelectOptions($selectOptions, $selectReady, $hashedReady);
         } else {
             parent::_prepareValueOptions();
         }
+    }
+
+    /**
+     * Retrieve all special attributes with their labels.
+     *
+     * @return array
+     */
+    private function getSpecialAttributes()
+    {
+        return [
+            'stock.is_in_stock' => __('Only in stock products'),
+            'price.is_discount' => __('Only discounted products'),
+            'has_image'         => __('Only products with image'),
+            'is_new_product'    => __('Only new products'),
+        ];
     }
 }
