@@ -111,7 +111,7 @@
  
     <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
-            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+            <argument name="searchRequestName" xsi:type="string">catalog_product_autocomplete</argument>
         </arguments>
     </virtualType>
     
