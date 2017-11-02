@@ -54,4 +54,71 @@
             </argument>
         </field>
     </fieldset>
+
+    <fieldset name="facet_configuration_container" component="Magento_Catalog/js/components/visible-on-option/fieldset" sortOrder="35">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Layered Navigation Filters</label>
+        </settings>
+
+        <dynamicRows name="layered_navigation_filters" sortOrder="1">
+            <settings>
+                <addButton>false</addButton>
+                <pageSize>100</pageSize>
+                <additionalClasses>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <scopeLabel>[GLOBAL]</scopeLabel>
+                <componentType>dynamicRows</componentType>
+            </settings>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="positionProvider" xsi:type="string">position</item>
+                    </item>
+                </argument>
+                <field name="attribute_label" formElement="input" template="ui/form/element/text">
+                    <settings>
+                        <dataType>text</dataType>
+                        <label translate="true">Attribute</label>
+                        <visible>true</visible>
+                        <dataScope>attribute_label</dataScope>
+                    </settings>
+                </field>
+                <field name="display_mode" component="Magento_Ui/js/form/element/select" formElement="select">
+                    <settings>
+                        <dataType>text</dataType>
+                        <label translate="true">Display Mode</label>
+                        <dataScope>display_mode</dataScope>
+                    </settings>
+                    <formElements>
+                        <select>
+                            <settings>
+                                <options class="Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode"/>
+                            </settings>
+                        </select>
+                    </formElements>
+                </field>
+                <field name="position" component="Magento_Catalog/js/form/element/input" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">layered_navigation_filters_order</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="_hidden">true</class>
+                        </additionalClasses>
+                        <dataType>text</dataType>
+                        <visible>false</visible>
+                        <dataScope>position</dataScope>
+                    </settings>
+                </field>
+            </container>
+        </dynamicRows>
+
+    </fieldset>
 </form>

@@ -13,6 +13,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
+use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
+
 /**
  * FilterList customization to support decimal filters.
  *
@@ -26,6 +28,33 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
      * Boolean filter name
      */
     const BOOLEAN_FILTER = 'boolean';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilters(\Magento\Catalog\Model\Layer $layer)
+    {
+        if (!count($this->filters)) {
+            $this->filters = [
+                $this->objectManager->create($this->filterTypes[self::CATEGORY_FILTER], ['layer' => $layer]),
+            ];
+
+            $filterableAttributes = $layer->getCurrentCategory()->getExtensionAttributes()->getFilterableAttributeList();
+            if (empty($filterableAttributes)) {
+                $filterableAttributes = $this->filterableAttributes->getList($layer->getCurrentCategory());
+            }
+
+            foreach ($filterableAttributes as $attribute) {
+                // Do not create a filter for always-hidden attributes.
+                if ($attribute->hasDisplayMode() && (int) $attribute->getDisplayMode() === DisplayMode::ALWAYS_HIDDEN) {
+                    continue;
+                }
+                $this->filters[] = $this->createAttributeFilter($attribute, $layer);
+            }
+        }
+
+        return $this->filters;
+    }
 
     /**
      * {@inheritDoc}

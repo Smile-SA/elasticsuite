@@ -170,4 +170,19 @@
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
+
+    <!-- Filterable Attributes List Managed by Category -->
+    <virtualType
+            name="categoryFilterableAttributes"
+            type="Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">categoryFilterableAttributes</argument>
+        </arguments>
+    </type>
 </config>

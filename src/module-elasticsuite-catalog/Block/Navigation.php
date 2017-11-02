@@ -20,6 +20,7 @@ use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\Module\Manager;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\View\Element\Template\Context;
+use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
 
 /**
  * Custom implementation of the navigation block to apply facet coverage rate.
@@ -166,8 +167,9 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
                 $facetCoverageRate        = $attribute->getFacetMinCoverageRate();
                 $attributeCountCandidates = array_sum(array_intersect_key($countBySetId, $attribute->getAttributeSetInfo()));
                 $currentCoverageRate      = $attributeCountCandidates / $totalCount * 100;
+                $isAlwaysDisplayed        = $filter->getAttributeModel()->getDisplayMode() === DisplayMode::ALWAYS_DISPLAYED;
 
-                if ($facetCoverageRate < $currentCoverageRate) {
+                if ($isAlwaysDisplayed || ($facetCoverageRate < $currentCoverageRate)) {
                     $filter->addFacetToCollection();
                 }
             } catch (\Exception $e) {
