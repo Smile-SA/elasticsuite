@@ -94,17 +94,19 @@ class ResultPlugin
 
         $query->setNumResults($this->resultCount);
         $query->setIsSpellchecked(false);
+        $isSpellcheck = $resultBlock->getListBlock()->getLoadedProductCollection()->isSpellchecked();
 
-        if ($this->isSpellcheck() && $this->resultCount > 0) {
+        if ($isSpellcheck && $this->resultCount > 0) {
             $messages[] = __(
                 "No search results for: <b>'%1'</b>. We propose you approaching results.",
                 $this->catalogSearchData->getEscapedQueryText()
             );
-
             $query->setIsSpellchecked(true);
         }
 
-        $this->queryResource->saveSearchResults($query);
+        if ($this->canSaveQuery()) {
+            $this->queryResource->saveSearchResults($query);
+        }
 
         return $messages;
     }
@@ -122,7 +124,7 @@ class ResultPlugin
     public function aroundGetResultCount(Result $resultBlock, \Closure $proceed)
     {
         if ($this->resultCount === null) {
-            $size = $this->getProductCollection()->getSize();
+            $size = $resultBlock->getListBlock()->getLoadedProductCollection()->getSize();
             $this->resultCount = $size;
         }
 
@@ -147,22 +149,12 @@ class ResultPlugin
     }
 
     /**
-     * Return the current layer product collection.
-     *
-     * @return \Magento\Catalog\Model\ResourceModel\Product\Collection
-     */
-    private function getProductCollection()
-    {
-        return $this->layer->getProductCollection();
-    }
-
-    /**
-     * Indicates if the current search is spellchecked.
+     * Indicates if the search query should be save or not.
      *
      * @return boolean
      */
-    private function isSpellcheck()
+    private function canSaveQuery()
     {
-        return $this->getProductCollection()->isSpellchecked();
+        return empty($this->layer->getState()->getFilters());
     }
 }
