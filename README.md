@@ -4,18 +4,33 @@
 
 ### ⚠️ Magento versions compatibility :
 
-We had a lot of work on Magento 2.1.x compatibility since there was a lot of compatibility breaking changes in this version (introduction of the entity manager, new form based on UI components, staging for the EE edition, ...).
+Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite 2.4 and Magento 2.1.x versions.
 
-The migration is now finished concerning **both CE and EE versions**.
-
-If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the latest **2.3.0 release**.
+If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.4.x release**.
 
 **Which version should I use ?**
 
-Magento Version         | ElasticSuite Latest Version
-------------------------|------------------------------------------------------------------------
-Magento 2.0.* CE / EE   |[ElasticSuite 2.1.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.4)
-Magento 2.1.* CE / EE   |[ElasticSuite 2.3.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
+Magento Version                                     | ElasticSuite Latest Version
+----------------------------------------------------|------------------------------------------------------------------------
+Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ^2.1.0```
+Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ^2.3.0```
+Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.4.x** latest release : ```composer require smile/elasticsuite ^2.4.0```
+
+### Magento2 B2B Compatibility
+
+If your are using Magento Commerce (formerly known as Enterprise Edition) B2B feature with Elasticsuite, you will need to install the **Elasticsuite Shared Catalog** module which is located [here](https://github.com/Smile-SA/magento2-module-elasticsuite-shared-catalog)
+
+### Introducing Elasticsuite modules
+
+We are glad to announce officially that we now have a complete list of **additional modules to Elasticsuite**, which are all available for free and are published Open Source on Github :
+
+Module Name                                                                                           | Description
+------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------
+[CMS Search](https://github.com/Smile-SA/module-elasticsuite-cms-search)                              | Allow to search for CMS pages (in autocomplete and search results).
+[Ratings](https://github.com/Smile-SA/magento2-module-elasticsuite-rating)                            | Allow to filter and/or sort on ratings (based on standard Magento rating module).
+[Custom Entities](https://github.com/Smile-SA/magento2-module-elasticsuite-custom-entity)             | Ability to define complex entities as attributes (eg : having "brand" entities with pictures, description etc...)
+[TargetRules with Elasticsearch](https://github.com/Smile-SA/magento2-module-elasticsuite-targetrule) | This module allow to compute target rules via Elasticsearch instead of full MySQL (**require Magento Commerce (EE)**).
+[Elasticsuite for Retailers](https://github.com/Smile-SA/elasticsuite-for-retailer)                   | A complete suite of retail oriented modules : Store Locator, Price segmentation per store, etc...
 
 ## What is ElasticSuite for Magento 2 ?
 
@@ -29,7 +44,7 @@ The project was originally created by Smile and released to the Open Source comm
     <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014) and two-times **Spirit of Excellence** (2015-2016) awarded by Magento.
+SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016) and **Global Elite Partner** (2017) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
@@ -43,11 +58,11 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version **2.3.0** has been focused on the **Search Optimizers** feature and on various performances improvements.
+The current version **2.4.0** has been focused on the **Magento 2.2 compatibility (including B2B)**, **Search Optimizers Preview** features and on various fulltext search relevance improvements (SKU matching, enhanced customisation).
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.4.0)
 
-This version also features a full **Staging Compatibility** and can be used without issues on Magento Enterprise Edition 2.1.x.
+This version is designed to be used on Magento Enterprise Edition 2.2.x.
 
 From now, we are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
 
@@ -76,7 +91,9 @@ Actually, there are the features actually included :
 
     ![Search Optimizers](doc/static/search_optimizers.png)
 
-    On the next version, a preview for all optimizer rules will be available in the back-office so that you will be able to **preview each fine-tuning before publishing it**.
+    You are also able to **preview each fine-tuning before publishing it** :
+
+    ![Search Optimizers Preview](doc/static/search_optimizers_preview.png)
 
 * **Categories Merchandising :**
 
