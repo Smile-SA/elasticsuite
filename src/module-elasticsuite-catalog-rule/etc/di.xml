@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogRule dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogRule
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2017 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Add the default Elasticsuite Special Attributes. -->
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider">
+        <arguments>
+            <argument name="attributes" xsi:type="array">
+                <item name="has_image" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\HasImage</item>
+                <item name="stock.is_in_stock" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsInStock</item>
+                <item name="price.is_discount" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>
