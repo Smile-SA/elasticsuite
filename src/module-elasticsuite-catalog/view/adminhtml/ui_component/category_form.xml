@@ -30,46 +30,17 @@
                 </item>
             </argument>
         </field>
-    </fieldset>
 
-    <fieldset name="general">
-        <field name="use_name_in_product_search">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">100</item>
-                    <item name="dataType" xsi:type="string">boolean</item>
-                    <item name="formElement" xsi:type="string">checkbox</item>
-                    <item name="source" xsi:type="string">category</item>
-                    <item name="prefer" xsi:type="string">toggle</item>
-                    <item name="label" xsi:type="string" translate="true">Use Category Name in product search</item>
-                    <item name="valueMap" xsi:type="array">
-                        <item name="true" xsi:type="string">1</item>
-                        <item name="false" xsi:type="string">0</item>
-                    </item>
-                    <item name="validation" xsi:type="array">
-                        <item name="required-entry" xsi:type="boolean">false</item>
-                    </item>
-                    <item name="default" xsi:type="string">1</item>
-                </item>
-            </argument>
-        </field>
-    </fieldset>
-
-    <fieldset name="facet_configuration_container" component="Magento_Catalog/js/components/visible-on-option/fieldset" sortOrder="35">
-        <settings>
-            <collapsible>true</collapsible>
-            <label translate="true">Layered Navigation Filters</label>
-        </settings>
-
-        <dynamicRows name="layered_navigation_filters" sortOrder="1">
+        <dynamicRows name="layered_navigation_filters" sortOrder="200">
             <settings>
                 <addButton>false</addButton>
                 <pageSize>100</pageSize>
                 <additionalClasses>
-                    <class name="admin__field-wide">true</class>
+                    <class name="smile-elasticsuite-filterable-attributes">true</class>
                 </additionalClasses>
                 <scopeLabel>[GLOBAL]</scopeLabel>
                 <componentType>dynamicRows</componentType>
+                <label translate="true">Layered Navigation Filters</label>
             </settings>
             <container name="record" component="Magento_Ui/js/dynamic-rows/record">
                 <argument name="data" xsi:type="array">
@@ -119,6 +90,29 @@
                 </field>
             </container>
         </dynamicRows>
-
     </fieldset>
+
+    <fieldset name="general">
+        <field name="use_name_in_product_search">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">100</item>
+                    <item name="dataType" xsi:type="string">boolean</item>
+                    <item name="formElement" xsi:type="string">checkbox</item>
+                    <item name="source" xsi:type="string">category</item>
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="label" xsi:type="string" translate="true">Use Category Name in product search</item>
+                    <item name="valueMap" xsi:type="array">
+                        <item name="true" xsi:type="string">1</item>
+                        <item name="false" xsi:type="string">0</item>
+                    </item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="default" xsi:type="string">1</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+
 </form>
