@@ -116,7 +116,7 @@ define([
                var searchTokens    = this.slugify(this.fulltextSearch()).split('-');
                var lastSearchToken = searchTokens.splice(-1, 1)[0];
 
-               items = items.filter(function(item) {
+               items = items.filter(function(item) {
                    var isValidItem = true;
                    var itemTokens = this.slugify(item.label).split('-');
                    searchTokens.forEach(function(currentToken) {
