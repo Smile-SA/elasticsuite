@@ -1,11 +1,10 @@
-<!-- <div class="field search" data-bind="if: hasMoreItems">
+<div class="field search" data-bind="if: hasMoreItems">
     <div class="control">
         <input id="search"
                type="text" 
-               data-bind="attr: {placeholder: searchPlaceholder}, value: fulltextSearch, event: {change: onSearchChange}"/>
+               data-bind="attr: {placeholder: searchPlaceholder}, event: {keyup: onSearchChange.bind(this), focusout: onSearchFocusOut}" />
     </div>
 </div>
- -->
  
 <ol class="items" data-bind="foreach: getDisplayedItems()">
     <li class="item">
@@ -24,8 +23,12 @@
     </li>
 </ol>
 
-<div class="actions" data-bind="if: enableExpansion()">
-    <div class="secondary" data-bind="">
+<div class="no-results-message" data-bind="if: fulltextSearch() && !hasSearchResult()" class="empty">
+   <p data-bind="html: getSearchResultMessage()"></p>
+</div>
+
+<div class="actions" data-bind="visible: enableExpansion()">
+    <div class="secondary">
         <a class="action show-more" data-bind="visible: displayShowMore(), event: {click: onShowMore}"><span data-bind="text: showMoreLabel"></span></a>
         <a class="action show-less" data-bind="visible: displayShowLess(), event: {click: onShowLess}"><span data-bind="text: showLessLabel"></span></a>
     </div>
