@@ -43,6 +43,7 @@ define([
 
             this.initSearchPlaceholder();
             this.onShowLess();
+            this.displaySearch = this.displayShowMore();
         },
 
         /**
@@ -54,8 +55,7 @@ define([
             if (this.items.length > 2) {
                 examples.push('...');
             }
-
-            this.searchPlaceholder = $.mage.__('Search (%s)').replace('%s', examples.join(', '));
+            this.searchPlaceholder = $('<div/>').html($.mage.__('Search (%s)').replace('%s', examples.join(', '))).text();
         },
 
         /**
