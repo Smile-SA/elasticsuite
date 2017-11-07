@@ -16,6 +16,7 @@ use Magento\Catalog\Helper\Product as ProductHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Customer\Api\Data\GroupInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Document;
+use Magento\Catalog\Helper\Image as ImageHelper;
 
 /**
  * Optimizer Preview item
@@ -37,22 +38,25 @@ class Item
     private $document;
 
     /**
-     * @var ProductHelper $productHelper
+     * @var ImageHelper
      */
-    private $productHelper;
+    private $imageHelper;
 
     /**
      * Constructor.
      *
-     * @param ProductInterface $product       Product
-     * @param Document         $document      Product Document.
-     * @param ProductHelper    $productHelper Product helper.
+     * @param ProductInterface $product     Product
+     * @param Document         $document    Product Document.
+     * @param ImageHelper      $imageHelper Image helper.
      */
-    public function __construct(ProductInterface $product, Document $document, ProductHelper $productHelper)
-    {
+    public function __construct(
+        ProductInterface $product,
+        Document $document,
+        ImageHelper $imageHelper
+    ) {
         $this->product       = $product;
         $this->document      = $document;
-        $this->productHelper = $productHelper;
+        $this->imageHelper   = $imageHelper;
     }
 
     /**
@@ -118,7 +122,9 @@ class Item
             $this->product->setSmallImage($image);
         }
 
-        return $this->productHelper->getSmallImageUrl($this->product);
+        $this->imageHelper->init($this->product, 'smile_elasticsuiteoptimizer_preview');
+
+        return $this->imageHelper->getUrl();
     }
 
     /**
