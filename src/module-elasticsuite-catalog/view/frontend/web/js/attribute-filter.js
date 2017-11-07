@@ -22,8 +22,9 @@ define([
     return Component.extend({
         defaults: {
             template: "Smile_ElasticsuiteCatalog/attribute-filter",
-            showMoreLabel: $.mage.__("Show more"),
-            showLessLabel: $.mage.__("Show less")
+            showMoreLabel       : $.mage.__("Show more"),
+            showLessLabel       : $.mage.__("Show less"),
+            noSearchResultLabel : $.mage.__("No value matching the search <b>\"%s\"</b.")
         },
 
         /**
@@ -60,10 +61,26 @@ define([
         /**
          * Triggered when typing on the search input
          */
-        onSearchChange: function () {
-            if (this.fulltextSearch().trim() === "") {
-                this.fulltextSearch(null);
-                this.onShowLess();
+        onSearchChange: function (component, ev) {
+            var text = ev.target.value;
+            if (text.trim() === "") {
+                component.fulltextSearch(null);
+                component.onShowLess();
+            } else {
+                component.fulltextSearch(text);
+                component.onShowMore();
+            }
+            return true;
+        },
+        
+        /**
+         * Triggered when leaving the search field.
+         */
+        onSearchFocusOut: function(component, ev) {
+            var text = ev.target.value;
+            if (text.trim() === "") {
+                component.fulltextSearch(null);
+                ev.target.value = "";
             }
         },
 
@@ -95,9 +112,43 @@ define([
                 items = this.items.slice(0, this.maxSize);
             }
             
+            if (this.fulltextSearch()) {
+               var searchTokens    = this.slugify(this.fulltextSearch()).split('-');
+               var lastSearchToken = searchTokens.splice(-1, 1)[0];
+
+               items = items.filter(function(item) {
+                   var isValidItem = true;
+                   var itemTokens = this.slugify(item.label).split('-');
+                   searchTokens.forEach(function(currentToken) {
+                       if (!itemTokens.includes(currentToken)) {
+                           isValidItem = false;
+                       }
+                   })
+                   if (isValidItem && lastSearchToken) {
+                       var ngrams = itemTokens.map(function(token) {return token.substring(0, lastSearchToken.length)});
+                       isValidItem = ngrams.includes(lastSearchToken);
+                   }
+                   return isValidItem;
+               }.bind(this))
+            }
+
             return items;
         },
 
+        /**
+         * Does the search have a result
+         */
+        hasSearchResult: function () {
+            return this.getDisplayedItems().length > 0
+        },
+        
+        /**
+         * Search result message
+         */
+        getSearchResultMessage : function() {
+            return this.noSearchResultLabel.replace("%s", this.fulltextSearch())
+        },
+        
         /**
          * Callback for the "Show more" button
          */
@@ -109,6 +160,17 @@ define([
             }
         },
 
+        /**
+         * Index the text to be searched.
+         */
+        slugify: function(text) {
+          return text.toString().toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+            .replace(/^-+/, '')             // Trim - from start of text
+        },
+        
         /**
          * Callback for the "Show less" button
          */
