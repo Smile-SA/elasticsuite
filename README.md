@@ -139,6 +139,14 @@ Actually, there are the features actually included :
 
 <br/>
 
+* **Autocomplete in layered navigation filters :**
+
+    The module allows the users to search into filters values **via an autocomplete box**.
+
+    ![Facet Autocomplete](doc/static/facet-autocomplete.gif)
+
+<br/>
+
 * **Enhanced price slider :**
 
     The module features an **out of the box price slider**.
