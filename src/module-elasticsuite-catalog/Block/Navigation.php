@@ -87,6 +87,11 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
             }
         }
 
+        if ($this->getLayer() instanceof \Magento\Catalog\Model\Layer\Category &&
+            $this->getLayer()->getCurrentCategory()->getDisplayMode() === \Magento\Catalog\Model\Category::DM_PAGE) {
+            return false;
+        }
+
         return parent::canShowBlock();
     }
 
