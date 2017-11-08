@@ -16,7 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
-use Smile\ElasticsuiteCatalog\Helper\Attribute as ProductAttributeHelper;
+use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 
 /**
  * Abstract Datasource for EAV entities
@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCatalog\Helper\Attribute as ProductAttributeHelper;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class AbstractAttributeData
+abstract class AbstractAttributeData
 {
     /**
      * @var array
@@ -38,7 +38,7 @@ class AbstractAttributeData
     protected $attributeIdsByTable = [];
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Helper\Attribute
+     * @var \Smile\ElasticsuiteCatalog\Helper\AbstractAttribute
      */
     protected $attributeHelper;
 
@@ -73,15 +73,15 @@ class AbstractAttributeData
     /**
      * Constructor
      *
-     * @param ResourceModel          $resourceModel        Resource model.
-     * @param FieldFactory           $fieldFactory         Mapping field factory.
-     * @param ProductAttributeHelper $attributeHelper      Attribute helper.
-     * @param array                  $indexedBackendModels List of indexed backend models added to the default list.
+     * @param ResourceModel   $resourceModel        Resource model.
+     * @param FieldFactory    $fieldFactory         Mapping field factory.
+     * @param AttributeHelper $attributeHelper      Attribute helper.
+     * @param array           $indexedBackendModels List of indexed backend models added to the default list.
      */
     public function __construct(
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
-        ProductAttributeHelper $attributeHelper,
+        AttributeHelper $attributeHelper,
         array $indexedBackendModels = []
     ) {
         $this->resourceModel   = $resourceModel;

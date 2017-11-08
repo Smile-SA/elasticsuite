@@ -167,18 +167,6 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticsuiteCatalog\Helper\ProductAttribute" type="Smile\ElasticsuiteCatalog\Helper\Attribute">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="Smile\ElasticsuiteCatalog\Helper\CategoryAttribute" type="Smile\ElasticsuiteCatalog\Helper\Attribute">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Category\Attribute\CollectionFactory</argument>
-        </arguments>
-    </virtualType>
-
     <!-- Advanced Search Compatibility -->
     <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
                  type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">

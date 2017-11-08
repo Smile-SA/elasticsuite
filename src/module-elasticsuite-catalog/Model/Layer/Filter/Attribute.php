@@ -41,7 +41,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private $hasMoreItems = false;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Helper\Attribute
+     * @var \Smile\ElasticsuiteCatalog\Helper\ProductAttribute
      */
     private $mappingHelper;
 
@@ -53,7 +53,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
      * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
-     * @param \Smile\ElasticsuiteCatalog\Helper\Attribute          $mappingHelper     Mapping helper.
+     * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute   $mappingHelper     Mapping helper.
      * @param array                                                $data              Custom data.
      */
     public function __construct(
@@ -62,7 +62,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
-        \Smile\ElasticsuiteCatalog\Helper\Attribute $mappingHelper,
+        \Smile\ElasticsuiteCatalog\Helper\ProductAttribute $mappingHelper,
         array $data = []
     ) {
         parent::__construct(
