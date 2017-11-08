@@ -15,17 +15,18 @@ namespace Smile\ElasticsuiteCatalog\Helper;
 
 use Smile\ElasticsuiteCore\Helper\Mapping;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\ObjectManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
+ * Abstract ElasticSuite catalog attributes helper.
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Attribute extends Mapping
+abstract class AbstractAttribute extends Mapping
 {
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory
@@ -53,28 +54,15 @@ class Attribute extends Mapping
     private $attributeMappers = [];
 
     /**
-     * Object manager
-     *
-     * @var ObjectManagerInterface
+     * @param Context          $context           Helper context.
+     * @param AttributeFactory $attributeFactory  Factory used to create attributes.
+     * @param string           $collectionFactory Attribute collection factory.
      */
-    private $objectManager;
-
-    /**
-     * @param Context                $context           Helper context.
-     * @param ObjectManagerInterface $objectManager     The object manager
-     * @param AttributeFactory       $attributeFactory  Factory used to create attributes.
-     * @param string                 $collectionFactory Factory class name to use for create attribute collections.
-     */
-    public function __construct(
-        Context $context,
-        ObjectManagerInterface $objectManager,
-        AttributeFactory $attributeFactory,
-        $collectionFactory
-    ) {
+    public function __construct(Context $context, AttributeFactory $attributeFactory, $collectionFactory)
+    {
         parent::__construct($context);
         $this->attributeFactory = $attributeFactory;
-        $this->objectManager = $objectManager;
-        $this->attributeCollectionFactory = $this->objectManager->get($collectionFactory);
+        $this->attributeCollectionFactory = $collectionFactory;
     }
 
     /**

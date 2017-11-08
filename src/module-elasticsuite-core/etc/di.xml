@@ -68,21 +68,34 @@
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
-                <item name="boolQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory</item>
-                <item name="filteredQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory</item>
-                <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory</item>
-                <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NotFactory</item>
-                <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory</item>
-                <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermFactory</item>
-                <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory</item>
-                <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory</item>
-                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory</item>
-                <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory</item>
-                <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory</item>
+                <item name="boolQuery" xsi:type="object">boolQueryFactory</item>
+                <item name="filteredQuery" xsi:type="object">filteredQueryFactory</item>
+                <item name="nestedQuery" xsi:type="object">nestedQueryFactory</item>
+                <item name="notQuery" xsi:type="object">notQueryFactory</item>
+                <item name="missingQuery" xsi:type="object">missingQueryFactory</item>
+                <item name="termQuery" xsi:type="object">termQueryFactory</item>
+                <item name="termsQuery" xsi:type="object">termsQueryFactory</item>
+                <item name="rangeQuery" xsi:type="object">rangeQueryFactory</item>
+                <item name="matchQuery" xsi:type="object">matchQueryFactory</item>
+                <item name="commonQuery" xsi:type="object">commonQueryFactory</item>
+                <item name="multiMatchQuery" xsi:type="object">multiMatchQueryFactory</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory</item>
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="boolQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory" />
+    <virtualType name="filteredQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory" />
+    <virtualType name="nestedQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory" />
+    <virtualType name="notQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NotFactory" />
+    <virtualType name="missingQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory" />
+    <virtualType name="termQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermFactory" />
+    <virtualType name="termsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory" />
+    <virtualType name="rangeQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory" />
+    <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory" />
+    <virtualType name="commonQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory" />
+    <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
+    <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -106,13 +119,17 @@
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
-                <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory</item>
-                <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory</item>
-                <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory</item>
+                <item name="termBucket" xsi:type="object">termBucketFactory</item>
+                <item name="histogramBucket" xsi:type="object">histogramBucketFactory</item>
+                <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
             </argument>
         </arguments>
     </type>
-    
+
+    <virtualType name="termBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory" />
+    <virtualType name="histogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory" />
+    <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
+
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
         <arguments>
             <argument name="builders" xsi:type="array">

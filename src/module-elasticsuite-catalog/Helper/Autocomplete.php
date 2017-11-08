@@ -36,7 +36,7 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
      * @param StoreManagerInterface $storeManager    Store manager.
      * @param Attribute             $attributeHelper Attribute helper.
      */
-    public function __construct(Context $context, StoreManagerInterface $storeManager, Attribute $attributeHelper)
+    public function __construct(Context $context, StoreManagerInterface $storeManager, ProductAttribute $attributeHelper)
     {
         parent::__construct($context, $storeManager);
 
