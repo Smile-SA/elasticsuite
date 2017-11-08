@@ -99,7 +99,10 @@ class DataProviderPlugin
      */
     private function getAttributes(CategoryInterface $category)
     {
-        $this->attributes = $category->getExtensionAttributes()->getFilterableAttributeList();
+        $extensionAttributes = $category->getExtensionAttributes();
+        if (null !== $extensionAttributes && $category->getId()) {
+            $this->attributes = $extensionAttributes->getFilterableAttributeList();
+        }
 
         if ($this->attributes === null) {
             $collection = $this->attributeCollectionFactory->create(['category' => $category]);
