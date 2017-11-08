@@ -45,10 +45,17 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
             }
 
             foreach ($filterableAttributes as $attribute) {
-                // Do not create a filter for always-hidden attributes.
-                if ($attribute->hasDisplayMode() && (int) $attribute->getDisplayMode() === DisplayMode::ALWAYS_HIDDEN) {
-                    continue;
+                if ($attribute->hasDisplayMode()) {
+                    // Do not create a filter for always-hidden attributes.
+                    if ((int) $attribute->getDisplayMode() === DisplayMode::ALWAYS_HIDDEN) {
+                        continue;
+                    }
+                    // Set Coverage to 0 for always-displayed attributes.
+                    if ((int) $attribute->getDisplayMode() === DisplayMode::ALWAYS_DISPLAYED) {
+                        $attribute->setFacetMinCoverageRate(0);
+                    }
                 }
+
                 $this->filters[] = $this->createAttributeFilter($attribute, $layer);
             }
         }
