@@ -38,6 +38,23 @@ define([
         },
 
         /**
+         * Manage even/odd rows here since we cannot do it with pure CSS : hidden irrelevant attributes causes gaps.
+         */
+        sort: function() {
+            this._super();
+
+            var currentPosition = 0;
+            var updatedCollection = this.elems().each(function (record) {
+                if (record.data().relevant) {
+                    record.data().cssClass = (currentPosition % 2 === 0) ? 'even' : 'odd';
+                    currentPosition ++;
+                }
+            });
+
+            this.elems(updatedCollection);
+        },
+
+        /**
          * Check if the list contains some attributes that are not relevant.
          *
          * @returns {boolean|*}
