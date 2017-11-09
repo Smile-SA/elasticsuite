@@ -21,8 +21,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\C
 use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Elasticsuite Data Provider Plugin for Category Edit Form.
@@ -44,11 +42,6 @@ class DataProviderPlugin
     private $productCollectionFactory;
 
     /**
-     * @var QueryFactory
-     */
-    private $queryFactory;
-
-    /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     private $scopeConfig;
@@ -68,20 +61,17 @@ class DataProviderPlugin
      *
      * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
      * @param FulltextCollectionFactory  $productCollectionFactory   Product Collection Factory.
-     * @param QueryFactory               $queryFactory               Query Factory.
      * @param ScopeConfigInterface       $scopeConfig                Scope Configuration.
      * @param StoreManagerInterface      $storeManagerInterface      Store Manager.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
         FulltextCollectionFactory $productCollectionFactory,
-        QueryFactory $queryFactory,
         ScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManagerInterface
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
         $this->productCollectionFactory   = $productCollectionFactory;
-        $this->queryFactory               = $queryFactory;
         $this->scopeConfig                = $scopeConfig;
         $this->storeManager               = $storeManagerInterface;
     }
@@ -177,8 +167,19 @@ class DataProviderPlugin
         $collection = $this->productCollectionFactory->create();
         $collection->setStoreId($this->getStoreId($category))
             ->addFacet('indexed_attributes', BucketInterface::TYPE_TERM, ['size' => 0])
-            ->addQueryFilter($this->getCategorySearchQuery($category))
-            ->setPageSize(0);
+            ->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
+
+        if ($this->isEnabledShowOutOfStock($this->getStoreId($category))) {
+            $collection->addIsInStockFilter();
+        }
+
+        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
+            $collection->addQueryFilter($category->getVirtualRule()->getCategorySearchQuery($category));
+        } elseif (!$category->getVirtualRule()) {
+            $collection->addCategoryFilter($category);
+        }
+
+        $collection->setPageSize(0);
 
         $bucket = $collection->getFacetedData('indexed_attributes');
 
@@ -188,34 +189,6 @@ class DataProviderPlugin
                 return (int) $item['count'] > 0;
             }
         );
-    }
-
-    /**
-     * Retrieve query to build to retrieve products of a given category.
-     *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-     */
-    private function getCategorySearchQuery(CategoryInterface $category)
-    {
-        $filterParams = [
-            'category.category_id' => $category->getId(),
-            'visibility'           => [Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH],
-        ];
-
-        if (!$this->isEnabledShowOutOfStock($category->getStoreId())) {
-            $filterParams['stock.is_in_stock'] = true;
-        }
-
-        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
-            $filterParams['category'] = $category->getVirtualRule()->getCategorySearchQuery($category);
-            unset($filterParams['category.category_id']);
-        }
-
-        $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $filterParams);
-
-        return $query;
     }
 
     /**
