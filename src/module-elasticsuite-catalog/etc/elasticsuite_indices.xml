@@ -44,6 +44,7 @@
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />
                 <field name="configurable_attributes" type="string" />
+                <field name="indexed_attributes" type="string" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />

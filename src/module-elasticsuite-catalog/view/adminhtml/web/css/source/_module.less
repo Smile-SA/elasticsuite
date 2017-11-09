@@ -132,7 +132,41 @@
 }
 
 .smile-elasticsuite-filterable-attributes {
+
+    .admin__field-tooltip {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .irrelevant-panel {
+        width: calc( (100%) - 20px );
+        float:left;
+        clear: both;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+    .irrelevant-show-hide {
+        cursor: pointer;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        display: block;
+    }
+
+    .admin__control-table-wrapper {
+        float:left;
+    }
+
     table {
+
+        background: repeating-linear-gradient(
+            45deg,
+            #ffffff,
+            #ffffff 10px,
+            #e3e3e3 10px,
+            #e3e3e3 20px
+        );
+
         thead {
             th {
                 background: #ffffff;
@@ -148,6 +182,7 @@
         tbody, thead {
             tr {
                 td {
+                    background-color: transparent;
                     white-space: nowrap;
                     text-align: center;
                     vertical-align: middle;
@@ -160,13 +195,14 @@
                 td.col-draggable {
                     padding-top: 4px;
                 }
+            }
 
-                &:nth-child(odd) td {
-                    background: #ffffff;
-                }
-                &:nth-child(even) td {
-                    background: #fbfaf6;
-                }
+            tr:not(.irrelevant):nth-child(odd) {
+                background: #ffffff;
+            }
+
+            tr:not(.irrelevant):nth-child(even) {
+                background: #fbfaf6;
             }
         }
     }

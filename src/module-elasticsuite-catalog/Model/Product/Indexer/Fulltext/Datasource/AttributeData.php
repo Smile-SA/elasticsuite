@@ -93,6 +93,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 }
 
                 $indexData[$productId] += $indexValues;
+
+                if (!isset($indexData[$productId]['indexed_attributes'])) {
+                    $indexData[$productId]['indexed_attributes'] = [];
+                }
+                $indexData[$productId]['indexed_attributes'][] = $attribute->getAttributeCode();
             }
         }
 

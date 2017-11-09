@@ -31,7 +31,11 @@
             </argument>
         </field>
 
-        <dynamicRows name="layered_navigation_filters" sortOrder="200">
+        <dynamicRows
+                name="layered_navigation_filters"
+                component="Smile_ElasticsuiteCatalog/js/form/element/filterable-attributes"
+                template="Smile_ElasticsuiteCatalog/form/element/filterable-attributes"
+                sortOrder="200">
             <settings>
                 <addButton>false</addButton>
                 <pageSize>100</pageSize>
@@ -73,6 +77,14 @@
                         </select>
                     </formElements>
                 </field>
+                <field name="product_match" formElement="input" template="ui/form/element/text">
+                    <settings>
+                        <dataType>text</dataType>
+                        <label translate="true">Products</label>
+                        <visible>true</visible>
+                        <dataScope>product_match</dataScope>
+                    </settings>
+                </field>
                 <field name="position" component="Magento_Catalog/js/form/element/input" formElement="input">
                     <argument name="data" xsi:type="array">
                         <item name="config" xsi:type="array">
@@ -86,6 +98,21 @@
                         <dataType>text</dataType>
                         <visible>false</visible>
                         <dataScope>position</dataScope>
+                    </settings>
+                </field>
+                <field name="relevant" component="Magento_Catalog/js/form/element/input" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">layered_navigation_filters_order</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="_hidden">true</class>
+                        </additionalClasses>
+                        <dataType>text</dataType>
+                        <visible>false</visible>
+                        <dataScope>relevant</dataScope>
                     </settings>
                 </field>
             </container>

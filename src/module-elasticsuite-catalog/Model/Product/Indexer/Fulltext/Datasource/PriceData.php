@@ -80,6 +80,13 @@ class PriceData implements DatasourceInterface
                 'is_discount'       => $finalPrice < $originalPrice,
                 'customer_group_id' => $priceDataRow['customer_group_id'],
             ];
+
+            if (!isset($indexData[$productId]['indexed_attributes'])) {
+                $indexData[$productId]['indexed_attributes'] = [];
+            }
+            if (!in_array('price', $indexData[$productId]['indexed_attributes'])) {
+                $indexData[$productId]['indexed_attributes'][] = 'price';
+            }
         }
 
         return $indexData;
