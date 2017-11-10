@@ -114,7 +114,9 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     private function addChildData(&$parentData, $childAttributes)
     {
-        $authorizedChildAttributes = $parentData['children_attributes'];
+        $authorizedChildAttributes   = $parentData['children_attributes'];
+        $authorizedChildAttributes[] = 'indexed_attributes';
+
         $addedChildAttributesData  = array_filter(
             $childAttributes,
             function ($attributeCode) use ($authorizedChildAttributes) {
