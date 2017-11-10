@@ -14,17 +14,25 @@
 
 define([
     'ko',
+    'jquery',
     'Magento_Ui/js/dynamic-rows/dynamic-rows'
-], function (ko, DynamicRows) {
+], function (ko, $, DynamicRows) {
     'use strict';
 
     return DynamicRows.extend({
 
         defaults: {
-            isIrrelevantShown : false,
-            irrelevantLabel : "Some attributes does not match any products in this category and have been hidden.",
-            irrelevantButtonLabel : "Show/Hide irrelevant attributes.",
-            irrelevantTooltip : "Attributes not matching any product of the category actually are hidden for convenience."
+            isIrrelevantShown          : false,
+            irrelevantLabel            : $.mage.__("Some attributes does not match any products in this category and have been hidden."),
+            irrelevantButtonLabel      : $.mage.__("Show/Hide irrelevant attributes."),
+            irrelevantTooltip          : $.mage.__("Attributes not matching any product of the category actually are hidden for convenience."),
+            header                     : $.mage.__("For each attribute of this category, you can define the following display configuration :"),
+            autoLabel                  : $.mage.__("Auto"),
+            autoDescription            : $.mage.__("Let the engine decide according to attribute coverage rate."),
+            alwaysDisplayedLabel       : $.mage.__("Always displayed"),
+            alwaysDisplayedDescription : $.mage.__("The filter is always displayed if it has at least one value."),
+            alwaysHiddenLabel          : $.mage.__("Always hidden"),
+            alwaysHiddenDescription    : $.mage.__("The filter is never displayed even if it has values.")
         },
 
         /**
@@ -40,14 +48,14 @@ define([
         /**
          * Manage even/odd rows here since we cannot do it with pure CSS : hidden irrelevant attributes causes gaps.
          */
-        sort: function() {
+        sort: function () {
             this._super();
 
             var currentPosition = 0;
             var updatedCollection = this.elems().each(function (record) {
                 if (record.data().relevant) {
                     record.data().cssClass = (currentPosition % 2 === 0) ? 'even' : 'odd';
-                    currentPosition ++;
+                    currentPosition++;
                 }
             });
 
@@ -59,7 +67,7 @@ define([
          *
          * @returns {boolean|*}
          */
-        hasIrrelevantAttributes : function() {
+        hasIrrelevantAttributes: function () {
             var result = this.elems().some(function (item) {
                 return item.data().hasOwnProperty('relevant') && item.data().relevant === false;
             });
@@ -68,38 +76,11 @@ define([
         },
 
         /**
-         * Get the text to display when the list contains irrelevant attributes.
-         *
-         * @returns {*}
-         */
-        getIrrelevantLabel : function () {
-            return this.irrelevantLabel;
-        },
-
-        /**
-         * Get the button label to display when the list contains irrelevant attributes.
-         *
-         * @returns {*}
-         */
-        getIrrelevantButtonLabel : function() {
-            return this.irrelevantButtonLabel;
-        },
-
-        /**
-         * Get the button label to display when the list contains irrelevant attributes.
-         *
-         * @returns {*}
-         */
-        getIrrelevantTooltip : function() {
-            return this.irrelevantTooltip;
-        },
-
-        /**
          * Toggle the isIrrelevantShown() flag.
          *
          * @returns {exports}
          */
-        toggleIrrelevants : function() {
+        toggleIrrelevants: function () {
             var currentValue = this.isIrrelevantShown();
             this.isIrrelevantShown(!currentValue);
 

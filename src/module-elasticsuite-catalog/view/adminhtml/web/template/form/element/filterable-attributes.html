@@ -4,16 +4,24 @@
     </label>
 
     <div class="admin__field-control" data-role="grid-wrapper" attr="'data-index': index">
-        <!-- ko if: hasIrrelevantAttributes() -->
-        <div class="admin__field-control _with-tooltip">
-            <div class="irrelevant-panel">
-                <span class="irrelevant-label" translate="getIrrelevantLabel()"/>
-                <br/>
-                <a class="irrelevant-show-hide" translate="getIrrelevantButtonLabel()" data-bind="click:toggleIrrelevants"/>
+
+        <div class="admin__field-control">
+            <div class="filterable-attributes-header">
+                <p translate="header"/>
+                <ul>
+                    <li><strong><span translate="autoLabel"/></strong> : <span translate="autoDescription"/></li>
+                    <li><strong><span translate="alwaysDisplayedLabel"/></strong> : <span translate="alwaysDisplayedDescription"/></li>
+                    <li><strong><span translate="alwaysHiddenLabel"/></strong> : <span translate="alwaysHiddenDescription"/></li>
+                </ul>
             </div>
-            <div class="admin__field-tooltip">
-                <a class="admin__field-tooltip-action action-help" target="_blank" tabindex="1"></a>
-                <div class="admin__field-tooltip-content" translate="getIrrelevantTooltip()"/>
+        </div>
+
+        <!-- ko if: hasIrrelevantAttributes() -->
+        <div class="admin__field-control">
+            <div class="message message-notice">
+                <span class="irrelevant-label" translate="irrelevantLabel"/>
+                <br/>
+                <a class="irrelevant-show-hide" translate="irrelevantButtonLabel" data-bind="click:toggleIrrelevants"/>
             </div>
         </div>
         <!-- /ko -->
