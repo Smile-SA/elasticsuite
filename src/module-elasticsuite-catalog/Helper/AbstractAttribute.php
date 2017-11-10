@@ -56,7 +56,7 @@ abstract class AbstractAttribute extends Mapping
     /**
      * @param Context          $context           Helper context.
      * @param AttributeFactory $attributeFactory  Factory used to create attributes.
-     * @param string           $collectionFactory Attribute collection factory.
+     * @param mixed            $collectionFactory Attribute collection factory.
      */
     public function __construct(Context $context, AttributeFactory $attributeFactory, $collectionFactory)
     {
