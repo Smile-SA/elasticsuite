@@ -25,20 +25,31 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 class CoverageProvider
 {
     /**
-     * Get coverage by attributes for a product collection
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    private $productCollection;
+
+    /**
+     * CoverageProvider constructor.
      *
      * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection Product Collection
+     */
+    public function __construct(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    {
+        $this->productCollection = $collection;
+    }
+
+    /**
+     * Get coverage by attributes for a product collection
      *
      * @return array
      */
-    public function getAttributesCoverage(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    public function getAttributesCoverage()
     {
-        $productCollection = clone $collection;
+        $this->productCollection->addFacet('indexed_attributes', BucketInterface::TYPE_TERM, ['size' => 0]);
+        $this->productCollection->setPageSize(0);
 
-        $productCollection->addFacet('indexed_attributes', BucketInterface::TYPE_TERM, ['size' => 0]);
-        $productCollection->setPageSize(0);
-
-        $bucket = $productCollection->getFacetedData('indexed_attributes');
+        $bucket = $this->productCollection->getFacetedData('indexed_attributes');
 
         if (isset($bucket['__other_docs'])) {
             unset($bucket['__other_docs']);

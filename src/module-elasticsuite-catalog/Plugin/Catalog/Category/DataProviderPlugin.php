@@ -14,13 +14,10 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Catalog\Category;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
-use Magento\Catalog\Model\Product\Visibility;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
-use Smile\ElasticsuiteCatalog\Model\CoverageProvider;
+use Smile\ElasticsuiteCatalog\Model\Category\AttributeCoverageProviderFactory;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\CollectionFactory as AttributeCollectionFactory;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
 
 /**
  * Elasticsuite Data Provider Plugin for Category Edit Form.
@@ -37,24 +34,9 @@ class DataProviderPlugin
     private $attributeCollectionFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory
+     * @var AttributeCoverageProviderFactory
      */
-    private $productCollectionFactory;
-
-    /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var CoverageProvider
-     */
-    private $coverageProvider;
+    private $coverageProviderFactory;
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
@@ -64,24 +46,15 @@ class DataProviderPlugin
     /**
      * DataProviderPlugin constructor.
      *
-     * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
-     * @param FulltextCollectionFactory  $productCollectionFactory   Product Collection Factory.
-     * @param ScopeConfigInterface       $scopeConfig                Scope Configuration.
-     * @param StoreManagerInterface      $storeManagerInterface      Store Manager.
-     * @param CoverageProvider           $coverageProvider           Coverage Provider.
+     * @param AttributeCollectionFactory       $attributeCollectionFactory Attribute Collection Factory.
+     * @param AttributeCoverageProviderFactory $coverageProviderFactory    Coverage Provider Factory.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
-        FulltextCollectionFactory $productCollectionFactory,
-        ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManagerInterface,
-        CoverageProvider $coverageProvider
+        AttributeCoverageProviderFactory $coverageProviderFactory
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
-        $this->productCollectionFactory   = $productCollectionFactory;
-        $this->scopeConfig                = $scopeConfig;
-        $this->storeManager               = $storeManagerInterface;
-        $this->coverageProvider           = $coverageProvider;
+        $this->coverageProviderFactory    = $coverageProviderFactory;
     }
 
     /**
@@ -172,77 +145,14 @@ class DataProviderPlugin
      */
     private function getRelevantAttributes(CategoryInterface $category)
     {
-        $collection = $this->productCollectionFactory->create();
-        $collection->setStoreId($this->getStoreId($category))
-            ->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
-
-        if ($this->isEnabledShowOutOfStock($this->getStoreId($category))) {
-            $collection->addIsInStockFilter();
-        }
-
-        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
-            $collection->addQueryFilter($category->getVirtualRule()->getCategorySearchQuery($category));
-        } elseif (!$category->getVirtualRule()) {
-            $collection->addCategoryFilter($category);
-        }
-
-        $coverage = $this->coverageProvider->getAttributesCoverage($collection);
+        $coverageProvider = $this->coverageProviderFactory->create(['category' => $category]);
+        $coverage         = $coverageProvider->getAttributesCoverage();
 
         return array_filter(
             $coverage,
             function ($item) {
                 return (int) $item['count'] > 0;
             }
-        );
-    }
-
-    /**
-     * Retrieve Store Id from current category, or default to the default storeview.
-     *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category
-     *
-     * @return int
-     */
-    private function getStoreId(CategoryInterface $category)
-    {
-        $defaultStoreId = $this->getDefaultStoreView()->getId();
-        $storeId        = current(array_filter($category->getStoreIds()));
-        if (in_array($defaultStoreId, $category->getStoreIds())) {
-            $storeId = $defaultStoreId;
-        }
-
-        return $storeId;
-    }
-
-    /**
-     * Retrieve default Store View
-     *
-     * @return \Magento\Store\Api\Data\StoreInterface
-     */
-    private function getDefaultStoreView()
-    {
-        $store = $this->storeManager->getDefaultStoreView();
-        if (null === $store) {
-            // Occurs when current user does not have access to default website (due to AdminGWS ACLS on Magento EE).
-            $store = current($this->storeManager->getWebsites())->getDefaultStore();
-        }
-
-        return $store;
-    }
-
-    /**
-     * Get config value for 'display out of stock' option
-     *
-     * @param int $storeId The Store Id
-     *
-     * @return bool
-     */
-    private function isEnabledShowOutOfStock($storeId = null)
-    {
-        return $this->scopeConfig->isSetFlag(
-            'cataloginventory/options/show_out_of_stock',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
         );
     }
 }
