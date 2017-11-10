@@ -17,10 +17,10 @@ use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\CollectionFactory as AttributeCollectionFactory;
 use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
+use Smile\ElasticsuiteCatalog\Model\CoverageProvider;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\CollectionFactory as AttributeCollectionFactory;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Elasticsuite Data Provider Plugin for Category Edit Form.
@@ -37,7 +37,7 @@ class DataProviderPlugin
     private $attributeCollectionFactory;
 
     /**
-     * @var FulltextCollectionFactory
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory
      */
     private $productCollectionFactory;
 
@@ -52,6 +52,11 @@ class DataProviderPlugin
     private $storeManager;
 
     /**
+     * @var CoverageProvider
+     */
+    private $coverageProvider;
+
+    /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
      */
     private $attributes = null;
@@ -63,17 +68,20 @@ class DataProviderPlugin
      * @param FulltextCollectionFactory  $productCollectionFactory   Product Collection Factory.
      * @param ScopeConfigInterface       $scopeConfig                Scope Configuration.
      * @param StoreManagerInterface      $storeManagerInterface      Store Manager.
+     * @param CoverageProvider           $coverageProvider           Coverage Provider.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
         FulltextCollectionFactory $productCollectionFactory,
         ScopeConfigInterface $scopeConfig,
-        StoreManagerInterface $storeManagerInterface
+        StoreManagerInterface $storeManagerInterface,
+        CoverageProvider $coverageProvider
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
         $this->productCollectionFactory   = $productCollectionFactory;
         $this->scopeConfig                = $scopeConfig;
         $this->storeManager               = $storeManagerInterface;
+        $this->coverageProvider           = $coverageProvider;
     }
 
     /**
@@ -166,7 +174,6 @@ class DataProviderPlugin
     {
         $collection = $this->productCollectionFactory->create();
         $collection->setStoreId($this->getStoreId($category))
-            ->addFacet('indexed_attributes', BucketInterface::TYPE_TERM, ['size' => 0])
             ->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
 
         if ($this->isEnabledShowOutOfStock($this->getStoreId($category))) {
@@ -179,12 +186,10 @@ class DataProviderPlugin
             $collection->addCategoryFilter($category);
         }
 
-        $collection->setPageSize(0);
-
-        $bucket = $collection->getFacetedData('indexed_attributes');
+        $coverage = $this->coverageProvider->getAttributesCoverage($collection);
 
         return array_filter(
-            $bucket,
+            $coverage,
             function ($item) {
                 return (int) $item['count'] > 0;
             }
