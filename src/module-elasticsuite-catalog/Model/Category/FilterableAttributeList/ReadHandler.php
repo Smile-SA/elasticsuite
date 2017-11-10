@@ -15,7 +15,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Category\FilterableAttributeList;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\Api\ExtensionAttributesFactory;
 use Magento\Framework\EntityManager\Operation\ExtensionInterface;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttributeList as Resource;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute as Resource;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\CollectionFactory;
 
 /**
@@ -28,7 +28,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\C
 class ReadHandler implements ExtensionInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttributeList
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute
      */
     private $resource;
 

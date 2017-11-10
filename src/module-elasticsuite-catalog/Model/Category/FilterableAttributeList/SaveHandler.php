@@ -13,7 +13,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Category\FilterableAttributeList;
 
 use Magento\Framework\EntityManager\Operation\ExtensionInterface;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttributeList as Resource;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute as Resource;
 
 /**
  * Category Layered Navigation Filters Save Handler
@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttributeLi
 class SaveHandler implements ExtensionInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttributeList
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute
      */
     private $resource;
 

@@ -23,7 +23,7 @@ use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class FilterableAttributeList extends AbstractDb
+class FilterableAttribute extends AbstractDb
 {
     /**
      * @var \Magento\Framework\EntityManager\MetadataPool
