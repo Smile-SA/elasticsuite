@@ -28,6 +28,9 @@ interface FieldInterface
      *
      */
 
+    /**
+     * @deprecated
+     */
     const FIELD_TYPE_STRING  = 'string';
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
