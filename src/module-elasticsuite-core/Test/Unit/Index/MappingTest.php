@@ -74,8 +74,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_SEARCH_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_MULTI, $properties[Mapping::DEFAULT_SEARCH_FIELD]['type']);
-        $this->assertArrayHasKey(Mapping::DEFAULT_SEARCH_FIELD, $properties[Mapping::DEFAULT_SEARCH_FIELD]['fields']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_SEARCH_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_SEARCH_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_SEARCH_FIELD]['fields']);
     }
@@ -90,8 +89,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_AUTOCOMPLETE_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_MULTI, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['type']);
-        $this->assertArrayHasKey(Mapping::DEFAULT_AUTOCOMPLETE_FIELD, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['fields']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['fields']);
     }
@@ -106,8 +104,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_SPELLING_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_MULTI, $properties[Mapping::DEFAULT_SPELLING_FIELD]['type']);
-        $this->assertArrayHasKey(Mapping::DEFAULT_SPELLING_FIELD, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_SPELLING_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_PHONETIC, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);

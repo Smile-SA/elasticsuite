@@ -199,15 +199,14 @@ class Field implements FieldInterface
         $fieldName    = $this->getName();
         $propertyName = $fieldName;
         $property     = $this->getMappingPropertyConfig();
+        $isDefaultAnalyzer = $analyzer == $this->getDefaultSearchAnalyzer();
 
-        if ($property['type'] == self::FIELD_TYPE_MULTI) {
-            $isDefaultAnalyzer = $analyzer == $this->getDefaultSearchAnalyzer();
-            $subFieldName = $isDefaultAnalyzer ? $fieldName : $analyzer;
+        if (isset($property['fields']) && !$isDefaultAnalyzer) {
             $propertyName = null;
 
-            if (isset($property['fields'][$subFieldName])) {
-                $property     = $property['fields'][$subFieldName];
-                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf("%s.%s", $fieldName, $subFieldName);
+            if (isset($property['fields'][$analyzer])) {
+                $property     = $property['fields'][$analyzer];
+                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf("%s.%s", $fieldName, $analyzer);
             }
         }
 
@@ -264,21 +263,17 @@ class Field implements FieldInterface
     private function getMultiFieldMappingPropertyConfig($analyzers)
     {
         // Setting the field type to "multi_field".
-        $property = ['type' => self::FIELD_TYPE_MULTI];
+        $property = [];
 
         foreach ($analyzers as $analyzer) {
             // Using the analyzer name as subfield name by default.
             $subFieldName = $analyzer;
 
-            if ($analyzer == $this->getDefaultSearchAnalyzer() && $this->isNested()) {
-                // Using the field suffix as default subfield name for nested fields.
-                $subFieldName = $this->getNestedFieldName();
-            } elseif ($analyzer == $this->getDefaultSearchAnalyzer()) {
-                // Using the field name as default subfield name for normal fields.
-                $subFieldName = $this->getName();
+            if ($analyzer == $this->getDefaultSearchAnalyzer()) {
+                $property = array_merge($property, $this->getPropertyConfig($analyzer));
+            } else {
+                $property['fields'][$subFieldName] = $this->getPropertyConfig($analyzer);
             }
-
-            $property['fields'][$subFieldName] = $this->getPropertyConfig($analyzer);
         }
 
         return $property;
@@ -325,7 +320,7 @@ class Field implements FieldInterface
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED)
     {
-        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true, 'norms' => ['enabled' => false]];
+        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true];
 
         if ($this->getType() == self::FIELD_TYPE_STRING && $analyzer == self::ANALYZER_UNTOUCHED) {
             $fieldMapping['index'] = 'not_analyzed';
@@ -333,11 +328,12 @@ class Field implements FieldInterface
             $fieldMapping['analyzer']   = $analyzer;
             $fieldMapping['doc_values'] = false;
             $fieldMapping['index_options'] = 'docs';
+            //$fieldMapping['norms'] = false; @todo
             if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
                 $fieldMapping['index_options'] = 'positions';
             }
-            if ($analyzer !== self::ANALYZER_SORTABLE) {
-                $fieldMapping['fielddata'] = ['format' => 'disabled'];
+            if ($analyzer === self::ANALYZER_SORTABLE) {
+                $fieldMapping['fielddata'] = true;
             }
         } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
             $fieldMapping['format'] = implode('||', $this->dateFormats);

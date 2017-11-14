@@ -66,7 +66,8 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('child', $field->getNestedFieldName());
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertArrayHasKey('child', $mappingPropertyConfig['fields']);
+        $this->assertArrayHasKey('fields', $mappingPropertyConfig);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_UNTOUCHED, $mappingPropertyConfig['fields']);
     }
 
     /**
