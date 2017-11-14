@@ -15,8 +15,8 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Catalog\Category;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
 use Smile\ElasticsuiteCatalog\Model\Category\AttributeCoverageProviderFactory;
+use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute\CollectionFactory as AttributeCollectionFactory;
 
 /**
@@ -55,6 +55,28 @@ class DataProviderPlugin
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
         $this->coverageProviderFactory    = $coverageProviderFactory;
+    }
+
+    /**
+     * Remove filter configuration from meta in case of a new category, or a root one.
+     * Meta is added in the ui_component via XML.
+     *
+     * @param CategoryDataProvider $dataProvider Data provider.
+     * @param \Closure             $proceed      Original method.
+     *
+     * @return array
+     */
+    public function aroundGetMeta(CategoryDataProvider $dataProvider, \Closure $proceed)
+    {
+        $meta = $proceed();
+
+        $currentCategory = $dataProvider->getCurrentCategory();
+
+        if ($currentCategory->getId() === null || $currentCategory->getLevel() < 2) {
+            $meta['display_settings']['children']['layered_navigation_filters']['arguments']['data']['config']['visible'] = false;
+        }
+
+        return $meta;
     }
 
     /**
