@@ -42,7 +42,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('terms', $aggregation);
         $this->assertEquals('fieldName', $aggregation['terms']['field']);
-        $this->assertEquals(0, $aggregation['terms']['size']);
+        $this->assertEquals(TermBucket::MAX_BUCKET_SIZE, $aggregation['terms']['size']);
         $this->assertEquals([TermBucket::SORT_ORDER_COUNT => SortOrderInterface::SORT_DESC], $aggregation['terms']['order']);
     }
 
@@ -54,13 +54,13 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testAplhabeticSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 10, TermBucket::SORT_ORDER_TERM);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, TermBucket::MAX_BUCKET_SIZE + 1, TermBucket::SORT_ORDER_TERM);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
         $this->assertArrayHasKey('terms', $aggregation);
         $this->assertEquals('fieldName', $aggregation['terms']['field']);
-        $this->assertEquals(10, $aggregation['terms']['size']);
+        $this->assertEquals(TermBucket::MAX_BUCKET_SIZE, $aggregation['terms']['size']);
         $this->assertEquals([TermBucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC], $aggregation['terms']['order']);
     }
 
