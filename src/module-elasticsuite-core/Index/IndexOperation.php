@@ -160,7 +160,7 @@ class IndexOperation implements IndexOperationInterface
             $indexName       = $index->getName();
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
-            $this->client->indices()->optimize(['index' => $indexName]);
+            $this->client->indices()->forceMerge(['index' => $indexName]);
             $this->client->indices()->putSettings(
                 ['index' => $indexName, 'body' => $this->indexSettings->getInstallIndexSettings()]
             );
