@@ -42,7 +42,7 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
         }
 
         if ($query->getQuery()) {
-            $searchQuery['query'] = $this->parentBuilder->buildQuery($query->getQuery());
+            $searchQuery['must'] = $this->parentBuilder->buildQuery($query->getQuery());
         }
 
         if ($query->getName()) {
@@ -51,6 +51,6 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
 
         $searchQuery['boost'] = $query->getBoost();
 
-        return ['filtered' => $searchQuery];
+        return ['bool' => $searchQuery];
     }
 }
