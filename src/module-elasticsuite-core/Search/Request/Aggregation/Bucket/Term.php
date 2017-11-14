@@ -29,6 +29,11 @@ class Term extends AbstractBucket
     /**
      * @var integer
      */
+    const MAX_BUCKET_SIZE = 100000;
+
+    /**
+     * @var integer
+     */
     private $size;
 
     /**
@@ -59,7 +64,8 @@ class Term extends AbstractBucket
         $sortOrder = BucketInterface::SORT_ORDER_MANUAL
     ) {
         parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
-        $this->size = $size;
+
+        $this->size      = $size > 0 && $size < self::MAX_BUCKET_SIZE ? $size : self::MAX_BUCKET_SIZE;
         $this->sortOrder = $sortOrder;
     }
 
