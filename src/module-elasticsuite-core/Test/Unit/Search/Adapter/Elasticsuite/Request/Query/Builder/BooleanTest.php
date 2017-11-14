@@ -41,7 +41,7 @@ class BooleanTest extends AbstractComplexQueryBuilderTest
         $this->assertArrayHasKey('bool', $query);
 
         $this->assertEquals(BooleanQuery::DEFAULT_BOOST_VALUE, $query['bool']['boost']);
-        $this->assertEquals(1, $query['bool']['minimum_should_match']);
+        $this->assertArrayNotHasKey('minimum_should_match', $query['bool']);
 
         $this->assertArrayHasKey('must', $query['bool']);
         $this->assertArrayHasKey('should', $query['bool']);
@@ -64,6 +64,7 @@ class BooleanTest extends AbstractComplexQueryBuilderTest
         $query = $builder->buildQuery($boolQuery);
 
         $this->assertCount(2, $query['bool']['must']);
+        $this->assertArrayNotHasKey('minimum_should_match', $query['bool']);
         $this->assertContains('mustClause1', $query['bool']['must']);
         $this->assertContains('mustClause2', $query['bool']['must']);
     }
@@ -80,6 +81,7 @@ class BooleanTest extends AbstractComplexQueryBuilderTest
         $boolQuery = new BooleanQuery([], [$this->getSubQueryMock('shouldClause1'), $this->getSubQueryMock('shouldClause2')]);
         $query = $builder->buildQuery($boolQuery);
 
+        $this->assertEquals(1, $query['bool']['minimum_should_match']);
         $this->assertCount(2, $query['bool']['should']);
         $this->assertContains('shouldClause1', $query['bool']['should']);
         $this->assertContains('shouldClause2', $query['bool']['should']);
@@ -97,6 +99,7 @@ class BooleanTest extends AbstractComplexQueryBuilderTest
         $boolQuery = new BooleanQuery([], [], [$this->getSubQueryMock('mustNotClause1'), $this->getSubQueryMock('mustNotClause2')]);
         $query = $builder->buildQuery($boolQuery);
 
+        $this->assertArrayNotHasKey('minimum_should_match', $query['bool']);
         $this->assertCount(2, $query['bool']['must_not']);
         $this->assertContains('mustNotClause1', $query['bool']['must_not']);
         $this->assertContains('mustNotClause2', $query['bool']['must_not']);
