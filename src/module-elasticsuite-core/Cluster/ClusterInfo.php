@@ -35,6 +35,11 @@ class ClusterInfo implements ClusterInfoInterface
      */
     private $serverVersion;
 
+    /**
+     * Constructor.
+     *
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface $clientFactory ElasticSearch client factory.
+     */
     public function __construct(\Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface $clientFactory)
     {
         $this->client = $clientFactory->createClient();

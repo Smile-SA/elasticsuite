@@ -54,13 +54,12 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testAplhabeticSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, TermBucket::MAX_BUCKET_SIZE + 1, TermBucket::SORT_ORDER_TERM);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 1, TermBucket::SORT_ORDER_TERM);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
         $this->assertArrayHasKey('terms', $aggregation);
         $this->assertEquals('fieldName', $aggregation['terms']['field']);
-        $this->assertEquals(TermBucket::MAX_BUCKET_SIZE, $aggregation['terms']['size']);
         $this->assertEquals([TermBucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC], $aggregation['terms']['order']);
     }
 
@@ -72,13 +71,12 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testRelevanceSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 10, TermBucket::SORT_ORDER_RELEVANCE);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 1, TermBucket::SORT_ORDER_RELEVANCE);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
         $this->assertArrayHasKey('terms', $aggregation);
         $this->assertEquals('fieldName', $aggregation['terms']['field']);
-        $this->assertEquals(10, $aggregation['terms']['size']);
         $this->assertEquals(['termRelevance' => SortOrderInterface::SORT_DESC], $aggregation['terms']['order']);
         $this->assertArrayHasKey('aggregations', $aggregation);
         $this->assertArrayHasKey('termRelevance', $aggregation['aggregations']);
@@ -99,6 +97,41 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $termBucket->method('getType')->will($this->returnValue('invalidType'));
 
         $this->getAggregationBuilder()->buildBucket($termBucket);
+    }
+
+    /**
+     * Test the max bucket size limitation.
+     *
+     * @dataProvider sizeDataProvider
+     *
+     * @param integer $size     Configured bucket size.
+     * @param integer $expected Expected bucket size in the built aggregation.
+     *
+     * @return void
+     */
+    public function testBucketSize($size, $expected)
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, $size);
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertEquals($expected, $aggregation['terms']['size']);
+    }
+
+    /**
+     * Dataset used to run testBucketSize.
+     *
+     * @return array
+     */
+    public function sizeDataProvider()
+    {
+        return [
+            [0, TermBucket::MAX_BUCKET_SIZE],
+            [TermBucket::MAX_BUCKET_SIZE - 1, TermBucket::MAX_BUCKET_SIZE - 1],
+            [TermBucket::MAX_BUCKET_SIZE, TermBucket::MAX_BUCKET_SIZE],
+            [TermBucket::MAX_BUCKET_SIZE + 1, TermBucket::MAX_BUCKET_SIZE],
+        ];
     }
 
     /**

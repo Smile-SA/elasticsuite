@@ -16,6 +16,13 @@ namespace Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping;
 
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
+/**
+ * Implements backward compatibility of mapping fields with ES 2.x.
+ *
+  *@category Smile_Elasticsuite
+ * @package  Smile\ElasticsuiteCore
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 class FieldPlugin
 {
     /**
@@ -23,11 +30,26 @@ class FieldPlugin
      */
     private $serverVersion;
 
+    /**
+     * Constructor.
+     *
+     * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo Cluster information API.
+     */
     public function __construct(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo)
     {
         $this->serverVersion = $clusterInfo->getServerVersion();
     }
 
+    /**
+     * Fix the ES property into the mapping.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param FieldInterface $field  Field object.
+     * @param array          $result ES 5.x property mapping.
+     *
+     * @return array
+     */
     public function afterGetMappingPropertyConfig(FieldInterface $field, $result)
     {
         $result = $this->fixPropertyNorm($result);
@@ -41,6 +63,14 @@ class FieldPlugin
         return $result;
     }
 
+    /**
+     * Norms configuration have changed between ES 2.x and ES 5.x.
+     * Restore the previous behavior if using ES 2.x.
+     *
+     * @param array $property Property.
+     *
+     * @return array
+     */
     private function fixPropertyNorm($property)
     {
         if (strcmp($this->serverVersion, "5") < 0 && isset($property['norms']) && is_bool($property['norms'])) {
@@ -50,6 +80,14 @@ class FieldPlugin
         return $property;
     }
 
+    /**
+     * Fielddata configuration have changed between ES 2.x and ES 5.x.
+     * Restore the previous behavior if using ES 2.x.
+     *
+     * @param array $property Property.
+     *
+     * @return string
+     */
     private function fixFielddata($property)
     {
         if (strcmp($this->serverVersion, "5") < 0 && $property['type'] === FieldInterface::FIELD_TYPE_STRING) {
@@ -58,7 +96,7 @@ class FieldPlugin
 
             if (isset($property['fielddata']) && $useFielddata) {
                 unset($property['fielddata']);
-            } else if (!$useFielddata) {
+            } elseif (!$useFielddata) {
                 $property['fielddata'] = ['format' => 'disabled'];
             }
         }
