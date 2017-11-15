@@ -53,6 +53,11 @@ class Full
     {
         $productId = 0;
 
+        // Magento is only sending children ids here. Ensure to reindex also the parents product ids, if any.
+        if (!empty($productIds)) {
+            $productIds = array_unique(array_merge($productIds, $this->resourceModel->getRelationsByChild($productIds)));
+        }
+
         do {
             $products = $this->getSearchableProducts($storeId, $productIds, $productId);
 
