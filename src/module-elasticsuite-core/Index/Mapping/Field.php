@@ -258,6 +258,8 @@ class Field implements FieldInterface
      *
      * @param array $analyzers List of analyzers used as subfields.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @return array
      */
     private function getMultiFieldMappingPropertyConfig($analyzers)
