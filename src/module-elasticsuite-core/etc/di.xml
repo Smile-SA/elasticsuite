@@ -25,6 +25,10 @@
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />
 
+    <!-- Cluster namespace related DI -->
+    <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
+                type="Smile\ElasticsuiteCore\Cluster\ClusterInfo" />
+                
     <!-- Indices namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexInterface"
                 type="Smile\ElasticsuiteCore\Index\Index" />
@@ -387,5 +391,10 @@
                 <item name="elasticsuite" xsi:type="string">Magento\AdvancedSearch\Model\DataProvider\Suggestions</item>
             </argument>
         </arguments>
+    </type>
+
+    <!--  -->
+    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
+        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping\FieldPlugin"/>
     </type>
 </config>

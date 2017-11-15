@@ -266,13 +266,10 @@ class Field implements FieldInterface
         $property = [];
 
         foreach ($analyzers as $analyzer) {
-            // Using the analyzer name as subfield name by default.
-            $subFieldName = $analyzer;
-
             if ($analyzer == $this->getDefaultSearchAnalyzer()) {
                 $property = array_merge($property, $this->getPropertyConfig($analyzer));
             } else {
-                $property['fields'][$subFieldName] = $this->getPropertyConfig($analyzer);
+                $property['fields'][$analyzer] = $this->getPropertyConfig($analyzer);
             }
         }
 
@@ -328,7 +325,7 @@ class Field implements FieldInterface
             $fieldMapping['analyzer']   = $analyzer;
             $fieldMapping['doc_values'] = false;
             $fieldMapping['index_options'] = 'docs';
-            //$fieldMapping['norms'] = false; @todo
+            $fieldMapping['norms'] = false;
             if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
                 $fieldMapping['index_options'] = 'positions';
             }

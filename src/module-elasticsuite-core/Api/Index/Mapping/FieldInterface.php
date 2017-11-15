@@ -27,23 +27,31 @@ interface FieldInterface
      * Field types declaration.
      *
      */
-
-    /**
-     * @deprecated
-     */
-    const FIELD_TYPE_STRING  = 'string';
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
     const FIELD_TYPE_DATE    = 'date';
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
-    const FIELD_TYPE_MULTI   = 'multi_field';
+
     const FIELD_TYPE_OBJECT  = 'object';
+
+    /**
+     * Deprecated multi_field type.
+     *
+     * @deprecated
+     */
+    const FIELD_TYPE_MULTI   = 'multi_field';
+
+    /**
+     * Deprecated string type.
+     *
+     * @deprecated
+     */
+    const FIELD_TYPE_STRING  = 'string';
 
     /**
      * Analyzers declarations.
      */
-
     const ANALYZER_STANDARD   = 'standard';
     const ANALYZER_WHITESPACE = 'whitespace';
     const ANALYZER_SHINGLE    = 'shingle';
