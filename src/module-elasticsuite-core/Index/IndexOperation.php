@@ -140,12 +140,18 @@ class IndexOperation implements IndexOperationInterface
         $index         = $this->initIndex($indexIdentifier, $store, false);
         $indexSettings = ['settings' => $this->indexSettings->getCreateIndexSettings()];
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
-
-        foreach ($index->getTypes() as $currentType) {
-            $indexSettings['mappings'][$currentType->getName()] = $currentType->getMapping()->asArray();
-        }
+        $mappings      = [];
 
         $this->client->indices()->create(['index' => $index->getName(), 'body' => $indexSettings]);
+
+        foreach ($index->getTypes() as $currentType) {
+            $this->client->indices()->putMapping([
+                'index' => $index->getName(),
+                'type'  => $currentType->getName(),
+                'body'  => [$currentType->getName() => $currentType->getMapping()->asArray()],
+            ]);
+        }
+
 
         return $index;
     }
@@ -284,7 +290,7 @@ class IndexOperation implements IndexOperationInterface
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
      * @param boolean                                               $existingIndex   Is the index already existing.
      *
-     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
      */
     private function initIndex($indexIdentifier, $store, $existingIndex)
     {
