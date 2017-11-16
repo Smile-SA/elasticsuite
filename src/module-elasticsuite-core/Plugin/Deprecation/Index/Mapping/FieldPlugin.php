@@ -86,7 +86,7 @@ class FieldPlugin
      *
      * @param array $property Property.
      *
-     * @return string
+     * @return array
      */
     private function fixFielddata($property)
     {
