@@ -24,7 +24,7 @@ define([
             template: "Smile_ElasticsuiteCatalog/attribute-filter",
             showMoreLabel       : $.mage.__("Show more"),
             showLessLabel       : $.mage.__("Show less"),
-            noSearchResultLabel : $.mage.__("No value matching the search <b>%1</b>.")
+            noSearchResultLabel : $.mage.__("No value matching the search <b>%s</b>.")
         },
 
         /**
