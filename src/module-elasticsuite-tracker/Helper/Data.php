@@ -13,8 +13,6 @@
  */
 namespace Smile\ElasticsuiteTracker\Helper;
 
-use Magento\Framework\App\Helper;
-
 /**
  * Smile Tracker helper
  *
@@ -29,12 +27,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * @var string
      */
     const CONFIG_IS_ENABLED_XPATH = 'smile_elasticsuite_tracker/general/enabled';
-
-    /**
-     * Tracking URL configuration path
-     * @var string
-     */
-    const CONFIG_BASE_URL_XPATH   = 'smile_elasticsuite_tracker/general/base_url';
 
     /**
      * Coookie configuration configuration path
@@ -57,26 +49,22 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $storeManager;
 
     /**
-     * Magento assets repository
-     *
-     * @var \Magento\Framework\View\Asset\Repository
+     * @var \Magento\Framework\UrlInterface
      */
-    private $assetRepository;
+    private $urlBuilder;
 
     /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context         The current context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager    The Store Manager
-     * @param \Magento\Framework\View\Asset\Repository   $assetRepository The asset repository
+     * @param \Magento\Framework\App\Helper\Context      $context      The current context
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager The Store Manager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\View\Asset\Repository $assetRepository
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     ) {
+        $this->urlBuilder = $context->getUrlBuilder();
         $this->storeManager    = $storeManager;
-        $this->assetRepository = $assetRepository;
         parent::__construct($context);
     }
 
@@ -97,15 +85,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getBaseUrl()
     {
-        $result = $this->scopeConfig->getValue(self::CONFIG_BASE_URL_XPATH);
-
-        if (!$result) {
-            $params = ['_secure' => $this->_getRequest()->isSecure()];
-
-            return $this->assetRepository->getUrlWithParams("Smile_ElasticsuiteTracker::hit.png", $params);
-        }
-
-        return $result;
+        return $this->urlBuilder->getUrl('elasticsuite/tracker/hit');
     }
 
     /**
