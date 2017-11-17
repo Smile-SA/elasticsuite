@@ -22,6 +22,8 @@ use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @deprecated Use Smile\ElasticsuiteCore\Api\Client\ClientInterface instead.
  */
 class ClientFactory implements ClientFactoryInterface
 {

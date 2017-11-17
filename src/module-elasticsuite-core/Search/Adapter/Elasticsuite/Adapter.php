@@ -18,7 +18,7 @@ use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\RequestInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponseFactory;
 use Psr\Log\LoggerInterface;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
 /**
  * ElasticSuite Search Adapter.
@@ -40,7 +40,7 @@ class Adapter implements AdapterInterface
     private $logger;
 
     /**
-     * @var \Elasticsearch\Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -52,20 +52,20 @@ class Adapter implements AdapterInterface
     /**
      * Constructor.
      *
-     * @param QueryResponseFactory   $responseFactory Search response factory.
-     * @param Request\Mapper         $requestMapper   Search request mapper.
-     * @param ClientFactoryInterface $clientFactory   ES Client Factory.
-     * @param LoggerInterface        $logger          Logger.
+     * @param QueryResponseFactory $responseFactory Search response factory.
+     * @param Request\Mapper       $requestMapper   Search request mapper.
+     * @param ClientInterface      $client          ES Client Factory.
+     * @param LoggerInterface      $logger          Logger.
      */
     public function __construct(
         QueryResponseFactory $responseFactory,
         Request\Mapper $requestMapper,
-        ClientFactoryInterface $clientFactory,
+        ClientInterface $client,
         LoggerInterface $logger
     ) {
         $this->responseFactory = $responseFactory;
         $this->logger          = $logger;
-        $this->client          = $clientFactory->createClient();
+        $this->client          = $client;
         $this->requestMapper   = $requestMapper;
     }
 

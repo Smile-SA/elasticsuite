@@ -49,12 +49,13 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
+        $this->initClientMock();
+
         $objectManager = $this->getObjectManagerMock();
-        $clientFactory = $this->getClientFactoryMock();
         $indexSettings = $this->getIndexSettingsMock();
         $logger        = $this->getLoggerMock();
 
-        $this->indexOperation = new IndexOperation($objectManager, $clientFactory, $indexSettings, $logger);
+        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $logger);
     }
 
     /**
@@ -236,26 +237,16 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
      *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function getClientFactoryMock()
+    private function initClientMock()
     {
-        $this->clientMock = $this->getMockBuilder(\Elasticsearch\Client::class)
+        $this->clientMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $indicesNamespaceMock = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $indicesExistsMethodStub = function ($index) {
-            return $index['index'] === 'index_identifier_store_code';
+        $indicesExistsMethodStub = function ($indexName) {
+            return $indexName === 'index_identifier_store_code';
         };
-        $indicesNamespaceMock->method('exists')->will($this->returnCallback($indicesExistsMethodStub));
-        $this->clientMock->method('indices')->will($this->returnValue($indicesNamespaceMock));
-
-        $clientFactoryMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface::class)->getMock();
-        $clientFactoryMock->method('createClient')->will($this->returnValue($this->clientMock));
-
-        return $clientFactoryMock;
+        $this->clientMock->method('indexExists')->will($this->returnCallback($indicesExistsMethodStub));
     }
 
     /**

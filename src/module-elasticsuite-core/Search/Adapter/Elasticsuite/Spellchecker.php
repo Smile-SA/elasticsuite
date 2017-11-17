@@ -16,7 +16,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite;
 
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
@@ -32,7 +32,7 @@ use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 class Spellchecker implements SpellcheckerInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -44,12 +44,12 @@ class Spellchecker implements SpellcheckerInterface
     /**
      * Constructor.
      *
-     * @param ClientFactoryInterface $clientFactory ES Client Factory.
-     * @param CacheHelper            $cacheHelper   ES cache helper.
+     * @param ClientInterface $client      ES Client Factory.
+     * @param CacheHelper     $cacheHelper ES cache helper.
      */
-    public function __construct(ClientFactoryInterface $clientFactory, CacheHelper $cacheHelper)
+    public function __construct(ClientInterface $client, CacheHelper $cacheHelper)
     {
-        $this->client      = $clientFactory->createClient();
+        $this->client      = $client;
         $this->cacheHelper = $cacheHelper;
     }
 
@@ -124,7 +124,7 @@ class Spellchecker implements SpellcheckerInterface
      */
     private function getCutoffrequencyLimit(RequestInterface $request)
     {
-        $indexStatsResponse = $this->client->indices()->stats(['index' => $request->getIndex()]);
+        $indexStatsResponse = $this->client->indexStats($request->getIndex());
         $indexStats         = current($indexStatsResponse['indices']);
         $totalIndexedDocs = $indexStats['total']['docs']['count'];
 

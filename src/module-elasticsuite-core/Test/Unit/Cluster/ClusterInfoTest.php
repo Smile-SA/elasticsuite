@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Cluster;
 
 use Smile\ElasticsuiteCore\Cluster\ClusterInfo;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
 
 /**
  * Cluster information tests.
@@ -33,13 +32,14 @@ class ClusterInfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetServerVersion()
     {
-        $client = $this->getMockBuilder(\Elasticsearch\Client::class)->disableOriginalConstructor()->getMock();
-        $client->method('info')->will($this->returnValue(['version' => ['number' => '1.0.0']]));
+        $clientMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $clientFactoryMock = $this->getMockBuilder(ClientFactoryInterface::class)->getMock();
-        $clientFactoryMock->method('createClient')->will($this->returnValue($client));
+        $clientMock->method('info')
+            ->will($this->returnValue(['version' => ['number' => '1.0.0']]));
 
-        $clusterInfo = new ClusterInfo($clientFactoryMock);
+        $clusterInfo = new ClusterInfo($clientMock);
 
         $this->assertEquals('1.0.0', $clusterInfo->getServerVersion());
     }

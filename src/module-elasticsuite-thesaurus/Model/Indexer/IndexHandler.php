@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
@@ -30,7 +30,7 @@ use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 class IndexHandler
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -52,18 +52,18 @@ class IndexHandler
     /**
      * Constructor.
      *
-     * @param ClientFactoryInterface  $clientFactory       ES Client factory.
+     * @param ClientInterface         $clientFactory       ES Client factory.
      * @param IndexOperationInterface $indexManager        ES index management tool
      * @param IndexSettingsHelper     $indexSettingsHelper Index settings helper.
      * @param CacheHelper             $cacheHelper         ES caching helper.
      */
     public function __construct(
-        ClientFactoryInterface $clientFactory,
+        ClientInterface $clientFactory,
         IndexOperationInterface $indexManager,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper
     ) {
-        $this->client              = $clientFactory->createClient();
+        $this->client              = $clientFactory;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexManager        = $indexManager;
         $this->cacheHelper         = $cacheHelper;
@@ -84,8 +84,7 @@ class IndexHandler
         $indexName       = $this->indexSettingsHelper->createIndexNameFromIdentifier($indexIdentifier, $storeId);
         $indexAlias      = $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
         $indexSettings   = ['settings' => $this->getIndexSettings($synonyms, $expansions)];
-
-        $this->client->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
+        $this->client->createIndex($indexName, $indexSettings);
         $this->indexManager->proceedIndexInstall($indexName, $indexAlias);
         $this->cacheHelper->cleanIndexCache(ThesaurusIndex::INDEX_IDENTIER, $storeId);
     }

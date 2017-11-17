@@ -21,6 +21,9 @@
     <!-- Client config and factory DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface"
                 type="Smile\ElasticsuiteCore\Client\ClientFactory" />
+                
+    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientInterface"
+                type="Smile\ElasticsuiteCore\Client\Client" />
 
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />

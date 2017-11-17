@@ -20,6 +20,8 @@ namespace Smile\ElasticsuiteCore\Api\Client;
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @deprecated Use Smile\ElasticsuiteCore\Api\Client\ClientInterface instead.
  */
 interface ClientFactoryInterface
 {
