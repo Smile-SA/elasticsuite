@@ -24,7 +24,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregatio
 class Value extends \Magento\Framework\Search\Response\Aggregation\Value
 {
     /**
-     * @var \Magento\Framework\Search\Response\Aggregation[]
+     * @var \Magento\Framework\Search\Response\Aggregation
      */
     private $aggregations;
 
