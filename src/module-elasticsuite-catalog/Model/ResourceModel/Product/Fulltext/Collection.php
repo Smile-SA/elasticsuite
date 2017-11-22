@@ -284,7 +284,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $result[$metrics['value']] = $metrics;
+                $result[$value->getValue()] = $metrics;
             }
         }
 
@@ -594,7 +594,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $this->countByAttributeSet[$metrics['value']] = $metrics['count'];
+                $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
             }
         }
     }

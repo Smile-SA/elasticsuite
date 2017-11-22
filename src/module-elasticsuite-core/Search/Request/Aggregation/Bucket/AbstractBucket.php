@@ -42,6 +42,11 @@ abstract class AbstractBucket implements BucketInterface
     private $metrics;
 
     /**
+     * @var Metric[]
+     */
+    private $childBuckets;
+
+    /**
      * @var string
      */
     private $nestedPath;
@@ -59,17 +64,19 @@ abstract class AbstractBucket implements BucketInterface
     /**
      * Constructor.
      *
-     * @param string         $name         Bucket name.
-     * @param string         $field        Bucket field.
-     * @param Metric[]       $metrics      Bucket metrics.
-     * @param string         $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface $filter       Bucket filter.
-     * @param QueryInterface $nestedFilter Nested filter for the bucket.
+     * @param string            $name         Bucket name.
+     * @param string            $field        Bucket field.
+     * @param Metric[]          $metrics      Bucket metrics.
+     * @param BucketInterface[] $childBuckets Child buckets.
+     * @param string            $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface    $filter       Bucket filter.
+     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
      */
     public function __construct(
         $name,
         $field,
-        array $metrics,
+        array $metrics = [],
+        array $childBuckets = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null
@@ -77,6 +84,7 @@ abstract class AbstractBucket implements BucketInterface
         $this->name         = $name;
         $this->field        = $field;
         $this->metrics      = $metrics;
+        $this->childBuckets = $childBuckets;
         $this->nestedPath   = $nestedPath;
         $this->filter       = $filter;
         $this->nestedFilter = $nestedFilter;
@@ -137,5 +145,13 @@ abstract class AbstractBucket implements BucketInterface
     public function getFilter()
     {
         return $this->filter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getChildBuckets()
+    {
+        return $this->childBuckets;
     }
 }

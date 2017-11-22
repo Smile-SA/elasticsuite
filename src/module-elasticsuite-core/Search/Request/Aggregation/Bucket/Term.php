@@ -44,26 +44,28 @@ class Term extends AbstractBucket
     /**
      * Constructor.
      *
-     * @param string         $name         Bucket name.
-     * @param string         $field        Bucket field.
-     * @param Metric[]       $metrics      Bucket metrics.
-     * @param string         $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface $filter       Bucket filter.
-     * @param QueryInterface $nestedFilter Nested filter for the bucket.
-     * @param integer        $size         Bucket size.
-     * @param string         $sortOrder    Bucket sort order.
+     * @param string            $name         Bucket name.
+     * @param string            $field        Bucket field.
+     * @param Metric[]          $metrics      Bucket metrics.
+     * @param BucketInterface[] $childBuckets Child buckets.
+     * @param string            $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface    $filter       Bucket filter.
+     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
+     * @param integer           $size         Bucket size.
+     * @param string            $sortOrder    Bucket sort order.
      */
     public function __construct(
         $name,
         $field,
-        array $metrics,
+        array $metrics = [],
+        array $childBuckets = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
         $size = 0,
-        $sortOrder = BucketInterface::SORT_ORDER_MANUAL
+        $sortOrder = BucketInterface::SORT_ORDER_COUNT
     ) {
-        parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
+        parent::__construct($name, $field, $metrics, $childBuckets, $nestedPath, $filter, $nestedFilter);
 
         $this->size      = $size > 0 && $size < self::MAX_BUCKET_SIZE ? $size : self::MAX_BUCKET_SIZE;
         $this->sortOrder = $sortOrder;

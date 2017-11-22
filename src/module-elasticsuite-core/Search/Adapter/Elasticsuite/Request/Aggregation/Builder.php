@@ -63,6 +63,15 @@ class Builder
             $bucketType = $bucket->getType();
             $builder    = $this->getBuilder($bucketType);
             $aggregation = $builder->buildBucket($bucket);
+            $subAggregations = isset($aggregation['aggregations']) ? $aggregation['aggregations'] : [];
+
+            if (!empty($bucket->getChildBuckets())) {
+                $subAggregations = array_merge($subAggregations, $this->buildAggregations($bucket->getChildBuckets()));
+            }
+
+            if (!empty($subAggregations)) {
+                $aggregation['aggregations'] = $subAggregations;
+            }
 
             if ($bucket->isNested()) {
                 if ($bucket->getNestedFilter()) {

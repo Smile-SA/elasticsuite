@@ -54,7 +54,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testAplhabeticSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 1, TermBucket::SORT_ORDER_TERM);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], [], null, null, null, 1, TermBucket::SORT_ORDER_TERM);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
@@ -71,7 +71,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testRelevanceSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, 1, TermBucket::SORT_ORDER_RELEVANCE);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], [], null, null, null, 1, TermBucket::SORT_ORDER_RELEVANCE);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
@@ -112,7 +112,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testBucketSize($size, $expected)
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], null, null, null, $size);
+        $termBucket = new TermBucket('aggregationName', 'fieldName', [], [], null, null, null, $size);
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
