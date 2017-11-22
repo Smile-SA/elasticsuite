@@ -21,7 +21,7 @@
         "magento/framework": ">=101.0.0",
         "magento/magento-composer-installer": "*"
     },
-    "version": "2.4.0",
+    "version": "2.5.0",
     "autoload": {
         "files": [
             "registration.php"
