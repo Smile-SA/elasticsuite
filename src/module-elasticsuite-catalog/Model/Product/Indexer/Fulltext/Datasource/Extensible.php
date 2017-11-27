@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Vladimir Bratukhin <insyon@gmail.com>
+ */
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterface;
@@ -22,7 +26,7 @@ abstract class Extensible
     /**
      * Constructor.
      *
-     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory DataExtension factory
      */
     public function __construct(
         ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory

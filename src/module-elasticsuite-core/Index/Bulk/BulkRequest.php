@@ -18,6 +18,7 @@ use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
 use Smile\ElasticsuiteCore\Api\Index\DocumentExtensionInterface;
+
 /**
  * Default implementation for ES bulk (Smile\ElasticsuiteCore\Api\Index\BulkInterface).
  *

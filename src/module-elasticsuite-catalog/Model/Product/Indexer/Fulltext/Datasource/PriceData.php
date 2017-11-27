@@ -41,9 +41,9 @@ class PriceData extends Extensible implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
-     * @param ResourceModel $resourceModel Resource model
-     * @param ProductTypeFactory $productTypeFactory Product type factory (used to detect products types).
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory DataExtension factory
+     * @param ResourceModel                        $resourceModel                 Resource model
+     * @param ProductTypeFactory                   $productTypeFactory            Product type factory (used to detect products types).
      */
     public function __construct(
         ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
@@ -92,6 +92,7 @@ class PriceData extends Extensible implements DatasourceInterface
             $this->getDataExtension($data)
                  ->addPriceData($data['price'] ?? []);
         }
+
         return $indexData;
     }
 

@@ -28,14 +28,15 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class CategoryData extends Extensible implements DatasourceInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData
+     * @var ResourceModel
      */
     private $resourceModel;
 
     /**
      * CategoryData constructor.
-     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
-     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData $resourceModel
+     *
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory DataExtensionFactory
+     * @param ResourceModel                        $resourceModel                 ResourceModel
      */
     public function __construct(
         ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
@@ -78,6 +79,7 @@ class CategoryData extends Extensible implements DatasourceInterface
             $this->getDataExtension($data)
                  ->addCategoryData($data['category'] ?? []);
         }
+
         return $indexData;
     }
 }

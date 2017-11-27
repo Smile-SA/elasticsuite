@@ -1,6 +1,12 @@
 <?php
+/**
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Vladimir Bratukhin <insyon@gmail.com>
+ */
 
 namespace Smile\ElasticsuiteCore\Api\Index;
+
 /**
  * ES Document Extension service contract interface
  *

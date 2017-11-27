@@ -33,8 +33,8 @@ class InventoryData extends Extensible implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model.
-     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory DataExtension factory
+     * @param ResourceModel                        $resourceModel                 Resource model
      */
     public function __construct(
         ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,

@@ -1,6 +1,12 @@
 <?php
+/**
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Vladimir Bratukhin <insyon@gmail.com>
+ */
 
 namespace Smile\ElasticsuiteCatalog\Api;
+
 use Smile\ElasticsuiteCore\Api\Index\DocumentExtensionInterface;
 
 /**
@@ -16,7 +22,7 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add product data to extension object
      *
-     * @param array $data
+     * @param array $data Data
      *
      * @return $this
      */
@@ -25,8 +31,8 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add child product data to extension object
      *
-     * @param array $data
-     * @param $childId
+     * @param array $data    Data
+     * @param int   $childId Child identifier
      *
      * @return $this
      */
@@ -35,7 +41,7 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add inventory data to extension object
      *
-     * @param array $data
+     * @param array $data Data
      *
      * @return $this
      */
@@ -44,7 +50,7 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add category data to extension object
      *
-     * @param array $data
+     * @param array $data Data
      *
      * @return $this
      */
@@ -53,7 +59,7 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add price data to extension object
      *
-     * @param array $data
+     * @param array $data Data
      *
      * @return $this
      */
