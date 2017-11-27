@@ -139,26 +139,29 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     private function getDataExtension(&$product)
     {
-        return $product[ProductDataExtensionInterface::KEY] ?? (
+        if (!isset($product[ProductDataExtensionInterface::KEY])) {
             $product[ProductDataExtensionInterface::KEY]
-                = $this->dataExtensionInterfaceFactory->create()
-            );
+                = $this->dataExtensionInterfaceFactory->create();
+        }
+
+        return $product[ProductDataExtensionInterface::KEY];
     }
 
     /**
      * Append data of child products to the parent.
      *
+     * @param int   $storeId         Store id
      * @param array $parentData      Parent product data.
      * @param array $childAttributes Child product attributes data.
      * @param int   $childId         Child product id
      *
      * @return void
      */
-    private function addChildData(&$parentData, $childAttributes, $childId)
+    private function addChildData($storeId, &$parentData, $childAttributes, $childId)
     {
         // Add child data to service contract of parent product.
         $this->getDataExtension($parentData)
-             ->addChildData($childAttributes, $childId);
+             ->addChildData($storeId, $childAttributes, $childId);
         $authorizedChildAttributes = $parentData['children_attributes'];
         $addedChildAttributesData  = array_filter(
             $childAttributes,

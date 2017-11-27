@@ -45,9 +45,11 @@ abstract class AbstractExtensible
      */
     protected function getDataExtension(&$product)
     {
-        return $product[ProductDataExtensionInterface::KEY] ?? (
+        if (!isset($product[ProductDataExtensionInterface::KEY])) {
             $product[ProductDataExtensionInterface::KEY]
-                = $this->dataExtensionInterfaceFactory->create()
-            );
+                = $this->dataExtensionInterfaceFactory->create();
+        }
+
+        return $product[ProductDataExtensionInterface::KEY];
     }
 }
