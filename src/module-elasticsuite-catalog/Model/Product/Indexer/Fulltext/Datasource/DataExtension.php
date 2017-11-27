@@ -60,5 +60,4 @@ class DataExtension implements ProductDataExtensionInterface
     {
         return [];
     }
-
 }
