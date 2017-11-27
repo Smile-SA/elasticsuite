@@ -22,7 +22,7 @@ class DataExtension implements ProductDataExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addProductData(array $data)
+    public function addProductData($storeId, array $data)
     {
         return $this;
     }
@@ -30,7 +30,7 @@ class DataExtension implements ProductDataExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addChildData(array $data, $childId)
+    public function addChildData($storeId, array $data, $childId)
     {
         return $this;
     }
@@ -38,7 +38,7 @@ class DataExtension implements ProductDataExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addInventoryData(array $data)
+    public function addInventoryData($storeId, array $data)
     {
         return $this;
     }
@@ -46,7 +46,7 @@ class DataExtension implements ProductDataExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addPriceData(array $data)
+    public function addPriceData($storeId, array $data)
     {
         return $this;
     }
@@ -54,7 +54,7 @@ class DataExtension implements ProductDataExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addCategoryData(array $data)
+    public function addCategoryData($storeId, array $data)
     {
         return $this;
     }

@@ -59,7 +59,7 @@ class InventoryData extends AbstractExtensible implements DatasourceInterface
                 'qty'         => (int) $inventoryDataRow['qty'],
             ];
             $this->getDataExtension($indexData[$productId])
-                 ->addInventoryData($inventoryDataRow);
+                 ->addInventoryData($storeId, $inventoryDataRow);
         }
 
         return $indexData;

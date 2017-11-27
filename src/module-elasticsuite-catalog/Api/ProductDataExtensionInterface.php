@@ -23,46 +23,50 @@ interface ProductDataExtensionInterface extends DocumentExtensionInterface
     /**
      * Add product data to extension object
      *
-     * @param array $data Data
+     * @param int   $storeId Store ID
+     * @param array $data    Data
      *
      * @return $this
      */
-    public function addProductData(array $data);
+    public function addProductData($storeId, array $data);
 
     /**
      * Add child product data to extension object
      *
+     * @param int   $storeId Store ID
      * @param array $data    Data
      * @param int   $childId Child identifier
-     *
      * @return $this
      */
-    public function addChildData(array $data, $childId);
+    public function addChildData($storeId, array $data, $childId);
 
     /**
      * Add inventory data to extension object
      *
-     * @param array $data Data
+     * @param int   $storeId Store ID
+     * @param array $data    Data
      *
      * @return $this
      */
-    public function addInventoryData(array $data);
+    public function addInventoryData($storeId, array $data);
 
     /**
      * Add category data to extension object
      *
-     * @param array $data Data
+     * @param int   $storeId Store ID
+     * @param array $data    Data
      *
      * @return $this
      */
-    public function addCategoryData(array $data);
+    public function addCategoryData($storeId, array $data);
 
     /**
      * Add price data to extension object
      *
-     * @param array $data Data
+     * @param int   $storeId Store ID
+     * @param array $data    Data
      *
      * @return $this
      */
-    public function addPriceData(array $data);
+    public function addPriceData($storeId, array $data);
 }

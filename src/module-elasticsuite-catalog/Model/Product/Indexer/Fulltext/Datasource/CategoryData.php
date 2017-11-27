@@ -77,7 +77,7 @@ class CategoryData extends AbstractExtensible implements DatasourceInterface
 
         foreach ($indexData as &$data) {
             $this->getDataExtension($data)
-                 ->addCategoryData($data['category'] ?? []);
+                 ->addCategoryData($storeId, $data['category'] ?? []);
         }
 
         return $indexData;

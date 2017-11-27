@@ -69,11 +69,9 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     {
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
+
         // Add products data to service contract.
-        foreach ($indexData as &$product) {
-            $this->getDataExtension($product)
-                ->addProductData($product);
-        }
+        $this->addProductData($storeId, $indexData);
 
         $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
@@ -94,7 +92,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                     if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
                         $indexData[$parentId]['children_ids'][] = $childId;
                         $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
-                        $this->addChildData($indexData[$parentId], $childrenIndexData[$childId], $childId);
+                        $this->addChildData($storeId, $indexData[$parentId], $childrenIndexData[$childId], $childId);
                     }
                 }
             }
@@ -252,5 +250,23 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         return $indexData;
+    }
+
+    /**
+     * Adds product data to service contract
+     *
+     * @param int   $storeId   Store ID
+     * @param array $indexData Index data
+     *
+     * @return $this
+     */
+    private function addProductData($storeId, &$indexData)
+    {
+        foreach ($indexData as &$product) {
+            $this->getDataExtension($product)
+                ->addProductData($storeId, $product);
+        }
+
+        return $this;
     }
 }

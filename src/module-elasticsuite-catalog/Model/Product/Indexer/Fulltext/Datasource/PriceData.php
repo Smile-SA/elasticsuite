@@ -90,7 +90,7 @@ class PriceData extends AbstractExtensible implements DatasourceInterface
 
         foreach ($indexData as &$data) {
             $this->getDataExtension($data)
-                 ->addPriceData($data['price'] ?? []);
+                 ->addPriceData($storeId, $data['price'] ?? []);
         }
 
         return $indexData;
