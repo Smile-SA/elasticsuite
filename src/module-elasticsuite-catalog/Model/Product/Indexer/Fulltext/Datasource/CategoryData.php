@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class CategoryData extends Extensible implements DatasourceInterface
+class CategoryData extends AbstractExtensible implements DatasourceInterface
 {
     /**
      * @var ResourceModel

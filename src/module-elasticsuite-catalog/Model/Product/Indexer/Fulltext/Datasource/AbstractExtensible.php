@@ -2,8 +2,10 @@
 /**
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
+ * @copyright 2017 Smile
  * @author    Vladimir Bratukhin <insyon@gmail.com>
  */
+
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterface;
@@ -16,7 +18,7 @@ use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
  *
  * @author Vladimir Bratukhin <insyon@gmail.com>
  */
-abstract class Extensible
+abstract class AbstractExtensible
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory

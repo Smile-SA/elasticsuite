@@ -26,7 +26,7 @@ use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class PriceData extends Extensible implements DatasourceInterface
+class PriceData extends AbstractExtensible implements DatasourceInterface
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData

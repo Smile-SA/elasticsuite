@@ -1,4 +1,10 @@
 <?php
+/**
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @copyright 2017 Smile
+ * @author    Vladimir Bratukhin <insyon@gmail.com>
+ */
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
@@ -14,7 +20,7 @@ use \Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterface;
 class DataExtension implements ProductDataExtensionInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addProductData(array $data)
     {
@@ -22,7 +28,7 @@ class DataExtension implements ProductDataExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addChildData(array $data, $childId)
     {
@@ -30,7 +36,7 @@ class DataExtension implements ProductDataExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addInventoryData(array $data)
     {
@@ -38,7 +44,7 @@ class DataExtension implements ProductDataExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addPriceData(array $data)
     {
@@ -46,7 +52,7 @@ class DataExtension implements ProductDataExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addCategoryData(array $data)
     {
@@ -54,7 +60,7 @@ class DataExtension implements ProductDataExtensionInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function toArray()
     {

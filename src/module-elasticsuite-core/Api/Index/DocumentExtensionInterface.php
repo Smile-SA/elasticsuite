@@ -1,7 +1,8 @@
 <?php
 /**
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCore
+ * @copyright 2017 Smile
  * @author    Vladimir Bratukhin <insyon@gmail.com>
  */
 

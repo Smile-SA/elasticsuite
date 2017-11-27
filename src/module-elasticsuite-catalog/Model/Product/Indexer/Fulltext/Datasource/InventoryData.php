@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class InventoryData extends Extensible implements DatasourceInterface
+class InventoryData extends AbstractExtensible implements DatasourceInterface
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData

@@ -69,7 +69,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     {
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
-        // Add products data to service contract //
+        // Add products data to service contract.
         foreach ($indexData as &$product) {
             $this->getDataExtension($product)
                 ->addProductData($product);
