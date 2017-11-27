@@ -2,8 +2,8 @@
 /**
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
- * @copyright 2017 Smile
  * @author    Vladimir Bratukhin <insyon@gmail.com>
+ * @copyright 2017 Smile
  */
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
@@ -37,9 +37,9 @@ abstract class AbstractExtensible
     }
 
     /**
-     * Returns DataExtension object for productData array
+     * Returns DataExtension object for product data array
      *
-     * @param array $product
+     * @param array $product Product data array
      *
      * @return ProductDataExtensionInterface
      */
