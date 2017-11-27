@@ -16,7 +16,8 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
+    <preference for="Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterface"
+                type="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\DataExtension"/>
     <virtualType name="catalogProductSearchIndexHandler" type="\Smile\ElasticsuiteCore\Indexer\GenericIndexerHandler">
         <arguments>
             <argument name="indexName" xsi:type="string">catalog_product</argument>

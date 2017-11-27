@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData as ResourceModel;
 
@@ -24,7 +25,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class CategoryData implements DatasourceInterface
+class CategoryData extends Extensible implements DatasourceInterface
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData
@@ -32,12 +33,15 @@ class CategoryData implements DatasourceInterface
     private $resourceModel;
 
     /**
-     * Constructor.
-     *
-     * @param ResourceModel $resourceModel Resource model.
+     * CategoryData constructor.
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
+     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData $resourceModel
      */
-    public function __construct(ResourceModel $resourceModel)
-    {
+    public function __construct(
+        ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
+        ResourceModel $resourceModel
+    ) {
+        parent::__construct($dataExtensionInterfaceFactory);
         $this->resourceModel = $resourceModel;
     }
 
@@ -70,6 +74,10 @@ class CategoryData implements DatasourceInterface
             $indexData[$productId]['category'][] = array_filter($categoryDataRow);
         }
 
+        foreach ($indexData as &$data) {
+            $this->getDataExtension($data)
+                 ->addCategoryData($data['category'] ?? []);
+        }
         return $indexData;
     }
 }

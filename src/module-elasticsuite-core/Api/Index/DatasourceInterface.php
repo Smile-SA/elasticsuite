@@ -32,4 +32,5 @@ interface DatasourceInterface
      * @return array
      */
     public function addData($storeId, array $indexData);
+
 }

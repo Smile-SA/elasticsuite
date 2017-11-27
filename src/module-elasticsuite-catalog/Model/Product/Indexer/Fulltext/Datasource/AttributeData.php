@@ -14,9 +14,14 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Helper\Attribute as ProductAttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterface;
+use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
+use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
 
 /**
  * Datasource used to index product attributes.
@@ -34,12 +39,41 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     private $forbidenChildrenAttributeCode = ['visibility', 'status', 'price', 'tax_class_id'];
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory
+     */
+    private $dataExtensionInterfaceFactory;
+
+    /**
+     * AttributeData constructor.
+     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData $resourceModel
+     * @param \Smile\ElasticsuiteCore\Index\Mapping\FieldFactory $fieldFactory
+     * @param \Smile\ElasticsuiteCatalog\Helper\Attribute $attributeHelper
+     * @param \Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
+     * @param array $indexedBackendModels
+     */
+    public function __construct(
+        \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData $resourceModel,
+        \Smile\ElasticsuiteCore\Index\Mapping\FieldFactory $fieldFactory,
+        \Smile\ElasticsuiteCatalog\Helper\Attribute $attributeHelper,
+        ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
+        array $indexedBackendModels = []
+    ) {
+        parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
+        $this->dataExtensionInterfaceFactory = $dataExtensionInterfaceFactory;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addData($storeId, array $indexData)
     {
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
+        // Add products data to service contract //
+        foreach ($indexData as &$product) {
+            $this->getDataExtension($product)
+                ->addProductData($product);
+        }
 
         $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
@@ -60,7 +94,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                     if (isset($indexData[$parentId]) && isset($childrenIndexData[$childId])) {
                         $indexData[$parentId]['children_ids'][] = $childId;
                         $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
-                        $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
+                        $this->addChildData($indexData[$parentId], $childrenIndexData[$childId], $childId);
                     }
                 }
             }
@@ -91,12 +125,26 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 if (!isset($indexData[$productId])) {
                     $indexData[$productId] = [];
                 }
-
                 $indexData[$productId] += $indexValues;
             }
         }
 
         return $indexData;
+    }
+
+    /**
+     * Returns DataExtension object for productData array
+     *
+     * @param array $product
+     *
+     * @return ProductDataExtensionInterface
+     */
+    private function getDataExtension(&$product)
+    {
+        return $product[ProductDataExtensionInterface::KEY] ?? (
+            $product[ProductDataExtensionInterface::KEY]
+                = $this->dataExtensionInterfaceFactory->create()
+            );
     }
 
     /**
@@ -107,8 +155,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      *
      * @return void
      */
-    private function addChildData(&$parentData, $childAttributes)
+    private function addChildData(&$parentData, $childAttributes, $childId)
     {
+        // add child data to service contract of parent product //
+        $this->getDataExtension($parentData)
+             ->addChildData($childAttributes, $childId);
         $authorizedChildAttributes = $parentData['children_attributes'];
         $addedChildAttributesData  = array_filter(
             $childAttributes,
@@ -121,9 +172,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         foreach ($addedChildAttributesData as $attributeCode => $value) {
             if (!isset($parentData[$attributeCode])) {
                 $parentData[$attributeCode] = [];
+            } elseif ($attributeCode != ProductDataExtensionInterface::KEY) {
+                // Copy all except attribute data extension to parent
+                $parentData[$attributeCode] = array_values(array_unique(array_merge($parentData[$attributeCode], $value)));
             }
-
-            $parentData[$attributeCode] = array_values(array_unique(array_merge($parentData[$attributeCode], $value)));
         }
     }
 

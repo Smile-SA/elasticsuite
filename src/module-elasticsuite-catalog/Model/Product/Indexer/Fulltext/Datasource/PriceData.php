@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
@@ -25,7 +26,7 @@ use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class PriceData implements DatasourceInterface
+class PriceData extends Extensible implements DatasourceInterface
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData
@@ -40,11 +41,16 @@ class PriceData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ResourceModel      $resourceModel      Resource model
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory
+     * @param ResourceModel $resourceModel Resource model
      * @param ProductTypeFactory $productTypeFactory Product type factory (used to detect products types).
      */
-    public function __construct(ResourceModel $resourceModel, ProductTypeFactory $productTypeFactory)
-    {
+    public function __construct(
+        ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
+        ResourceModel $resourceModel,
+        ProductTypeFactory $productTypeFactory
+    ) {
+        parent::__construct($dataExtensionInterfaceFactory);
         $this->resourceModel = $resourceModel;
         $this->productType   = $productTypeFactory->create();
     }
@@ -82,6 +88,10 @@ class PriceData implements DatasourceInterface
             ];
         }
 
+        foreach ($indexData as &$data) {
+            $this->getDataExtension($data)
+                 ->addPriceData($data['price'] ?? []);
+        }
         return $indexData;
     }
 
