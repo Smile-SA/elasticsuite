@@ -69,6 +69,10 @@ class Builder
                 $subAggregations = array_merge($subAggregations, $this->buildAggregations($bucket->getChildBuckets()));
             }
 
+            foreach ($bucket->getMetrics() as $metric) {
+                $subAggregations[$metric->getName()] = [$metric->getType() => ['field' => $metric->getField()]];
+            }
+
             if (!empty($subAggregations)) {
                 $aggregation['aggregations'] = $subAggregations;
             }

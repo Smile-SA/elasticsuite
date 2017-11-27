@@ -139,6 +139,9 @@ class AggregationFactory
         foreach ($rawValue as $metricName => $value) {
             if (!is_array($value) || !isset($value['buckets'])) {
                 $metricName = $metricName == 'doc_count' ? 'count' : $metricName;
+                if (is_array($value) && isset($value['value'])) {
+                    $value = $value['value'];
+                }
                 $metrics[$metricName] = $value;
             }
         }

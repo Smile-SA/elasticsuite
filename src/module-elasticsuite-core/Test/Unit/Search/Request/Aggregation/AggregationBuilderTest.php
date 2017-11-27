@@ -23,6 +23,7 @@ use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory;
 
 /**
  * Search request query builder test case.
@@ -40,7 +41,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testSimpleAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -70,7 +71,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testFilteredAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -107,7 +108,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -139,7 +140,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedFilteredAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations    = [
@@ -170,9 +171,9 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testUnknownFieldAggregation()
     {
-        $builder         = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder         = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
         $containerConfig = $this->getContainerConfiguration();
-        $aggregations    = ['invalidField' => ['type' => 'aggType', 'config' => ['foo' => 'bar']]];
+        $aggregations    = ['invalidField' => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'metrics' => []]]];
 
         $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
 
@@ -188,9 +189,10 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testNotFilterableFieldAggregation()
     {
-        $builder         = new AggregationBuilder($this->getAggregationFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
+
         $containerConfig = $this->getContainerConfiguration();
-        $aggregations    = ['notFilterableField' => ['type' => 'aggType', 'config' => ['foo' => 'bar']]];
+        $aggregations    = ['notFilterableField' => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'metrics' => []]]];
 
         $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
 
@@ -267,5 +269,15 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
         ];
 
         return new Mapping('entity_id', $fields);
+    }
+
+    /**
+     * Metrics factory used during tests.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getMetricFactory()
+    {
+        return $this->getMockBuilder(MetricFactory::class)->getMock();
     }
 }
