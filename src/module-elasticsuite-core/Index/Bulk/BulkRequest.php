@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Index\Bulk;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
+use Smile\ElasticsuiteCore\Api\Index\DocumentExtensionInterface;
 
 /**
  * Default implementation for ES bulk (Smile\ElasticsuiteCore\Api\Index\BulkInterface).
@@ -55,6 +56,11 @@ class BulkRequest implements BulkRequestInterface
      */
     public function addDocument(IndexInterface $index, TypeInterface $type, $docId, array $data)
     {
+        foreach ($data as &$value) {
+            if ($value instanceof DocumentExtensionInterface) {
+                $value = $value->toArray();
+            }
+        }
         $this->bulkData[] = ['index' => ['_index' => $index->getName(), '_type' => $type->getName(), '_id' => $docId]];
         $this->bulkData[] = $data;
 

@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Api\ProductDataExtensionInterfaceFactory;
 
 /**
  * Datasource used to append inventory data to product during indexing.
@@ -22,7 +23,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class InventoryData implements DatasourceInterface
+class InventoryData extends AbstractExtensible implements DatasourceInterface
 {
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData
@@ -32,10 +33,14 @@ class InventoryData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model.
+     * @param ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory DataExtension factory
+     * @param ResourceModel                        $resourceModel                 Resource model
      */
-    public function __construct(ResourceModel $resourceModel)
-    {
+    public function __construct(
+        ProductDataExtensionInterfaceFactory $dataExtensionInterfaceFactory,
+        ResourceModel $resourceModel
+    ) {
+        parent::__construct($dataExtensionInterfaceFactory);
         $this->resourceModel = $resourceModel;
     }
 
@@ -53,6 +58,8 @@ class InventoryData implements DatasourceInterface
                 'is_in_stock' => (bool) $inventoryDataRow['stock_status'],
                 'qty'         => (int) $inventoryDataRow['qty'],
             ];
+            $this->getDataExtension($indexData[$productId])
+                 ->addInventoryData($storeId, $inventoryDataRow);
         }
 
         return $indexData;
