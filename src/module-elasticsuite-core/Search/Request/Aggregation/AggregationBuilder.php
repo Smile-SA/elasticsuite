@@ -48,6 +48,7 @@ class AggregationBuilder
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
+     * @param MetricFactory      $metricFactory      Factory used to instantiate metrics.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
@@ -158,6 +159,14 @@ class AggregationBuilder
         return $bucketParams;
     }
 
+    /**
+     * Build buckets metric.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container config.
+     * @param array                           $aggregationParams      Aggregation params.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\Aggregation\Metric[]
+     */
     private function getMetrics(ContainerConfigurationInterface $containerConfiguration, array $aggregationParams)
     {
         $metrics = [];

@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteCore\Search\Request\Aggregation;
 
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
-use Magento\Framework\Search\Request\Aggregation\Metric;
 
 /**
  * ElasticSuite metric implementation.

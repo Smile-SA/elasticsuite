@@ -26,6 +26,19 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  */
 class DateHistogram extends Histogram
 {
+    /**
+     * Constructor.
+     *
+     * @param string            $name         Bucket name.
+     * @param string            $field        Bucket field.
+     * @param Metric[]          $metrics      Bucket metrics.
+     * @param BucketInterface[] $childBuckets Child buckets.
+     * @param string            $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface    $filter       Bucket filter.
+     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
+     * @param integer           $interval     Histogram interval.
+     * @param integer           $minDocCount  Histogram min doc count.
+     */
     public function __construct(
         $name,
         $field,
