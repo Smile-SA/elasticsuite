@@ -119,6 +119,14 @@ class AggregationFactory
                 'aggregations' => $this->getSubAggregations($value),
             ];
 
+            $subAggregationsNames = $valueParams['aggregations']->getBucketNames();
+
+            foreach (array_keys($valueParams['metrics']) as $metricName) {
+                if (in_array($metricName, $subAggregationsNames)) {
+                    unset($valueParams['metrics'][$metricName]);
+                }
+            }
+
             $values[] = $this->valueFactory->create($valueParams);
         }
 
@@ -139,7 +147,9 @@ class AggregationFactory
         foreach ($rawValue as $metricName => $value) {
             if (!is_array($value) || !isset($value['buckets'])) {
                 $metricName = $metricName == 'doc_count' ? 'count' : $metricName;
-                if (is_array($value) && isset($value['value'])) {
+                if (is_array($value) && isset($value['value_as_string'])) {
+                    $value = $value['value_as_string'];
+                } elseif (is_array($value) && isset($value['value'])) {
                     $value = $value['value'];
                 }
                 $metrics[$metricName] = $value;
@@ -161,8 +171,14 @@ class AggregationFactory
         $subAggregations = [];
 
         foreach ($rawValue as $key => $value) {
-            if (is_array($value) && isset($value['buckets'])) {
-                $subAggregations[$key] = $value;
+            if (is_array($value)) {
+                while (is_array($value) && isset($value[$key]) && is_array($value[$key])) {
+                    $value = $value[$key];
+                }
+
+                if (isset($value['buckets'])) {
+                    $subAggregations[$key] = $value;
+                }
             }
         }
 
