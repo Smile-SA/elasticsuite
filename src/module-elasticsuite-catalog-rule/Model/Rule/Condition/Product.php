@@ -14,7 +14,7 @@ namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition;
 
 use Magento\Backend\Helper\Data;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\ProductFactory;
+use Magento\Catalog\Model\ProductFactory as ProductModelFactory;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
@@ -57,7 +57,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param Config                     $config                    EAV config.
      * @param AttributeList              $attributeList             Product search rule attribute list.
      * @param QueryBuilder               $queryBuilder              Product search rule query builder.
-     * @param ProductFactory             $productFactory            Product factory.
+     * @param ProductModelFactory        $productFactory            Product factory.
      * @param ProductRepositoryInterface $productRepository         Product repository.
      * @param ProductResource            $productResource           Product resource model.
      * @param Collection                 $attrSetCollection         Attribute set collection.
@@ -71,7 +71,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         Config $config,
         AttributeList $attributeList,
         QueryBuilder $queryBuilder,
-        ProductFactory $productFactory,
+        ProductModelFactory $productFactory,
         ProductRepositoryInterface $productRepository,
         ProductResource $productResource,
         Collection $attrSetCollection,
