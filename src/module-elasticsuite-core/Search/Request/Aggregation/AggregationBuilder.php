@@ -140,7 +140,7 @@ class AggregationBuilder
 
         $bucketParams = [
             'field'   => $bucketField,
-            'name'    => $field->getName(),
+            'name'    => isset($aggregationParams['config']['name']) ? $aggregationParams['config']['name'] : $field->getName(),
             'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];
 
