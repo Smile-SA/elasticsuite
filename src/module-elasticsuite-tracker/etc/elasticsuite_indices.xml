@@ -97,4 +97,19 @@
         </type>
     </index>
 
+    <index identifier="tracking_log_session" defaultSearchType="session">
+        <type name="session" idFieldName="session_id">
+            <mapping>
+                <field name="session_id" type="string"/>
+                <field name="visitor_id" type="string"/>
+                <field name="customer_id" type="integer"/>
+                <field name="product_view" type="integer" />
+                <field name="category_view" type="integer" />
+                <field name="search_query" type="string" />
+                <field name="product_sale" type="integer" />
+                <field name="category_sale" type="integer" />
+            </mapping>
+        </type>
+    </index>
+
 </indices>

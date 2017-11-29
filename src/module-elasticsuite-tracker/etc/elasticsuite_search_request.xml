@@ -19,4 +19,6 @@
 
     <request name="tracking_log_event" label="Tracking Log Event" index="tracking_log_event" type="event" fulltext="false" />
 
+    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" type="session" fulltext="false" />
+
 </requests>
