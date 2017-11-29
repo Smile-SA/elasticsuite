@@ -100,8 +100,8 @@ class SessionIndex
     /**
      * Build search request used to collect aggregated session data.
      *
-     * @param int      $storeId
-     * @param string[] $sessionIds
+     * @param int      $storeId    Current store Id.
+     * @param string[] $sessionIds Session ids.
      *
      * @return \Smile\ElasticsuiteCore\Search\RequestInterface
      */
