@@ -36,6 +36,7 @@ class EventIndex implements EventIndexInterface
     private $indexOperation;
 
     /**
+     * Constructor.
      *
      * @param IndexResolver                                             $indexResolver  Resource model.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface $indexOperation Index operation.

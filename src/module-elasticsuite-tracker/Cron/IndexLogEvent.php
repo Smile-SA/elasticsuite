@@ -34,17 +34,25 @@ class IndexLogEvent
     private $eventIndex;
 
     /**
+     * @var \Smile\ElasticsuiteTracker\Api\SessionIndexInterface
+     */
+    private $sessionIndex;
+
+    /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue Pending events queue.
-     * @param \Smile\ElasticsuiteTracker\Api\EventIndexInterface $eventIndex Event index.
+     * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface   $eventQueue   Pending events queue.
+     * @param \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $eventIndex   Event index.
+     * @param \Smile\ElasticsuiteTracker\Api\EventIndexInterface   $sessionIndex Session index.
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue,
-        \Smile\ElasticsuiteTracker\Api\EventIndexInterface $eventIndex
+        \Smile\ElasticsuiteTracker\Api\EventIndexInterface $eventIndex,
+        \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $sessionIndex
     ) {
-        $this->eventQueue = $eventQueue;
-        $this->eventIndex = $eventIndex;
+        $this->eventQueue   = $eventQueue;
+        $this->eventIndex   = $eventIndex;
+        $this->sessionIndex = $sessionIndex;
     }
 
     /**
@@ -57,6 +65,7 @@ class IndexLogEvent
         $events = $this->eventQueue->getEvents();
         if (!empty($events)) {
             $this->eventIndex->indexEvents($events);
+            $this->sessionIndex->indexEvents($events);
             $this->eventQueue->deleteEvents(array_column($events, 'event_id'));
         }
     }

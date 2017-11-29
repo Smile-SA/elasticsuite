@@ -20,6 +20,7 @@
 
     <preference for="Smile\ElasticsuiteTracker\Api\EventQueueInterface" type="Smile\ElasticsuiteTracker\Model\EventQueue" />
     <preference for="Smile\ElasticsuiteTracker\Api\EventIndexInterface" type="Smile\ElasticsuiteTracker\Model\EventIndex" />
+    <preference for="Smile\ElasticsuiteTracker\Api\SessionIndexInterface" type="Smile\ElasticsuiteTracker\Model\SessionIndex" />
 
     <type name="Smile\ElasticsuiteTracker\Model\EventQueue">
         <arguments>
