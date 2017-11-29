@@ -26,9 +26,9 @@ use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
 class EventIndex implements EventIndexInterface
 {
     /**
-     * @var ResourceModel\EventIndex
+     * @var IndexResolver
      */
-    private $resourceModel;
+    private $indexResolver;
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface
@@ -37,14 +37,14 @@ class EventIndex implements EventIndexInterface
 
     /**
      *
-     * @param ResourceModel\EventIndex                                  $resourceModel  Resource model.
+     * @param IndexResolver                                             $indexResolver  Resource model.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface $indexOperation Index operation.
      */
     public function __construct(
-        ResourceModel\EventIndex $resourceModel,
+        IndexResolver $indexResolver,
         \Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface $indexOperation
     ) {
-        $this->resourceModel  = $resourceModel;
+        $this->indexResolver  = $indexResolver;
         $this->indexOperation = $indexOperation;
     }
 
@@ -64,7 +64,7 @@ class EventIndex implements EventIndexInterface
         $bulk = $this->indexOperation->createBulk();
 
         foreach ($events as $event) {
-            $index = $this->resourceModel->getIndex($event);
+            $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $event['date']);
             $bulk->addDocument($index, $index->getDefaultSearchType(), $event['event_id'], $event);
         }
 

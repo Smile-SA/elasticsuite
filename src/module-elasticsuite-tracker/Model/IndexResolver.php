@@ -12,23 +12,21 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteTracker\Model\ResourceModel;
-
-use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
+namespace Smile\ElasticsuiteTracker\Model;
 
 /**
- * Event index resource model.
+ * Resolve tracking indices.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class EventIndex
+class IndexResolver
 {
     /**
      * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterface[]
      */
-    private $indices;
+    private $indices = [];
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Index\IndexFactoryInterface
@@ -57,29 +55,30 @@ class EventIndex
         \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory $indexFactory,
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client
     ) {
-        $this->client        = $client;
-        $this->indexFactory  = $indexFactory;
-        $this->indexSettings = $indexSettings;
+            $this->client        = $client;
+            $this->indexFactory  = $indexFactory;
+            $this->indexSettings = $indexSettings;
     }
 
     /**
-     * Get index using event data.
+     * Get index by identifier, store and date.
      *
-     * @param array $event Event.
+     * @param string $indexIdentifier Index identifier.
+     * @param int    $storeId         Store id.
+     * @param string $date            Date.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
      */
-    public function getIndex($event)
+    public function getIndex($indexIdentifier, $storeId, $date)
     {
-        $indexAlias      = $this->getIndexAlias($event);
-        $indexName       = $this->getIndexName($event);
-        $indexIdentifier = $this->getIndexIdenifier();
+        $indexAlias      = $this->getIndexAlias($indexIdentifier, $storeId);
+        $indexName       = $this->getIndexName($indexIdentifier, $storeId, $date);
 
         if (!isset($this->indices[$indexName])) {
             $indexSettings = $this->indexSettings->getIndicesConfig();
             $indexConfig = array_merge(['identifier' => $indexAlias, 'name' => $indexName], $indexSettings[$indexIdentifier]);
             $this->indices[$indexName] = $this->indexFactory->create($indexConfig);
-            $this->createIndexIfNotExists($this->indices[$indexName], $event['page']['store_id']);
+            $this->createIndexIfNotExists($this->indices[$indexName], $storeId);
         }
 
         return $this->indices[$indexName];
@@ -96,7 +95,7 @@ class EventIndex
     private function createIndexIfNotExists(\Smile\ElasticsuiteCore\Api\Index\IndexInterface $index, $store)
     {
         if ($this->client->indexExists($index->getName()) === false) {
-            $indexSettings = $this->indexSettings->getInstallIndexSettings();
+            $indexSettings = array_merge($this->indexSettings->getCreateIndexSettings(), $this->indexSettings->getInstallIndexSettings());
             $indexSettings['analysis'] = $this->indexSettings->getAnalysisSettings($store);
             $this->client->createIndex($index->getName(), $indexSettings);
             $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $index->getIdentifier()]]]);
@@ -107,40 +106,31 @@ class EventIndex
     }
 
     /**
-     * Search index identifier.
-     *
-     * @return string
-     */
-    private function getIndexIdenifier()
-    {
-        return EventIndexInterface::INDEX_IDENTIFIER;
-    }
-
-    /**
      * Build index alias from an event.
      *
-     * @param array $event Event.
+     * @param string $indexIdentifier Index identifier.
+     * @param int    $storeId         Store id.
      *
      * @return string
      */
-    private function getIndexAlias($event)
+    private function getIndexAlias($indexIdentifier, $storeId)
     {
-        $indexIdentifier = $this->getIndexIdenifier();
-
-        return $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $event['page']['store_id']);
+        return $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
     }
 
     /**
      * Build index name from an event.
      *
-     * @param arrat $event Event.
+     * @param string $indexIdentifier Index identifier.
+     * @param int    $storeId         Store id.
+     * @param string $date            Date.
      *
      * @return string
      */
-    private function getIndexName($event)
+    private function getIndexName($indexIdentifier, $storeId, $date)
     {
-        $indexAlias = $this->getIndexAlias($event);
-        $date       = substr($event['date'], 0, 10);
+        $indexAlias = $this->getIndexAlias($indexIdentifier, $storeId);
+        $date       = substr($date, 0, 10);
 
         return sprintf("%s_%s", $indexAlias, str_replace("-", "", $date));
     }
