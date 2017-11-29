@@ -356,8 +356,9 @@ define([
          * @private
          */
         _validateElement: function(event) {
-            if (this.responseList.selected.attr('href') !== undefined) {
-                window.location = this.responseList.selected.attr('href');
+            var selected = this.responseList.selected;
+            if (selected && selected.attr('href') !== undefined) {
+                window.location = selected.attr('href');
                 event.preventDefault();
                 return false;
             }
