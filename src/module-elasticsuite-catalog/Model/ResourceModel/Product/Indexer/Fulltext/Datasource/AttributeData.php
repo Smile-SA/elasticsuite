@@ -205,7 +205,7 @@ class AttributeData extends AbstractAttributeData
             ["configurable_attributes" => new \Zend_Db_Expr($configurableAttrExpr)]
         );
 
-        $select->group("main.{$childFieldName}");
+        $select->group(["main.{$parentFieldName}", "main.{$childFieldName}"]);
 
         return $this->addWebsiteFilter($select, "main", $childFieldName, $storeId);
     }
