@@ -74,7 +74,10 @@
                 "src/lib/web/fonts/elasticsuite",
                 "lib/web/fonts/elasticsuite"
             ]
-        ]
+        ],
+        "branch-alias" : {
+            "dev-master" : "2.5.x-dev"
+        }
     },
    "minimum-stability": "dev",
    "prefer-stable": true
