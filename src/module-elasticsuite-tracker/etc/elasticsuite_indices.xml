@@ -48,8 +48,12 @@
                 
                 <!-- Page data (product) -->
                 <field name="page.product.id" type="integer" />
-                <field name="page.product.sku" type="string" />
-                <field name="page.product.label" type="string" />
+                <field name="page.product.sku" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="page.product.label" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
                 
                 <!-- Page data (product list) -->
                 <field name="page.product_list.current_page" type="integer" />
@@ -62,12 +66,18 @@
                 <field name="page.product_list.filters.value" type="string" nestedPath="page.product_list.filters" />
                 
                 <!-- Page data (searches) -->
-                <field name="page.search.query" type="string" />
+                <field name="page.search.query" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
                 <field name="page.search.is_spellchecked" type="boolean" />
                 
                 <!-- Page data (CMS) -->
-                <field name="page.cms.identifier" type="string" />
-                <field name="page.cms.title" type="string" />
+                <field name="page.cms.identifier" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="page.cms.title" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
                 
                 <!-- Page data (order) -->
                 <field name="page.order.id" type="integer" />
@@ -101,11 +111,15 @@
         <type name="session" idFieldName="session_id">
             <mapping>
                 <field name="session_id" type="string"/>
+                <field name="start_date" type="date"/>
+                <field name="end_date" type="date"/>
                 <field name="visitor_id" type="string"/>
                 <field name="customer_id" type="integer"/>
                 <field name="product_view" type="integer" />
                 <field name="category_view" type="integer" />
-                <field name="search_query" type="string" />
+                <field name="search_query" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
                 <field name="product_sale" type="integer" />
                 <field name="category_sale" type="integer" />
             </mapping>
