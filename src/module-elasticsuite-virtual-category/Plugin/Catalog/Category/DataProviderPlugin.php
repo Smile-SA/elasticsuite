@@ -88,6 +88,10 @@ class DataProviderPlugin
             $data[$currentCategory->getId()]['use_default']['is_virtual_category'] = true;
         }
 
+        if ($currentCategory->getLevel() >= 2 && !isset($data[$currentCategory->getId()]['virtual_category_root'])) {
+            $data[$currentCategory->getId()]['virtual_category_root'] = $currentCategory->getPathIds()[1];
+        }
+
         $data[$currentCategory->getId()]['sorted_products'] = $this->getProductSavedPositions($currentCategory);
         $data[$currentCategory->getId()]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);
         $data[$currentCategory->getId()]['price_format'] = $this->localeFormat->getPriceFormat();
