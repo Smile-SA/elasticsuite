@@ -185,4 +185,23 @@
         </arguments>
     </type>
 
+    <!-- Layered Navigation Filters Configuration by Category -->
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="create_category_layered_navigation_filters" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttributeList\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="update_category_layered_navigation_filters" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttributeList\SaveHandler</item>
+                    </item>
+                    <item name="read" xsi:type="array">
+                        <item name="read_category_layered_navigation_filters" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttributeList\ReadHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

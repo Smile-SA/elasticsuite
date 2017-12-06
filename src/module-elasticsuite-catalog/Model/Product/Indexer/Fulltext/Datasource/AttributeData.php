@@ -93,6 +93,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 }
 
                 $indexData[$productId] += $indexValues;
+
+                if (!isset($indexData[$productId]['indexed_attributes'])) {
+                    $indexData[$productId]['indexed_attributes'] = [];
+                }
+                $indexData[$productId]['indexed_attributes'][] = $attribute->getAttributeCode();
             }
         }
 
@@ -109,7 +114,9 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     private function addChildData(&$parentData, $childAttributes)
     {
-        $authorizedChildAttributes = $parentData['children_attributes'];
+        $authorizedChildAttributes   = $parentData['children_attributes'];
+        $authorizedChildAttributes[] = 'indexed_attributes';
+
         $addedChildAttributesData  = array_filter(
             $childAttributes,
             function ($attributeCode) use ($authorizedChildAttributes) {

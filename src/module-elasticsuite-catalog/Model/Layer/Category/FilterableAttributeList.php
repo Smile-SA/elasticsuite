@@ -23,6 +23,21 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Category;
 class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\FilterableAttributeList
 {
     /**
+     * {@inheritdoc}
+     */
+    public function getList($category = null)
+    {
+        $collection = $this->collectionFactory->create(['category' => $category]);
+        $collection->setItemObjectClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
+            ->addStoreLabel($this->storeManager->getStore()->getId())
+            ->setOrder('position', 'ASC');
+
+        $collection = $this->_prepareAttributeCollection($collection);
+
+        return $collection;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */

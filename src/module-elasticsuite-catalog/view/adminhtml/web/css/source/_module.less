@@ -130,3 +130,79 @@
         }
     }
 }
+
+.smile-elasticsuite-filterable-attributes {
+
+    .admin__field-tooltip {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .irrelevant-panel {
+        float:left;
+        clear: both;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+    .irrelevant-show-hide {
+        cursor: pointer;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        display: block;
+    }
+
+    .admin__control-table-wrapper {
+        float:left;
+    }
+
+    table {
+
+        background: repeating-linear-gradient(
+            45deg,
+            #ffffff,
+            #ffffff 10px,
+            #e3e3e3 10px,
+            #e3e3e3 20px
+        );
+
+        thead {
+            th {
+                background: #ffffff;
+                border: solid #c9c2b8;
+                border-width: 0 0 1px;
+                padding: 7px;
+                white-space: nowrap;
+                text-align: center;
+                vertical-align: middle;
+            }
+        }
+
+        tbody, thead {
+            tr {
+                td {
+                    background-color: transparent;
+                    white-space: nowrap;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 2px 7px;
+                    span {
+                        padding:0;
+                    }
+                }
+
+                td.col-draggable {
+                    padding-top: 4px;
+                }
+            }
+
+            tr.odd {
+                background: #ffffff;
+            }
+
+            tr.even {
+                background: #fbfaf6;
+            }
+        }
+    }
+}
