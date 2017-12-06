@@ -29,7 +29,7 @@ class IndexResolver
     private $indices = [];
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\IndexFactoryInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory
      */
     private $indexFactory;
 
