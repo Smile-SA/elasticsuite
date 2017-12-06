@@ -67,11 +67,12 @@ class Builder
     {
         $sortField = $sortOrder->getField();
 
-        $sortOrderConfig = [
-            'order'         => $sortOrder->getDirection(),
-            'missing'       => $sortOrder->getDirection() == SortOrderInterface::SORT_ASC ? '_last' : '_first',
-            'unmapped_type' => FieldInterface::FIELD_TYPE_STRING,
-        ];
+        $sortOrderConfig = ['order' => $sortOrder->getDirection()];
+
+        if ($sortField !== SortOrderInterface::DEFAULT_SORT_FIELD) {
+            $sortOrderConfig['missing']       = $sortOrder->getDirection() == SortOrderInterface::SORT_ASC ? '_last' : '_first';
+            $sortOrderConfig['unmapped_type'] = FieldInterface::FIELD_TYPE_STRING;
+        }
 
         if ($sortOrder->getType() == SortOrderInterface::TYPE_NESTED) {
             $sortOrderConfig['nested_path']   = $sortOrder->getNestedPath();

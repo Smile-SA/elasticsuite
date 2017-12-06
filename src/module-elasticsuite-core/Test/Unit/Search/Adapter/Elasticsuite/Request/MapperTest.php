@@ -63,7 +63,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 
-        $this->assertEquals('query', $mappedRequest['filter']);
+        $this->assertEquals('query', $mappedRequest['post_filter']);
     }
 
     /**

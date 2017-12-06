@@ -82,7 +82,7 @@ class Mapper
 
         $filter = $this->getRootFilter($request);
         if ($filter) {
-            $searchRequest['filter'] = $filter;
+            $searchRequest['post_filter'] = $filter;
         }
 
         $aggregations = $this->getAggregations($request);

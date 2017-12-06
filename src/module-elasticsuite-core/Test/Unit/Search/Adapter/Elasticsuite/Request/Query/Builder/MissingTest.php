@@ -38,9 +38,11 @@ class MissingTest extends AbstractSimpleQueryBuilderTest
         $missingQuery = new MissingQuery('field');
         $query = $builder->buildQuery($missingQuery);
 
-        $this->assertArrayHasKey('missing', $query);
-        $this->assertArrayHasKey('field', $query['missing']);
-        $this->assertArrayNotHasKey('_name', $query['missing']);
+        $this->assertArrayHasKey('bool', $query);
+        $this->assertArrayHasKey('must_not', $query['bool']);
+        $this->assertArrayHasKey('exists', $query['bool']['must_not']);
+        $this->assertArrayHasKey('field', $query['bool']['must_not']['exists']);
+        $this->assertArrayNotHasKey('_name', $query['bool']);
     }
 
     /**
@@ -55,8 +57,8 @@ class MissingTest extends AbstractSimpleQueryBuilderTest
         $missingQuery = new MissingQuery('field', 'queryName');
         $query = $builder->buildQuery($missingQuery);
 
-        $this->assertArrayHasKey('_name', $query['missing']);
-        $this->assertEquals('queryName', $query['missing']['_name']);
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
     }
 
     /**

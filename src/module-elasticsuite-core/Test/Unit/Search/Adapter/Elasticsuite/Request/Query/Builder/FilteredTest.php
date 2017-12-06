@@ -38,17 +38,17 @@ class FilteredTest extends AbstractComplexQueryBuilderTest
         $filteredQuery = new FilteredQuery($this->getSubQueryMock('baseQuery'), $this->getSubQueryMock('filterQuery'));
         $query = $builder->buildQuery($filteredQuery);
 
-        $this->assertArrayHasKey('filtered', $query);
+        $this->assertArrayHasKey('bool', $query);
 
-        $this->assertArrayHasKey('query', $query['filtered']);
-        $this->assertEquals('baseQuery', $query['filtered']['query']);
+        $this->assertArrayHasKey('must', $query['bool']);
+        $this->assertEquals('baseQuery', $query['bool']['must']);
 
-        $this->assertArrayHasKey('filter', $query['filtered']);
-        $this->assertEquals('filterQuery', $query['filtered']['filter']);
+        $this->assertArrayHasKey('filter', $query['bool']);
+        $this->assertEquals('filterQuery', $query['bool']['filter']);
 
-        $this->assertEquals(FilteredQuery::DEFAULT_BOOST_VALUE, $query['filtered']['boost']);
+        $this->assertEquals(FilteredQuery::DEFAULT_BOOST_VALUE, $query['bool']['boost']);
 
-        $this->assertArrayNotHasKey('_name', $query['filtered']);
+        $this->assertArrayNotHasKey('_name', $query['bool']);
     }
 
     /**
@@ -63,8 +63,8 @@ class FilteredTest extends AbstractComplexQueryBuilderTest
         $filteredQuery = new FilteredQuery($this->getSubQueryMock('baseQuery'), $this->getSubQueryMock('filterQuery'), 'queryName');
         $query = $builder->buildQuery($filteredQuery);
 
-        $this->assertArrayHasKey('_name', $query['filtered']);
-        $this->assertEquals('queryName', $query['filtered']['_name']);
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
     }
 
     /**

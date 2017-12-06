@@ -84,6 +84,10 @@ class AggregationBuilder
                     $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
                     $bucketParams['nestedFilter'] = $nestedFilter->getQuery();
                 }
+
+                if (isset($bucketParams['childBuckets'])) {
+                    $bucketParams['childBuckets'] = $this->buildAggregations($containerConfiguration, $bucketParams['childBuckets'], []);
+                }
             } catch (\Exception $e) {
                 $bucketParams = $aggregationParams['config'];
             }

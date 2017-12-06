@@ -262,11 +262,12 @@ class Mapping implements MappingInterface
      */
     private function addProperty(array $properties, $propertyName, $propertyType, $analyzers = [])
     {
-        $property = ['type' => FieldInterface::FIELD_TYPE_MULTI];
+        $property = ['type' => FieldInterface::FIELD_TYPE_STRING, 'analyzer' => FieldInterface::ANALYZER_STANDARD];
 
         foreach ($analyzers as $analyzer) {
-            $subFieldName = $analyzer == FieldInterface::ANALYZER_STANDARD ? $propertyName : $analyzer;
-            $property['fields'][$subFieldName] = ['type' => $propertyType, 'analyzer' => $analyzer];
+            if ($analyzer !== FieldInterface::ANALYZER_STANDARD) {
+                $property['fields'][$analyzer] = ['type' => $propertyType, 'analyzer' => $analyzer];
+            }
         }
 
         $properties[$propertyName] = $property;
@@ -329,15 +330,6 @@ class Mapping implements MappingInterface
         if (!empty($copyToProperties)) {
             // For normal fields, copy_to is append at the property root.
             $copyToRoot = &$property;
-            if ($property['type'] == FieldInterface::FIELD_TYPE_MULTI) {
-                /*
-                 * For field with type "multi_field", the copy_to has to be added in the
-                 * default subfield.
-                 * This is changing the root.
-                 */
-                $copyToRoot = &$property['fields'][$fieldName];
-            }
-
             $copyToRoot['copy_to'] = $copyToProperties;
         }
 

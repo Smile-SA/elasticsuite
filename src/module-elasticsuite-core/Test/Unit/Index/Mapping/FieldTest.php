@@ -66,7 +66,8 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('child', $field->getNestedFieldName());
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertArrayHasKey('child', $mappingPropertyConfig['fields']);
+        $this->assertArrayHasKey('fields', $mappingPropertyConfig);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_UNTOUCHED, $mappingPropertyConfig['fields']);
     }
 
     /**
@@ -101,7 +102,6 @@ class FieldTest extends \PHPUnit\Framework\TestCase
             $mappingPropertyConfig = $field->getMappingPropertyConfig();
             $this->assertEquals($type, $mappingPropertyConfig['type']);
             $this->assertEquals(true, $mappingPropertyConfig['doc_values']);
-            $this->assertEquals(false, $mappingPropertyConfig['norms']['enabled']);
 
             if ($type === FieldInterface::FIELD_TYPE_DATE) {
                 $this->assertEquals('yyyy-MM-dd HH:mm:ss||yyyy-MM-dd', $mappingPropertyConfig['format']);
@@ -123,9 +123,9 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $field       = new Field('field', $fieldType, null, $fieldConfig);
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertEquals(FieldInterface::FIELD_TYPE_MULTI, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $mappingPropertyConfig['type']);
 
-        $this->assertEquals(FieldInterface::ANALYZER_STANDARD, $mappingPropertyConfig['fields']['field']['analyzer']);
+        $this->assertEquals(FieldInterface::ANALYZER_STANDARD, $mappingPropertyConfig['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_WHITESPACE, $mappingPropertyConfig['fields']['whitespace']['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_SHINGLE, $mappingPropertyConfig['fields']['shingle']['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_SORTABLE, $mappingPropertyConfig['fields']['sortable']['analyzer']);

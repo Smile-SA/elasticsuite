@@ -234,7 +234,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $result[$metrics['value']] = $metrics;
+                $result[$value->getValue()] = $metrics['count'];
             }
         }
 

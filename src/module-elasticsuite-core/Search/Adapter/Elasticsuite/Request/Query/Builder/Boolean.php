@@ -31,6 +31,15 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
     const QUERY_CONDITION_SHOULD = 'should';
 
     /**
+     * @var array
+     */
+    private $booleanClauses = [
+        self::QUERY_CONDITION_MUST,
+        self::QUERY_CONDITION_NOT,
+        self::QUERY_CONDITION_SHOULD,
+    ];
+
+    /**
      * {@inheritDoc}
      */
     public function buildQuery(QueryInterface $query)
@@ -41,13 +50,7 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
 
         $searchQuery = [];
 
-        $clauses = [
-            self::QUERY_CONDITION_MUST,
-            self::QUERY_CONDITION_NOT,
-            self::QUERY_CONDITION_SHOULD,
-        ];
-
-        foreach ($clauses as $clause) {
+        foreach ($this->booleanClauses as $clause) {
             $queries = array_map(
                 [$this->parentBuilder, 'buildQuery'],
                 $this->getQueryClause($query, $clause)
@@ -55,7 +58,10 @@ class Boolean extends AbstractComplexBuilder implements BuilderInterface
             $searchQuery[$clause] = array_filter($queries);
         }
 
-        $searchQuery['minimum_should_match'] = $query->getMinimumShouldMatch();
+        if (!empty($searchQuery[self::QUERY_CONDITION_SHOULD])) {
+            $searchQuery['minimum_should_match'] = $query->getMinimumShouldMatch();
+        }
+
         $searchQuery['boost']                = $query->getBoost();
 
         if ($query->isCached()) {

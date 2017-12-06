@@ -96,7 +96,7 @@ class Spellchecker implements SpellcheckerInterface
                 $spellingType = self::SPELLING_TYPE_MOST_FUZZY;
             }
         } catch (\Exception $e) {
-            ;
+            $spellingType = self::SPELLING_TYPE_EXACT;
         }
 
         return $spellingType;
@@ -143,9 +143,7 @@ class Spellchecker implements SpellcheckerInterface
         $termVectorsQuery = [
             'index'           => $request->getIndex(),
             'type'            => $request->getType(),
-            'id'              => '',
             'term_statistics' => true,
-            'dfs'             => true,
         ];
 
         $termVectorsQuery['body']['doc'] = [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()];

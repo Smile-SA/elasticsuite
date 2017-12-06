@@ -21,53 +21,148 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class AggregationFactory extends \Magento\Framework\Search\Adapter\Mysql\AggregationFactory
+class AggregationFactory
 {
     /**
-     * {@inheritDoc}
+     * @var \Magento\Framework\Search\Response\AggregationFactory
      */
-    public function create(array $rawAggregation)
-    {
-        $aggregations = $this->preprocessAggregations($rawAggregation);
+    private $aggregationFactory;
 
-        return parent::create($aggregations);
+    /**
+     * @var \Magento\Framework\Search\Response\BucketFactory
+     */
+    private $bucketFactory;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\ValueFactory
+     */
+    private $valueFactory;
+
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Framework\Search\Response\AggregationFactory                                 $aggregationFactory Aggregation factory.
+     * @param \Magento\Framework\Search\Response\BucketFactory                                      $bucketFactory      Bucket factory.
+     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\ValueFactory $valueFactory       Value factory.
+     */
+    public function __construct(
+        \Magento\Framework\Search\Response\AggregationFactory $aggregationFactory,
+        \Magento\Framework\Search\Response\BucketFactory $bucketFactory,
+        \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\ValueFactory $valueFactory
+    ) {
+        $this->aggregationFactory = $aggregationFactory;
+        $this->bucketFactory      = $bucketFactory;
+        $this->valueFactory       = $valueFactory;
     }
 
     /**
-     * Derefences children aggregations (nested and filter) while they have the same name.
+     * Build a aggregation object from the search engine response.
      *
-     * @param array $rawAggregation ES Aggregations response.
+     * @param array $rawAggregations ES aggregations response.
      *
-     * @return array
+     * @return \Magento\Framework\Search\Response\Aggregation
      */
-    private function preprocessAggregations(array $rawAggregation)
+    public function create(array $rawAggregations)
     {
-        $processedAggregations = [];
+        $buckets = $this->getBuckets($rawAggregations);
 
-        foreach ($rawAggregation as $bucketName => $aggregation) {
-            while (isset($aggregation[$bucketName])) {
-                $aggregation = $aggregation[$bucketName];
-            }
-            if (isset($aggregation['buckets'])) {
-                foreach ($aggregation['buckets'] as $key => $currentBuket) {
-                    if (isset($currentBuket['key'])) {
-                        $key = $currentBuket['key'];
-                    }
+        return $this->aggregationFactory->create(['buckets' => $buckets]);
+    }
 
-                    $processedAggregations[$bucketName][$key] = [
-                        'value' => $key,
-                        'count' => $currentBuket['doc_count'],
-                    ];
-                }
+    /**
+     * Return buckets from an ES aggregation.
+     *
+     * @param array $rawAggregations ES aggregations.
+     *
+     * @return \Magento\Framework\Search\Response\Bucket[]
+     */
+    private function getBuckets($rawAggregations)
+    {
+        $buckets = [];
+
+        foreach ($rawAggregations as $bucketName => $rawBucket) {
+            while (isset($rawBucket[$bucketName])) {
+                $rawBucket = $rawBucket[$bucketName];
             }
-            if (isset($aggregation['sum_other_doc_count'])) {
-                $processedAggregations[$bucketName]['__other_docs'] = [
-                    'value' => '__other_docs',
-                    'count' => $aggregation['sum_other_doc_count'],
-                ];
+
+            $bucketParams = ['name' => $bucketName, 'values' => $this->getBucketValues($rawBucket)];
+            $buckets[$bucketName] = $this->bucketFactory->create($bucketParams);
+        }
+
+        return $buckets;
+    }
+
+    /**
+     * Return a bucket from an ES aggregation.
+     *
+     * @param array $rawBucket ES bucket.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\Value[]
+     */
+    private function getBucketValues($rawBucket)
+    {
+        $values = [];
+
+        if (isset($rawBucket['sum_other_doc_count']) && $rawBucket['sum_other_doc_count'] > 0) {
+            $rawBucket['buckets']['__other_docs']['doc_count'] = $rawBucket['sum_other_doc_count'];
+        }
+
+        foreach ($rawBucket['buckets'] as $key => $value) {
+            if (isset($value['key'])) {
+                $key = $value['key'];
+                unset($value['key']);
+            }
+
+            $valueParams = [
+                'value'        => $key,
+                'metrics'      => $this->getMetrics($value),
+                'aggregations' => $this->getSubAggregations($value),
+            ];
+
+            $values[] = $this->valueFactory->create($valueParams);
+        }
+
+        return $values;
+    }
+
+    /**
+     * Parse a bucket and returns metrics.
+     *
+     * @param array $rawValue Bucket data.
+     *
+     * @return mixed
+     */
+    private function getMetrics($rawValue)
+    {
+        $metrics = [];
+
+        foreach ($rawValue as $metricName => $value) {
+            if (!is_array($value) || !isset($value['buckets'])) {
+                $metricName = $metricName == 'doc_count' ? 'count' : $metricName;
+                $metrics[$metricName] = $value;
             }
         }
 
-        return $processedAggregations;
+        return $metrics;
+    }
+
+    /**
+     * Parse a bucket and returns sub-aggregations.
+     *
+     * @param array $rawValue Bucket data.
+     *
+     * @return \Magento\Framework\Search\Response\Aggregation
+     */
+    private function getSubAggregations($rawValue)
+    {
+        $subAggregations = [];
+
+        foreach ($rawValue as $key => $value) {
+            if (is_array($value) && isset($value['buckets'])) {
+                $subAggregations[$key] = $value;
+            }
+        }
+
+        return $this->create($subAggregations);
     }
 }
