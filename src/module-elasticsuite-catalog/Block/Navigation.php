@@ -156,16 +156,16 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     private function addFacets()
     {
-        $productCollection = $this->getLayer()->getProductCollection();
-        $countBySetId      = $productCollection->getProductCountByAttributeSetId();
-        $totalCount        = $productCollection->getSize();
+        $productCollection    = $this->getLayer()->getProductCollection();
+        $countByAttributeCode = $productCollection->getProductCountByAttributeCode();
+        $totalCount           = $productCollection->getSize();
 
         foreach ($this->filterList->getFilters($this->_catalogLayer) as $filter) {
             try {
-                $attribute                = $filter->getAttributeModel();
-                $facetCoverageRate        = $attribute->getFacetMinCoverageRate();
-                $attributeCountCandidates = array_sum(array_intersect_key($countBySetId, $attribute->getAttributeSetInfo()));
-                $currentCoverageRate      = $attributeCountCandidates / $totalCount * 100;
+                $attribute           = $filter->getAttributeModel();
+                $facetCoverageRate   = $attribute->getFacetMinCoverageRate();
+                $attributeCount      = $countByAttributeCode[$attribute->getAttributeCode()] ?? 0;
+                $currentCoverageRate = (int) $attributeCount / $totalCount * 100;
 
                 if ($facetCoverageRate < $currentCoverageRate) {
                     $filter->addFacetToCollection();

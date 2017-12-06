@@ -77,6 +77,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * @var array
      */
+    private $countByAttributeCode;
+
+    /**
+     * @var array
+     */
     private $fieldNameMapping = [
         'price'        => 'price.price',
         'position'     => 'category.position',
@@ -331,6 +336,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Load the product count by attribute set id.
      *
+     * @deprecated Replaced by getProductCountByAttributeCode
+     *
      * @return array
      */
     public function getProductCountByAttributeSetId()
@@ -341,6 +348,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this->countByAttributeSet;
     }
+
+    /**
+     * Load the product count by attribute code.
+     *
+     * @return array
+     */
+    public function getProductCountByAttributeCode()
+    {
+        if ($this->countByAttributeCode === null) {
+            $this->loadProductCounts();
+        }
+
+        return $this->countByAttributeCode;
+    }
+
 
     /**
      * Filter in stock product.
@@ -557,7 +579,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Load product count :
      *  - collection size
-     *  - number of products by attribute set
+     *  - number of products by attribute set (legacy)
+     *  - number of products by attribute code
      *
      * @return void
      */
@@ -569,7 +592,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         // Query text.
         $queryText = $this->queryText;
 
-        $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
+        $facets = [
+            'attribute_set_id'   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
+            'indexed_attributes' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
+        ];
 
         $searchRequest = $this->requestBuilder->create(
             $storeId,
@@ -580,21 +606,30 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             [],
             $this->filters,
             $this->queryFilters,
-            $setIdFacet
+            $facets
         );
 
         $searchResponse = $this->searchEngine->search($searchRequest);
 
-        $this->_totalRecords       = $searchResponse->count();
-        $this->countByAttributeSet = [];
-        $this->isSpellchecked = $searchRequest->isSpellchecked();
+        $this->_totalRecords        = $searchResponse->count();
+        $this->countByAttributeSet  = [];
+        $this->countByAttributeCode = [];
+        $this->isSpellchecked       = $searchRequest->isSpellchecked();
 
-        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
+        $attributeSetIdBucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
+        $attributeCodeBucket  = $searchResponse->getAggregations()->getBucket('indexed_attributes');
 
-        if ($bucket) {
-            foreach ($bucket->getValues() as $value) {
+        if ($attributeSetIdBucket) {
+            foreach ($attributeSetIdBucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
                 $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
+            }
+        }
+
+        if ($attributeCodeBucket) {
+            foreach ($attributeCodeBucket->getValues() as $value) {
+                $metrics = $value->getMetrics();
+                $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
             }
         }
     }
