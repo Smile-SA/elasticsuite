@@ -37,16 +37,17 @@ class QueryBuilder
      * @var array
      */
     private $mappedConditions = [
-        'eq'     => 'values',
-        'seq'    => 'values',
-        'in'     => 'values',
-        'from'   => 'gte',
-        'moreq'  => 'gte',
-        'gteq'   => 'gte',
-        'to'     => 'lte',
-        'lteq'   => 'lte',
-        'like'   => 'queryText',
-        'in_set' => 'values',
+        'eq'       => 'values',
+        'seq'      => 'values',
+        'in'       => 'values',
+        'from'     => 'gte',
+        'moreq'    => 'gte',
+        'gteq'     => 'gte',
+        'to'       => 'lte',
+        'lteq'     => 'lte',
+        'like'     => 'queryText',
+        'fulltext' => 'queryText',
+        'in_set'   => 'values',
     ];
 
     /**

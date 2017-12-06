@@ -40,16 +40,24 @@ class AggregationBuilder
     private $queryBuilder;
 
     /**
+     * @var MetricFactory
+     */
+    private $metricFactory;
+
+    /**
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
+     * @param MetricFactory      $metricFactory      Factory used to instantiate metrics.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
         AggregationFactory $aggregationFactory,
+        MetricFactory $metricFactory,
         QueryBuilder $queryBuilder
     ) {
         $this->aggregationFactory = $aggregationFactory;
+        $this->metricFactory      = $metricFactory;
         $this->queryBuilder       = $queryBuilder;
     }
 
@@ -92,6 +100,8 @@ class AggregationBuilder
                 $bucketParams = $aggregationParams['config'];
             }
 
+            $bucketParams['metrics'] = $this->getMetrics($containerConfiguration, $aggregationParams);
+
             $buckets[] = $this->aggregationFactory->create($bucketType, $bucketParams);
         }
 
@@ -130,8 +140,7 @@ class AggregationBuilder
 
         $bucketParams = [
             'field'   => $bucketField,
-            'name'    => $field->getName(),
-            'metrics' => [],
+            'name'    => isset($aggregationParams['config']['name']) ? $aggregationParams['config']['name'] : $field->getName(),
             'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];
 
@@ -148,5 +157,32 @@ class AggregationBuilder
         }
 
         return $bucketParams;
+    }
+
+    /**
+     * Build buckets metric.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container config.
+     * @param array                           $aggregationParams      Aggregation params.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\Aggregation\Metric[]
+     */
+    private function getMetrics(ContainerConfigurationInterface $containerConfiguration, array $aggregationParams)
+    {
+        $metrics = [];
+        if (isset($aggregationParams['config']['metrics'])) {
+            foreach ($aggregationParams['config']['metrics'] as $metricName => $metricConfig) {
+                try {
+                    $field = $containerConfiguration->getMapping()->getField($metricConfig['field']);
+                    $metricConfig['field'] = $field->getName();
+                } catch (\Exception $e) {
+                    ;
+                }
+
+                $metrics[] = $this->metricFactory->create(['name' => $metricName] + $metricConfig);
+            }
+        }
+
+        return $metrics;
     }
 }

@@ -1,13 +1,10 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticsuiteCore module loading configuration.
- *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
@@ -16,10 +13,10 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="Smile_ElasticsuiteTracker" setup_version="1.1.0">
-        <sequence>
-            <module name="Smile_ElasticsuiteCore"/>
-        </sequence>
-    </module>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="standard">
+        <route id="elasticsuite" frontName="elasticsuite">
+            <module name="Smile_ElasticsuiteTracker" />
+        </route>
+    </router>
 </config>

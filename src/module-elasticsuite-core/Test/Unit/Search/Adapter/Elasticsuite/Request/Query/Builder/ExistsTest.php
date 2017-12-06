@@ -1,0 +1,69 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
+
+use Smile\ElasticsuiteCore\Search\Request\Query\Exists as ExistsQuery;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Exists as ExistsQueryBuilder;
+
+/**
+ * Exists search request query test case.
+ *
+ * @category  Smile_Elasticsuite
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
+class ExistsTest extends AbstractSimpleQueryBuilderTest
+{
+    /**
+     * Test the builder with mandatory params only.
+     *
+     * @return void
+     */
+    public function testAnonymousMissingQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $missingQuery = new ExistsQuery('field');
+        $query = $builder->buildQuery($missingQuery);
+
+        $this->assertArrayHasKey('exists', $query);
+        $this->assertArrayHasKey('field', $query['exists']);
+        $this->assertArrayNotHasKey('_name', $query['exists']);
+    }
+
+    /**
+     * Test the builder with mandatory + name params.
+     *
+     * @return void
+     */
+    public function testNamedMissingQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $missingQuery = new ExistsQuery('field', 'queryName');
+        $query = $builder->buildQuery($missingQuery);
+
+        $this->assertArrayHasKey('_name', $query['exists']);
+        $this->assertEquals('queryName', $query['exists']['_name']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getQueryBuilder()
+    {
+        return new ExistsQueryBuilder();
+    }
+}

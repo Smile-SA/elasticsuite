@@ -21,6 +21,9 @@
     <!-- Client config and factory DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface"
                 type="Smile\ElasticsuiteCore\Client\ClientFactory" />
+                
+    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientInterface"
+                type="Smile\ElasticsuiteCore\Client\Client" />
 
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />
@@ -76,6 +79,7 @@
                 <item name="filteredQuery" xsi:type="object">filteredQueryFactory</item>
                 <item name="nestedQuery" xsi:type="object">nestedQueryFactory</item>
                 <item name="notQuery" xsi:type="object">notQueryFactory</item>
+                <item name="existsQuery" xsi:type="object">existsQueryFactory</item>
                 <item name="missingQuery" xsi:type="object">missingQueryFactory</item>
                 <item name="termQuery" xsi:type="object">termQueryFactory</item>
                 <item name="termsQuery" xsi:type="object">termsQueryFactory</item>
@@ -92,6 +96,7 @@
     <virtualType name="filteredQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory" />
     <virtualType name="nestedQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory" />
     <virtualType name="notQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NotFactory" />
+    <virtualType name="existsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\ExistsFactory" />
     <virtualType name="missingQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory" />
     <virtualType name="termQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermFactory" />
     <virtualType name="termsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory" />
@@ -109,6 +114,7 @@
                 <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nested\Proxy</item>
                 <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Not\Proxy</item>
                 <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing\Proxy</item>
+                <item name="existsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Exists\Proxy</item>
                 <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term\Proxy</item>
                 <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms\Proxy</item>
                 <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range\Proxy</item>
@@ -125,6 +131,7 @@
             <argument name="factories" xsi:type="array">
                 <item name="termBucket" xsi:type="object">termBucketFactory</item>
                 <item name="histogramBucket" xsi:type="object">histogramBucketFactory</item>
+                <item name="dateHistogramBucket" xsi:type="object">dateHistogramBucketFactory</item>
                 <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
             </argument>
         </arguments>
@@ -132,6 +139,7 @@
 
     <virtualType name="termBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory" />
     <virtualType name="histogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory" />
+    <virtualType name="dateHistogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\DateHistogramFactory" />
     <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
@@ -139,6 +147,7 @@
             <argument name="builders" xsi:type="array">
                 <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term\Proxy</item>
                 <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram\Proxy</item>
+                <item name="dateHistogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\DateHistogram\Proxy</item>
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
             </argument>
         </arguments>

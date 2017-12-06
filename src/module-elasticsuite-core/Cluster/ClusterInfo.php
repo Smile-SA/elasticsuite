@@ -26,7 +26,7 @@ use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
 class ClusterInfo implements ClusterInfoInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientInterface
      */
     private $client;
 
@@ -38,11 +38,11 @@ class ClusterInfo implements ClusterInfoInterface
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface $clientFactory ElasticSearch client factory.
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client ElasticSearch client.
      */
-    public function __construct(\Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface $clientFactory)
+    public function __construct(\Smile\ElasticsuiteCore\Api\Client\ClientInterface $client)
     {
-        $this->client = $clientFactory->createClient();
+        $this->client = $client;
     }
 
     /**

@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite;
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Adapter;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Psr\Log\LoggerInterface;
@@ -32,7 +32,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 class AdapterTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientInterface
      */
     private $client;
 
@@ -85,10 +85,10 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     {
         $queryResponseFactory = $this->getQueryResponseFactoryMock();
         $requestMapper        = $this->getRequestMapperMock();
-        $clientFactory        = $this->getClientFactoryMock();
+        $client               = $this->getClientMock();
         $logger               = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
-        $this->adapter = new Adapter($queryResponseFactory, $requestMapper, $clientFactory, $logger);
+        $this->adapter = new Adapter($queryResponseFactory, $requestMapper, $client, $logger);
     }
 
     /**
@@ -127,13 +127,10 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
      *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function getClientFactoryMock()
+    private function getClientMock()
     {
-        $this->client = $this->getMockBuilder(\Elasticsearch\Client::class)->disableOriginalConstructor()->getMock();
+        $this->client = $this->getMockBuilder(ClientInterface::class)->disableOriginalConstructor()->getMock();
 
-        $clientFactoryMock = $this->getMockBuilder(ClientFactoryInterface::class)->getMock();
-        $clientFactoryMock->method('createClient')->will($this->returnValue($this->client));
-
-        return $clientFactoryMock;
+        return $this->client;
     }
 }

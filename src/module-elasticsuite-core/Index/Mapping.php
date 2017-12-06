@@ -292,33 +292,21 @@ class Mapping implements MappingInterface
         // Read property config from the field.
         $property = $field->getMappingPropertyConfig();
 
-        if ($field->isNested()) {
-            /*
-             * Nested field management :
-             *
-             * For nested field we need to
-             *   - change the insertion root to the parent field.
-             *   - create the parent field with type nested if not yet exists.
-             *   - using the suffix name of the field instead of the name including nested path.
-             *
-             * Ex: "price.is_discount" field has to be inserted with name "is_discount" into the "price" field.
-             *
-             */
-            $nestedPath = $field->getNestedPath();
+        $fieldPathArray   = explode('.', $fieldName);
+        $currentPathArray = [];
+        $fieldPathSize    = count($fieldPathArray);
 
-            if (!isset($properties[$nestedPath])) {
-                $properties[$nestedPath] = ['type' => FieldInterface::FIELD_TYPE_NESTED, 'properties' => []];
+        for ($i = 0; $i < $fieldPathSize - 1; $i++) {
+            $currentPathArray[] = $fieldPathArray[$i];
+            $currentPath        = implode('.', $currentPathArray);
+
+            if ($field->isNested() && $field->getNestedPath() == $currentPath && !isset($fieldRoot[$fieldPathArray[$i]])) {
+                $fieldRoot[$fieldPathArray[$i]] = ['type' => FieldInterface::FIELD_TYPE_NESTED, 'properties' => []];
+            } elseif (!isset($fieldRoot[$fieldPathArray[$i]])) {
+                $fieldRoot[$fieldPathArray[$i]] = ['type' => FieldInterface::FIELD_TYPE_OBJECT, 'properties' => []];
             }
 
-            $fieldRoot = &$properties[$nestedPath]['properties'];
-            $fieldName = $field->getNestedFieldName();
-        } elseif (strstr($fieldName, '.')) {
-            $fieldPathArray = explode('.', $fieldName);
-            if (!isset($properties[current($fieldPathArray)])) {
-                $properties[current($fieldPathArray)] = ['type' => FieldInterface::FIELD_TYPE_OBJECT, 'properties' => []];
-            }
-            $fieldRoot = &$properties[current($fieldPathArray)]['properties'];
-            $fieldName = end($fieldPathArray);
+            $fieldRoot = &$fieldRoot[$fieldPathArray[$i]]['properties'];
         }
 
         /*
@@ -333,7 +321,7 @@ class Mapping implements MappingInterface
             $copyToRoot['copy_to'] = $copyToProperties;
         }
 
-        $fieldRoot[$fieldName] = $property;
+        $fieldRoot[end($fieldPathArray)] = $property;
 
         return $properties;
     }

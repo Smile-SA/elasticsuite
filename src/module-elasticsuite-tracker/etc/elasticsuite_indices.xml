@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalog indices configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
+
+    <index identifier="tracking_log_event" defaultSearchType="event">
+        <type name="event" idFieldName="event_id">
+            <mapping>
+                <!-- Event metadata -->
+                <field name="event_id" type="string" />
+                <field name="date" type="date" />
+
+                <!-- Session data -->
+                <field name="session.uid" type="string" />
+                <field name="session.vid" type="string" />
+                <field name="session.customer_id" type="integer" />
+                
+                <!-- Page metadata -->
+                <field name="page.site" type="string" />
+                <field name="page.store_id" type="integer" />
+                <field name="page.title" type="string" />
+                <field name="page.url" type="string" />
+                
+                <!-- Page data (type) -->
+                <field name="page.type.identifier" type="string" />
+                <field name="page.type.label" type="string" />
+                
+                <!-- Page data (category) -->
+                <field name="page.category.id" type="integer" />
+                <field name="page.category.label" type="string" />
+                <field name="page.category.path" type="string" />
+                
+                <!-- Page data (product) -->
+                <field name="page.product.id" type="integer" />
+                <field name="page.product.sku" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="page.product.label" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                
+                <!-- Page data (product list) -->
+                <field name="page.product_list.current_page" type="integer" />
+                <field name="page.product_list.page_count" type="integer" />
+                <field name="page.product_list.product_count" type="integer" />
+                <field name="page.product_list.display_mode" type="string" />
+                <field name="page.product_list.sort_order" type="string" />
+                <field name="page.product_list.sort_direction" type="string" />
+                <field name="page.product_list.filters.name" type="string" nestedPath="page.product_list.filters" />
+                <field name="page.product_list.filters.value" type="string" nestedPath="page.product_list.filters" />
+                
+                <!-- Page data (searches) -->
+                <field name="page.search.query" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="page.search.is_spellchecked" type="boolean" />
+                
+                <!-- Page data (CMS) -->
+                <field name="page.cms.identifier" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="page.cms.title" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                
+                <!-- Page data (order) -->
+                <field name="page.order.id" type="integer" />
+                <field name="page.order.grand_total" type="double" />
+                <field name="page.order.discount_total" type="double" />
+                <field name="page.order.shipping_total" type="double" />
+                <field name="page.order.subtotal" type="double" />
+                <field name="page.order.payment_method" type="string" />
+                <field name="page.order.shipping_method" type="string" />
+                <field name="page.order.salesrules" type="string" />
+                <field name="page.order.items.sku" type="string" nestedPath="page.order.items" />
+                <field name="page.order.items.product_id" type="string" nestedPath="page.order.items" />
+                <field name="page.order.items.category_ids" type="integer" nestedPath="page.order.items" />
+                <field name="page.order.items.label" type="string" nestedPath="page.order.items" />
+                <field name="page.order.items.price" type="double" nestedPath="page.order.items" />
+                <field name="page.order.items.row_total" type="double" nestedPath="page.order.items" />
+                <field name="page.order.items.qty" type="integer" nestedPath="page.order.items" />
+                
+                <!-- Page data (referrer) -->
+                <field name="page.referrer.domain" type="string" />
+                <field name="page.referrer.page" type="string" />
+                
+                <!-- Page data (resolution) -->
+                <field name="page.resolution.x" type="integer" />
+                <field name="page.resolution.y" type="integer" />
+            </mapping>
+        </type>
+    </index>
+
+    <index identifier="tracking_log_session" defaultSearchType="session">
+        <type name="session" idFieldName="session_id">
+            <mapping>
+                <field name="session_id" type="string"/>
+                <field name="start_date" type="date"/>
+                <field name="end_date" type="date"/>
+                <field name="visitor_id" type="string"/>
+                <field name="customer_id" type="integer"/>
+                <field name="product_view" type="integer" />
+                <field name="category_view" type="integer" />
+                <field name="search_query" type="string">
+                    <isSearchable>true</isSearchable>
+                </field>
+                <field name="product_sale" type="integer" />
+                <field name="category_sale" type="integer" />
+            </mapping>
+        </type>
+    </index>
+
+</indices>
