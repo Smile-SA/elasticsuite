@@ -352,6 +352,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Load the product count by attribute code.
      *
+     * @deprecated To be refactored later.
+     *
      * @return array
      */
     public function getProductCountByAttributeCode()
