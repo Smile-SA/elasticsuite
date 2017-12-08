@@ -48,7 +48,7 @@ class Attribute extends AbstractRenderer
         ];
 
         foreach ($filterItems as $item) {
-            $jsLayoutConfig['items'][] = $item->toArray(['label', 'count', 'url', 'is_selected']);
+            $jsLayoutConfig['items'][] = $item->toArray(['label', 'count', 'url', 'is_selected', 'option_id']);
         }
 
         return json_encode($jsLayoutConfig);

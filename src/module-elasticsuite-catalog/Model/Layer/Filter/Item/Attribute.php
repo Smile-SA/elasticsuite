@@ -51,11 +51,28 @@ class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
             $data['url'] = $this->getUrl();
         }
 
+        if (in_array('option_id', $keys) || empty($keys)) {
+            $data['option_id'] = $this->getOptionId();
+        }
+
         if (in_array('is_selected', $keys) || empty($keys)) {
             $data['is_selected'] = (bool) $this->getIsSelected();
         }
 
         return $data;
+    }
+
+    /**
+     * @return string
+     */
+    private function getOptionId() {
+        $filter = $this->getFilter();
+        $attr = $filter->getAttributeModel();
+        $code = $filter->getRequestVar().'-';
+        if ($attr->usesSource()) {
+            return $code.$attr->getSource()->getOptionId($this->getValue());
+        }
+        return $code.$value;
     }
 
     /**

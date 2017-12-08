@@ -191,7 +191,7 @@ define([
             if (this.titleRenderers && this.titleRenderers[type]) {
                 title = $('<dt role="listbox" class="autocomplete-list-title title-' + type + '">' + this.titleRenderers[type].render(data) + '</dt>');
             } else if (this.options.templates && this.options.templates[type].title) {
-                title = $('<dt role="listbox" class="autocomplete-list-title title-' + type + '">' + this.options.templates[type].title + '</dt>');
+                title = $('<dt role="listbox" class="autocomplete-list-title title-' + type + '">' + $.mage.__(this.options.templates[type].title) + '</dt>');
             }
 
             return title;
