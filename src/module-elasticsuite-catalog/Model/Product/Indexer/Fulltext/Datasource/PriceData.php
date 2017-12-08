@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Model\CoverageRateProvider;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;
@@ -80,6 +81,13 @@ class PriceData implements DatasourceInterface
                 'is_discount'       => $finalPrice < $originalPrice,
                 'customer_group_id' => $priceDataRow['customer_group_id'],
             ];
+
+            if (!isset($indexData[$productId]['indexed_attributes'])) {
+                $indexData[$productId]['indexed_attributes'] = ['price'];
+            } elseif (!in_array('price', $indexData[$productId]['indexed_attributes'])) {
+                // Add price only one time.
+                $indexData[$productId]['indexed_attributes'][] = 'price';
+            }
         }
 
         return $indexData;

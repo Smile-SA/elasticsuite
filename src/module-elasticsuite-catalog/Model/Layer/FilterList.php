@@ -13,6 +13,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
+use Smile\ElasticsuiteCatalog\Model\Product\Attribute\CoverageRateProvider;
+
 /**
  * FilterList customization to support decimal filters.
  *
@@ -26,6 +28,56 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
      * Boolean filter name
      */
     const BOOLEAN_FILTER = 'boolean';
+
+    /**
+     * @var CoverageRateProvider
+     */
+    private $coverageRateProvider;
+
+    /**
+     * FilterList constructor.
+     *
+     * @param \Magento\Framework\ObjectManagerInterface                     $objectManager        Object Manager
+     * @param \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes Filterable Attributes
+     * @param CoverageRateProvider                                          $coverageRateProvider Coverage Rate Provider
+     * @param array                                                         $filters              Filters
+     */
+    public function __construct(
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes,
+        CoverageRateProvider $coverageRateProvider,
+        array $filters = []
+    ) {
+        $this->coverageRateProvider = $coverageRateProvider;
+        parent::__construct($objectManager, $filterableAttributes, $filters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilters(\Magento\Catalog\Model\Layer $layer)
+    {
+        if (!count($this->filters)) {
+            parent::getFilters($layer);
+
+            $coverageRates = $this->coverageRateProvider->getCoverageRates($layer->getProductCollection());
+            foreach ($this->filters as $key => $filter) {
+                try {
+                    $attribute           = $filter->getAttributeModel();
+                    $facetCoverageRate   = $attribute->getFacetMinCoverageRate();
+                    $currentCoverageRate = $coverageRates[$attribute->getAttributeCode()] ?? 0;
+
+                    if ($currentCoverageRate < $facetCoverageRate) {
+                        unset($this->filters[$key]);
+                    }
+                } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    // Category Filter has no attribute model, which causes exception.
+                }
+            }
+        }
+
+        return $this->filters;
+    }
 
     /**
      * {@inheritDoc}
