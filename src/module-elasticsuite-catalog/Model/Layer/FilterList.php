@@ -35,20 +35,28 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
     private $coverageRateProvider;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributesProviderInterface
+     */
+    private $filterableAttributesProvider;
+
+    /**
      * FilterList constructor.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                     $objectManager        Object Manager
-     * @param \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes Filterable Attributes
-     * @param CoverageRateProvider                                          $coverageRateProvider Coverage Rate Provider
-     * @param array                                                         $filters              Filters
+     * @param \Magento\Framework\ObjectManagerInterface                     $objectManager                Object Manager
+     * @param \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes         Filterable Attributes
+     * @param CoverageRateProvider                                          $coverageRateProvider         Coverage Rate Provider
+     * @param FilterableAttributesProviderInterface                         $filterableAttributesProvider Filterable attributes provider
+     * @param array                                                         $filters                      Filters
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes,
         CoverageRateProvider $coverageRateProvider,
+        FilterableAttributesProviderInterface $filterableAttributesProvider,
         array $filters = []
     ) {
-        $this->coverageRateProvider = $coverageRateProvider;
+        $this->coverageRateProvider         = $coverageRateProvider;
+        $this->filterableAttributesProvider = $filterableAttributesProvider;
         parent::__construct($objectManager, $filterableAttributes, $filters);
     }
 
@@ -58,6 +66,8 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
     public function getFilters(\Magento\Catalog\Model\Layer $layer)
     {
         if (!count($this->filters)) {
+            // Switch the filterable attributes list to the one given by the Provider.
+            $this->filterableAttributes = $this->filterableAttributesProvider->getFilterableAttributes($layer);
             parent::getFilters($layer);
 
             $coverageRates = $this->coverageRateProvider->getCoverageRates($layer->getProductCollection());
@@ -92,7 +102,8 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
 
         if (($attribute->getFrontendInput() == 'boolean')
             && ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean')
-            && isset($this->filterTypes[self::BOOLEAN_FILTER])) {
+            && isset($this->filterTypes[self::BOOLEAN_FILTER])
+        ) {
             $filterClassName = $this->filterTypes[self::BOOLEAN_FILTER];
         }
 
