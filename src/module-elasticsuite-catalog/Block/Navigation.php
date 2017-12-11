@@ -156,7 +156,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     private function addFacets()
     {
-        foreach ($this->filterList->getFilters($this->_catalogLayer) as $filter) {
+        foreach ($this->filterList->getRelevantFilters($this->_catalogLayer) as $filter) {
             $filter->addFacetToCollection();
         }
     }

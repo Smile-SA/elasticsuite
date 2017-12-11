@@ -35,6 +35,11 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
     private $coverageRateProvider;
 
     /**
+     * @var array
+     */
+    private $relevantFilters = [];
+
+    /**
      * FilterList constructor.
      *
      * @param \Magento\Framework\ObjectManagerInterface                     $objectManager        Object Manager
@@ -53,30 +58,35 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieve only relevant filters : filters that have a coverage rate on current collection which is
+     * greater than their configuration.
+     *
+     * @param \Magento\Catalog\Model\Layer $layer Navigation Layer
+     *
+     * @return array
      */
-    public function getFilters(\Magento\Catalog\Model\Layer $layer)
+    public function getRelevantFilters(\Magento\Catalog\Model\Layer $layer)
     {
-        if (!count($this->filters)) {
-            parent::getFilters($layer);
-
+        if (!count($this->relevantFilters)) {
             $coverageRates = $this->coverageRateProvider->getCoverageRates($layer->getProductCollection());
-            foreach ($this->filters as $key => $filter) {
+
+            foreach ($this->getFilters($layer) as $filter) {
                 try {
                     $attribute           = $filter->getAttributeModel();
                     $facetCoverageRate   = $attribute->getFacetMinCoverageRate();
                     $currentCoverageRate = $coverageRates[$attribute->getAttributeCode()] ?? 0;
 
-                    if ($currentCoverageRate < $facetCoverageRate) {
-                        unset($this->filters[$key]);
+                    if ($currentCoverageRate > $facetCoverageRate) {
+                        $this->relevantFilters[] = $filter;
                     }
                 } catch (\Magento\Framework\Exception\LocalizedException $e) {
                     // Category Filter has no attribute model, which causes exception.
+                    $this->relevantFilters[] = $filter;
                 }
             }
         }
 
-        return $this->filters;
+        return $this->relevantFilters;
     }
 
     /**
