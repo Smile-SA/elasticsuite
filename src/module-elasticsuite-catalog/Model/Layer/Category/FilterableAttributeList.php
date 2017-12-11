@@ -13,9 +13,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Category;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
-use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
-
 /**
  * Custom implementation of the search filterable attribute list to load attribute set info with the collection.
  *
@@ -26,27 +23,6 @@ use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayM
 class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\FilterableAttributeList
 {
     /**
-     * @var \Magento\Catalog\Api\Data\CategoryInterface
-     */
-    private $category;
-
-    /**
-     * FilterableAttributeList constructor.
-     *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory Collection Factory
-     * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager      Store Manager
-     * @param \Magento\Catalog\Api\Data\CategoryInterface|null                         $category          Category
-     */
-    public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        CategoryInterface $category = null
-    ) {
-        parent::__construct($collectionFactory, $storeManager);
-        $this->category = $category;
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */
@@ -54,11 +30,6 @@ class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\Filt
     {
         $collection->addSetInfo(true);
         $collection->addIsFilterableFilter();
-
-        if ($this->category && $this->category->getId()) {
-            $collection->setCategoryFilter($this->category);
-            $collection->filterHiddenAttributes();
-        }
 
         return $collection;
     }

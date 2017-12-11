@@ -10,23 +10,27 @@
  * @copyright 2017 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCatalog\Model\Layer;
+namespace Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\Processor;
 
 use Magento\Catalog\Model\Layer\FilterableAttributeListInterface;
+use Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\ProcessorInterface;
 
 /**
- * Interface for filterable attributes provider.
+ * Default Processor for Filterable Attributes.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-interface FilterableAttributesProviderInterface
+class DefaultProcessor implements ProcessorInterface
 {
     /**
-     * @param \Magento\Catalog\Model\Layer $layer The Layer
-     *
-     * @return FilterableAttributeListInterface
+     * {@inheritdoc}
      */
-    public function getFilterableAttributes(\Magento\Catalog\Model\Layer $layer);
+    public function processFilterableAttributes(
+        FilterableAttributeListInterface $filterableAttributeList,
+        \Magento\Catalog\Model\Layer $layer
+    ) {
+        return $filterableAttributeList->getList();
+    }
 }

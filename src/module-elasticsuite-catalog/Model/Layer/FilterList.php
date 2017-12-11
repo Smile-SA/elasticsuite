@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
+use Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\ProcessorInterface as FilterableAttributesProcessorInterface;
 use Smile\ElasticsuiteCatalog\Model\Product\Attribute\CoverageRateProvider;
 
 /**
@@ -35,58 +36,85 @@ class FilterList extends \Magento\Catalog\Model\Layer\FilterList
     private $coverageRateProvider;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributesProviderInterface
+     * @var array
      */
-    private $filterableAttributesProvider;
+    private $relevantFilters = [];
+
+    /**
+     * @var FilterableAttributesProcessorInterface
+     */
+    private $filterableAttributesProcessor;
 
     /**
      * FilterList constructor.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                     $objectManager                Object Manager
-     * @param \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes         Filterable Attributes
-     * @param CoverageRateProvider                                          $coverageRateProvider         Coverage Rate Provider
-     * @param FilterableAttributesProviderInterface                         $filterableAttributesProvider Filterable attributes provider
-     * @param array                                                         $filters                      Filters
+     * @param \Magento\Framework\ObjectManagerInterface                     $objectManager                 Object Manager
+     * @param \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes          Filterable Attributes
+     * @param CoverageRateProvider                                          $coverageRateProvider          Coverage Rate Provider
+     * @param FilterableAttributesProcessorInterface                        $filterableAttributesProcessor Filterable attributes processor
+     * @param array                                                         $filters                       Filters
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Catalog\Model\Layer\FilterableAttributeListInterface $filterableAttributes,
         CoverageRateProvider $coverageRateProvider,
-        FilterableAttributesProviderInterface $filterableAttributesProvider,
+        FilterableAttributesProcessorInterface $filterableAttributesProcessor,
         array $filters = []
     ) {
-        $this->coverageRateProvider         = $coverageRateProvider;
-        $this->filterableAttributesProvider = $filterableAttributesProvider;
+        $this->coverageRateProvider          = $coverageRateProvider;
+        $this->filterableAttributesProcessor = $filterableAttributesProcessor;
         parent::__construct($objectManager, $filterableAttributes, $filters);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getFilters(\Magento\Catalog\Model\Layer $layer)
     {
         if (!count($this->filters)) {
-            // Switch the filterable attributes list to the one given by the Provider.
-            $this->filterableAttributes = $this->filterableAttributesProvider->getFilterableAttributes($layer);
-            parent::getFilters($layer);
+            $this->filters = [
+                $this->objectManager->create($this->filterTypes[self::CATEGORY_FILTER], ['layer' => $layer]),
+            ];
 
-            $coverageRates = $this->coverageRateProvider->getCoverageRates($layer->getProductCollection());
-            foreach ($this->filters as $key => $filter) {
-                try {
-                    $attribute           = $filter->getAttributeModel();
-                    $facetCoverageRate   = $attribute->getFacetMinCoverageRate();
-                    $currentCoverageRate = $coverageRates[$attribute->getAttributeCode()] ?? 0;
+            $filterableAttributes = $this->filterableAttributesProcessor
+                ->processFilterableAttributes($this->filterableAttributes, $layer);
 
-                    if ($currentCoverageRate < $facetCoverageRate) {
-                        unset($this->filters[$key]);
-                    }
-                } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                    // Category Filter has no attribute model, which causes exception.
-                }
+            foreach ($filterableAttributes as $attribute) {
+                $this->filters[] = $this->createAttributeFilter($attribute, $layer);
             }
         }
 
         return $this->filters;
+    }
+
+    /**
+     * Retrieve only relevant filters : filters that have a coverage rate on current collection which is
+     * greater than their configuration.
+     *
+     * @param \Magento\Catalog\Model\Layer $layer Navigation Layer
+     *
+     * @return array
+     */
+    public function getRelevantFilters(\Magento\Catalog\Model\Layer $layer)
+    {
+        if (!count($this->relevantFilters)) {
+            $coverageRates = $this->coverageRateProvider->getCoverageRates($layer->getProductCollection());
+            foreach ($this->getFilters($layer) as $filter) {
+                try {
+                    $attribute           = $filter->getAttributeModel();
+                    $facetCoverageRate   = $attribute->getFacetMinCoverageRate();
+                    $currentCoverageRate = $coverageRates[$attribute->getAttributeCode()] ?? 0;
+                    if ($currentCoverageRate > $facetCoverageRate) {
+                        $this->relevantFilters[] = $filter;
+                    }
+                } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    // Category Filter has no attribute model, which causes exception.
+                    $this->relevantFilters[] = $filter;
+                }
+            }
+        }
+
+        return $this->relevantFilters;
     }
 
     /**

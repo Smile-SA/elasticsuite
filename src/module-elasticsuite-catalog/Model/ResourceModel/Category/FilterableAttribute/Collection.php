@@ -13,7 +13,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\FilterableAttribute;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayMode;
+use Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\Source\DisplayMode;
 
 /**
  * Filterable Attribute Collection.
@@ -26,13 +26,68 @@ use Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\Source\DisplayM
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
 {
     /**
+     * @var \Magento\Catalog\Api\Data\CategoryInterface
+     */
+    private $category;
+
+    /**
+     * Collection constructor.
+     *
+     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory    Entity Factory
+     * @param \Psr\Log\LoggerInterface                                     $logger           Logger
+     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy    Fetch Strategy
+     * @param \Magento\Framework\Event\ManagerInterface                    $eventManager     Event Manager
+     * @param \Magento\Eav\Model\Config                                    $eavConfig        EAV Config
+     * @param \Magento\Eav\Model\EntityFactory                             $eavEntityFactory EAV Entity Factory
+     * @param \Magento\Catalog\Api\Data\CategoryInterface                  $category         Category
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection       Connection
+     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null    $resource         Resource
+     */
+    public function __construct(
+        \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
+        \Magento\Framework\Event\ManagerInterface $eventManager,
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Eav\Model\EntityFactory $eavEntityFactory,
+        CategoryInterface $category,
+        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
+    ) {
+        $this->category = $category;
+        parent::__construct(
+            $entityFactory,
+            $logger,
+            $fetchStrategy,
+            $eventManager,
+            $eavConfig,
+            $eavEntityFactory,
+            $connection,
+            $resource
+        );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName) Method is inherited.
+     *
+     * {@inheritdoc}
+     */
+    protected function _initSelect()
+    {
+        parent::_initSelect();
+        $this->setCategoryFilter($this->category);
+
+        return $this;
+    }
+
+    /**
      * Compute attributes proper filter and sort order for a given category.
      *
      * @param CategoryInterface $category The category
      *
      * @return $this
      */
-    public function setCategoryFilter(CategoryInterface $category)
+    private function setCategoryFilter(CategoryInterface $category)
     {
         $joinCondition = [
             'fal.attribute_id = main_table.attribute_id',
@@ -47,30 +102,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         );
 
         // Compute the position from the category_filterable_attribute table if they exists.
-        $positionExpr    = sprintf('COALESCE(fal.position, NULLIF(additional_table.position, 0), %s)', PHP_INT_MAX);
+        $positionExpr = sprintf('COALESCE(fal.position, NULLIF(additional_table.position, 0), %s)', PHP_INT_MAX);
         // Same thing for the display_mode : will default to the 'auto' value if not set for the given category.
         $displayModeExpr = sprintf('COALESCE(fal.display_mode, %s)', DisplayMode::AUTO_DISPLAYED);
-        // Compute min coverage dynamically. Set it to 0 if display mode is set to always displayed.
-        $coverageExpr    = sprintf('IF(display_mode=%s, 0, facet_min_coverage_rate)', DisplayMode::ALWAYS_DISPLAYED);
 
         $this->getSelect()->columns([
-            'position'                => new \Zend_Db_Expr($positionExpr),
-            'display_mode'            => new \Zend_Db_Expr($displayModeExpr),
-            'facet_min_coverage_rate' => new \Zend_Db_Expr($coverageExpr),
+            'position'     => new \Zend_Db_Expr($positionExpr),
+            'display_mode' => new \Zend_Db_Expr($displayModeExpr),
         ]);
-
-        return $this;
-    }
-
-    /**
-     * Exclude attributes set to "always hidden".
-     *
-     * @return $this
-     */
-    public function filterHiddenAttributes()
-    {
-        $displayModeExpr = sprintf('display_mode IS NULL OR display_mode != %s', DisplayMode::ALWAYS_HIDDEN);
-        $this->getSelect()->where(new \Zend_Db_Expr($displayModeExpr));
 
         return $this;
     }
