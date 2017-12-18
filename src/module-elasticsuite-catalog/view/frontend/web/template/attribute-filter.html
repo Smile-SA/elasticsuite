@@ -1,7 +1,8 @@
 <div class="field search" data-bind="if: displaySearch">
     <div class="control">
         <input class="filter-search"
-               type="text" 
+               type="text"
+               autocomplete="off"
                data-bind="attr: {placeholder: searchPlaceholder}, event: {keyup: onSearchChange.bind(this), focusout: onSearchFocusOut}" />
     </div>
 </div>
@@ -10,10 +11,12 @@
     <li class="item">
         <a data-bind="attr: {href:url}, visible: count >= 1">
             <input type="checkbox"
-                   data-bind="checked: is_selected" 
+                   data-bind="checked: is_selected, attr: {id: id}" 
                    onclick="this.parentNode.click();" />
-            <span data-bind="html: label"></span>
-            <span class="count" data-bind="text: count"></span>
+            <label data-bind="attr: {for: id}">
+                <span data-bind="html: label"></span>
+                <span class="count" data-bind="text: count"></span>
+            </label>
         </a>
         
         <div data-bind="visible: count < 1">
@@ -24,7 +27,7 @@
 </ol>
 
 <div class="no-results-message" data-bind="if: fulltextSearch() && !hasSearchResult()" class="empty">
-   <p data-bind="html: getSearchResultMessage()"></p>
+    <p data-bind="html: getSearchResultMessage()"></p>
 </div>
 
 <div class="actions" data-bind="visible: enableExpansion()">
