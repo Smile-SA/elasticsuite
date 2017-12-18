@@ -113,7 +113,7 @@ class DataProvider implements DataProviderInterface
                             'attribute_code'  => $attribute->getAttributeCode(),
                             'attribute_label' => $attribute->getStoreLabel(),
                             'type'            => $this->getType(),
-                            'count'           => $currentFilter['count']
+                            'count'           => $currentFilter['count'],
 
                         ];
                         $items[] = $this->itemFactory->create($itemData);
