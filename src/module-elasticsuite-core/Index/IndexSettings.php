@@ -46,7 +46,6 @@ class IndexSettings implements IndexSettingsInterface
      */
     const MERGE_FACTOR = 20;
 
-
     /**
      * @var \Smile\ElasticsuiteCore\Helper\IndexSettings
      */
@@ -118,6 +117,7 @@ class IndexSettings implements IndexSettingsInterface
             'merge.scheduler.max_thread_count' => 1,
             'translog.durability'              => 'async',
             'translog.disable_flush'           => true,
+            'max_result_window'                => $this->helper->getMaxResultWindow(),
         ];
 
         return $settings;
