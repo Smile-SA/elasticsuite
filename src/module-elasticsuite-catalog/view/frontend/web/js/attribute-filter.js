@@ -15,8 +15,9 @@
 define([
     'jquery',
     'uiComponent',
+    'underscore',
     'mage/translate'
-], function ($, Component) {
+], function ($, Component, _) {
     "use strict";
 
     return Component.extend({
@@ -33,7 +34,7 @@ define([
         initialize: function () {
             this._super();
             this.expanded = false;
-            
+            this.items = this.items.map(this.addItemId.bind(this));
             this.observe(['fulltextSearch', 'expanded']);
 
             var lastSelectedIndex = Math.max.apply(null, (this.items.map(
@@ -91,7 +92,7 @@ define([
          */
         loadAdditionalItems: function (callback) {
             $.get(this.ajaxLoadUrl, function (data) {
-                this.items = data;
+                this.items = data.map(this.addItemId.bind(this));
                 this.hasMoreItems  = false;
                 
                 if (callback) {
@@ -203,6 +204,14 @@ define([
          */
         displayShowLess: function () {
             return this.enableExpansion() && this.expanded() === true && !this.fulltextSearch();
-        }
+        },
+
+        /**
+         * Add an id to items.
+         */
+        addItemId: function (item) {
+            item.id = _.uniqueId(this.index + "_option_");
+            return item;
+        },
     });
 });
