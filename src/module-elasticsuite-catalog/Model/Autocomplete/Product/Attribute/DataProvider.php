@@ -106,12 +106,17 @@ class DataProvider implements DataProviderInterface
                 $filterField = $this->attributeConfig->getFilterField($attribute);
                 $facetData   = $this->productCollection->getFacetedData($filterField);
 
-                foreach ($facetData as $currentFilter) {
-                    if ($currentFilter['value'] != '__other_docs') {
-                        $currentFilter['attribute_code']  = $attribute->getAttributeCode();
-                        $currentFilter['attribute_label'] = $attribute->getStoreLabel();
-                        $currentFilter['type']            = $this->getType();
-                        $items[] = $this->itemFactory->create($currentFilter);
+                foreach ($facetData as $filterValue => $currentFilter) {
+                    if ($filterValue != '__other_docs') {
+                        $itemData = [
+                            'value'           => $filterValue,
+                            'attribute_code'  => $attribute->getAttributeCode(),
+                            'attribute_label' => $attribute->getStoreLabel(),
+                            'type'            => $this->getType(),
+                            'count'           => $currentFilter['count']
+
+                        ];
+                        $items[] = $this->itemFactory->create($itemData);
                     }
                 }
             }
