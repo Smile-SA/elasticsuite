@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Smile\ElasticsuiteCatalog\Model\CoverageRateProvider;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 use Magento\Catalog\Model\Product\TypeFactory as ProductTypeFactory;

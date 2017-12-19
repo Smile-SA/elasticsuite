@@ -14,13 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Block;
 
-use Magento\Catalog\Model\Layer\AvailabilityFlagInterface;
-use Magento\Catalog\Model\Layer\FilterList;
-use Magento\Catalog\Model\Layer\Resolver;
-use Magento\Framework\Module\Manager;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\View\Element\Template\Context;
-
 /**
  * Custom implementation of the navigation block to apply facet coverage rate.
  *
@@ -33,39 +26,47 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     const DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/expanded_facets';
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManagerInterface
      */
     private $objectManager;
 
     /**
-     * @var Manager
+     * @var \Magento\Framework\Module\Manager
      */
     private $moduleManager;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList
+     */
+    private $relevantFilterList;
+
+    /**
      * Navigation constructor.
      *
-     * @param \Magento\Framework\View\Element\Template\Context       $context        Application context
-     * @param \Magento\Catalog\Model\Layer\Resolver                  $layerResolver  Layer Resolver
-     * @param \Magento\Catalog\Model\Layer\FilterList                $filterList     Filter List
-     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag Visibility Flag
-     * @param \Magento\Framework\ObjectManagerInterface              $objectManager  Object Manager
-     * @param \Magento\Framework\Module\Manager                      $moduleManager  Module Manager
-     * @param array                                                  $data           Block Data
+     * @param \Magento\Framework\View\Element\Template\Context          $context            Application context
+     * @param \Magento\Catalog\Model\Layer\Resolver                     $layerResolver      Layer Resolver
+     * @param \Magento\Catalog\Model\Layer\FilterList                   $filterList         Filter List
+     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface    $visibilityFlag     Visibility Flag
+     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager      Object Manager
+     * @param \Magento\Framework\Module\Manager                         $moduleManager      Module Manager
+     * @param \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList Attribute coverage rate provider.
+     * @param array                                                     $data               Block Data
      */
     public function __construct(
-        Context $context,
-        Resolver $layerResolver,
-        FilterList $filterList,
-        AvailabilityFlagInterface $visibilityFlag,
-        ObjectManagerInterface $objectManager,
-        Manager $moduleManager,
+        \Magento\Framework\View\Element\Template\Context $context,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Catalog\Model\Layer\FilterList $filterList,
+        \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Magento\Framework\Module\Manager $moduleManager,
+        \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList,
         array $data
     ) {
-        $this->objectManager = $objectManager;
-        $this->moduleManager = $moduleManager;
-
         parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
+
+        $this->objectManager      = $objectManager;
+        $this->moduleManager      = $moduleManager;
+        $this->relevantFilterList = $relevantFilterList;
     }
 
     /**
@@ -156,7 +157,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     private function addFacets()
     {
-        foreach ($this->filterList->getFilters($this->_catalogLayer) as $filter) {
+        foreach ($this->relevantFilterList->getRelevantFilters($this->getLayer(), $this->getFilters()) as $filter) {
             $filter->addFacetToCollection();
         }
     }
