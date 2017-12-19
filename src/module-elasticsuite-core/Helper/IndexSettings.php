@@ -36,6 +36,11 @@ class IndexSettings extends AbstractConfiguration
     const LOCALE_CODE_CONFIG_XML_PATH = 'general/locale/code';
 
     /**
+     * @var integer
+     */
+    const PER_SHARD_MAX_RESULT_WINDOW = 100000;
+
+    /**
      * Return the locale code (eg.: "en_US") for a store.
      *
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
@@ -140,6 +145,16 @@ class IndexSettings extends AbstractConfiguration
     public function getBatchIndexingSize()
     {
         return (int) $this->getIndicesSettingsConfigParam('batch_indexing_size');
+    }
+
+    /**
+     * Max number of results per query.
+     *
+     * @return integer
+     */
+    public function getMaxResultWindow()
+    {
+        return (int) $this->getNumberOfShards() * self::PER_SHARD_MAX_RESULT_WINDOW;
     }
 
     /**
