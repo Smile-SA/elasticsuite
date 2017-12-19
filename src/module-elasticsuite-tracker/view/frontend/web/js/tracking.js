@@ -132,7 +132,7 @@ var smileTracker = (function () {
     }
     
     function setTrackerStyle(imgNode) {
-        imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0;');
+        imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0; visibility: hidden;');
     }
 
     // Send the tag to the remote server
