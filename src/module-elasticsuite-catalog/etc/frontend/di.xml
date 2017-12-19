@@ -49,6 +49,7 @@
     <virtualType name="categoryFilterList" type="Smile\ElasticsuiteCatalog\Model\Layer\FilterList">
         <arguments>
             <argument name="filterableAttributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList</argument>
+            <argument name="filterableAttributesProcessor" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\Processor\CategoryProcessor</argument>
             <argument name="filters" xsi:type="array">
                 <item name="attribute" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute</item>
                 <item name="price" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Price</item>
@@ -170,4 +171,9 @@
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
+
+    <!-- Filterable Attributes List Managed by Category -->
+    <!-- Defaulting the Filterable Attributes Provider -->
+    <preference for="Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\ProcessorInterface"
+                type="Smile\ElasticsuiteCatalog\Model\Layer\FilterableAttributes\Processor\DefaultProcessor"/>
 </config>
