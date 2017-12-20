@@ -36,10 +36,10 @@
     </xs:complexType>
 
     <xs:complexType name="typeDefinition">
-        <xs:sequence>
-            <xs:element name="datasources" type="datasourcesDefinition" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:all>
+            <xs:element name="datasources" type="datasourcesDefinition" minOccurs="0"/>
             <xs:element name="mapping" type="mappingDefinition"/>
-        </xs:sequence>
+        </xs:all>
         <xs:attribute type="xs:string" name="name" use="required"/>
     </xs:complexType>
 
