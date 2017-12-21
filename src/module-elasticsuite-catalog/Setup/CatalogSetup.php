@@ -21,6 +21,8 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 /**
  * Generic Setup for ElasticsuiteCatalog module.
  *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -377,5 +379,86 @@ class CatalogSetup
         );
 
         $connection->query($insertQuery);
+    }
+
+    /**
+     * Create table containing configuration of facets for categories.
+     *
+     * @param SchemaSetupInterface $setup Schema Setup Interface
+     */
+    public function createCategoryFacetConfigurationTable(SchemaSetupInterface $setup)
+    {
+        // Create table 'smile_elasticsuitecatalog_category_filterable_attribute'.
+        $tableName = 'smile_elasticsuitecatalog_category_filterable_attribute';
+        $idField   = $this->metadataPool->getMetadata(CategoryInterface::class)->getIdentifierField();
+
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable($tableName))
+            ->addColumn(
+                $idField,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false],
+                'Category ID'
+            )
+            ->addColumn(
+                'attribute_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false],
+                'Attribute Id'
+            )
+            ->addColumn(
+                'position',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => true, 'unsigned' => true],
+                'Position'
+            )
+            ->addColumn(
+                'display_mode',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => false, 'default' => '0'],
+                'Position'
+            )
+            ->addColumn(
+                'facet_min_coverage_rate',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => true],
+                'Facet min coverage rate'
+            )
+            ->addColumn(
+                'facet_max_size',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['nullable' => true, 'unsigned' => true],
+                'Facet max size'
+            )
+            ->addColumn(
+                'facet_sort_order',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                25,
+                ['nullable' => true],
+                'Facet sort order'
+            )
+            ->addForeignKey(
+                $setup->getFkName($tableName, $idField, 'catalog_category_entity', $idField),
+                $idField,
+                $setup->getTable('catalog_category_entity'),
+                $idField,
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )
+            ->addForeignKey(
+                $setup->getFkName($tableName, 'attribute_id', 'eav_attribute', 'attribute_id'),
+                'attribute_id',
+                $setup->getTable('eav_attribute'),
+                'attribute_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )
+            ->setComment('Facet configuration for each category.');
+
+        $setup->getConnection()->createTable($table);
     }
 }
