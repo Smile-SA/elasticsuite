@@ -62,6 +62,9 @@ class InstallSchema implements InstallSchemaInterface
         // Introduced in version 1.1.0.
         $this->catalogSetup->appendDecimalDisplayConfiguration($setup);
 
+        // Introduced in version 1.3.0.
+        $this->catalogSetup->createCategoryFacetConfigurationTable($setup);
+
         $setup->endSetup();
     }
 }

@@ -23,6 +23,28 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Category;
 class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\FilterableAttributeList
 {
     /**
+     * @var \Magento\Catalog\Model\Layer\Resolver
+     */
+    private $layerResolver;
+
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory Attribute collection factory.
+     * @param \Magento\Store\Model\StoreManagerInterface                               $storeManager      Store manager.
+     * @param \Magento\Catalog\Model\Layer\Resolver                                    $layerResolver     Layer resolver.
+     */
+    public function __construct(
+        \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver
+    ) {
+        parent::__construct($collectionFactory, $storeManager);
+
+        $this->layerResolver = $layerResolver;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */
@@ -30,6 +52,11 @@ class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\Filt
     {
         $collection->addSetInfo(true);
         $collection->addIsFilterableFilter();
+
+        $category = $this->layerResolver->get()->getCurrentCategory();
+        if ($category && $category->getId()) {
+            $collection->setCategory($category);
+        }
 
         return $collection;
     }
