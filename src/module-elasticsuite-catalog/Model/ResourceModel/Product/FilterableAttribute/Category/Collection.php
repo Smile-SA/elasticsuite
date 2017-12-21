@@ -51,17 +51,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _beforeLoad()
-    {
-        parent::_beforeLoad();
-        $this->applyCategory();
-    }
-
-    /**
      * Apply current category settings to the collection.
      *
      * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\Collection
@@ -77,6 +66,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         $this->_select = $this->getConnection()->select()->from($subSelect);
 
         return $this;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
+     */
+    protected function _beforeLoad()
+    {
+        parent::_beforeLoad();
+        $this->applyCategory();
     }
 
     /**

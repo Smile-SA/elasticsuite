@@ -335,53 +335,6 @@ class CatalogSetup
     }
 
     /**
-     * Update attribute value for an entity with a default value.
-     * All existing values are erased by the new value.
-     *
-     * @param \Magento\Eav\Setup\EavSetup $eavSetup     EAV module Setup
-     * @param integer|string              $entityTypeId Target entity id.
-     * @param integer|string              $attributeId  Target attribute id.
-     * @param mixed                       $value        Value to be set.
-     * @param array                       $excludedIds  List of categories that should not be updated during the
-     *                                                  process.
-     *
-     * @return void
-     */
-    private function updateCategoryAttributeDefaultValue($eavSetup, $entityTypeId, $attributeId, $value, $excludedIds = [])
-    {
-        $setup          = $eavSetup->getSetup();
-        $entityTable    = $setup->getTable($eavSetup->getEntityType($entityTypeId, 'entity_table'));
-        $attributeTable = $eavSetup->getAttributeTable($entityTypeId, $attributeId);
-        $connection     = $setup->getConnection();
-
-        if (!is_int($attributeId)) {
-            $attributeId = $eavSetup->getAttributeId($entityTypeId, $attributeId);
-        }
-
-        // Retrieve the primary key name. May differs if the staging module is activated or not.
-        $linkField = $this->metadataPool->getMetadata(CategoryInterface::class)->getLinkField();
-
-        $entitySelect = $connection->select();
-        $entitySelect->from(
-            $entityTable,
-            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
-        );
-
-        if (!empty($excludedIds)) {
-            $entitySelect->where("entity_id NOT IN(?)", $excludedIds);
-        }
-
-        $insertQuery = $connection->insertFromSelect(
-            $entitySelect,
-            $attributeTable,
-            ['attribute_id', $linkField, 'value'],
-            \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_ON_DUPLICATE
-        );
-
-        $connection->query($insertQuery);
-    }
-
-    /**
      * Create table containing configuration of facets for categories.
      *
      * @param SchemaSetupInterface $setup Schema Setup Interface
@@ -460,5 +413,52 @@ class CatalogSetup
             ->setComment('Facet configuration for each category.');
 
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * Update attribute value for an entity with a default value.
+     * All existing values are erased by the new value.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup     EAV module Setup
+     * @param integer|string              $entityTypeId Target entity id.
+     * @param integer|string              $attributeId  Target attribute id.
+     * @param mixed                       $value        Value to be set.
+     * @param array                       $excludedIds  List of categories that should not be updated during the
+     *                                                  process.
+     *
+     * @return void
+     */
+    private function updateCategoryAttributeDefaultValue($eavSetup, $entityTypeId, $attributeId, $value, $excludedIds = [])
+    {
+        $setup          = $eavSetup->getSetup();
+        $entityTable    = $setup->getTable($eavSetup->getEntityType($entityTypeId, 'entity_table'));
+        $attributeTable = $eavSetup->getAttributeTable($entityTypeId, $attributeId);
+        $connection     = $setup->getConnection();
+
+        if (!is_int($attributeId)) {
+            $attributeId = $eavSetup->getAttributeId($entityTypeId, $attributeId);
+        }
+
+        // Retrieve the primary key name. May differs if the staging module is activated or not.
+        $linkField = $this->metadataPool->getMetadata(CategoryInterface::class)->getLinkField();
+
+        $entitySelect = $connection->select();
+        $entitySelect->from(
+            $entityTable,
+            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
+        );
+
+        if (!empty($excludedIds)) {
+            $entitySelect->where("entity_id NOT IN(?)", $excludedIds);
+        }
+
+        $insertQuery = $connection->insertFromSelect(
+            $entitySelect,
+            $attributeTable,
+            ['attribute_id', $linkField, 'value'],
+            \Magento\Framework\DB\Adapter\AdapterInterface::INSERT_ON_DUPLICATE
+        );
+
+        $connection->query($insertQuery);
     }
 }
