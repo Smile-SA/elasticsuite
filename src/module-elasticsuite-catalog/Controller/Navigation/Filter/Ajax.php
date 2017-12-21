@@ -42,6 +42,11 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private $filterListPool;
 
     /**
+     * @var \Magento\Catalog\Api\Data\CategoryInterfaceFactory
+     */
+    private $categoryFactory;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Framework\App\Action\Context            $context           Controller action context.
@@ -53,6 +58,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Catalog\Api\Data\CategoryInterfaceFactory $categoryFactory,
         $filterListPool = []
     ) {
         parent::__construct($context);
@@ -60,6 +66,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         $this->jsonResultFactory = $jsonResultFactory;
         $this->layerResolver     = $layerResolver;
         $this->filterListPool    = $filterListPool;
+        $this->categoryFactory   = $categoryFactory;
     }
 
     /**
@@ -99,6 +106,12 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private function initLayer()
     {
         $this->layerResolver->create($this->getLayerType());
+
+        if ($this->getRequest()->getParam('cat')) {
+            $category = $this->categoryFactory->create()->setId($this->getRequest()->getParam('cat'));
+            $this->layerResolver->get()->setCurrentCategory($category);
+        }
+
         $this->applyFilters();
 
         return $this;
