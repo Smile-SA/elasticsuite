@@ -27,7 +27,19 @@
             <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
-    
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory</argument>
+        </arguments>
+    </type>
+
     <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean">
         <arguments>
             <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>

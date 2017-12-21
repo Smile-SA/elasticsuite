@@ -12,6 +12,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
+use Smile\ElasticsuiteCatalog\Model\Category\Attribute\Source\FilterDisplayMode;
+
 /**
  * Return relevant filter for a layer.
  *
@@ -40,9 +42,11 @@ class RelevantFilterList
                 $attributeCode   = $attribute->getAttributeCode();
                 $minCoverageRate = $attribute->getFacetMinCoverageRate();
 
-                $isRelevant = isset($coverageRates[$attributeCode]) && ($coverageRates[$attributeCode] >= $minCoverageRate);
+                $isRelevant   = isset($coverageRates[$attributeCode]) && ($coverageRates[$attributeCode] >= $minCoverageRate);
+                $forceDisplay = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_DISPLAYED;
+                $isHidden     = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_HIDDEN;
 
-                if ($isRelevant === false) {
+                if ($isHidden || !($isRelevant || $forceDisplay)) {
                     unset($filters[$filterName]);
                 }
             } catch (\Exception $e) {
