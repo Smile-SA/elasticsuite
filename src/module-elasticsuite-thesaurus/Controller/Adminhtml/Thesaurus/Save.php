@@ -39,7 +39,7 @@ class Save extends ThesaurusController
 
         if ($data) {
             $identifier = $this->getRequest()->getParam('thesaurus_id');
-            $model = $this->thesaurusFactory->create();
+            $model      = $this->thesaurusFactory->create();
 
             if ($identifier) {
                 $model->load($identifier);
@@ -51,6 +51,10 @@ class Save extends ThesaurusController
             }
 
             $model->setData($data);
+            $storeIds = $this->getRequest()->getParam('stores', null);
+            if ($storeIds) {
+                $model->setStoreIds($storeIds);
+            }
 
             try {
                 $this->thesaurusRepository->save($model);
