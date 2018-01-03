@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteThesaurus\Model;
 
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
 use Magento\Framework\Indexer\IndexerRegistry;
@@ -43,6 +44,11 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     protected $_eventObject = 'thesaurus';
 
     /**
+     * @var IndexerRegistry
+     */
+    protected $indexerRegistry;
+
+    /**
      * @var array The store ids of this thesaurus
      */
     private $storeIds = [];
@@ -53,9 +59,9 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     private $termsData;
 
     /**
-     * @var IndexerRegistry
+     * @var StoreManagerInterface
      */
-    protected $indexerRegistry;
+    private $storeManager;
 
     /**
      * PHP constructor
@@ -63,6 +69,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      * @param \Magento\Framework\Model\Context                        $context            Magento Context
      * @param \Magento\Framework\Registry                             $registry           Magento Registry
      * @param IndexerRegistry                                         $indexerRegistry    Indexers registry.
+     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager       Store Manager.
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Magento Resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Magento Collection
      * @param array                                                   $data               Magento Data
@@ -71,11 +78,13 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         IndexerRegistry $indexerRegistry,
+        StoreManagerInterface $storeManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->indexerRegistry = $indexerRegistry;
+        $this->storeManager    = $storeManager;
 
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
@@ -181,8 +190,8 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      */
     public function getStoreIds()
     {
-        if ($this->getStores()) {
-            $this->setStoreIds($this->getStores());
+        if ($this->storeManager->isSingleStoreMode()) {
+            $this->storeIds = [$this->storeManager->getStore(true)->getId()];
         }
 
         if (empty($this->storeIds)) {
@@ -201,6 +210,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      */
     public function setStoreIds($storeIds)
     {
+        $this->setData('store_id', $storeIds);
         $this->storeIds = $storeIds;
 
         return $this;
