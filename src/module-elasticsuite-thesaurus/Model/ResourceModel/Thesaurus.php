@@ -123,8 +123,7 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         if ($object->getId()) {
             $stores = $this->getStoreIdsFromThesaurusId($object->getId());
-            $object->setData('store_id', $stores);
-            $object->setData('stores', $stores);
+            $object->setStoreIds($stores);
         }
 
         return parent::_afterLoad($object);
@@ -149,15 +148,14 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $storeLinks = [];
             $deleteCondition = [ThesaurusInterface::THESAURUS_ID . " = ?" => $object->getThesaurusId()];
 
-            foreach ($storeIds as $key => $storeId) {
+            foreach ($storeIds as $storeId) {
                 $storeLinks[] = [
                     ThesaurusInterface::THESAURUS_ID  => (int) $object->getThesaurusId(),
                     ThesaurusInterface::STORE_ID      => (int) $storeId,
                 ];
-                $storeIds[$key] = (int) $storeId;
             }
 
-            $deleteCondition[ThesaurusInterface::STORE_ID . " NOT IN (?)"] = array_keys($storeIds);
+            $deleteCondition[ThesaurusInterface::STORE_ID . " NOT IN (?)"] = $storeIds;
 
             $this->getConnection()->delete($this->getTable(ThesaurusInterface::STORE_TABLE_NAME), $deleteCondition);
             $this->getConnection()->insertOnDuplicate(

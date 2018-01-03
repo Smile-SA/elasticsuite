@@ -104,7 +104,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             $fieldset->addField('type', 'hidden', ['name' => 'type']);
         }
 
-        $this->initBaseFields($fieldset, $model);
+        $this->initBaseFields($fieldset);
         $this->initTypeFields($fieldset, $model);
 
         $form->setValues($model->getData());
@@ -120,15 +120,13 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      *  - thesaurus name
      *  - store id
      *
-     * @param \Magento\Framework\Data\Form\Element\Fieldset     $fieldset The fieldset
-     * @param \Smile\ElasticsuiteThesaurus\Model\Thesaurus|null $model    Current Thesaurus
+     * @param \Magento\Framework\Data\Form\Element\Fieldset $fieldset The fieldset
      *
      * @throws \Magento\Framework\Exception\LocalizedException
-     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @return \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Edit\Form
      */
-    private function initBaseFields($fieldset, $model)
+    private function initBaseFields($fieldset)
     {
         $fieldset->addField(
             'name',
@@ -169,9 +167,6 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             );
 
             $field->setRenderer($renderer);
-        } else {
-            $fieldset->addField('store_id', 'hidden', ['name' => 'store_id']);
-            $model->setStoreIds([$this->_storeManager->getStore(true)->getId()]);
         }
 
         return $this;
