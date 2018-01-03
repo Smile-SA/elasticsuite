@@ -256,7 +256,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             if (!empty($options)) {
                 foreach ($options as $option) {
                     if (isset($option['label'])) {
-                        $optionLabel = (string) $option['label'];
+                        $optionLabel = trim((string) $option['label']);
                         $optionPosition++;
 
                         if ($optionLabel !== null && isset($items[$optionLabel])) {
