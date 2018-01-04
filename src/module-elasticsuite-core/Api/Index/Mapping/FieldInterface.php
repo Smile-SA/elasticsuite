@@ -29,6 +29,7 @@ interface FieldInterface
      */
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
+    const FIELD_TYPE_LONG    = 'long';
     const FIELD_TYPE_DATE    = 'date';
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
