@@ -115,8 +115,10 @@ abstract class AbstractAttribute extends Mapping
 
         if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
             $type = FieldInterface::FIELD_TYPE_BOOLEAN;
-        } elseif ($attribute->getBackendType() == 'int' || $attribute->getFrontendClass() == 'validate-digits') {
+        } elseif ($attribute->getBackendType() == 'int') {
             $type = FieldInterface::FIELD_TYPE_INTEGER;
+        } elseif ($attribute->getFrontendClass() == 'validate-digits') {
+            $type = FieldInterface::FIELD_TYPE_LONG;
         } elseif ($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
             $type = FieldInterface::FIELD_TYPE_DOUBLE;
         } elseif ($attribute->getBackendType() == 'datetime') {

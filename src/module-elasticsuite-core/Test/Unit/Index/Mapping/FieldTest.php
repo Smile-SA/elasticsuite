@@ -90,8 +90,11 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     public function testBasicTypes()
     {
         $types = [
-            FieldInterface::FIELD_TYPE_INTEGER, FieldInterface::FIELD_TYPE_DOUBLE,
-            FieldInterface::FIELD_TYPE_BOOLEAN, FieldInterface::FIELD_TYPE_DATE,
+            FieldInterface::FIELD_TYPE_INTEGER,
+            FieldInterface::FIELD_TYPE_LONG,
+            FieldInterface::FIELD_TYPE_DOUBLE,
+            FieldInterface::FIELD_TYPE_BOOLEAN,
+            FieldInterface::FIELD_TYPE_DATE,
         ];
 
         foreach ($types as $type) {
