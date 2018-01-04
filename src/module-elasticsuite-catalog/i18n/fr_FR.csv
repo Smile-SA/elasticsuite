@@ -61,3 +61,11 @@ Yes,Oui
 No,Non
 "Use Category Name in product search","Utiliser le nom de la catégorie dans les résultats de recherche"
 "No value matching the search <b>%s</b>.","Aucun résultat pour la recherche <b>%s</b>."
+"Layered Navigation Filters","Filtres de navigation"
+"Attribute","Attribut"
+"Display Mode","Affichage"
+"Auto","Auto"
+"Always hidden","Toujours masqué"
+"Always displayed","Toujours affiché"
+"Default","Par défaut"
+"Pinned","Épinglé"

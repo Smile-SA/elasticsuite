@@ -21,4 +21,8 @@
         <plugin name="search_weigh" type="\Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin" />
     </type>
 
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="smile_elasticsuite_categories_form_data_provider" type="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin" />
+    </type>
+
 </config>
