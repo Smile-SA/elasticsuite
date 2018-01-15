@@ -135,10 +135,6 @@ class FilterableAttribute extends AbstractDb
             $item['position'] = null;
         }
 
-        if (empty($item['facet_display_mode']) || $item['facet_display_mode'] !== FilterDisplayMode::AUTO_DISPLAYED) {
-            $item['facet_min_coverage_rate'] = null;
-        }
-
         foreach (array_keys($fields) as $field) {
             $useDefault = 'use_default_' . $field;
             if (isset($item[$useDefault]) && (filter_var($item[$useDefault], FILTER_VALIDATE_BOOLEAN) === true)) {

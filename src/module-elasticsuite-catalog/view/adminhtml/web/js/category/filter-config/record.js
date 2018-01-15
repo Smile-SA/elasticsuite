@@ -63,7 +63,11 @@ define(['Magento_Ui/js/dynamic-rows/record'], function (Component) {
                 if (this.elems().length > 0) {
                     var facetCoverageIndex = this.getChildrenIndex('facet_min_coverage_rate');
                     if (facetCoverageIndex !== -1) {
-                        this.setDisabledColumn(facetCoverageIndex, (parseInt(this.data().facet_display_mode, 10) !== 0));
+                        var isAuto = (parseInt(this.data().facet_display_mode, 10) === 0);
+                        this.elems()[facetCoverageIndex].canEdit(isAuto);
+                        if (!isAuto) {
+                            this.elems()[facetCoverageIndex].isUseDefault(true);
+                        }
                     }
                 }
             }

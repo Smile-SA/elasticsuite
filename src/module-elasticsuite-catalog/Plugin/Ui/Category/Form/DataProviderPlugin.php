@@ -98,17 +98,18 @@ class DataProviderPlugin
 
         foreach ($this->getAttributes($currentCategory) as $attribute) {
             $attributesList[] = [
-                'attribute_id'                 => (int) $attribute->getAttributeId(),
-                'attribute_label'              => $attribute->getFrontendLabel(),
-                'facet_display_mode'           => (int) ($attribute->getFacetDisplayMode() ?? FilterDisplayMode::AUTO_DISPLAYED),
-                'facet_min_coverage_rate'      => $attribute->getFacetMinCoverageRate(),
-                'facet_max_size'               => $attribute->getFacetMaxSize(),
-                'use_default_facet_max_size'   => (bool) $attribute->getUseDefaultFacetMaxSize(),
-                'facet_sort_order'             => $attribute->getFacetSortOrder(),
-                'use_default_facet_sort_order' => (bool) $attribute->getUseDefaultFacetSortOrder(),
-                'is_pinned'                    => !(bool) $attribute->getUseDefaultPosition(),
-                'default_position'             => (int) $attribute->getDefaultPosition(),
-                'position'                     => (int) $attribute->getPosition(),
+                'attribute_id'                        => (int) $attribute->getAttributeId(),
+                'attribute_label'                     => $attribute->getFrontendLabel(),
+                'facet_display_mode'                  => (int) ($attribute->getFacetDisplayMode() ?? FilterDisplayMode::AUTO_DISPLAYED),
+                'facet_min_coverage_rate'             => $attribute->getFacetMinCoverageRate(),
+                'use_default_facet_min_coverage_rate' => (bool) $attribute->getUseDefaultFacetMinCoverageRate(),
+                'facet_max_size'                      => $attribute->getFacetMaxSize(),
+                'use_default_facet_max_size'          => (bool) $attribute->getUseDefaultFacetMaxSize(),
+                'facet_sort_order'                    => $attribute->getFacetSortOrder(),
+                'use_default_facet_sort_order'        => (bool) $attribute->getUseDefaultFacetSortOrder(),
+                'is_pinned'                           => !(bool) $attribute->getUseDefaultPosition(),
+                'default_position'                    => (int) $attribute->getDefaultPosition(),
+                'position'                            => (int) $attribute->getPosition(),
             ];
         }
 

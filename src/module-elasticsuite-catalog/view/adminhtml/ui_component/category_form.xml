@@ -81,17 +81,26 @@
                         </select>
                     </formElements>
                 </field>
-                <field name="facet_min_coverage_rate" component="Magento_Catalog/js/form/element/input" formElement="input">
+                <field name="facet_min_coverage_rate" component="Smile_ElasticsuiteCatalog/js/category/filter-config/field/min-coverage" formElement="input">
                     <argument name="data" xsi:type="array">
                         <item name="config" xsi:type="array">
                             <item name="prefixName" xsi:type="string">facet_config</item>
                             <item name="suffixName" xsi:type="string">facet_min_coverage_rate</item>
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/category/filter-config/min-coverage/use-default</item>
+                            </item>
                         </item>
                     </argument>
                     <settings>
                         <label translate="true">Facet coverage rate</label>
                         <dataType>number</dataType>
                         <dataScope>facet_min_coverage_rate</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_min_coverage_rate</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_min_coverage_rate</link>
+                        </links>
                     </settings>
                 </field>
                 <field name="facet_max_size" component="Magento_Catalog/js/form/element/input" formElement="input">
@@ -99,47 +108,41 @@
                         <item name="config" xsi:type="array">
                             <item name="prefixName" xsi:type="string">facet_config</item>
                             <item name="suffixName" xsi:type="string">facet_max_size</item>
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">ui/form/element/helper/service</item>
+                            </item>
                         </item>
                     </argument>
                     <settings>
                         <label translate="true">Facet max. size</label>
                         <dataType>number</dataType>
                         <dataScope>facet_max_size</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_max_size</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_max_size</link>
+                        </links>
                     </settings>
-                </field>
-                <field name="use_default_facet_max_size" formElement="checkbox">
-                    <argument name="data" xsi:type="array">
-                        <item name="config" xsi:type="array">
-                            <item name="prefixName" xsi:type="string">facet_config</item>
-                            <item name="suffixName" xsi:type="string">facet_max_size</item>
-                        </item>
-                    </argument>
-                    <settings>
-                        <dataType>boolean</dataType>
-                        <exports>
-                            <link name="checked">${$.parentName}.facet_max_size:disabled</link>
-                        </exports>
-                        <additionalClasses>
-                            <class name="use-default">true</class>
-                        </additionalClasses>
-                    </settings>
-                    <formElements>
-                        <checkbox>
-                            <settings>
-                                <description translate="true">Default</description>
-                                <valueMap>
-                                    <map name="false" xsi:type="boolean">false</map>
-                                    <map name="true" xsi:type="boolean">true</map>
-                                </valueMap>
-                            </settings>
-                        </checkbox>
-                    </formElements>
                 </field>
                 <field name="facet_sort_order" component="Magento_Ui/js/form/element/select" formElement="select">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">ui/form/element/helper/service</item>
+                            </item>
+                        </item>
+                    </argument>
                     <settings>
                         <dataType>text</dataType>
                         <label translate="true">Sort Order</label>
                         <dataScope>facet_sort_order</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_sort_order</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_sort_order</link>
+                        </links>
                     </settings>
                     <formElements>
                         <select>
@@ -147,34 +150,6 @@
                                 <options class="Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder"/>
                             </settings>
                         </select>
-                    </formElements>
-                </field>
-                <field name="use_default_facet_sort_order" formElement="checkbox">
-                    <argument name="data" xsi:type="array">
-                        <item name="config" xsi:type="array">
-                            <item name="prefixName" xsi:type="string">facet_config</item>
-                            <item name="suffixName" xsi:type="string">facet_sort_order</item>
-                        </item>
-                    </argument>
-                    <settings>
-                        <dataType>boolean</dataType>
-                        <exports>
-                            <link name="checked">${$.parentName}.facet_sort_order:disabled</link>
-                        </exports>
-                        <additionalClasses>
-                            <class name="use-default">true</class>
-                        </additionalClasses>
-                    </settings>
-                    <formElements>
-                        <checkbox>
-                            <settings>
-                                <description translate="true">Default</description>
-                                <valueMap>
-                                    <map name="false" xsi:type="boolean">false</map>
-                                    <map name="true" xsi:type="boolean">true</map>
-                                </valueMap>
-                            </settings>
-                        </checkbox>
                     </formElements>
                 </field>
                 <field name="is_pinned" formElement="checkbox">
