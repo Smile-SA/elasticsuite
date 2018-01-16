@@ -151,6 +151,16 @@
                     span {
                         padding: 0;
                     }
+
+                    div.admin__field-control {
+                        div.admin__field-service {
+                            font-size:80%;
+                            white-space:nowrap;
+                            padding-top: 0.5rem;
+                            padding-bottom: 0.5rem;
+                            text-align: left;
+                        }
+                    }
                 }
 
                 td.pin-switch {
@@ -184,6 +194,32 @@
 
             tr:nth-child(even) {
                 background: #fbfaf6;
+            }
+        }
+    }
+}
+
+//
+//  Desktop large
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__xl) {
+    .smile-elasticsuite-filterable-attributes {
+        table {
+            tbody, thead {
+                tr {
+                    td {
+                        div.admin__field-control {
+                            input.admin__control-text {
+                                width: 30%;
+                                float: left;
+                            }
+
+                            div.admin__field-service {
+                                text-align:center;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
