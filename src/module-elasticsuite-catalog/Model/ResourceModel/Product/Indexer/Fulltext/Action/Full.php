@@ -62,9 +62,15 @@ class Full extends Indexer
      */
     public function getRelationsByChild($childrenIds)
     {
+        $metadata      = $this->getEntityMetaData(\Magento\Catalog\Api\Data\ProductInterface::class);
+        $entityTable   = $this->getTable($metadata->getEntityTable());
+        $relationTable = $this->getTable('catalog_product_relation');
+        $joinCondition = sprintf('relation.parent_id = entity.%s', $metadata->getLinkField());
+
         $select = $this->getConnection()->select()
-            ->from($this->resource->getTableName('catalog_product_relation'), 'parent_id')
-            ->where('child_id IN(?)', $childrenIds);
+            ->from(['relation' => $relationTable], [])
+            ->join(['entity' => $entityTable], $joinCondition, [$metadata->getIdentifierField()])
+            ->where('child_id IN(?)', array_map('intval', $childrenIds));
 
         return $this->getConnection()->fetchCol($select);
     }
