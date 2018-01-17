@@ -82,7 +82,10 @@ class FilterableAttribute extends AbstractDb
         $fields = $this->getConnection()->describeTable($this->getMainTable());
         foreach ($data as $item) {
             $item[$this->getIdFieldName()] = $categoryId;
-            $rows[] = $this->buildRow($item, $fields);
+            $row                           = $this->buildRow($item, $fields);
+            if ($this->isValid($row)) {
+                $rows[] = $row;
+            }
         }
 
         $result = true;
@@ -144,5 +147,33 @@ class FilterableAttribute extends AbstractDb
 
         // Remove non-existent columns and sort the other according to fields order.
         return array_replace(array_flip(array_keys($fields)), array_intersect_key($item, $fields));
+    }
+
+    /**
+     * Check if a given row is relevant to save.
+     *
+     * @param array $row A row to be saved in table.
+     *
+     * @return boolean
+     */
+    private function isValid($row)
+    {
+        $result = false;
+
+        // Check if facet_display_mode is defaulted.
+        if ((int) $row['facet_display_mode'] !== FilterDisplayMode::AUTO_DISPLAYED) {
+            $result = true;
+        }
+
+        // Check remaining fields are not null.
+        unset($row[$this->getIdFieldName()]);
+        unset($row['attribute_id']);
+        unset($row['facet_display_mode']);
+
+        if (!empty(array_filter($row, 'strlen'))) { // Preserve 0 values.
+            $result = true;
+        }
+
+        return $result;
     }
 }
