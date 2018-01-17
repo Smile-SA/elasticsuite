@@ -49,8 +49,10 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
             $searchQuery['_name'] = $query->getName();
         }
 
+        $queryType = isset($searchQuery['must']) ? 'bool' : 'constant_score';
+
         $searchQuery['boost'] = $query->getBoost();
 
-        return ['bool' => $searchQuery];
+        return [$queryType => $searchQuery];
     }
 }
