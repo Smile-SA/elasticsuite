@@ -152,6 +152,10 @@
                         padding: 0;
                     }
 
+                    select {
+                        min-width: 100%;
+                    }
+
                     div.admin__field-control {
                         div.admin__field-service {
                             font-size:80%;
@@ -194,32 +198,6 @@
 
             tr:nth-child(even) {
                 background: #fbfaf6;
-            }
-        }
-    }
-}
-
-//
-//  Desktop large
-//  _____________________________________________
-.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__xl) {
-    .smile-elasticsuite-filterable-attributes {
-        table {
-            tbody, thead {
-                tr {
-                    td {
-                        div.admin__field-control {
-                            input.admin__control-text {
-                                width: 30%;
-                                float: left;
-                            }
-
-                            div.admin__field-service {
-                                text-align:center;
-                            }
-                        }
-                    }
-                }
             }
         }
     }
