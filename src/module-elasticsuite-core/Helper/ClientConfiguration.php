@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Helper;
 
+use Magento\Framework\App\Helper\AbstractHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 
 /**
@@ -23,21 +24,71 @@ use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ClientConfiguration extends AbstractConfiguration implements ClientConfigurationInterface
+class ClientConfiguration extends AbstractHelper implements ClientConfigurationInterface
 {
     /**
      * Location of Elasticsearch client configuration.
      *
+     * @deprecated
      * @var string
      */
     const ES_CLIENT_CONFIG_XML_PREFIX = 'es_client';
+
+    /**
+     * Configuration path for client servers list.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_CLIENT_SERVERS = 'smile_elasticsuite_core_base_settings/es_client/servers';
+
+    /**
+     * Configuration path for debug mode enabled.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_DEBUG_MODE_ENABLED = 'smile_elasticsuite_core_base_settings/es_client/enable_debug_mode';
+
+    /**
+     * Configuration path for connection timeout.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_CONNECTION_TIMEOUT = 'smile_elasticsuite_core_base_settings/es_client/connection_timeout';
+
+    /**
+     * Configuration path for HTTPS mode.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_ENABLE_HTTPS_MODE = 'smile_elasticsuite_core_base_settings/es_client/enable_https_mode';
+
+    /**
+     * Configuration path for enable HTTP auth.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_ENABLE_HTTP_AUTH = 'smile_elasticsuite_core_base_settings/es_client/enable_http_auth';
+
+    /**
+     * Configuration path for HTTP auth user.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_HTTP_AUTH_USER = 'smile_elasticsuite_core_base_settings/es_client/http_auth_user';
+
+    /**
+     * Configuration path for HTTP auth user.
+     *
+     * @var string
+     */
+    const CONFIG_PATH_HTTP_AUTH_PWD = 'smile_elasticsuite_core_base_settings/es_client/http_auth_pwd';
 
     /**
      * {@inheritdoc}
      */
     public function getServerList()
     {
-        return explode(',', $this->getElasticsearchClientConfigParam('servers'));
+        return explode(',', $this->scopeConfig->getValue(self::CONFIG_PATH_CLIENT_SERVERS));
     }
 
     /**
@@ -45,7 +96,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function isDebugModeEnabled()
     {
-        return (bool) $this->getElasticsearchClientConfigParam('enable_debug_mode');
+        return (bool) $this->scopeConfig->getValue(self::CONFIG_PATH_DEBUG_MODE_ENABLED);
     }
 
     /**
@@ -53,7 +104,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function getConnectionTimeout()
     {
-        return (int) $this->getElasticsearchClientConfigParam('connection_timeout');
+        return (int) $this->scopeConfig->getValue(self::CONFIG_PATH_CONNECTION_TIMEOUT);
     }
 
     /**
@@ -61,7 +112,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function getScheme()
     {
-        return (bool) $this->getElasticsearchClientConfigParam('enable_https_mode') ? 'https' : 'http';
+        return (bool) $this->scopeConfig->getValue(self::CONFIG_PATH_ENABLE_HTTPS_MODE) ? 'https' : 'http';
     }
 
     /**
@@ -69,7 +120,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function isHttpAuthEnabled()
     {
-        $authEnabled = (bool) $this->getElasticsearchClientConfigParam('enable_http_auth');
+        $authEnabled = (bool) $this->scopeConfig->getValue(self::CONFIG_PATH_ENABLE_HTTP_AUTH);
 
         return $authEnabled && !empty($this->getHttpAuthUser()) && !empty($this->getHttpAuthPassword());
     }
@@ -79,7 +130,7 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function getHttpAuthUser()
     {
-        return (string) $this->getElasticsearchClientConfigParam('http_auth_user');
+        return (string) $this->scopeConfig->getValue(self::CONFIG_PATH_HTTP_AUTH_USER);
     }
 
     /**
@@ -87,20 +138,6 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
      */
     public function getHttpAuthPassword()
     {
-        return (string) $this->getElasticsearchClientConfigParam('http_auth_pwd');
-    }
-
-    /**
-     * Read config under the path smile_elasticsuite_core_base_settings/es_client.
-     *
-     * @param string $configField Field name.
-     *
-     * @return mixed
-     */
-    private function getElasticsearchClientConfigParam($configField)
-    {
-        $path = self::ES_CLIENT_CONFIG_XML_PREFIX . '/' . $configField;
-
-        return $this->getElasticSuiteConfigParam($path);
+        return (string) $this->scopeConfig->getValue(self::CONFIG_PATH_HTTP_AUTH_PWD);
     }
 }
