@@ -41,7 +41,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     /**
      * @var \Magento\Framework\Pricing\Render
      */
-    private $priceRenderer;
+    private $priceRenderer = null;
 
     /**
      * @var ObjectManagerInterface
@@ -58,19 +58,16 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
      *
      * @param ObjectManagerInterface $objectManager   Object manager used to instantiate new item.
      * @param ImageHelper            $imageHelper     Catalog product image helper.
-     * @param Render                 $priceRenderer   Catalog product price renderer.
      * @param AttributeConfig        $attributeConfig Autocomplete attribute config.
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
         ImageHelper $imageHelper,
-        Render $priceRenderer,
         AttributeConfig $attributeConfig
     ) {
         parent::__construct($objectManager);
         $this->attributes    = $attributeConfig->getAdditionalSelectedAttributes();
         $this->imageHelper   = $imageHelper;
-        $this->priceRenderer = $priceRenderer;
         $this->objectManager = $objectManager;
     }
 
@@ -169,19 +166,23 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
      */
     private function getPriceRenderer()
     {
-        /** @var \Magento\Framework\View\LayoutInterface $layout */
-        $layout = $this->objectManager->get('\Magento\Framework\View\LayoutInterface');
-        $layout->getUpdate()->addHandle('default');
-        $priceRenderer = $layout->getBlock('product.price.render.default');
+        if (null === $this->priceRenderer) {
+            /** @var \Magento\Framework\View\LayoutInterface $layout */
+            $layout = $this->objectManager->get('\Magento\Framework\View\LayoutInterface');
+            $layout->getUpdate()->addHandle('default');
+            $priceRenderer = $layout->getBlock('product.price.render.default');
 
-        if (!$priceRenderer) {
-            $priceRenderer = $layout->createBlock(
-                'Magento\Framework\Pricing\Render',
-                'product.price.render.default',
-                ['data' => ['price_render_handle' => 'catalog_product_prices']]
-            );
+            if (!$priceRenderer) {
+                $priceRenderer = $layout->createBlock(
+                    'Magento\Framework\Pricing\Render',
+                    'product.price.render.default',
+                    ['data' => ['price_render_handle' => 'catalog_product_prices']]
+                );
+            }
+
+            $this->priceRenderer = $priceRenderer;
         }
 
-        return $priceRenderer;
+        return $this->priceRenderer;
     }
 }
