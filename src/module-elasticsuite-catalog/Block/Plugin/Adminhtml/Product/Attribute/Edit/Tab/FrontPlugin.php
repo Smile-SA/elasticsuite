@@ -17,6 +17,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
@@ -55,17 +56,28 @@ class FrontPlugin
     private $booleanSource;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder
+     */
+    private $filterSortOrder;
+
+    /**
      * Class constructor
      *
-     * @param Yesno    $booleanSource The YesNo source.
-     * @param Weight   $weightSource  Weight source.
-     * @param Registry $registry      Core registry.
+     * @param Yesno           $booleanSource   The YesNo source.
+     * @param Weight          $weightSource    Weight source.
+     * @param Registry        $registry        Core registry.
+     * @param FilterSortOrder $filterSortOrder Filter Sort Order.
      */
-    public function __construct(Yesno $booleanSource, Weight $weightSource, Registry $registry)
-    {
-        $this->weightSource  = $weightSource;
-        $this->booleanSource = $booleanSource;
-        $this->coreRegistry  = $registry;
+    public function __construct(
+        Yesno $booleanSource,
+        Weight $weightSource,
+        Registry $registry,
+        FilterSortOrder $filterSortOrder
+    ) {
+        $this->weightSource    = $weightSource;
+        $this->booleanSource   = $booleanSource;
+        $this->coreRegistry    = $registry;
+        $this->filterSortOrder = $filterSortOrder;
     }
 
     /**
@@ -218,12 +230,7 @@ class FrontPlugin
             [
                 'name'   => 'facet_sort_order',
                 'label'  => __('Facet sort order'),
-                'values' => [
-                    ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
-                    ['value' => BucketInterface::SORT_ORDER_MANUAL, 'label' => __('Admin sort')],
-                    ['value' => BucketInterface::SORT_ORDER_TERM, 'label' => __('Name')],
-                    ['value' => BucketInterface::SORT_ORDER_RELEVANCE, 'label' => __('Relevance')],
-                ],
+                'values' => $this->filterSortOrder->toOptionArray(),
             ],
             'facet_max_size'
         );

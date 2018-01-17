@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer;
 
-use Smile\ElasticsuiteCatalog\Model\Category\Attribute\Source\FilterDisplayMode;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
 
 /**
  * Return relevant filter for a layer.

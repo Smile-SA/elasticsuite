@@ -30,6 +30,171 @@
                 </item>
             </argument>
         </field>
+        
+        <dynamicRows
+            name="facet_config"
+            sortOrder="200"
+            component="Smile_ElasticsuiteCatalog/js/category/filter-config/dynamic-rows"
+            template="Smile_ElasticsuiteCatalog/category/filter-config/dynamic-rows">
+            <settings>
+                <addButton>false</addButton>
+                <pageSize>100</pageSize>
+                <additionalClasses>
+                    <class name="smile-elasticsuite-filterable-attributes">true</class>
+                    <class name="admin__field-wide">true</class>
+                </additionalClasses>
+                <scopeLabel>[GLOBAL]</scopeLabel>
+                <componentType>dynamicRows</componentType>
+                <label translate="true">Layered Navigation Filters</label>
+                <dndConfig>
+                    <param name="component" xsi:type="string">Smile_ElasticsuiteCatalog/js/category/filter-config/dnd</param>
+                </dndConfig>
+            </settings>
+            <container name="record" component="Smile_ElasticsuiteCatalog/js/category/filter-config/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="positionProvider" xsi:type="string">position</item>
+                    </item>
+                </argument>
+                <field name="attribute_label" formElement="input" template="ui/form/element/text">
+                    <settings>
+                        <dataType>text</dataType>
+                        <label translate="true">Attribute</label>
+                        <visible>true</visible>
+                        <dataScope>attribute_label</dataScope>
+                    </settings>
+                </field>
+                <field name="facet_display_mode" component="Magento_Ui/js/form/element/select" formElement="select">
+                    <settings>
+                        <dataType>number</dataType>
+                        <label translate="true">Display Mode</label>
+                        <dataScope>facet_display_mode</dataScope>
+                    </settings>
+                    <formElements>
+                        <select>
+                            <settings>
+                                <options class="Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode"/>
+                            </settings>
+                        </select>
+                    </formElements>
+                </field>
+                <field name="facet_min_coverage_rate" component="Smile_ElasticsuiteCatalog/js/category/filter-config/field/min-coverage" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">facet_config</item>
+                            <item name="suffixName" xsi:type="string">facet_min_coverage_rate</item>
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/category/filter-config/min-coverage/use-default</item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <label translate="true">Facet coverage rate</label>
+                        <dataType>number</dataType>
+                        <dataScope>facet_min_coverage_rate</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_min_coverage_rate</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_min_coverage_rate</link>
+                        </links>
+                    </settings>
+                </field>
+                <field name="facet_max_size" component="Magento_Catalog/js/form/element/input" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">facet_config</item>
+                            <item name="suffixName" xsi:type="string">facet_max_size</item>
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">ui/form/element/helper/service</item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <label translate="true">Facet max. size</label>
+                        <dataType>number</dataType>
+                        <dataScope>facet_max_size</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_max_size</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_max_size</link>
+                        </links>
+                    </settings>
+                </field>
+                <field name="facet_sort_order" component="Magento_Ui/js/form/element/select" formElement="select">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="service" xsi:type="array">
+                                <item name="template" xsi:type="string">ui/form/element/helper/service</item>
+                            </item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataType>text</dataType>
+                        <label translate="true">Sort Order</label>
+                        <dataScope>facet_sort_order</dataScope>
+                        <imports>
+                            <link name="disabled">${ $.provider }:${ $.parentScope }.use_default_facet_sort_order</link>
+                        </imports>
+                        <links>
+                            <link name="isUseDefault">${ $.provider }:${ $.parentScope }.use_default_facet_sort_order</link>
+                        </links>
+                    </settings>
+                    <formElements>
+                        <select>
+                            <settings>
+                                <options class="Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder"/>
+                            </settings>
+                        </select>
+                    </formElements>
+                </field>
+                <field name="is_pinned" formElement="checkbox">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">facet_config_order</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <dataType>boolean</dataType>
+                        <label translate="true">Pinned</label>
+                        <additionalClasses>
+                            <class name="pin-switch">true</class>
+                        </additionalClasses>
+                    </settings>
+                    <formElements>
+                        <checkbox>
+                            <settings>
+                                <valueMap>
+                                    <map name="false" xsi:type="boolean">false</map>
+                                    <map name="true" xsi:type="boolean">true</map>
+                                </valueMap>
+                                <prefer>toggle</prefer>
+                            </settings>
+                        </checkbox>
+                    </formElements>
+                </field>
+                <field name="position" component="Magento_Catalog/js/form/element/input" formElement="input">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="prefixName" xsi:type="string">facet_config_order</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="_hidden">true</class>
+                        </additionalClasses>
+                        <dataType>text</dataType>
+                        <visible>false</visible>
+                        <dataScope>position</dataScope>
+                    </settings>
+                </field>
+            </container>
+        </dynamicRows>
+        
     </fieldset>
 
     <fieldset name="general">

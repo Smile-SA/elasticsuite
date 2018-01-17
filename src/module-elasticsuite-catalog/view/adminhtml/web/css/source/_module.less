@@ -12,7 +12,6 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
-
 .elasticsuite-admin-product-sorter {
 
     margin: 40px 0;
@@ -74,7 +73,7 @@
 
             .info {
                 position: relative;
-                background: rgba(44,44,44, 0.75);
+                background: rgba(44, 44, 44, 0.75);
                 width: 100%;
                 margin-top: -31px;
                 color: #FFF;
@@ -89,7 +88,7 @@
                 p.stock {
                     float: right;
                 }
-                
+
                 p.sku {
                     display: block;
                     width: 100%;
@@ -102,7 +101,6 @@
                 float: left;
                 margin: 3px 0 0 0;
             }
-
 
             div.product-image {
                 text-align: center;
@@ -126,6 +124,80 @@
             .draggable-handle::before {
                 opacity: 0;
                 cursor: default;
+            }
+        }
+    }
+}
+
+.smile-elasticsuite-filterable-attributes {
+    table {
+        thead {
+            th {
+                background: #ffffff;
+                border: solid #c9c2b8;
+                border-width: 0 0 1px;
+                padding: 7px;
+                vertical-align: middle;
+            }
+        }
+
+        tbody, thead {
+            tr {
+                td {
+                    background-color: transparent;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 2px 7px;
+                    span {
+                        padding: 0;
+                    }
+
+                    select {
+                        min-width: 100%;
+                    }
+
+                    div.admin__field-control {
+                        div.admin__field-service {
+                            font-size:80%;
+                            white-space:nowrap;
+                            padding-top: 0.5rem;
+                            padding-bottom: 0.5rem;
+                            text-align: left;
+                        }
+                    }
+                }
+
+                td.pin-switch {
+                    div.admin__actions-switch {
+                        max-width: 40px;
+                        overflow: hidden;
+                    }
+                    span.admin__actions-switch-text {
+                        visibility: hidden;
+                        :before {
+                            padding-left:0;
+                        }
+                    }
+                }
+
+                td.use-default {
+                    font-size:80%;
+                    .admin__field-label {
+                        padding-left : 2rem;
+                    }
+                }
+
+                td.col-draggable {
+                    padding-top: 4px;
+                }
+
+                td._disabled {
+                    opacity: 1;
+                }
+            }
+
+            tr:nth-child(even) {
+                background: #fbfaf6;
             }
         }
     }
