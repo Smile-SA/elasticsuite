@@ -185,9 +185,19 @@
         </arguments>
     </type>
 
-    <!-- Plugin to handle saving of filterable attributes by category -->
-    <type name="\Magento\Catalog\Model\ResourceModel\Category">
-        <plugin name="smile_elasticsuite_filterable_attributes_save_configuration"
-                type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Category\SaveFilterableAttributes" />
+    <!-- Handle saving of filterable attributes by category -->
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="filterableAttributesPersistor" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="filterableAttributesPersistor" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\SaveHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
     </type>
 </config>
