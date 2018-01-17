@@ -31,22 +31,17 @@ class ClientConfiguration implements ClientConfigurationInterface
     /**
      * @var boolean
      */
-    private $isDebugModeEnabled;
+    private $isDebugModeEnabled = false;
 
     /**
      * @var integer
      */
-    private $connectionTimeout;
+    private $connectionTimeout = 0;
 
     /**
      * @var string
      */
-    private $scheme;
-
-    /**
-     * @var boolean
-     */
-    private $isHttpAuthEnabled;
+    private $scheme = null;
 
     /**
      * @var string
@@ -59,28 +54,24 @@ class ClientConfiguration implements ClientConfigurationInterface
     private $httpAuthPassword;
 
     /**
-     * @inheritDoc
+     * ClientConfiguration constructor.
+     *
+     * @param array $serverList       Server list configuration.
+     * @param null  $httpAuthUser     HTTP auth user supplied (optional).
+     * @param null  $httpAuthPassword HTTP auth password supplied (optional).
      */
     public function __construct(
         $serverList = [],
-        $isDebugModeEnabled = false,
-        $connectionTimeout = 0,
-        $scheme = 'http',
-        $isHttpAuthEnabled = false,
         $httpAuthUser = null,
         $httpAuthPassword = null
     ) {
         $this->serverList = $serverList;
-        $this->isDebugModeEnabled = $isDebugModeEnabled;
-        $this->connectionTimeout = $connectionTimeout;
-        $this->scheme = $scheme;
-        $this->isHttpAuthEnabled = $isHttpAuthEnabled;
         $this->httpAuthUser = $httpAuthUser;
         $this->httpAuthPassword = $httpAuthPassword;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getServerList()
     {
@@ -88,7 +79,7 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isDebugModeEnabled()
     {
@@ -96,7 +87,7 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getConnectionTimeout()
     {
@@ -104,7 +95,7 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getScheme()
     {
@@ -112,15 +103,22 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function isHttpAuthEnabled()
     {
-        return (bool) $this->isHttpAuthEnabled;
+        $authValues = [$this->getHttpAuthUser(), $this->getHttpAuthPassword()];
+        foreach ($authValues as $authValue) {
+            if ($authValue !== null && mb_strlen((string) $authValue) > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getHttpAuthUser()
     {
@@ -128,7 +126,7 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getHttpAuthPassword()
     {

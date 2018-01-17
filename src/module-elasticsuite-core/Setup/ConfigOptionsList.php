@@ -64,8 +64,8 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     /**
      * ConfigOptionsList constructor.
      *
-     * @param ClientFactoryFactory $clientFactoryFactory
-     * @param ClientConfigurationFactory $clientConfigurationFactory
+     * @param ClientFactoryFactory       $clientFactoryFactory       Factory to generate the ClientFactory.
+     * @param ClientConfigurationFactory $clientConfigurationFactory Factory to generate the ClientConfiguration.
      */
     public function __construct(
         ClientFactoryFactory $clientFactoryFactory,
@@ -112,7 +112,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         $configData = new ConfigData(ConfigFilePool::APP_ENV);
         $configPrefix = 'system/default/';
 
-        // Apply the provided server configuration if it is set and not an empty string
+        // Apply the provided server configuration if it is set and not an empty string.
         if (!$this->isDataEmpty($data, self::INPUT_KEY_ES_SERVER)) {
             $configData->set(
                 $configPrefix . ClientConfiguration::CONFIG_PATH_CLIENT_SERVERS,
@@ -120,7 +120,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             );
         }
 
-        // If the user has supplied a username or password, assume they are using auth
+        // If the user has supplied a username or password, assume they are using auth.
         if (!$this->isDataEmpty($data, self::INPUT_KEY_ES_SERVER_HTTP_AUTH_USER) ||
             !$this->isDataEmpty($data, self::INPUT_KEY_ES_SERVER_HTTP_AUTH_PWD)) {
             $httpAuthConfig = [
@@ -129,7 +129,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                 ClientConfiguration::CONFIG_PATH_HTTP_AUTH_PWD => $data[self::INPUT_KEY_ES_SERVER_HTTP_AUTH_PWD],
             ];
             foreach ($httpAuthConfig as $configKey => $configValue) {
-                $configData->set($configPrefix . $configKey, $configKey);
+                $configData->set($configPrefix . $configKey, $configValue);
             }
         }
 
@@ -138,6 +138,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function validate(array $options, DeploymentConfig $deploymentConfig)
     {
@@ -162,7 +163,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     }
 
     /**
-     * @param array $options
+     * Create setup configuration for the client for purposes of validation.
+     *
+     * @param array $options The configuration options supplied by install.
+     *
      * @return \Smile\ElasticsuiteCore\Setup\ClientConfiguration
      */
     private function createClientConfiguration(array $options)
@@ -172,10 +176,9 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             'serverList' => $options[self::INPUT_KEY_ES_SERVER],
         ];
 
-        // If HTTP Auth is enabled, add those configurations
+        // If HTTP Auth is enabled, add those configurations.
         if ($this->isHttpAuthEnabled($options)) {
             $configurationArgs = array_merge($configurationArgs, [
-                'isHttpAuthEnabled' => true,
                 'httpAuthUser'      => $options[self::INPUT_KEY_ES_SERVER_HTTP_AUTH_USER] ?? null,
                 'httpAuthPassword'  => $options[self::INPUT_KEY_ES_SERVER_HTTP_AUTH_PWD] ?? null,
             ]);
@@ -187,13 +190,14 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     /**
      * Check if HTTP Auth is required to be enabled.
      *
-     * @param $data
+     * @param array $options The configuration options supplied by install.
+     *
      * @return bool
      */
-    private function isHttpAuthEnabled(array $data)
+    private function isHttpAuthEnabled(array $options)
     {
         foreach ([self::INPUT_KEY_ES_SERVER_HTTP_AUTH_USER, self::INPUT_KEY_ES_SERVER_HTTP_AUTH_PWD] as $possibleKey) {
-            if (!$this->isDataEmpty($data, $possibleKey)) {
+            if (!$this->isDataEmpty($options, $possibleKey)) {
                 return true;
             }
         }
@@ -202,15 +206,16 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     }
 
     /**
-     * Check if data ($data) with key ($key) is empty
+     * Check if supplied data ($options) with key ($key) is empty.
      *
-     * @param array $data
-     * @param string $key
+     * @param array  $options Configuration data to check
+     * @param string $key     The relevant input key
+     *
      * @return bool
      */
-    private function isDataEmpty(array $data, $key)
+    private function isDataEmpty(array $options, $key)
     {
-        if (isset($data[$key]) && $data[$key] !== '') {
+        if (isset($options[$key]) && $options[$key] !== '') {
             return false;
         }
 
