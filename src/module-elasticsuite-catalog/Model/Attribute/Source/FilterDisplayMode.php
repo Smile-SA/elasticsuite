@@ -10,7 +10,7 @@
  * @copyright 2017 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCatalog\Model\Category\Attribute\Source;
+namespace Smile\ElasticsuiteCatalog\Model\Attribute\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 

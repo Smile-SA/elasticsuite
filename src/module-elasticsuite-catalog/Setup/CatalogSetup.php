@@ -369,11 +369,11 @@ class CatalogSetup
                 'Position'
             )
             ->addColumn(
-                'display_mode',
+                'facet_display_mode',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
                 ['nullable' => false, 'default' => '0'],
-                'Position'
+                'Facet display mode'
             )
             ->addColumn(
                 'facet_min_coverage_rate',

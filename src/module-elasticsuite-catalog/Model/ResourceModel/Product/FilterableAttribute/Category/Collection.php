@@ -105,7 +105,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
      */
     private function getAdditionalColumns()
     {
-        $columns = [];
+        $columns = ['facet_display_mode' => 'fal.facet_display_mode'];
 
         foreach ($this->overridenColumns as $column) {
             $columns[$column] = new \Zend_Db_Expr("COALESCE(fal.$column, additional_table.$column)");

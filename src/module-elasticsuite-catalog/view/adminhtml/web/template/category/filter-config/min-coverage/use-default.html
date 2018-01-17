@@ -1,0 +1,12 @@
+<div class="admin__field-service">
+    <input type="checkbox"
+           class="admin__control-checkbox"
+           attr="
+                id: $data.uid + '_default',
+                name: 'use_default[' + $data.index + ']',
+                'data-form-part': $data.ns,
+                disabled: !canEdit()
+           "
+           ko-checked="isUseDefault || !canEdit">
+    <label translate="'Use Default Value'" attr="for: $data.uid + '_default'" class="admin__field-label"></label>
+</div>
