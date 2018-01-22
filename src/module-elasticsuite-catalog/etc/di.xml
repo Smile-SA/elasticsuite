@@ -202,6 +202,6 @@
     </type>
     
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
-        <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin"/>
+        <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
 </config>

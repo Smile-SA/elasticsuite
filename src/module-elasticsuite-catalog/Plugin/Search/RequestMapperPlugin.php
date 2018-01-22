@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Apply catalog product settings to the search API request mapper.
@@ -95,6 +96,10 @@ class RequestMapperPlugin
         if ($this->isEnabled($containerConfiguration)) {
             $sortOrders = [];
 
+            if ($containerConfiguration->getName() == "catalog_view_container" && empty($result)) {
+                $result['position'] = ['direction' => SortOrderInterface::SORT_ASC];
+            }
+
             foreach ($result as $sortField => $sortParams) {
                 if ($sortField == 'price') {
                     $sortParams['nestedFilter'] = ['price.customer_group_id' => $this->customerSession->getCustomerGroupId()];
@@ -138,7 +143,7 @@ class RequestMapperPlugin
                 $filters[$fieldName] = $filterValue;
             }
 
-                $result = $filters;
+            $result = $filters;
         }
 
         return $result;
