@@ -200,4 +200,8 @@
             </argument>
         </arguments>
     </type>
+    
+    <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
+        <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin"/>
+    </type>
 </config>

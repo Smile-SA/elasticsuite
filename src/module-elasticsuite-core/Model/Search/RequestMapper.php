@@ -64,7 +64,7 @@ class RequestMapper
         foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
             foreach ($filterGroup->getFilters() as $filter) {
                 if ($filter->getField() != "search_term") {
-                    $filters[$filter->getField()] = $filter->getValue();
+                    $filters[$filter->getField()] = [$filter->getConditionType() => $filter->getValue()];
                 }
             }
         }
