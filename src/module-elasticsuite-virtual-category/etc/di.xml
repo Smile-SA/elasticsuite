@@ -74,4 +74,8 @@
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\DataProviderPlugin" />
     </type>
     
+    <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
+        <plugin name="virtualCategoryProductRequestMapper" type="Smile\ElasticsuiteVirtualCategory\Plugin\Search\RequestMapperPlugin" sortOrder="20"/>
+    </type>
+    
 </config>

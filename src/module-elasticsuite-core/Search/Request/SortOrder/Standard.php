@@ -75,7 +75,7 @@ class Standard implements SortOrderInterface
      */
     public function getDirection()
     {
-        return $this->direction;
+        return $this->direction ?? self::SORT_ASC;
     }
 
     /**

@@ -63,6 +63,12 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface"
                 type="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Spellchecker" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration" />
+
+    <preference for="Magento\Search\Api\SearchInterface"
+                type="Smile\ElasticsuiteCore\Model\Search" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
