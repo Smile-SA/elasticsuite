@@ -30,12 +30,12 @@ define([
                 formData: "${ $.provider }:data"
             },
             messages : {
-                blockTitle    : $.mage.__('Product Preview and Sorting'),
                 emptyText     : $.mage.__('Your product selection is empty.'),
                 automaticSort : $.mage.__('Automatic Sort'),
                 manualSort    : $.mage.__('Manual Sort'),
                 showMore      : $.mage.__('Show more')
-            }
+            },
+            forceLoading : false
         },
 
         initialize: function ()
@@ -53,17 +53,23 @@ define([
             this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner']);
 
             this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
+            
+            if (this.forceLoading) {
+                this.refreshProductList();
+            }
         },
         
         updateImports: function (config) {
-            Object.keys(config.refreshFields).each (function (fieldName) {
-                fieldName = '${ $.provider }:data.' + fieldName;
+            if (config.refreshFields) {
+                Object.keys(config.refreshFields).each (function (fieldName) {
+                    fieldName = '${ $.provider }:data.' + fieldName;
 
-                if (config.listens === undefined) {
-                    config.listens = {}
-                }
-                config.listens[fieldName] = "refreshProductList";
-            });
+                    if (config.listens === undefined) {
+                        config.listens = {}
+                    }
+                    config.listens[fieldName] = "refreshProductList";
+                });
+            }
         },
         
         refreshProductList: function () {
@@ -75,7 +81,7 @@ define([
 
             this.refreshRateLimiter = setTimeout(function () {
                 var formData = this.formData;
-                Object.keys(this.editPositions()).each(function (productId) {
+                Object.keys(this.editPositions()).forEach(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
                 }.bind(this));
 
