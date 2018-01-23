@@ -40,6 +40,7 @@ class Edit extends \Magento\Search\Controller\Adminhtml\Term
      *
      * @param \Magento\Backend\App\Action\Context $context      Controller context.
      * @param \Magento\Framework\Registry         $coreRegistry Registry.
+     * @param \Magento\Search\Model\QueryFactory  $queryFactory Search query factory.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -56,29 +57,27 @@ class Edit extends \Magento\Search\Controller\Adminhtml\Term
      */
     public function execute()
     {
-        $id = $this->getRequest()->getParam('id');
-        $model = $this->queryFactory->create();
+        $queryId = $this->getRequest()->getParam('id');
+        $model   = $this->queryFactory->create();
+        $result  = null;
 
-        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
-        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        $resultRedirect->setPath('search/*');
-
-        if (!$id) {
+        if (!$queryId) {
             $this->messageManager->addErrorMessage(__('No search specified.'));
-            return $resultRedirect;
+            $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath('search/term/index');
         }
 
-        $model->load($id);
+        $model->load($queryId);
         if (!$model->getId()) {
             $this->messageManager->addErrorMessage(__('This search no longer exists.'));
-            return $resultRedirect;
+            $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath('search/term/index');
         }
 
-        $this->coreRegistry->register('current_catalog_search', $model);
+        if ($result === null) {
+            $this->coreRegistry->register('current_catalog_search', $model);
+            $result = $this->createPage();
+            $result->getConfig()->getTitle()->prepend(__('Search results for "%1"', $model->getQueryText()));
+        }
 
-        $resultPage = $this->createPage();
-        $resultPage->getConfig()->getTitle()->prepend(__('Search results for "%1"', $model->getQueryText()));
-
-        return $resultPage;
+        return $result;
     }
 }
