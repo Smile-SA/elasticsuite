@@ -12,13 +12,19 @@
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-
 namespace Smile\ElasticsuiteCatalog\Model\ProductSorter;
 
 use \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
+/**
+ * Product sorter preview.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 abstract class AbstractPreview implements PreviewInterface
 {
     /**
@@ -46,6 +52,15 @@ abstract class AbstractPreview implements PreviewInterface
      */
     private $queryFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param ProductCollectionFactory $collectionFactory Product collection factory.
+     * @param ItemFactory              $itemFactory       Preview item factory.
+     * @param QueryFactory             $queryFactory      ES query factory.
+     * @param unknown                  $storeId           Store id.
+     * @param number                   $size              Preview size.
+     */
     public function __construct(
         ProductCollectionFactory $collectionFactory,
         ItemFactory $itemFactory,
@@ -60,6 +75,9 @@ abstract class AbstractPreview implements PreviewInterface
         $this->size              = $size;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getData()
     {
         $data = $this->getUnsortedProductData();
@@ -69,6 +87,25 @@ abstract class AbstractPreview implements PreviewInterface
 
         return $data;
     }
+
+    /**
+     * Apply custom logic to product collection.
+     *
+     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection Product collection.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    {
+        return $collection;
+    }
+
+    /**
+     * List of sorted product ids.
+     *
+     * @return array
+     */
+    abstract protected function getSortedProductIds();
 
     /**
      * Convert an array of products to an array of preview items.
@@ -105,7 +142,7 @@ abstract class AbstractPreview implements PreviewInterface
     }
 
     /**
-     * Return a collection with with products that match the category rules loaded.
+     * Return a collection with with products that match the current preview.
      *
      * @return array
      */
@@ -146,11 +183,4 @@ abstract class AbstractPreview implements PreviewInterface
 
         return $sortedProducts;
     }
-
-    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
-    {
-        return $collection;
-    }
-
-    abstract protected function getSortedProductIds();
 }

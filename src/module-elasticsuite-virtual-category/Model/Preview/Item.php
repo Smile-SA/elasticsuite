@@ -18,11 +18,12 @@ namespace Smile\ElasticsuiteVirtualCategory\Model\Preview;
 /**
  * Virtual category preview item model.
  *
- * @deprecated
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @deprecated Since ElasticSuite 2.5.0
  */
 class Item extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\Item
 {

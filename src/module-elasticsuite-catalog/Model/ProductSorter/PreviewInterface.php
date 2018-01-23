@@ -15,6 +15,13 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\ProductSorter;
 
+/**
+ * Product sorter preview interface.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ */
 interface PreviewInterface
 {
     /**
