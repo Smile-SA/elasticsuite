@@ -26,6 +26,7 @@
                 <datasource name="categories">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
                 <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
                 <datasource name="stock">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</datasource>
+                <datasource name="searchPositions">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->
@@ -66,6 +67,10 @@
                     <isFilterable>0</isFilterable>
                 </field>
 
+                <!-- Static fields handled by the "searchPositions" datasource -->
+                <field name="search_query.query_id" type="integer" nestedPath="search_query" />
+                <field name="search_query.position" type="integer" nestedPath="search_query" />
+                
             </mapping>
         </type>
     </index>

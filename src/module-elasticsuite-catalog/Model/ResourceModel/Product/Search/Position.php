@@ -29,6 +29,25 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     const TABLE_NAME = 'smile_elasticsuitecatalog_search_query_product_position';
 
     /**
+     * Get query position for a product list.
+     *
+     * @param array $productIds Product ids.
+     * @param int   $storeId    Store ids.
+     *
+     * @return array
+     */
+    public function getByProductIds(array $productIds, $storeId)
+    {
+        $select = $this->getBaseSelect()
+            ->joinInner($this->getTable('search_query'), 'main_table.query_id = search_query.query_id', [])
+            ->where('product_id IN(?)', $productIds)
+            ->where('store_id = ?', $storeId)
+            ->columns(['product_id', 'query_id', 'position']);
+
+        return $this->getConnection()->fetchAll($select);
+    }
+
+    /**
      * Load product positions for the given category.
      *
      * @param Query|int $query Query.
