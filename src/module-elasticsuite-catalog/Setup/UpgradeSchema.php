@@ -66,6 +66,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->createCategoryFacetConfigurationTable($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.4.0', '<')) {
+            $this->catalogSetup->createSearchPositionTable($setup);
+        }
+
         $setup->endSetup();
     }
 }
