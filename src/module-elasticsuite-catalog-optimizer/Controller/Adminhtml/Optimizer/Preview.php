@@ -22,7 +22,6 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\PreviewFactory;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 
 /**

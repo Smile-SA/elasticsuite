@@ -65,6 +65,9 @@ class InstallSchema implements InstallSchemaInterface
         // Introduced in version 1.3.0.
         $this->catalogSetup->createCategoryFacetConfigurationTable($setup);
 
+        // Introduced in version 1.4.0.
+        $this->catalogSetup->createSearchPositionTable($setup);
+
         $setup->endSetup();
     }
 }

@@ -18,10 +18,10 @@ namespace Smile\ElasticsuiteVirtualCategory\Model;
 use Magento\Catalog\Model\Product\Visibility;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
-use Smile\ElasticsuiteVirtualCategory\Model\Preview\ItemFactory;
+use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
+use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
 
 /**
  * Virtual category preview model.
@@ -30,18 +30,8 @@ use Smile\ElasticsuiteVirtualCategory\Model\Preview\ItemFactory;
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Preview
+class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview
 {
-    /**
-     * @var FulltextCollectionFactory
-     */
-    private $productCollectionFactory;
-
-    /**
-     * @var ItemFactory
-     */
-    private $previewItemFactory;
-
     /**
      * @var CategoryInterface
      */
@@ -53,106 +43,39 @@ class Preview
     private $queryFactory;
 
     /**
-     *
-     * @var unknown
-     */
-    private $size;
-
-    /**
      * Constructor.
      *
      * @param CategoryInterface         $category                 Category to preview.
      * @param FulltextCollectionFactory $productCollectionFactory Fulltext product collection factory.
-     * @param ItemFactory               $previewItemFactory       Preview item factory.
+     * @param ItemDataFactory           $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             QueryInterface factory.
      * @param int                       $size                     Preview size.
      */
     public function __construct(
         CategoryInterface $category,
         FulltextCollectionFactory $productCollectionFactory,
-        ItemFactory $previewItemFactory,
+        ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
         $size = 10
     ) {
-        $this->size                     = $size;
-        $this->productCollectionFactory = $productCollectionFactory;
-        $this->previewItemFactory       = $previewItemFactory;
-        $this->category                 = $category;
-        $this->queryFactory             = $queryFactory;
+        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size);
+        $this->category     = $category;
+        $this->queryFactory = $queryFactory;
     }
 
     /**
-     * Load preview data.
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public function getData()
+    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
     {
-        $data = $this->getUnsortedProductData();
+        $collection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
 
-        $sortedProducts = $this->getSortedProducts();
-        $data['products'] = $this->preparePreviewItems(array_merge($sortedProducts, $data['products']));
-
-        return $data;
-    }
-
-    /**
-     * Preview base product collection.
-     *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
-     */
-    private function getProductCollection()
-    {
-        $productCollection = $this->productCollectionFactory->create();
-        $queryFilter       = $this->getQueryFilter();
-
-        $productCollection->setStoreId($this->category->getStoreId())
-            ->addAttributeToSelect(['name', 'small_image']);
-
+        $queryFilter = $this->getQueryFilter();
         if ($queryFilter !== null) {
-            $productCollection->addQueryFilter($queryFilter);
+            $collection->addQueryFilter($queryFilter);
         }
 
-        $productCollection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
-
-        return $productCollection;
-    }
-
-    /**
-     * Return a collection with with products that match the category rules loaded.
-     *
-     * @return array
-     */
-    private function getUnsortedProductData()
-    {
-        $productCollection = $this->getProductCollection()->setPageSize($this->size);
-
-        return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
-    }
-
-    /**
-     * Return a collection with all products manually sorted loaded.
-     *
-     * @return \Magento\Catalog\Api\Data\ProductInterface[]
-     */
-    private function getSortedProducts()
-    {
-        $products   = [];
-        $productIds = $this->getSortedProductIds();
-
-        if ($productIds && count($productIds)) {
-            $productCollection = $this->getProductCollection()->setPageSize(count($productIds));
-
-            $idFilterParams = ['values' => $productIds, 'field' => 'entity_id'];
-            $idFilter       = $this->queryFactory->create(QueryInterface::TYPE_TERMS, $idFilterParams);
-            $productCollection->addQueryFilter($idFilter);
-
-            $productCollection->setPageSize(count($productIds));
-
-            $products = $productCollection->getItems();
-        }
-
-        return $products;
+        return $collection;
     }
 
     /**
@@ -160,28 +83,9 @@ class Preview
      *
      * @return array
      */
-    private function getSortedProductIds()
+    protected function getSortedProductIds()
     {
         return $this->category->getSortedProductIds();
-    }
-
-    /**
-     * Convert an array of products to an array of preview items.
-     *
-     * @param \Magento\Catalog\Model\ResourceModel\Product[] $products Product list.
-     *
-     * @return Preview\Item[]
-     */
-    private function preparePreviewItems($products = [])
-    {
-        $items = [];
-
-        foreach ($products as $product) {
-            $item = $this->previewItemFactory->create(['product' => $product]);
-            $items[$product->getId()] = $item->getData();
-        }
-
-        return array_values($items);
     }
 
     /**

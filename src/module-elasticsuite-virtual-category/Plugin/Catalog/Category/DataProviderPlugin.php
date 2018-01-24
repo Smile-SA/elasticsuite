@@ -110,7 +110,7 @@ class DataProviderPlugin
     {
         $url = null;
 
-        $storeId   = $this->getStoreId($category);
+        $storeId = $this->getStoreId($category);
 
         if ($storeId) {
             $urlParams = ['ajax' => true, 'store' => $storeId];

@@ -93,7 +93,11 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
 
         if (!$searchQuery->getQueryText() && $layer->getCurrentCategory()) {
             $categoryId = $layer->getCurrentCategory()->getId();
-            $collection->addSortFilterParameters('position', 'category.position', 'category', ['category.category_id' => $categoryId]);
+            $sortFilter = ['category.category_id' => $categoryId];
+            $collection->addSortFilterParameters('position', 'category.position', 'category', $sortFilter);
+        } elseif ($searchQuery->getId()) {
+            $sortFilter = ['search_query.query_id' => $searchQuery->getId()];
+            $collection->addSortFilterParameters('relevance', 'search_query.position', 'search_query', $sortFilter);
         }
 
         foreach ($this->catalogConfig->getAttributesUsedForSortBy() as $attributeCode => $attribute) {
