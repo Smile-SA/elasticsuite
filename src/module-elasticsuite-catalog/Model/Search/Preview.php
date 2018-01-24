@@ -14,6 +14,7 @@
  */
 
 namespace Smile\ElasticsuiteCatalog\Model\Search;
+
 use Magento\Search\Model\QueryInterface;
 use Magento\Catalog\Model\Product\Visibility;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;

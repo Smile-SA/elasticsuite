@@ -79,7 +79,7 @@ class DataProvider extends AbstractDataProvider
 
         foreach ($data['items'] as $currentItem) {
             $queryId = $currentItem[$this->primaryFieldName];
-            $currentItem['sorted_products'] = json_encode($this->getSortedProducts($queryId), JSON_FORCE_OBJECT);;
+            $currentItem['sorted_products'] = json_encode($this->getSortedProducts($queryId), JSON_FORCE_OBJECT);
             $currentItem['price_format'] = $this->localeFormat->getPriceFormat();
             $currentItem['product_sorter_load_url'] = $this->getProductSorterLoadUrl();
             $items[$queryId] = $currentItem;
@@ -93,9 +93,9 @@ class DataProvider extends AbstractDataProvider
      *
      * @param int $queryId Query id.
      *
-     * return array
+     * @return array
      */
-    function getSortedProducts($queryId)
+    private function getSortedProducts($queryId)
     {
         return $this->resourceModel->getProductPositionsByQuery($queryId);
     }
@@ -105,7 +105,8 @@ class DataProvider extends AbstractDataProvider
      *
      * @return string
      */
-    function getProductSorterLoadUrl() {
+    private function getProductSorterLoadUrl()
+    {
         return $this->urlBuilder->getUrl('search/term_merchandiser/load', ['ajax' => true]);
     }
 }

@@ -69,9 +69,10 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * Save the product postions.
+     * Save the product positions.
      *
-     * @param Query $query Query.
+     * @param int   $queryId             Query id.
+     * @param array $newProductPositions Product positions.
      *
      * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search\Position
      */

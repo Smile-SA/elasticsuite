@@ -416,6 +416,59 @@ class CatalogSetup
     }
 
     /**
+     * Create table 'smile_elasticsuitecatalog_search_query_product_position'.
+     *
+     * @param SchemaSetupInterface $setup Setup.
+     *
+     * @return void
+     */
+    public function createSearchPositionTable(SchemaSetupInterface $setup)
+    {
+        $tableName = 'smile_elasticsuitecatalog_search_query_product_position';
+        $table = $setup->getConnection()
+        ->newTable($setup->getTable($tableName))
+        ->addColumn(
+            'query_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => '0'],
+            'Query ID'
+        )
+        ->addColumn(
+            'product_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => '0'],
+            'Product ID'
+        )
+        ->addColumn(
+            'position',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => false, 'default' => '0'],
+            'Position'
+        )
+        ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
+        ->addForeignKey(
+            $setup->getFkName($tableName, 'query_id', 'search_query', 'query_id'),
+            'query_id',
+            $setup->getTable('search_query'),
+            'query_id',
+            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+        )
+        ->addForeignKey(
+            $setup->getFkName($tableName, 'product_id', 'catalog_product_entity', 'entity_id'),
+            'product_id',
+            $setup->getTable('catalog_product_entity'),
+            'entity_id',
+            \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+        )
+        ->setComment('Catalog product position in search queries');
+
+        $setup->getConnection()->createTable($table);
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *
@@ -460,58 +513,5 @@ class CatalogSetup
         );
 
         $connection->query($insertQuery);
-    }
-
-    /**
-     * Create table 'smile_elasticsuitecatalog_search_query_product_position'.
-     *
-     * @param SchemaSetupInterface $setup Setup.
-     *
-     * @return void
-     */
-    public function createSearchPositionTable(SchemaSetupInterface $setup)
-    {
-        $tableName = 'smile_elasticsuitecatalog_search_query_product_position';
-        $table = $setup->getConnection()
-            ->newTable($setup->getTable($tableName))
-            ->addColumn(
-                'query_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => '0'],
-                'Query ID'
-            )
-            ->addColumn(
-                'product_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                null,
-                ['unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => '0'],
-                'Product ID'
-            )
-            ->addColumn(
-                'position',
-                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
-                null,
-                ['nullable' => false, 'default' => '0'],
-                'Position'
-                )
-            ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
-            ->addForeignKey(
-                $setup->getFkName($tableName, 'query_id', 'search_query', 'query_id'),
-                'query_id',
-                $setup->getTable('search_query'),
-                'query_id',
-                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )
-            ->addForeignKey(
-                $setup->getFkName($tableName, 'product_id', 'catalog_product_entity', 'entity_id'),
-                'product_id',
-                $setup->getTable('catalog_product_entity'),
-                'entity_id',
-                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )
-            ->setComment('Catalog product position in search queries');
-
-            $setup->getConnection()->createTable($table);
     }
 }
