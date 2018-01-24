@@ -13,6 +13,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search;
 
 use Magento\Search\Model\Query;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
  * Product search position resource model.
@@ -27,6 +28,27 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @var string
      */
     const TABLE_NAME = 'smile_elasticsuitecatalog_search_query_product_position';
+
+    /**
+     * @var \Magento\Framework\Indexer\IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context         Context.
+     * @param \Magento\Framework\Indexer\IndexerRegistry        $indexerRegistry Indexer registry.
+     * @param string                                            $connectionName  Connection name.
+     */
+    public function __construct(
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry,
+        $connectionName = null
+    ) {
+        $this->indexerRegistry = $indexerRegistry;
+        parent::__construct($context, $connectionName);
+    }
 
     /**
      * Get query position for a product list.
@@ -78,6 +100,11 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function saveProductPositions($queryId, $newProductPositions)
     {
+        $reindexedProductIds = array_merge(
+            array_keys($newProductPositions),
+            array_keys($this->getProductPositionsByQuery($queryId))
+        );
+
         $deleteConditions = [
             $this->getConnection()->quoteInto('query_id = ?', (int) $queryId),
         ];
@@ -101,6 +128,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         $this->getConnection()->delete($this->getMainTable(), implode(' AND ', $deleteConditions));
+        $this->reindex(array_unique($reindexedProductIds));
 
         return $this;
     }
@@ -112,6 +140,18 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _construct()
     {
         $this->_setMainTable(self::TABLE_NAME);
+    }
+
+    /**
+     * Reindex product on position change.
+     *
+     * @param array $productIds Product ids to be reindexed.
+     *
+     * @return void
+     */
+    private function reindex($productIds)
+    {
+        $this->indexerRegistry->get(\Magento\CatalogSearch\Model\Indexer\Fulltext::INDEXER_ID)->reindexList($productIds);
     }
 
     /**
