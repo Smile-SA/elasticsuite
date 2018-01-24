@@ -12,6 +12,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Block\Adminhtml\Search\Term\Merchandiser\Edit;
 
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
+
 /**
  * Save button.
  *
