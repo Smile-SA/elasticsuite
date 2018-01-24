@@ -33,7 +33,7 @@ abstract class AbstractPreview implements PreviewInterface
     private $collectionFactory;
 
     /**
-     * @var ItemFactory
+     * @var ItemDataFactory
      */
     private $itemFactory;
 
@@ -56,14 +56,14 @@ abstract class AbstractPreview implements PreviewInterface
      * Constructor.
      *
      * @param ProductCollectionFactory $collectionFactory Product collection factory.
-     * @param ItemFactory              $itemFactory       Preview item factory.
+     * @param ItemDataFactory          $itemFactory       Preview item factory.
      * @param QueryFactory             $queryFactory      ES query factory.
      * @param unknown                  $storeId           Store id.
      * @param number                   $size              Preview size.
      */
     public function __construct(
         ProductCollectionFactory $collectionFactory,
-        ItemFactory $itemFactory,
+        ItemDataFactory $itemFactory,
         QueryFactory $queryFactory,
         $storeId,
         $size = 10
@@ -119,8 +119,7 @@ abstract class AbstractPreview implements PreviewInterface
         $items = [];
 
         foreach ($products as $product) {
-            $item = $this->itemFactory->create(['product' => $product]);
-            $items[$product->getId()] = $item->getData();
+            $items[$product->getId()] = $this->itemFactory->getData($product);
         }
 
         return array_values($items);

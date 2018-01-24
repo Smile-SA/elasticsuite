@@ -26,13 +26,8 @@ use Magento\Catalog\Helper\Image as ImageHelper;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Item
+class ItemDataFactory
 {
-    /**
-     * @var ProductInterface
-     */
-    private $product;
-
     /**
      * @var ImageHelper
      */
@@ -41,30 +36,30 @@ class Item
     /**
      * Constructor.
      *
-     * @param ProductInterface $product     Item product.
-     * @param ImageHelper      $imageHelper Image helper.
+     * @param ImageHelper $imageHelper Image helper.
      */
-    public function __construct(ProductInterface $product, ImageHelper $imageHelper)
+    public function __construct(ImageHelper $imageHelper)
     {
-        $this->product     = $product;
         $this->imageHelper = $imageHelper;
     }
 
     /**
      * Item data.
      *
+     * @param ProductInterface $product Product.
+     *
      * @return array
      */
-    public function getData()
+    public function getData(ProductInterface $product)
     {
         $productItemData = [
-            'id'          => $this->product->getId(),
-            'sku'         => $this->product->getSku(),
-            'name'        => $this->product->getName(),
-            'price'       => $this->getProductPrice(),
-            'image'       => $this->getImageUrl($this->product),
-            'score'       => $this->product->getDocumentScore(),
-            'is_in_stock' => $this->isInStockProduct(),
+            'id'          => $product->getId(),
+            'sku'         => $product->getSku(),
+            'name'        => $product->getName(),
+            'price'       => $this->getProductPrice($product),
+            'image'       => $this->getImageUrl($product),
+            'score'       => $product->getDocumentScore(),
+            'is_in_stock' => $this->isInStockProduct($product),
         ];
 
         return $productItemData;
@@ -73,12 +68,14 @@ class Item
     /**
      * Returns current product sale price.
      *
+     * @param ProductInterface $product Product.
+     *
      * @return float
      */
-    private function getProductPrice()
+    private function getProductPrice(ProductInterface $product)
     {
         $price    = 0;
-        $document = $this->getDocumentSource();
+        $document = $this->getDocumentSource($product);
 
         if (isset($document['price'])) {
             foreach ($document['price'] as $currentPrice) {
@@ -94,12 +91,14 @@ class Item
     /**
      * Returns current product stock status.
      *
+     * @param ProductInterface $product Product.
+     *
      * @return bool
      */
-    private function isInStockProduct()
+    private function isInStockProduct(ProductInterface $product)
     {
         $isInStock = false;
-        $document = $this->getDocumentSource();
+        $document = $this->getDocumentSource($product);
         if (isset($document['stock']['is_in_stock'])) {
             $isInStock = (bool) $document['stock']['is_in_stock'];
         }
@@ -110,11 +109,11 @@ class Item
     /**
      * Get resized image URL.
      *
-     * @param ProductInterface $product Current product.
+     * @param ProductInterface $product Product.
      *
      * @return string
      */
-    private function getImageUrl($product)
+    private function getImageUrl(ProductInterface $product)
     {
         $this->imageHelper->init($product, 'smile_elasticsuite_product_sorter_image');
 
@@ -124,10 +123,12 @@ class Item
     /**
      * Return the ES source document for the current product.
      *
+     * @param ProductInterface $product Product.
+     *
      * @return array
      */
-    private function getDocumentSource()
+    private function getDocumentSource(ProductInterface $product)
     {
-        return $this->product->getDocumentSource() ? : [];
+        return $product->getDocumentSource() ? : [];
     }
 }

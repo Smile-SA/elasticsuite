@@ -20,7 +20,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
-use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemFactory;
+use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
 use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
 
 /**
@@ -47,14 +47,14 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      *
      * @param CategoryInterface         $category                 Category to preview.
      * @param FulltextCollectionFactory $productCollectionFactory Fulltext product collection factory.
-     * @param ItemFactory               $previewItemFactory       Preview item factory.
+     * @param ItemDataFactory           $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             QueryInterface factory.
      * @param int                       $size                     Preview size.
      */
     public function __construct(
         CategoryInterface $category,
         FulltextCollectionFactory $productCollectionFactory,
-        ItemFactory $previewItemFactory,
+        ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
         $size = 10
     ) {
