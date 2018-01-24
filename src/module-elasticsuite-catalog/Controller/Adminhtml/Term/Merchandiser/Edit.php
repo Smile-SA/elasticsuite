@@ -73,7 +73,7 @@ class Edit extends \Magento\Search\Controller\Adminhtml\Term
         }
 
         if ($result === null) {
-            $this->coreRegistry->register('current_catalog_search', $model);
+            $this->coreRegistry->register('current_query', $model);
             $result = $this->createPage();
             $result->getConfig()->getTitle()->prepend(__('Search results for "%1"', $model->getQueryText()));
         }

@@ -141,7 +141,7 @@ define([
         getProductById : function (productId) {
             var product = null;
             productId   = parseInt(productId, 10);
-            this.products().each(function (currentProduct) {
+            this.products().forEach(function (currentProduct) {
                 if (currentProduct.getId() === productId) {
                     product = currentProduct;
                 }

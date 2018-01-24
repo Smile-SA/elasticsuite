@@ -39,7 +39,7 @@ class Preview extends \Magento\Framework\View\Element\AbstractBlock
      *
      * @param \Magento\Backend\Block\Widget\Context $context    Block context.
      * @param \Magento\Backend\Model\UrlInterface   $urlBuilder URL Builder.
-     * @param array $data
+     * @param array                                 $data       Block data.
      */
     public function __construct(
         \Magento\Backend\Block\Widget\Context $context,
@@ -72,6 +72,7 @@ class Preview extends \Magento\Framework\View\Element\AbstractBlock
 
     /**
      * Retrieve merchandiser button URL.
+     *
      * @return string
      */
     private function getMerchandiserUrl()
