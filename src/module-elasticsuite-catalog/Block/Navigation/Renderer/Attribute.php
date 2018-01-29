@@ -41,10 +41,11 @@ class Attribute extends AbstractRenderer
         $filterItems    = $this->getFilter()->getItems();
 
         $jsLayoutConfig = [
-            'component'    => self::JS_COMPONENT,
-            'maxSize'      => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
-            'hasMoreItems' => (bool) $this->getFilter()->hasMoreItems(),
-            'ajaxLoadUrl'  => $this->getAjaxLoadUrl(),
+            'component'           => self::JS_COMPONENT,
+            'maxSize'             => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
+            'displayProductCount' => (bool) $this->displayProductCount(),
+            'hasMoreItems'        => (bool) $this->getFilter()->hasMoreItems(),
+            'ajaxLoadUrl'         => $this->getAjaxLoadUrl(),
         ];
 
         foreach ($filterItems as $item) {

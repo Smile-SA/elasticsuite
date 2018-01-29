@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteSwatches\Block\Navigation\Renderer;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Swatches\Helper\Data as SwatchHelper;
 use Smile\ElasticsuiteCatalog\Block\Navigation\Renderer\AbstractRenderer;
+use \Magento\Catalog\Helper\Data as CatalogHelper;
 
 /**
  * This block handle swatches slider rendering.
@@ -39,13 +40,14 @@ class Swatches extends AbstractRenderer
     /**
      * Constructor.
      *
-     * @param Context      $context      Template context.
-     * @param SwatchHelper $swatchHelper Swatch helper.
-     * @param array        $data         Custom data.
+     * @param Context       $context       Template context.
+     * @param CatalogHelper $catalogHelper Catalog helper.
+     * @param SwatchHelper  $swatchHelper  Swatch helper.
+     * @param array         $data          Custom data.
      */
-    public function __construct(Context $context, SwatchHelper $swatchHelper, array $data = [])
+    public function __construct(Context $context, CatalogHelper $catalogHelper, SwatchHelper $swatchHelper, array $data = [])
     {
-        parent::__construct($context, $data);
+        parent::__construct($context, $catalogHelper, $data);
         $this->swatchHelper = $swatchHelper;
     }
 
