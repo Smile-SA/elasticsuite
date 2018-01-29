@@ -63,7 +63,7 @@ class PriceData implements DatasourceInterface
             $isOriginalPriceReliable = $this->isOriginalPriceReliable($indexData[$productId]['type_id']);
 
             $originalPrice = $priceDataRow['min_price'];
-            $finalPrice    = $priceDataRow['min_price'];
+            $finalPrice    = $priceDataRow['max_price'];
 
             if ($isOriginalPriceReliable) {
                 if ($priceDataRow['price']) {
