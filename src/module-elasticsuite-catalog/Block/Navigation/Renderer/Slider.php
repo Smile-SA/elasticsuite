@@ -19,6 +19,7 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Json\EncoderInterface;
+use \Magento\Catalog\Helper\Data as CatalogHelper;
 
 /**
  * This block handle standard decimal slider rendering.
@@ -49,18 +50,20 @@ class Slider extends AbstractRenderer
 
     /**
      *
-     * @param Context          $context      Template context.
-     * @param EncoderInterface $jsonEncoder  JSON Encoder.
-     * @param FormatInterface  $localeFormat Price format config.
-     * @param array            $data         Custom data.
+     * @param Context          $context       Template context.
+     * @param CatalogHelper    $catalogHelper Catalog helper.
+     * @param EncoderInterface $jsonEncoder   JSON Encoder.
+     * @param FormatInterface  $localeFormat  Price format config.
+     * @param array            $data          Custom data.
      */
     public function __construct(
         Context $context,
+        CatalogHelper $catalogHelper,
         EncoderInterface $jsonEncoder,
         FormatInterface $localeFormat,
         array $data = []
     ) {
-        parent::__construct($context, $data);
+        parent::__construct($context, $catalogHelper, $data);
 
         $this->jsonEncoder  = $jsonEncoder;
         $this->localeFormat = $localeFormat;

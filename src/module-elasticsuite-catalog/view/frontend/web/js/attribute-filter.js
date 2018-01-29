@@ -45,6 +45,7 @@ define([
             this.initSearchPlaceholder();
             this.onShowLess();
             this.displaySearch = this.displayShowMore();
+          
         },
 
         /**
@@ -211,6 +212,7 @@ define([
          */
         addItemId: function (item) {
             item.id = _.uniqueId(this.index + "_option_");
+            item.displayProductCount = this.displayProductCount && (item.count >= 1)
             return item;
         },
     });

@@ -15,7 +15,7 @@
                    onclick="this.parentNode.click();" />
             <label data-bind="attr: {for: id}">
                 <span data-bind="html: label"></span>
-                <span class="count" data-bind="text: count"></span>
+                <span class="count" data-bind="text: count, visible: $parent.displayProductCount"></span>
             </label>
         </a>
         
