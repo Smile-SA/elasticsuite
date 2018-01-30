@@ -94,19 +94,21 @@ class ClientFactory implements ClientFactoryInterface
         $clientConfiguration = $this->clientConfiguration;
 
         foreach ($clientConfiguration->getServerList() as $host) {
-            list($hostname, $port) = explode(':', $host);
-            $currentHostConfig = [
-                'host'   => $hostname,
-                'port'   => $port,
-                'scheme' => $clientConfiguration->getScheme(),
-            ];
+            if (!empty($host)) {
+                list($hostname, $port) = array_pad(explode(':', $host, 2), 2, "9200");
+                $currentHostConfig = [
+                    'host'   => $hostname,
+                    'port'   => $port,
+                    'scheme' => $clientConfiguration->getScheme(),
+                ];
 
-            if ($clientConfiguration->isHttpAuthEnabled()) {
-                $currentHostConfig['user'] = $clientConfiguration->getHttpAuthUser();
-                $currentHostConfig['pass'] = $clientConfiguration->getHttpAuthPassword();
+                if ($clientConfiguration->isHttpAuthEnabled()) {
+                    $currentHostConfig['user'] = $clientConfiguration->getHttpAuthUser();
+                    $currentHostConfig['pass'] = $clientConfiguration->getHttpAuthPassword();
+                }
+
+                $hosts[] = $currentHostConfig;
             }
-
-            $hosts[] = $currentHostConfig;
         }
 
         return $hosts;
