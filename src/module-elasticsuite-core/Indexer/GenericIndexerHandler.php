@@ -79,6 +79,11 @@ class GenericIndexerHandler implements IndexerInterface
     {
         foreach ($dimensions as $dimension) {
             $storeId   = $dimension->getValue();
+
+            if (!$this->indexOperation->indexExists($this->indexName, $storeId)) {
+                $this->indexOperation->createIndex($this->indexName, $storeId);
+            }
+
             $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
             $type      = $index->getType($this->typeName);
             $batchSize = $this->indexOperation->getBatchIndexingSize();
@@ -111,16 +116,19 @@ class GenericIndexerHandler implements IndexerInterface
     {
         foreach ($dimensions as $dimension) {
             $storeId   = $dimension->getValue();
-            $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
-            $type      = $index->getType($this->typeName);
-            $batchSize = $this->indexOperation->getBatchIndexingSize();
 
-            foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
-                $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $type, $batchDocuments);
-                $this->indexOperation->executeBulk($bulk);
+            if ($this->indexOperation->indexExists($this->indexName, $storeId)) {
+                $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+                $type      = $index->getType($this->typeName);
+                $batchSize = $this->indexOperation->getBatchIndexingSize();
+
+                foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
+                    $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $type, $batchDocuments);
+                    $this->indexOperation->executeBulk($bulk);
+                }
+
+                $this->indexOperation->refreshIndex($index);
             }
-
-            $this->indexOperation->refreshIndex($index);
         }
 
         return $this;
