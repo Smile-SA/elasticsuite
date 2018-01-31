@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Client;
 
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterfaceFactory;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Elasticsearch\ClientBuilder;
 use Psr\Log\LoggerInterface;
@@ -38,15 +39,18 @@ class Client implements ClientInterface
     /**
      * Constructor.
      *
-     * @param ClientConfigurationInterface $clientConfiguration Client configuration.
-     * @param ClientBuilder                $clientBuilder       ES client builder.
-     * @param LoggerInterface              $logger              Logger.
+     * @param ClientConfigurationInterfaceFactory $clientConfiguration Client configuration factory.
+     * @param ClientBuilder                       $clientBuilder       ES client builder.
+     * @param LoggerInterface                     $logger              Logger.
+     * @param array                               $options             Client options.
      */
     public function __construct(
-        ClientConfigurationInterface $clientConfiguration,
+        ClientConfigurationInterfaceFactory $clientConfigurationFactory,
         ClientBuilder $clientBuilder,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        $options = []
     ) {
+        $clientConfiguration = $clientConfigurationFactory->create(['options' => $options]);
         $this->esClient = $this->createClient($clientConfiguration, $clientBuilder, $logger);
     }
 
