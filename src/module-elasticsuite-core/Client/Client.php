@@ -156,6 +156,14 @@ class Client implements ClientInterface
     /**
      * {@inheritDoc}
      */
+    public function analyze($params)
+    {
+        return $this->esClient->indices()->analyze($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function indexStats($indexName)
     {
         return $this->esClient->indices()->stats(['index' => $indexName]);

@@ -52,18 +52,18 @@ class IndexHandler
     /**
      * Constructor.
      *
-     * @param ClientInterface         $clientFactory       ES Client factory.
+     * @param ClientInterface         $client              ES client.
      * @param IndexOperationInterface $indexManager        ES index management tool
      * @param IndexSettingsHelper     $indexSettingsHelper Index settings helper.
      * @param CacheHelper             $cacheHelper         ES caching helper.
      */
     public function __construct(
-        ClientInterface $clientFactory,
+        ClientInterface $client,
         IndexOperationInterface $indexManager,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper
     ) {
-        $this->client              = $clientFactory;
+        $this->client              = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexManager        = $indexManager;
         $this->cacheHelper         = $cacheHelper;
