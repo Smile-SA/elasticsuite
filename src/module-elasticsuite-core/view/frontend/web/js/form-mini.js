@@ -235,7 +235,7 @@ define([
             this.submitBtn.disabled = this._isEmpty(value);
 
             if (value.length >= parseInt(this.options.minSearchLength, 10)) {
-
+                this.searchForm.addClass('processing');
                 this.currentRequest = $.ajax({
                     method: "GET",
                     url: this.options.url,
@@ -300,7 +300,10 @@ define([
                                     self._resetResponseList(false);
                                 }
                             });
-                    },this)
+                    },this),
+                    complete : $.proxy(function () {
+                        this.searchForm.removeClass('processing');
+                    }, this)
                 });
             } else {
                 this._resetResponseList(true);
