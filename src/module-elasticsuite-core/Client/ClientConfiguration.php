@@ -12,25 +12,48 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Helper;
+namespace Smile\ElasticsuiteCore\Client;
 
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 
 /**
- * Smile_ElasticsuiteCore search engine client configuration configuration default implementation.
+ * ElasticSearch client configuration implementation.
  *
- * @category Smile
- * @package  Smile\ElasticsuiteCore
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ClientConfiguration extends AbstractConfiguration implements ClientConfigurationInterface
+class ClientConfiguration implements ClientConfigurationInterface
 {
     /**
      * Location of Elasticsearch client configuration.
      *
      * @var string
      */
-    const ES_CLIENT_CONFIG_XML_PREFIX = 'es_client';
+    const ES_CLIENT_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings/es_client';
+
+    /**
+     * @var array
+     */
+    private $options;
+
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     *
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig Config.
+     * @param array                                              $options     Custom options.
+     */
+    public function __construct(
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        $options = []
+    ) {
+        $this->scopeConfig = $scopeConfig;
+        $this->options     = $options;
+    }
 
     /**
      * {@inheritdoc}
@@ -101,6 +124,6 @@ class ClientConfiguration extends AbstractConfiguration implements ClientConfigu
     {
         $path = self::ES_CLIENT_CONFIG_XML_PREFIX . '/' . $configField;
 
-        return $this->getElasticSuiteConfigParam($path);
+        return $this->options[$configField] ?? $this->scopeConfig->getValue($path);
     }
 }

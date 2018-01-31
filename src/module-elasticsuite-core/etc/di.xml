@@ -22,7 +22,7 @@
                 type="Smile\ElasticsuiteCore\Client\Client" />
 
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
-                type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />
+                type="Smile\ElasticsuiteCore\Client\ClientConfiguration" />
 
     <!-- Cluster namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
