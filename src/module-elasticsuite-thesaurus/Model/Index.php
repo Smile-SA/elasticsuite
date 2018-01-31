@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteThesaurus\Model;
 
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
@@ -42,7 +42,7 @@ class Index
     const WORD_DELIMITER = '-';
 
     /**
-     * @var \Elasticsearch\Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -64,18 +64,18 @@ class Index
     /**
      * Constructor.
      *
-     * @param ClientFactoryInterface $clientFactory          ES Client Factory.
+     * @param ClientInterface        $client                 ES client.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      */
     public function __construct(
-        ClientFactoryInterface $clientFactory,
+        ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory
     ) {
-        $this->client                 = $clientFactory->createClient();
+        $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
@@ -206,7 +206,7 @@ class Index
         $indexName = $this->getIndexAlias($storeId);
 
         try {
-            $analysis = $this->client->indices()->analyze(
+            $analysis = $this->client->analyze(
                 ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
             );
         } catch (\Exception $e) {

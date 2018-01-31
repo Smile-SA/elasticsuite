@@ -143,6 +143,15 @@ interface ClientInterface
     public function search($params);
 
     /**
+     * Run an analyze request using ElasticSearch.
+     *
+     * @param array $params Analyze params.
+     *
+     * @return array
+     */
+    public function analyze($params);
+
+    /**
      * Returns index stats.
      *
      * @param string $indexName Index name.

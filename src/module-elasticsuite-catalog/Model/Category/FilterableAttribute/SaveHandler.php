@@ -56,5 +56,7 @@ class SaveHandler implements ExtensionInterface
 
             $this->resource->saveAttributesData($entity->getId(), $data);
         }
+
+        return $entity;
     }
 }

@@ -168,9 +168,10 @@ class CategoryData extends Indexer
             $loadCategoryIds = array_diff($categoryIds, array_keys($this->categoryNameCache[$storeId]));
         }
 
-        $loadCategoryIds = array_map('intval', $loadCategoryIds);
+        $loadCategoryIds  = array_map('intval', $loadCategoryIds);
+        $useNameAttribute = $this->getUseNameInSearchAttribute();
 
-        if (!empty($loadCategoryIds)) {
+        if (!empty($loadCategoryIds) && $useNameAttribute && $useNameAttribute->getId()) {
             $select = $this->prepareCategoryNameSelect($loadCategoryIds, $storeId);
             $entityIdField = $this->getEntityMetaData(CategoryInterface::class)->getIdentifierField();
 
