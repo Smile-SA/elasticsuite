@@ -80,11 +80,12 @@ class GenericIndexerHandler implements IndexerInterface
         foreach ($dimensions as $dimension) {
             $storeId   = $dimension->getValue();
 
-            if (!$this->indexOperation->indexExists($this->indexName, $storeId)) {
-                $this->indexOperation->createIndex($this->indexName, $storeId);
+            try {
+                $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
+            } catch (\Exception $e) {
+                $index = $this->indexOperation->createIndex($this->indexName, $storeId);
             }
 
-            $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
             $type      = $index->getType($this->typeName);
             $batchSize = $this->indexOperation->getBatchIndexingSize();
 
