@@ -123,11 +123,12 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
      */
     protected function _renderRangeLabel($fromPrice, $toPrice)
     {
-        $formattedPrice = $this->priceCurrency->format($fromPrice);
+        $formattedPrice = $this->priceCurrency->format((float) $fromPrice * $this->getCurrencyRate());
 
         if ($toPrice === '') {
             $formattedPrice = __('%1 and above', $formattedPrice);
         } elseif ($fromPrice != $toPrice || !$this->dataProvider->getOnePriceIntervalValue()) {
+            $toPrice        = (float) $toPrice * $this->getCurrencyRate();
             $formattedPrice = __('%1 - %2', $formattedPrice, $this->priceCurrency->format($toPrice));
         }
 

@@ -28,6 +28,7 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
             sliderBar   : '[data-role=slider-bar]',
             message     : '[data-role=message-box]',
             applyButton : '[data-role=apply-range]',
+            rate        : 1.0000,
             messageTemplates : {
                 "displayCount": '<span class="msg"><%- count %> items</span>',
                 "displayEmpty": '<span class="msg-error">No items in the current range.</span>'
@@ -35,18 +36,28 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
         },
 
         _create: function () {
-            this.from = this.options.currentValue.from;
-            this.to   = this.options.currentValue.to;
+            this._initSliderValues();
             this._createSlider();
             this._refreshDisplay();
             this.element.find(this.options.applyButton).bind('click', this._applyRange.bind(this));
         },
 
+        _initSliderValues: function() {
+            this.rate         = parseFloat(this.options.rate);
+            this.from         = Math.floor(this.options.currentValue.from * this.rate);
+            this.to           = Math.round(this.options.currentValue.to * this.rate);
+            this.intervals    = this.options.intervals.map(
+                function(item) { Math.round(item.value = item.value * this.rate); return item}.bind(this)
+            );
+            this.minValue = Math.floor(this.options.minValue * this.rate);
+            this.maxValue = Math.round(this.options.maxValue * this.rate);
+        },
+
         _createSlider: function() {
             this.element.find(this.options.sliderBar).slider({
                 range: true,
-                min: this.options.minValue,
-                max: this.options.maxValue,
+                min: this.minValue,
+                max: this.maxValue,
                 values: [ this.from, this.to ],
                 slide: this._onSliderChange.bind(this),
                 step: this.options.step
@@ -85,13 +96,19 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
         },
 
         _applyRange : function () {
-            var url = mageTemplate(this.options.urlTemplate)(this);
+            // Do not submit "rate applied" values. Revert the rate on submitted values.
+            var range = {
+                from : this.from * (1 / this.rate),
+                to   : this.to * (1 / this.rate)
+            };
+
+            var url = mageTemplate(this.options.urlTemplate)(range);
             this.element.find(this.options.applyButton).attr('href', url);
         },
 
 
         _getItemCount : function() {
-            var from = this.from, to = this.to, intervals = this.options.intervals;
+            var from = this.from, to = this.to, intervals = this.intervals;
             var count = intervals.map(function(item) {return item.value >= from && item.value < to ? item.count : 0;})
                                  .reduce(function(a,b) {return a + b;});
             return count;
@@ -106,7 +123,6 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
 
             return formattedValue;
         }
-
     });
 
     return $.smileEs.rangeSlider;
