@@ -1,46 +1,50 @@
-"Optimizers List","Optimizers List"
-"Name","Name"
-"Model","Model"
-"Status","Status"
-"Store","Store"
+Back,Back
+Delete,Delete
+"Are you sure you want to do this?","Are you sure you want to do this?"
+Save,Save
+"Save and Continue Edit","Save and Continue Edit"
+"Rule conditions","Rule conditions"
+Optimizer,Optimizer
 "New Optimizer","New Optimizer"
 "This optimizer no longer exists.","This optimizer no longer exists."
 "You deleted the optimizer %1.","You deleted the optimizer %1."
 "Edit %1","Edit %1"
 "Something went wrong while editing the optimizer.","Something went wrong while editing the optimizer."
+"Optimizers List","Optimizers List"
+Optimizers,Optimizers
+"You saved the optimizer %1.","You saved the optimizer %1."
+"End Date must follow Start Date.","End Date must follow Start Date."
+"Could not save the optimizer: %1","Could not save the optimizer: %1"
+label,label
+Edit,Edit
+"Delete ${ $.$data.name }","Delete ${ $.$data.name }"
+"Are you sure you want to delete ${ $.$data.name } ?","Are you sure you want to delete ${ $.$data.name } ?"
+"Search Query","Search Query"
+Preview,Preview
+"Base Results","Base Results"
+"Optimized Results","Optimized Results"
+"Show more","Show more"
+"Score : ","Score : "
 "Optimizer Information","Optimizer Information"
-"Constant","Constant"
-"Popularity","Popularity"
 "Enable optimizer","Enable optimizer"
+"Store View","Store View"
+Constant,Constant
+Model,Model
+"Optimizer Name","Optimizer Name"
+"Active from","Active from"
+"Active to","Active to"
+"Request type","Request type"
+Configuration,Configuration
 "Boost value (%)","Boost value (%)"
 "From -99 to 10000","From -99 to 10000"
-"Multiplier applied to the value before the function","Multiplier applied to the value before the function"
-"Scale factor","Scale factor"
-"Popularity type","Popularity type"
-"Function","Function"
-"Logarithmic","Logarithmic"
-"Square root","Square root"
-"Linear","Linear"
-"Product bought","Product bought"
-"Product viewed","Product viewed"
-"Request type","Request type"
-"Catalog Product Search","Catalog Product Search"
-"Advanced Product Search","Advanced Product Search"
-"Category Product View","Category Product View"
-"Categories fulltext search","Categories fulltext search"
 "Apply to products","Apply to products"
-"Active to","Active to"
-"Active from","Active from"
-"Optimizers","Optimizers"
-"Add New Optimizer","Add New Optimizer"
-"Constant Score","Constant Score"
-"Popularity","Popularity"
-"Store View","Store View"
-"Optimizer Name","Optimizer Name"
-"Rule conditions","Rule conditions"
-"Back","Back"
-"Save","Save"
-"End Date must follow Start Date","End Date must follow Start Date"
-"Preview","Preview"
 "Query Text","Query Text"
 "Category Preview","Category Preview"
+"Add New Optimizer","Add New Optimizer"
+"All Store Views","All Store Views"
+ID,ID
+Name,Name
+"Constant Score","Constant Score"
+Active,Active
+Inactive,Inactive
+Status,Status
