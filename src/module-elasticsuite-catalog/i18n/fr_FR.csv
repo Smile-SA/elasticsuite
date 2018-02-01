@@ -1,17 +1,17 @@
+Merchandiser,Merchandiser
+Back,Retour
+Reset,Réinitialiser
+"Save and Continue Edit","Sauvegarder et continuer l'édition"
+Save,Sauvegarder
 "<%- count %> products","<%- count %> produits"
 "No products in the selected range.","Aucun produit trouvé pour cet intervalle."
 "Search Configuration","Configuration de la recherche"
-"Used in autocomplete","Utiliser dans l'autocomplétion"
 "Display in autocomplete","Afficher dans l'autocomplétion"
 "Facet coverage rate","Taux de couverture de la facette"
 "Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: La facette Marque sera affichée uniquement si 90% of des produits ont une marque."
 "Facet max. size","Taille maximale de la facette"
 "Max number of values returned by a facet query.","Nombre maximal de valeurs affichées par la facette."
 "Facet sort order","Ordre de tri de la facette"
-"Result count","Nombre de résultat"
-"Admin sort","Tri administrateur"
-Name,Nom
-Relevance,Pertinence
 "Search Weight","Pondération dans la recherche"
 "Used in spellcheck","Utiliser la recherche approchante"
 "Slider Display Configuration","Slider Display Configuration"
@@ -20,6 +20,17 @@ Relevance,Pertinence
 "Display Precision","Display Precision"
 "The number of digits to use for precision when displaying.","The number of digits to use for precision when displaying."
 "No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","Aucun résultat exact pour la recherche: <b>'%1'</b>. Nous vous proposons des résultats approchants."
+"No search specified.","Aucun terme de recherche sélectionné."
+"This search no longer exists.","Ce terme de recherche n'existe plus."
+"Search results for ""%1""","Résultats de recherche pour ""%1"""
+"Unable to save positions.","Impossible d'enregistrer les positions."
+Auto,Auto
+"Always hidden","Toujours masqué"
+"Always displayed","Toujours affiché"
+"Result count","Nombre de résultat"
+"Admin sort","Tri administrateur"
+Name,Nom
+Relevance,Pertinence
 "%1 and above","%1 et plus"
 "%1 - %2","%1 - %2"
 "%1 is the only product matching your '%2' search.","%1 est le seul produit correspondant à votre recherche : '%2'"
@@ -29,7 +40,6 @@ OK,OK
 "Shop By","Filtrer Par"
 "Clear All","Tout effacer"
 "Shopping Options","Filtres"
-"Product Preview and Sorting","Prévisualisation et tri"
 "Your product selection is empty.","Votre sélection de produits est vide."
 "Automatic Sort","Tri Automatique"
 "Manual Sort","Tri manuel"
@@ -37,6 +47,7 @@ OK,OK
 "In Stock","En Stock"
 "Out Of Stock","Épuisé"
 "Show less","Voir moins"
+"No value matching the search <b>%s</b>.","Aucun résultat pour la recherche <b>%s</b>."
 "Search (%s)","Rechercher (%s)"
 "Product Autocomplete","Autocomplétion des produits"
 "Max Size","Taille maximum"
@@ -51,21 +62,18 @@ OK,OK
 "If there is only one product matching a given search query, the user will be redirect to this product page.","Si une recherche ne renvoie qu'un seul produit, l'utilisateur sera redirigé vers la fiche de ce produit."
 "Expanded facets","Facettes dépliées"
 "Number of facets to display expanded by default.","Nombre de facettes dépliées par défaut."
-Products,Produits
-Categories,Catégories
-Attributes,Attributs
 "ElasticSuite Category Indexing","Index des catégories Elastic Suite"
 "Reindex ElasticSuite catalog categories.","Reconstruire l'index de catégories ElasticSuite."
 "Is Spellchecked","Recherche approchante"
 Yes,Oui
 No,Non
-"Use Category Name in product search","Utiliser le nom de la catégorie dans les résultats de recherche"
-"No value matching the search <b>%s</b>.","Aucun résultat pour la recherche <b>%s</b>."
 "Layered Navigation Filters","Filtres de navigation"
 "Attribute","Attribut"
 "Display Mode","Affichage"
-"Auto","Auto"
-"Always hidden","Toujours masqué"
-"Always displayed","Toujours affiché"
-"Default","Par défaut"
+"Sort Order","Ordre de tri"
 "Pinned","Épinglé"
+"Use Category Name in product search","Utiliser le nom de la catégorie dans les résultats de recherche"
+"No search result for the current search.","Aucun résultat pour la recherche actuelle."
+Products,Produits
+Categories,Catégories
+Attributes,Attributs
