@@ -4,9 +4,9 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite 2.4 and Magento 2.1.x versions.
+Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite >2.4 and Magento 2.1.x versions.
 
-If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.4.x release**.
+If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.5.x release**.
 
 **Which version should I use ?**
 
@@ -14,7 +14,7 @@ Magento Version                                     | ElasticSuite Latest Versio
 ----------------------------------------------------|------------------------------------------------------------------------
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ^2.1.0```
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ^2.3.0```
-Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.4.x** latest release : ```composer require smile/elasticsuite ^2.4.0```
+Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.5.x** latest release : ```composer require smile/elasticsuite ^2.5.0```
 
 ### Magento2 B2B Compatibility
 
@@ -58,13 +58,11 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version **2.4.0** has been focused on the **Magento 2.2 compatibility (including B2B)**, **Search Optimizers Preview** features and on various fulltext search relevance improvements (SKU matching, enhanced customisation).
+The current version **2.5.0** has been focused on the **Elasticsearch 5.x compatibility**, **Search Terms Merchandiser**, **Facet management by category** and **Behavioral data tracking** features.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.4.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.5.0)
 
-This version is designed to be used on Magento Enterprise Edition 2.2.x.
-
-From now, we are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
+This version is designed to be used on both Magento Open Source and Commerce versions >2.2.
 
 Actually, there are the features actually included :
 
@@ -95,6 +93,8 @@ Actually, there are the features actually included :
 
     ![Search Optimizers Preview](doc/static/search_optimizers_preview.png)
 
+<br/>
+
 * **Categories Merchandising :**
 
     A new **Merchandising** panel has been added into the category edition screen of Magento's Back-Office. It features a **direct preview** of the current product list according to category settings.
@@ -104,6 +104,32 @@ Actually, there are the features actually included :
     This feature is compatible with "standard" categories but also with the Virtual Categories described before.
 
     ![Virtual Categories](doc/static/virtual_categories_dnd.gif)
+
+<br/>
+
+* **Facet Management by category :**
+
+    Inside the **Display Settings** panel of each category, you will be able to customize various layered navigation filters parameters :
+
+    - Filter position (pinned/unpinned)
+    - Display mode (always hidden, always displayed, automatic mode)
+    - Facet Max Size
+    - Facet coverage
+    - Facet sort order
+
+    This allow you to have a deeper level of configuration for your layered navigation for each category.
+
+    ![Facet by category](doc/static/facet-by-category.png)
+
+<br/>
+
+* **Search Terms Merchandising :**
+
+    A new **Merchandiser** link has been added into the search term screen of Magento's Back-Office. It features a **direct preview** of the current product list that will be returned by this search query in front office.
+
+    Inside this panel, you are also able to use a **drag-and-drop interface** to apply custom sort order on some of the products (Eg : to ensure your bestseller always appear at first position).
+
+    ![Term Merchandiser](doc/static/term-merchandiser.gif)
 
 <br/>
 
@@ -217,6 +243,14 @@ Actually, there are the features actually included :
 ### And more to come !
 
 The next versions that will be coming all among this year will include the following features :
+
+* **Search usage dashboard :**
+
+    Next version of ElasticSuite will feature an advanced dashboard where you will be able to see the following items :
+
+     + **Generic KPIs** (number of search, page views, sessions, searches per session, unique visitors ...)
+     + Search queries list (**most popular**, commons mispelling, **low conversion queries**, **zero results queries** ...)
+     + Graphs (pie chart for misspelled queries, **line chart figuring the evolution of the number of queries**...)
 
 * **Behavioral Search optimizations :**
 
