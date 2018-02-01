@@ -32,7 +32,7 @@
                 <field id="visit_cookie_name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visit Cookie Name</label>
                 </field>
-                <field id="visit_cookie_lifetime" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visit_cookie_lifetime" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visit Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.]]></comment>
@@ -40,7 +40,7 @@
                 <field id="visitor_cookie_name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visitor Cookie Name</label>
                 </field>
-                <field id="visitor_cookie_lifetime" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visitor_cookie_lifetime" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visitor Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.]]></comment>
