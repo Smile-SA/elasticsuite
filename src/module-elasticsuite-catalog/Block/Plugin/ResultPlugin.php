@@ -98,7 +98,7 @@ class ResultPlugin
 
         if ($isSpellcheck && $this->resultCount > 0) {
             $messages[] = __(
-                "No search results for: <b>'%1'</b>. We propose you approaching results.",
+                "No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.",
                 $this->catalogSearchData->getEscapedQueryText()
             );
             $query->setIsSpellchecked(true);

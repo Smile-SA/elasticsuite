@@ -1,10 +1,6 @@
-"Category mode","Mode d'affichage de la catégorie"
-"Virtual Category","Catégorie virtuelle"
-"Virtual category settings","Paramètres de la catégorie virtuelle"
 "Virtual rule","Règle à appliquer"
+"Virtual Category","Catégorie virtuelle"
 "Virtual Category Root","Racine de la catégorie virtuelle"
-"Preview and sorting","Prévisualisation et tri"
-"Select category ...","Choisissez une catégorie ..."
-Merchandising,Merchandising
-"Cannot move the category : '%2' is using '%1' as virtual root category.","Impossible de déplacer la catégorie : '%2' utilise actuellement '%1' comme racine."
+"Products List Preview and Sorting","Prévisualisation et tri"
 "Your product selection is empty for the selected Store View. If you are running a multi-store setup, please check this <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>manual page</a> for more informations.","Votre sélection de produits est vide pour la vue magasin actuellement sélectionnée. Si votre site comporte plusieurs vues magasin, consultez cette <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>page du manuel</a> pour plus d'informations."
+"Cannot move the category : '%2' is using '%1' as virtual root category.","Impossible de déplacer la catégorie : '%2' utilise actuellement '%1' comme racine."

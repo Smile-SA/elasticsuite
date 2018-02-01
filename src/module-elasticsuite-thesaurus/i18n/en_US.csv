@@ -5,13 +5,14 @@ Thesaurus,Thesaurus
 Synonym,Synonym
 Expansion,Expansion
 Type,Type
-"Thesarurus Type","Thesarurus Type"
+"Thesaurus Type","Thesaurus Type"
 "Save Thesaurus","Save Thesaurus"
 "Save and Continue Edit","Save and Continue Edit"
 "Delete Thesaurus","Delete Thesaurus"
 "Edit a Thesaurus","Edit a Thesaurus"
 "General Information","General Information"
 "Thesaurus Name","Thesaurus Name"
+Active,Active
 Store,Store
 "Bag of words","Bag of words"
 Synonyms,Synonyms
@@ -36,14 +37,13 @@ Synonyms,Synonyms
 "Enable Search Expansions","Enable Search Expansions"
 "Concepts Weight Divider","Concepts Weight Divider"
 "ElasticSuite Thesaurus Indexing","ElasticSuite Thesaurus Indexing"
-"Reindex ElasticSuite Search Engine Thesaurus.","Reindex ElasticSuite search engine thesaurus."
+"Reindex ElasticSuite search engine thesaurus.","Reindex ElasticSuite search engine thesaurus."
 Delete,Delete
 "Are you sure?","Are you sure?"
 Name,Name
 Expansions,Expansions
 Terms,Terms
-Action,Action
 Status,Status
-Edit,Edit
-Active,Active
 Inactive,Inactive
+Action,Action
+Edit,Edit
