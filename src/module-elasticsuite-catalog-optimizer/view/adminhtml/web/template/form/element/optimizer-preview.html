@@ -8,6 +8,9 @@
 <div class="admin__fieldset">
 
     <div class="elasticsuite-optimizer-preview">
+        <div data-role="spinner" class="admin__data-grid-loading-mask" visible="loading" if="showSpinner">
+            <div class="spinner"><span repeat="8"></span></div>
+        </div>
 
         <div data-bind="if: hasProducts()">
 
