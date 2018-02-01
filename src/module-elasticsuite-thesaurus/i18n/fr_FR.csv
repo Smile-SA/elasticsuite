@@ -5,7 +5,7 @@ Thesaurus,Thesaurus
 Synonym,Synonym
 Expansion,Expansion
 Type,Type
-"Thesarurus Type","Type de thésaurus"
+"Thesaurus Type","Type de thésaurus"
 "Save Thesaurus","Sauvegarder le thésaurus"
 "Save and Continue Edit","Sauvegarder et continuer à éditer"
 "Delete Thesaurus","Supprimer le thésaurus"
@@ -44,6 +44,6 @@ Name,Nom
 Expansions,Expansions
 Terms,Termes
 Status,Status
+Inactive,Désactivé
 Action,Action
 Edit,Editer
-Inactive,Désactivé
