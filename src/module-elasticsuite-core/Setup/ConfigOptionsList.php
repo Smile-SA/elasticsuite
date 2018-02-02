@@ -47,7 +47,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     const CONFIG_PATH_ES_HOSTS = self::CONF_PREFIX . '/servers';
     const CONFIG_PATH_ES_SSL   = self::CONF_PREFIX . '/enable_https_mode';
     const CONFIG_PATH_ES_USER  = self::CONF_PREFIX . '/http_auth_user';
-    const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/ http_auth_pwd';
+    const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/http_auth_pwd';
 
     /**
      * @var ClientFactoryInterface
