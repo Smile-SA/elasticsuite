@@ -62,6 +62,11 @@ class IndexSettings implements IndexSettingsInterface
     const CODEC = 'best_compression';
 
     /**
+     * @var integer
+     */
+    const TOTAL_FIELD_LIMIT = 20000;
+
+    /**
      * @var \Smile\ElasticsuiteCore\Helper\IndexSettings
      */
     protected $helper;
@@ -133,6 +138,7 @@ class IndexSettings implements IndexSettingsInterface
             'translog.durability'              => self::FULL_REINDEX_TRANSLOG_DURABILITY,
             'codec'                            => self::CODEC,
             'max_result_window'                => $this->helper->getMaxResultWindow(),
+            'mapping.total_fields.limit'       => self::TOTAL_FIELD_LIMIT,
         ];
 
         return $settings;
