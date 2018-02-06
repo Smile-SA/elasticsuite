@@ -404,8 +404,4 @@
         </arguments>
     </type>
 
-    <!--  -->
-    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
-        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping\FieldPlugin"/>
-    </type>
 </config>
