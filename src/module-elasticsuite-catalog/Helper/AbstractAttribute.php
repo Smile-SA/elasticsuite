@@ -266,7 +266,9 @@ abstract class AbstractAttribute extends Mapping
      */
     private function prepareSimpleIndexAttributeValue(AttributeInterface $attribute, $value)
     {
-        if ($attribute->getBackendType() == 'decimal') {
+        if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
+            $value = boolval($value);
+        } elseif ($attribute->getBackendType() == 'decimal') {
             $value = floatval($value);
         } elseif ($attribute->getBackendType() == 'int') {
             $value = intval($value);
