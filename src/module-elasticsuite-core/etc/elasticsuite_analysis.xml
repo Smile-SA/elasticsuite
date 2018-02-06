@@ -27,21 +27,21 @@
         <filter name="trim" type="trim" language="default"/>
         <filter name="lowercase" type="lowercase" language="default"/>
         <filter name="word_delimiter" type="word_delimiter" language="default">
-            <generate_word_parts>1</generate_word_parts>
-            <catenate_words>1</catenate_words>
-            <catenate_numbers>1</catenate_numbers>
-            <catenate_all>1</catenate_all>
-            <split_on_case_change>1</split_on_case_change>
-            <split_on_numerics>1</split_on_numerics>
-            <preserve_original>1</preserve_original>
+            <generate_word_parts>true</generate_word_parts>
+            <catenate_words>true</catenate_words>
+            <catenate_numbers>true</catenate_numbers>
+            <catenate_all>true</catenate_all>
+            <split_on_case_change>true</split_on_case_change>
+            <split_on_numerics>true</split_on_numerics>
+            <preserve_original>true</preserve_original>
         </filter>
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
             <max_shingle_size>2</max_shingle_size>
-            <output_unigrams>0</output_unigrams>
+            <output_unigrams>false</output_unigrams>
         </filter>
         <filter name="ascii_folding" type="asciifolding" language="default">
-            <preserve_original>0</preserve_original>
+            <preserve_original>false</preserve_original>
         </filter>
         <filter name="standard" type="standard" language="default" />
         <filter name="standard" type="stemmer" language="ar">
