@@ -60,9 +60,7 @@ class HasImage implements SpecialAttributeInterface
      */
     public function getSearchQuery()
     {
-        $query = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'image']);
-
-        return $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
+        return $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'image']);
     }
 
     /**
@@ -102,7 +100,7 @@ class HasImage implements SpecialAttributeInterface
      */
     public function getValue()
     {
-        return 1;
+        return true;
     }
 
     /**
