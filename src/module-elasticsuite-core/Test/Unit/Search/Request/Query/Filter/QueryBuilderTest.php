@@ -55,9 +55,9 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->fields = [
             new Field('idField', 'integer'),
-            new Field('simpleTextField', 'string'),
-            new Field('analyzedField', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
-            new Field('nested.child', 'string', 'nested'),
+            new Field('simpleTextField', Field::FIELD_TYPE_KEYWORD),
+            new Field('analyzedField', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('nested.child', Field::FIELD_TYPE_KEYWORD, 'nested'),
         ];
     }
 

@@ -111,7 +111,7 @@ abstract class AbstractAttribute extends Mapping
      */
     public function getFieldType(AttributeInterface $attribute)
     {
-        $type = FieldInterface::FIELD_TYPE_STRING;
+        $type = FieldInterface::FIELD_TYPE_TEXT;
 
         if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
             $type = FieldInterface::FIELD_TYPE_BOOLEAN;
@@ -123,8 +123,8 @@ abstract class AbstractAttribute extends Mapping
             $type = FieldInterface::FIELD_TYPE_DOUBLE;
         } elseif ($attribute->getBackendType() == 'datetime') {
             $type = FieldInterface::FIELD_TYPE_DATE;
-        } elseif ($attribute->usesSource() && $attribute->getSourceModel() === null) {
-            $type = FieldInterface::FIELD_TYPE_INTEGER;
+        } elseif ($attribute->usesSource()) {
+            $type = $attribute->getSourceModel() ? FieldInterface::FIELD_TYPE_KEYWORD : FieldInterface::FIELD_TYPE_INTEGER ;
         }
 
         return $type;
