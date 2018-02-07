@@ -35,8 +35,10 @@ class Terms extends Term
      */
     public function __construct($values, $field, $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
     {
-        if (!is_array($values)) {
+        if (!is_array($values) && is_string($values)) {
             $values = explode(',', $values);
+        } elseif (!is_array($values)) {
+            $values = [$values];
         }
 
         parent::__construct($values, $field, $name, $boost);
