@@ -55,6 +55,10 @@ class TermsTest extends AbstractSimpleQueryBuilderTest
         $termsQuery = new TermsQuery('value1,value2', 'field');
         $query = $builder->buildQuery($termsQuery);
         $this->assertEquals(['value1', 'value2'], $query['terms']['field']);
+
+        $termsQuery = new TermsQuery(true, 'field');
+        $query = $builder->buildQuery($termsQuery);
+        $this->assertEquals([true], $query['terms']['field']);
     }
 
     /**
