@@ -26,7 +26,7 @@ class Boolean extends Attribute
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        $attributeValue = $request->getParam($this->_requestVar);
+        $attributeValue = (bool) $request->getParam($this->_requestVar);
 
         if (!empty($attributeValue)) {
             if (!is_array($attributeValue)) {
