@@ -17,6 +17,7 @@ use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Abstract Datasource for EAV entities
@@ -178,7 +179,7 @@ abstract class AbstractAttributeData
 
         if ($attribute->usesSource()) {
             $optionFieldName = $this->attributeHelper->getOptionTextFieldName($fieldName);
-            $fieldType = 'string';
+            $fieldType = FieldInterface::FIELD_TYPE_TEXT;
             $fieldOptions = ['name' => $optionFieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
             $this->fields[$optionFieldName] = $this->fieldFactory->create($fieldOptions);
 

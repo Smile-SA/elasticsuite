@@ -36,16 +36,16 @@
                 <field name="required_options" type="boolean" />
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
-                <field name="type_id" type="string" />
-                <field name="sku" type="string">
+                <field name="type_id" type="keyword" />
+                <field name="sku" type="text">
                     <isSearchable>1</isSearchable>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
                     <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
                 </field>
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />
-                <field name="configurable_attributes" type="string" />
-                <field name="indexed_attributes" type="string" />
+                <field name="configurable_attributes" type="keyword" />
+                <field name="indexed_attributes" type="keyword" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
@@ -61,7 +61,7 @@
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
-                <field name="category.name" type="string" nestedPath="category">
+                <field name="category.name" type="text" nestedPath="category">
                     <isSearchable>1</isSearchable>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
                     <isFilterable>0</isFilterable>
@@ -87,7 +87,7 @@
                 <field name="parent_id" type="integer" />
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
-                <field name="path" type="string" />
+                <field name="path" type="keyword" />
                 <field name="position" type="integer" />
                 <field name="level" type="integer" />
                 <field name="children_count" type="integer" />

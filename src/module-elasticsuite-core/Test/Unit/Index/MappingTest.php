@@ -46,16 +46,16 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         // Static fields.
         $fields = [
             new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
-            new Field('nested.child1', FieldInterface::FIELD_TYPE_STRING, 'nested'),
-            new Field('nested.child2', FieldInterface::FIELD_TYPE_STRING, 'nested'),
-            new Field('object.child1', FieldInterface::FIELD_TYPE_STRING),
-            new Field('object.child2', FieldInterface::FIELD_TYPE_STRING),
+            new Field('nested.child1', FieldInterface::FIELD_TYPE_TEXT, 'nested'),
+            new Field('nested.child2', FieldInterface::FIELD_TYPE_TEXT, 'nested'),
+            new Field('object.child1', FieldInterface::FIELD_TYPE_TEXT),
+            new Field('object.child2', FieldInterface::FIELD_TYPE_TEXT),
         ];
 
         // Stubing a dynanyc data provider.
         $dynamicDataProvider       = $this->getMockBuilder(DynamicFieldProviderInterface::class)->getMock();
         $dynamicDataProviderFields = [
-            new Field('title', FieldInterface::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
+            new Field('title', FieldInterface::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
         ];
         $dynamicDataProvider->method('getFields')
             ->will($this->returnValue($dynamicDataProviderFields));
@@ -74,7 +74,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_SEARCH_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_SEARCH_FIELD]['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $properties[Mapping::DEFAULT_SEARCH_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_SEARCH_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_SEARCH_FIELD]['fields']);
     }
@@ -89,7 +89,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_AUTOCOMPLETE_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_AUTOCOMPLETE_FIELD]['fields']);
     }
@@ -104,7 +104,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertArrayHasKey(Mapping::DEFAULT_SPELLING_FIELD, $properties);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $properties[Mapping::DEFAULT_SPELLING_FIELD]['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $properties[Mapping::DEFAULT_SPELLING_FIELD]['type']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
         $this->assertArrayHasKey(FieldInterface::ANALYZER_PHONETIC, $properties[Mapping::DEFAULT_SPELLING_FIELD]['fields']);
@@ -278,40 +278,40 @@ class MappingTest extends \PHPUnit\Framework\TestCase
             ),
             new Field(
                 'ignoredField',
-                FieldInterface::FIELD_TYPE_STRING
+                FieldInterface::FIELD_TYPE_TEXT
             ),
             new Field(
                 'standardField',
-                FieldInterface::FIELD_TYPE_STRING,
+                FieldInterface::FIELD_TYPE_TEXT,
                 null,
                 ['is_searchable' => true]
             ),
             new Field(
                 'weightedField',
-                FieldInterface::FIELD_TYPE_STRING,
+                FieldInterface::FIELD_TYPE_TEXT,
                 null,
                 ['is_searchable' => true, 'search_weight' => 2]
             ),
             new Field(
                 'whitespaceField',
-                FieldInterface::FIELD_TYPE_STRING,
+                FieldInterface::FIELD_TYPE_TEXT,
                 null,
                 ['is_searchable' => true, 'search_weight' => 1, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]
             ),
             new Field(
                 'whitespaceWeightedField',
-                FieldInterface::FIELD_TYPE_STRING,
+                FieldInterface::FIELD_TYPE_TEXT,
                 null,
                 ['is_searchable' => true, 'search_weight' => 2, 'default_search_analyzer' => Field::ANALYZER_WHITESPACE]
             ),
             new Field(
                 'nested.subfield',
-                FieldInterface::FIELD_TYPE_STRING,
+                FieldInterface::FIELD_TYPE_TEXT,
                 'nested'
             ),
             new Field(
                 'object.subfield',
-                FieldInterface::FIELD_TYPE_STRING
+                FieldInterface::FIELD_TYPE_TEXT
             ),
         ];
 

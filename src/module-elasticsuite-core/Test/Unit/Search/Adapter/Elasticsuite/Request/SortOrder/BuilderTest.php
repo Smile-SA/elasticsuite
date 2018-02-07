@@ -50,7 +50,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('field', $currentSortOrder);
         $this->assertEquals(StandardSortOrder::SORT_ASC, $currentSortOrder['field']['order']);
         $this->assertEquals('_last', $currentSortOrder['field']['missing']);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $currentSortOrder['field']['unmapped_type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $currentSortOrder['field']['unmapped_type']);
     }
 
     /**
@@ -109,7 +109,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('parent.child', $currentSortOrder);
         $this->assertEquals(StandardSortOrder::SORT_ASC, $currentSortOrder['parent.child']['order']);
         $this->assertEquals('_last', $currentSortOrder['parent.child']['missing']);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $currentSortOrder['parent.child']['unmapped_type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $currentSortOrder['parent.child']['unmapped_type']);
         $this->assertEquals('parent', $currentSortOrder['parent.child']['nested_path']);
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
     }
@@ -133,7 +133,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('parent.child', $currentSortOrder);
         $this->assertEquals(StandardSortOrder::SORT_ASC, $currentSortOrder['parent.child']['order']);
         $this->assertEquals('_last', $currentSortOrder['parent.child']['missing']);
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $currentSortOrder['parent.child']['unmapped_type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $currentSortOrder['parent.child']['unmapped_type']);
         $this->assertEquals('parent', $currentSortOrder['parent.child']['nested_path']);
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
         $this->assertEquals('query', $currentSortOrder['parent.child']['nested_filter']);
