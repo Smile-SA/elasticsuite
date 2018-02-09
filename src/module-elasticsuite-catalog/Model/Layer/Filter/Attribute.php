@@ -267,10 +267,29 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
                 }
             }
 
-            usort($items, function ($item1, $item2) {
-                return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
-            });
+            $items = $this->sortOptionsData($items);
         }
+
+        return $items;
+    }
+
+    /**
+     * Sort items by adminSortIndex key.
+     *
+     * @param array $items to be sorted.
+     *
+     * @return array
+     */
+    private function sortOptionsData(array $items)
+    {
+
+        usort($items, function ($item1, $item2) {
+            if (!isset($item1['adminSortIndex']) or !isset($item2['adminSortIndex'])) {
+                return 0;
+            }
+
+            return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
+        });
 
         return $items;
     }
