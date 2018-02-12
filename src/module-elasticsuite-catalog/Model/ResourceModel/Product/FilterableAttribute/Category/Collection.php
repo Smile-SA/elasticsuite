@@ -126,8 +126,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
      */
     private function getMaxPosition()
     {
+        $fullTableName = $this->getResource()->getTable(self::CATEGORY_FILTER_CONFIG_TABLE);
         $categoryPositionSelect = $this->getConnection()->select()
-            ->from(self::CATEGORY_FILTER_CONFIG_TABLE, [])
+            ->from($fullTableName, [])
             ->columns(['category_max_position' => new \Zend_Db_Expr('MAX(position)')])
             ->where($this->getConnection()->quoteInto('entity_id = ?', (int) $this->category->getId()));
 
@@ -167,7 +168,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     {
         $type  = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY);
         $table = $type->getAdditionalAttributeTable();
-        $tableDesc = $this->getConnection()->describeTable($table);
+        $fullTableName = $this->getResource()->getTable($table);
+        $tableDesc = $this->getConnection()->describeTable($fullTableName);
         $tableFields = array_keys($tableDesc);
 
         return array_diff($tableFields, $this->overridenColumns);

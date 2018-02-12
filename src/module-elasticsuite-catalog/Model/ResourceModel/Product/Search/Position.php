@@ -60,8 +60,9 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getByProductIds(array $productIds, $storeId)
     {
+        $searchQueryTable = $this->getTable('search_query');
         $select = $this->getBaseSelect()
-            ->joinInner($this->getTable('search_query'), 'main_table.query_id = search_query.query_id', [])
+            ->joinInner($searchQueryTable, "main_table.query_id = {$searchQueryTable}.query_id", [])
             ->where('product_id IN(?)', $productIds)
             ->where('store_id = ?', $storeId)
             ->columns(['product_id', 'query_id', 'position']);
