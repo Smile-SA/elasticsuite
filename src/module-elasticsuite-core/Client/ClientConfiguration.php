@@ -33,11 +33,6 @@ class ClientConfiguration implements ClientConfigurationInterface
     const ES_CLIENT_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings/es_client';
 
     /**
-     * @var array
-     */
-    private $options;
-
-    /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     private $scopeConfig;
@@ -45,14 +40,11 @@ class ClientConfiguration implements ClientConfigurationInterface
     /**
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig Config.
-     * @param array                                              $options     Custom options.
      */
     public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        $options = []
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->scopeConfig = $scopeConfig;
-        $this->options     = $options;
     }
 
     /**
@@ -124,6 +116,6 @@ class ClientConfiguration implements ClientConfigurationInterface
     {
         $path = self::ES_CLIENT_CONFIG_XML_PREFIX . '/' . $configField;
 
-        return $this->options[$configField] ?? $this->scopeConfig->getValue($path);
+        return $this->scopeConfig->getValue($path);
     }
 }
