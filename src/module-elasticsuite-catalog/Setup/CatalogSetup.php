@@ -469,6 +469,25 @@ class CatalogSetup
     }
 
     /**
+     * Add 'is_blacklisted' column to 'smile_elasticsuitecatalog_search_query_product_position'.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function addBlacklistColumnToSearchPositionTable(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_elasticsuitecatalog_search_query_product_position'),
+            'is_blacklisted',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'comment'  => 'If the product is blacklisted',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *
