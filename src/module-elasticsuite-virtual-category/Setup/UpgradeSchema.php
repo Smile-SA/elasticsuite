@@ -6,26 +6,25 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-
 namespace Smile\ElasticsuiteVirtualCategory\Setup;
 
-use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
 
 /**
- * Schema for virtual categories.
+ * Upgrade Schema for virtual categories
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
- * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class InstallSchema implements InstallSchemaInterface
+class UpgradeSchema implements UpgradeSchemaInterface
 {
     /**
      * @var VirtualCategorySetup
@@ -43,23 +42,15 @@ class InstallSchema implements InstallSchemaInterface
     }
 
     /**
-     * Installs DB schema for the module
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @param SchemaSetupInterface   $setup   The setup interface
-     * @param ModuleContextInterface $context The module Context
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    public function upgrade(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
         $setup->startSetup();
 
-        $this->virtualCategorySetup->createPositionTable($setup);
-
-        // Introduced in version 1.2.0.
-        $this->virtualCategorySetup->addBlacklistColumnToPositionTable($setup);
+        if (version_compare($context->getVersion(), '1.2.0', '<')) {
+            $this->virtualCategorySetup->addBlacklistColumnToPositionTable($setup);
+        }
 
         $setup->endSetup();
     }
