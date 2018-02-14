@@ -45,9 +45,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $searchEngine;
 
     /**
-     * @var string
+     * @var string|QueryInterface
      */
-    private $queryText;
+    private $query;
 
     /**
      * @var string
@@ -241,7 +241,23 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
-     * Add search query filter
+     * Set search query filter in the collection.
+     *
+     * @param string|QueryInterface $query Search query text.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function setSearchQuery($query)
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * Add search query filter.
+     *
+     * @deprecated Replaced by setSearchQuery
      *
      * @param string $query Search query text.
      *
@@ -249,9 +265,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addSearchFilter($query)
     {
-        $this->queryText = $query;
-
-        return $this;
+        return $this->setSearchQuery($query);
     }
 
     /**
@@ -507,9 +521,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $size = $this->_pageSize ? $this->_pageSize : $this->getSize();
         $from = $size * (max(1, $this->getCurPage()) - 1);
 
-        // Query text.
-        $queryText = $this->queryText;
-
         // Setup sort orders.
         $sortOrders = $this->prepareSortOrders();
 
@@ -518,7 +529,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $searchRequestName,
             $from,
             $size,
-            $queryText,
+            $this->query,
             $sortOrders,
             $this->filters,
             $this->queryFilters,
@@ -591,9 +602,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $storeId     = $this->getStoreId();
         $requestName = $this->searchRequestName;
 
-        // Query text.
-        $queryText = $this->queryText;
-
         $facets = [
             'attribute_set_id'   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
             'indexed_attributes' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
@@ -604,7 +612,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $requestName,
             0,
             0,
-            $queryText,
+            $this->query,
             [],
             $this->filters,
             $this->queryFilters,

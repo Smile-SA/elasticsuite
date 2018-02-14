@@ -159,7 +159,7 @@ class DataProvider implements DataProviderInterface
 
         $categoryCollection = $this->categoryCollectionFactory->create();
         $categoryCollection->addAttributeToSelect("is_active");
-        $categoryCollection->addSearchFilter($terms);
+        $categoryCollection->setSearchQuery($terms);
         $categoryCollection->setPageSize($this->getResultsPageSize());
 
         return $categoryCollection;
