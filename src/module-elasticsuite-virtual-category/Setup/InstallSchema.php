@@ -58,9 +58,6 @@ class InstallSchema implements InstallSchemaInterface
 
         $this->virtualCategorySetup->createPositionTable($setup);
 
-        // Introduced in version 1.2.0.
-        $this->virtualCategorySetup->addBlacklistColumnToPositionTable($setup);
-
         $setup->endSetup();
     }
 }

@@ -50,6 +50,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.2.0', '<')) {
             $this->virtualCategorySetup->addBlacklistColumnToPositionTable($setup);
+            $this->virtualCategorySetup->setNullablePositionColumn($setup);
         }
 
         $setup->endSetup();
