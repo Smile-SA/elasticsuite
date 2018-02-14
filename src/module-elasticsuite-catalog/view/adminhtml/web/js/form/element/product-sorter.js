@@ -158,6 +158,7 @@ define([
                 update      : component.onSortUpdate.bind(component)
             });
             $(element).disableSelection();
+            $(element).append('<li class="clear"></li>');
         },
 
         onSortUpdate : function (event, ui)

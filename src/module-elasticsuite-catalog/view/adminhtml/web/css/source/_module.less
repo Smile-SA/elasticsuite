@@ -14,7 +14,7 @@
 
 .elasticsuite-admin-product-sorter {
 
-    margin: 40px 0;
+    margin: 40px 20px;
 
     span.title {
         font-size: 1.7rem;
@@ -23,6 +23,7 @@
     }
 
     .bottom-links {
+        clear: both;
         width: 40%;
         margin: 10px auto;
         border: 1px solid #cccccc;
@@ -45,37 +46,34 @@
 
     .product-list {
 
-        margin: 20px 40px 0;
+        margin: 20px 0 0;
 
-        li.product-list-item, li.product-list-item-placeholder {
-
-            display: inline-block;
+        li {
+            box-sizing: border-box;
+            float: left;
             border: 1px solid #d6d6d6;
+            background: #FFFFFF;
             width: 200px;
-            margin: 5px;
+            min-height: 221px;
+            margin: 5px 0 0 5px;
             vertical-align: top;
             list-style-type: none;
 
-            h1 {
-                font-size: 1.2em;
-                font-weight: 600;
-                line-height: 1.9em;
-                margin: 0 0 2px;
+            &.product-list-item-placeholder {
+                background: #e3e3e3;
+            }
 
-                span {
-                    width: 170px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: block;
-                }
+            &.clear {
+                width: 0;
+                min-height: 0;
+                border: none;
+                clear: both;
             }
 
             .info {
                 position: relative;
                 background: rgba(44, 44, 44, 0.75);
-                width: 100%;
-                margin-top: -31px;
+                margin-top: -51px;
                 color: #FFF;
                 padding: 4px;
 
@@ -92,6 +90,23 @@
                 p.sku {
                     display: block;
                     width: 100%;
+                    margin-bottom: 5px;
+                }
+
+                h1 {
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    line-height: 1.9em;
+                    margin: 0 10px;
+                    color: #FFF;
+
+                    span {
+                        width: 160px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
                 }
             }
 

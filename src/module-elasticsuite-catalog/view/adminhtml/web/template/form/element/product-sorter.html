@@ -25,13 +25,11 @@
             ">
                 <div class="draggable-handle" data-bind="if: hasPosition()"></div>
                 
-                <h1><span data-bind="html: getName(), attr: {title: getName()"></span></h1>
-                
                 <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
     
                 <div class="info">
+                    <h1><span data-bind="html: getName(), attr: {title: getName()"></span></h1>
                     <p class="sku" data-bind="text: getSku()"></p>
-                    <br/>
                     <p class="price" data-bind="text: getFormattedPrice()"></p>
                     <p class="stock" data-bind="text: getStockLabel()"></p>
                 </div>
