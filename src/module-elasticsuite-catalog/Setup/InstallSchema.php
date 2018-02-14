@@ -68,9 +68,6 @@ class InstallSchema implements InstallSchemaInterface
         // Introduced in version 1.4.0.
         $this->catalogSetup->createSearchPositionTable($setup);
 
-        // Introduced in version 1.5.0.
-        $this->catalogSetup->addBlacklistColumnToSearchPositionTable($setup);
-
         $setup->endSetup();
     }
 }

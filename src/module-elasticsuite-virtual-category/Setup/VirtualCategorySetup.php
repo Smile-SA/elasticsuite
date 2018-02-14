@@ -183,8 +183,15 @@ class VirtualCategorySetup
                 'position',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
-                ['nullable' => false, 'default' => '0'],
+                ['nullable' => true, 'default' => '0'],
                 'Position'
+            )
+            ->addColumn(
+                'is_blacklisted',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                null,
+                ['nullable' => true, 'default' => '0'],
+                'If the product is blacklisted'
             )
             ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
             ->addForeignKey(
@@ -221,6 +228,25 @@ class VirtualCategorySetup
                 'nullable' => false,
                 'default'  => 0,
                 'comment'  => 'If the product is blacklisted',
+            ]
+        );
+    }
+
+    /**
+     * Set the 'position' column of 'smile_virtualcategory_catalog_category_product_position' to nullable=true.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function setNullablePositionColumn(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable('smile_virtualcategory_catalog_category_product_position'),
+            'position',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'default'  => 0,
+                'comment'  => 'Position',
             ]
         );
     }
