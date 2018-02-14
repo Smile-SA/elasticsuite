@@ -79,7 +79,7 @@ class Filter implements PreProcessorInterface
         $terms = $this->getQueryText();
 
         $collection->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
-            ->addSearchFilter($terms);
+            ->setSearchQuery($terms);
 
         if (!$this->stockConfiguration->isShowOutOfStock()) {
             $collection->addIsInStockFilter();
