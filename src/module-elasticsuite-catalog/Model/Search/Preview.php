@@ -68,7 +68,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
     protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
     {
         $collection->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH]);
-        $collection->addSearchFilter($this->searchQuery->getQueryText());
+        $collection->setSearchQuery($this->searchQuery->getQueryText());
 
         return $collection;
     }
