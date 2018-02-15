@@ -58,11 +58,6 @@ class Save extends \Magento\Search\Controller\Adminhtml\Term
         $sortedProducts      = $this->getRequest()->getParam('sorted_products', []);
         $blacklistedProducts = $this->getRequest()->getParam('blacklisted_products', []);
 
-        $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/rorua.log');
-        $logger = new \Zend\Log\Logger();
-        $logger->addWriter($writer);
-        $logger->info(print_r($this->getRequest()->getParams(), true));
-
         if (is_string($sortedProducts)) {
             try {
                 $sortedProducts = $this->jsonHelper->jsonDecode($sortedProducts);
