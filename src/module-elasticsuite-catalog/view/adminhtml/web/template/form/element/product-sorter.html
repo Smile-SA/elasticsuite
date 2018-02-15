@@ -21,10 +21,13 @@
         <ul data-bind="foreach: products, afterRender: enableSortableList" class="product-list">
             <li class="product-list-item" data-bind="
                 attr: {'data-product-id': getId()}, 
-                css: {'manual-sorting': hasPosition(), 'automatic-sorting': !hasPosition(), }
+                css: {'manual-sorting': hasPosition(), 'automatic-sorting': !hasPosition(), 'blacklisted': isBlacklisted() }
             ">
                 <div class="draggable-handle" data-bind="if: hasPosition()"></div>
-                
+                <div class="blacklist-handle" data-bind="if: $parent.allowBlacklist">
+                    <a data-bind="click: $parent.toggleBlackListed.bind($parent), attr: { title: isBlacklisted() ? $t('Blacklisted') : $t('Visible') }"></a>
+                </div>
+
                 <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
     
                 <div class="info">
