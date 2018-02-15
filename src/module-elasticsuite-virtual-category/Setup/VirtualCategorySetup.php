@@ -183,14 +183,14 @@ class VirtualCategorySetup
                 'position',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
-                ['nullable' => true, 'default' => '0'],
+                ['nullable' => true],
                 'Position'
             )
             ->addColumn(
                 'is_blacklisted',
                 \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
                 null,
-                ['nullable' => true, 'default' => '0'],
+                ['nullable' => false, 'default' => '0'],
                 'If the product is blacklisted'
             )
             ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
@@ -245,7 +245,6 @@ class VirtualCategorySetup
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 'nullable' => true,
-                'default'  => 0,
                 'comment'  => 'Position',
             ]
         );
