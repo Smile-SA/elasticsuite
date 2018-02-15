@@ -58,6 +58,7 @@
             margin: 5px 0 0 5px;
             vertical-align: top;
             list-style-type: none;
+            position: relative;
 
             &.product-list-item-placeholder {
                 background: #e3e3e3;
@@ -115,6 +116,53 @@
                 padding: 0;
                 float: left;
                 margin: 3px 0 0 0;
+                position: absolute;
+            }
+
+            .blacklist-handle {
+                position: absolute;
+                top:5px;
+                right:5px;
+                z-index: 1;
+                a {
+                    cursor: pointer;
+                    color: #79a22e;
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+
+                a:before {
+                    font-family: 'Admin Icons';
+                    font-style: normal;
+                    font-weight: normal;
+                    line-height: 1;
+                    content: "\e60f";
+                }
+            }
+
+            &.blacklisted {
+                div.product-image, div.info {
+                    opacity: 0.6;
+                    filter: grayscale(50%);
+                }
+
+                .blacklist-handle {
+                    a {
+                        color: #41362f;
+                    }
+                    a:after {
+                        font-family: 'Admin Icons';
+                        font-style: normal;
+                        font-weight: normal;
+                        line-height: 1;
+                        content: '\e62f';
+                        position: absolute;
+                        top: -2px;
+                        left: 1px;
+                        font-size: 1.5em;
+                    }
+                }
             }
 
             div.product-image {

@@ -80,12 +80,14 @@
                         <item name="dataScope" xsi:type="string">sorted_products</item>
                         <item name="pageSize" xsi:type="string">20</item>
                         <item name="forceLoading" xsi:type="boolean">true</item>
+                        <item name="allowBlacklist" xsi:type="boolean">true</item>
                         <item name="messages" xsi:type="array">
                             <item name="emptyText" xsi:type="string" translate="true"><![CDATA[No search result for the current search.]]></item>
                         </item>
                         <item name="imports" xsi:type="array">
                             <item name="loadUrl" xsi:type="string">${ $.provider }:data.product_sorter_load_url</item>
                             <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>
+                            <item name="blacklistedProducts" xsi:type="string">${ $.provider }:data.blacklisted_products</item>
                         </item>
                   </item>
                   </argument>
