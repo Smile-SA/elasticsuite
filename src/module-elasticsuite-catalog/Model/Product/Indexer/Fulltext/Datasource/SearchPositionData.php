@@ -50,10 +50,13 @@ class SearchPositionData implements DatasourceInterface
         $searchPositions = $this->resourceModel->getByProductIds($productIds, $storeId);
 
         foreach ($searchPositions as $currentPosition) {
-            $indexData[(int) $currentPosition['product_id']]['search_query'][] = [
-                'query_id' => (int) $currentPosition['query_id'],
-                'position' => (int) $currentPosition['position'],
+            $data = [
+                'query_id'       => (int) $currentPosition['query_id'],
+                'position'       => (int) $currentPosition['position'],
+                'is_blacklisted' => (bool) $currentPosition['is_blacklisted'],
             ];
+
+            $indexData[(int) $currentPosition['product_id']]['search_query'][] = array_filter($data);
         }
 
         return $indexData;
