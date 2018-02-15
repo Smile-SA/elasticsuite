@@ -79,8 +79,9 @@ class DataProvider extends AbstractDataProvider
 
         foreach ($data['items'] as $currentItem) {
             $queryId = $currentItem[$this->primaryFieldName];
-            $currentItem['sorted_products'] = json_encode($this->getSortedProducts($queryId), JSON_FORCE_OBJECT);
-            $currentItem['price_format'] = $this->localeFormat->getPriceFormat();
+            $currentItem['sorted_products']         = json_encode($this->getSortedProducts($queryId), JSON_FORCE_OBJECT);
+            $currentItem['blacklisted_products']    = array_map('intval', $this->getBlacklistedProducts($queryId));
+            $currentItem['price_format']            = $this->localeFormat->getPriceFormat();
             $currentItem['product_sorter_load_url'] = $this->getProductSorterLoadUrl();
             $items[$queryId] = $currentItem;
         }
@@ -98,6 +99,18 @@ class DataProvider extends AbstractDataProvider
     private function getSortedProducts($queryId)
     {
         return $this->resourceModel->getProductPositionsByQuery($queryId);
+    }
+
+    /**
+     * Return list of blacklisted products for the query.
+     *
+     * @param int $queryId Query id.
+     *
+     * @return array
+     */
+    private function getBlacklistedProducts($queryId)
+    {
+        return $this->resourceModel->getProductBlacklistByQuery($queryId);
     }
 
     /**
