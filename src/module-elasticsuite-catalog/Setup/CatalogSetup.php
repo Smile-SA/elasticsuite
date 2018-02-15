@@ -445,7 +445,7 @@ class CatalogSetup
             'position',
             \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
             null,
-            ['nullable' => true, 'default' => '0'],
+            ['nullable' => true],
             'Position'
         )
         ->addColumn(
@@ -507,7 +507,6 @@ class CatalogSetup
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 'nullable' => true,
-                'default'  => 0,
                 'comment'  => 'Position',
             ]
         );
