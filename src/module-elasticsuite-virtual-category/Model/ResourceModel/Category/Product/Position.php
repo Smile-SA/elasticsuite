@@ -83,7 +83,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function saveProductPositions(CategoryInterface $category)
     {
         $newProductPositions  = $category->getSortedProducts();
-        $blacklistedProducts  = $category->getBlacklistedProducts();
+        $blacklistedProducts  = $category->getBlacklistedProducts() ?? [];
 
         $deleteConditions = [
             $this->getConnection()->quoteInto('category_id = ?', (int) $category->getId()),
