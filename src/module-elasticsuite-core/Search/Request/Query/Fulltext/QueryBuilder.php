@@ -130,15 +130,17 @@ class QueryBuilder
         $phraseMatchBoost      = $relevanceConfig->getPhraseMatchBoost();
         $defaultSearchField    = MappingInterface::DEFAULT_SEARCH_FIELD;
         $searchableFieldFilter = $this->fieldFilters['searchableFieldFilter'];
+        $sortableAnalyzer      = FieldInterface::ANALYZER_SORTABLE;
+        $phraseAnalyzer        = FieldInterface::ANALYZER_WHITESPACE;
 
-        $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, null, $searchableFieldFilter, $defaultSearchField),
-            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost),
+            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, 2 * $phraseMatchBoost)
         );
 
         $queryParams = [
