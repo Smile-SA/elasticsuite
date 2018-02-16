@@ -39,6 +39,7 @@
                 <field name="type_id" type="string" />
                 <field name="sku" type="string">
                     <isSearchable>1</isSearchable>
+                    <isUsedForSortBy>1</isUsedForSortBy>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
                     <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
                 </field>
