@@ -324,13 +324,7 @@ class Field implements FieldInterface
         if ($this->getType() == self::FIELD_TYPE_TEXT && $analyzer == self::ANALYZER_UNTOUCHED) {
             $fieldMapping['type']  = self::FIELD_TYPE_KEYWORD;
         } elseif ($this->getType() == self::FIELD_TYPE_TEXT) {
-            $fieldMapping['analyzer']   = $analyzer;
-            $fieldMapping['doc_values'] = false;
-            $fieldMapping['index_options'] = 'docs';
-            $fieldMapping['norms'] = false;
-            if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
-                $fieldMapping['index_options'] = 'positions';
-            }
+            $fieldMapping['analyzer'] = $analyzer;
             if ($analyzer === self::ANALYZER_SORTABLE) {
                 $fieldMapping['fielddata'] = true;
             }
