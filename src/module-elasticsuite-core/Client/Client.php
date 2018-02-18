@@ -38,18 +38,15 @@ class Client implements ClientInterface
     /**
      * Constructor.
      *
-     * @param ClientConfigurationInterfaceFactory $clientConfigurationFactory Client configuration factory.
-     * @param ClientBuilder                       $clientBuilder              ES client builder.
-     * @param LoggerInterface                     $logger                     Logger.
-     * @param array                               $options                    Client options.
+     * @param ClientConfigurationInterface $clientConfiguration Client configuration factory.
+     * @param ClientBuilder                $clientBuilder       ES client builder.
+     * @param LoggerInterface              $logger              Logger.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Client\ClientConfigurationFactory $clientConfigurationFactory,
+        ClientConfigurationInterface $clientConfiguration,
         ClientBuilder $clientBuilder,
-        LoggerInterface $logger,
-        $options = []
+        LoggerInterface $logger
     ) {
-        $clientConfiguration = $clientConfigurationFactory->create(['options' => $options]);
         $this->esClient = $this->createClient($clientConfiguration, $clientBuilder, $logger);
     }
 

@@ -53,15 +53,23 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      * @var ClientFactoryInterface
      */
     private $clientFactory;
+    /**
+     * @var ClientConfigurationFactory
+     */
+    private $clientConfigurationFactory;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Client\ClientFactory $clientFactory ES Client factory.
+     * @param \Smile\ElasticsuiteCore\Client\ClientFactory             $clientFactory              ES Client factory.
+     * @param \Smile\ElasticsuiteCore\Setup\ClientConfigurationFactory $clientConfigurationFactory Client Configuration factory.
      */
-    public function __construct(\Smile\ElasticsuiteCore\Client\ClientFactory $clientFactory)
-    {
+    public function __construct(
+        \Smile\ElasticsuiteCore\Client\ClientFactory $clientFactory,
+        \Smile\ElasticsuiteCore\Setup\ClientConfigurationFactory $clientConfigurationFactory
+    ) {
         $this->clientFactory = $clientFactory;
+        $this->clientConfigurationFactory = $clientConfigurationFactory;
     }
 
     /**
@@ -120,7 +128,9 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
         try {
             $clientsOptions = array_filter($this->getClientOptions($options, $deploymentConfig));
-            $this->clientFactory->create(['options' => $clientsOptions])->info();
+            $clientConfiguration = $this->clientConfigurationFactory->create(['options' => $clientsOptions]);
+
+            $this->clientFactory->create(['clientConfiguration' => $clientConfiguration])->info();
         } catch (\Exception $e) {
             $errors[] = "Unable to connect ElasticSearch server : {$e->getMessage()}";
         }
