@@ -39,7 +39,12 @@ class Index
     /**
      * @var string
      */
-    const WORD_DELIMITER = '-';
+    const WORD_DELIMITER = '_';
+
+    /**
+     * @var integer
+     */
+    const MAX_SIZE = 10;
 
     /**
      * @var ClientInterface
@@ -218,6 +223,7 @@ class Index
         foreach ($analysis['tokens'] as $token) {
             if ($token['type'] == 'SYNONYM') {
                 $positionKey = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
+                $token['token'] = str_replace('_', ' ', $token['token']);
                 $synonymByPositions[$positionKey][] = $token;
             }
         }
