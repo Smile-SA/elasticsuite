@@ -78,7 +78,11 @@ class PriceData implements DatasourceInterface
                 'price'             => $finalPrice,
                 'original_price'    => $originalPrice,
                 'is_discount'       => $finalPrice < $originalPrice,
-                'customer_group_id' => $priceDataRow['customer_group_id'],
+                'customer_group_id' => (int) $priceDataRow['customer_group_id'],
+                'tax_class_id'      => (int) $priceDataRow['tax_class_id'],
+                'final_price'       => $priceDataRow['final_price'],
+                'min_price'         => $priceDataRow['min_price'],
+                'max_price'         => $priceDataRow['max_price'],
             ];
         }
 
