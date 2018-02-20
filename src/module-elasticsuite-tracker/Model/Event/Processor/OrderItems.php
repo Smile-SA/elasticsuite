@@ -30,7 +30,7 @@ class OrderItems implements EventProcessorInterface
      */
     public function process($eventData)
     {
-        if (isset($eventData['page']['order']) && isset($eventData['page']['order']['items'])) {
+        if (isset($eventData['page']['order']['items'])) {
             $eventData['page']['order']['items'] = array_values($eventData['page']['order']['items']);
 
             foreach ($eventData['page']['order']['items'] as &$item) {

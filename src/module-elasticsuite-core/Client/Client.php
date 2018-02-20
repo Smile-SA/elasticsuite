@@ -14,10 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
-use Elasticsearch\ClientBuilder;
-use Psr\Log\LoggerInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
 /**
  * ElasticSearch client implementation.
@@ -38,19 +36,12 @@ class Client implements ClientInterface
     /**
      * Constructor.
      *
-     * @param ClientConfigurationInterfaceFactory $clientConfigurationFactory Client configuration factory.
-     * @param ClientBuilder                       $clientBuilder              ES client builder.
-     * @param LoggerInterface                     $logger                     Logger.
-     * @param array                               $options                    Client options.
+     * @param ClientConfigurationInterface $clientConfiguration Client configuration factory.
+     * @param ClientBuilder                $clientBuilder       ES client builder.
      */
-    public function __construct(
-        \Smile\ElasticsuiteCore\Client\ClientConfigurationFactory $clientConfigurationFactory,
-        ClientBuilder $clientBuilder,
-        LoggerInterface $logger,
-        $options = []
-    ) {
-        $clientConfiguration = $clientConfigurationFactory->create(['options' => $options]);
-        $this->esClient = $this->createClient($clientConfiguration, $clientBuilder, $logger);
+    public function __construct(ClientConfigurationInterface $clientConfiguration, ClientBuilder $clientBuilder)
+    {
+        $this->esClient = $clientBuilder->build($clientConfiguration->getOptions());
     }
 
     /**
@@ -186,64 +177,5 @@ class Client implements ClientInterface
     public function termvectors($params)
     {
         return $this->esClient->termvectors($params);
-    }
-
-    /**
-     * Create an ES Client form configuration.
-     *
-     * @param ClientConfigurationInterface $clientConfiguration Client configuration.
-     * @param ClientBuilder                $clientBuilder       ES client builder.
-     * @param LoggerInterface              $logger              Logger
-     *
-     * @return \Elasticsearch\Client
-     */
-    private function createClient(
-        ClientConfigurationInterface $clientConfiguration,
-        ClientBuilder $clientBuilder,
-        LoggerInterface $logger
-    ) {
-        $hosts = $this->getHosts($clientConfiguration);
-
-        if (!empty($hosts)) {
-            $clientBuilder->setHosts($hosts);
-        }
-
-        if ($clientConfiguration->isDebugModeEnabled()) {
-            $clientBuilder->setLogger($logger);
-        }
-
-        return $clientBuilder->build();
-    }
-
-    /**
-     * Return hosts config used to connect to the cluster.
-     *
-     * @param ClientConfigurationInterface $clientConfiguration Client configuration.
-     *
-     * @return array
-     */
-    private function getHosts(ClientConfigurationInterface $clientConfiguration)
-    {
-        $hosts = [];
-
-        foreach ($clientConfiguration->getServerList() as $host) {
-            if (!empty($host)) {
-                list($hostname, $port) = array_pad(explode(':', $host, 2), 2, 9200);
-                $currentHostConfig = [
-                    'host'   => $hostname,
-                    'port'   => $port,
-                    'scheme' => $clientConfiguration->getScheme(),
-                ];
-
-                if ($clientConfiguration->isHttpAuthEnabled()) {
-                    $currentHostConfig['user'] = $clientConfiguration->getHttpAuthUser();
-                    $currentHostConfig['pass'] = $clientConfiguration->getHttpAuthPassword();
-                }
-
-                $hosts[] = $currentHostConfig;
-            }
-        }
-
-        return $hosts;
     }
 }

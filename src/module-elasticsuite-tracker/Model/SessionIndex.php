@@ -105,7 +105,9 @@ class SessionIndex implements SessionIndexInterface
         $sessionIdsByStore = [];
 
         foreach ($events as $event) {
-            $sessionIdsByStore[$event['page']['store_id']][] = $event['session']['uid'];
+            if (isset($event['page']['store_id'])) {
+                $sessionIdsByStore[$event['page']['store_id']][] = $event['session']['uid'] ?? 0;
+            }
         }
 
         return $sessionIdsByStore;
