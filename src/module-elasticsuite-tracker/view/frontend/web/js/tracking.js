@@ -160,7 +160,7 @@ var smileTracker = (function () {
 
     // Append a variable to the page
     function addVariable(varName, value) {
-        this.vars[varName] = encodeURI(value);
+        this.vars[varName] = encodeURIComponent(value);
         return this;
     }
 
