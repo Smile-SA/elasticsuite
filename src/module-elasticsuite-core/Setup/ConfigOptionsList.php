@@ -50,7 +50,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/http_auth_pwd';
 
     /**
-     * @var ClientFactoryInterface
+     * @var \Smile\ElasticsuiteCore\Client\ClientFactory
      */
     private $clientFactory;
 
@@ -103,7 +103,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     {
         $configData = new ConfigData(ConfigFilePool::APP_ENV);
 
-        $clientOptions = $this->getClientOptions($options, $deploymentConfig);
+        $clientOptions = array_filter($this->getClientOptions($options, $deploymentConfig));
         foreach ($clientOptions as $optionName => $value) {
             $configData->set(self::CONF_PREFIX . '/' . $optionName, $value);
         }
@@ -119,8 +119,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         $errors = [];
 
         try {
-            $clientsOptions = array_filter($this->getClientOptions($options, $deploymentConfig));
-            $this->clientFactory->create(['options' => $clientsOptions])->info();
+            $clientsOptions = $this->getClientOptions($options, $deploymentConfig);
+            if (!empty($clientsOptions)) {
+                $this->clientFactory->create(['options' => $clientsOptions])->info();
+            }
         } catch (\Exception $e) {
             $errors[] = "Unable to connect ElasticSearch server : {$e->getMessage()}";
         }
@@ -143,11 +145,22 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             $clientOptions = [
                 'servers'           => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_HOSTS),
                 'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
-                'http_auth_user'    => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER),
-                'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
             ];
 
-            $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
+            if ($this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER) !== null) {
+                $clientOptions['http_auth_user'] = (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER);
+            }
+
+            if ($this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS) !== null) {
+                $clientOptions['http_auth_pwd'] = (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS);
+            }
+
+            $clientOptions['enable_http_auth'] = false;
+            if (!empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd'])) {
+                $clientOptions['enable_http_auth'] = true;
+            }
+
+            $clientOptions['enable_debug_mode'] = false;
         }
 
         return $clientOptions;
@@ -158,7 +171,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      *
      * @param array            $options          Input options.
      * @param DeploymentConfig $deploymentConfig Deployment config.
-     * @param unknown          $inputKey         Name of the variable in the input options.
+     * @param string           $inputKey         Name of the variable in the input options.
      *
      * @return mixed
      */
