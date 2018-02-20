@@ -56,6 +56,26 @@ class Hit extends \Magento\Framework\App\Action\Action
         $this->getResponse()->setHeader('Content-Type', 'image/png');
         $this->getResponse()->sendResponse();
 
-        $this->logEventQueue->addEvent($this->getRequest()->getParams());
+        $this->logEventQueue->addEvent($this->decodeParams($this->getRequest()->getParams()));
+    }
+
+    /**
+     * Decode URI params.
+     *
+     * @param mixed $params Params.
+     *
+     * @return mixed
+     */
+    private function decodeParams($params)
+    {
+        if (is_string($params)) {
+            $params = urldecode($params);
+        } elseif (is_array($params)) {
+            foreach ($params as &$currentParam) {
+                $currentParam = $this->decodeParams($currentParam);
+            }
+        }
+
+        return $params;
     }
 }
