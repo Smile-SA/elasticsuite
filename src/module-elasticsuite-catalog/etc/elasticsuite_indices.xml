@@ -61,6 +61,7 @@
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
+                <field name="category.is_blacklisted" type="boolean" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
                 <field name="category.name" type="text" nestedPath="category">
                     <isSearchable>1</isSearchable>
@@ -71,7 +72,8 @@
                 <!-- Static fields handled by the "searchPositions" datasource -->
                 <field name="search_query.query_id" type="integer" nestedPath="search_query" />
                 <field name="search_query.position" type="integer" nestedPath="search_query" />
-                
+                <field name="search_query.is_blacklisted" type="boolean" nestedPath="search_query" />
+
             </mapping>
         </type>
     </index>
