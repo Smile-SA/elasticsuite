@@ -94,7 +94,7 @@
                 <field name="page.order.items.label" type="string" nestedPath="page.order.items" />
                 <field name="page.order.items.price" type="double" nestedPath="page.order.items" />
                 <field name="page.order.items.row_total" type="double" nestedPath="page.order.items" />
-                <field name="page.order.items.qty" type="integer" nestedPath="page.order.items" />
+                <field name="page.order.items.qty" type="double" nestedPath="page.order.items" />
                 
                 <!-- Page data (referrer) -->
                 <field name="page.referrer.domain" type="string" />
