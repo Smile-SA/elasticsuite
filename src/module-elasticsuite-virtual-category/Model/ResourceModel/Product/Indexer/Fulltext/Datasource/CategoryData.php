@@ -81,15 +81,21 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
     private function getVirtualSelect($productIds)
     {
         $select = $this->getConnection()->select()
-            ->from(['cpi' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
-            ->where('cpi.product_id IN(?)', $productIds)
+            ->from(['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
+            ->joinLeft(
+                ['cpi' => $this->getTable('catalog_category_product_index')],
+                'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
+                []
+            )
+            ->where('p.product_id IN(?)', $productIds)
+            ->where('cpi.product_id IS NULL')
             ->columns(
                 [
-                    'category_id' => 'cpi.category_id',
-                    'product_id'  => 'cpi.product_id',
+                    'category_id' => 'p.category_id',
+                    'product_id'  => 'p.product_id',
                     'is_parent'   => new \Zend_Db_Expr('0'),
                     'is_virtual'  => new \Zend_Db_Expr('1'),
-                    'position'    => 'cpi.position',
+                    'position'    => 'p.position',
                 ]
             );
 
