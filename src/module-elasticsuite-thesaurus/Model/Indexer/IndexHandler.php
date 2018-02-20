@@ -107,9 +107,15 @@ class IndexHandler
         ];
 
         $settings['analysis']['filter']['shingle'] = [
-            'type' => 'shingle',
-            'output_false' => true,
-            'token_separator' => ThesaurusIndex::WORD_DELIMITER,
+            'type'             => 'shingle',
+            'output_false'     => true,
+            'token_separator'  => ThesaurusIndex::WORD_DELIMITER,
+            'max_shingle_size' => ThesaurusIndex::MAX_SIZE,
+        ];
+
+        $settings['analysis']['filter']['type_filter'] = [
+            'type' => 'keep_types',
+            'types' => [ "SYNONYM" ],
         ];
 
         $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms);
@@ -140,6 +146,8 @@ class IndexHandler
             $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
 
+        $settings['analysis']['analyzer'][$type]['filter'][] = 'type_filter';
+
         return $settings;
     }
 
@@ -154,7 +162,7 @@ class IndexHandler
     private function prepareSynonymFilterData($rows)
     {
         $rowMaper = function ($row) {
-            return preg_replace('/([\w])\s(?=[\w])/', '\1-', $row);
+            return preg_replace('/([\w])[\s-](?=[\w])/', '\1_', $row);
         };
 
         return array_map($rowMaper, $rows);
