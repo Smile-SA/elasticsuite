@@ -65,7 +65,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->joinInner($searchQueryTable, "main_table.query_id = {$searchQueryTable}.query_id", [])
             ->where('product_id IN(?)', $productIds)
             ->where('store_id = ?', $storeId)
-            ->columns(['product_id', 'query_id', 'position']);
+            ->columns(['product_id', 'query_id', 'position', 'is_blacklisted']);
 
         return $this->getConnection()->fetchAll($select);
     }
