@@ -50,18 +50,18 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/http_auth_pwd';
 
     /**
-     * @var ClientFactoryInterface
+     * @var \Smile\ElasticsuiteCore\Client\ClientBuilder
      */
-    private $clientFactory;
+    private $clientBuilder;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Client\ClientFactory $clientFactory ES Client factory.
+     * @param \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder ES client builder.
      */
-    public function __construct(\Smile\ElasticsuiteCore\Client\ClientFactory $clientFactory)
+    public function __construct(\Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder)
     {
-        $this->clientFactory = $clientFactory;
+        $this->clientBuilder = $clientBuilder;
     }
 
     /**
@@ -119,8 +119,8 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         $errors = [];
 
         try {
-            $clientsOptions = array_filter($this->getClientOptions($options, $deploymentConfig));
-            $this->clientFactory->create(['options' => $clientsOptions])->info();
+            $options = array_filter($this->getClientOptions($options, $deploymentConfig));
+            $this->clientBuilder->build($options)->info();
         } catch (\Exception $e) {
             $errors[] = "Unable to connect ElasticSearch server : {$e->getMessage()}";
         }
@@ -129,6 +129,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     }
 
     /**
+     * Read client options from CLI / env file.
      *
      * @param array            $options          Input options.
      * @param DeploymentConfig $deploymentConfig Deployment config.
