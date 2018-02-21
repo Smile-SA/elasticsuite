@@ -140,7 +140,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     {
         $clientOptions = [];
 
-        if (isset($options[self::INPUT_KEY_ES_HOSTS])) {
+        if (isset($options[self::INPUT_KEY_ES_HOSTS]) || $deploymentConfig->get(self::CONFIG_PATH_ES_HOSTS)) {
             $clientOptions = [
                 'servers'           => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_HOSTS),
                 'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
