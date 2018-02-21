@@ -109,7 +109,7 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
 
         _getItemCount : function() {
             var from = this.from, to = this.to, intervals = this.intervals;
-            var count = intervals.map(function(item) {return item.value >= from && item.value < to ? item.count : 0;})
+            var count = intervals.map(function(item) {return item.value >= from && item.value <= to ? item.count : 0;})
                                  .reduce(function(a,b) {return a + b;});
             return count;
         },
