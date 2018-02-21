@@ -166,6 +166,17 @@
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
         </arguments>
     </type>
+    
+    <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData">
+        <arguments>
+            <argument name="priceReaderPool" xsi:type="array">
+                <item name="default" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceDefault</item>
+                <item name="configurable" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceConfigurable</item>
+                <item name="grouped" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
+                <item name="bundle" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
+            </argument>
+        </arguments>
+    </type> 
 
     <!-- Advanced Search Compatibility -->
     <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
