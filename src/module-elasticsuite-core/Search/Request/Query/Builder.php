@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
+use Smile\ElasticsuiteCore\Search\Context;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
@@ -45,20 +46,28 @@ class Builder
     private $filterQueryBuilder;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\Context
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param QueryFactory         $queryFactory         Factory used to build subqueries.
      * @param FulltextQueryBuilder $fulltextQueryBuilder Builder of the fulltext query part.
-     * @param FilterQueryBuilder   $filterQuerybuilder   Buulder of the filters.
+     * @param FilterQueryBuilder   $filterQuerybuilder   Builder of the filters.
+     * @param Context              $searchContext        Search Context.
      */
     public function __construct(
         QueryFactory $queryFactory,
         FulltextQueryBuilder $fulltextQueryBuilder,
-        FilterQueryBuilder $filterQuerybuilder
+        FilterQueryBuilder $filterQuerybuilder,
+        Context $searchContext
     ) {
         $this->queryFactory         = $queryFactory;
         $this->fulltextQueryBuilder = $fulltextQueryBuilder;
         $this->filterQueryBuilder   = $filterQuerybuilder;
+        $this->searchContext        = $searchContext;
     }
 
 
@@ -82,6 +91,13 @@ class Builder
             }
             if (is_string($query) || is_array($query)) {
                 $queryParams['query'] = $this->createFulltextQuery($containerConfiguration, $query, $spellingType);
+            }
+        }
+
+        foreach ($containerConfiguration->getDefaultFilters() as $filter) {
+            $defaultFilterQuery = $filter->getFilterQuery($this->searchContext);
+            if ($defaultFilterQuery !== null) {
+                $filters[] = $filter->getFilterQuery($this->searchContext);
             }
         }
 

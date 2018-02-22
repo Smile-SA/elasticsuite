@@ -74,4 +74,11 @@ interface ContainerConfigurationInterface
      * @return integer
      */
     public function getStoreId();
+
+    /**
+     * Retrieve default filters for the container (visibility, in stock, etc ...).
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\DefaultFilterInterface[]
+     */
+    public function getDefaultFilters();
 }
