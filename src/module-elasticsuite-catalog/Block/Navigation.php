@@ -41,6 +41,16 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     private $relevantFilterList;
 
     /**
+     * @var string[]
+     */
+    private $inlineLayouts = ['1column'];
+
+    /**
+     * @var string|NULL
+     */
+    private $pageLayout;
+
+    /**
      * Navigation constructor.
      *
      * @param \Magento\Framework\View\Element\Template\Context          $context            Application context
@@ -63,7 +73,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         array $data
     ) {
         parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
-
+        $this->pageLayout         = $context->getPageConfig()->getPageLayout();
         $this->objectManager      = $objectManager;
         $this->moduleManager      = $moduleManager;
         $this->relevantFilterList = $relevantFilterList;
@@ -78,22 +88,24 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     public function canShowBlock()
     {
+        $canShowBlock = parent::canShowBlock();
+
         if ($this->moduleManager->isEnabled('Magento_Staging')) {
             try {
                 $versionManager = $this->objectManager->get('\Magento\Staging\Model\VersionManager');
 
-                return parent::canShowBlock() && !$versionManager->isPreviewVersion();
+                $canShowBlock = $canShowBlock && !$versionManager->isPreviewVersion();
             } catch (\Exception $exception) {
-                return parent::canShowBlock();
+                ;
             }
         }
 
         if ($this->getLayer() instanceof \Magento\Catalog\Model\Layer\Category &&
             $this->getLayer()->getCurrentCategory()->getDisplayMode() === \Magento\Catalog\Model\Category::DM_PAGE) {
-            return false;
+            $canShowBlock = false;
         }
 
-        return parent::canShowBlock();
+        return $canShowBlock;
     }
 
     /**
@@ -106,14 +118,18 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     public function getActiveFilters()
     {
-        $requestParams    = array_keys($this->getRequest()->getParams());
-        $displayedFilters = $this->getDisplayedFilters();
-        $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
-        $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+        $activeFilters = [];
 
-        foreach ($displayedFilters as $index => $filter) {
-            if (in_array($filter->getRequestVar(), $requestParams)) {
-                $activeFilters[] = $index;
+        if (!$this->isInline()) {
+            $requestParams    = array_keys($this->getRequest()->getParams());
+            $displayedFilters = $this->getDisplayedFilters();
+            $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
+            $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+
+            foreach ($displayedFilters as $index => $filter) {
+                if (in_array($filter->getRequestVar(), $requestParams)) {
+                    $activeFilters[] = $index;
+                }
             }
         }
 
@@ -135,6 +151,16 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         );
 
         return array_values($displayedFilters);
+    }
+
+    /**
+     * Indicates if the block is displayed inline or not.
+     *
+     * @return boolean
+     */
+    public function isInline()
+    {
+        return in_array($this->pageLayout, $this->inlineLayouts);
     }
 
     /**
