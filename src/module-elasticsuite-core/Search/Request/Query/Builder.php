@@ -94,12 +94,7 @@ class Builder
             }
         }
 
-        foreach ($containerConfiguration->getFilters() as $filter) {
-            $defaultFilterQuery = $filter->getFilterQuery($this->searchContext);
-            if ($defaultFilterQuery !== null) {
-                $filters[] = $filter->getFilterQuery($this->searchContext);
-            }
-        }
+        $filters = array_merge($filters, $containerConfiguration->getFilters($this->searchContext));
 
         if (!empty($filters)) {
             $queryParams['filter'] = $this->createFilterQuery($containerConfiguration, $filters);

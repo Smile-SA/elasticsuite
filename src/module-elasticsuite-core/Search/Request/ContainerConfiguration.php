@@ -18,7 +18,6 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\DefaultFilter\Pool;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\Factory as RelevanceConfigFactory;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 
@@ -57,11 +56,6 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     private $relevanceConfig;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface[]
-     */
-    private $filters;
-
-    /**
      * Constructor.
      *
      * @param string                  $containerName          Search request container name.
@@ -69,22 +63,19 @@ class ContainerConfiguration implements ContainerConfigurationInterface
      * @param BaseConfig              $baseConfig             XML file configuration.
      * @param RelevanceConfigFactory  $relevanceConfigFactory Fulltext search relevance factory
      * @param IndexOperationInterface $indexManager           Index manager (used to load mappings).
-     * @param Pool                    $defaultFilterPool      Index manager (used to load mappings).
      */
     public function __construct(
         $containerName,
         $storeId,
         BaseConfig $baseConfig,
         RelevanceConfigFactory $relevanceConfigFactory,
-        IndexOperationInterface $indexManager,
-        Pool $defaultFilterPool
+        IndexOperationInterface $indexManager
     ) {
         $this->containerName   = $containerName;
         $this->storeId         = $storeId;
         $this->baseConfig      = $baseConfig;
         $this->indexManager    = $indexManager;
         $this->relevanceConfig = $relevanceConfigFactory->create($storeId, $containerName);
-        $this->filters         = $defaultFilterPool->getFilters($containerName);
     }
 
     /**
@@ -149,9 +140,17 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getFilters()
+    public function getFilters(\Smile\ElasticsuiteCore\Search\Context $searchContext)
     {
-        return $this->filters;
+        $filters = [];
+
+        /** @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface $filter */
+        foreach ($this->readBaseConfigParam('filters') as $filter) {
+            // Not using the filter name as array key, to prevent collision with filters added via addFieldToFilter.
+            $filters[] = $filter->getFilterQuery($searchContext);
+        }
+
+        return array_filter($filters);
     }
 
     /**

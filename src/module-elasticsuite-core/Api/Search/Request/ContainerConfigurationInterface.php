@@ -76,9 +76,11 @@ interface ContainerConfigurationInterface
     public function getStoreId();
 
     /**
-     * Retrieve default filters for the container (visibility, in stock, etc ...).
+     * Retrieve filters for the container (visibility, in stock, etc ...) and the current search Context.
      *
-     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface[]
+     * @param \Smile\ElasticsuiteCore\Search\Context $searchContext Search Context
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
-    public function getFilters();
+    public function getFilters(\Smile\ElasticsuiteCore\Search\Context $searchContext);
 }

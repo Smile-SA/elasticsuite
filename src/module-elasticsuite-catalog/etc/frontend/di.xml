@@ -183,26 +183,6 @@
         </arguments>
     </type>
 
-    <!-- Default Product filters injection -->
-    <type name="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\DefaultFilter\Pool">
-        <arguments>
-            <argument name="filters" xsi:type="array">
-                <item name="quick_search_container" xsi:type="array">
-                    <item name="stock" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</item>
-                    <item name="visibility" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Visibility</item>
-                </item>
-                <item name="catalog_product_autocomplete" xsi:type="array">
-                    <item name="stock" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</item>
-                    <item name="visibility" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Visibility</item>
-                </item>
-                <item name="catalog_view_container" xsi:type="array">
-                    <item name="stock" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</item>
-                    <item name="visibility" xsi:type="object">\Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Visibility</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
-
     <!-- Search Context init -->
     <type name="Magento\Catalog\Model\Layer\Category">
         <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Layer\CategoryPlugin"/>
