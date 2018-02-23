@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -89,7 +89,11 @@ class AggregationBuilder
                 }
 
                 if (isset($bucketParams['nestedFilter'])) {
-                    $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
+                    $nestedFilter = $this->createFilter(
+                        $containerConfiguration,
+                        $bucketParams['nestedFilter'],
+                        $bucketParams['nestedPath']
+                    );
                     $bucketParams['nestedFilter'] = $nestedFilter;
                 }
 
@@ -113,12 +117,13 @@ class AggregationBuilder
      *
      * @param ContainerConfigurationInterface $containerConfiguration Search container configuration
      * @param array                           $filters                Filters definition.
+     * @param string|null                     $currentPath            Current nested path or null.
      *
      * @return QueryInterface
      */
-    private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters)
+    private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters, $currentPath = null)
     {
-        return $this->queryBuilder->createFilterQuery($containerConfiguration, $filters);
+        return $this->queryBuilder->create($containerConfiguration, $filters, $currentPath);
     }
 
     /**
