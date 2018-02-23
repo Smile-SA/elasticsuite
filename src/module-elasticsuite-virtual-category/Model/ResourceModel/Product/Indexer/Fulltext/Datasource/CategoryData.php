@@ -61,11 +61,12 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             ->where('cpi.store_id = ?', $storeId)
             ->where('cpi.product_id IN(?)', $productIds)
             ->columns([
-                'category_id' => 'cpi.category_id',
-                'product_id'  => 'cpi.product_id',
-                'is_parent'   => 'cpi.is_parent',
-                'is_virtual'  => new \Zend_Db_Expr(0),
-                'position'    => 'p.position',
+                'category_id'    => 'cpi.category_id',
+                'product_id'     => 'cpi.product_id',
+                'is_parent'      => 'cpi.is_parent',
+                'is_virtual'     => new \Zend_Db_Expr('"false"'),
+                'position'       => 'p.position',
+                'is_blacklisted' => 'p.is_blacklisted',
             ]);
 
         return $select;
@@ -91,11 +92,12 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             ->where('cpi.product_id IS NULL')
             ->columns(
                 [
-                    'category_id' => 'p.category_id',
-                    'product_id'  => 'p.product_id',
-                    'is_parent'   => new \Zend_Db_Expr('0'),
-                    'is_virtual'  => new \Zend_Db_Expr('1'),
-                    'position'    => 'p.position',
+                    'category_id'    => 'p.category_id',
+                    'product_id'     => 'p.product_id',
+                    'is_parent'      => new \Zend_Db_Expr('0'),
+                    'is_virtual'     => new \Zend_Db_Expr('"true"'),
+                    'position'       => 'p.position',
+                    'is_blacklisted' => 'p.is_blacklisted',
                 ]
             );
 

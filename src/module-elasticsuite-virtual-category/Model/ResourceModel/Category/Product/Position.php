@@ -46,9 +46,31 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $select = $this->getBaseSelect()
             ->where('category_id = ?', (int) $category)
+            ->where('position IS NOT NULL')
             ->columns(['product_id', 'position']);
 
         return $this->getConnection()->fetchPairs($select);
+    }
+
+    /**
+     * Load blacklisted products for the given query.
+     *
+     * @param CategoryInterface|int $category Category.
+     *
+     * @return array
+     */
+    public function getProductBlacklistByCategory($category)
+    {
+        if (is_object($category)) {
+            $category = $category->getId();
+        }
+
+        $select = $this->getBaseSelect()
+            ->columns(['product_id'])
+            ->where('category_id = ?', (int) $category)
+            ->where('is_blacklisted = ?', (int) true);
+
+        return $this->getConnection()->fetchCol($select);
     }
 
     /**
@@ -61,26 +83,26 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function saveProductPositions(CategoryInterface $category)
     {
         $newProductPositions  = $category->getSortedProducts();
+        $blacklistedProducts  = $category->getBlacklistedProducts() ?? [];
 
         $deleteConditions = [
             $this->getConnection()->quoteInto('category_id = ?', (int) $category->getId()),
         ];
 
-        if (!empty($newProductPositions)) {
-            $insertData = [];
+        if (!empty($newProductPositions) || !empty($blacklistedProducts)) {
+            $insertData        = [];
+            $updatedProductIds = array_merge(array_keys($newProductPositions), $blacklistedProducts);
 
-            foreach ($newProductPositions as $productId => $position) {
+            foreach ($updatedProductIds as $productId) {
                 $insertData[] = [
-                    'category_id' => $category->getId(),
-                    'product_id'  => $productId,
-                    'position'    => $position,
+                    'category_id'    => $category->getId(),
+                    'product_id'     => $productId,
+                    'position'       => $newProductPositions[$productId] ?? null,
+                    'is_blacklisted' => in_array($productId, $blacklistedProducts),
                 ];
             }
 
-            $deleteConditions[] = $this->getConnection()->quoteInto(
-                'product_id NOT IN (?)',
-                array_keys($newProductPositions)
-            );
+            $deleteConditions[] = $this->getConnection()->quoteInto('product_id NOT IN (?)', $updatedProductIds);
             $this->getConnection()->insertOnDuplicate($this->getMainTable(), $insertData, array_keys(current($insertData)));
         }
 

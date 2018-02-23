@@ -25,30 +25,16 @@ interface FieldInterface
 {
     /**
      * Field types declaration.
-     *
      */
+    const FIELD_TYPE_TEXT    = 'text';
+    const FIELD_TYPE_KEYWORD = 'keyword';
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
     const FIELD_TYPE_LONG    = 'long';
     const FIELD_TYPE_DATE    = 'date';
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
-
     const FIELD_TYPE_OBJECT  = 'object';
-
-    /**
-     * Deprecated multi_field type.
-     *
-     * @deprecated
-     */
-    const FIELD_TYPE_MULTI   = 'multi_field';
-
-    /**
-     * Deprecated string type.
-     *
-     * @deprecated
-     */
-    const FIELD_TYPE_STRING  = 'string';
 
     /**
      * Analyzers declarations.

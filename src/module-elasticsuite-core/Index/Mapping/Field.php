@@ -73,7 +73,7 @@ class Field implements FieldInterface
      * @param array       $fieldConfig Field configuration (see self::$config declaration for
      *                                 available values and default values).
      */
-    public function __construct($name, $type = 'string', $nestedPath = null, $fieldConfig = [])
+    public function __construct($name, $type = self::FIELD_TYPE_KEYWORD, $nestedPath = null, $fieldConfig = [])
     {
         $this->name       = (string) $name;
         $this->type       = (string) $type;
@@ -179,7 +179,7 @@ class Field implements FieldInterface
     {
         $property = $this->getPropertyConfig();
 
-        if ($this->getType() == self::FIELD_TYPE_STRING) {
+        if ($this->getType() == self::FIELD_TYPE_TEXT) {
             $analyzers = $this->getFieldAnalyzers();
             $property = $this->getPropertyConfig(current($analyzers));
 
@@ -237,12 +237,12 @@ class Field implements FieldInterface
     {
         $isAnalyzerCorrect = true;
 
-        if ($property['type'] == self::FIELD_TYPE_STRING) {
+        if ($property['type'] == self::FIELD_TYPE_TEXT || $property['type'] == self::FIELD_TYPE_KEYWORD) {
             $isAnalyzed = $expectedAnalyzer !== self::ANALYZER_UNTOUCHED;
 
             if ($isAnalyzed && (!isset($property['analyzer']) || $property['analyzer'] != $expectedAnalyzer)) {
                 $isAnalyzerCorrect = false;
-            } elseif (!$isAnalyzed && (!isset($property['index']) || $property['index'] != 'not_analyzed')) {
+            } elseif (!$isAnalyzed && $property['type'] !== self::FIELD_TYPE_KEYWORD) {
                 $isAnalyzerCorrect = false;
             }
         }
@@ -319,18 +319,12 @@ class Field implements FieldInterface
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED)
     {
-        $fieldMapping = ['type' => $this->getType(), 'doc_values' => true];
+        $fieldMapping = ['type' => $this->getType()];
 
-        if ($this->getType() == self::FIELD_TYPE_STRING && $analyzer == self::ANALYZER_UNTOUCHED) {
-            $fieldMapping['index'] = 'not_analyzed';
-        } elseif ($this->getType() == self::FIELD_TYPE_STRING) {
-            $fieldMapping['analyzer']   = $analyzer;
-            $fieldMapping['doc_values'] = false;
-            $fieldMapping['index_options'] = 'docs';
-            $fieldMapping['norms'] = false;
-            if (in_array($analyzer, [self::ANALYZER_STANDARD, self::ANALYZER_WHITESPACE])) {
-                $fieldMapping['index_options'] = 'positions';
-            }
+        if ($this->getType() == self::FIELD_TYPE_TEXT && $analyzer == self::ANALYZER_UNTOUCHED) {
+            $fieldMapping['type']  = self::FIELD_TYPE_KEYWORD;
+        } elseif ($this->getType() == self::FIELD_TYPE_TEXT) {
+            $fieldMapping['analyzer'] = $analyzer;
             if ($analyzer === self::ANALYZER_SORTABLE) {
                 $fieldMapping['fielddata'] = true;
             }

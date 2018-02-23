@@ -79,9 +79,8 @@ class QueryBuilder
 
         $query = $this->getSpecialAttributesSearchQuery($productCondition);
 
-        $this->prepareFieldValue($productCondition);
-
         if ($query === null && !empty($productCondition->getValue())) {
+            $this->prepareFieldValue($productCondition);
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
@@ -197,11 +196,16 @@ class QueryBuilder
      */
     private function getTermsQueryParams(ProductCondition $productCondition)
     {
+        $field     = $this->getSearchField($productCondition);
         $fieldName = $this->getSearchFieldName($productCondition);
         $values    = $productCondition->getValue();
 
         if (!is_array($values) && in_array($productCondition->getOperator(), ['()', '!()'])) {
             $values = explode(',', $values);
+        }
+
+        if ($field->getType() == FieldInterface::FIELD_TYPE_BOOLEAN) {
+            $values = (bool) $values;
         }
 
         return ['field' => $fieldName, 'values' => $values];
@@ -237,7 +241,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\FieldInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     private function getSearchField(ProductCondition $productCondition)
     {

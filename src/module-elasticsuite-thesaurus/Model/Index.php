@@ -212,7 +212,7 @@ class Index
 
         try {
             $analysis = $this->client->analyze(
-                ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $type]]
             );
         } catch (\Exception $e) {
             $analysis = ['tokens' => []];
