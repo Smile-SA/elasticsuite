@@ -57,9 +57,9 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     private $relevanceConfig;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\DefaultFilterInterface[]
+     * @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface[]
      */
-    private $defaultFilters;
+    private $filters;
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
         $this->baseConfig      = $baseConfig;
         $this->indexManager    = $indexManager;
         $this->relevanceConfig = $relevanceConfigFactory->create($storeId, $containerName);
-        $this->defaultFilters  = $defaultFilterPool->getFilters($containerName);
+        $this->filters         = $defaultFilterPool->getFilters($containerName);
     }
 
     /**
@@ -149,9 +149,9 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getDefaultFilters()
+    public function getFilters()
     {
-        return $this->defaultFilters;
+        return $this->filters;
     }
 
     /**

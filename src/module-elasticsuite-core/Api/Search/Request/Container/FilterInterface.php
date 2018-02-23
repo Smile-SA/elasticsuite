@@ -21,7 +21,7 @@ namespace Smile\ElasticsuiteCore\Api\Search\Request\Container;
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-interface DefaultFilterInterface
+interface FilterInterface
 {
     /**
      * Get filter query according to current search context.

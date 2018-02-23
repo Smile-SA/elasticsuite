@@ -94,7 +94,7 @@ class Builder
             }
         }
 
-        foreach ($containerConfiguration->getDefaultFilters() as $filter) {
+        foreach ($containerConfiguration->getFilters() as $filter) {
             $defaultFilterQuery = $filter->getFilterQuery($this->searchContext);
             if ($defaultFilterQuery !== null) {
                 $filters[] = $filter->getFilterQuery($this->searchContext);

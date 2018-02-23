@@ -78,7 +78,7 @@ interface ContainerConfigurationInterface
     /**
      * Retrieve default filters for the container (visibility, in stock, etc ...).
      *
-     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\DefaultFilterInterface[]
+     * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface[]
      */
-    public function getDefaultFilters();
+    public function getFilters();
 }

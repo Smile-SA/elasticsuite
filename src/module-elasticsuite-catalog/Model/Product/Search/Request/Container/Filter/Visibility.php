@@ -12,7 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter;
 
-use Smile\ElasticsuiteCore\Api\Search\Request\Container\DefaultFilterInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -22,7 +22,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Visibility implements DefaultFilterInterface
+class Visibility implements FilterInterface
 {
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
