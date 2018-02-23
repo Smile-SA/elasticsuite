@@ -14,10 +14,9 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
-use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
-use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder as QueryBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Index\Mapping;
@@ -203,22 +202,18 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Search request query builder used during test.
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\Query\Builder
+     * @return \Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder
      */
     private function getQueryBuilder()
     {
         $queryMock = $this->getMockBuilder(QueryInterface::class)
             ->setMethods(['getQuery', 'getName', 'getType', 'getBoost'])
             ->getMock();
-        $queryMock->method('getQuery')->will($this->returnSelf());
 
         $queryFactory = $this->getMockBuilder(QueryFactory::class)->disableOriginalConstructor()->getMock();
         $queryFactory->method('create')->will($this->returnValue($queryMock));
 
-        $fulltextQueryBuilder = new \Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder($queryFactory);
-        $filteredQueryBuilder = new \Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder($queryFactory);
-
-        return new QueryBuilder($queryFactory, $fulltextQueryBuilder, $filteredQueryBuilder);
+        return new \Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder($queryFactory);
     }
 
     /**
