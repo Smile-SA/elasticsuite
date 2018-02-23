@@ -90,7 +90,7 @@ class AggregationBuilder
 
                 if (isset($bucketParams['nestedFilter'])) {
                     $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
-                    $bucketParams['nestedFilter'] = $nestedFilter->getQuery();
+                    $bucketParams['nestedFilter'] = $nestedFilter;
                 }
 
                 if (isset($bucketParams['childBuckets'])) {
