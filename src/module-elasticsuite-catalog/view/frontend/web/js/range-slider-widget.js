@@ -23,16 +23,17 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
     $.widget('smileEs.rangeSlider', {
 
         options: {
-            fromLabel   : '[data-role=from-label]',
-            toLabel     : '[data-role=to-label]',
-            sliderBar   : '[data-role=slider-bar]',
-            message     : '[data-role=message-box]',
-            applyButton : '[data-role=apply-range]',
-            rate        : 1.0000,
+            fromLabel      : '[data-role=from-label]',
+            toLabel        : '[data-role=to-label]',
+            sliderBar      : '[data-role=slider-bar]',
+            message        : '[data-role=message-box]',
+            applyButton    : '[data-role=apply-range]',
+            rate           : 1.0000,
+            maxLabelOffset : 0.01,
             messageTemplates : {
                 "displayCount": '<span class="msg"><%- count %> items</span>',
                 "displayEmpty": '<span class="msg-error">No items in the current range.</span>'
-            }
+            },
         },
 
         _create: function () {
@@ -78,7 +79,7 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
             }
 
             if (this.element.find('[data-role=to-label]')) {
-                this.element.find('[data-role=to-label]').html(this._formatLabel(this.to));
+                this.element.find('[data-role=to-label]').html(this._formatLabel(this.to - this.options.maxLabelOffset));
             }
 
             if (this.element.find('[data-role=message-box]')) {
