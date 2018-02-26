@@ -72,10 +72,11 @@ class QueryBuilder
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param array                           $filters         Filters to be built.
+     * @param string|null                     $currentPath     Current nested path or null.
      *
      * @return QueryInterface
      */
-    public function create(ContainerConfigurationInterface $containerConfig, array $filters)
+    public function create(ContainerConfigurationInterface $containerConfig, array $filters, $currentPath = null)
     {
         $queries = [];
 
@@ -86,7 +87,7 @@ class QueryBuilder
                 $queries[] = $condition;
             } else {
                 $mappingField = $mapping->getField($fieldName);
-                $queries[]    = $this->prepareFieldCondition($mappingField, $condition);
+                $queries[]    = $this->prepareFieldCondition($mappingField, $condition, $currentPath);
             }
         }
 
@@ -102,12 +103,13 @@ class QueryBuilder
     /**
      * Transform the condition into a search request query object.
      *
-     * @param FieldInterface $field     Filter field.
-     * @param array|string   $condition Filter condition.
+     * @param FieldInterface $field       Filter field.
+     * @param array|string   $condition   Filter condition.
+     * @param string|null    $currentPath Current nested path or null.
      *
      * @return QueryInterface
      */
-    private function prepareFieldCondition(FieldInterface $field, $condition)
+    private function prepareFieldCondition(FieldInterface $field, $condition, $currentPath)
     {
         $queryType = QueryInterface::TYPE_TERMS;
         $condition = $this->prepareCondition($condition);
@@ -134,12 +136,31 @@ class QueryBuilder
 
         $query = $this->queryFactory->create($queryType, $condition);
 
-        if ($field->isNested()) {
+        if ($this->isNestedField($field, $currentPath)) {
             $queryParams = ['path' => $field->getNestedPath(), 'query' => $query];
             $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $queryParams);
         }
 
         return $query;
+    }
+
+    /**
+     * @param FieldInterface $field       Filter field.
+     * @param string|null    $currentPath Current nested path or null.
+     *
+     * @return bool
+     * @throws \LogicException
+     */
+    private function isNestedField(FieldInterface $field, $currentPath)
+    {
+        if ($field->isNested() && $field->getNestedPath() !== $currentPath) {
+            throw new \LogicException("Can not filter nested field {$field->getName()} with nested path $currentPath");
+        }
+        if (!$field->isNested() && $currentPath !== null) {
+             throw new \LogicException("Can not filter non nested field {$field->getName()} in nested context ($currentPath)");
+        }
+
+        return $field->isNested() && $currentPath === null;
     }
 
     /**
