@@ -70,10 +70,13 @@ class Mapper
     public function buildSearchRequest(RequestInterface $request)
     {
         $searchRequest = [
-            'from'         => $request->getFrom(),
-            'size'         => $request->getSize(),
-            'sort'         => $this->getSortOrders($request),
+            'size' => $request->getSize(),
         ];
+
+        if ($searchRequest['size'] > 0) {
+            $searchRequest['sort'] = $this->getSortOrders($request);
+            $searchRequest['from'] = $request->getFrom();
+        }
 
         $query = $this->getRootQuery($request);
         if ($query) {
