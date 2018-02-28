@@ -157,7 +157,6 @@ class QueryBuilder
 
         if ($currentPath !== null) {
             if ($field->isNested() && ($field->getNestedPath() !== $currentPath)) {
-                var_dump($currentPath);
                 throw new \LogicException("Can not filter nested field {$field->getName()} with nested path $currentPath");
             }
             if (!$field->isNested()) {
