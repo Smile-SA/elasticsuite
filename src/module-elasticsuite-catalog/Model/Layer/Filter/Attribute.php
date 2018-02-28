@@ -98,10 +98,10 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             $productCollection->addFieldToFilter($this->getFilterField(), $attributeValue);
             $layerState = $this->getLayer()->getState();
 
-            $filterLabel = implode(', ', $this->currentFilterValue);
-            $filter = $this->_createItem($filterLabel, $this->currentFilterValue);
-
-            $layerState->addFilter($filter);
+            foreach ($this->currentFilterValue as $currentFilter) {
+                $filter = $this->_createItem($currentFilter, $this->currentFilterValue);
+                $layerState->addFilter($filter);
+            }
         }
 
         return $this;
