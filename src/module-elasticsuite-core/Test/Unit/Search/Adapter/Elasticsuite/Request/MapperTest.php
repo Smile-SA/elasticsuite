@@ -93,7 +93,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $mapper  = $this->getMapper();
         $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
 
-        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, null, ['sort' => 'sort']);
+        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, null, ['sort' => 'sort'], 0, 10);
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 
