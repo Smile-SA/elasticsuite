@@ -153,6 +153,8 @@ class QueryBuilder
      */
     private function isNestedField(FieldInterface $field, $currentPath)
     {
+        $isNested = $field->isNested();
+
         if ($currentPath !== null) {
             if ($field->isNested() && ($field->getNestedPath() !== $currentPath)) {
                 var_dump($currentPath);
@@ -161,9 +163,11 @@ class QueryBuilder
             if (!$field->isNested()) {
                  throw new \LogicException("Can not filter non nested field {$field->getName()} in nested context ($currentPath)");
             }
+
+            $isNested = false;
         }
 
-        return $field->isNested();
+        return $isNested;
     }
 
     /**
