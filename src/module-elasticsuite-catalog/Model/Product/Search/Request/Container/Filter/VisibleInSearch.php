@@ -22,7 +22,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Visibility implements FilterInterface
+class VisibleInSearch implements FilterInterface
 {
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
@@ -42,33 +42,18 @@ class Visibility implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilterQuery(\Smile\ElasticSuiteCore\Search\Context $searchContext)
+    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
     {
-        $query = null;
-
-        if ($searchContext->getCurrentCategory()) {
-            $query = $this->queryFactory->create(
-                QueryInterface::TYPE_TERMS,
-                [
-                    'field' => 'visibility',
-                    'values' => [
-                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_CATALOG,
-                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
-                    ],
-                ]
-            );
-        } elseif ($searchContext->getCurrentSearchQuery()) {
-            $query = $this->queryFactory->create(
-                QueryInterface::TYPE_TERMS,
-                [
-                    'field' => 'visibility',
-                    'values' => [
-                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
-                        \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
-                    ],
-                ]
-            );
-        }
+        $query = $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            [
+                'field' => 'visibility',
+                'values' => [
+                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_IN_SEARCH,
+                    \Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH,
+                ],
+            ]
+        );
 
         return $query;
     }

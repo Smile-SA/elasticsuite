@@ -51,7 +51,7 @@ class Stock implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilterQuery(\Smile\ElasticSuiteCore\Search\Context $searchContext)
+    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
     {
         $query = null;
 
