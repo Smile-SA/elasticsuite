@@ -61,6 +61,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                         $indexData[$parentId]['children_ids'][] = $childId;
                         $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
                         $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
+                        $this->addChildSku($indexData[$parentId], $relation);
                     }
                 }
             }
@@ -204,5 +205,27 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         return $indexData;
+    }
+
+    /**
+     * Append SKU of children product to the parent product index data.
+     *
+     * @param array $parentData Parent product data.
+     * @param array $relation   Relation data between the child and the parent.
+     */
+    private function addChildSku(&$parentData, $relation)
+    {
+        $sku = $relation['sku'] ?? false;
+
+        if ($sku) {
+            if (!isset($parentData['sku'])) {
+                $parentData['sku'] = [];
+            } elseif (!is_array($parentData['sku'])) {
+                $parentData['sku'] = [$parentData['sku']];
+            }
+
+            $parentData['sku'][] = $sku;
+            $parentData['sku']   = array_unique($parentData['sku']);
+        }
     }
 }
