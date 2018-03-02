@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
-use Smile\ElasticsuiteCore\Search\Context;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
@@ -56,13 +56,13 @@ class Builder
      * @param QueryFactory         $queryFactory         Factory used to build subqueries.
      * @param FulltextQueryBuilder $fulltextQueryBuilder Builder of the fulltext query part.
      * @param FilterQueryBuilder   $filterQuerybuilder   Builder of the filters.
-     * @param Context              $searchContext        Search Context.
+     * @param ContextInterface     $searchContext        Search Context.
      */
     public function __construct(
         QueryFactory $queryFactory,
         FulltextQueryBuilder $fulltextQueryBuilder,
         FilterQueryBuilder $filterQuerybuilder,
-        Context $searchContext
+        ContextInterface $searchContext
     ) {
         $this->queryFactory         = $queryFactory;
         $this->fulltextQueryBuilder = $fulltextQueryBuilder;
