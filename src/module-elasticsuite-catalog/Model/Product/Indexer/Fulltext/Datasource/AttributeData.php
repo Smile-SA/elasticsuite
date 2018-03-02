@@ -215,17 +215,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     private function addChildSku(&$parentData, $relation)
     {
-        $sku = $relation['sku'] ?? false;
-
-        if ($sku) {
-            if (!isset($parentData['sku'])) {
-                $parentData['sku'] = [];
-            } elseif (!is_array($parentData['sku'])) {
-                $parentData['sku'] = [$parentData['sku']];
-            }
-
-            $parentData['sku'][] = $sku;
-            $parentData['sku']   = array_unique($parentData['sku']);
+        if (isset($parentData['sku']) && !is_array($parentData['sku'])) {
+            $parentData['sku'] = [$parentData['sku']];
         }
+
+        $parentData['sku'][] = $relation['sku'];
+        array_unique($parentData['sku']);
     }
 }
