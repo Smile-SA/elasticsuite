@@ -21,7 +21,7 @@ use Magento\Store\Model\StoreManagerInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Context
+class Context implements \Smile\ElasticsuiteCore\Api\Search\ContextInterface
 {
     /**
      * @var \Magento\Catalog\Api\Data\CategoryInterface
@@ -39,6 +39,11 @@ class Context
     private $storeId = null;
 
     /**
+     * @var null|int
+     */
+    private $customerGroupId = null;
+
+    /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
@@ -54,22 +59,12 @@ class Context
     }
 
     /**
-     * Set current category to Search Context.
-     *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Current Category
-     *
-     * @throws \Exception
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCurrentCategory(\Magento\Catalog\Api\Data\CategoryInterface $category)
     {
         if ($this->category !== null && ((int) $this->category->getId() === (int) $category->getId())) {
             return $this;
-        }
-
-        if ($this->searchQuery !== null || $this->category !== null) {
-            throw new \RuntimeException("Search context cannot vary once created.");
         }
 
         $this->category = $category;
@@ -78,22 +73,12 @@ class Context
     }
 
     /**
-     * Set current search query to Search Context
-     *
-     * @param \Magento\Search\Model\QueryInterface $query Current Search Query
-     *
-     * @throws \Exception
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setCurrentSearchQuery(\Magento\Search\Model\QueryInterface $query)
     {
         if ($this->searchQuery !== null && ($this->searchQuery->getQueryText() === $query->getQueryText())) {
             return $this;
-        }
-
-        if ($this->category !== null || $this->searchQuery !== null) {
-            throw new \RuntimeException("Search context cannot vary once created.");
         }
 
         $this->searchQuery = $query;
@@ -102,27 +87,27 @@ class Context
     }
 
     /**
-     * Set Store Id
-     *
-     * @param int $storeId Store Id
-     *
-     * @throws \Exception
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setStoreId(int $storeId)
     {
-        if ($this->storeId !== null) {
-            throw new \Exception("Search context cannot vary once created.");
-        }
-
         $this->storeId = $storeId;
 
         return $this;
     }
 
     /**
-     * @return \Magento\Catalog\Api\Data\CategoryInterface
+     * {@inheritdoc}
+     */
+    public function setCustomerGroupId(int $customerGroupId)
+    {
+        $this->customerGroupId = $customerGroupId;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getCurrentCategory()
     {
@@ -130,7 +115,7 @@ class Context
     }
 
     /**
-     * @return \Magento\Search\Model\QueryInterface
+     * {@inheritdoc}
      */
     public function getCurrentSearchQuery()
     {
@@ -138,7 +123,7 @@ class Context
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getStoreId()
     {
@@ -147,5 +132,13 @@ class Context
         }
 
         return $this->storeId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCustomerGroupId()
+    {
+        return $this->customerGroupId;
     }
 }

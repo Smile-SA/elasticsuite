@@ -140,7 +140,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getFilters(\Smile\ElasticsuiteCore\Search\Context $searchContext)
+    public function getFilters(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
     {
         $filters = [];
 
