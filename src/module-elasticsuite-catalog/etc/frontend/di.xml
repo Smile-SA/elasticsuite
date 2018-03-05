@@ -182,4 +182,13 @@
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
+
+    <!-- Search Context init -->
+    <type name="Magento\Catalog\Model\Layer\Category">
+        <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Layer\CategoryPlugin"/>
+    </type>
+
+    <type name="Magento\Search\Model\QueryFactory">
+        <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Search\QueryFactoryPlugin"/>
+    </type>
 </config>

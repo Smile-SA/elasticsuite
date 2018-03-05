@@ -19,11 +19,27 @@
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_search_request.xsd">
 
-    <request name="quick_search_container" label="Catalog Product Search" index="catalog_product" type="product" fulltext="true" />
+    <request name="quick_search_container" label="Catalog Product Search" index="catalog_product" type="product" fulltext="true">
+        <filters>
+            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visible-in-search">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+        </filters>
+    </request>
 
-    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" type="product" fulltext="true" />
+    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" type="product" fulltext="true">
+        <filters>
+            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+        </filters>
+    </request>
 
-    <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false" />
+    <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
+        <filters>
+            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
+        </filters>
+    </request>
 
-    <request name="category_search_container" label="Catalog Category Search" index="catalog_category" type="category" fulltext="true" />
+    <request name="category_search_container" label="Catalog Category Search" index="catalog_category" type="category" fulltext="true"/>
+
 </requests>

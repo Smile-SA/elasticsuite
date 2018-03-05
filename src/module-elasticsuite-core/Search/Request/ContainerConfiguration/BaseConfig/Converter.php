@@ -23,6 +23,8 @@ namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfi
  */
 class Converter extends \Magento\Framework\Search\Request\Config\Converter
 {
+    const FILTERS_PATH = 'filters/filter';
+
     /**
      * Convert config.
      *
@@ -37,13 +39,16 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
 
         /** @var \DOMNodeList $requestNodes */
         $requestNodes = $source->getElementsByTagName('request');
-        $requests = [];
+        $xpath        = new \DOMXPath($source);
+        $requests     = [];
+
         foreach ($requestNodes as $requestNode) {
             $simpleXmlNode = simplexml_import_dom($requestNode);
             /** @var \DOMElement $requestNode */
-            $name = $requestNode->getAttribute('name');
-            $request = $this->mergeAttributes((array) $simpleXmlNode);
-            $requests[$name] = $request;
+            $name               = $requestNode->getAttribute('name');
+            $request            = $this->mergeAttributes((array) $simpleXmlNode);
+            $request['filters'] = $this->parseFilters($xpath, $requestNode);
+            $requests[$name]    = $request;
         }
 
         return $requests;
@@ -65,5 +70,24 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
         }
 
         return $source;
+    }
+
+    /**
+     * Parse filters from request node configuration.
+     *
+     * @param \DOMXPath $xpath           XPath access to the document parsed.
+     * @param \DOMNode  $requestRootNode Request node to be parsed.
+     *
+     * @return array
+     */
+    private function parseFilters(\DOMXPath $xpath, \DOMNode $requestRootNode)
+    {
+        $filters = [];
+
+        foreach ($xpath->query(self::FILTERS_PATH, $requestRootNode) as $filterNode) {
+            $filters[$filterNode->getAttribute('name')] = $filterNode->nodeValue;
+        }
+
+        return $filters;
     }
 }
