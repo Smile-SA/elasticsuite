@@ -102,10 +102,12 @@ class AttributeData extends AbstractAttributeData
                 foreach ($data as $relationRow) {
                     $parentId = (int) $relationRow['parent_id'];
                     $childId  = (int) $relationRow['child_id'];
+                    $sku      = (string) $relationRow['sku'];
                     $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"]));
                     $children[$childId][] = [
                         "parent_id"               => $parentId,
                         "configurable_attributes" => $configurableAttributes,
+                        "sku"                     => $sku,
                     ];
                 }
             }
@@ -188,7 +190,7 @@ class AttributeData extends AbstractAttributeData
             ->joinInner(
                 ['child' => $entityTable],
                 new \Zend_Db_Expr("child.{$entityIdField} = main.{$childFieldName}"),
-                ['child_id' => $entityIdField]
+                ['child_id' => $entityIdField, 'sku' => 'sku']
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
 
