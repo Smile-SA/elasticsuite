@@ -138,6 +138,22 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getFilters(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    {
+        $filters = [];
+
+        /** @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface $filter */
+        foreach ($this->readBaseConfigParam('filters') as $filter) {
+            // Not using the filter name as array key, to prevent collision with filters added via addFieldToFilter.
+            $filters[] = $filter->getFilterQuery($searchContext);
+        }
+
+        return array_filter($filters);
+    }
+
+    /**
      * Read configuration param from base config.
      *
      * @param string $param Param name.

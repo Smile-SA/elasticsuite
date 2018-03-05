@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query;
 
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder as FulltextQueryBuilder;
@@ -45,20 +46,28 @@ class Builder
     private $filterQueryBuilder;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\Context
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param QueryFactory         $queryFactory         Factory used to build subqueries.
      * @param FulltextQueryBuilder $fulltextQueryBuilder Builder of the fulltext query part.
-     * @param FilterQueryBuilder   $filterQuerybuilder   Buulder of the filters.
+     * @param FilterQueryBuilder   $filterQuerybuilder   Builder of the filters.
+     * @param ContextInterface     $searchContext        Search Context.
      */
     public function __construct(
         QueryFactory $queryFactory,
         FulltextQueryBuilder $fulltextQueryBuilder,
-        FilterQueryBuilder $filterQuerybuilder
+        FilterQueryBuilder $filterQuerybuilder,
+        ContextInterface $searchContext
     ) {
         $this->queryFactory         = $queryFactory;
         $this->fulltextQueryBuilder = $fulltextQueryBuilder;
         $this->filterQueryBuilder   = $filterQuerybuilder;
+        $this->searchContext        = $searchContext;
     }
 
 
@@ -84,6 +93,8 @@ class Builder
                 $queryParams['query'] = $this->createFulltextQuery($containerConfiguration, $query, $spellingType);
             }
         }
+
+        $filters = array_merge($filters, $containerConfiguration->getFilters($this->searchContext));
 
         if (!empty($filters)) {
             $queryParams['filter'] = $this->createFilterQuery($containerConfiguration, $filters);
