@@ -39,7 +39,6 @@
         <filters>
             <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
-            <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryBlacklist</filter>
         </filters>
     </request>
 

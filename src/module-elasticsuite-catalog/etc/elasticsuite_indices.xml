@@ -61,7 +61,6 @@
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
-                <field name="category.is_blacklisted" type="boolean" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
                 <field name="category.name" type="text" nestedPath="category">
                     <isSearchable>1</isSearchable>
