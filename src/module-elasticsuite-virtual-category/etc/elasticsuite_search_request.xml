@@ -19,7 +19,7 @@
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_search_request.xsd">
 
-    <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
+    <request name="catalog_view_container">
         <filters>
             <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryBlacklist</filter>
         </filters>
