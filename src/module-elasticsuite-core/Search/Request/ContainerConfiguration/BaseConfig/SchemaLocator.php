@@ -59,6 +59,6 @@ class SchemaLocator implements SchemaLocatorInterface
      */
     public function getPerFileSchema()
     {
-        return $this->schema;
+        return null;
     }
 }

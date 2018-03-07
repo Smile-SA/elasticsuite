@@ -43,6 +43,7 @@ class Reader extends Filesystem
      */
     protected $_idAttributes = [
         '/requests/request' => 'name',
+        '/requests/request/filters/filter' => 'name',
     ];
 
     /**

@@ -23,6 +23,7 @@
         <filters>
             <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visible-in-search">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+            <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
     </request>
 
@@ -30,6 +31,7 @@
         <filters>
             <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+            <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
     </request>
 
