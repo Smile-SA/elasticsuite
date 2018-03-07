@@ -5,12 +5,12 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter;
+namespace Smile\ElasticsuiteVirtualCategory\Model\Product\Search\Request\Container\Filter;
 
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
