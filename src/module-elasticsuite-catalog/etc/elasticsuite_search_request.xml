@@ -27,14 +27,6 @@
         </filters>
     </request>
 
-    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" type="product" fulltext="true">
-        <filters>
-            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
-            <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
-            <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
-        </filters>
-    </request>
-
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
         <filters>
             <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
