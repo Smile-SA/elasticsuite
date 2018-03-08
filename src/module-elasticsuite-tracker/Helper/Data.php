@@ -54,17 +54,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $urlBuilder;
 
     /**
+     * @var \Magento\Framework\Session\SessionManagerInterface
+     */
+    private $sessionManager;
+
+    /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context      The current context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager The Store Manager
+     * @param \Magento\Framework\App\Helper\Context              $context        The current context
+     * @param \Magento\Store\Model\StoreManagerInterface         $storeManager   The Store Manager
+     * @param \Magento\Framework\Session\SessionManagerInterface $sessionManager Session Manager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Session\SessionManagerInterface $sessionManager
     ) {
-        $this->urlBuilder = $context->getUrlBuilder();
-        $this->storeManager    = $storeManager;
+        $this->urlBuilder     = $context->getUrlBuilder();
+        $this->storeManager   = $storeManager;
+        $this->sessionManager = $sessionManager;
         parent::__construct($context);
     }
 
@@ -95,7 +103,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCookieConfig()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_COOKIE);
+        $config           = $this->scopeConfig->getValue(self::CONFIG_COOKIE);
+        $config['domain'] = $this->sessionManager->getCookieDomain();
+        $config['path']   = $this->sessionManager->getCookiePath();
+
+        return $config;
     }
 
     /**
