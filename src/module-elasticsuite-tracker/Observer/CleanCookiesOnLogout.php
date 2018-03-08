@@ -69,7 +69,7 @@ class CleanCookiesOnLogout implements \Magento\Framework\Event\ObserverInterface
         $cookieNames = $this->getCookies();
 
         $metadata = $this->cookieMetadataFactory->createPublicCookieMetadata();
-        $metadata->setPath('/');
+        $metadata->setPath($this->getCookieConfiguration()['path'] ?? '/');
 
         foreach ($cookieNames as $cookieName) {
             $this->cookieManager->deleteCookie($cookieName, $metadata);
@@ -83,7 +83,7 @@ class CleanCookiesOnLogout implements \Magento\Framework\Event\ObserverInterface
      */
     private function getCookies()
     {
-        $cookieConfiguration = $this->helper->getCookieConfig();
+        $cookieConfiguration = $this->getCookieConfiguration();
 
         $cookies = [
             $cookieConfiguration['visit_cookie_name'] ?? null,
@@ -91,5 +91,15 @@ class CleanCookiesOnLogout implements \Magento\Framework\Event\ObserverInterface
         ];
 
         return array_filter($cookies);
+    }
+
+    /**
+     * Retrieve Cookie configuration.
+     *
+     * @return array
+     */
+    private function getCookieConfiguration()
+    {
+        return $this->helper->getCookieConfig();
     }
 }

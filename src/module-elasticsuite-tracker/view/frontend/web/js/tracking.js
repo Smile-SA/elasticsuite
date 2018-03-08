@@ -30,9 +30,9 @@ var smileTracker = (function () {
         return null;
     }
 
-    function setCookie(cookieName, cookieValue, expiresAt) {
+    function setCookie(cookieName, cookieValue, expiresAt, path) {
         var expires = "expires=" + expiresAt.toUTCString();
-        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=/";
+        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=" + path;
     }
 
     // Retrieve values for a param into URL
@@ -178,20 +178,21 @@ var smileTracker = (function () {
 
     function initSession() {
         if (this.config && this.config.hasOwnProperty('sessionConfig')) {
-            var config = this.config.sessionConfig;
+            var config   = this.config.sessionConfig;
             var expireAt = new Date();
+            var path     = config['path'] || '/';
 
             if (getCookie(config['visit_cookie_name']) === null) {
                 expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                setCookie(config['visit_cookie_name'], guid(), expireAt);
+                setCookie(config['visit_cookie_name'], guid(), expireAt, path);
             } else {
                 expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt);
+                setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path);
             }
 
             if (getCookie(config['visitor_cookie_name']) === null) {
                 expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
-                setCookie(config['visitor_cookie_name'], guid(), expireAt);
+                setCookie(config['visitor_cookie_name'], guid(), expireAt, path);
             }
 
             addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
