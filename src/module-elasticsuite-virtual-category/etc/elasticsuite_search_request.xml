@@ -21,7 +21,7 @@
 
     <request name="catalog_view_container">
         <filters>
-            <filter name="blacklisted-products">Smile\ElasticsuiteVirtualCategory\Model\Product\Search\Request\Container\Filter\CategoryBlacklist</filter>
+            <filter name="blacklistedProducts">Smile\ElasticsuiteVirtualCategory\Model\Product\Search\Request\Container\Filter\CategoryBlacklist</filter>
         </filters>
     </request>
 

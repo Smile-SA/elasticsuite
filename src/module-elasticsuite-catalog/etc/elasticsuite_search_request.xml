@@ -21,16 +21,16 @@
 
     <request name="quick_search_container" label="Catalog Product Search" index="catalog_product" type="product" fulltext="true">
         <filters>
-            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
-            <filter name="visible-in-search">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
-            <filter name="blacklisted-products">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
+            <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+            <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
     </request>
 
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
         <filters>
-            <filter name="stock">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
-            <filter name="visible-in-catalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
+            <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
         </filters>
     </request>
 
