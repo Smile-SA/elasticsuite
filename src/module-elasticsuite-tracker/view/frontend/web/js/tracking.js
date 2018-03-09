@@ -139,22 +139,20 @@ var smileTracker = (function () {
     // Append a transparent pixel to the body
     function sendTag(forceCollect) {
         if (this.trackerSent === false || forceCollect === true) {
-            var bodyNode = document.getElementsByTagName('body')[0];
+            require([this.config.userConsent], function(UserConsent) {
+                var canSend = (typeof UserConsent.getUserConsent === 'function') && (UserConsent.getUserConsent() === true);
 
-            if (this.config && this.config.hasOwnProperty('sessionConfig')) {
-                var trackingUrl = getTrackerUrl.bind(this)();
-                var imgNode = document.createElement('img');
-                imgNode.setAttribute('src', trackingUrl);
-                setTrackerStyle(imgNode);
-                bodyNode.appendChild(imgNode);
-                this.trackerSent = true;
-                this.vars = {};
-            }
-
-            var extImgNode = document.createElement('img');
-            extImgNode.setAttribute('src', "//t.smile.eu/h.png?magento2");
-            setTrackerStyle(extImgNode);
-            bodyNode.appendChild(extImgNode);
+                if (canSend && this.config && this.config.hasOwnProperty('sessionConfig')) {
+                    var bodyNode = document.getElementsByTagName('body')[0];
+                    var trackingUrl = getTrackerUrl.bind(this)();
+                    var imgNode = document.createElement('img');
+                    imgNode.setAttribute('src', trackingUrl);
+                    setTrackerStyle(imgNode);
+                    bodyNode.appendChild(imgNode);
+                    this.trackerSent = true;
+                    this.vars = {};
+                }
+            }.bind(this));
         }
     }
 
