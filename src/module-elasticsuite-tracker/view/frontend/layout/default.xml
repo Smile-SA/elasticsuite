@@ -21,7 +21,11 @@
     </head>
     <body>
         <referenceContainer name="head.additional">
-            <block template="config.phtml" class="Smile\ElasticsuiteTracker\Block\Config" name="smile.tracker.config" />
+            <block template="config.phtml" class="Smile\ElasticsuiteTracker\Block\Config" name="smile.tracker.config">
+                <arguments>
+                    <argument name="userConsentComponent" xsi:type="string">Smile_ElasticsuiteTracker/js/user-consent</argument>
+                </arguments>
+            </block>
         </referenceContainer>
         <referenceContainer name="before.body.end">
             <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />

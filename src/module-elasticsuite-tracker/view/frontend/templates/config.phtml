@@ -20,11 +20,24 @@
 <script type="text/javascript">
 //<![CDATA[
     smileTracker.setConfig({
-        beaconUrl  : '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
-        sessionConfig : <?php /* @noEscape */ echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>
+        beaconUrl     : '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getBeaconUrl()); ?>',
+        sessionConfig : <?php /* @noEscape */ echo $jsonHelper->jsonEncode($block->getCookieConfig()); ?>,
+        userConsent   : '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getUserConsentComponent()); ?>'
     });
 
     smileTracker.addPageVar('store_id', '<?php /* @noEscape */ echo $this->escapeJsQuote($block->getStoreId());?>');
 //]]>
+</script>
+
+<?php $cookieRestrictionEnabled = (bool) $this->helper(\Magento\Cookie\Helper\Cookie::class)->isCookieRestrictionModeEnabled() ;?>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Smile_ElasticsuiteTracker/js/user-consent": {
+            "cookieRestrictionEnabled": <?= $jsonHelper->jsonEncode($cookieRestrictionEnabled) ?>,
+            "cookieRestrictionName": "<?= /* @noEscape */ \Magento\Cookie\Helper\Cookie::IS_USER_ALLOWED_SAVE_COOKIE ?>"
+        }
+    }
+}
 </script>
 <?php endif; ?>
