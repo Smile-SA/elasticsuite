@@ -104,13 +104,21 @@ class SaveProductsPositions extends AbstractIndexerPlugin
         $oldPositionProductIds = array_keys($this->saveHandler->getProductPositionsByCategory($category));
         $newPositionProductIds = array_keys($category->getSortedProducts());
 
-        $affectedProductIds = array_merge($oldPositionProductIds, $newPositionProductIds);
+        $oldBlacklistedProductIds = array_values($this->saveHandler->getProductBlacklistByCategory($category));
+        $newBlacklistedProductIds = array_values($category->getBlacklistedProducts() ?? []);
+
+        $affectedProductIds = array_merge(
+            $oldPositionProductIds,
+            $newPositionProductIds,
+            $oldBlacklistedProductIds,
+            $newBlacklistedProductIds
+        );
 
         if ($category->getAffectedProductIds()) {
             $affectedProductIds = array_merge($affectedProductIds, $category->getAffectedProductIds());
         }
 
-        return $affectedProductIds;
+        return array_unique($affectedProductIds);
     }
 
     /**
