@@ -210,7 +210,7 @@ class Spellchecker implements SpellcheckerInterface
             if (in_array($analyzer, $analyzers)) {
                 foreach ($fieldData['terms'] as $term => $termStats) {
                     foreach ($termStats['tokens'] as $token) {
-                        $positionKey = sprintf("%s_%s", $token['start_offset'], $token['end_offset']);
+                        $positionKey = $token['position'];
 
                         if (!isset($termStats['doc_freq'])) {
                             $termStats['doc_freq'] = 0;
