@@ -38,7 +38,22 @@
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
             <max_shingle_size>2</max_shingle_size>
-            <output_unigrams>false</output_unigrams>
+            <output_unigrams>true</output_unigrams>
+        </filter>
+        <filter name="reference_shingle" type="shingle" language="default">
+            <min_shingle_size>2</min_shingle_size>
+            <max_shingle_size>10</max_shingle_size>
+            <output_unigrams>true</output_unigrams>
+            <token_separator></token_separator>
+        </filter>
+        <filter name="reference_word_delimiter" type="word_delimiter" language="default">
+            <generate_word_parts>true</generate_word_parts>
+            <catenate_words>false</catenate_words>
+            <catenate_numbers>false</catenate_numbers>
+            <catenate_all>false</catenate_all>
+            <split_on_case_change>true</split_on_case_change>
+            <split_on_numerics>true</split_on_numerics>
+            <preserve_original>false</preserve_original>
         </filter>
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>false</preserve_original>
@@ -146,11 +161,11 @@
     <analyzers>
         <analyzer name="standard" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
-                <filter ref="elision" />
                 <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
                 <filter ref="standard" />
             </filters>
             <char_filters>
@@ -159,11 +174,24 @@
         </analyzer>
         <analyzer name="whitespace" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
-                <filter ref="elision" />
                 <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="reference" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="reference_word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
+                <filter ref="reference_shingle" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -171,11 +199,11 @@
         </analyzer>
         <analyzer name="shingle" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
-                <filter ref="elision" />
                 <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>
@@ -184,9 +212,9 @@
         </analyzer>
         <analyzer name="sortable" tokenizer="keyword" language="default">
             <filters>
-                <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="lowercase" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -194,11 +222,11 @@
         </analyzer>
         <analyzer name="phonetic" tokenizer="whitespace" language="default">
             <filters>
-                <filter ref="lowercase" />
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
-                <filter ref="elision" />
                 <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
                 <filter ref="phonetic" />
             </filters>
             <char_filters>
