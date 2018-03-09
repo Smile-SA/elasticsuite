@@ -86,8 +86,6 @@ class ResultPlugin
     /**
      * Process a redirect to the product page if there is only one result for a given search.
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
      * @param \Magento\CatalogSearch\Controller\Result\Index $subject The CatalogSearch Result Controller
      * @param \Closure                                       $proceed The execute method
      *
@@ -99,7 +97,7 @@ class ResultPlugin
     ) {
         $proceed();
 
-        if ($this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG)) {
+        if (!$subject->getResponse()->isRedirect() && $this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG)) {
             $layer      = $this->layerResolver->get();
             $layerState = $layer->getState();
 
