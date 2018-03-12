@@ -35,6 +35,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_COOKIE           = 'smile_elasticsuite_tracker/session';
 
     /**
+     * Anonymization status configuration path
+     * @var string
+     */
+    const CONFIG_IS_ANONYMIZATION_ENABLED_XPATH = 'smile_elasticsuite_tracker/anonymization/enabled';
+
+    /**
+     * Anonymization delay configuration path
+     * @var string
+     */
+    const CONFIG_ANONYMIZATION_DELAY_XPATH      = 'smile_elasticsuite_tracker/anonymization/delay';
+
+    /**
      * Magento Configuration
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -118,5 +130,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getStoreId()
     {
         return $this->storeManager->getStore()->getId();
+    }
+
+
+    /**
+     * Check if Anonymization is enabled.
+     *
+     * @return bool
+     */
+    public function isAnonymizationEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_ANONYMIZATION_ENABLED_XPATH);
+    }
+
+    /**
+     * Retrieve anonymization delay (in days).
+     *
+     * @return int
+     */
+    public function getAnonymizationDelay()
+    {
+        return (int) $this->scopeConfig->getValue(self::CONFIG_ANONYMIZATION_DELAY_XPATH);
     }
 }
