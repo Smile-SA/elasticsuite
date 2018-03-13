@@ -117,6 +117,24 @@ class AttributeData extends AbstractAttributeData
     }
 
     /**
+     * Allow to filter an attribute collection on attributes that are indexed into the search engine.
+     * Overriden to enforce "status" attribute indexing for products.
+     *
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection Attribute Collection
+     *
+     * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     */
+    public function addIndexedFilterToAttributeCollection(
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection
+    ) {
+        $attributeCollection = parent::addIndexedFilterToAttributeCollection($attributeCollection);
+
+        $attributeCollection->getSelect()->orWhere("attribute_code = 'status'");
+
+        return $attributeCollection;
+    }
+
+    /**
      * Retrieve Product Emulator (Magento Object) by type identifier.
      *
      * @param string $typeId Type identifier.
