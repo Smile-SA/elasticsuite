@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteAdminNotification adminhtml dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAdminNotification
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Smile ElasticSuite Admin Notification Factory -->
+    <virtualType name="\Smile\ElasticsuiteAdminNotification\Model\FeedFactory" type="Magento\AdminNotification\Model\FeedFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteAdminNotification\Model\Feed</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Mimic the \Magento\AdminNotification Observer, but using our own factory -->
+    <virtualType 
+            name="\Smile\ElasticsuiteAdminNotification\Observer\PredispatchAdminActionControllerObserver"
+            type="\Magento\AdminNotification\Observer\PredispatchAdminActionControllerObserver">
+        <arguments>
+            <argument name="feedFactory" xsi:type="object">\Smile\ElasticsuiteAdminNotification\Model\FeedFactory</argument>
+        </arguments>
+    </virtualType>
+
+</config>

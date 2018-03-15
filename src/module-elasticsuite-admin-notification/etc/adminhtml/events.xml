@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteAdminNotification adminhtml events.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAdminNotification
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <event name="controller_action_predispatch">
+        <!-- This observer is a virtual type defined in DI -->
+        <observer name="elasticsuite-admin-notification" instance="Smile\ElasticsuiteAdminNotification\Observer\PredispatchAdminActionControllerObserver" />
+    </event>
+
+</config>
