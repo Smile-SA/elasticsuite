@@ -167,7 +167,8 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        // not using array_filter here because it could remove "0" string from values
+        // $value = array_filter($value);
         $value = array_values($value);
         $values[$attributeCode] = $value;
 

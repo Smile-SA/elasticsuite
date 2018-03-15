@@ -28,7 +28,7 @@ class Boolean extends Attribute
     {
         $attributeValue = (bool) $request->getParam($this->_requestVar);
 
-        if (!empty($attributeValue)) {
+        if (!is_null($attributeValue)) { // not using is_empty here because it doesn't work with "0" values
             if (!is_array($attributeValue)) {
                 $attributeValue = [$attributeValue];
             }
@@ -88,11 +88,11 @@ class Boolean extends Attribute
         foreach ($this->_items as $item) {
             $applyValue = $item->getLabel();
 
-            if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
-                if (is_numeric($item->getLabel())) {
-                    $label = $this->getAttributeModel()->getSource()->getOptionText((int) $item->getLabel());
-                    $item->setLabel((string) $label);
-                }
+            // removed checking $item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES)
+            // because we need label for both YES and NO values
+            if (is_numeric($item->getLabel())) {
+                $label = $this->getAttributeModel()->getSource()->getOptionText((int) $item->getLabel());
+                $item->setLabel((string) $label);
             }
 
             if (($valuePos = array_search($applyValue, $this->currentFilterValue)) !== false) {
