@@ -23,9 +23,9 @@ namespace Smile\ElasticsuiteTracker\Block;
 class Config extends \Magento\Framework\View\Element\Template
 {
     /**
-     * The default tracking consent component, used as a fallback if none defined in layout.
+     * The default tracking consent script, used as a fallback if none defined in layout.
      */
-    const DEFAULT_CONSENT_COMPONENT = 'Smile_ElasticsuiteTracker/js/user-consent';
+    const DEFAULT_CONSENT_SCRIPT = 'Smile_ElasticsuiteTracker/js/user-consent';
 
     /**
      * Magento Configuration
@@ -49,11 +49,11 @@ class Config extends \Magento\Framework\View\Element\Template
     private $trackerHelper;
 
     /**
-     * Javascript component that will handle User consent.
+     * Javascript script that will handle User consent.
      *
      * @var string
      */
-    private $userConsentComponent;
+    private $userConsentScript;
 
     /**
      * PHP Constructor
@@ -71,10 +71,10 @@ class Config extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->scopeConfig          = $context->getScopeConfig();
-        $this->jsonHelper           = $jsonHelper;
-        $this->trackerHelper        = $trackerHelper;
-        $this->userConsentComponent = $data['userConsentComponent'] ?? self::DEFAULT_CONSENT_COMPONENT;
+        $this->scopeConfig       = $context->getScopeConfig();
+        $this->jsonHelper        = $jsonHelper;
+        $this->trackerHelper     = $trackerHelper;
+        $this->userConsentScript = $data['userConsentScript'] ?? self::DEFAULT_CONSENT_SCRIPT;
     }
 
     /**
@@ -131,12 +131,22 @@ class Config extends \Magento\Framework\View\Element\Template
     }
 
     /**
-     * Return the JS component to be used to check if user did consent tracking.
+     * Return the JS script to be used to check if user did consent tracking.
      *
      * @return string
      */
-    public function getUserConsentComponent()
+    public function getUserConsentScript()
     {
-        return $this->userConsentComponent;
+        return $this->userConsentScript;
+    }
+
+    /**
+     * Get config passed to the user consent script.
+     *
+     * @return array
+     */
+    public function getUserConsentConfig()
+    {
+        return $this->getData('userConsentConfig') ?? [];
     }
 }

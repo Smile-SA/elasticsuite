@@ -139,20 +139,17 @@ var smileTracker = (function () {
     // Append a transparent pixel to the body
     function sendTag(forceCollect) {
         if (this.trackerSent === false || forceCollect === true) {
-            require([this.config.userConsent], function(UserConsent) {
-                var canSend = (typeof UserConsent.getUserConsent === 'function') && (UserConsent.getUserConsent() === true);
+            var bodyNode = document.getElementsByTagName('body')[0];
 
-                if (canSend && this.config && this.config.hasOwnProperty('sessionConfig')) {
-                    var bodyNode = document.getElementsByTagName('body')[0];
-                    var trackingUrl = getTrackerUrl.bind(this)();
-                    var imgNode = document.createElement('img');
-                    imgNode.setAttribute('src', trackingUrl);
-                    setTrackerStyle(imgNode);
-                    bodyNode.appendChild(imgNode);
-                    this.trackerSent = true;
-                    this.vars = {};
-                }
-            }.bind(this));
+            if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+                var trackingUrl = getTrackerUrl.bind(this)();
+                var imgNode = document.createElement('img');
+                imgNode.setAttribute('src', trackingUrl);
+                setTrackerStyle(imgNode);
+                bodyNode.appendChild(imgNode);
+                this.trackerSent = true;
+                this.vars = {};
+            }
         }
     }
 
@@ -202,14 +199,11 @@ var smileTracker = (function () {
     var SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
-
-        /* LEGACY module : Cookie collect authorization popin
-         if (!getCookie('SCT_AUTH_COLLECT') && (domainsExeption.indexOf(window.location.host) == -1)) {
-         window.addEventListener('load', displayCollectAuthPopup.bind(this));
-         }
-         */
-        window.addEventListener('load', sendTag.bind(this));
     };
+
+    SmileTrackerImpl.prototype.sendTag = function () {
+        require(['domReady'], function(domReady) { domReady(sendTag.bind(this)); }.bind(this));
+    }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
         this.config  = config;
