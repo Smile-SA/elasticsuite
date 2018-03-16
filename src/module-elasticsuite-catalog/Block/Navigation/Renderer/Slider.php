@@ -213,7 +213,7 @@ class Slider extends AbstractRenderer
         $filter = $this->getFilter();
         $item   = current($this->getFilter()->getItems());
 
-        $regexp      = "/({$filter->getRequestVar()})=([0-9]+)/";
+        $regexp      = "/({$filter->getRequestVar()})=(-?[0-9]+)/";
         $replacement = '${1}=<%- from %>-<%- to %>';
 
         return preg_replace($regexp, $replacement, $item->getUrl());
