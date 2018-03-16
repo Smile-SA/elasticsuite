@@ -40,18 +40,18 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
     /**
      * Decimal constructor.
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory    Filter item
-     *                                                                                               factory
-     * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager         The Store Manager
-     * @param \Magento\Catalog\Model\Layer                                     $layer                The Layer
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder      The data builder
-     * @param \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory $filterDecimalFactory Factory for
-     *                                                                                               decimal items
-     * @param \Magento\Framework\Pricing\PriceCurrencyInterface                $priceCurrency        Price Currency
-     * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory    $dataProviderFactory  Price DataProvider
-     *                                                                                               Factory
-     * @param \Magento\Framework\Locale\ResolverInterface                      $localeResolver       Locale Resolver
-     * @param array                                                            $data                 Filter Data
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                           $filterItemFactory    Filter item
+     *                                                                                                        factory
+     * @param \Magento\Store\Model\StoreManagerInterface                                $storeManager         The Store Manager
+     * @param \Magento\Catalog\Model\Layer                                              $layer                The Layer
+     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder                      $itemDataBuilder      The data builder
+     * @param \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory          $filterDecimalFactory Factory for
+     *                                                                                              decimal items
+     * @param \Magento\Framework\Pricing\PriceCurrencyInterface                         $priceCurrency        Price Currency
+     * @param \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory  Decimal DataProvider
+     *                                                                                                        Factory
+     * @param \Magento\Framework\Locale\ResolverInterface                               $localeResolver       Locale Resolver
+     * @param array                                                                     $data                 Filter Data
      */
     public function __construct(
         \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
@@ -60,7 +60,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory $filterDecimalFactory,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
+        \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         array $data
     ) {
