@@ -23,7 +23,11 @@
         <referenceContainer name="head.additional">
             <block template="config.phtml" class="Smile\ElasticsuiteTracker\Block\Config" name="smile.tracker.config">
                 <arguments>
-                    <argument name="userConsentComponent" xsi:type="string">elasticsuiteTrackerUserConsent</argument>
+                    <argument name="userConsentScript" xsi:type="string">Smile_ElasticsuiteTracker/js/user-consent</argument>
+                    <argument name="userConsentConfig" xsi:type="array">
+                        <item name="cookieRestrictionEnabled" xsi:type="helper" helper="\Magento\Cookie\Helper\Cookie::isCookieRestrictionModeEnabled" />
+                        <item name="cookieRestrictionName" xsi:type="string">user_allowed_save_cookie</item>
+                    </argument>
                 </arguments>
             </block>
         </referenceContainer>
