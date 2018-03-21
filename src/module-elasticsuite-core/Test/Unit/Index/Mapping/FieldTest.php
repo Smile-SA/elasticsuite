@@ -166,7 +166,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsUsedInSpellcheckField($fieldConfig, $isSearchable, $isUsedInSpellcheck)
     {
-        $fieldType   = FieldInterface::FIELD_TYPE_STRING;
+        $fieldType   = FieldInterface::FIELD_TYPE_TEXT;
         $field       = new Field('field', $fieldType, null, $fieldConfig);
 
         $this->assertEquals($isSearchable, $field->isSearchable());
