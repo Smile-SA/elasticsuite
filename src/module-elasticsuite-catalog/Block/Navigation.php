@@ -73,7 +73,7 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         array $data
     ) {
         parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
-        $this->pageLayout         = $context->getPageConfig()->getPageLayout();
+        $this->pageLayout         = $context->getPageConfig()->getPageLayout() ?: $this->getLayout()->getUpdate()->getPageLayout();
         $this->objectManager      = $objectManager;
         $this->moduleManager      = $moduleManager;
         $this->relevantFilterList = $relevantFilterList;
