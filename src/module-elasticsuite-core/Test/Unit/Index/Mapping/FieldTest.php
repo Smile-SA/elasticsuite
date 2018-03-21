@@ -156,4 +156,46 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $field->getMappingProperty());
         $this->assertEquals('field', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
     }
+
+    /**
+     * @dataProvider getIsUsedInSpellcheckFieldConfigDataProvider
+     *
+     * @param array $fieldConfig        Field configuration from data provider
+     * @param bool  $isSearchable       Expected result for is_searchable property
+     * @param bool  $isUsedInSpellcheck Expected result for is_used_in_spellcheck property
+     */
+    public function testIsUsedInSpellcheckField($fieldConfig, $isSearchable, $isUsedInSpellcheck)
+    {
+        $fieldType   = FieldInterface::FIELD_TYPE_STRING;
+        $field       = new Field('field', $fieldType, null, $fieldConfig);
+
+        $this->assertEquals($isSearchable, $field->isSearchable());
+        $this->assertEquals($isUsedInSpellcheck, $field->isUsedInSpellcheck());
+    }
+
+    /**
+     * Data provider to test combinations of is_searchable/is_used_in_spellcheck for field configuration.
+     *
+     * @return array
+     */
+    public function getIsUsedInSpellcheckFieldConfigDataProvider()
+    {
+        return [
+            [
+                ['is_searchable' => true, 'is_used_in_spellcheck' => false],
+                true,
+                false,
+            ],
+            [
+                ['is_searchable' => true, 'is_used_in_spellcheck' => true],
+                true,
+                true,
+            ],
+            [
+                ['is_searchable' => false, 'is_used_in_spellcheck' => true],
+                false,
+                false,
+            ],
+        ];
+    }
 }

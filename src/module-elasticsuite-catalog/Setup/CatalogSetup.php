@@ -288,7 +288,7 @@ class CatalogSetup
 
         $setup->getConnection()->update(
             $setup->getTable('catalog_eav_attribute'),
-            ['is_searchable' => 1],
+            ['is_used_for_promo_rules' => 1, 'is_searchable' => 0, 'is_used_in_spellcheck' => 0],
             $setup->getConnection()->quoteInto('attribute_id = ?', $productImageAttributeId)
         );
     }

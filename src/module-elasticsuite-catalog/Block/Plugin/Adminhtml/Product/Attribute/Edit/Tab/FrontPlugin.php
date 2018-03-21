@@ -106,7 +106,7 @@ class FrontPlugin
             $form->getElement('is_searchable')->setDisabled(1);
         }
 
-        $this->appendFieldsDependency($form, $subject);
+        $this->appendFieldsDependency($subject);
 
         return $block;
     }
@@ -366,7 +366,10 @@ class FrontPlugin
             $dependencyBlock
                 ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
                 ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
-                ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1');
+                ->addFieldMap('is_searchable', 'is_searchable')
+                ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
+                ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
+                ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1');
         }
 
         return $this;

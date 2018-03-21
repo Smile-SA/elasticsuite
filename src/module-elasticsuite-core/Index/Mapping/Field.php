@@ -130,7 +130,7 @@ class Field implements FieldInterface
      */
     public function isUsedInSpellcheck()
     {
-        return (bool) $this->config['is_used_in_spellcheck'];
+        return (bool) $this->config['is_used_in_spellcheck'] && (bool) $this->config['is_searchable'];
     }
 
     /**
