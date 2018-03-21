@@ -40,7 +40,6 @@ class SessionIndex
      */
     private $buckets = [
         'session.vid'                   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'visitor_id']],
-        'session.customer_id'           => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'customer_id']],
         'page.product.id'               => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'product_view']],
         'page.category.id'              => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'category_view']],
         'page.search.query'             => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'search_query']],
