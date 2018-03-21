@@ -29,7 +29,6 @@
                 <!-- Session data -->
                 <field name="session.uid" type="keyword" />
                 <field name="session.vid" type="keyword" />
-                <field name="session.customer_id" type="integer" />
                 
                 <!-- Page metadata -->
                 <field name="page.site" type="keyword" />
@@ -114,7 +113,6 @@
                 <field name="start_date" type="date"/>
                 <field name="end_date" type="date"/>
                 <field name="visitor_id" type="keyword"/>
-                <field name="customer_id" type="integer"/>
                 <field name="product_view" type="integer" />
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="text">
