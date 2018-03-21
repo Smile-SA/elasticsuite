@@ -29,22 +29,22 @@ class Hit extends \Magento\Framework\App\Action\Action
     const PIXEL = '6wzwc+flkuJiYGDg9fRwCQLSjCDMwQQkJ5QH3wNSbCVBfsEMYJC3jH0ikOLxdHEMqZiTnJCQAOSxMDB+E7cIBcl7uvq5rHNKaAIA';
 
     /**
-     * @var \Smile\ElasticsuiteTracker\Api\EventQueueInterface
+     * @var \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface
      */
-    private $logEventQueue;
+    private $trackingService;
 
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Action\Context              $context       Context.
-     * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface $logEventQueue Event queue.
+     * @param \Magento\Framework\App\Action\Context                           $context         Context.
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $trackingService Tracking Service.
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Smile\ElasticsuiteTracker\Api\EventQueueInterface $logEventQueue
+        \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $trackingService
     ) {
         parent::__construct($context);
-        $this->logEventQueue = $logEventQueue;
+        $this->trackingService = $trackingService;
     }
 
     /**
@@ -56,7 +56,9 @@ class Hit extends \Magento\Framework\App\Action\Action
         $this->getResponse()->setHeader('Content-Type', 'image/png');
         $this->getResponse()->sendResponse();
 
-        $this->logEventQueue->addEvent($this->decodeParams($this->getRequest()->getParams()));
+        $eventData = $this->decodeParams($this->getRequest()->getParams());
+
+        $this->trackingService->addEvent($eventData);
     }
 
     /**
