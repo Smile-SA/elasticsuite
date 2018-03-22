@@ -17,7 +17,7 @@ use Magento\Framework\Setup\Option\TextConfigOption;
 use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Config\Data\ConfigData;
 use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\Setup\Option\FlagConfigOption;
+use Magento\Framework\Setup\Option\SelectConfigOption;
 
 /**
  * Handle ES parameters during setup.
@@ -76,10 +76,13 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                 self::CONFIG_PATH_ES_HOSTS,
                 'ElasticSearch Servers List.'
             ),
-            new FlagConfigOption(
+            new SelectConfigOption(
                 self::INPUT_KEY_ES_SSL,
+                SelectConfigOption::FRONTEND_WIZARD_SELECT,
+                [0, 1],
                 self::CONFIG_PATH_ES_SSL,
-                'Use SSL mode to connect to ElasticSearch.'
+                'Use SSL mode to connect to ElasticSearch.',
+                0
             ),
             new TextConfigOption(
                 self::INPUT_KEY_ES_USER,
@@ -165,26 +168,32 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      */
     private function readConfiguration(array $options, DeploymentConfig $deploymentConfig, $inputKey)
     {
-        $configPath = $this->getConfigPath($inputKey);
+        $config = null;
+        $option = $this->getOption($inputKey);
 
-        return $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : null);
+        if ($option) {
+            $configPath = $option->getConfigPath($inputKey);
+            $config = $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : $option->getDefault());
+        }
+
+        return $config;
     }
 
     /**
-     * Convert an inout key to a config path.
+     * Retrieve option by input key.
      *
      * @param string $inputKey Input key.
      *
-     * @return NULL|string
+     * @return \Magento\Framework\Setup\Option\AbstractConfigOption|null
      */
-    private function getConfigPath($inputKey)
+    private function getOption($inputKey)
     {
-        $configPath = null;
+        $option = null;
 
-        foreach ($this->getOptions() as $option) {
-            $configPath = $option->getName() == $inputKey ? $option->getConfigPath() : $configPath;
+        foreach ($this->getOptions() as $currentOption) {
+            $option = $currentOption->getName() == $inputKey ? $currentOption : $option;
         }
 
-        return $configPath;
+        return $option;
     }
 }
