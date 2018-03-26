@@ -19,16 +19,19 @@ define(['Magento_Ui/js/form/components/fieldset'], function(Fieldset) {
                 "initValue": "${ $.provider }:data.model"
             },
             listens: {
-                "${ $.provider }:data.model" : "onModelChange"
+                "${ $.provider }:data.model" : "onChange"
             }
         },
         initialize: function() {
             this._super();
             this.observe(['disableChildren']);
-            this.onModelChange(this.initValue);
+            this.onChange(this.initValue);
         },
-        onModelChange: function(value)  {
+        onChange: function(value)  {
             var isVisible = this.index == value;
+            if (Array.isArray(value)) {
+                isVisible = (value.indexOf(this.index) !== -1);
+            }
             this.visible(isVisible);
             this.disableChildren(!isVisible);
         }

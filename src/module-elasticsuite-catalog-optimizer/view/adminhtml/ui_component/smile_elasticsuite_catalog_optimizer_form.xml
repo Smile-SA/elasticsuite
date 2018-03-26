@@ -189,6 +189,338 @@
         </field>
     </fieldset>
 
+    <fieldset name="quick_search_container">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Catalog Product Search</item>
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
+                <item name="imports" xsi:type="array">
+                    <item name="initValue" xsi:type="string">${ $.provider }:data.search_container</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
+                </item>
+            </item>
+        </argument>
+        <field name="search_term_apply_to">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="value" xsi:type="number">0</item>
+                        <item name="label" xsi:type="string" translate="true">All search terms</item>
+                    </item>
+                    <item name="1" xsi:type="array">
+                        <item name="value" xsi:type="number">1</item>
+                        <item name="label" xsi:type="string" translate="true">Selected search terms</item>
+                    </item>
+                </item>
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Apply to</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="dataScope" xsi:type="string">quick_search_container.apply_to</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+            <settings>
+                <switcherConfig>
+                    <rules>
+                        <rule name="0">
+                            <value>0</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container.query_ids_fieldset</target>
+                                    <callback>close</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                        <rule name="1">
+                            <value>1</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container.query_ids_fieldset</target>
+                                    <callback>open</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                    </rules>
+                    <enabled>true</enabled>
+                </switcherConfig>
+            </settings>
+        </field>
+
+        <fieldset name="query_ids_fieldset">
+            <settings>
+                <label/>
+                <ns>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container</ns>
+                <collapsible>true</collapsible>
+                <opened>true</opened>
+            </settings>
+            <container name="button_set" template="ui/form/components/complex">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string"/>
+                        <item name="content" xsi:type="string" translate="true"><![CDATA[Select the search terms for which you want the optimizer to apply.]]></item>
+                    </item>
+                </argument>
+                <button name="release_notification_button_back" displayArea="actions-secondary">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="buttonClasses" xsi:type="string"></item>
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container.search_terms_modal</item>
+                                    <item name="actionName" xsi:type="string">toggleModal</item>
+                                </item>
+                            </item>
+                            <item name="title" xsi:type="string" translate="true">Add Search Terms</item>
+                        </item>
+                    </argument>
+                </button>
+            </container>
+
+            <dynamicRows
+                    name="quick_search_container.query_ids"
+                    sortOrder="200"
+                    component="Magento_Ui/js/dynamic-rows/dynamic-rows-grid"
+                    template="ui/dynamic-rows/templates/grid"
+            >
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="columnsHeaderAfterRender" xsi:type="boolean">true</item>
+                        <item name="deleteButtonLabel" xsi:type="string" translate="true">Remove</item>
+                        <item name="dataProvider" xsi:type="string">search_term_listing</item>
+                        <item name="map" xsi:type="array">
+                            <item name="id" xsi:type="string">query_id</item>
+                            <item name="query_text" xsi:type="string">query_text</item>
+                            <item name="is_spellchecked" xsi:type="string">is_spellchecked</item>
+                        </item>
+                    </item>
+                </argument>
+                <settings>
+                    <addButton>false</addButton>
+                    <defaultRecord>false</defaultRecord>
+                    <columnsHeader>false</columnsHeader>
+                    <recordTemplate>record</recordTemplate>
+                    <additionalClasses>
+                        <class name="admin__field-wide">true</class>
+                    </additionalClasses>
+                    <dndConfig>
+                        <param name="enabled" xsi:type="boolean">false</param>
+                    </dndConfig>
+                    <links>
+                        <link name="insertData">${ $.provider }:${ $.dataProvider }</link>
+                    </links>
+                </settings>
+                <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="isTemplate" xsi:type="boolean">true</item>
+                            <item name="is_collection" xsi:type="boolean">true</item>
+                            <item name="componentType" xsi:type="string">container</item>
+                            <item name="dataScope" xsi:type="string"></item>
+                        </item>
+                    </argument>
+                    <field name="id" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">ID</label>
+                            <visible>true</visible>
+                            <dataScope>id</dataScope>
+                        </settings>
+                    </field>
+                    <field name="query_text" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Query Text</label>
+                            <visible>true</visible>
+                        </settings>
+                    </field>
+                    <field name="is_spellchecked" formElement="text" component="Magento_Ui/js/form/element/text" template="ui/dynamic-rows/cells/text">
+                        <argument name="data" xsi:type="array">
+                            <item name="config" xsi:type="array">
+                                <item name="visible" xsi:type="boolean">true</item>
+                                <item name="label" xsi:type="string" translate="true">Is Spellchecked</item>
+                                <item name="dataType" xsi:type="string">string</item>
+                                <item name="fit" xsi:type="boolean">true</item>
+                            </item>
+                        </argument>
+                    </field>
+                    <actionDelete name="delete">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Actions</label>
+                            <visible>true</visible>
+                            <dataScope>query_text</dataScope>
+                            <additionalClasses>
+                                <class name="data-grid-actions-cell">true</class>
+                            </additionalClasses>
+                        </settings>
+                    </actionDelete>
+                </container>
+            </dynamicRows>
+        </fieldset>
+
+        <modal name="search_terms_modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string" translate="true">Select Search Terms</option>
+                    <option name="type" xsi:type="string">slide</option>
+                    <option name="responsive" xsi:type="boolean">true</option>
+                    <option name="innerScroll" xsi:type="boolean">true</option>
+                    <option name="autoOpen" xsi:type="boolean">false</option>
+                </options>
+            </settings>
+            <button name="search_terms_modal_button_back" displayArea="actions-secondary">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="buttonClasses" xsi:type="string">action-secondary</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container.search_terms_modal</item>
+                                <item name="actionName" xsi:type="string">closeModal</item>
+                            </item>
+                        </item>
+                        <item name="title" xsi:type="string" translate="true">Cancel</item>
+                    </item>
+                </argument>
+            </button>
+            <button name="search_terms_modal_button_save" displayArea="actions-primary">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="buttonClasses" xsi:type="string">action-primary</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">index = search_term_listing</item>
+                                <item name="actionName" xsi:type="string">save</item>
+                            </item>
+                            <item name="1" xsi:type="array">
+                                <item name="targetName" xsi:type="string">smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.quick_search_container.search_terms_modal</item>
+                                <item name="actionName" xsi:type="string">closeModal</item>
+                            </item>
+                        </item>
+                        <item name="title" xsi:type="string" translate="true">Add Selected Terms</item>
+                    </item>
+                </argument>
+            </button>
+            <insertListing name="search_term_listing" component="Magento_Ui/js/form/components/insert-listing">
+                <settings>
+                    <externalProvider>${ $.ns }.search_term_listing_data_source</externalProvider>
+                    <selectionsProvider>${ $.ns }.${ $.ns }.search_term_listing_columns.ids</selectionsProvider>
+                    <realTimeLink>true</realTimeLink>
+                    <autoRender>true</autoRender>
+                    <externalFilterMode>true</externalFilterMode>
+                    <dataScope>search_term_listing</dataScope>
+                    <dataLinks>
+                        <imports>false</imports>
+                        <exports>true</exports>
+                    </dataLinks>
+                    <ns>search_term_listing</ns>
+                    <imports>
+                        <link name="optimizerId">${ $.provider }:data.optimizer_id</link>
+                    </imports>
+                    <exports>
+                        <link name="optimizerId">${ $.externalProvider }:params.optimizer_id</link>
+                    </exports>
+                    <links>
+                        <link name="value">${ $.provider }:${ $.ns }</link>
+                    </links>
+                </settings>
+            </insertListing>
+        </modal>
+    </fieldset>
+
+    <fieldset name="catalog_view_container">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Category Product View</item>
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
+                <item name="imports" xsi:type="array">
+                    <item name="initValue" xsi:type="string">${ $.provider }:data.search_container</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
+                </item>
+            </item>
+        </argument>
+
+        <field name="category_apply_to">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="value" xsi:type="number">0</item>
+                        <item name="label" xsi:type="string" translate="true">All Categories</item>
+                    </item>
+                    <item name="1" xsi:type="array">
+                        <item name="value" xsi:type="number">1</item>
+                        <item name="label" xsi:type="string" translate="true">Selected categories</item>
+                    </item>
+                </item>
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Apply to</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="dataScope" xsi:type="string">catalog_view_container.apply_to</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+            <settings>
+                <switcherConfig>
+                    <rules>
+                        <rule name="0">
+                            <value>0</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
+                                    <callback>hide</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                        <rule name="1">
+                            <value>1</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
+                                    <callback>show</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                    </rules>
+                    <enabled>true</enabled>
+                </switcherConfig>
+            </settings>
+        </field>
+
+        <field name="category_ids">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Apply to categories</item>
+                    <item name="componentType" xsi:type="string">field</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                    <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                    <item name="dataScope" xsi:type="string">catalog_view_container.category_ids</item>
+                    <item name="filterOptions" xsi:type="boolean">true</item>
+                    <item name="showCheckbox" xsi:type="boolean">false</item>
+                    <item name="disableLabel" xsi:type="boolean">true</item>
+                    <item name="multiple" xsi:type="boolean">true</item>
+                    <item name="levelsVisibility" xsi:type="number">1</item>
+                    <item name="required" xsi:type="boolean">true</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">true</item>
+                    </item>
+                    <item name="listens" xsi:type="array">
+                        <item name="${ $.namespace }.${ $.namespace }:responseData" xsi:type="string">setParsed</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+
     <fieldset name="constant_score">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
