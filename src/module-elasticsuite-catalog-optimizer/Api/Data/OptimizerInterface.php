@@ -36,6 +36,11 @@ interface OptimizerInterface
     const TABLE_NAME_SEARCH_CONTAINER = 'smile_elasticsuite_optimizer_search_container';
 
     /**
+     * Name of the optimizer limitation Mysql Table
+     */
+    const TABLE_NAME_LIMITATION = 'smile_elasticsuite_optimizer_limitation';
+
+    /**
      * Constant for field optimizer_id
      */
     const OPTIMIZER_ID = 'optimizer_id';
@@ -142,11 +147,11 @@ interface OptimizerInterface
     public function getToDate();
 
     /**
-     * Get search_container
+     * Get search containers associated with this optimizer.
      *
-     * @return string
+     * @return array
      */
-    public function getSearchContainer();
+    public function getSearchContainers();
 
     /**
      * Get rule_condition
