@@ -58,10 +58,12 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         $select = $connection->select();
 
-        $select->from($this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER), OptimizerInterface::SEARCH_CONTAINER)
-            ->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
+        $select->from(
+            $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER),
+            [OptimizerInterface::SEARCH_CONTAINER, 'apply_to']
+        )->where(OptimizerInterface::OPTIMIZER_ID . ' = ?', (int) $optimizerId);
 
-        return $connection->fetchCol($select);
+        return $connection->fetchPairs($select);
     }
 
     /**
@@ -97,7 +99,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         if ($object->getId()) {
             $searchContainers = $this->getSearchContainersFromOptimizerId($object->getId());
-            $object->setSearchContainer($searchContainers);
+            $object->setSearchContainers($searchContainers);
         }
 
          /* Using getter to force unserialize*/
@@ -147,9 +149,12 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $deleteCondition = OptimizerInterface::OPTIMIZER_ID . " = " . $object->getId();
 
             foreach ($searchContainers as $searchContainer) {
+                $searchContainerData = $object->getData($searchContainer);
+                $applyTo = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
                 $searchContainerLinks[] = [
                     OptimizerInterface::OPTIMIZER_ID     => (int) $object->getId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,
+                    'apply_to'                           => (int) $applyTo,
                 ];
             }
 

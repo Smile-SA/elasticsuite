@@ -13,15 +13,12 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form;
 
 use Magento\Backend\Model\UrlInterface;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Locale\FormatInterface;
 use Magento\Framework\Registry;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
+use Magento\Ui\DataProvider\Modifier\PoolInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory as OptimizerCollectionFactory;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Containers as ContainersSource;
 
 /**
  * Optimizer Data provider for adminhtml edit form
@@ -33,144 +30,67 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Conta
 class DataProvider extends AbstractDataProvider
 {
     /**
-     * @var array
+     * @var PoolInterface
      */
-    private $loadedData;
-
-    /**
-     * @var Registry
-     */
-    private $registry;
-
-    /**
-     * @var RequestInterface
-     */
-    private $request;
-
-    /**
-     * @var OptimizerRepositoryInterface
-     */
-    private $optimizerRepository;
-
-    /**
-     * @var \Magento\Backend\Model\UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
-     * @var \Magento\Framework\Locale\FormatInterface
-     */
-    private $localeFormat;
-
-    /**
-     * @var ContainersSource
-     */
-    private $containersSource;
+    private $modifierPool;
 
     /**
      * DataProvider constructor
      *
-     * @param string                       $name                       Component Name
-     * @param string                       $primaryFieldName           Primary Field Name
-     * @param string                       $requestFieldName           Request Field Name
-     * @param OptimizerCollectionFactory   $optimizerCollectionFactory Optimizer Collection Factory
-     * @param Registry                     $registry                   The Registry
-     * @param RequestInterface             $request                    The Request
-     * @param OptimizerRepositoryInterface $optimizerRepository        The Optimizer Repository
-     * @param UrlInterface                 $urlBuilder                 URL Builder
-     * @param FormatInterface              $localeFormat               Locale Format
-     * @param ContainersSource             $containersSource           Containers Source
-     * @param array                        $meta                       Component Metadata
-     * @param array                        $data                       Component Data
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @param string                     $name                       Component Name
+     * @param string                     $primaryFieldName           Primary Field Name
+     * @param string                     $requestFieldName           Request Field Name
+     * @param OptimizerCollectionFactory $optimizerCollectionFactory Optimizer Collection Factory
+     * @param PoolInterface              $modifierPool               Modifiers Pool
+     * @param array                      $meta                       Component Metadata
+     * @param array                      $data                       Component Data
      */
     public function __construct(
         $name,
         $primaryFieldName,
         $requestFieldName,
         OptimizerCollectionFactory $optimizerCollectionFactory,
-        Registry $registry,
-        RequestInterface $request,
-        OptimizerRepositoryInterface $optimizerRepository,
-        UrlInterface $urlBuilder,
-        FormatInterface $localeFormat,
-        ContainersSource $containersSource,
+        PoolInterface $modifierPool,
         array $meta = [],
         array $data = []
     ) {
-        $this->collection          = $optimizerCollectionFactory->create();
-        $this->registry            = $registry;
-        $this->request             = $request;
-        $this->optimizerRepository = $optimizerRepository;
-        $this->urlBuilder          = $urlBuilder;
-        $this->localeFormat        = $localeFormat;
-        $this->containersSource    = $containersSource;
+        $this->collection   = $optimizerCollectionFactory->create();
+        $this->modifierPool = $modifierPool;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
     /**
-     * Get Component data
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getData()
     {
-        if (isset($this->loadedData)) {
-            return $this->loadedData;
+        foreach ($this->getCollection()->getItems() as $itemId => $item) {
+            // Ensure optimizer config and rule get properly instantiated.
+            $item->getResource()->afterLoad($item);
+            $this->data[$itemId] = $item->toArray();
         }
 
-        $optimizer = $this->getCurrentOptimizer();
-
-        if ($optimizer) {
-            $optimizerData = $optimizer->getData();
-            if (!empty($optimizerData)) {
-                $this->loadedData[$optimizer->getId()] = $optimizerData;
-            }
-            $this->loadedData[$optimizer->getId()]['preview_url']       = $this->getPreviewUrl($optimizer);
-            $this->loadedData[$optimizer->getId()]['price_format']      = $this->localeFormat->getPriceFormat();
-            $this->loadedData[$optimizer->getId()]['search_containers'] = $this->containersSource->toOptionArray();
+        /** @var \Magento\Ui\DataProvider\Modifier\ModifierInterface $modifier */
+        foreach ($this->modifierPool->getModifiersInstances() as $modifier) {
+            $this->data = $modifier->modifyData($this->data);
         }
 
-        return $this->loadedData;
+        return $this->data;
     }
 
     /**
-     * Get current optimizer
-     *
-     * @return Optimizer
-     * @throws NoSuchEntityException
+     * {@inheritdoc}
      */
-    private function getCurrentOptimizer()
+    public function getMeta()
     {
-        $optimizer = $this->registry->registry('current_optimizer');
+        $this->meta = parent::getMeta();
 
-        if ($optimizer) {
-            return $optimizer;
+        /** @var \Magento\Ui\DataProvider\Modifier\ModifierInterface $modifier */
+        foreach ($this->modifierPool->getModifiersInstances() as $modifier) {
+            $this->meta = $modifier->modifyMeta($this->meta);
         }
 
-        $requestId = $this->request->getParam($this->requestFieldName);
-        if ($requestId) {
-            $optimizer = $this->optimizerRepository->getById($requestId);
-        }
-
-        if (!$optimizer || !$optimizer->getId()) {
-            $optimizer = $this->collection->getNewEmptyItem();
-        }
-
-        return $optimizer;
-    }
-
-    /**
-     * Retrieve the optimizer Preview URL.
-     *
-     * @return string
-     */
-    private function getPreviewUrl()
-    {
-        $urlParams = ['ajax' => true];
-
-        return $this->urlBuilder->getUrl('smile_elasticsuite_catalog_optimizer/optimizer/preview', $urlParams);
+        return $this->meta;
     }
 }
