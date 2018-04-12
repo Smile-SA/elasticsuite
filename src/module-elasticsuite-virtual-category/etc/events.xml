@@ -19,4 +19,8 @@
     <event name="catalog_category_move_before">
         <observer name="smile_elasticsuite_virtual_categories_move_before" instance="Smile\ElasticsuiteVirtualCategory\Observer\MoveVirtualCategoryRoot"/>
     </event>
+
+    <event name="magento_catalog_api_data_categoryinterface_save_before">
+        <observer name="smile_elasticsuite_virtual_categories_before_save" instance="Smile\ElasticsuiteVirtualCategory\Observer\ConvertVirtualRuleOnSave" />
+    </event>
 </config>

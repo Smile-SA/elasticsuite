@@ -77,5 +77,24 @@
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="virtualCategoryProductRequestMapper" type="Smile\ElasticsuiteVirtualCategory\Plugin\Search\RequestMapperPlugin" sortOrder="20"/>
     </type>
-    
+
+    <!-- Handle saving of virtual rule by category -->
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="read" xsi:type="array">
+                        <item name="virtualRuleReader" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler</item>
+                    </item>
+                    <item name="create" xsi:type="array">
+                        <item name="virtualRulePersistor" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="virtualRulePersistor" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\SaveHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
