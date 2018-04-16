@@ -20,7 +20,7 @@ namespace Smile\ElasticSuiteCore\Model;
  * @package  Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Search implements \Magento\Framework\Api\Search\SearchInterface
+class Search implements \Magento\Search\Api\SearchInterface
 {
     /**
      * @var \Smile\ElasticsuiteCore\Model\Search\RequestBuilder
