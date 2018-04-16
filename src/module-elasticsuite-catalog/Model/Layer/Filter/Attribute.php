@@ -90,12 +90,12 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
                 $attributeValue = [$attributeValue];
             }
 
-            $this->currentFilterValue = $attributeValue;
+            $this->currentFilterValue = array_values($attributeValue);
 
             /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
             $productCollection = $this->getLayer()->getProductCollection();
 
-            $productCollection->addFieldToFilter($this->getFilterField(), $attributeValue);
+            $productCollection->addFieldToFilter($this->getFilterField(), $this->currentFilterValue);
             $layerState = $this->getLayer()->getState();
 
             foreach ($this->currentFilterValue as $currentFilter) {
