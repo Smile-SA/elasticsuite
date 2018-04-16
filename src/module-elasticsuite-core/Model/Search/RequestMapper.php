@@ -40,7 +40,7 @@ class RequestMapper
     {
         $sortOrders = [];
 
-        foreach ($searchCriteria->getSortOrders() as $sortOrder) {
+        foreach ($searchCriteria->getSortOrders() ?? [] as $sortOrder) {
             $sortOrders[$sortOrder->getField()] = ['direction' => $sortOrder->getDirection()];
         }
 
@@ -61,8 +61,8 @@ class RequestMapper
     {
         $filters = [];
 
-        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
-            foreach ($filterGroup->getFilters() as $filter) {
+        foreach ($searchCriteria->getFilterGroups() ?? [] as $filterGroup) {
+            foreach ($filterGroup->getFilters() ?? [] as $filter) {
                 if ($filter->getField() != "search_term") {
                     $filters[$filter->getField()] = [$filter->getConditionType() => $filter->getValue()];
                 }
