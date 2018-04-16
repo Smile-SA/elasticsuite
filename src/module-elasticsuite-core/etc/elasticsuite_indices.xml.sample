@@ -43,7 +43,7 @@
                 <field name="price.is_discount" type="boolean" nestedPath="price"/>
                 <field name="price.customer_group_id" type="integer" nestedPath="price"/>
 
-                <!-- Static fields handled by the "prices" datasource -->
+                <!-- Static fields handled by the "categories" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category"/>
                 <field name="category.position" type="integer" nestedPath="category"/>
                 <field name="category.is_parent" type="boolean" nestedPath="category"/>
