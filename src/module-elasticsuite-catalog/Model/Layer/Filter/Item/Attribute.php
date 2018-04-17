@@ -52,6 +52,12 @@ class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
             }
 
             $query = [$this->getFilter()->getRequestVar() => $resetValue];
+            
+            foreach ($query as &$item) {
+                if (is_array($item)) {
+                    $item = array_values($item);
+                }
+            }
         }
 
         $params = [
