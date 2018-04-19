@@ -407,11 +407,6 @@
         </arguments>
     </type>
 
-    <!--  -->
-    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
-        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping\FieldPlugin"/>
-    </type>
-
     <!-- Sensitive / Environment Specific Configuration fields handling -->
     <type name="Magento\Config\Model\Config\TypePool">
         <arguments>
