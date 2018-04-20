@@ -102,6 +102,22 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     }
 
     /**
+     * Retrieve value element chooser URL
+     *
+     * @return string
+     */
+    public function getValueElementChooserUrl()
+    {
+        $url = parent::getValueElementChooserUrl();
+
+        if ($this->getAttribute() === 'category_ids') {
+            $url = $this->getCategoryChooserUrl();
+        }
+
+        return $url;
+    }
+
+    /**
      * Retrieve a query used to apply category filter rule.
      *
      * @param array $excludedCategories Category excluded from the loading (avoid infinite loop in query
@@ -130,5 +146,31 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         }
 
         return $query;
+    }
+
+    /**
+     * Get category chooser Url.
+     * Might be contextualised according to current object data, if needed.
+     * This will allow the Ajax call to the chooser to transfer current context (especially category_id).
+     *
+     * @return string
+     */
+    private function getCategoryChooserUrl()
+    {
+        $url = 'catalog_rule/promo_widget/chooser/attribute/' . $this->getAttribute();
+
+        $chooserUrlParams = [];
+        if ($this->getJsFormObject()) {
+            $chooserUrlParams['form'] = $this->getJsFormObject();
+        }
+
+        $urlParams = $this->getUrlParams();
+        if ($urlParams && is_array($urlParams) && isset($urlParams['category_id'])) {
+            $chooserUrlParams['category_id'] = $urlParams['category_id'];
+        }
+
+        $url = $this->_backendData->getUrl($url, $chooserUrlParams);
+
+        return $url;
     }
 }
