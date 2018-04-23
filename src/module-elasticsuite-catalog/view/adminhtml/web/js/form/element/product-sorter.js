@@ -25,13 +25,10 @@ define([
             showSpinner: true,
             template: "Smile_ElasticsuiteCatalog/form/element/product-sorter",
             refreshFields: {},
+            excludedPreviewFields : {},
             maxRefreshInterval: 1000,
             imports: {
-                formData: "${ $.provider }:data",
-                blacklistedProducts: "${ $.provider }:data.blacklisted_products"
-            },
-            links: {
-                blacklistedProducts: "${ $.provider }.data.blacklisted_products"
+                formData: "${ $.provider }:data"
             },
             messages : {
                 emptyText     : $.mage.__('Your product selection is empty.'),
@@ -39,12 +36,7 @@ define([
                 manualSort    : $.mage.__('Manual Sort'),
                 showMore      : $.mage.__('Show more')
             },
-            forceLoading : false,
-            allowBlacklist : false,
-            blacklistedProducts: [],
-            modules: {
-                provider: '${ $.provider }'
-            }
+            forceLoading : false
         },
 
         initialize: function ()
@@ -59,13 +51,25 @@ define([
             this.currentSize        = this.pageSize;
             this.enabled            = this.loadUrl != null;
 
-            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner', 'blacklistedProducts']);
+            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner']);
 
             this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
-
+            
             if (this.forceLoading) {
                 this.refreshProductList();
             }
+        },
+
+        prepareFormData: function(formData) {
+            if (this.excludedPreviewFields) {
+                Object.keys(this.excludedPreviewFields).each (function (fieldName) {
+                    if (formData.hasOwnProperty(fieldName) && formData[fieldName] !== null) {
+                        formData[fieldName] = null;
+                    }
+                });
+            }
+
+            return formData;
         },
 
         updateImports: function (config) {
@@ -89,7 +93,7 @@ define([
             this.loading(true);
 
             this.refreshRateLimiter = setTimeout(function () {
-                var formData = this.formData;
+                var formData = this.prepareFormData(this.formData);
                 Object.keys(this.editPositions()).forEach(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
                 }.bind(this));
@@ -126,11 +130,6 @@ define([
             if (this.editPositions()[productData.id]) {
                 productData.position = this.editPositions()[productData.id];
             }
-
-            if ($.inArray(parseInt(productData.id, 10), this.blacklistedProducts()) >= 0) {
-                productData.is_blacklisted = true;
-            }
-
             return new Product({data : productData});
         },
 
@@ -230,34 +229,6 @@ define([
 
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
-        },
-
-        allowBlacklist: function() {
-            return this.allowBlacklist;
-        },
-
-        toggleBlackListed: function(product) {
-            var state = !product.isBlacklisted();
-            product.setIsBlacklisted(state);
-
-            if (state === true) {
-                this.blacklistedProducts().push(product.getId());
-            }
-
-            if (state === false) {
-                var index = this.blacklistedProducts().indexOf(product.getId());
-                if (index >= 0) {
-                    this.blacklistedProducts().splice(index, 1);
-                }
-            }
-
-            // Array unique callback.
-            var blacklistedProducts = this.blacklistedProducts().filter(function (value, index, self) {
-                return self.indexOf(value) === index;
-            });
-
-            this.blacklistedProducts(blacklistedProducts);
-            this.provider().data['blacklisted_products'] = this.blacklistedProducts();
         }
     });
 });

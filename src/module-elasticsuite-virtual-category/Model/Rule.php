@@ -352,6 +352,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     {
         if (is_numeric($store) || is_string($store)) {
             $store = $this->storeManager->getStore($store);
+        } elseif (is_null($store)) {
+            $store = $this->storeManager->getStore();
         }
 
         $storeGroupId = $store->getStoreGroupId();
