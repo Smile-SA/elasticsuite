@@ -67,6 +67,10 @@ class CategoryData implements DatasourceInterface
                 $categoryDataRow['position'] = (int) $categoryDataRow['position'];
             }
 
+            if (isset($categoryDataRow['is_blacklisted'])) {
+                $categoryDataRow['is_blacklisted'] = (bool) $categoryDataRow['is_blacklisted'];
+            }
+
             $indexData[$productId]['category'][] = array_filter($categoryDataRow);
         }
 

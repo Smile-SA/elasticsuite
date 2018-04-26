@@ -29,7 +29,7 @@
                     </item>
                     <item name="product_attribute" xsi:type="array">
                         <item name="title" xsi:type="string" translate="true">Attributes</item>
-                        <item name="template" xsi:type="string">Smile_ElasticsuiteCore/autocomplete/term</item>
+                        <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product-attribute</item>
                         <item name="titleRenderer" xsi:type="string">Smile_ElasticsuiteCatalog/js/autocomplete/product-attribute</item>
                     </item>
                 </argument>

@@ -61,10 +61,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->fields = [
-            new Field('idField', 'integer'),
-            new Field('fulltextSearch1', 'string', null, ['is_searchable' => true]),
-            new Field('fulltextSearch2', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
-            new Field('fulltextSearch3', 'string', null, ['is_searchable' => true, 'is_used_in_spellcheck' => true]),
+            new Field('idField', Field::FIELD_TYPE_INTEGER),
+            new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
+            new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('fulltextSearch3', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_used_in_spellcheck' => true]),
         ];
     }
 

@@ -107,13 +107,13 @@ class QueryBuilder
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
         $queryParams = [
-            'field'              => MappingInterface::DEFAULT_SEARCH_FIELD,
+            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
             'queryText'          => $queryText,
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
         ];
 
-        return $this->queryFactory->create(QueryInterface::TYPE_COMMON, $queryParams);
+        return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
 
     /**

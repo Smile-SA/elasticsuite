@@ -256,11 +256,11 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $fields = [
             new Field('entity_id', Field::FIELD_TYPE_INTEGER),
-            new Field('simpleField', Field::FIELD_TYPE_STRING),
-            new Field('searchableField', Field::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
-            new Field('nested.simpleField', Field::FIELD_TYPE_STRING, 'nested'),
-            new Field('nested.searchableField', Field::FIELD_TYPE_STRING, 'nested', ['is_searchable' => true]),
-            new Field('notFilterableField', Field::FIELD_TYPE_STRING, null, ['is_filterable' => false, 'is_searchable' => true]),
+            new Field('simpleField', Field::FIELD_TYPE_KEYWORD),
+            new Field('searchableField', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
+            new Field('nested.simpleField', Field::FIELD_TYPE_KEYWORD, 'nested'),
+            new Field('nested.searchableField', Field::FIELD_TYPE_TEXT, 'nested', ['is_searchable' => true]),
+            new Field('notFilterableField', Field::FIELD_TYPE_TEXT, null, ['is_filterable' => false, 'is_searchable' => true]),
         ];
 
         return new Mapping('entity_id', $fields);

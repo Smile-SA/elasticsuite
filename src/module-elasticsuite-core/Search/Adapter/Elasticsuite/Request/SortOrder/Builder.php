@@ -71,7 +71,7 @@ class Builder
 
         if ($sortField !== SortOrderInterface::DEFAULT_SORT_FIELD) {
             $sortOrderConfig['missing']       = $sortOrder->getDirection() == SortOrderInterface::SORT_ASC ? '_last' : '_first';
-            $sortOrderConfig['unmapped_type'] = FieldInterface::FIELD_TYPE_STRING;
+            $sortOrderConfig['unmapped_type'] = FieldInterface::FIELD_TYPE_KEYWORD;
         }
 
         if ($sortOrder->getType() == SortOrderInterface::TYPE_NESTED) {

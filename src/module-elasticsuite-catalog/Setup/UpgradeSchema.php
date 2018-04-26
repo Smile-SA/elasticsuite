@@ -70,6 +70,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->createSearchPositionTable($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.5.0', '<')) {
+            $this->catalogSetup->addBlacklistColumnToSearchPositionTable($setup);
+            $this->catalogSetup->setNullablePositionColumn($setup);
+        }
+
         $setup->endSetup();
     }
 }

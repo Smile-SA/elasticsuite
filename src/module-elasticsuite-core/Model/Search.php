@@ -18,7 +18,7 @@ namespace Smile\ElasticSuiteCore\Model;
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Search implements \Magento\Search\Api\SearchInterface
 {
@@ -53,7 +53,6 @@ class Search implements \Magento\Search\Api\SearchInterface
             $this->searchEngine          = $searchEngine;
             $this->searchResponseBuilder = $searchResponseBuilder;
     }
-
 
     /**
      * Execute search.

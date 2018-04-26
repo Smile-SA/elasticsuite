@@ -23,6 +23,7 @@
         <type name="product" idFieldName="entity_id">
             <mapping>
                 <field name="category.is_virtual" type="boolean" nestedPath="category" />
+                <field name="category.is_blacklisted" type="boolean" nestedPath="category" />
             </mapping>
         </type>
     </index>

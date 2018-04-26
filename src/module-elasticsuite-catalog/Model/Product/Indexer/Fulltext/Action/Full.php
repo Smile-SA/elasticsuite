@@ -63,6 +63,8 @@ class Full
 
             foreach ($products as $productData) {
                 $productId = (int) $productData['entity_id'];
+                $productData['has_options']      = (bool) $productData['has_options'];
+                $productData['required_options'] = (bool) $productData['required_options'];
                 yield $productId => $productData;
             }
         } while (!empty($products));

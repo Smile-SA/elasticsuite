@@ -92,7 +92,7 @@ class IsDiscount implements SpecialAttributeInterface
      */
     public function getValue()
     {
-        return 1;
+        return true;
     }
 
     /**
