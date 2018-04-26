@@ -150,11 +150,6 @@ var smileTracker = (function () {
                 this.trackerSent = true;
                 this.vars = {};
             }
-
-            var extImgNode = document.createElement('img');
-            extImgNode.setAttribute('src', "//t.smile.eu/h.png?magento2");
-            setTrackerStyle(extImgNode);
-            bodyNode.appendChild(extImgNode);
         }
     }
 
@@ -204,14 +199,11 @@ var smileTracker = (function () {
     var SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
-
-        /* LEGACY module : Cookie collect authorization popin
-         if (!getCookie('SCT_AUTH_COLLECT') && (domainsExeption.indexOf(window.location.host) == -1)) {
-         window.addEventListener('load', displayCollectAuthPopup.bind(this));
-         }
-         */
-        window.addEventListener('load', sendTag.bind(this));
     };
+
+    SmileTrackerImpl.prototype.sendTag = function () {
+        require(['domReady'], function(domReady) { domReady(sendTag.bind(this)); }.bind(this));
+    }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
         this.config  = config;

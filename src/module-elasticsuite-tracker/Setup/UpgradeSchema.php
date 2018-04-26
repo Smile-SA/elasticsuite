@@ -74,6 +74,56 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $setup->getConnection()->createTable($logTable);
         }
 
+        if (version_compare($context->getVersion(), '1.2.0', '<')) {
+            $this->createCustomerLinkTable($setup);
+        }
+
         $setup->endSetup();
+    }
+
+    /**
+     * Create customer link table.
+     *
+     * @param SchemaSetupInterface $setup Setup
+     */
+    private function createCustomerLinkTable(SchemaSetupInterface $setup)
+    {
+        $logTable = $setup->getConnection()->newTable($setup->getTable('elasticsuite_tracker_log_customer_link'))
+            ->addColumn(
+                'customer_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'primary' => true],
+                'Customer ID'
+            )
+            ->addColumn(
+                'session_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['unsigned' => true, 'nullable' => false, 'primary' => true],
+                'Session ID'
+            )
+            ->addColumn(
+                'visitor_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                255,
+                ['unsigned' => true, 'nullable' => false, 'primary' => true],
+                'Visitor ID'
+            )
+            ->addColumn(
+                'delete_after',
+                \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+                null,
+                ['nullable' => true, 'default' => null],
+                'Delete after'
+            )->addForeignKey(
+                $setup->getFkName('elasticsuite_tracker_log_customer_link', 'customer_id', 'customer_entity', 'entity_id'),
+                'customer_id',
+                $setup->getTable('customer_entity'),
+                'entity_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )->setComment('Smile Elastic Suite Tracker customer link Table');
+
+        $setup->getConnection()->createTable($logTable);
     }
 }

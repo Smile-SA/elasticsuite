@@ -26,17 +26,11 @@
                 <visit_cookie_lifetime>3600</visit_cookie_lifetime>
                 <visitor_cookie_lifetime>365</visitor_cookie_lifetime>
                 <visitor_cookie_name>STVID</visitor_cookie_name>
-                <customer_attributes>
-                    <gender />
-                    <dob />
-                </customer_attributes>
-                <customer_address_attributes>
-                    <country_id />
-                    <region />
-                    <postcode />
-                    <city />
-                </customer_address_attributes>
             </session>
+            <anonymization>
+                <enabled>0</enabled>
+                <delay>365</delay>
+            </anonymization>
         </smile_elasticsuite_tracker>
     </default>
 </config>

@@ -21,11 +21,11 @@
     <preference for="Smile\ElasticsuiteTracker\Api\EventQueueInterface" type="Smile\ElasticsuiteTracker\Model\EventQueue" />
     <preference for="Smile\ElasticsuiteTracker\Api\EventIndexInterface" type="Smile\ElasticsuiteTracker\Model\EventIndex" />
     <preference for="Smile\ElasticsuiteTracker\Api\SessionIndexInterface" type="Smile\ElasticsuiteTracker\Model\SessionIndex" />
+    <preference for="Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface" type="Smile\ElasticsuiteTracker\Model\Customer\TrackingService" />
 
     <type name="Smile\ElasticsuiteTracker\Model\EventQueue">
         <arguments>
             <argument name="eventProcessors" xsi:type="array">
-                <item name="customerSession" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\CustomerSession</item>
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
             </argument>

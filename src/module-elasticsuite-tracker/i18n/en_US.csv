@@ -8,3 +8,7 @@ Enabled,Enabled
 "Visitor Cookie Name","Visitor Cookie Name"
 "Visitor Cookie Lifetime","Visitor Cookie Lifetime"
 "In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.","In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation."
+"Tracking Anonymization","Tracking Anonymization"
+"Anonymize customer data after a delay.","Anonymize customer data after a delay."
+"Anonymization Delay","Anonymization Delay"
+"In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay.","In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay."
