@@ -84,11 +84,11 @@ class QueryBuilder
 
         if ($query === null) {
             $queryParams = [
-                'query'  => $this->getWeightedSearchQuery($containerConfig, $queryText),
-                'filter' => $this->getCutoffFrequencyQuery($containerConfig, $queryText),
+                'should' => [$this->getWeightedSearchQuery($containerConfig, $queryText)],
+                'must'   => [$this->getCutoffFrequencyQuery($containerConfig, $queryText)],
                 'boost'  => $boost,
             ];
-            $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
         }
 
         return $query;

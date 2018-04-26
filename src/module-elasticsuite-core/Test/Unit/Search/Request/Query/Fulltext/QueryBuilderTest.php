@@ -75,7 +75,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testExactSpellingQueryBuilder()
     {
-        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_EXACT, QueryInterface::TYPE_FILTER);
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_EXACT, QueryInterface::TYPE_BOOL);
     }
 
     /**
@@ -85,7 +85,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testMostExactSpellingQueryBuilder()
     {
-        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_MOST_EXACT, QueryInterface::TYPE_FILTER);
+        $this->runTestQueryBuilder('search text', SpellcheckerInterface::SPELLING_TYPE_MOST_EXACT, QueryInterface::TYPE_BOOL);
     }
 
     /**
