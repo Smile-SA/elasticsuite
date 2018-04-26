@@ -71,14 +71,20 @@ class IndexResolver
      */
     public function getIndex($indexIdentifier, $storeId, $date)
     {
-        $indexAlias      = $this->getIndexAlias($indexIdentifier, $storeId);
-        $indexName       = $this->getIndexName($indexIdentifier, $storeId, $date);
+        $indexName = $indexIdentifier;
 
-        if (!isset($this->indices[$indexName])) {
-            $indexSettings = $this->indexSettings->getIndicesConfig();
-            $indexConfig = array_merge(['identifier' => $indexAlias, 'name' => $indexName], $indexSettings[$indexIdentifier]);
-            $this->indices[$indexName] = $this->indexFactory->create($indexConfig);
-            $this->createIndexIfNotExists($this->indices[$indexName], $storeId);
+        try {
+            $indexAlias      = $this->getIndexAlias($indexIdentifier, $storeId);
+            $indexName       = $this->getIndexName($indexIdentifier, $storeId, $date);
+
+            if (!isset($this->indices[$indexName])) {
+                $indexSettings = $this->indexSettings->getIndicesConfig();
+                $indexConfig = array_merge(['identifier' => $indexAlias, 'name' => $indexName], $indexSettings[$indexIdentifier]);
+                $this->indices[$indexName] = $this->indexFactory->create($indexConfig);
+                $this->createIndexIfNotExists($this->indices[$indexName], $storeId);
+            }
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            $this->indices[$indexName] = null;
         }
 
         return $this->indices[$indexName];

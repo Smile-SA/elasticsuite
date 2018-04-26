@@ -68,8 +68,10 @@ class EventIndex implements EventIndexInterface
         foreach ($events as $event) {
             if (isset($event['page']['store_id'])) {
                 $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $event['date']);
-                $indices[$index->getName()] = $index;
-                $bulk->addDocument($index, $index->getDefaultSearchType(), $event['event_id'], $event);
+                if ($index !== null) {
+                    $indices[$index->getName()] = $index;
+                    $bulk->addDocument($index, $index->getDefaultSearchType(), $event['event_id'], $event);
+                }
             }
         }
 
