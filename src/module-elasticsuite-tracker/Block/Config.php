@@ -23,6 +23,11 @@ namespace Smile\ElasticsuiteTracker\Block;
 class Config extends \Magento\Framework\View\Element\Template
 {
     /**
+     * The default tracking consent script, used as a fallback if none defined in layout.
+     */
+    const DEFAULT_CONSENT_SCRIPT = 'Smile_ElasticsuiteTracker/js/user-consent';
+
+    /**
      * Magento Configuration
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -44,6 +49,13 @@ class Config extends \Magento\Framework\View\Element\Template
     private $trackerHelper;
 
     /**
+     * Javascript script that will handle User consent.
+     *
+     * @var string
+     */
+    private $userConsentScript;
+
+    /**
      * PHP Constructor
      *
      * @param \Magento\Framework\View\Element\Template\Context $context       App context
@@ -59,9 +71,10 @@ class Config extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->scopeConfig   = $context->getScopeConfig();
-        $this->jsonHelper    = $jsonHelper;
-        $this->trackerHelper = $trackerHelper;
+        $this->scopeConfig       = $context->getScopeConfig();
+        $this->jsonHelper        = $jsonHelper;
+        $this->trackerHelper     = $trackerHelper;
+        $this->userConsentScript = $data['userConsentScript'] ?? self::DEFAULT_CONSENT_SCRIPT;
     }
 
     /**
@@ -115,5 +128,25 @@ class Config extends \Magento\Framework\View\Element\Template
     public function getStoreId()
     {
         return $this->trackerHelper->getStoreId();
+    }
+
+    /**
+     * Return the JS script to be used to check if user did consent tracking.
+     *
+     * @return string
+     */
+    public function getUserConsentScript()
+    {
+        return $this->userConsentScript;
+    }
+
+    /**
+     * Get config passed to the user consent script.
+     *
+     * @return array
+     */
+    public function getUserConsentConfig()
+    {
+        return $this->getData('userConsentConfig') ?? [];
     }
 }

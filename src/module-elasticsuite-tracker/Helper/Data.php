@@ -35,6 +35,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_COOKIE           = 'smile_elasticsuite_tracker/session';
 
     /**
+     * Anonymization status configuration path
+     * @var string
+     */
+    const CONFIG_IS_ANONYMIZATION_ENABLED_XPATH = 'smile_elasticsuite_tracker/anonymization/enabled';
+
+    /**
+     * Anonymization delay configuration path
+     * @var string
+     */
+    const CONFIG_ANONYMIZATION_DELAY_XPATH      = 'smile_elasticsuite_tracker/anonymization/delay';
+
+    /**
      * Magento Configuration
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -54,17 +66,25 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $urlBuilder;
 
     /**
+     * @var \Magento\Framework\Session\SessionManagerInterface
+     */
+    private $sessionManager;
+
+    /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\App\Helper\Context      $context      The current context
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager The Store Manager
+     * @param \Magento\Framework\App\Helper\Context              $context        The current context
+     * @param \Magento\Store\Model\StoreManagerInterface         $storeManager   The Store Manager
+     * @param \Magento\Framework\Session\SessionManagerInterface $sessionManager Session Manager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Store\Model\StoreManagerInterface $storeManager
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\Session\SessionManagerInterface $sessionManager
     ) {
-        $this->urlBuilder = $context->getUrlBuilder();
-        $this->storeManager    = $storeManager;
+        $this->urlBuilder     = $context->getUrlBuilder();
+        $this->storeManager   = $storeManager;
+        $this->sessionManager = $sessionManager;
         parent::__construct($context);
     }
 
@@ -95,7 +115,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getCookieConfig()
     {
-        return $this->scopeConfig->getValue(self::CONFIG_COOKIE);
+        $config           = $this->scopeConfig->getValue(self::CONFIG_COOKIE);
+        $config['domain'] = $this->sessionManager->getCookieDomain();
+        $config['path']   = $this->sessionManager->getCookiePath();
+
+        return $config;
     }
 
     /**
@@ -106,5 +130,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getStoreId()
     {
         return $this->storeManager->getStore()->getId();
+    }
+
+
+    /**
+     * Check if Anonymization is enabled.
+     *
+     * @return bool
+     */
+    public function isAnonymizationEnabled()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_ANONYMIZATION_ENABLED_XPATH);
+    }
+
+    /**
+     * Retrieve anonymization delay (in days).
+     *
+     * @return int
+     */
+    public function getAnonymizationDelay()
+    {
+        return (int) $this->scopeConfig->getValue(self::CONFIG_ANONYMIZATION_DELAY_XPATH);
     }
 }

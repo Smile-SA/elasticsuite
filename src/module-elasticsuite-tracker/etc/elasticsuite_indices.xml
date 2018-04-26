@@ -29,8 +29,7 @@
                 <!-- Session data -->
                 <field name="session.uid" type="string" />
                 <field name="session.vid" type="string" />
-                <field name="session.customer_id" type="integer" />
-                
+
                 <!-- Page metadata -->
                 <field name="page.site" type="string" />
                 <field name="page.store_id" type="integer" />
@@ -80,7 +79,6 @@
                 </field>
                 
                 <!-- Page data (order) -->
-                <field name="page.order.id" type="integer" />
                 <field name="page.order.grand_total" type="double" />
                 <field name="page.order.discount_total" type="double" />
                 <field name="page.order.shipping_total" type="double" />
@@ -114,7 +112,6 @@
                 <field name="start_date" type="date"/>
                 <field name="end_date" type="date"/>
                 <field name="visitor_id" type="string"/>
-                <field name="customer_id" type="integer"/>
                 <field name="product_view" type="integer" />
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="string">
