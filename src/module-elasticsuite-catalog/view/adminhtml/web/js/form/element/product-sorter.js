@@ -25,6 +25,7 @@ define([
             showSpinner: true,
             template: "Smile_ElasticsuiteCatalog/form/element/product-sorter",
             refreshFields: {},
+            excludedPreviewFields : {},
             maxRefreshInterval: 1000,
             imports: {
                 formData: "${ $.provider }:data",
@@ -68,6 +69,18 @@ define([
             }
         },
 
+        prepareFormData: function(formData) {
+            if (this.excludedPreviewFields) {
+                Object.keys(this.excludedPreviewFields).each (function (fieldName) {
+                    if (formData.hasOwnProperty(fieldName) && formData[fieldName] !== null) {
+                        formData[fieldName] = null;
+                    }
+                });
+            }
+
+            return formData;
+        },
+
         updateImports: function (config) {
             if (config.refreshFields) {
                 Object.keys(config.refreshFields).each (function (fieldName) {
@@ -89,7 +102,7 @@ define([
             this.loading(true);
 
             this.refreshRateLimiter = setTimeout(function () {
-                var formData = this.formData;
+                var formData = this.prepareFormData(this.formData);
                 Object.keys(this.editPositions()).forEach(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
                 }.bind(this));

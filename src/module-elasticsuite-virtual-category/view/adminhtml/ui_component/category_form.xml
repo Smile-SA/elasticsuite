@@ -153,6 +153,10 @@
                             <item name="selected_products.added_products" xsi:type="string">selected_products.added_products</item>
                             <item name="selected_products.deleted_products" xsi:type="string">selected_products.deleted_products</item>
                         </item>
+                        <item name="excludedPreviewFields" xsi:type="array">
+                            <item name="facet_config" xsi:type="string">facet_config</item>
+                            <item name="facet_config_order" xsi:type="string">facet_config_order</item>
+                        </item>
                         <item name="imports" xsi:type="array">
                             <item name="loadUrl" xsi:type="string">${ $.provider }:data.product_sorter_load_url</item>
                             <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>

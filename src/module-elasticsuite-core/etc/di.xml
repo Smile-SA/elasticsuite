@@ -407,4 +407,20 @@
         </arguments>
     </type>
 
+    <!-- Sensitive / Environment Specific Configuration fields handling -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="environment" xsi:type="array">
+                <item name="smile_elasticsuite_core_base_settings/es_client/servers" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/enable_https_mode" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/enable_http_auth" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_user" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_pwd" xsi:type="string">1</item>
+            </argument>
+            <argument name="sensitive" xsi:type="array">
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_user" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_pwd" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
