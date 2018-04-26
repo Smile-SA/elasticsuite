@@ -26,4 +26,7 @@
     <!-- Overridden directly because this block is called via hardcoded calls -->
     <preference for="\Magento\Catalog\Block\Adminhtml\Category\Tab\Product" type="Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Tab\Product"/>
 
+    <type name="\Magento\CatalogRule\Controller\Adminhtml\Promo\Widget\Chooser">
+        <plugin name="category_chooser_plugin" type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ChooserPlugin"/>
+    </type>
 </config>
