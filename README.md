@@ -1,4 +1,4 @@
-![ElasticSuite](doc/static/elasticsuite-banner.jpg)
+![ElasticSuite](doc/static/elasticsuite-logo.jpg)
 
 ## News
 
