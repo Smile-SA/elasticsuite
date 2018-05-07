@@ -55,6 +55,10 @@ class CollectionFactory extends \Magento\Catalog\Model\ResourceModel\Category\Co
 
         if ($this->getCurrentCategory() && $this->getCurrentCategory()->getLevel() >= 2) {
             $collection->addAttributeToFilter('entity_id', ['neq' => (int) $this->getCurrentCategory()->getId()]);
+
+            $rootPath      = array_slice($this->getCurrentCategory()->getPathIds(), 0, 2);
+            $pathCondition = implode('/', $rootPath) . '%';
+            $collection->addFieldToFilter('path', ['like' => $pathCondition]);
         }
 
         return $collection;
