@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;

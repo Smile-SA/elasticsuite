@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 define(['Magento_Ui/js/dynamic-rows/dnd'], function (Dnd) {

@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\Tab;

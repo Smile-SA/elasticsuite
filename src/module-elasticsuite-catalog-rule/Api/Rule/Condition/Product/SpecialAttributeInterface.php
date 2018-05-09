@@ -8,7 +8,7 @@
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCatalogRule
  * @author    Aurelien FOUCRET <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 

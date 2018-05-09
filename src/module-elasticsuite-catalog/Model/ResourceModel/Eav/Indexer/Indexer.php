@@ -9,7 +9,7 @@
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer;
