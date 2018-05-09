@@ -1,7 +1,7 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
@@ -51,7 +51,7 @@ class ThesaurusSetup
                 50,
                 ['nullable' => false],
                 'Thesaurus Type'
-            )->setComment('Smile Elastic Suite Thesaurus Table');
+            )->setComment('Smile ElasticSuite Thesaurus Table');
 
         $setup->getConnection()->createTable($table);
     }
@@ -94,7 +94,7 @@ class ThesaurusSetup
                 $setup->getTable('store'),
                 'store_id',
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )->setComment('Smile Elastic Suite Thesaurus Table for link between thesauri and stores');
+            )->setComment('Smile ElasticSuite Thesaurus Table for link between thesauri and stores');
 
         $setup->getConnection()->createTable($table);
     }
@@ -138,7 +138,7 @@ class ThesaurusSetup
                 $setup->getTable(ThesaurusInterface::TABLE_NAME),
                 ThesaurusInterface::THESAURUS_ID,
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )->setComment('Smile Elastic Suite Thesaurus Table for link between thesauri and reference terms');
+            )->setComment('Smile ElasticSuite Thesaurus Table for link between thesauri and reference terms');
 
         $setup->getConnection()->createTable($table);
     }
@@ -185,7 +185,7 @@ class ThesaurusSetup
                 $setup->getTable(ThesaurusInterface::TABLE_NAME),
                 ThesaurusInterface::THESAURUS_ID,
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )->setComment('Smile Elastic Suite Thesaurus Table for link between thesauri and expanded terms');
+            )->setComment('Smile ElasticSuite Thesaurus Table for link between thesauri and expanded terms');
 
         $setup->getConnection()->createTable($table);
     }

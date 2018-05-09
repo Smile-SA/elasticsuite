@@ -2,7 +2,7 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Query;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
- * Elastic suite request term query.
+ * ElasticSuite request term query.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore

@@ -1,3 +1,3 @@
 ## README
 
-Readme for the whole Smile Elastic Suite is available [here](https://github.com/Smile-SA/elasticsuite).
+Readme for the whole Smile ElasticSuite is available [here](https://github.com/Smile-SA/elasticsuite).

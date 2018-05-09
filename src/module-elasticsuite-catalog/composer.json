@@ -7,7 +7,7 @@
             "email": "aurelien.foucret@smile.fr"
         }
     ],
-    "description": "Smile ElasticSuite - Catalog search module.",
+    "description": "ElasticSuite - Catalog search module.",
     "homepage": "https://github.com/Smile-SA/module-elasticsuite-catalog",
     "keywords": [
         "magento",

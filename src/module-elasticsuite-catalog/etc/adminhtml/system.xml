@@ -46,7 +46,7 @@
         <section id="smile_elasticsuite_catalogsearch_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Catalog Search</label>
             <tab>smile_elasticsuite</tab>
-            <resource>Magento_Backend::smile_elasticsuite_autocomplete</resource>
+            <resource>Magento_Backend::smile_elasticsuite_catalogsearch</resource>
 
             <group id="catalogsearch" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Catalog Search Configuration</label>

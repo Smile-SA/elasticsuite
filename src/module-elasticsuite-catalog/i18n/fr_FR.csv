@@ -62,7 +62,7 @@ OK,OK
 "If there is only one product matching a given search query, the user will be redirect to this product page.","Si une recherche ne renvoie qu'un seul produit, l'utilisateur sera redirigé vers la fiche de ce produit."
 "Expanded facets","Facettes dépliées"
 "Number of facets to display expanded by default.","Nombre de facettes dépliées par défaut."
-"ElasticSuite Category Indexing","Index des catégories Elastic Suite"
+"ElasticSuite Category Indexing","Index des catégories ElasticSuite"
 "Reindex ElasticSuite catalog categories.","Reconstruire l'index de catégories ElasticSuite."
 "Is Spellchecked","Recherche approchante"
 Yes,Oui

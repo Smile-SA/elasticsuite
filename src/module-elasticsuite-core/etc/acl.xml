@@ -5,7 +5,7 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
@@ -23,14 +23,14 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="Magento_Catalog::config_smile_elasticsuite_core_base_settings" title="Manage Smile ElasticSuite base settings" />
-                            <resource id="Magento_Backend::smile_elasticsuite_autocomplete" title="Manage Smile ElasticSuite Autocomplete settings" />
+                            <resource id="Magento_Catalog::config_smile_elasticsuite_core_base_settings" title="ElasticSuite Base Settings" />
+                            <resource id="Magento_Backend::smile_elasticsuite_autocomplete" title="ElasticSuite Autocomplete" />
                         </resource>
                     </resource>
                 </resource>
-                <resource id="Smile_ElasticsuiteCore::menu" title="Manage Smile Elastic Suite components">
-                    <resource id="Smile_ElasticsuiteCore::manage_search" title="Manage Search Engine configuration">
-                        <resource id="Smile_ElasticsuiteCore::manage_relevance" title="Manage Relevance" />
+                <resource id="Smile_ElasticsuiteCore::menu" title="ElasticSuite">
+                    <resource id="Smile_ElasticsuiteCore::manage_search" title="Search Engine configuration">
+                        <resource id="Smile_ElasticsuiteCore::manage_relevance" title="Search Relevance" />
                     </resource>
                 </resource>
             </resource>

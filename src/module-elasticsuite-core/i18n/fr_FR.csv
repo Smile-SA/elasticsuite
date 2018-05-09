@@ -39,7 +39,7 @@ General,Général
 "Phonetic Search Configuration","Paramétrage de la recherche phonétique"
 "Enable Phonetic Search","Activer la recherche phonétique"
 "Require <a href='https://github.com/elastic/elasticsearch-analysis-phonetic'>Phonetic analysis</a> plugin installation.","Nécessite l'installation du plugin <a href='https://github.com/elastic/elasticsearch-analysis-phonetic'>Phonetic analysis</a>."
-"Smile ElasticSuite","Smile ElasticSuite"
+"ElasticSuite","ElasticSuite"
 "Search Relevance","Pertinence de la recherche"
 "Base Settings","Paramétrage général"
 "Elasticsearch Client","Client Elasticsearch"
