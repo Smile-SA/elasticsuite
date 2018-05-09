@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile ElasticSuite Thesaurus menu configuration
+ * ElasticSuite Thesaurus menu configuration
  *
  * DISCLAIMER
  *
@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain RUAUD <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Apache License Version 2.0
  */
 -->

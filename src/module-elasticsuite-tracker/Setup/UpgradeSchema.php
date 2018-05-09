@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -122,7 +122,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 $setup->getTable('customer_entity'),
                 'entity_id',
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
-            )->setComment('Smile Elastic Suite Tracker customer link Table');
+            )->setComment('Smile ElasticSuite Tracker customer link Table');
 
         $setup->getConnection()->createTable($logTable);
     }
