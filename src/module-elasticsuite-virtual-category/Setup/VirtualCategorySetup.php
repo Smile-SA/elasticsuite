@@ -343,8 +343,8 @@ class VirtualCategorySetup
      */
     private function reindexFlatCategories()
     {
-        $flatCategoryIndexer = $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Category\Flat\State::INDEXER_ID);
         if ($this->flatCategoryIndexState->isFlatEnabled()) {
+            $flatCategoryIndexer = $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Category\Flat\State::INDEXER_ID);
             $flatCategoryIndexer->reindexAll();
         }
     }
