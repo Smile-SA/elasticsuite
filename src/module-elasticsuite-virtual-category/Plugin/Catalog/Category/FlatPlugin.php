@@ -25,9 +25,27 @@ use Magento\Framework\DataObject;
 class FlatPlugin
 {
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler
+     */
+    private $readHandler;
+
+    /**
+     * FlatPlugin constructor.
+     *
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler Read Handler
+     */
+    public function __construct(
+        \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler
+    ) {
+        $this->readHandler = $readHandler;
+    }
+
+    /**
      * Process correct loading of virtual rule when loading a category via the Flat Resource
      * Built around load() method because the afterLoad() Resource method is only triggered
      * when using the EntityManager, and is not triggered when calling load() method on model explicitely.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param FlatResource $categoryResource Flat Category Resource
      * @param \Closure     $proceed          Flat Category legacy load() method
@@ -40,8 +58,7 @@ class FlatPlugin
         $proceed($category, $value, $field);
 
         if ($category->getVirtualRule() == null || is_string($category->getVirtualRule())) {
-            $attribute = $categoryResource->getAttribute('virtual_rule');
-            $attribute->getBackend()->afterLoad($category);
+            $this->readHandler->execute($category);
         }
     }
 }

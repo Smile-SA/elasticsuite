@@ -121,7 +121,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     public function __toString()
     {
-        return serialize($this->getConditions()->asArray());
+        return json_encode($this->getConditions()->asArray());
     }
 
     /**

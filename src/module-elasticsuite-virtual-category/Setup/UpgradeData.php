@@ -68,6 +68,11 @@ class UpgradeData implements UpgradeDataInterface
             $this->virtualCategorySetup->updateVirtualCategoryRootTypeToInt($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
+        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+            $this->virtualCategorySetup->updateVirtualRuleBackend($this->eavSetupFactory->create(['setup' => $setup]));
+            $this->virtualCategorySetup->convertSerializedRulesToJson($this->eavSetupFactory->create(['setup' => $setup]));
+        }
+
         $setup->endSetup();
     }
 }

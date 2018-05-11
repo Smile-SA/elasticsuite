@@ -14,6 +14,8 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory;
 
+use \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler as VirtualRuleReadHandler;
+
 /**
  * Category collection with automatic loading of the virtual category using the attribute backend.
  *
@@ -24,9 +26,9 @@ namespace Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory;
 class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collection
 {
     /**
-     * @var \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler as VirtualRuleReadHandler
      */
-    private $virtualAttributeBackend;
+    private $virtualRuleReadHandler;
 
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -37,23 +39,23 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         parent::_afterLoad();
 
         foreach ($this->_items as $item) {
-            $this->getVirtualAttributeBackend()->afterLoad($item);
+            $this->getVirtualRuleReadHandler()->execute($item);
         }
 
         return $this;
     }
 
     /**
-     * Virtual attribute backend.
+     * Virtual rule read handler.
      *
-     * @return \Magento\Eav\Model\Entity\Attribute\Backend\AbstractBackend
+     * @return \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler
      */
-    private function getVirtualAttributeBackend()
+    private function getVirtualRuleReadHandler()
     {
-        if ($this->virtualAttributeBackend === null) {
-            $this->virtualAttributeBackend = $this->getResource()->getAttribute('virtual_rule')->getBackend();
+        if ($this->virtualRuleReadHandler === null) {
+            $this->virtualRuleReadHandler = $this->_universalFactory->create(VirtualRuleReadHandler::class);
         }
 
-        return $this->virtualAttributeBackend;
+        return $this->virtualRuleReadHandler;
     }
 }
