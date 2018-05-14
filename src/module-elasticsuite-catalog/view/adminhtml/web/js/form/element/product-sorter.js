@@ -62,7 +62,7 @@ define([
 
         prepareFormData: function(formData) {
             if (this.excludedPreviewFields) {
-                Object.keys(this.excludedPreviewFields).each (function (fieldName) {
+                Object.keys(this.excludedPreviewFields).forEach(function (fieldName) {
                     if (formData.hasOwnProperty(fieldName) && formData[fieldName] !== null) {
                         formData[fieldName] = null;
                     }
