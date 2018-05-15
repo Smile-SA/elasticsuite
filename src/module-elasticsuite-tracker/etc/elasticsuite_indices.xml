@@ -98,6 +98,12 @@
                 <field name="page.referrer.domain" type="string" />
                 <field name="page.referrer.page" type="string" />
                 
+                <!-- Page data (campaign) -->
+                <field name="page.utm_source" type="string" />
+                <field name="page.utm_campaign" type="string" />
+                <field name="page.utm_medium" type="string" />
+                <field name="page.utm_term" type="string" />
+                
                 <!-- Page data (resolution) -->
                 <field name="page.resolution.x" type="integer" />
                 <field name="page.resolution.y" type="integer" />
