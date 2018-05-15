@@ -90,8 +90,8 @@ var smileTracker = (function () {
     }
 
     function addResolutionVars() {
-        this.addPageVar('resolution.X', window.screen.availWidth);
-        this.addPageVar('resolution.Y', window.screen.availHeight);
+        this.addPageVar('resolution.x', window.screen.availWidth);
+        this.addPageVar('resolution.y', window.screen.availHeight);
         return this;
     }
 

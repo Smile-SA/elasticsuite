@@ -49,6 +49,7 @@
                 <field name="page.product.id" type="integer" />
                 <field name="page.product.sku" type="string">
                     <isSearchable>true</isSearchable>
+                    <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
                 </field>
                 <field name="page.product.label" type="string">
                     <isSearchable>true</isSearchable>
@@ -67,6 +68,7 @@
                 <!-- Page data (searches) -->
                 <field name="page.search.query" type="string">
                     <isSearchable>true</isSearchable>
+                    <isUsedForSortBy>true</isUsedForSortBy>
                 </field>
                 <field name="page.search.is_spellchecked" type="boolean" />
                 
@@ -98,6 +100,12 @@
                 <field name="page.referrer.domain" type="string" />
                 <field name="page.referrer.page" type="string" />
                 
+                <!-- Page data (campaign) -->
+                <field name="page.utm_source" type="string" />
+                <field name="page.utm_campaign" type="string" />
+                <field name="page.utm_medium" type="string" />
+                <field name="page.utm_term" type="string" />
+                
                 <!-- Page data (resolution) -->
                 <field name="page.resolution.x" type="integer" />
                 <field name="page.resolution.y" type="integer" />
@@ -116,6 +124,7 @@
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="string">
                     <isSearchable>true</isSearchable>
+                    <isUsedForSortBy>true</isUsedForSortBy>
                 </field>
                 <field name="product_sale" type="integer" />
                 <field name="category_sale" type="integer" />
