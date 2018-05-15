@@ -49,6 +49,7 @@
                 <field name="page.product.id" type="integer" />
                 <field name="page.product.sku" type="string">
                     <isSearchable>true</isSearchable>
+                    <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
                 </field>
                 <field name="page.product.label" type="string">
                     <isSearchable>true</isSearchable>
