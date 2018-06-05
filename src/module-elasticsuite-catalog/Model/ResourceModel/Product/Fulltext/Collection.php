@@ -223,7 +223,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
-        return $this->setOrder($attribute, $dir);
+        if ($attribute !== 'entity_id') {
+            return $this->setOrder($attribute, $dir);
+        }
+
+        return $this;
     }
 
     /**
