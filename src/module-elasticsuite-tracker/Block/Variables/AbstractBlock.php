@@ -66,6 +66,16 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
         $this->registry      = $registry;
     }
 
+    /**
+     * Check that the module is currently enabled
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->trackerHelper->isEnabled();
+    }
+
 
     /**
      * Retrieve the Json Helper
