@@ -215,4 +215,8 @@
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
+
+    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
+        <plugin name="skuFieldPlugin" type="Smile\ElasticsuiteCatalog\Plugin\Index\Mapping\Sku\FieldPlugin"/>
+    </type>
 </config>
