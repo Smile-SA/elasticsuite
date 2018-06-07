@@ -17,106 +17,62 @@ define(['Magento_Ui/js/dynamic-rows/dynamic-rows'], function (DynamicRows) {
 
     return DynamicRows.extend({
 
-        defaults: {
-            unpinnedPositions: []
-        },
-
         /**
-         * Pin/Unpin an item to the top of list.
-         */
-        togglePinned: function (record) {
-            return record.isPinned() ? this.pin(record) : this.unpin(record);
-        },
-
-        /**
-         * Pin an item on top of the list
+         * Set max element position
          *
-         * @param record The record being pinned
-         *
-         * @returns {exports}
+         * @param {Number} position - element position
+         * @param {Object} elem - instance
          */
-        pin : function(record) {
-            this.sortElements();
-            record.position = this.getPinnedRecords().length; // Pin the item at the end of already pinned items.
-
-            return this;
-        },
-
-        /**
-         * Unpin an item. Put it back to his place in the list.
-         *
-         * @param record The record being pinned
-         *
-         * @returns {exports}
-         */
-        unpin : function(record) {
-            this.sortElements();
-            var pinnedRecords = this.getPinnedRecords();
-
-            // Items which are pinned and should be normally previous the unpinned one, leaving an hole in the list.
-            var pinnedBefore = pinnedRecords.filter(function(elem) {
-                return this.getUnpinnedPosition(elem) < this.getUnpinnedPosition(record)
-            }.bind(this));
-
-            // We finally add +1 to insert after element instead of replacing it.
-            record.position = this.getUnpinnedPosition(record) + pinnedRecords.length - pinnedBefore.length + 1;
-
-            this.sortElements();
-            return this;
-        },
-
-        /**
-         * Retrieve all currently pinned records.
-         *
-         * @returns {*}
-         */
-        getPinnedRecords : function() {
-            return this.elems().filter(function(elem) { return elem.isPinned() === true });
-        },
-
-        /**
-         * Reapply position correctly according to current order of items.
-         * Mandatory to avoid gaps in position field.
-         */
-        sortElements : function() {
-            for (var i = 0; i < this.elems().length; i++) {
-                this.elems()[i].position = i + 1;
+        setMaxPosition: function (position, elem) {
+            if (position || position === 0) {
+                this.checkMaxPosition(position);
+                // Discard the legacy call to sort() that was here because it was messed up by pinned items.
+            } else {
+                this.maxPosition += 1;
             }
         },
 
-        /**
-         * Initialize children
-         *
-         * @returns {Object} Chainable.
-         */
-        initChildren: function () {
-            this._super();
+        sort: function (position, elem) {
+            var posCounter = 0;
 
-            if (this.unpinnedPositions.length === 0) {
-                var unpinnedPositions = this.getChildItems().sort(function (itemA, itemB) {
-                    if (itemA.default_position !== itemB.default_position) {
-                        return parseInt(itemA.default_position, 10) - parseInt(itemB.default_position, 10);
+            var sorted = this.elems().sort(function (propOne, propTwo) {
+                var order = 0;
+
+                if (propOne.isPinned() && propTwo.isPinned()) {
+                    order = propOne.position - propTwo.position;
+                } else if (propOne.isPinned() || propTwo.isPinned()) {
+                    order = propOne.isPinned() ? -1 : 1;
+                } else {
+                    order = propOne.data().default_position - propTwo.data().default_position;
+
+                    if (order === 0) {
+                        order = propOne.recordId - propTwo.recordId;
                     }
-                    return itemA.attribute_label.localeCompare(itemB.attribute_label);
-                });
-
-                for (var i = 0; i < unpinnedPositions.length; i++) {
-                    this.unpinnedPositions[unpinnedPositions[i].attribute_id] = i + 1;
                 }
-            }
 
-            return this;
+                return order;
+            });
+
+            sorted.forEach(function(record) {
+                posCounter++;
+                record.position = posCounter;
+            });
+
+            this.elems(sorted);
+
         },
 
-        /**
-         * Retrieve position of an item when not pinned.
-         * Unpinned Positions are computed at element first rendering.
-         *
-         * @param record
-         * @returns {Integer}
-         */
-        getUnpinnedPosition: function (record) {
-            return parseInt(this.unpinnedPositions[record.data().attribute_id], 10);
+       /**
+        * Retrieve all currently pinned records.
+        *
+        * @returns {*}
+        */
+        getPinnedRecords : function() {
+            return this.elems().filter(
+                function(elem) { return elem.isPinned() === true }
+            ).sort(function(recordA, recordB) {
+                return recordA.position - recordB.position;
+            });
         }
     });
 });
