@@ -95,7 +95,7 @@ class ResultPlugin
         \Magento\CatalogSearch\Controller\Result\Index $subject,
         \Closure $proceed
     ) {
-        $proceed();
+        $result = $proceed();
 
         if (!$subject->getResponse()->isRedirect() && $this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG)) {
             $layer      = $this->layerResolver->get();
@@ -110,12 +110,12 @@ class ResultPlugin
                         $this->addRedirectMessage($product);
                         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
                         $result->setUrl($product->getProductUrl());
-
-                        return $result;
                     }
                 }
             }
         }
+
+        return $result;
     }
 
     /**
