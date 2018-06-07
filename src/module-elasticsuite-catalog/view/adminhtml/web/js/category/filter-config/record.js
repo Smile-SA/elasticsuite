@@ -25,16 +25,6 @@ define(['Magento_Ui/js/dynamic-rows/record'], function (Component) {
         },
 
         /**
-         * Initialize element
-         */
-        initialize: function() {
-            this._super();
-            this.position = this.recordId + 1;
-
-            return this;
-        },
-
-        /**
          * Init bindings.
          *
          * @returns {exports}
@@ -50,7 +40,10 @@ define(['Magento_Ui/js/dynamic-rows/record'], function (Component) {
         onPinChange : function() {
             if (this.data() && this.data().is_pinned !== undefined) {
                 this.isPinned(this.data().is_pinned);
-                this.parentComponent().togglePinned(this);
+                if (this.isPinned()) {
+                    this.position = this.parentComponent().getPinnedRecords().length + 1;
+                }
+                this.parentComponent().sort(this.position, this);
             }
         },
 
@@ -87,8 +80,7 @@ define(['Magento_Ui/js/dynamic-rows/record'], function (Component) {
          * @param name
          * @returns {Integer}
          */
-        getChildrenIndex: function (name)
-        {
+        getChildrenIndex: function (name) {
             return this.elems().findIndex(function (elem) {
                 return elem.index === name
             });
