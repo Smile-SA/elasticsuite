@@ -28,12 +28,14 @@ class Full extends Indexer
     /**
      * Load a bulk of product data.
      *
-     * @param int    $storeId    Store id.
-     * @param string $productIds Product ids filter.
+     * @param int     $storeId    Store id.
+     * @param string  $productIds Product ids filter.
+     * @param integer $fromId     Load product with id greater than.
+     * @param integer $limit      Number of product to get loaded.
      *
      * @return array
      */
-    public function getSearchableProducts($storeId, $productIds = null)
+    public function getSearchableProducts($storeId, $productIds = null, $fromId = 0, $limit = 1000)
     {
         $select = $this->getConnection()->select()
             ->from(['e' => $this->getTable('catalog_product_entity')]);
@@ -43,6 +45,10 @@ class Full extends Indexer
         if ($productIds !== null) {
             $select->where('e.entity_id IN (?)', $productIds);
         }
+
+        $select->limit($limit);
+        $select->where('e.entity_id > ?', $fromId);
+        $select->order('e.entity_id');
 
         return $this->connection->fetchAll($select);
     }
@@ -56,9 +62,15 @@ class Full extends Indexer
      */
     public function getRelationsByChild($childrenIds)
     {
+        $metadata      = $this->getEntityMetaData(\Magento\Catalog\Api\Data\ProductInterface::class);
+        $entityTable   = $this->getTable($metadata->getEntityTable());
+        $relationTable = $this->getTable('catalog_product_relation');
+        $joinCondition = sprintf('relation.parent_id = entity.%s', $metadata->getLinkField());
+
         $select = $this->getConnection()->select()
-            ->from($this->resource->getTableName('catalog_product_relation'), 'parent_id')
-            ->where('child_id IN(?)', $childrenIds);
+            ->from(['relation' => $relationTable], [])
+            ->join(['entity' => $entityTable], $joinCondition, [$metadata->getIdentifierField()])
+            ->where('child_id IN(?)', array_map('intval', $childrenIds));
 
         return $this->getConnection()->fetchCol($select);
     }

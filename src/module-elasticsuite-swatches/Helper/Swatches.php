@@ -13,11 +13,8 @@
 namespace Smile\ElasticsuiteSwatches\Helper;
 
 use Magento\Catalog\Api\Data\ProductInterface as Product;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Eav\Model\Entity\Attribute;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Swatches\Model\SwatchAttributesProvider;
 
 /**
  * ElasticSuite swatches helper.

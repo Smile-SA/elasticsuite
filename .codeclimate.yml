@@ -10,15 +10,16 @@ engines:
     enabled: true
   fixme:
     enabled: true
-  phpmd:
+  phan:
     enabled: true
     config:
       file_extensions: php
-      rulesets: Resources/phpmd-rulesets/rulset.xml
+      ignore-undeclared: true
 ratings:
   paths:
   - "**.js"
   - "**.php"
 exclude_paths:
+  - src/*/Test
   - vendor/*
   - Resources/*

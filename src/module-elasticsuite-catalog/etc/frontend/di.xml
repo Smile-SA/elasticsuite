@@ -24,6 +24,25 @@
     <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute">
         <arguments>
             <argument name="filterItemFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Item\AttributeFactory</argument>
+            <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\Collection</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Boolean">
+        <arguments>
+            <argument name="mappingHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
 
@@ -104,7 +123,7 @@
  
     <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
-            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+            <argument name="searchRequestName" xsi:type="string">catalog_product_autocomplete</argument>
         </arguments>
     </virtualType>
     
@@ -115,26 +134,6 @@
                 <item name="filters" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Filter</item>
                 <item name="attributeSelect" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeSelector</item>
                 <item name="attributeAggregations" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeAggregation</item>
-            </argument>
-        </arguments>
-    </type>
- 
-    <type name="Smile\ElasticsuiteCore\Block\Search\Form\Autocomplete">
-        <arguments>
-            <argument name="rendererList" xsi:type="array">
-                <item name="product" xsi:type="array">
-                    <item name="title" xsi:type="string" translate="true">Products</item>
-                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product</item>
-                </item>
-                <item name="product_attribute" xsi:type="array">
-                    <item name="title" xsi:type="string" translate="true">Attributes</item>
-                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/product-attribute</item>
-                    <item name="titleRenderer" xsi:type="string">Smile_ElasticsuiteCatalog/js/autocomplete/product-attribute</item>
-                </item>
-                <item name="category" xsi:type="array">
-                    <item name="title" xsi:type="string" translate="true">Categories</item>
-                    <item name="template" xsi:type="string">Smile_ElasticsuiteCatalog/autocomplete/category</item>
-                </item>
             </argument>
         </arguments>
     </type>
@@ -171,6 +170,16 @@
     <type name="Magento\Catalog\Block\Product\ProductList\Random">
         <arguments>
             <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\CatalogSearch\Controller\Result\Index">
+        <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCatalog\Helper\Autocomplete">
+        <arguments>
+            <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
     </type>
 </config>

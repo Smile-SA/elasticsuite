@@ -39,26 +39,28 @@ class Histogram extends AbstractBucket
     /**
      * Constructor.
      *
-     * @param string         $name         Bucket name.
-     * @param string         $field        Bucket field.
-     * @param Metric[]       $metrics      Bucket metrics.
-     * @param string         $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface $filter       Bucket filter.
-     * @param QueryInterface $nestedFilter Nested filter for the bucket.
-     * @param integer        $interval     Histogram interval.
-     * @param integer        $minDocCount  Histogram min doc count.
+     * @param string            $name         Bucket name.
+     * @param string            $field        Bucket field.
+     * @param Metric[]          $metrics      Bucket metrics.
+     * @param BucketInterface[] $childBuckets Child buckets.
+     * @param string            $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface    $filter       Bucket filter.
+     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
+     * @param integer           $interval     Histogram interval.
+     * @param integer           $minDocCount  Histogram min doc count.
      */
     public function __construct(
         $name,
         $field,
         array $metrics,
+        array $childBuckets = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
         $interval = 1,
         $minDocCount = 0
     ) {
-        parent::__construct($name, $field, $metrics, $nestedPath, $filter, $nestedFilter);
+        parent::__construct($name, $field, $metrics, $childBuckets, $nestedPath, $filter, $nestedFilter);
         $this->interval    = $interval;
         $this->minDocCount = $minDocCount;
     }

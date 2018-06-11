@@ -132,7 +132,7 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
                 if (is_array($filterValue)) {
                     $filterValue = implode('|', $filterValue);
                 }
-                $variables['product_list.filters.' . $identifier] = $filterValue;
+                $variables['product_list.filters.' . $identifier] = html_entity_decode($filterValue);
             }
         }
 

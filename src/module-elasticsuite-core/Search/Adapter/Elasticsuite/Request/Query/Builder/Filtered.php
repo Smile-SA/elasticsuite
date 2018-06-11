@@ -31,6 +31,10 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_FILTER) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $searchQuery = [];
 
         if ($query->getFilter()) {
@@ -38,11 +42,17 @@ class Filtered extends AbstractComplexBuilder implements BuilderInterface
         }
 
         if ($query->getQuery()) {
-            $searchQuery['query'] = $this->parentBuilder->buildQuery($query->getQuery());
+            $searchQuery['must'] = $this->parentBuilder->buildQuery($query->getQuery());
         }
+
+        if ($query->getName()) {
+            $searchQuery['_name'] = $query->getName();
+        }
+
+        $queryType = isset($searchQuery['must']) ? 'bool' : 'constant_score';
 
         $searchQuery['boost'] = $query->getBoost();
 
-        return ['filtered' => $searchQuery];
+        return [$queryType => $searchQuery];
     }
 }

@@ -105,6 +105,10 @@ class Conditions extends Template implements RendererInterface
             'element_name' => $this->getElement()->getName(),
         ];
 
+        if (is_array($this->getData('url_params'))) {
+            $urlParams = array_merge($urlParams, $this->getData('url_params'));
+        }
+
         return $this->getUrl('catalog_search_rule/product_rule/conditions', $urlParams);
     }
 
@@ -153,6 +157,50 @@ class Conditions extends Template implements RendererInterface
         $this->input = $this->elementFactory->create('text');
         $this->input->setRule($this->rule)->setRenderer($this->conditions);
 
+        $this->setConditionFormName($this->rule->getConditions(), $this->getElement()->getContainer()->getHtmlId());
+
+        if (is_array($this->getData('url_params'))) {
+            $this->setConditionUrlParams($this->rule->getConditions(), $this->getData('url_params'));
+        }
+
         return $this->input->toHtml();
+    }
+
+    /**
+     * Set proper form name to rule conditions.
+     *
+     * @param \Magento\Rule\Model\Condition\AbstractCondition $conditions Rule conditions.
+     * @param string                                          $formName   Form Name.
+     *
+     * @return void
+     */
+    private function setConditionFormName(\Magento\Rule\Model\Condition\AbstractCondition $conditions, $formName)
+    {
+        $conditions->setJsFormObject($formName);
+
+        if ($conditions->getConditions() && is_array($conditions->getConditions())) {
+            foreach ($conditions->getConditions() as $condition) {
+                $this->setConditionFormName($condition, $formName);
+            }
+        }
+    }
+
+    /**
+     * Set proper url params to rule conditions.
+     *
+     * @param \Magento\Rule\Model\Condition\AbstractCondition $conditions Rule conditions.
+     * @param array                                           $urlParams  URL Params.
+     *
+     * @return void
+     */
+    private function setConditionUrlParams(\Magento\Rule\Model\Condition\AbstractCondition $conditions, $urlParams)
+    {
+        $conditions->setUrlParams($urlParams);
+
+        if ($conditions->getConditions() && is_array($conditions->getConditions())) {
+            foreach ($conditions->getConditions() as $condition) {
+                $this->setConditionUrlParams($condition, $urlParams);
+            }
+        }
     }
 }

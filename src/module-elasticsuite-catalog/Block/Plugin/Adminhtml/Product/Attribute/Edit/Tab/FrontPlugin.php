@@ -17,6 +17,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
@@ -55,17 +56,28 @@ class FrontPlugin
     private $booleanSource;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder
+     */
+    private $filterSortOrder;
+
+    /**
      * Class constructor
      *
-     * @param Yesno    $booleanSource The YesNo source.
-     * @param Weight   $weightSource  Weight source.
-     * @param Registry $registry      Core registry.
+     * @param Yesno           $booleanSource   The YesNo source.
+     * @param Weight          $weightSource    Weight source.
+     * @param Registry        $registry        Core registry.
+     * @param FilterSortOrder $filterSortOrder Filter Sort Order.
      */
-    public function __construct(Yesno $booleanSource, Weight $weightSource, Registry $registry)
-    {
-        $this->weightSource  = $weightSource;
-        $this->booleanSource = $booleanSource;
-        $this->coreRegistry  = $registry;
+    public function __construct(
+        Yesno $booleanSource,
+        Weight $weightSource,
+        Registry $registry,
+        FilterSortOrder $filterSortOrder
+    ) {
+        $this->weightSource    = $weightSource;
+        $this->booleanSource   = $booleanSource;
+        $this->coreRegistry    = $registry;
+        $this->filterSortOrder = $filterSortOrder;
     }
 
     /**
@@ -92,11 +104,9 @@ class FrontPlugin
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setDisabled(1);
-            $form->getElement('is_used_in_autocomplete')->setValue(1);
         }
 
-        $this->appendFieldsDependency($form, $subject);
+        $this->appendFieldsDependency($subject);
 
         return $block;
     }
@@ -166,17 +176,6 @@ class FrontPlugin
     private function addAutocompleteFields(Fieldset $fieldset)
     {
         $fieldset->addField(
-            'is_used_in_autocomplete',
-            'select',
-            [
-                'name'   => 'is_used_in_autocomplete',
-                'label'  => __('Used in autocomplete'),
-                'values' => $this->booleanSource->toOptionArray(),
-            ],
-            'is_used_in_spellcheck'
-        );
-
-        $fieldset->addField(
             'is_displayed_in_autocomplete',
             'select',
             [
@@ -184,7 +183,7 @@ class FrontPlugin
                 'label'  => __('Display in autocomplete'),
                 'values' => $this->booleanSource->toOptionArray(),
             ],
-            'is_used_in_autocomplete'
+            'is_used_in_spellcheck'
         );
 
         return $this;
@@ -231,12 +230,7 @@ class FrontPlugin
             [
                 'name'   => 'facet_sort_order',
                 'label'  => __('Facet sort order'),
-                'values' => [
-                    ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
-                    ['value' => BucketInterface::SORT_ORDER_MANUAL, 'label' => __('Admin sort')],
-                    ['value' => BucketInterface::SORT_ORDER_TERM, 'label' => __('Name')],
-                    ['value' => BucketInterface::SORT_ORDER_RELEVANCE, 'label' => __('Relevance')],
-                ],
+                'values' => $this->filterSortOrder->toOptionArray(),
             ],
             'facet_max_size'
         );
@@ -372,7 +366,10 @@ class FrontPlugin
             $dependencyBlock
                 ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
                 ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
-                ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1');
+                ->addFieldMap('is_searchable', 'is_searchable')
+                ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
+                ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
+                ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1');
         }
 
         return $this;

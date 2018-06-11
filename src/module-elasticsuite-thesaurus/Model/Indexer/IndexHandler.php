@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
@@ -30,7 +30,7 @@ use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 class IndexHandler
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var ClientInterface
      */
     private $client;
 
@@ -52,18 +52,18 @@ class IndexHandler
     /**
      * Constructor.
      *
-     * @param ClientFactoryInterface  $clientFactory       ES Client factory.
+     * @param ClientInterface         $client              ES client.
      * @param IndexOperationInterface $indexManager        ES index management tool
      * @param IndexSettingsHelper     $indexSettingsHelper Index settings helper.
      * @param CacheHelper             $cacheHelper         ES caching helper.
      */
     public function __construct(
-        ClientFactoryInterface $clientFactory,
+        ClientInterface $client,
         IndexOperationInterface $indexManager,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper
     ) {
-        $this->client              = $clientFactory->createClient();
+        $this->client              = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexManager        = $indexManager;
         $this->cacheHelper         = $cacheHelper;
@@ -84,8 +84,7 @@ class IndexHandler
         $indexName       = $this->indexSettingsHelper->createIndexNameFromIdentifier($indexIdentifier, $storeId);
         $indexAlias      = $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
         $indexSettings   = ['settings' => $this->getIndexSettings($synonyms, $expansions)];
-
-        $this->client->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
+        $this->client->createIndex($indexName, $indexSettings);
         $this->indexManager->proceedIndexInstall($indexName, $indexAlias);
         $this->cacheHelper->cleanIndexCache(ThesaurusIndex::INDEX_IDENTIER, $storeId);
     }
@@ -107,9 +106,15 @@ class IndexHandler
         ];
 
         $settings['analysis']['filter']['shingle'] = [
-            'type' => 'shingle',
-            'output_false' => true,
-            'token_separator' => ThesaurusIndex::WORD_DELIMITER,
+            'type'             => 'shingle',
+            'output_false'     => true,
+            'token_separator'  => ThesaurusIndex::WORD_DELIMITER,
+            'max_shingle_size' => ThesaurusIndex::MAX_SIZE,
+        ];
+
+        $settings['analysis']['filter']['type_filter'] = [
+            'type' => 'keep_types',
+            'types' => [ "SYNONYM" ],
         ];
 
         $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms);
@@ -140,6 +145,8 @@ class IndexHandler
             $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
 
+        $settings['analysis']['analyzer'][$type]['filter'][] = 'type_filter';
+
         return $settings;
     }
 
@@ -154,7 +161,7 @@ class IndexHandler
     private function prepareSynonymFilterData($rows)
     {
         $rowMaper = function ($row) {
-            return preg_replace('/([\w])\s(?=[\w])/', '\1-', $row);
+            return preg_replace('/([\w])[\s-](?=[\w])/', '\1_', $row);
         };
 
         return array_map($rowMaper, $rows);

@@ -62,7 +62,7 @@
                     <comment>When enabled the module will produce logs through Magento logging system.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="connection_timeout" translate="label" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="connection_timeout" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Server Connection Timeout</label>
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
@@ -95,7 +95,7 @@
 
             <group id="term_autocomplete" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Popular Term Autocomplete</label>
-                <field id="max_size" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of popular search terms to display in autocomplete results.]]></comment>

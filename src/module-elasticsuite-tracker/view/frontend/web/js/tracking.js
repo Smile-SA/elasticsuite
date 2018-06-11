@@ -30,9 +30,9 @@ var smileTracker = (function () {
         return null;
     }
 
-    function setCookie(cookieName, cookieValue, expiresAt) {
+    function setCookie(cookieName, cookieValue, expiresAt, path) {
         var expires = "expires=" + expiresAt.toUTCString();
-        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=/";
+        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=" + path;
     }
 
     // Retrieve values for a param into URL
@@ -57,10 +57,7 @@ var smileTracker = (function () {
         this.addPageVar("url", window.location.pathname);
 
         // Page title tracking
-        this.addPageVar("title", encodeURI(document.title));
-
-        // Current timestamp in seconds
-        this.addPageVar("time", parseInt((new Date().getTime() / 1000), 10));
+        this.addPageVar("title", document.title);
     }
 
     // Append GA campaign variable to the tracked variables
@@ -80,7 +77,7 @@ var smileTracker = (function () {
                 // Append the GA param to the tracker
                 this.addPageVar(paramName, paramValue);
             }
-        });
+        }.bind(this));
     }
 
     function addReferrerVars() {
@@ -93,8 +90,8 @@ var smileTracker = (function () {
     }
 
     function addResolutionVars() {
-        this.addPageVar('resolution.X', window.screen.availWidth);
-        this.addPageVar('resolution.Y', window.screen.availHeight);
+        this.addPageVar('resolution.x', window.screen.availWidth);
+        this.addPageVar('resolution.y', window.screen.availHeight);
         return this;
     }
 
@@ -135,34 +132,30 @@ var smileTracker = (function () {
     }
     
     function setTrackerStyle(imgNode) {
-        imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0;');
+        imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0; visibility: hidden;');
     }
 
     // Send the tag to the remote server
     // Append a transparent pixel to the body
     function sendTag(forceCollect) {
         if (this.trackerSent === false || forceCollect === true) {
-            var trackingUrl = getTrackerUrl.bind(this)();
             var bodyNode = document.getElementsByTagName('body')[0];
-            var imgNode = document.createElement('img');
-            imgNode.setAttribute('src', trackingUrl);
-            setTrackerStyle(imgNode);
-            bodyNode.appendChild(imgNode);
-            this.trackerSent = true;
-            this.vars = {};
 
-            if (window.location.protocol === "http:") {
-                var extImgNode = document.createElement('img');
-                extImgNode.setAttribute('src', "http://t.smile.eu/h.png?magento2");
-                setTrackerStyle(extImgNode);
-                bodyNode.appendChild(extImgNode);
+            if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+                var trackingUrl = getTrackerUrl.bind(this)();
+                var imgNode = document.createElement('img');
+                imgNode.setAttribute('src', trackingUrl);
+                setTrackerStyle(imgNode);
+                bodyNode.appendChild(imgNode);
+                this.trackerSent = true;
+                this.vars = {};
             }
         }
     }
 
     // Append a variable to the page
     function addVariable(varName, value) {
-        this.vars[varName] = encodeURI(value);
+        this.vars[varName] = encodeURIComponent(value);
         return this;
     }
 
@@ -175,42 +168,42 @@ var smileTracker = (function () {
     }
 
     function transformVarName(varName, prefix) {
-        return prefix + "." + varName;
+        return prefix + "[" + varName.replace(/[.]/g, "][") + "]";
     }
 
     function initSession() {
-        var config = this.config.sessionConfig;
-        var expireAt = new Date();
+        if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+            var config   = this.config.sessionConfig;
+            var expireAt = new Date();
+            var path     = config['path'] || '/';
 
-        if (getCookie(config['visit_cookie_name']) === null) {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-            setCookie(config['visit_cookie_name'], guid(), expireAt);
-        } else {
-            expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-            setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt);
+            if (getCookie(config['visit_cookie_name']) === null) {
+                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                setCookie(config['visit_cookie_name'], guid(), expireAt, path);
+            } else {
+                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path);
+            }
+
+            if (getCookie(config['visitor_cookie_name']) === null) {
+                expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
+                setCookie(config['visitor_cookie_name'], guid(), expireAt, path);
+            }
+
+            addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
+            addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
         }
-
-        if (getCookie(config['visitor_cookie_name']) === null) {
-            expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
-            setCookie(config['visitor_cookie_name'], guid(), expireAt);
-        }
-
-        addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
-        addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
     }
 
     // Implementation of the tracker
     var SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
-
-        /* LEGACY module : Cookie collect authorization popin
-         if (!getCookie('SCT_AUTH_COLLECT') && (domainsExeption.indexOf(window.location.host) == -1)) {
-         window.addEventListener('load', displayCollectAuthPopup.bind(this));
-         }
-         */
-        window.addEventListener('load', sendTag.bind(this));
     };
+
+    SmileTrackerImpl.prototype.sendTag = function () {
+        require(['domReady'], function(domReady) { domReady(sendTag.bind(this)); }.bind(this));
+    }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
         this.config  = config;

@@ -64,6 +64,8 @@ class Index implements IndexInterface
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
+     * @throws \InvalidArgumentException When the default search type is invalid.
+     *
      * @param string          $identifier        Index real name.
      * @param string          $name              Index real name.
      * @param TypeInterface[] $types             Index current types.
@@ -74,9 +76,13 @@ class Index implements IndexInterface
     {
         $this->identifier         = $identifier;
         $this->name               = $name;
-        $this->types              = $types;
+        $this->types              = $this->prepareTypes($types);
         $this->needInstall        = $needInstall;
         $this->defaultSearchType  = $defaultSearchType;
+
+        if (!isset($this->types[$defaultSearchType])) {
+            throw new \InvalidArgumentException("Default search $defaultSearchType does not exists in the index.");
+        }
     }
 
     /**
@@ -104,10 +110,16 @@ class Index implements IndexInterface
     }
 
     /**
+     * @throws \InvalidArgumentException When the type does not exists.
+     *
      * {@inheritdoc}
      */
     public function getType($typeName)
     {
+        if (!isset($this->types[$typeName])) {
+            throw new \InvalidArgumentException("Type $typeName does not exists in the index.");
+        }
+
         return $this->types[$typeName];
     }
 
@@ -125,5 +137,23 @@ class Index implements IndexInterface
     public function getDefaultSearchType()
     {
         return $this->getType($this->defaultSearchType);
+    }
+
+    /**
+     * Prepare the types added to the index (rekey the array).
+     *
+     * @param TypeInterface[] $types Installed types.
+     *
+     * @return TypeInterface[]
+     */
+    private function prepareTypes($types)
+    {
+        $preparedTypes = [];
+
+        foreach ($types as $type) {
+            $preparedTypes[$type->getName()] = $type;
+        }
+
+        return $preparedTypes;
     }
 }

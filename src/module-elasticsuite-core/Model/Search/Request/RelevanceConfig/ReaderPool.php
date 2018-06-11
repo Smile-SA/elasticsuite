@@ -19,7 +19,7 @@ namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig;
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class ReaderPool implements \Magento\Framework\App\Config\Scope\ReaderPoolInterface
+class ReaderPool
 {
     /**
      * List of readers

@@ -221,7 +221,7 @@ define([
          *
          * @private
          */
-        _onPropertyChange: function () {
+        _onPropertyChange: _.debounce(function () {
             var searchField = this.element,
                 clonePosition = {
                     position: 'absolute',
@@ -235,7 +235,7 @@ define([
             this.submitBtn.disabled = this._isEmpty(value);
 
             if (value.length >= parseInt(this.options.minSearchLength, 10)) {
-
+                this.searchForm.addClass('processing');
                 this.currentRequest = $.ajax({
                     method: "GET",
                     url: this.options.url,
@@ -300,7 +300,10 @@ define([
                                     self._resetResponseList(false);
                                 }
                             });
-                    },this)
+                    },this),
+                    complete : $.proxy(function () {
+                        this.searchForm.removeClass('processing');
+                    }, this)
                 });
             } else {
                 this._resetResponseList(true);
@@ -308,7 +311,7 @@ define([
                 this._updateAriaHasPopup(false);
                 this.element.removeAttr('aria-activedescendant');
             }
-        },
+        }, 250),
 
         /**
          * Executes when keys are pressed in the search input field. Performs specific actions
@@ -356,8 +359,9 @@ define([
          * @private
          */
         _validateElement: function(event) {
-            if (this.responseList.selected.attr('href') !== undefined) {
-                window.location = this.responseList.selected.attr('href');
+            var selected = this.responseList.selected;
+            if (selected && selected.attr('href') !== undefined) {
+                window.location = selected.attr('href');
                 event.preventDefault();
                 return false;
             }

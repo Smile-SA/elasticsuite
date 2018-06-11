@@ -12,9 +12,6 @@
  */
 namespace Smile\ElasticsuiteThesaurus\Controller\Adminhtml\Thesaurus;
 
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 use Smile\ElasticsuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
 use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 
@@ -42,7 +39,7 @@ class Save extends ThesaurusController
 
         if ($data) {
             $identifier = $this->getRequest()->getParam('thesaurus_id');
-            $model = $this->thesaurusFactory->create();
+            $model      = $this->thesaurusFactory->create();
 
             if ($identifier) {
                 $model->load($identifier);
@@ -54,6 +51,10 @@ class Save extends ThesaurusController
             }
 
             $model->setData($data);
+            $storeIds = $this->getRequest()->getParam('stores', null);
+            if ($storeIds) {
+                $model->setStoreIds($storeIds);
+            }
 
             try {
                 $this->thesaurusRepository->save($model);

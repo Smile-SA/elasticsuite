@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 
 /**
  * Build an ES histogram aggregation.
@@ -23,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Histogram
+class Histogram implements BuilderInterface
 {
     /**
      * Build the aggregation.
@@ -34,7 +35,15 @@ class Histogram
      */
     public function buildBucket(BucketInterface $bucket)
     {
-        $aggParams = ['field' => $bucket->getField(), 'interval' => $bucket->getInterval(), 'min_doc_count' => $bucket->getMinDocCount()];
+        if ($bucket->getType() !== BucketInterface::TYPE_HISTOGRAM) {
+            throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
+        }
+
+        $aggParams = [
+            'field'         => $bucket->getField(),
+            'interval'      => $bucket->getInterval(),
+            'min_doc_count' => $bucket->getMinDocCount(),
+        ];
 
         return ['histogram' => $aggParams];
     }

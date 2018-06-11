@@ -90,6 +90,10 @@ class VirtualRule extends \Magento\Backend\Block\AbstractBlock
 
         $virtualRuleField->setValue($this->getCategory()->getVirtualRule());
         $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
+
+        $urlParams = ['category_id' => $this->getCategory()->getId()];
+
+        $virtualRuleRenderer->addData(['url_params' => $urlParams]);
         $virtualRuleField->setRenderer($virtualRuleRenderer);
 
         return $form;

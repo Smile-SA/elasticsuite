@@ -88,8 +88,12 @@ class SortOrderBuilder
                 }
 
                 if (isset($sortOrderParams['nestedFilter'])) {
-                    $nestedFilter = $this->queryBuilder->create($containerConfig, $sortOrderParams['nestedFilter']);
-                    $sortOrderParams['nestedFilter'] = $nestedFilter->getQuery();
+                    $nestedFilter = $this->queryBuilder->create(
+                        $containerConfig,
+                        $sortOrderParams['nestedFilter'],
+                        $sortOrderParams['nestedPath']
+                    );
+                    $sortOrderParams['nestedFilter'] = $nestedFilter;
                 }
             } catch (\LogicException $e) {
                 $sortOrderParams['field'] = $fieldName;

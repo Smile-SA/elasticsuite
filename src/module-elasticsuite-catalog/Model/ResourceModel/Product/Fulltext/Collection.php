@@ -77,6 +77,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * @var array
      */
+    private $countByAttributeCode;
+
+    /**
+     * @var array
+     */
     private $fieldNameMapping = [
         'price'        => 'price.price',
         'position'     => 'category.position',
@@ -87,6 +92,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var boolean
      */
     private $isSpellchecked = false;
+
+    /**
+     * Pager page size backup variable.
+     * Page size is always set to false in _renderFiltersBefore() after executing the query to Elasticsearch,
+     * to be sure to pull correctly all matched products from the DB.
+     * But it needs to be reset so low-level methods like getLastPageNumber() still work.
+     *
+     * @var integer|false
+     */
+    private $originalPageSize = false;
 
     /**
      * Constructor.
@@ -208,7 +223,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addAttributeToSort($attribute, $dir = self::SORT_ORDER_ASC)
     {
-        return $this->setOrder($attribute, $dir);
+        if ($attribute !== 'entity_id') {
+            return $this->setOrder($attribute, $dir);
+        }
+
+        return $this;
     }
 
     /**
@@ -274,7 +293,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $result[$metrics['value']] = $metrics;
+                $result[$value->getValue()] = $metrics;
             }
         }
 
@@ -321,6 +340,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Load the product count by attribute set id.
      *
+     * @deprecated Replaced by getProductCountByAttributeCode
+     *
      * @return array
      */
     public function getProductCountByAttributeSetId()
@@ -331,6 +352,23 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         return $this->countByAttributeSet;
     }
+
+    /**
+     * Load the product count by attribute code.
+     *
+     * @deprecated To be refactored later.
+     *
+     * @return array
+     */
+    public function getProductCountByAttributeCode()
+    {
+        if ($this->countByAttributeCode === null) {
+            $this->loadProductCounts();
+        }
+
+        return $this->countByAttributeCode;
+    }
+
 
     /**
      * Filter in stock product.
@@ -400,6 +438,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
+        $this->originalPageSize = $this->_pageSize;
         $this->_pageSize = false;
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
@@ -448,6 +487,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $orginalItems[$documentId]->setDocumentSource($document->getSource());
                 $this->_items[$documentId] = $orginalItems[$documentId];
             }
+        }
+
+        if (false === $this->_pageSize && false !== $this->originalPageSize) {
+            $this->_pageSize = $this->originalPageSize;
         }
 
         return parent::_afterLoad();
@@ -502,6 +545,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
+            $sortField  = $this->mapFieldName($attribute);
 
             if ($useProductuctLimitation && isset($this->_productLimitationFilters['sortParams'][$attribute])) {
                 $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
@@ -515,7 +559,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $sortParams['nestedFilter'] = ['price.customer_group_id' => $customerGroupId];
             }
 
-            $sortField = $this->mapFieldName($attribute);
             $sortOrders[$sortField] = $sortParams;
         }
 
@@ -542,7 +585,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Load product count :
      *  - collection size
-     *  - number of products by attribute set
+     *  - number of products by attribute set (legacy)
+     *  - number of products by attribute code
      *
      * @return void
      */
@@ -554,7 +598,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         // Query text.
         $queryText = $this->queryText;
 
-        $setIdFacet = ['attribute_set_id' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]]];
+        $facets = [
+            'attribute_set_id'   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
+            'indexed_attributes' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
+        ];
 
         $searchRequest = $this->requestBuilder->create(
             $storeId,
@@ -565,21 +612,30 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             [],
             $this->filters,
             $this->queryFilters,
-            $setIdFacet
+            $facets
         );
 
         $searchResponse = $this->searchEngine->search($searchRequest);
 
-        $this->_totalRecords       = $searchResponse->count();
-        $this->countByAttributeSet = [];
-        $this->isSpellchecked = $searchRequest->isSpellchecked();
+        $this->_totalRecords        = $searchResponse->count();
+        $this->countByAttributeSet  = [];
+        $this->countByAttributeCode = [];
+        $this->isSpellchecked       = $searchRequest->isSpellchecked();
 
-        $bucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
+        $attributeSetIdBucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
+        $attributeCodeBucket  = $searchResponse->getAggregations()->getBucket('indexed_attributes');
 
-        if ($bucket) {
-            foreach ($bucket->getValues() as $value) {
+        if ($attributeSetIdBucket) {
+            foreach ($attributeSetIdBucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $this->countByAttributeSet[$metrics['value']] = $metrics['count'];
+                $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
+            }
+        }
+
+        if ($attributeCodeBucket) {
+            foreach ($attributeCodeBucket->getValues() as $value) {
+                $metrics = $value->getMetrics();
+                $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
             }
         }
     }

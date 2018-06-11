@@ -166,18 +166,17 @@
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
         </arguments>
     </type>
-
-    <virtualType name="Smile\ElasticsuiteCatalog\Helper\ProductAttribute" type="Smile\ElasticsuiteCatalog\Helper\Attribute">
+    
+    <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData">
         <arguments>
-            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory</argument>
+            <argument name="priceReaderPool" xsi:type="array">
+                <item name="default" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceDefault</item>
+                <item name="configurable" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceConfigurable</item>
+                <item name="grouped" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
+                <item name="bundle" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
+            </argument>
         </arguments>
-    </virtualType>
-
-    <virtualType name="Smile\ElasticsuiteCatalog\Helper\CategoryAttribute" type="Smile\ElasticsuiteCatalog\Helper\Attribute">
-        <arguments>
-            <argument name="collectionFactory" xsi:type="string">Magento\Catalog\Model\ResourceModel\Category\Attribute\CollectionFactory</argument>
-        </arguments>
-    </virtualType>
+    </type> 
 
     <!-- Advanced Search Compatibility -->
     <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
@@ -197,4 +196,23 @@
         </arguments>
     </type>
 
+    <!-- Handle saving of filterable attributes by category -->
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\CategoryInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="filterableAttributesPersistor" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="filterableAttributesPersistor" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Category\FilterableAttribute\SaveHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    
+    <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
+        <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
+    </type>
 </config>

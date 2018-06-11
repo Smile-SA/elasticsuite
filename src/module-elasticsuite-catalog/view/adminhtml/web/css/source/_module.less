@@ -12,10 +12,9 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
-
 .elasticsuite-admin-product-sorter {
 
-    margin: 40px 0;
+    margin: 40px 20px;
 
     span.title {
         font-size: 1.7rem;
@@ -24,6 +23,7 @@
     }
 
     .bottom-links {
+        clear: both;
         width: 40%;
         margin: 10px auto;
         border: 1px solid #cccccc;
@@ -46,37 +46,34 @@
 
     .product-list {
 
-        margin: 20px 40px 0;
+        margin: 20px 0 0;
 
-        li.product-list-item, li.product-list-item-placeholder {
-
-            display: inline-block;
+        li {
+            box-sizing: content-box;
+            float: left;
             border: 1px solid #d6d6d6;
+            background: #FFFFFF;
             width: 200px;
-            margin: 5px;
+            min-height: 221px;
+            margin: 5px 0 0 5px;
             vertical-align: top;
             list-style-type: none;
 
-            h1 {
-                font-size: 1.2em;
-                font-weight: 600;
-                line-height: 1.9em;
-                margin: 0 0 2px;
+            &.product-list-item-placeholder {
+                background: #e3e3e3;
+            }
 
-                span {
-                    width: 170px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    display: block;
-                }
+            &.clear {
+                width: 0;
+                min-height: 0;
+                border: none;
+                clear: both;
             }
 
             .info {
                 position: relative;
-                background: rgba(44,44,44, 0.75);
-                width: 100%;
-                margin-top: -31px;
+                background: rgba(44, 44, 44, 0.75);
+                margin-top: -51px;
                 color: #FFF;
                 padding: 4px;
 
@@ -89,6 +86,28 @@
                 p.stock {
                     float: right;
                 }
+
+                p.sku {
+                    display: block;
+                    width: 100%;
+                    margin-bottom: 5px;
+                }
+
+                h1 {
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    line-height: 1.9em;
+                    margin: 0 10px;
+                    color: #FFF;
+
+                    span {
+                        width: 160px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                    }
+                }
             }
 
             .draggable-handle {
@@ -97,7 +116,6 @@
                 float: left;
                 margin: 3px 0 0 0;
             }
-
 
             div.product-image {
                 text-align: center;
@@ -121,6 +139,80 @@
             .draggable-handle::before {
                 opacity: 0;
                 cursor: default;
+            }
+        }
+    }
+}
+
+.smile-elasticsuite-filterable-attributes {
+    table {
+        thead {
+            th {
+                background: #ffffff;
+                border: solid #c9c2b8;
+                border-width: 0 0 1px;
+                padding: 7px;
+                vertical-align: middle;
+            }
+        }
+
+        tbody, thead {
+            tr {
+                td {
+                    background-color: transparent;
+                    text-align: center;
+                    vertical-align: middle;
+                    padding: 2px 7px;
+                    span {
+                        padding: 0;
+                    }
+
+                    select {
+                        min-width: 100%;
+                    }
+
+                    div.admin__field-control {
+                        div.admin__field-service {
+                            font-size:80%;
+                            white-space:nowrap;
+                            padding-top: 0.5rem;
+                            padding-bottom: 0.5rem;
+                            text-align: left;
+                        }
+                    }
+                }
+
+                td.pin-switch {
+                    div.admin__actions-switch {
+                        max-width: 40px;
+                        overflow: hidden;
+                    }
+                    span.admin__actions-switch-text {
+                        visibility: hidden;
+                        :before {
+                            padding-left:0;
+                        }
+                    }
+                }
+
+                td.use-default {
+                    font-size:80%;
+                    .admin__field-label {
+                        padding-left : 2rem;
+                    }
+                }
+
+                td.col-draggable {
+                    padding-top: 4px;
+                }
+
+                td._disabled {
+                    opacity: 1;
+                }
+            }
+
+            tr:nth-child(even) {
+                background: #fbfaf6;
             }
         }
     }

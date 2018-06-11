@@ -23,6 +23,10 @@
                 <width>45</width>
                 <height>45</height>
             </image>
+            <image id="smile_elasticsuite_product_sorter_image" type="small_image">
+                <width>150</width>
+                <height>150</height>
+            </image>
         </images>
     </media>
 </view>

@@ -4,19 +4,33 @@
 
 ### ⚠️ Magento versions compatibility :
 
-We had a lot of work on Magento 2.1.x compatibility since there was a lot of compatibility breaking changes in this version (introduction of the entity manager, new form based on UI components, staging for the EE edition, ...).
+Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite >2.4 and Magento 2.1.x versions.
 
-The migration is now finished concerning **both CE and EE versions**.
-
-If your project is based on Magento 2.1.x you can start working with ElasticSuite today using the latest **2.3.0 release**.
+If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.5.x release**.
 
 **Which version should I use ?**
 
-Magento Version         | ElasticSuite Latest Version
-------------------------|------------------------------------------------------------------------
-Magento 2.0.* CE / EE   |[ElasticSuite 2.1.4 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.1.4)
-Magento 2.1.* CE / EE   |[ElasticSuite 2.3.0 release](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
+Magento Version                                     | ElasticSuite Latest Version
+----------------------------------------------------|------------------------------------------------------------------------
+Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ^2.1.0```
+Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ^2.3.0```
+Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.5.x** latest release : ```composer require smile/elasticsuite ^2.5.0```
 
+### Magento2 B2B Compatibility
+
+If your are using Magento Commerce (formerly known as Enterprise Edition) B2B feature with Elasticsuite, you will need to install the **Elasticsuite Shared Catalog** module which is located [here](https://github.com/Smile-SA/magento2-module-elasticsuite-shared-catalog)
+
+### Introducing Elasticsuite modules
+
+We are glad to announce officially that we now have a complete list of **additional modules to Elasticsuite**, which are all available for free and are published Open Source on Github :
+
+Module Name                                                                                           | Description
+------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------
+[CMS Search](https://github.com/Smile-SA/module-elasticsuite-cms-search)                              | Allow to search for CMS pages (in autocomplete and search results).
+[Ratings](https://github.com/Smile-SA/magento2-module-elasticsuite-rating)                            | Allow to filter and/or sort on ratings (based on standard Magento rating module).
+[Custom Entities](https://github.com/Smile-SA/magento2-module-elasticsuite-custom-entity)             | Ability to define complex entities as attributes (eg : having "brand" entities with pictures, description etc...)
+[TargetRules with Elasticsearch](https://github.com/Smile-SA/magento2-module-elasticsuite-targetrule) | This module allow to compute target rules via Elasticsearch instead of full MySQL (**require Magento Commerce (EE)**).
+[Elasticsuite for Retailers](https://github.com/Smile-SA/elasticsuite-for-retailer)                   | A complete suite of retail oriented modules : Store Locator, Price segmentation per store, etc...
 
 ## What is ElasticSuite for Magento 2 ?
 
@@ -24,13 +38,13 @@ ElasticSuite is a merchandising suite for Magento which aims to provide out the 
 
 The project was originally created by Smile and released to the Open Source community for Magento 1.x. You can still find the Magento 1.x module [here](https://github.com/Smile-SA/smile-magento-elasticsearch).
 
-## Who is developping ElasticSuite ?
+## Who is developing ElasticSuite ?
 
 <p align="center">
     <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014) and two-times **Spirit of Excellence** (2015-2016) awarded by Magento.
+SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016) and **Global Elite Partner** (2017) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
@@ -44,13 +58,11 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version **2.3.0** has been focused on the **Search Optimizers** feature and on various performances improvements.
+The current version **2.5.0** has been focused on the **Elasticsearch 5.x compatibility**, **Search Terms Merchandiser**, **Facet management by category** and **Behavioral data tracking** features.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.3.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.5.0)
 
-This version also features a full **Staging Compatibility** and can be used without issues on Magento Enterprise Edition 2.1.x.
-
-From now, we are still working on the migration of all features available into the Magento 1.x .version of the module in this new version.
+This version is designed to be used on both Magento Open Source and Commerce versions >2.2.
 
 Actually, there are the features actually included :
 
@@ -77,7 +89,11 @@ Actually, there are the features actually included :
 
     ![Search Optimizers](doc/static/search_optimizers.png)
 
-    On the next version, a preview for all optimizer rules will be available in the back-office so that you will be able to **preview each fine-tuning before publishing it**.
+    You are also able to **preview each fine-tuning before publishing it** :
+
+    ![Search Optimizers Preview](doc/static/search_optimizers_preview.png)
+
+<br/>
 
 * **Categories Merchandising :**
 
@@ -88,6 +104,32 @@ Actually, there are the features actually included :
     This feature is compatible with "standard" categories but also with the Virtual Categories described before.
 
     ![Virtual Categories](doc/static/virtual_categories_dnd.gif)
+
+<br/>
+
+* **Facet Management by category :**
+
+    Inside the **Display Settings** panel of each category, you will be able to customize various layered navigation filters parameters :
+
+    - Filter position (pinned/unpinned)
+    - Display mode (always hidden, always displayed, automatic mode)
+    - Facet Max Size
+    - Facet coverage
+    - Facet sort order
+
+    This allow you to have a deeper level of configuration for your layered navigation for each category.
+
+    ![Facet by category](doc/static/facet-by-category.png)
+
+<br/>
+
+* **Search Terms Merchandising :**
+
+    A new **Merchandiser** link has been added into the search term screen of Magento's Back-Office. It features a **direct preview** of the current product list that will be returned by this search query in front office.
+
+    Inside this panel, you are also able to use a **drag-and-drop interface** to apply custom sort order on some of the products (Eg : to ensure your bestseller always appear at first position).
+
+    ![Term Merchandiser](doc/static/term-merchandiser.gif)
 
 <br/>
 
@@ -120,6 +162,14 @@ Actually, there are the features actually included :
     ![Expansions](doc/static/expansions.png)
 
     This means that adding an expansion between *"sport"* and *"fitness, gym, running"* will make it expanding for all queries containing *"sport"* like *"sport shoes"* (which would be expanded to "fitness shoes", "gym shoes", and "running shoes").
+
+<br/>
+
+* **Autocomplete in layered navigation filters :**
+
+    The module allows the users to search into filters values **via an autocomplete box**.
+
+    ![Facet Autocomplete](doc/static/facet-autocomplete.gif)
 
 <br/>
 
@@ -194,6 +244,14 @@ Actually, there are the features actually included :
 
 The next versions that will be coming all among this year will include the following features :
 
+* **Search usage dashboard :**
+
+    Next version of ElasticSuite will feature an advanced dashboard where you will be able to see the following items :
+
+     + **Generic KPIs** (number of search, page views, sessions, searches per session, unique visitors ...)
+     + Search queries list (**most popular**, commons mispelling, **low conversion queries**, **zero results queries** ...)
+     + Graphs (pie chart for misspelled queries, **line chart figuring the evolution of the number of queries**...)
+
 * **Behavioral Search optimizations :**
 
     Second part of the relevance optimization features will be the behavioral optimizers. This will allow you to build **rules matching your customer's behavior**.
@@ -220,7 +278,7 @@ The next versions that will be coming all among this year will include the follo
 
 Documentation is available [here](https://github.com/Smile-SA/elasticsuite/wiki).
 
-The User Guide is also available on PDF format [here](doc/static/User Guide-ElasticSuite for Magento 2-v2.3.pdf)
+The User Guide is also available on PDF format [here](doc/static/User%20Guide-ElasticSuite%20for%20Magento%202-v2.5.pdf)
 
 ## Standards & Code Quality
 

@@ -27,20 +27,32 @@ interface FieldInterface
      * Field types declaration.
      *
      */
-
-    const FIELD_TYPE_STRING  = 'string';
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
+    const FIELD_TYPE_LONG    = 'long';
     const FIELD_TYPE_DATE    = 'date';
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
-    const FIELD_TYPE_MULTI   = 'multi_field';
+
     const FIELD_TYPE_OBJECT  = 'object';
+
+    /**
+     * Deprecated multi_field type.
+     *
+     * @deprecated
+     */
+    const FIELD_TYPE_MULTI   = 'multi_field';
+
+    /**
+     * Deprecated string type.
+     *
+     * @deprecated
+     */
+    const FIELD_TYPE_STRING  = 'string';
 
     /**
      * Analyzers declarations.
      */
-
     const ANALYZER_STANDARD   = 'standard';
     const ANALYZER_WHITESPACE = 'whitespace';
     const ANALYZER_SHINGLE    = 'shingle';
@@ -90,13 +102,6 @@ interface FieldInterface
     public function isUsedInSpellcheck();
 
     /**
-     * Is the field used for autocomplete.
-     *
-     * @return boolean
-     */
-    public function isUsedInAutocomplete();
-
-    /**
      * Weight of the fields in search.
      *
      * @return integer
@@ -140,4 +145,12 @@ interface FieldInterface
      * @return string|null
      */
     public function getMappingProperty($analyzer = self::ANALYZER_UNTOUCHED);
+
+
+    /**
+     * Return the search analyzer used by default for fulltext searches.
+     *
+     * @return string
+     */
+    public function getDefaultSearchAnalyzer();
 }

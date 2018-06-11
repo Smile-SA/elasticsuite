@@ -27,6 +27,12 @@
         </arguments>
     </type>
 
+    <type name="Magento\Swatches\Block\Product\Renderer\Configurable">
+        <arguments>
+            <argument name="swatchHelper" xsi:type="object">Smile\ElasticsuiteSwatches\Helper\Swatches</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Swatches\Controller\Ajax\Media">
         <arguments>
             <argument name="swatchHelper" xsi:type="object">Smile\ElasticsuiteSwatches\Helper\Swatches</argument>

@@ -129,19 +129,19 @@ class Config extends \Magento\Framework\Config\Data
             $dynamicFieldProviders = array_filter($datasources, array($this, 'isDynamicFieldsProvider'));
 
             foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
-                $staticFields[$fieldName] = $this->mappingFieldFactory->create($fieldConfig + ['name' => $fieldName]);
+                $staticFields[$fieldName] = $this->mappingFieldFactory->create(['name' => $fieldName] + $fieldConfig);
             }
 
             $mapping = $this->mappingFactory->create(
                 [
+                    'idFieldName'           => $typeConfigData['idFieldName'],
                     'staticFields'          => $staticFields,
                     'dynamicFieldProviders' => $dynamicFieldProviders,
-                    'idFieldName'           => $typeConfigData['idFieldName'],
                 ]
             );
 
             $types[$typeName] = $this->typeFactory->create(
-                ['name' => $typeName, 'datasources' => $datasources, 'mapping' => $mapping]
+                ['name' => $typeName, 'mapping' => $mapping, 'datasources' => $datasources]
             );
         }
 

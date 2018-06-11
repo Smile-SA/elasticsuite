@@ -21,12 +21,10 @@
 ?>
 
 <?php if ($block->canShowBlock()) : ?>
-    <?php $filters = count($block->getFilters());?>
     <?php $activeFilters = $block->getActiveFilters(); ?>
-    <?php /*$activeFilters = "[0, 1, 2]" ;*/?>
     <div class="block filter" id="layered-filter-block" data-mage-init='{"collapsible":{"openedState": "active", "collapsible": true, "active": false, "collateral": { "openedState": "filter-active", "element": "body" } }}'>
         <?php $filtered = count($block->getLayer()->getState()->getFilters()) ?>
-        <div class="block-title filter-title" data-count="<?php /* @escapeNotVerified */ echo $filtered; ?>">
+        <div class="block-title filter-title" data-count="<?= /* @escapeNotVerified */ $filtered ?>">
             <strong data-role="title"><?php /* @escapeNotVerified */ echo __('Shop By') ?></strong>
         </div>
 
@@ -42,18 +40,18 @@
             <?php foreach ($block->getFilters() as $filter) : ?>
                 <?php if ($filter->getItemsCount()) : ?>
                     <?php if (!$wrapOptions) : ?>
-                        <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?php /* @escapeNotVerified */ echo __('Shopping Options') ?></strong>
-                        <dl class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?php  /* @noEscape */ echo $activeFilters; ?>, "multipleCollapsible": true}}'>
+                        <strong role="heading" aria-level="2" class="block-subtitle filter-subtitle"><?= /* @escapeNotVerified */ __('Shopping Options') ?></strong>
+                        <div class="filter-options" id="narrow-by-list" data-role="content" data-mage-init='{"accordion":{"openedState": "active", "collapsible": true, "active": <?php  /* @noEscape */ echo $activeFilters; ?>, "multipleCollapsible": <?= /* @noEscape */ $block->isInline() ? "false" : "true"; ?>}}'>
                             <?php $wrapOptions = true;?>
                     <?php endif; ?>
-                    <dt data-role="title" class="filter-options-title"><?php /* @escapeNotVerified */ echo __($filter->getName()) ?></dt>
-                    <dd data-role="collapsible" class="filter-options-item">
-                        <div data-role="content" class="filter-options-content"><?php /* @escapeNotVerified */ echo $block->getChildBlock('renderer')->render($filter); ?></div>
-                    </dd>
+                    <div data-role="collapsible" class="filter-options-item">
+                        <div data-role="title" class="filter-options-title"><?= /* @escapeNotVerified */ __($filter->getName()) ?></div>
+                        <div data-role="content" class="filter-options-content"><?= /* @escapeNotVerified */ $block->getChildBlock('renderer')->render($filter) ?></div>
+                    </div>
                 <?php endif; ?>
             <?php endforeach; ?>
             <?php if ($wrapOptions) : ?>
-                </dl>
+                </div>
             <?php else : ?>
                 <script>
                     require([

@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteThesaurus\Model;
 
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
@@ -39,10 +39,15 @@ class Index
     /**
      * @var string
      */
-    const WORD_DELIMITER = '-';
+    const WORD_DELIMITER = '_';
 
     /**
-     * @var \Elasticsearch\Client
+     * @var integer
+     */
+    const MAX_SIZE = 10;
+
+    /**
+     * @var ClientInterface
      */
     private $client;
 
@@ -64,18 +69,18 @@ class Index
     /**
      * Constructor.
      *
-     * @param ClientFactoryInterface $clientFactory          ES Client Factory.
+     * @param ClientInterface        $client                 ES client.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      */
     public function __construct(
-        ClientFactoryInterface $clientFactory,
+        ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory
     ) {
-        $this->client                 = $clientFactory->createClient();
+        $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
@@ -205,15 +210,20 @@ class Index
     {
         $indexName = $this->getIndexAlias($storeId);
 
-        $analysis = $this->client->indices()->analyze(
-            ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
-        );
+        try {
+            $analysis = $this->client->analyze(
+                ['index' => $indexName, 'text' => $queryText, 'analyzer' => $type]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
+        }
 
         $synonymByPositions = [];
 
         foreach ($analysis['tokens'] as $token) {
             if ($token['type'] == 'SYNONYM') {
                 $positionKey = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
+                $token['token'] = str_replace('_', ' ', $token['token']);
                 $synonymByPositions[$positionKey][] = $token;
             }
         }

@@ -31,8 +31,17 @@ class Not extends AbstractComplexBuilder implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        $subQuery = $this->parentBuilder->buildQuery($query->getQuery());
+        if ($query->getType() !== QueryInterface::TYPE_NOT) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
 
-        return ['bool' => ['must_not' => [$subQuery]]];
+        $subQuery    = $this->parentBuilder->buildQuery($query->getQuery());
+        $searchQuery = ['bool' => ['must_not' => [$subQuery], 'boost' => $query->getBoost()]];
+
+        if ($query->getName()) {
+            $searchQuery['bool']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

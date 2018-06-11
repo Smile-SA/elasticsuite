@@ -32,6 +32,7 @@ interface QueryInterface extends \Magento\Framework\Search\Request\QueryInterfac
     const TYPE_NOT           = 'notQuery';
     const TYPE_MULTIMATCH    = 'multiMatchQuery';
     const TYPE_COMMON        = 'commonQuery';
+    const TYPE_EXISTS        = 'existsQuery';
     const TYPE_MISSING       = 'missingQuery';
     const TYPE_FUNCTIONSCORE = 'functionScore';
 }

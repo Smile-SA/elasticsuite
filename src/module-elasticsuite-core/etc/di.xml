@@ -18,13 +18,16 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <!-- Client config and factory DI -->
-    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientFactoryInterface"
-                type="Smile\ElasticsuiteCore\Client\ClientFactory" />
+    <preference for="Smile\ElasticsuiteCore\Api\Client\ClientInterface"
+                type="Smile\ElasticsuiteCore\Client\Client" />
 
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
-                type="Smile\ElasticsuiteCore\Helper\ClientConfiguration" />
+                type="Smile\ElasticsuiteCore\Client\ClientConfiguration" />
 
+    <!-- Cluster namespace related DI -->
+    <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
+                type="Smile\ElasticsuiteCore\Cluster\ClusterInfo" />
+                
     <!-- Indices namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexInterface"
                 type="Smile\ElasticsuiteCore\Index\Index" />
@@ -56,21 +59,71 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface"
                 type="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Spellchecker" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration" />
+
+    <preference for="Magento\Search\Api\SearchInterface"
+                type="Smile\ElasticsuiteCore\Model\Search" />
+
+    <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
+        <arguments>
+            <argument name="fieldFilters" xsi:type="array">
+                <item name="searchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter</item>
+                <item name="fuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\FuzzyFieldFilter</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
-                <item name="boolQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory</item>
-                <item name="filteredQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory</item>
-                <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory</item>
-                <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\NotFactory</item>
-                <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory</item>
-                <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermFactory</item>
-                <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory</item>
-                <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory</item>
-                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory</item>
-                <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory</item>
-                <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory</item>
+                <item name="boolQuery" xsi:type="object">boolQueryFactory</item>
+                <item name="filteredQuery" xsi:type="object">filteredQueryFactory</item>
+                <item name="nestedQuery" xsi:type="object">nestedQueryFactory</item>
+                <item name="notQuery" xsi:type="object">notQueryFactory</item>
+                <item name="existsQuery" xsi:type="object">existsQueryFactory</item>
+                <item name="missingQuery" xsi:type="object">missingQueryFactory</item>
+                <item name="termQuery" xsi:type="object">termQueryFactory</item>
+                <item name="termsQuery" xsi:type="object">termsQueryFactory</item>
+                <item name="rangeQuery" xsi:type="object">rangeQueryFactory</item>
+                <item name="matchQuery" xsi:type="object">matchQueryFactory</item>
+                <item name="commonQuery" xsi:type="object">commonQueryFactory</item>
+                <item name="multiMatchQuery" xsi:type="object">multiMatchQueryFactory</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="boolQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\BooleanFactory" />
+    <virtualType name="filteredQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FilteredFactory" />
+    <virtualType name="nestedQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NestedFactory" />
+    <virtualType name="notQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\NotFactory" />
+    <virtualType name="existsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\ExistsFactory" />
+    <virtualType name="missingQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MissingFactory" />
+    <virtualType name="termQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermFactory" />
+    <virtualType name="termsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory" />
+    <virtualType name="rangeQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory" />
+    <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory" />
+    <virtualType name="commonQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory" />
+    <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
+    <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
+
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="boolQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boolean\Proxy</item>
+                <item name="filteredQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Filtered\Proxy</item>
+                <item name="nestedQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nested\Proxy</item>
+                <item name="notQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Not\Proxy</item>
+                <item name="missingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Missing\Proxy</item>
+                <item name="existsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Exists\Proxy</item>
+                <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term\Proxy</item>
+                <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms\Proxy</item>
+                <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range\Proxy</item>
+                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match\Proxy</item>
+                <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common\Proxy</item>
+                <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
+                <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -78,9 +131,26 @@
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
-                <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory</item>
-                <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory</item>
-                <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory</item>
+                <item name="termBucket" xsi:type="object">termBucketFactory</item>
+                <item name="histogramBucket" xsi:type="object">histogramBucketFactory</item>
+                <item name="dateHistogramBucket" xsi:type="object">dateHistogramBucketFactory</item>
+                <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="termBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TermFactory" />
+    <virtualType name="histogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory" />
+    <virtualType name="dateHistogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\DateHistogramFactory" />
+    <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
+
+    <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="termBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term\Proxy</item>
+                <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram\Proxy</item>
+                <item name="dateHistogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\DateHistogram\Proxy</item>
+                <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -139,18 +209,6 @@
     <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory" type="Magento\Framework\App\Config\ValueFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Value</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config">
-        <arguments>
-            <argument name="scopePool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool</argument>
-        </arguments>
-    </type>
-
-    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ScopePool" type="Magento\Framework\App\Config\ScopePool">
-        <arguments>
-            <argument name="readerPool" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool</argument>
         </arguments>
     </virtualType>
 
@@ -256,9 +314,6 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\FuzzinessConfig" />
 
-    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface"
-                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig\PhoneticConfig" />
-
     <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader">
         <arguments>
             <argument name="converter" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Converter</argument>
@@ -345,6 +400,28 @@
         <arguments>
             <argument name="data" xsi:type="array">
                 <item name="elasticsuite" xsi:type="string">Magento\AdvancedSearch\Model\DataProvider\Suggestions</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!--  -->
+    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
+        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping\FieldPlugin"/>
+    </type>
+
+    <!-- Sensitive / Environment Specific Configuration fields handling -->
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="environment" xsi:type="array">
+                <item name="smile_elasticsuite_core_base_settings/es_client/servers" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/enable_https_mode" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/enable_http_auth" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_user" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_pwd" xsi:type="string">1</item>
+            </argument>
+            <argument name="sensitive" xsi:type="array">
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_user" xsi:type="string">1</item>
+                <item name="smile_elasticsuite_core_base_settings/es_client/http_auth_pwd" xsi:type="string">1</item>
             </argument>
         </arguments>
     </type>

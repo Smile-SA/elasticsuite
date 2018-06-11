@@ -52,13 +52,32 @@
 
     <!-- Apply boost plugin -->
     
-        <!-- Plugin -->
+    <!-- Plugin -->
     <type name="\Smile\ElasticsuiteCore\Search\Request\Query\Builder">
         <plugin name="queryRewriteOptimizers" type="\Smile\ElasticsuiteCatalogOptimizer\Plugin\QueryRewrite" />
     </type>
+
+    <!-- Optimizer providers -->
     
+    <virtualType name="defaultOptimizerProviderFactory" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\DefaultProviderFactory" />
+    <virtualType name="excludeOptimizerProviderFactory" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\ExcludeFactory" />
+    <virtualType name="onlyOptimizerProviderFactory" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\OnlyFactory" />
+    <virtualType name="replaceOptimizerProviderFactory" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\ReplaceFactory" />
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="default" xsi:type="object">defaultOptimizerProviderFactory</item>
+                <item name="exclude" xsi:type="object">excludeOptimizerProviderFactory</item>
+                <item name="only"    xsi:type="object">onlyOptimizerProviderFactory</item>
+                <item name="replace" xsi:type="object">replaceOptimizerProviderFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList">
         <arguments>
+            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\DefaultProvider</argument>
             <argument name="appliers" xsi:type="array">
                 <item name="constant_score" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\ConstantScore</item>
             </argument>

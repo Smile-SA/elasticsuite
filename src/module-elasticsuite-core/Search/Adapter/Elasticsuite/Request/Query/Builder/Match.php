@@ -31,12 +31,22 @@ class Match implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
+        if ($query->getType() !== QueryInterface::TYPE_MATCH) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
         $searchQueryParams = [
             'query'                => $query->getQueryText(),
             'minimum_should_match' => $query->getMinimumShouldMatch(),
             'boost'                => $query->getBoost(),
         ];
 
-        return ['match' => [$query->getField() => $searchQueryParams]];
+        $searchQuery = ['match' => [$query->getField() => $searchQueryParams]];
+
+        if ($query->getName()) {
+            $searchQuery['match']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

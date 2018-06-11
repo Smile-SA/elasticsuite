@@ -31,6 +31,16 @@ class Missing implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        return ['missing' => ['field' => $query->getField()]];
+        if ($query->getType() !== QueryInterface::TYPE_MISSING) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
+        $searchQuery = ['bool' => ['must_not' => ['exists' => ['field' => $query->getField()]]]];
+
+        if ($query->getName()) {
+            $searchQuery['bool']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

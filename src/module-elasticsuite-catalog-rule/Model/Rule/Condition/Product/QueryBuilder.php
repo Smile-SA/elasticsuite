@@ -1,10 +1,8 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
- *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogRule
@@ -39,6 +37,11 @@ class QueryBuilder
     private $attributeList;
 
     /**
+     * @var SpecialAttributesProvider
+     */
+    private $specialAttributesProvider;
+
+    /**
      * @var NestedFilterInterface[]
      */
     private $nestedFilters;
@@ -46,15 +49,21 @@ class QueryBuilder
     /**
      * Constructor.
      *
-     * @param AttributeList           $attributeList Search rule product attributes list
-     * @param QueryFactory            $queryFactory  Search query factory.
-     * @param NestedFilterInterface[] $nestedFilters Filters applied to nested fields during query building.
+     * @param AttributeList             $attributeList             Search rule product attributes list
+     * @param QueryFactory              $queryFactory              Search query factory.
+     * @param SpecialAttributesProvider $specialAttributesProvider Special Attributes Provider.
+     * @param NestedFilterInterface[]   $nestedFilters             Filters applied to nested fields during query building.
      */
-    public function __construct(AttributeList $attributeList, QueryFactory $queryFactory, $nestedFilters = [])
-    {
-        $this->queryFactory  = $queryFactory;
-        $this->attributeList = $attributeList;
-        $this->nestedFilters = $nestedFilters;
+    public function __construct(
+        AttributeList $attributeList,
+        QueryFactory $queryFactory,
+        SpecialAttributesProvider $specialAttributesProvider,
+        $nestedFilters = []
+    ) {
+        $this->queryFactory              = $queryFactory;
+        $this->attributeList             = $attributeList;
+        $this->specialAttributesProvider = $specialAttributesProvider;
+        $this->nestedFilters             = $nestedFilters;
     }
 
     /**
@@ -76,11 +85,11 @@ class QueryBuilder
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
-            if ($productCondition->getInputType() === 'string') {
-                $queryType = QueryInterface::TYPE_MATCH;
+            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()'])) {
+                $queryType   = QueryInterface::TYPE_MATCH;
                 $queryParams = $this->getMatchQueryParams($productCondition);
             } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
-                $queryType = QueryInterface::TYPE_RANGE;
+                $queryType   = QueryInterface::TYPE_RANGE;
                 $queryParams = $this->getRangeQueryParams($productCondition);
             }
 
@@ -93,11 +102,11 @@ class QueryBuilder
             $field = $this->getSearchField($productCondition);
 
             if ($field->isNested()) {
-                $nestedPath = $field->getNestedPath();
+                $nestedPath        = $field->getNestedPath();
                 $nestedQueryParams = ['query' => $query, 'path' => $nestedPath];
 
                 if (isset($this->nestedFilters[$nestedPath])) {
-                    $nestedFilterClauses = [];
+                    $nestedFilterClauses           = [];
                     $nestedFilterClauses['must'][] = $this->nestedFilters[$nestedPath]->getFilter();
                     $nestedFilterClauses['must'][] = $nestedQueryParams['query'];
 
@@ -124,23 +133,12 @@ class QueryBuilder
     {
         $query = null;
 
-        if ($productCondition->getAttribute() == 'has_image' && $productCondition->getValue()) {
-            $query = $this->getHasImageQuery();
+        if (in_array($productCondition->getAttribute(), array_keys($this->specialAttributesProvider->getList()))) {
+            $specialAttribute = $this->specialAttributesProvider->getAttribute($productCondition->getAttribute());
+            $query            = $specialAttribute->getSearchQuery();
         }
 
         return $query;
-    }
-
-    /**
-     * Has image query.
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
-     */
-    private function getHasImageQuery()
-    {
-        $query = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'image']);
-
-        return $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
     }
 
     /**
@@ -248,7 +246,7 @@ class QueryBuilder
         return $field;
     }
 
-     /**
+    /**
      * Retrieve ES mapping field name used for the current condition (including analyzer).
      *
      * @param ProductCondition $productCondition Product condition.
@@ -262,8 +260,8 @@ class QueryBuilder
         $field    = $this->attributeList->getField($attributeName);
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
-        if ($productCondition->getInputType() === "string") {
-            $analyzer = FieldInterface::ANALYZER_STANDARD;
+        if ($productCondition->getInputType() === "string" && !in_array($productCondition->getOperator(), ['()', '!()'])) {
+            $analyzer = $field->getDefaultSearchAnalyzer();
         }
 
         return $field->getMappingProperty($analyzer);

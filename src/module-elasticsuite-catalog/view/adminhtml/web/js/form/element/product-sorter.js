@@ -25,44 +25,64 @@ define([
             showSpinner: true,
             template: "Smile_ElasticsuiteCatalog/form/element/product-sorter",
             refreshFields: {},
+            excludedPreviewFields : {},
             maxRefreshInterval: 1000,
             imports: {
                 formData: "${ $.provider }:data"
             },
             messages : {
-                blockTitle    : $.mage.__('Product Preview and Sorting'),
                 emptyText     : $.mage.__('Your product selection is empty.'),
                 automaticSort : $.mage.__('Automatic Sort'),
                 manualSort    : $.mage.__('Manual Sort'),
                 showMore      : $.mage.__('Show more')
-            }
+            },
+            forceLoading : false
         },
-        
+
         initialize: function ()
         {
             this.updateImports(arguments[0]);
             this._super();
-            
+
             this.editPositions      = JSON.parse(this.value());
             this.products           = [];
             this.countTotalProducts = 0;
             this.pageSize           = parseInt(this.pageSize, 10);
             this.currentSize        = this.pageSize;
-            
+            this.enabled            = this.loadUrl != null;
+
             this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner']);
-            
+
             this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
+            
+            if (this.forceLoading) {
+                this.refreshProductList();
+            }
         },
-        
+
+        prepareFormData: function(formData) {
+            if (this.excludedPreviewFields) {
+                Object.keys(this.excludedPreviewFields).forEach(function (fieldName) {
+                    if (formData.hasOwnProperty(fieldName) && formData[fieldName] !== null) {
+                        formData[fieldName] = null;
+                    }
+                });
+            }
+
+            return formData;
+        },
+
         updateImports: function (config) {
-            Object.keys(config.refreshFields).each (function (fieldName) {
-                fieldName = '${ $.provider }:data.' + fieldName;
-                
-                if (config.listens === undefined) {
-                    config.listens = {}
-                }
-                config.listens[fieldName] = "refreshProductList";
-            });
+            if (config.refreshFields) {
+                Object.keys(config.refreshFields).each (function (fieldName) {
+                    fieldName = '${ $.provider }:data.' + fieldName;
+
+                    if (config.listens === undefined) {
+                        config.listens = {}
+                    }
+                    config.listens[fieldName] = "refreshProductList";
+                });
+            }
         },
         
         refreshProductList: function () {
@@ -73,13 +93,16 @@ define([
             this.loading(true);
 
             this.refreshRateLimiter = setTimeout(function () {
-                var formData = this.formData;
-                Object.keys(this.editPositions()).each(function (productId) {
+                var formData = this.prepareFormData(this.formData);
+                Object.keys(this.editPositions()).forEach(function (productId) {
                     formData['product_position[' + productId + ']'] = this.editPositions()[productId];
                 }.bind(this));
-                
+
                 formData['page_size'] = this.currentSize();
-                this.loadXhr = $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
+
+                if (this.enabled) {
+                    this.loadXhr = $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
+                }
             }.bind(this), this.maxRefreshInterval);
         },
         
@@ -91,17 +114,17 @@ define([
             
             var productIds = products.map(function (product) { return product.getId() });
             var editPositions = this.editPositions();
-            
+
             for (var productId in editPositions) {
                 if ($.inArray(parseInt(productId, 10), productIds) < 0) {
                     delete editPositions[productId];
                 } 
             }
-            
+
             this.editPositions(editPositions);
             this.loading(false);
         },
-        
+
         createProduct: function (productData) {
             productData.priceFormat = this.priceFormat;
             if (this.editPositions()[productData.id]) {
@@ -109,7 +132,7 @@ define([
             }
             return new Product({data : productData});
         },
-        
+
         hasProducts: function () {
             return this.products().length > 0;
         },
@@ -122,7 +145,7 @@ define([
             this.currentSize(this.currentSize() + this.pageSize);
             this.refreshProductList();
         },
-        
+
         sortProduct : function (products) {
             products.sort(function (product1, product2) { return product1.compareTo(product2); });
             return products;
@@ -131,7 +154,7 @@ define([
         getProductById : function (productId) {
             var product = null;
             productId   = parseInt(productId, 10);
-            this.products().each(function (currentProduct) {
+            this.products().forEach(function (currentProduct) {
                 if (currentProduct.getId() === productId) {
                     product = currentProduct;
                 }
@@ -148,6 +171,7 @@ define([
                 update      : component.onSortUpdate.bind(component)
             });
             $(element).disableSelection();
+            $(element).append('<li class="clear"></li>');
         },
 
         onSortUpdate : function (event, ui)
@@ -174,7 +198,7 @@ define([
                     editPositions[currentProduct.getId()] = position;
                 }
             }.bind(this))
-            
+
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
         },
@@ -202,7 +226,7 @@ define([
                 editPositions[product.getId()] = maxPosition + 1;
                 product.setPosition(maxPosition + 1);
             }
-            
+
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
         }

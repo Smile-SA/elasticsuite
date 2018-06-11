@@ -71,4 +71,11 @@ interface ClientConfigurationInterface
      * @return string
      */
     public function getHttpAuthPassword();
+
+    /**
+     * Client config options.
+     *
+     * @return array
+     */
+    public function getOptions();
 }

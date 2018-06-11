@@ -56,8 +56,8 @@ class Type implements TypeInterface
      */
     public function __construct($name, MappingInterface $mapping, array $datasources = [])
     {
-        $this->name    = $name;
-        $this->mapping = $mapping;
+        $this->name        = $name;
+        $this->mapping     = $mapping;
         $this->datasources = $datasources;
     }
 
@@ -90,6 +90,10 @@ class Type implements TypeInterface
      */
     public function getDatasource($name)
     {
+        if (!isset($this->datasources[$name])) {
+            throw new \InvalidArgumentException("Datasource $name does not exists.");
+        }
+
         return $this->datasources[$name];
     }
     /**

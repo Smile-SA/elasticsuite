@@ -31,6 +31,19 @@ class Range implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        return ['range' => [$query->getField() => $query->getBounds()]];
+        if ($query->getType() !== QueryInterface::TYPE_RANGE) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
+        $queryParams = $query->getBounds();
+        $queryParams['boost'] = $query->getBoost();
+
+        $searchQuery = ['range' => [$query->getField() => $queryParams]];
+
+        if ($query->getName()) {
+            $searchQuery['range']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

@@ -39,6 +39,32 @@ class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getRemoveUrl()
+    {
+        $query = [$this->getFilter()->getRequestVar() => $this->getFilter()->getResetValue()];
+
+        if (is_array($this->getApplyValue())) {
+            $resetValue = array_diff($this->getApplyValue(), [$this->getLabel()]);
+            if (count($resetValue) < 2) {
+                $resetValue = current($resetValue);
+            }
+
+            $query = [$this->getFilter()->getRequestVar() => $resetValue];
+        }
+
+        $params = [
+            '_current'     => true,
+            '_use_rewrite' => true,
+            '_query'       => $query,
+            '_escape'      => true,
+        ];
+
+        return $this->_url->getUrl('*/*/*', $params);
+    }
+
+    /**
      * Append url and is_selected computed fields to the result array.
      *
      * {@inheritDoc}

@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
 
-use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
@@ -62,7 +61,7 @@ class Factory
     /**
      * XML node for phonetic configuration
      */
-    const PHONETIC_CONFIG_XML_PREFIX = 'spellchecking/phonetic';
+    const PHONETIC_CONFIG_XML_PATH = 'spellchecking/phonetic/enable';
 
     /**
      * @var RelevanceConfigurationInterface[]
@@ -129,12 +128,12 @@ class Factory
     protected function loadConfiguration($scopeCode)
     {
         $configurationParams = [
-            'minimumShouldMatch' => $this->getMinimumShouldMatch($scopeCode),
-            'tieBreaker'         => $this->getTieBreaker($scopeCode),
-            'phraseMatchBoost'   => $this->getPhraseMatchBoostConfiguration($scopeCode),
-            'cutOffFrequency'    => $this->getCutoffFrequencyConfiguration($scopeCode),
-            'fuzziness'          => $this->getFuzzinessConfiguration($scopeCode),
-            'phonetic'           => $this->getPhoneticConfiguration($scopeCode),
+            'minimumShouldMatch'   => $this->getMinimumShouldMatch($scopeCode),
+            'tieBreaker'           => $this->getTieBreaker($scopeCode),
+            'phraseMatchBoost'     => $this->getPhraseMatchBoostConfiguration($scopeCode),
+            'cutOffFrequency'      => $this->getCutoffFrequencyConfiguration($scopeCode),
+            'fuzziness'            => $this->getFuzzinessConfiguration($scopeCode),
+            'enablePhoneticSearch' => $this->isPhoneticSearchEnabled($scopeCode),
         ];
 
         return $configurationParams;
@@ -186,35 +185,11 @@ class Factory
      *
      * @param string $scopeCode The scope code.
      *
-     * @return PhoneticConfigurationInterface|null
+     * @return bool
      */
-    private function getPhoneticConfiguration($scopeCode)
+    private function isPhoneticSearchEnabled($scopeCode)
     {
-        $path = self::PHONETIC_CONFIG_XML_PREFIX;
-
-        $configuration = (bool) $this->getConfigValue($path . "/enable", $scopeCode);
-
-        if ($configuration) {
-            $phoneticFuzziness = (bool) $this->getConfigValue($path . "/enable_fuzziness", $scopeCode);
-            $configurationParams = ['fuzziness' => null];
-
-            if ($phoneticFuzziness === true) {
-                $fuzzinessParams = [
-                    'value'        => $this->getConfigValue($path . "/fuzziness_value", $scopeCode),
-                    'prefixLength' => $this->getConfigValue($path . "/fuzziness_prefix_length", $scopeCode),
-                    'maxExpansion' => $this->getConfigValue($path . "/fuzziness_max_expansion", $scopeCode),
-                ];
-
-                $configurationParams['fuzziness'] = $this->createFuzzinessConfiguration($fuzzinessParams);
-            }
-
-            $configuration = $this->objectManager->create(
-                '\Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\PhoneticConfigurationInterface',
-                $configurationParams
-            );
-        }
-
-        return $configuration === false ? null : $configuration;
+        return (bool) $this->getConfigValue(self::PHONETIC_CONFIG_XML_PATH, $scopeCode);
     }
 
     /**

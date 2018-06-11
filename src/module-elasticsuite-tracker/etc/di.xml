@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCore dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Smile\ElasticsuiteTracker\Api\EventQueueInterface" type="Smile\ElasticsuiteTracker\Model\EventQueue" />
+    <preference for="Smile\ElasticsuiteTracker\Api\EventIndexInterface" type="Smile\ElasticsuiteTracker\Model\EventIndex" />
+    <preference for="Smile\ElasticsuiteTracker\Api\SessionIndexInterface" type="Smile\ElasticsuiteTracker\Model\SessionIndex" />
+    <preference for="Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface" type="Smile\ElasticsuiteTracker\Model\Customer\TrackingService" />
+
+    <type name="Smile\ElasticsuiteTracker\Model\EventQueue">
+        <arguments>
+            <argument name="eventProcessors" xsi:type="array">
+                <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
+                <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

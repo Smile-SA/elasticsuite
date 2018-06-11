@@ -47,7 +47,7 @@ class QueryFactory
      *
      * @return QueryInterface
      */
-    public function create($queryType, $queryParams)
+    public function create($queryType, $queryParams = [])
     {
         if (!isset($this->factories[$queryType])) {
             throw new \LogicException("No factory found for query of type {$queryType}");

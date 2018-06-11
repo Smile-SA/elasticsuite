@@ -88,6 +88,10 @@ class DataProviderPlugin
             $data[$currentCategory->getId()]['use_default']['is_virtual_category'] = true;
         }
 
+        if ($currentCategory->getLevel() >= 2 && !isset($data[$currentCategory->getId()]['virtual_category_root'])) {
+            $data[$currentCategory->getId()]['virtual_category_root'] = $currentCategory->getPathIds()[1];
+        }
+
         $data[$currentCategory->getId()]['sorted_products'] = $this->getProductSavedPositions($currentCategory);
         $data[$currentCategory->getId()]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);
         $data[$currentCategory->getId()]['price_format'] = $this->localeFormat->getPriceFormat();
@@ -100,23 +104,20 @@ class DataProviderPlugin
      *
      * @param Category $category Category.
      *
-     * @return string
+     * @return string|null
      */
     private function getProductSorterLoadUrl(Category $category)
     {
-        $storeId = $category->getStoreId();
+        $url = null;
 
-        if ($storeId === 0) {
-            $defaultStoreId = $this->getDefaultStoreView()->getId();
-            $storeId        = current(array_filter($category->getStoreIds()));
-            if (in_array($defaultStoreId, $category->getStoreIds())) {
-                $storeId = $defaultStoreId;
-            }
+        $storeId = $this->getStoreId($category);
+
+        if ($storeId) {
+            $urlParams = ['ajax' => true, 'store' => $storeId];
+            $url = $this->urlBuilder->getUrl('virtualcategory/category_virtual/preview', $urlParams);
         }
 
-        $urlParams = ['ajax' => true, 'store' => $storeId];
-
-        return $this->urlBuilder->getUrl('virtualcategory/category_virtual/preview', $urlParams);
+        return $url;
     }
 
     /**
@@ -138,18 +139,43 @@ class DataProviderPlugin
     }
 
     /**
-     * Retrieve default Store View
+     * Retrieve default store view id.
      *
-     * @return \Magento\Store\Api\Data\StoreInterface
+     * @return int
      */
-    private function getDefaultStoreView()
+    private function getDefaultStoreId()
     {
         $store = $this->storeManager->getDefaultStoreView();
+
         if (null === $store) {
             // Occurs when current user does not have access to default website (due to AdminGWS ACLS on Magento EE).
-            $store = current($this->storeManager->getWebsites())->getDefaultStore();
+            $store = !empty($this->storeManager->getWebsites()) ? current($this->storeManager->getWebsites())->getDefaultStore() : null;
         }
 
-        return $store;
+        return $store ? $store->getId() : 0;
+    }
+
+    /**
+     * Get store id for the current category.
+     *
+     *
+     * @param Category $category Category.
+     *
+     * @return int
+     */
+    private function getStoreId(Category $category)
+    {
+        $storeId = $category->getStoreId();
+
+        if ($storeId === 0) {
+            $defaultStoreId   = $this->getDefaultStoreId();
+            $categoryStoreIds = array_filter($category->getStoreIds());
+            $storeId        = current($categoryStoreIds);
+            if (in_array($defaultStoreId, $categoryStoreIds)) {
+                $storeId = $defaultStoreId;
+            }
+        }
+
+        return $storeId;
     }
 }

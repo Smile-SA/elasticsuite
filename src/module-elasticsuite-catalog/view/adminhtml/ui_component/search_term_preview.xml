@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+      
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">search_term_preview.search_term_preview_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true"></item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    
+    <settings>
+        <buttons>
+            <button name="save_and_continue" class="Smile\ElasticsuiteCatalog\Block\Adminhtml\Search\Term\Merchandiser\Edit\SaveAndContinueButton"/>
+            <button name="reset" class="Smile\ElasticsuiteCatalog\Block\Adminhtml\Search\Term\Merchandiser\Edit\ResetButton"/>
+            <button name="save" class="Smile\ElasticsuiteCatalog\Block\Adminhtml\Search\Term\Merchandiser\Edit\SaveButton"/>
+            <button name="back" class="Smile\ElasticsuiteCatalog\Block\Adminhtml\Search\Term\Merchandiser\Edit\BackButton" />
+        </buttons>
+        <namespace>search_term_preview</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>search_term_preview.search_term_preview_data_source</dep>
+        </deps>
+    </settings>
+    
+    <dataSource name="search_term_preview_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="search/term_merchandiser/save"/>
+        </settings>
+        <dataProvider class="Smile\ElasticsuiteCatalog\Ui\Component\Search\Term\Preview\DataProvider" name="search_term_preview_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>query_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <collapsible>false</collapsible>
+            <opened>true</opened>
+            <label translate="true"></label>
+        </settings>
+        
+        <container name="product_sorter_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">30</item>
+                </item>
+            </argument>
+            <field name="sorted_products">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="formElement" xsi:type="string">text</item>
+                        <item name="source" xsi:type="string">category</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalog/js/form/element/product-sorter</item>
+                        <item name="label" xsi:type="string" translate="true"></item>
+                        <item name="dataScope" xsi:type="string">sorted_products</item>
+                        <item name="pageSize" xsi:type="string">20</item>
+                        <item name="forceLoading" xsi:type="boolean">true</item>
+                        <item name="messages" xsi:type="array">
+                            <item name="emptyText" xsi:type="string" translate="true"><![CDATA[No search result for the current search.]]></item>
+                        </item>
+                        <item name="imports" xsi:type="array">
+                            <item name="loadUrl" xsi:type="string">${ $.provider }:data.product_sorter_load_url</item>
+                            <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>
+                        </item>
+                  </item>
+                  </argument>
+            </field>
+        </container>
+    </fieldset>
+</form>

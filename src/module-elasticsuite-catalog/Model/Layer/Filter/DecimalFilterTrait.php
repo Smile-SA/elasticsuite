@@ -13,6 +13,13 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+/**
+ * Decimal filter model methods.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ */
 trait DecimalFilterTrait
 {
     /**
@@ -45,7 +52,7 @@ trait DecimalFilterTrait
 
                 $this->getLayer()->getProductCollection()->addFieldToFilter(
                     $this->getAttributeModel()->getAttributeCode(),
-                    ['from' => $fromValue, 'to' => $toValue]
+                    ['gte' => $fromValue, 'lt' => $toValue]
                 );
 
                 $this->getLayer()->getState()->addFilter(

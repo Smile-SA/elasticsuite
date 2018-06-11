@@ -14,13 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Block;
 
-use Magento\Catalog\Model\Layer\AvailabilityFlagInterface;
-use Magento\Catalog\Model\Layer\FilterList;
-use Magento\Catalog\Model\Layer\Resolver;
-use Magento\Framework\Module\Manager;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\View\Element\Template\Context;
-
 /**
  * Custom implementation of the navigation block to apply facet coverage rate.
  *
@@ -33,39 +26,57 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     const DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/expanded_facets';
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Framework\ObjectManagerInterface
      */
     private $objectManager;
 
     /**
-     * @var Manager
+     * @var \Magento\Framework\Module\Manager
      */
     private $moduleManager;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList
+     */
+    private $relevantFilterList;
+
+    /**
+     * @var string[]
+     */
+    private $inlineLayouts = ['1column'];
+
+    /**
+     * @var string|NULL
+     */
+    private $pageLayout;
+
+    /**
      * Navigation constructor.
      *
-     * @param \Magento\Framework\View\Element\Template\Context       $context        Application context
-     * @param \Magento\Catalog\Model\Layer\Resolver                  $layerResolver  Layer Resolver
-     * @param \Magento\Catalog\Model\Layer\FilterList                $filterList     Filter List
-     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag Visibility Flag
-     * @param \Magento\Framework\ObjectManagerInterface              $objectManager  Object Manager
-     * @param \Magento\Framework\Module\Manager                      $moduleManager  Module Manager
-     * @param array                                                  $data           Block Data
+     * @param \Magento\Framework\View\Element\Template\Context          $context            Application context
+     * @param \Magento\Catalog\Model\Layer\Resolver                     $layerResolver      Layer Resolver
+     * @param \Magento\Catalog\Model\Layer\FilterList                   $filterList         Filter List
+     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface    $visibilityFlag     Visibility Flag
+     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager      Object Manager
+     * @param \Magento\Framework\Module\Manager                         $moduleManager      Module Manager
+     * @param \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList Attribute coverage rate provider.
+     * @param array                                                     $data               Block Data
      */
     public function __construct(
-        Context $context,
-        Resolver $layerResolver,
-        FilterList $filterList,
-        AvailabilityFlagInterface $visibilityFlag,
-        ObjectManagerInterface $objectManager,
-        Manager $moduleManager,
+        \Magento\Framework\View\Element\Template\Context $context,
+        \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Catalog\Model\Layer\FilterList $filterList,
+        \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        \Magento\Framework\Module\Manager $moduleManager,
+        \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList,
         array $data
     ) {
-        $this->objectManager = $objectManager;
-        $this->moduleManager = $moduleManager;
-
         parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
+        $this->pageLayout         = $context->getPageConfig()->getPageLayout() ?: $this->getLayout()->getUpdate()->getPageLayout();
+        $this->objectManager      = $objectManager;
+        $this->moduleManager      = $moduleManager;
+        $this->relevantFilterList = $relevantFilterList;
     }
 
     /**
@@ -77,17 +88,24 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     public function canShowBlock()
     {
+        $canShowBlock = parent::canShowBlock();
+
         if ($this->moduleManager->isEnabled('Magento_Staging')) {
             try {
                 $versionManager = $this->objectManager->get('\Magento\Staging\Model\VersionManager');
 
-                return parent::canShowBlock() && !$versionManager->isPreviewVersion();
+                $canShowBlock = $canShowBlock && !$versionManager->isPreviewVersion();
             } catch (\Exception $exception) {
-                return parent::canShowBlock();
+                ;
             }
         }
 
-        return parent::canShowBlock();
+        if ($this->getLayer() instanceof \Magento\Catalog\Model\Layer\Category &&
+            $this->getLayer()->getCurrentCategory()->getDisplayMode() === \Magento\Catalog\Model\Category::DM_PAGE) {
+            $canShowBlock = false;
+        }
+
+        return $canShowBlock;
     }
 
     /**
@@ -100,14 +118,18 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     public function getActiveFilters()
     {
-        $requestParams    = array_keys($this->getRequest()->getParams());
-        $displayedFilters = $this->getDisplayedFilters();
-        $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
-        $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+        $activeFilters = [];
 
-        foreach ($displayedFilters as $index => $filter) {
-            if (in_array($filter->getRequestVar(), $requestParams)) {
-                $activeFilters[] = $index;
+        if (!$this->isInline()) {
+            $requestParams    = array_keys($this->getRequest()->getParams());
+            $displayedFilters = $this->getDisplayedFilters();
+            $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
+            $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+
+            foreach ($displayedFilters as $index => $filter) {
+                if (in_array($filter->getRequestVar(), $requestParams)) {
+                    $activeFilters[] = $index;
+                }
             }
         }
 
@@ -132,6 +154,16 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     }
 
     /**
+     * Indicates if the block is displayed inline or not.
+     *
+     * @return boolean
+     */
+    public function isInline()
+    {
+        return in_array($this->pageLayout, $this->inlineLayouts);
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
@@ -151,23 +183,8 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
      */
     private function addFacets()
     {
-        $productCollection = $this->getLayer()->getProductCollection();
-        $countBySetId      = $productCollection->getProductCountByAttributeSetId();
-        $totalCount        = $productCollection->getSize();
-
-        foreach ($this->filterList->getFilters($this->_catalogLayer) as $filter) {
-            try {
-                $attribute                = $filter->getAttributeModel();
-                $facetCoverageRate        = $attribute->getFacetMinCoverageRate();
-                $attributeCountCandidates = array_sum(array_intersect_key($countBySetId, $attribute->getAttributeSetInfo()));
-                $currentCoverageRate      = $attributeCountCandidates / $totalCount * 100;
-
-                if ($facetCoverageRate < $currentCoverageRate) {
-                    $filter->addFacetToCollection();
-                }
-            } catch (\Exception $e) {
-                $filter->addFacetToCollection();
-            }
+        foreach ($this->relevantFilterList->getRelevantFilters($this->getLayer(), $this->getFilters()) as $filter) {
+            $filter->addFacetToCollection();
         }
     }
 }

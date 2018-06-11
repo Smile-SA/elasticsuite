@@ -59,6 +59,10 @@ class PriceSlider extends Slider
             $config['step'] = $this->getStepValue();
         }
 
+        if ($this->getFilter()->getCurrencyRate()) {
+            $config['rate'] = $this->getFilter()->getCurrencyRate();
+        }
+
         return $config;
     }
 

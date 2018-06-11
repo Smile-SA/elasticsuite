@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model\ResourceModel\Indexer;
 
-use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
@@ -80,8 +79,16 @@ class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaur
         $select     = $connection->select();
 
         $select->from(['thesaurus' => $this->getMainTable()], [])
-            ->join(['terms' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)], 'thesaurus.thesaurus_id = terms.thesaurus_id', [])
-            ->join(['store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)], 'store.thesaurus_id = thesaurus.thesaurus_id', [])
+            ->join(
+                ['terms' => $this->getTable(ThesaurusInterface::EXPANSION_TABLE_NAME)],
+                'thesaurus.thesaurus_id = terms.thesaurus_id',
+                []
+            )
+            ->join(
+                ['store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)],
+                'store.thesaurus_id = thesaurus.thesaurus_id',
+                []
+            )
             ->group(['thesaurus.thesaurus_id', 'terms.term_id'])
             ->where("thesaurus.type = ?", $type)
             ->where('thesaurus.is_active = 1')

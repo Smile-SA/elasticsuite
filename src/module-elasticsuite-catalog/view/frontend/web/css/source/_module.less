@@ -109,6 +109,13 @@
             content: "\e621"
         }
     }
+
+    .no-results-message p {
+        margin: 9px 10px 0;
+        background-color: #FFEEEE;
+        padding: 5px;
+        color: #AA0000;
+    }
 }
 
 .smile-elasticsuite-autocomplete-result {
@@ -150,6 +157,20 @@
     .price-box {
         span.old-price {
             display:block;
+        }
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .page-layout-1column {
+        .filter-options {
+            .filter {
+                &-options {
+                    &-content {
+                        padding: @indent__s;
+                    }
+                }
+            }
         }
     }
 }

@@ -26,6 +26,7 @@
                 <datasource name="categories">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
                 <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
                 <datasource name="stock">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</datasource>
+                <datasource name="searchPositions">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</datasource>
             </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->
@@ -36,10 +37,16 @@
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
                 <field name="type_id" type="string" />
-                <field name="sku" type="string" />
+                <field name="sku" type="string">
+                    <isSearchable>1</isSearchable>
+                    <isUsedForSortBy>1</isUsedForSortBy>
+                    <isUsedInSpellcheck>1</isUsedInSpellcheck>
+                    <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
+                </field>
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />
                 <field name="configurable_attributes" type="string" />
+                <field name="indexed_attributes" type="string" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
@@ -61,6 +68,10 @@
                     <isFilterable>0</isFilterable>
                 </field>
 
+                <!-- Static fields handled by the "searchPositions" datasource -->
+                <field name="search_query.query_id" type="integer" nestedPath="search_query" />
+                <field name="search_query.position" type="integer" nestedPath="search_query" />
+                
             </mapping>
         </type>
     </index>

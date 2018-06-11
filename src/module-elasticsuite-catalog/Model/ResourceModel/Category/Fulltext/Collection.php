@@ -14,7 +14,6 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Fulltext;
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Search\RequestInterface;
 
 /**
  * Search engine category collection for Autocomplete.
@@ -235,7 +234,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
                 $metrics = $value->getMetrics();
-                $result[$metrics['value']] = $metrics;
+                $result[$value->getValue()] = $metrics['count'];
             }
         }
 

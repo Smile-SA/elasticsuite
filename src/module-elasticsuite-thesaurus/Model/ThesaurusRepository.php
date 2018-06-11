@@ -14,8 +14,6 @@ namespace Smile\ElasticsuiteThesaurus\Model;
 
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SortOrder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterfaceFactory;
@@ -88,6 +86,9 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     /**
      * Retrieve a thesaurus by its ID
      *
+     * @SuppressWarnings(PHPMD.StaticAccess) Mandatory to throw the exception via static access to be compliant
+     * with Magento Extension Quality Program
+     *
      * @param int $thesaurusId id of the thesaurus
      *
      * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
@@ -99,8 +100,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
             /** @var ThesaurusInterface $thesaurus */
             $thesaurus = $this->thesaurusFactory->create()->load($thesaurusId);
             if (!$thesaurus->getThesaurusId()) {
-                $exception = new NoSuchEntityException();
-                throw $exception->singleField('thesaurusId', $thesaurusId);
+                throw NoSuchEntityException::singleField('thesaurusId', $thesaurusId);
             }
 
             $this->thesaurusRepositoryById[$thesaurusId] = $thesaurus;

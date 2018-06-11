@@ -42,17 +42,24 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private $filterListPool;
 
     /**
+     * @var \Magento\Catalog\Api\Data\CategoryInterfaceFactory
+     */
+    private $categoryFactory;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Action\Context            $context           Controller action context.
-     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory JSON result factory.
-     * @param \Magento\Catalog\Model\Layer\Resolver            $layerResolver     Layer resolver.
-     * @param \Magento\Catalog\Model\Layer\FilterList[]        $filterListPool    Filter list pool.
+     * @param \Magento\Framework\App\Action\Context              $context           Controller action context.
+     * @param \Magento\Framework\Controller\Result\JsonFactory   $jsonResultFactory JSON result factory.
+     * @param \Magento\Catalog\Model\Layer\Resolver              $layerResolver     Layer resolver.
+     * @param \Magento\Catalog\Api\Data\CategoryInterfaceFactory $categoryFactory   Category factory.
+     * @param \Magento\Catalog\Model\Layer\FilterList[]          $filterListPool    Filter list pool.
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Catalog\Api\Data\CategoryInterfaceFactory $categoryFactory,
         $filterListPool = []
     ) {
         parent::__construct($context);
@@ -60,6 +67,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         $this->jsonResultFactory = $jsonResultFactory;
         $this->layerResolver     = $layerResolver;
         $this->filterListPool    = $filterListPool;
+        $this->categoryFactory   = $categoryFactory;
     }
 
     /**
@@ -99,6 +107,12 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private function initLayer()
     {
         $this->layerResolver->create($this->getLayerType());
+
+        if ($this->getRequest()->getParam('cat')) {
+            $category = $this->categoryFactory->create()->setId($this->getRequest()->getParam('cat'));
+            $this->layerResolver->get()->setCurrentCategory($category);
+        }
+
         $this->applyFilters();
 
         return $this;

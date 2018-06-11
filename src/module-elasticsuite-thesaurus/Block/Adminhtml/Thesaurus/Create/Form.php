@@ -63,8 +63,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             'select',
             [
                 'name' => 'type',
-                'label' => __('Thesarurus Type'),
-                'title' => __('Thesarurus Type'),
+                'label' => __('Thesaurus Type'),
+                'title' => __('Thesaurus Type'),
                 'values' => $thesaurusTypes,
             ]
         );

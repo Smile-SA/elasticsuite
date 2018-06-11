@@ -187,14 +187,10 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      */
     private function underscore($name)
     {
-        if (isset($this->underscoreCache[$name])) {
-            return $this->underscoreCache[$name];
+        if (!isset($this->underscoreCache[$name])) {
+            $this->underscoreCache[$name] = strtolower(preg_replace('/(.)([A-Z])/', "$1_$2", $name));
         }
 
-        $result = strtolower(preg_replace('/(.)([A-Z])/', "$1_$2", $name));
-
-        $this->underscoreCache[$name] = $result;
-
-        return $result;
+        return $this->underscoreCache[$name];
     }
 }

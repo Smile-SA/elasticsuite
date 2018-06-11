@@ -41,11 +41,18 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
-        $relationsByChildId = $this->resourceModel->loadChildrens($productIds);
+        $relationsByChildId = $this->resourceModel->loadChildrens($productIds, $storeId);
 
         if (!empty($relationsByChildId)) {
-            $allChildrenIds = array_keys($relationsByChildId);
-            $childrenIndexData = $this->addAttributeData($storeId, $allChildrenIds);
+            $allChildrenIds      = array_keys($relationsByChildId);
+            $childrenIndexData   = $this->addAttributeData($storeId, $allChildrenIds);
+
+            foreach ($childrenIndexData as $childrenId => $childrenData) {
+                $enabled = isset($childrenData['status']) && current($childrenData['status']) == 1;
+                if ($enabled === false) {
+                    unset($childrenIndexData[$childrenId]);
+                }
+            }
 
             foreach ($relationsByChildId as $childId => $relations) {
                 foreach ($relations as $relation) {
@@ -54,10 +61,13 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                         $indexData[$parentId]['children_ids'][] = $childId;
                         $this->addRelationData($indexData[$parentId], $childrenIndexData[$childId], $relation);
                         $this->addChildData($indexData[$parentId], $childrenIndexData[$childId]);
+                        $this->addChildSku($indexData[$parentId], $relation);
                     }
                 }
             }
         }
+
+        $indexData = $this->filterCompositeProducts($indexData);
 
         return $indexData;
     }
@@ -84,6 +94,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 }
 
                 $indexData[$productId] += $indexValues;
+
+                if (!isset($indexData[$productId]['indexed_attributes'])) {
+                    $indexData[$productId]['indexed_attributes'] = [];
+                }
+                $indexData[$productId]['indexed_attributes'][] = $attribute->getAttributeCode();
             }
         }
 
@@ -114,7 +129,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 $parentData[$attributeCode] = [];
             }
 
-            $parentData[$attributeCode] = array_unique(array_merge($parentData[$attributeCode], $value));
+            $parentData[$attributeCode] = array_values(array_unique(array_merge($parentData[$attributeCode], $value)));
         }
     }
 
@@ -133,7 +148,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         $parentAttributeCodes = array_keys($parentData);
 
         if (!isset($parentData['children_attributes'])) {
-            $parentData['children_attributes'] = [];
+            $parentData['children_attributes'] = ['indexed_attributes'];
         }
 
         $childrenAttributes = array_merge(
@@ -168,5 +183,43 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         $parentData['children_attributes'] = array_values(array_unique($childrenAttributes));
+    }
+
+    /**
+     * Filter out composite product when no enabled children are attached.
+     *
+     * @param array $indexData Indexed data.
+     *
+     * @return array
+     */
+    private function filterCompositeProducts($indexData)
+    {
+        $compositeProductTypes = $this->resourceModel->getCompositeTypes();
+
+        foreach ($indexData as $productId => $productData) {
+            $isComposite = in_array($productData['type_id'], $compositeProductTypes);
+            $hasChildren = isset($productData['children_ids']) && !empty($productData['children_ids']);
+            if ($isComposite && !$hasChildren) {
+                unset($indexData[$productId]);
+            }
+        }
+
+        return $indexData;
+    }
+
+    /**
+     * Append SKU of children product to the parent product index data.
+     *
+     * @param array $parentData Parent product data.
+     * @param array $relation   Relation data between the child and the parent.
+     */
+    private function addChildSku(&$parentData, $relation)
+    {
+        if (isset($parentData['sku']) && !is_array($parentData['sku'])) {
+            $parentData['sku'] = [$parentData['sku']];
+        }
+
+        $parentData['sku'][] = $relation['sku'];
+        array_unique($parentData['sku']);
     }
 }

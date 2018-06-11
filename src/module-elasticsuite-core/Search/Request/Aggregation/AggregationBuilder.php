@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -40,16 +40,24 @@ class AggregationBuilder
     private $queryBuilder;
 
     /**
+     * @var MetricFactory
+     */
+    private $metricFactory;
+
+    /**
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
+     * @param MetricFactory      $metricFactory      Factory used to instantiate metrics.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
         AggregationFactory $aggregationFactory,
+        MetricFactory $metricFactory,
         QueryBuilder $queryBuilder
     ) {
         $this->aggregationFactory = $aggregationFactory;
+        $this->metricFactory      = $metricFactory;
         $this->queryBuilder       = $queryBuilder;
     }
 
@@ -81,12 +89,22 @@ class AggregationBuilder
                 }
 
                 if (isset($bucketParams['nestedFilter'])) {
-                    $nestedFilter = $this->createFilter($containerConfiguration, $bucketParams['nestedFilter']);
-                    $bucketParams['nestedFilter'] = $nestedFilter->getQuery();
+                    $nestedFilter = $this->createFilter(
+                        $containerConfiguration,
+                        $bucketParams['nestedFilter'],
+                        $bucketParams['nestedPath']
+                    );
+                    $bucketParams['nestedFilter'] = $nestedFilter;
+                }
+
+                if (isset($bucketParams['childBuckets'])) {
+                    $bucketParams['childBuckets'] = $this->buildAggregations($containerConfiguration, $bucketParams['childBuckets'], []);
                 }
             } catch (\Exception $e) {
                 $bucketParams = $aggregationParams['config'];
             }
+
+            $bucketParams['metrics'] = $this->getMetrics($containerConfiguration, $aggregationParams);
 
             $buckets[] = $this->aggregationFactory->create($bucketType, $bucketParams);
         }
@@ -99,12 +117,13 @@ class AggregationBuilder
      *
      * @param ContainerConfigurationInterface $containerConfiguration Search container configuration
      * @param array                           $filters                Filters definition.
+     * @param string|null                     $currentPath            Current nested path or null.
      *
      * @return QueryInterface
      */
-    private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters)
+    private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters, $currentPath = null)
     {
-        return $this->queryBuilder->createFilters($containerConfiguration, $filters);
+        return $this->queryBuilder->create($containerConfiguration, $filters, $currentPath);
     }
 
     /**
@@ -126,8 +145,7 @@ class AggregationBuilder
 
         $bucketParams = [
             'field'   => $bucketField,
-            'name'    => $field->getName(),
-            'metrics' => [],
+            'name'    => isset($aggregationParams['config']['name']) ? $aggregationParams['config']['name'] : $field->getName(),
             'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];
 
@@ -137,12 +155,39 @@ class AggregationBuilder
             unset($bucketParams['filter']);
         }
 
-        if ($field->isNested() && !isset($bucketParams['nestedPath'])) {
+        if ($field->isNested()) {
             $bucketParams['nestedPath'] = $field->getNestedPath();
-        } elseif ($field->isNested() === false && isset($bucketParams['nestedPath'])) {
+        } elseif (isset($bucketParams['nestedPath'])) {
             unset($bucketParams['nestedPath']);
         }
 
         return $bucketParams;
+    }
+
+    /**
+     * Build buckets metric.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container config.
+     * @param array                           $aggregationParams      Aggregation params.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\Aggregation\Metric[]
+     */
+    private function getMetrics(ContainerConfigurationInterface $containerConfiguration, array $aggregationParams)
+    {
+        $metrics = [];
+        if (isset($aggregationParams['config']['metrics'])) {
+            foreach ($aggregationParams['config']['metrics'] as $metricName => $metricConfig) {
+                try {
+                    $field = $containerConfiguration->getMapping()->getField($metricConfig['field']);
+                    $metricConfig['field'] = $field->getName();
+                } catch (\Exception $e) {
+                    ;
+                }
+
+                $metrics[] = $this->metricFactory->create(['name' => $metricName] + $metricConfig);
+            }
+        }
+
+        return $metrics;
     }
 }

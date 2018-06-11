@@ -41,7 +41,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private $hasMoreItems = false;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Helper\Mapping
+     * @var \Smile\ElasticsuiteCatalog\Helper\ProductAttribute
      */
     private $mappingHelper;
 
@@ -53,7 +53,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
      * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping               $mappingHelper     Mapping helper.
+     * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute   $mappingHelper     Mapping helper.
      * @param array                                                $data              Custom data.
      */
     public function __construct(
@@ -62,7 +62,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
-        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
+        \Smile\ElasticsuiteCatalog\Helper\ProductAttribute $mappingHelper,
         array $data = []
     ) {
         parent::__construct(
@@ -90,18 +90,18 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
                 $attributeValue = [$attributeValue];
             }
 
-            $this->currentFilterValue = $attributeValue;
+            $this->currentFilterValue = array_values($attributeValue);
 
             /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
             $productCollection = $this->getLayer()->getProductCollection();
 
-            $productCollection->addFieldToFilter($this->getFilterField(), $attributeValue);
+            $productCollection->addFieldToFilter($this->getFilterField(), $this->currentFilterValue);
             $layerState = $this->getLayer()->getState();
 
-            $filterLabel = implode(', ', $this->currentFilterValue);
-            $filter = $this->_createItem($filterLabel, $this->currentFilterValue);
-
-            $layerState->addFilter($filter);
+            foreach ($this->currentFilterValue as $currentFilter) {
+                $filter = $this->_createItem($currentFilter, $this->currentFilterValue);
+                $layerState->addFilter($filter);
+            }
         }
 
         return $this;
@@ -198,13 +198,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      */
     protected function getFilterField()
     {
-        $field = $this->getAttributeModel()->getAttributeCode();
-
-        if ($this->getAttributeModel()->usesSource()) {
-            $field = $this->mappingHelper->getOptionTextFieldName($field);
-        }
-
-        return $field;
+        return $this->mappingHelper->getFilterField($this->getAttributeModel());
     }
 
     /**
@@ -261,20 +255,41 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
 
             if (!empty($options)) {
                 foreach ($options as $option) {
-                    $optionLabel = (string) $option['label'];
-                    $optionPosition++;
+                    if (isset($option['label'])) {
+                        $optionLabel = trim((string) $option['label']);
+                        $optionPosition++;
 
-                    if ($optionLabel && isset($items[$optionLabel])) {
-                        $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                        $items[$optionLabel]['value']          = $option['value'];
+                        if ($optionLabel !== null && isset($items[$optionLabel])) {
+                            $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                            $items[$optionLabel]['value']          = $option['value'];
+                        }
                     }
                 }
             }
 
-            usort($items, function ($item1, $item2) {
-                return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
-            });
+            $items = $this->sortOptionsData($items);
         }
+
+        return $items;
+    }
+
+    /**
+     * Sort items by adminSortIndex key.
+     *
+     * @param array $items to be sorted.
+     *
+     * @return array
+     */
+    private function sortOptionsData(array $items)
+    {
+
+        usort($items, function ($item1, $item2) {
+            if (!isset($item1['adminSortIndex']) or !isset($item2['adminSortIndex'])) {
+                return 0;
+            }
+
+            return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
+        });
 
         return $items;
     }

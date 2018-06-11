@@ -68,15 +68,26 @@ class AttributeData extends AbstractAttributeData
     }
 
     /**
+     * List of composite product types.
+     *
+     * @return string[]
+     */
+    public function getCompositeTypes()
+    {
+        return $this->catalogProductType->getCompositeTypes();
+    }
+
+    /**
      * Retrieve list of children ids for a product list.
      *
      * Warning the result use children ids as a key and list of parents as value
      *
      * @param array $productIds List of parent product ids.
+     * @param int   $storeId    Store id.
      *
      * @return array
      */
-    public function loadChildrens($productIds)
+    public function loadChildrens($productIds, $storeId)
     {
         $children = [];
 
@@ -85,22 +96,42 @@ class AttributeData extends AbstractAttributeData
             $relation = $typeInstance->getRelationInfo();
 
             if ($relation->getTable() && $relation->getParentFieldName() && $relation->getChildFieldName()) {
-                $select = $this->getRelationQuery($relation, $productIds);
+                $select = $this->getRelationQuery($relation, $productIds, $storeId);
                 $data   = $this->getConnection()->fetchAll($select);
 
                 foreach ($data as $relationRow) {
                     $parentId = (int) $relationRow['parent_id'];
                     $childId  = (int) $relationRow['child_id'];
+                    $sku      = (string) $relationRow['sku'];
                     $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"]));
                     $children[$childId][] = [
                         "parent_id"               => $parentId,
                         "configurable_attributes" => $configurableAttributes,
+                        "sku"                     => $sku,
                     ];
                 }
             }
         }
 
         return $children;
+    }
+
+    /**
+     * Allow to filter an attribute collection on attributes that are indexed into the search engine.
+     * Overriden to enforce "status" attribute indexing for products.
+     *
+     * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection Attribute Collection
+     *
+     * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     */
+    public function addIndexedFilterToAttributeCollection(
+        \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection
+    ) {
+        $attributeCollection = parent::addIndexedFilterToAttributeCollection($attributeCollection);
+
+        $attributeCollection->getSelect()->orWhere("attribute_code = 'status'");
+
+        return $attributeCollection;
     }
 
     /**
@@ -154,10 +185,11 @@ class AttributeData extends AbstractAttributeData
      *
      * @param \Magento\Framework\DataObject $relation  Relation Instance
      * @param array                         $parentIds The parent product Ids (array of entity_id)
+     * @param int                           $storeId   Store id.
      *
      * @return \Magento\Framework\DB\Select
      */
-    private function getRelationQuery($relation, $parentIds)
+    private function getRelationQuery($relation, $parentIds, $storeId)
     {
         $linkField       = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
@@ -176,7 +208,7 @@ class AttributeData extends AbstractAttributeData
             ->joinInner(
                 ['child' => $entityTable],
                 new \Zend_Db_Expr("child.{$entityIdField} = main.{$childFieldName}"),
-                ['child_id' => $entityIdField]
+                ['child_id' => $entityIdField, 'sku' => 'sku']
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
 
@@ -193,7 +225,32 @@ class AttributeData extends AbstractAttributeData
             ["configurable_attributes" => new \Zend_Db_Expr($configurableAttrExpr)]
         );
 
-        $select->group("main.{$childFieldName}");
+        $select->group(["main.{$parentFieldName}", "main.{$childFieldName}"]);
+
+        return $this->addWebsiteFilter($select, "main", $childFieldName, $storeId);
+    }
+
+    /**
+     * Add website clauses to products selected.
+     *
+     * @param \Magento\Framework\DB\Select $select           Original select.
+     * @param string                       $productTableName Product table name in the original select.
+     * @param string                       $productFieldName Product id field name in the original select.
+     * @param int                          $storeId          Store id.
+     *
+     * @return \Magento\Framework\DB\Select $select
+     */
+    private function addWebsiteFilter(\Magento\Framework\DB\Select $select, $productTableName, $productFieldName, $storeId)
+    {
+        $websiteId  = $this->getStore($storeId)->getWebsiteId();
+        $indexTable = $this->getTable('catalog_product_website');
+
+        $visibilityJoinCond = $this->getConnection()->quoteInto(
+            "websites.product_id = $productTableName.$productFieldName AND websites.website_id = ?",
+            $websiteId
+        );
+
+        $select->useStraightJoin(true)->join(['websites' => $indexTable], $visibilityJoinCond, []);
 
         return $select;
     }

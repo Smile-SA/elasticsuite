@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 
 /**
  * Prepare a fulltext search query.
@@ -36,13 +37,21 @@ class QueryBuilder
     private $queryFactory;
 
     /**
+     *
+     * @var FieldFilterInterface[]
+     */
+    private $fieldFilters;
+
+    /**
      * Constructor.
      *
-     * @param QueryFactory $queryFactory Query factory (used to build subqueries.
+     * @param QueryFactory           $queryFactory Query factory (used to build subqueries.
+     * @param FieldFilterInterface[] $fieldFilters Field filters models.
      */
-    public function __construct(QueryFactory $queryFactory)
+    public function __construct(QueryFactory $queryFactory, array $fieldFilters = [])
     {
         $this->queryFactory = $queryFactory;
+        $this->fieldFilters = $fieldFilters;
     }
 
     /**
@@ -117,21 +126,21 @@ class QueryBuilder
      */
     private function getWeightedSearchQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
-        $relevanceConfig  = $containerConfig->getRelevanceConfig();
-        $phraseMatchBoost = $relevanceConfig->getPhraseMatchBoost();
-        $defaultSearchField = MappingInterface::DEFAULT_SEARCH_FIELD;
-        $searchableCallback = [$this, 'isSearchableFieldCallback'];
+        $relevanceConfig       = $containerConfig->getRelevanceConfig();
+        $phraseMatchBoost      = $relevanceConfig->getPhraseMatchBoost();
+        $defaultSearchField    = MappingInterface::DEFAULT_SEARCH_FIELD;
+        $searchableFieldFilter = $this->fieldFilters['searchableFieldFilter'];
+        $sortableAnalyzer      = FieldInterface::ANALYZER_SORTABLE;
+        $phraseAnalyzer        = FieldInterface::ANALYZER_WHITESPACE;
 
-
-        $standardAnalyzer = FieldInterface::ANALYZER_STANDARD;
-        $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
         $searchFields = array_merge(
-            $this->getWeightedFields($containerConfig, $standardAnalyzer, $searchableCallback, $defaultSearchField),
-            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableCallback, $defaultSearchField, $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, null, $searchableFieldFilter, $defaultSearchField),
+            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost),
+            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, 2 * $phraseMatchBoost)
         );
 
         $queryParams = [
@@ -163,10 +172,10 @@ class QueryBuilder
             $analyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
-        $defaultSearchField = MappingInterface::DEFAULT_SEARCH_FIELD;
-        $searchableCallback = [$this, 'isSearchableFieldCallback'];
+        $defaultSearchField    = MappingInterface::DEFAULT_SEARCH_FIELD;
+        $searchableFieldFilter = $this->fieldFilters['searchableFieldFilter'];
 
-        $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $searchableCallback, $defaultSearchField);
+        $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $searchableFieldFilter, $defaultSearchField);
 
         $queryParams = [
             'fields'             => $searchFields,
@@ -238,11 +247,11 @@ class QueryBuilder
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
-        $fuzzyFieldCallback = [$this, 'isFuzzyFieldCallback'];
+        $fuzzyFieldFilter = $this->fieldFilters['fuzzyFieldFilter'];
 
         $searchFields = array_merge(
-            $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldCallback, $defaultSearchField),
-            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldCallback, $defaultSearchField, $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldFilter, $defaultSearchField),
+            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost)
         );
 
         $queryParams = [
@@ -267,13 +276,12 @@ class QueryBuilder
      */
     private function getPhoneticQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
-        $relevanceConfig = $containerConfig->getRelevanceConfig();
-
+        $relevanceConfig    = $containerConfig->getRelevanceConfig();
         $analyzer           = FieldInterface::ANALYZER_PHONETIC;
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
-        $fuzzyFieldCallback = [$this, 'isFuzzyFieldCallback'];
+        $fuzzyFieldFilter   = $this->fieldFilters['fuzzyFieldFilter'];
 
-        $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $fuzzyFieldCallback, $defaultSearchField);
+        $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $fuzzyFieldFilter, $defaultSearchField);
 
         $queryParams = [
             'fields'             => $searchFields,
@@ -282,10 +290,6 @@ class QueryBuilder
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
         ];
-
-        if ($relevanceConfig->getPhoneticConfiguration()->isFuzzinessEnabled()) {
-            $queryParams['fuzzinessConfig'] = $relevanceConfig->getPhoneticConfiguration()->getFuzzinessConfiguration();
-        }
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
@@ -296,7 +300,7 @@ class QueryBuilder
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $analyzer        Target analyzer.
-     * @param callable                        $filterCallback  Field filter callback.
+     * @param FieldFilterInterface            $fieldFilter     Field filter.
      * @param string|null                     $defaultField    Default search field.
      * @param integer                         $boost           Additional boost applied to the fields (multiplicative).
      *
@@ -304,62 +308,14 @@ class QueryBuilder
      */
     private function getWeightedFields(
         ContainerConfigurationInterface $containerConfig,
-        $analyzer = FieldInterface::ANALYZER_STANDARD,
-        $filterCallback = null,
+        $analyzer = null,
+        FieldFilterInterface $fieldFilter = null,
         $defaultField = null,
         $boost = 1
     ) {
-        $weightedFields = [];
 
-        if ($defaultField !== null) {
-            if ($analyzer != FieldInterface::ANALYZER_STANDARD) {
-                $defaultField = sprintf("%s.%s", $defaultField, $analyzer);
-            }
-            $weightedFields[$defaultField] = 1;
-        }
+        $mapping = $containerConfig->getMapping();
 
-        $fields = $containerConfig->getMapping()->getFields();
-
-        if ($filterCallback) {
-            $fields = array_filter($fields, $filterCallback);
-        }
-
-        foreach ($fields as $field) {
-            $mappingProperty = $field->getMappingProperty($analyzer);
-
-            if ($mappingProperty && ($defaultField === null || $field->getSearchWeight() != 1)) {
-                $weightedFields[$mappingProperty] = $field->getSearchWeight() * $boost;
-            }
-        }
-
-        return $weightedFields;
-    }
-
-    /**
-     * Indicates if a field is searchable.
-     *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
-     * @param FieldInterface $field Mapping field.
-     *
-     * @return boolean
-     */
-    private function isSearchableFieldCallback(FieldInterface $field)
-    {
-        return $field->isSearchable() && $field->getType() == FieldInterface::FIELD_TYPE_STRING;
-    }
-
-    /**
-     * Indicates if a field is used in fuzzy search.
-     *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
-     * @param FieldInterface $field Mapping field.
-     *
-     * @return boolean
-     */
-    private function isFuzzyFieldCallback(FieldInterface $field)
-    {
-        return $field->isSearchable() && $field->isUsedInSpellcheck();
+        return $mapping->getWeightedSearchProperties($analyzer, $defaultField, $boost, $fieldFilter);
     }
 }

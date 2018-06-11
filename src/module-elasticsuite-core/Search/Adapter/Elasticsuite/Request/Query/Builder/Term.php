@@ -31,6 +31,21 @@ class Term implements BuilderInterface
      */
     public function buildQuery(QueryInterface $query)
     {
-        return ['term' => [$query->getField() => $query->getValue()]];
+        if ($query->getType() !== QueryInterface::TYPE_TERM) {
+            throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
+        }
+
+        $searchQueryParams = [
+            'value' => $query->getValue(),
+            'boost' => $query->getBoost(),
+        ];
+
+        $searchQuery = ['term' => [$query->getField() => $searchQueryParams]];
+
+        if ($query->getName()) {
+            $searchQuery['term']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }
