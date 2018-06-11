@@ -145,6 +145,10 @@ class Config extends \Magento\Framework\Config\Data
             );
         }
 
+        if (count($types) > 1) {
+            throw new \LogicException("Can not add several types in the same index.");
+        }
+
         $defaultSearchType = $indexConfigData['defaultSearchType'];
 
         return ['types' => $types, 'defaultSearchType' => $defaultSearchType];
