@@ -285,8 +285,8 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         }
 
         if ($fromDate && $toDate) {
-            $fromDate = new \DateTime($fromDate);
-            $toDate = new \DateTime($toDate);
+            $fromDate = $this->dateFilter->filter($fromDate);
+            $toDate = $this->dateFilter->filter($toDate);
 
             if ($fromDate > $toDate) {
                 $result[] = __('End Date must follow Start Date.');
