@@ -163,7 +163,14 @@ class VirtualCategorySetup
         $originalTable = $setup->getTable('catalog_category_entity_varchar');
         $targetTable   = $setup->getTable('catalog_category_entity_int');
 
-        $baseFields = array_slice(array_keys($setup->getConnection()->describeTable($originalTable)), 1, -1);
+        $fields = $setup->getConnection()->describeTable($originalTable);
+
+        // We will not use the auto increment field (row_id / entity_id) in the insert from select query.
+        unset($fields[$setup->getConnection()->getAutoIncrementField($originalTable)]);
+        // "value" field will be replaced on the flight when building the query.
+        unset($fields['value']);
+
+        $baseFields = array_keys($fields);
 
         // Select old value.
         $valueSelect = $setup->getConnection()->select();
