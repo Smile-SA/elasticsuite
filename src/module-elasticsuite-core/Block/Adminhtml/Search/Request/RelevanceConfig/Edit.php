@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig;
 
 use Magento\Backend\Block\Template\Context;
 use Magento\Config\Model\Config\Structure;
+use Magento\Framework\Serialize\Serializer\Json;
 
 /**
  * Relevance Configuration edit form
@@ -51,18 +52,26 @@ class Edit extends \Magento\Backend\Block\Widget
     protected $configStructure;
 
     /**
+     * @var \Magento\Framework\Serialize\Serializer\Json
+     */
+    private $jsonSerializer;
+
+    /**
      * Class constructor
      *
      * @param Context   $context         Application context
      * @param Structure $configStructure Configuration Structure
+     * @param Json      $jsonSerializer  JSON Serializer
      * @param array     $data            The data
      */
     public function __construct(
         Context $context,
         Structure $configStructure,
+        Json $jsonSerializer,
         array $data = []
     ) {
         $this->configStructure = $configStructure;
+        $this->jsonSerializer  = $jsonSerializer;
         parent::__construct($context, $data);
     }
 
@@ -84,6 +93,28 @@ class Edit extends \Magento\Backend\Block\Widget
     public function getSaveUrl()
     {
         return $this->getUrl('*/*/save', ['_current' => true]);
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigSearchParamsJson()
+    {
+        $params = [];
+
+        if ($this->getRequest()->getParam('section')) {
+            $params['section'] = $this->getRequest()->getParam('section');
+        }
+
+        if ($this->getRequest()->getParam('group')) {
+            $params['group'] = $this->getRequest()->getParam('group');
+        }
+
+        if ($this->getRequest()->getParam('field')) {
+            $params['field'] = $this->getRequest()->getParam('field');
+        }
+
+        return $this->jsonSerializer->serialize($params);
     }
 
     /**
