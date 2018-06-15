@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteThesaurus
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -21,7 +21,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
  * Thesaurus Data Installer
  *
  * @category Smile
- * @package  Smile\ElasticSuiteThesaurus
+ * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class InstallData implements InstallDataInterface
