@@ -65,6 +65,9 @@
     <preference for="Magento\Search\Api\SearchInterface"
                 type="Smile\ElasticsuiteCore\Model\Search" />
 
+    <preference for="Magento\Framework\Search\SearchEngineInterface"
+                type="Smile\ElasticsuiteCore\Model\Search" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
