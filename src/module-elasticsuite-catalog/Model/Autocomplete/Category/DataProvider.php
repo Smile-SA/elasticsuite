@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2016 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -22,7 +22,7 @@ use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProv
  * Catalog category autocomplete data provider.
  *
  * @category Smile
- * @package  Smile\ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class DataProvider implements DataProviderInterface

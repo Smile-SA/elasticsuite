@@ -18,7 +18,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
  * Relevance configuration implementation.
  *
  * @category Smile
- * @package  Smile\ElasticSuiteCore
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Config implements ScopeConfigInterface
