@@ -95,7 +95,8 @@
                 <item name="matchQuery" xsi:type="object">matchQueryFactory</item>
                 <item name="commonQuery" xsi:type="object">commonQueryFactory</item>
                 <item name="multiMatchQuery" xsi:type="object">multiMatchQueryFactory</item>
-                <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory</item>
+                <item name="moreLikeThisQuery" xsi:type="object">moreLikeThisQueryFactory</item>
+                <item name="functionScore" xsi:type="object">functionScoreFactory</item>
             </argument>
         </arguments>
     </type>
@@ -112,6 +113,7 @@
     <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory" />
     <virtualType name="commonQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory" />
     <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
+    <virtualType name="moreLikeThisQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThisFactory" />
     <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
@@ -130,6 +132,7 @@
                 <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common\Proxy</item>
                 <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
+                <item name="moreLikeThisQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MoreLikeThis\Proxy</item>
             </argument>
         </arguments>
     </type>
