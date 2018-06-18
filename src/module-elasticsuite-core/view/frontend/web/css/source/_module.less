@@ -12,64 +12,67 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
-.search-autocomplete {
-    position: absolute;
-    z-index: 3;
-    overflow: hidden;
-    margin-top: -15px;
-    &:extend(.abs-add-box-sizing all);
-    dl {
-        .lib-list-reset-styles();
-        dt {
-            &:not(:empty) {
-                .lib-css(background, @autocomplete__background-color);
-                .lib-css(border, @autocomplete__border);
-                border-top: 0;
-                border-bottom: 0;
+
+& when (@media-common = true) {
+    .search-autocomplete {
+        position: absolute;
+        z-index: 3;
+        overflow: hidden;
+        margin-top: -15px;
+        &:extend(.abs-add-box-sizing all);
+        dl {
+            .lib-list-reset-styles();
+            dt {
+                &:not(:empty) {
+                    .lib-css(background, @autocomplete__background-color);
+                    .lib-css(border, @autocomplete__border);
+                    border-top: 0;
+                    border-bottom: 0;
+                }
+                .lib-css(border-top, @autocomplete-item__border);
+                cursor: default;
+                margin: 0;
+                padding: @indent__xs @indent__xl @indent__xs @indent__s;
+                position: relative;
+                text-align: left;
+                white-space: normal;
+                &:first-child {
+                    border-top: none;
+                }
+                &:hover,
+                &.selected {
+                    .lib-css(background, @autocomplete-item__hover__color);
+                }
             }
-            .lib-css(border-top, @autocomplete-item__border);
-            cursor: default;
-            margin: 0;
-            padding: @indent__xs @indent__xl @indent__xs @indent__s;
-            position: relative;
-            text-align: left;
-            white-space: normal;
-            &:first-child {
-                border-top: none;
-            }
-            &:hover,
-            &.selected {
-                .lib-css(background, @autocomplete-item__hover__color);
-            }
-        }
-        dd {
-            &:not(:empty) {
-                .lib-css(background, @autocomplete__background-color);
-                .lib-css(border, @autocomplete__border);
-                border-top: 0;
-            }
-            .lib-css(border-top, @autocomplete-item__border);
-            cursor: pointer;
-            margin: 0;
-            padding: @indent__xs @indent__s;
-            position: relative;
-            text-align: left;
-            white-space: normal;
-            &:first-child {
-                border-top: none;
-            }
-            &:hover,
-            &.selected {
-                .lib-css(background, @autocomplete-item__hover__color);
-            }
-            .amount {
-                .lib-css(color, @autocomplete-item-amount__color);
-                position: absolute;
-                right: 7px;
-                top: @indent__xs;
-            }
-            .clear {
-                clear:both;
+            dd {
+                &:not(:empty) {
+                    .lib-css(background, @autocomplete__background-color);
+                    .lib-css(border, @autocomplete__border);
+                    border-top: 0;
+                }
+                .lib-css(border-top, @autocomplete-item__border);
+                cursor: pointer;
+                margin: 0;
+                padding: @indent__xs @indent__s;
+                position: relative;
+                text-align: left;
+                white-space: normal;
+                &:first-child {
+                    border-top: none;
+                }
+                &:hover,
+                &.selected {
+                    .lib-css(background, @autocomplete-item__hover__color);
+                }
+                .amount {
+                    .lib-css(color, @autocomplete-item-amount__color);
+                    position: absolute;
+                    right: 7px;
+                    top: @indent__xs;
+                }
+                .clear {
+                    clear:both;
+                }
             }
         }
     }
