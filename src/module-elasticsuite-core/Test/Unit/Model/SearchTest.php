@@ -14,7 +14,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
-use Smile\ElasticSuiteCore\Model\Search;
+use Smile\ElasticsuiteCore\Model\Search;
 
 /**
  * Search API unit testing.

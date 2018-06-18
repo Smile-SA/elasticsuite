@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteSwatches
+ * @package   Smile\ElasticsuiteSwatches
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0

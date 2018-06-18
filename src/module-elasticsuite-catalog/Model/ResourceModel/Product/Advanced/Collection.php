@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuiteCatalog
+ * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -20,7 +20,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
- * @package  Smile\ElasticSuiteCatalog
+ * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Collection extends FulltextCollection
