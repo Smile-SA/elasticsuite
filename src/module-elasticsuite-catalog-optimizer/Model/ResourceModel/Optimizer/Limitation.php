@@ -24,6 +24,30 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
+     * Retrieve applicable optimizer Ids for a given category Id.
+     *
+     * @param int $categoryId The category Id
+     *
+     * @return array
+     */
+    public function getApplicableOptimizerIdsByCategoryId($categoryId)
+    {
+        return $this->getApplicationData('category_id', $categoryId);
+    }
+
+    /**
+     * Retrieve applicable optimizer Ids for a given query Id.
+     *
+     * @param int $queryId The query Id
+     *
+     * @return array
+     */
+    public function getApplicableOptimizerIdsByQueryId($queryId)
+    {
+        return $this->getApplicationData('query_id', $queryId);
+    }
+
+    /**
      * Retrieve all categories associated to a given optimizer.
      *
      * @param OptimizerInterface $optimizer The Optimizer
@@ -104,6 +128,31 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->select()
             ->from(OptimizerInterface::TABLE_NAME_LIMITATION, $column)
             ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
+
+        return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
+     * Retrieve applicable optimizer ids for a given entity_id (could be a category_id or query_id).
+     *
+     * @param string $column  The column to filter on (category_id or query_id).
+     * @param int    $idValue The id of entity to filter
+     *
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getApplicationData($column, $idValue)
+    {
+        $select = $this->getConnection()
+            ->select()
+            ->from(['main_table' => $this->getMainTable()], [])
+            ->joinInner(
+                ['osc' => $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER)],
+                "osc.optimizer_id = main_table.optimizer_id OR osc.apply_to = 0",
+                [OptimizerInterface::OPTIMIZER_ID]
+            )
+            ->where($this->getConnection()->quoteInto("main_table.{$column} = ?", (int) $idValue))
+            ->group(OptimizerInterface::OPTIMIZER_ID);
 
         return $this->getConnection()->fetchCol($select);
     }
