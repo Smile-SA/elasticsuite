@@ -26,23 +26,23 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class InventoryData extends Indexer
+class InventoryData extends Indexer implements InventoryDataInterface
 {
     /**
      * @var \Magento\CatalogInventory\Api\StockRegistryInterface
      */
-    private $stockRegistry;
+    protected $stockRegistry;
 
 
     /**
      * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
      */
-    private $stockConfiguration;
+    protected $stockConfiguration;
 
     /**
      * @var int[]
      */
-    private $stockIdByWebsite = [];
+    protected $stockIdByWebsite = [];
 
     /**
      * InventoryData constructor.
@@ -67,12 +67,7 @@ class InventoryData extends Indexer
     }
 
     /**
-     * Load inventory data for a list of product ids and a given store.
-     *
-     * @param integer $storeId    Store id.
-     * @param array   $productIds Product ids list.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function loadInventoryData($storeId, $productIds)
     {
@@ -95,7 +90,7 @@ class InventoryData extends Indexer
      *
      * @return int
      */
-    private function getStockId($websiteId)
+    protected function getStockId($websiteId)
     {
         if (!isset($this->stockIdByWebsite[$websiteId])) {
             $stockId = $this->stockRegistry->getStock($websiteId)->getStockId();
@@ -112,7 +107,7 @@ class InventoryData extends Indexer
      *
      * @return int
      */
-    private function getWebsiteId($storeId)
+    protected function getWebsiteId($storeId)
     {
         return $this->storeManager->getStore($storeId)->getWebsiteId();
     }

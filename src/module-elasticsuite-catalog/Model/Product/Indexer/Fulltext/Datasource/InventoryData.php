@@ -13,7 +13,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryDataInterface;
 
 /**
  * Datasource used to append inventory data to product during indexing.
@@ -25,16 +25,16 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class InventoryData implements DatasourceInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData
+     * @var InventoryDataInterface
      */
     private $resourceModel;
 
     /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model.
+     * @param InventoryDataInterface $resourceModel Resource model.
      */
-    public function __construct(ResourceModel $resourceModel)
+    public function __construct(InventoryDataInterface $resourceModel)
     {
         $this->resourceModel = $resourceModel;
     }
