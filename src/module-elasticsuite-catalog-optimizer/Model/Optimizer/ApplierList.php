@@ -44,16 +44,6 @@ class ApplierList
     private $collectionProvider;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
-     */
-    private $searchContext;
-
-    /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerList
-     */
-    private $optimizersList;
-
-    /**
      * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface[]
      */
     private $appliers;
@@ -69,29 +59,31 @@ class ApplierList
     private $functions = [];
 
     /**
+     * @var OptimizerFilterInterface[]
+     */
+    private $filters;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                        $queryFactory       Query factory.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider Collection Provider.
      * @param \Magento\Framework\App\CacheInterface                                            $cache              Application cache.
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                              $contextInterface   Search context.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerList                $optimizersList     Optimizers list.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface[]           $appliers           Appliers interface.
+     * @param OptimizerFilterInterface[]                                                       $filters            Optimizer filters.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider,
         \Magento\Framework\App\CacheInterface $cache,
-        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerList $optimizersList,
-        array $appliers = []
+        array $appliers = [],
+        array $filters = []
     ) {
         $this->queryFactory       = $queryFactory;
         $this->collectionProvider = $collectionProvider;
         $this->cache              = $cache;
-        $this->optimizersList     = $optimizersList;
-        $this->searchContext      = $contextInterface;
         $this->appliers           = $appliers;
+        $this->filters            = $filters;
     }
 
     /**
@@ -105,7 +97,11 @@ class ApplierList
     public function applyOptimizers(ContainerConfigurationInterface $containerConfiguration, QueryInterface $query)
     {
         $functions = $this->getFunctions($containerConfiguration);
-        $functions = $this->optimizersList->getOptimizers($this->searchContext, $functions);
+
+        if (isset($this->filters[$containerConfiguration->getName()])) {
+            $optimizerIds = $this->filters[$containerConfiguration->getName()]->getOptimizerIds() ?? array_keys($functions);
+            $functions = array_intersect_key($functions, array_flip($optimizerIds));
+        }
 
         return $this->applyFunctions($query, $functions);
     }

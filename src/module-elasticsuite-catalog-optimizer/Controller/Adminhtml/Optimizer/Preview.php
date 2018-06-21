@@ -197,9 +197,9 @@ class Preview extends Action
      */
     private function getQueryText()
     {
-        $queryText = (string) $this->getRequest()->getParam('query_text_preview', '');
+        $queryText = trim(strtolower((string) $this->getRequest()->getParam('query_text_preview', '')));
 
-        if (trim($queryText) == '') {
+        if ($queryText == '') {
             $queryText = null;
         }
 

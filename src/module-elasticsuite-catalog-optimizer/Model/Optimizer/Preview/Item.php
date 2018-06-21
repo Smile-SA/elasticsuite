@@ -12,7 +12,6 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
-use Magento\Catalog\Helper\Product as ProductHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Customer\Api\Data\GroupInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Document;
