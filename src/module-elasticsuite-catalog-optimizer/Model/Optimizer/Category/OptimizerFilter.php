@@ -57,14 +57,20 @@ class OptimizerFilter implements OptimizerFilterInterface
      */
     public function filterFunctions($functions)
     {
-        $storeId    = $this->searchContext->getStoreId();
-        $categoryId = (int) $this->searchContext->getCurrentCategory()->getId();
-        $cacheKey   = sprintf("%s_%s", $categoryId, $storeId);
+        $optimizerIds = array_keys($functions);
 
-        if (!isset($this->cache[$cacheKey])) {
-            $this->cache[$cacheKey] = $this->limitationResource->getApplicableOptimizerIdsByCategoryId($categoryId);
+        if ($this->searchContext->getCurrentCategory()) {
+            $storeId    = $this->searchContext->getStoreId();
+            $categoryId = (int) $this->searchContext->getCurrentCategory()->getId();
+            $cacheKey   = sprintf("%s_%s", $categoryId, $storeId);
+
+            if (!isset($this->cache[$cacheKey])) {
+                $this->cache[$cacheKey] = $this->limitationResource->getApplicableOptimizerIdsByCategoryId($categoryId);
+            }
+
+            $optimizerIds = $this->cache[$cacheKey];
         }
 
-        return array_intersect_key($functions, array_flip($this->cache[$cacheKey]));
+        return array_intersect_key($functions, array_flip($optimizerIds));
     }
 }
