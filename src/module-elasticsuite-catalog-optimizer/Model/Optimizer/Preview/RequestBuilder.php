@@ -13,9 +13,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Search\Model\SearchEngine;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
