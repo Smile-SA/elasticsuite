@@ -158,9 +158,9 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * {@inheritDoc}
      */
-    public function getSearchContainer()
+    public function getSearchContainers()
     {
-        return $this->getData(self::SEARCH_CONTAINER);
+        return $this->getData('search_containers');
     }
 
     /**

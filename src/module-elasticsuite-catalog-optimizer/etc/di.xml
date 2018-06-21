@@ -49,6 +49,7 @@
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\OptimizerRepository" />
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />
     <preference for="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+    <preference for="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Locator\LocatorInterface" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Locator\RegistryLocator" />
 
     <!-- Apply boost plugin -->
     
@@ -81,7 +82,29 @@
             <argument name="appliers" xsi:type="array">
                 <item name="constant_score" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\ConstantScore</item>
             </argument>
+            <argument name="filters" xsi:type="array">
+                <item name="quick_search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Search\OptimizerFilter</item>
+                <item name="catalog_view_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Category\OptimizerFilter</item>
+            </argument>
         </arguments>
     </type>
 
+    <!-- Handle saving of relationship between optimizer and categories or search terms -->
+    <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface" xsi:type="array">
+                    <item name="create" xsi:type="array">
+                        <item name="optimizerLimitationPersistor" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Limitation\SaveHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="optimizerLimitationPersistor" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Limitation\SaveHandler</item>
+                    </item>
+                    <item name="read" xsi:type="array">
+                        <item name="optimizerLimitationReader" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Limitation\ReadHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>
