@@ -99,7 +99,8 @@ class ApplierList
         $functions = $this->getFunctions($containerConfiguration);
 
         if (isset($this->filters[$containerConfiguration->getName()])) {
-            $functions = $this->filters[$containerConfiguration->getName()]->filterFunctions($functions);
+            $optimizerIds = $this->filters[$containerConfiguration->getName()]->getOptimizerIds() ?? array_keys($functions);
+            $functions = array_intersect_key($functions, array_flip($optimizerIds));
         }
 
         return $this->applyFunctions($query, $functions);

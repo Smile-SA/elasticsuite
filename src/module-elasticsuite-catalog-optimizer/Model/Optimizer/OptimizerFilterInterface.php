@@ -22,11 +22,9 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 interface OptimizerFilterInterface
 {
     /**
-     * Filter function that can be applied.
+     * Return the list of optimizers to be applied.
      *
-     * @param array $functions Function to be filtered.
-     *
-     * @return arrray
+     * @return arrray|null
      */
-    public function filterFunctions($functions);
+    public function getOptimizerIds();
 }

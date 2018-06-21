@@ -55,9 +55,9 @@ class OptimizerFilter implements OptimizerFilterInterface
     /**
      * {@inheritDoc}
      */
-    public function filterFunctions($functions)
+    public function getOptimizerIds()
     {
-        $optimizerIds = array_keys($functions);
+        $optimizerIds = null;
 
         if ($this->searchContext->getCurrentCategory()) {
             $storeId    = $this->searchContext->getStoreId();
@@ -71,6 +71,6 @@ class OptimizerFilter implements OptimizerFilterInterface
             $optimizerIds = $this->cache[$cacheKey];
         }
 
-        return array_intersect_key($functions, array_flip($optimizerIds));
+        return $optimizerIds;
     }
 }
