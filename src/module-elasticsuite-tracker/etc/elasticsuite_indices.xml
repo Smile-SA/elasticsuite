@@ -101,10 +101,10 @@
                 <field name="page.referrer.page" type="keyword" />
                 
                 <!-- Page data (campaign) -->
-                <field name="page.utm_source" type="string" />
-                <field name="page.utm_campaign" type="string" />
-                <field name="page.utm_medium" type="string" />
-                <field name="page.utm_term" type="string" />
+                <field name="page.utm_source" type="keyword" />
+                <field name="page.utm_campaign" type="keyword" />
+                <field name="page.utm_medium" type="keyword" />
+                <field name="page.utm_term" type="keyword" />
                 
                 <!-- Page data (resolution) -->
                 <field name="page.resolution.x" type="integer" />
