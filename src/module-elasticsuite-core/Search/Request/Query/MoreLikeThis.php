@@ -235,7 +235,7 @@ class MoreLikeThis implements QueryInterface
      */
     public function getMaxDocFreq()
     {
-        return $this->minDocFreq;
+        return $this->maxDocFreq;
     }
 
     /**
