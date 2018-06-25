@@ -124,7 +124,6 @@
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="text">
                     <isSearchable>true</isSearchable>
-                    <isUsedForSortBy>true</isUsedForSortBy>
                 </field>
                 <field name="product_sale" type="integer" />
                 <field name="category_sale" type="integer" />
