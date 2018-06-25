@@ -45,6 +45,7 @@ class MoreLikeThis implements BuilderInterface
             'min_doc_freq'         => $query->getMinDocFreq(),
             'max_doc_freq'         => $query->getMaxDocFreq(),
             'max_query_terms'      => $query->getMaxQueryTerms(),
+            'include'              => $query->includeOriginalDocs(),
         ];
 
         if ($query->getName()) {

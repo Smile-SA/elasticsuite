@@ -105,20 +105,27 @@ class MoreLikeThis implements QueryInterface
     private $maxQueryTerms;
 
     /**
+     * @var boolean
+     */
+    private $includeOriginalDocs;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @param array        $fields             Used fields.
-     * @param array|string $like               MLT like clause (doc ids or query string).
-     * @param integer      $minimumShouldMatch Minimum should match in query generated.
-     * @param integer      $boostTerms         TF-IDF term boosting value.
-     * @param integer      $minTermFreq        Minimum term freq for a term to be considered.
-     * @param integer      $minDocFreq         Minimum doc freq for a term to be considered.
-     * @param integer      $maxDocFreq         Maximum doc freq for a term to be considered.
-     * @param integer      $maxQueryTerms      Maximum number of term in generated queries.
-     * @param string       $name               Query name.
-     * @param integer      $boost              Query boost.
+     * @param array        $fields              Used fields.
+     * @param array|string $like                MLT like clause (doc ids or query string).
+     * @param integer      $minimumShouldMatch  Minimum should match in query generated.
+     * @param integer      $boostTerms          TF-IDF term boosting value.
+     * @param integer      $minTermFreq         Minimum term freq for a term to be considered.
+     * @param integer      $minDocFreq          Minimum doc freq for a term to be considered.
+     * @param integer      $maxDocFreq          Maximum doc freq for a term to be considered.
+     * @param integer      $maxQueryTerms       Maximum number of term in generated queries.
+     * @param integer      $includeOriginalDocs Include original doc in the result set.
+     * @param string       $name                Query name.
+     * @param integer      $boost               Query boost.
      */
     public function __construct(
         array $fields,
@@ -129,19 +136,21 @@ class MoreLikeThis implements QueryInterface
         $minDocFreq = self::DEFAULT_MIN_DOC_FREQ,
         $maxDocFreq = self::DEFAULT_MAX_DOC_FREQ,
         $maxQueryTerms = self::DEFAULT_MAX_QUERY_TERMS,
+        $includeOriginalDocs = false,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
-        $this->fields             = $fields;
-        $this->like               = $like;
-        $this->minimumShouldMatch = $minimumShouldMatch;
-        $this->boostTerms         = $boostTerms;
-        $this->minTermFreq        = $minTermFreq;
-        $this->minDocFreq         = $minDocFreq;
-        $this->maxDocFreq         = $maxDocFreq;
-        $this->maxQueryTerms      = $maxQueryTerms;
-        $this->name               = $name;
-        $this->boost              = $boost;
+        $this->fields              = $fields;
+        $this->like                = $like;
+        $this->minimumShouldMatch  = $minimumShouldMatch;
+        $this->boostTerms          = $boostTerms;
+        $this->minTermFreq         = $minTermFreq;
+        $this->minDocFreq          = $minDocFreq;
+        $this->maxDocFreq          = $maxDocFreq;
+        $this->maxQueryTerms       = $maxQueryTerms;
+        $this->name                = $name;
+        $this->boost               = $boost;
+        $this->includeOriginalDocs = $includeOriginalDocs;
     }
 
     /**
@@ -246,5 +255,15 @@ class MoreLikeThis implements QueryInterface
     public function getMaxQueryTerms()
     {
         return $this->maxQueryTerms;
+    }
+
+    /**
+     * Indicates if orginial docs should be included in the result.
+     *
+     * @return boolean
+     */
+    public function includeOriginalDocs()
+    {
+        return $this->includeOriginalDocs;
     }
 }
