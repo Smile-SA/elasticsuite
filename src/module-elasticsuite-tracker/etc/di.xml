@@ -28,6 +28,7 @@
             <argument name="eventProcessors" xsi:type="array">
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
+                <item name="searches" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Search</item>
             </argument>
         </arguments>
     </type>
