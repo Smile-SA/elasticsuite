@@ -39,12 +39,30 @@ class SessionIndex
      * @var array
      */
     private $buckets = [
-        'session.vid'                   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'visitor_id']],
-        'page.product.id'               => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'product_view']],
-        'page.category.id'              => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'category_view']],
-        'page.search.query'             => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'search_query']],
-        'page.order.items.product_id'   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'product_sale']],
-        'page.order.items.category_ids' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['name' => 'category_sale']],
+        'session.vid'                   => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'visitor_id'],
+        ],
+        'page.product.id'               => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'product_view'],
+        ],
+        'page.category.id'              => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'category_view'],
+        ],
+        'page.search.query'             => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'search_query', 'field' => 'page.search.query.sortable'],
+        ],
+        'page.order.items.product_id'   => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'product_sale'],
+        ],
+        'page.order.items.category_ids' => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'category_sale'],
+        ],
     ];
 
     /**
