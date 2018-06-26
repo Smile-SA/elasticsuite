@@ -22,6 +22,7 @@
             <module name="Smile_ElasticsuiteCore"/>
             <module name="Magento_Cookie"/>
             <module name="Magento_Customer"/>
+            <module name="Magento_Quote"/>
         </sequence>
     </module>
 </config>

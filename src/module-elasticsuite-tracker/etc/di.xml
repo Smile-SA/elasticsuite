@@ -33,4 +33,9 @@
         </arguments>
     </type>
 
+    <type name="Magento\Quote\Model\Quote">
+      <plugin name="trackAddedProduct" type="Smile\ElasticsuiteTracker\Plugin\QuotePlugin" sortOrder="1" />
+    </type>
+    
+
 </config>
