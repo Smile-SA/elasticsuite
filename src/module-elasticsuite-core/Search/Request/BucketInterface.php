@@ -26,14 +26,20 @@ namespace Smile\ElasticsuiteCore\Search\Request;
  */
 interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterface
 {
-    const TYPE_HISTOGRAM       = 'histogramBucket';
-    const TYPE_DATE_HISTOGRAM  = 'dateHistogramBucket';
-    const TYPE_QUERY_GROUP     = 'queryGroupBucket';
+    const TYPE_HISTOGRAM        = 'histogramBucket';
+    const TYPE_DATE_HISTOGRAM   = 'dateHistogramBucket';
+    const TYPE_QUERY_GROUP      = 'queryGroupBucket';
+    const TYPE_SIGNIFICANT_TERM = 'significantTermBucket';
 
     const SORT_ORDER_COUNT     = '_count';
     const SORT_ORDER_TERM      = '_term';
     const SORT_ORDER_RELEVANCE = "_score";
     const SORT_ORDER_MANUAL    = "_manual";
+
+    /**
+     * @var integer
+     */
+    const MAX_BUCKET_SIZE = 100000;
 
     /**
      * Indicates if the aggregation is nested.
