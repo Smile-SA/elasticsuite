@@ -55,6 +55,10 @@ class SessionIndex
             'type' => BucketInterface::TYPE_TERM,
             'config' => ['name' => 'search_query', 'field' => 'page.search.query.sortable'],
         ],
+        'page.cart.product_id'               => [
+            'type' => BucketInterface::TYPE_TERM,
+            'config' => ['name' => 'product_cart'],
+        ],
         'page.order.items.product_id'   => [
             'type' => BucketInterface::TYPE_TERM,
             'config' => ['name' => 'product_sale'],
