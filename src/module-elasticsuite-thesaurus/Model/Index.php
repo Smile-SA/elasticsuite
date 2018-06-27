@@ -122,9 +122,11 @@ class Index
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
         $rewrites = [];
+        $maxRewrites = $config->getMaxRewrites();
 
         if ($config->isSynonymSearchEnabled()) {
-            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, ThesaurusInterface::TYPE_SYNONYM);
+            $thesaurusType   = ThesaurusInterface::TYPE_SYNONYM;
+            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites);
             $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider());
         }
 
@@ -132,9 +134,10 @@ class Index
             $synonymRewrites = array_merge([$queryText => 1], $rewrites);
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
-                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, ThesaurusInterface::TYPE_EXPANSION);
+                $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
+                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
-                $rewrites = array_merge($rewrites, $expansionRewrites);
+                $rewrites          = array_merge($rewrites, $expansionRewrites);
             }
         }
 
@@ -200,13 +203,14 @@ class Index
     /**
      * Generates all possible synonym rewrites for a store and text query.
      *
-     * @param integer $storeId   Store id.
-     * @param string  $queryText Text query.
-     * @param string  $type      Substitution type (synonym or expansion).
+     * @param integer $storeId     Store id.
+     * @param string  $queryText   Text query.
+     * @param string  $type        Substitution type (synonym or expansion).
+     * @param integer $maxRewrites Max number of allowed rewrites.
      *
      * @return array
      */
-    private function getSynonymRewrites($storeId, $queryText, $type)
+    private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
         $indexName = $this->getIndexAlias($storeId);
 
@@ -228,24 +232,25 @@ class Index
             }
         }
 
-        return $this->combineSynonyms($queryText, $synonymByPositions);
+        return $this->combineSynonyms($queryText, $synonymByPositions, $maxRewrites);
     }
 
     /**
      * Combine analysis result to provides all possible synonyms substitution comination.
      *
-     * @param string $queryText          Original query text
-     * @param array  $synonymByPositions Synonyms array by positions.
-     * @param int    $substitutions      Number of substitutions in the current query.
-     * @param int    $offset             Offset of previous substitutions.
+     * @param string  $queryText          Original query text
+     * @param array   $synonymByPositions Synonyms array by positions.
+     * @param integer $maxRewrites        Max number of allowed rewrites.
+     * @param int     $substitutions      Number of substitutions in the current query.
+     * @param int     $offset             Offset of previous substitutions.
      *
      * @return array
      */
-    private function combineSynonyms($queryText, $synonymByPositions, $substitutions = 0, $offset = 0)
+    private function combineSynonyms($queryText, $synonymByPositions, $maxRewrites, $substitutions = 0, $offset = 0)
     {
         $combinations = [];
 
-        if (!empty($synonymByPositions)) {
+        if (!empty($synonymByPositions) && $substitutions < $maxRewrites) {
             $currentPositionSynonyms = current($synonymByPositions);
             $remainingSynonyms = array_slice($synonymByPositions, 1);
 
@@ -259,7 +264,7 @@ class Index
                 if (!empty($remainingSynonyms)) {
                     $combinations = array_merge(
                         $combinations,
-                        $this->combineSynonyms($rewrittenQueryText, $remainingSynonyms, $substitutions + 1, $newOffset)
+                        $this->combineSynonyms($rewrittenQueryText, $remainingSynonyms, $maxRewrites, $substitutions + 1, $newOffset)
                     );
                 }
             }
@@ -267,7 +272,7 @@ class Index
             if (!empty($remainingSynonyms)) {
                 $combinations = array_merge(
                     $combinations,
-                    $this->combineSynonyms($queryText, $remainingSynonyms, $substitutions, $offset)
+                    $this->combineSynonyms($queryText, $remainingSynonyms, $maxRewrites, $substitutions, $offset)
                 );
             }
         }

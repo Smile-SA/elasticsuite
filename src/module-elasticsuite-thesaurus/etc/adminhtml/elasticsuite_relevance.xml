@@ -21,6 +21,13 @@
             <label>Thesaurus Configuration</label>
             <resource>Smile_ElasticsuiteCore::manage_relevance</resource>
 
+            <group id="general" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>General Configuration</label>
+                <field id="max_rewrites" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Max Allowed Rewrites</label>
+                </field>
+            </group>
+
             <group id="synonyms" translate="label" type="text" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Synonyms Configuration</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
