@@ -34,15 +34,32 @@ class ThesaurusConfig
     private $expansionsConfig;
 
     /**
+     * @var array
+     */
+    private $general;
+
+    /**
      * Constructor.
      *
+     * @param array $general    General configuration.
      * @param array $synonyms   Synonyms configuration.
      * @param array $expansions Expansions configuration.
      */
-    public function __construct($synonyms = [], $expansions = [])
+    public function __construct($general = [], $synonyms = [], $expansions = [])
     {
+        $this->general          = $general;
         $this->synonymsConfig   = $synonyms;
         $this->expansionsConfig = $expansions;
+    }
+
+    /**
+     * Max allowed rewrites for the synonym engine.
+     *
+     * @return int
+     */
+    public function getMaxRewrites()
+    {
+        return (int) $this->general['max_rewrites'];
     }
 
     /**
