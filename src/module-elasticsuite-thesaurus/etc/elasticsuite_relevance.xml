@@ -16,6 +16,9 @@
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
     <default>
         <thesaurus>
+            <general>
+                <max_rewrites>2</max_rewrites>
+            </general>
             <synonyms>
                 <enable>1</enable>
                 <weight_divider>10</weight_divider>
