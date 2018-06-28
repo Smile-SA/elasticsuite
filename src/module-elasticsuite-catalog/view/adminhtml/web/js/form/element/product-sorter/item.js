@@ -1,14 +1,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -25,8 +25,9 @@ define([
     return Component.extend({
         initialize : function () {
             this._super();
-            this.observe(['position']);
+            this.observe(['position', 'blacklisted']);
             this.setPosition(this.data.position);
+            this.setIsBlacklisted(this.data.is_blacklisted);
         },
 
         setPosition : function (position) {
@@ -35,6 +36,14 @@ define([
             }
             
             this.position(position);
+        },
+
+        setIsBlacklisted : function (state) {
+            if (state === undefined) {
+                state = false;
+            }
+
+            this.blacklisted(state);
         },
 
         compareTo : function(product) {
@@ -47,6 +56,8 @@ define([
             
             return result;
         },
+
+        isBlacklisted     : function () { return this.blacklisted() === true; },
 
         getPosition       : function () { return this.position(); },
 

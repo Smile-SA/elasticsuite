@@ -1,4 +1,4 @@
-![ElasticSuite](doc/static/elasticsuite-banner.jpg)
+![ElasticSuite](doc/static/elasticsuite-logo.jpg)
 
 ## News
 
@@ -31,6 +31,16 @@ Module Name                                                                     
 [Custom Entities](https://github.com/Smile-SA/magento2-module-elasticsuite-custom-entity)             | Ability to define complex entities as attributes (eg : having "brand" entities with pictures, description etc...)
 [TargetRules with Elasticsearch](https://github.com/Smile-SA/magento2-module-elasticsuite-targetrule) | This module allow to compute target rules via Elasticsearch instead of full MySQL (**require Magento Commerce (EE)**).
 [Elasticsuite for Retailers](https://github.com/Smile-SA/elasticsuite-for-retailer)                   | A complete suite of retail oriented modules : Store Locator, Price segmentation per store, etc...
+
+### Community Add-ons
+
+We have now some of our fellow users that are distributing **add-ons for ElasticSuite**. We would like to thanks them for supporting and using ElasticSuite.
+
+Here is a list of currently published add-ons :
+
+Add-on Name                                                                                           | Description
+------------------------------------------------------------------------------------------------------|-----------------------------------------------------------
+[ComWrap ElasticsuiteBlog](https://github.com/comwrap/Comwrap_ElasticsuiteBlog)                       | A bridge to use ElasticSuite with [MageFan Blog](https://github.com/magefan/module-blog). <br> It allows to index Blog posts into the search engine and display them into the autocomplete results, and also on the search result page.
 
 ## What is ElasticSuite for Magento 2 ?
 

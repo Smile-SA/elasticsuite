@@ -1,21 +1,19 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Search\Model\SearchEngine;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;

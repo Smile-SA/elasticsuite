@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -65,6 +65,10 @@ class CategoryData implements DatasourceInterface
 
             if (isset($categoryDataRow['position']) && $categoryDataRow['position'] !== null) {
                 $categoryDataRow['position'] = (int) $categoryDataRow['position'];
+            }
+
+            if (isset($categoryDataRow['is_blacklisted'])) {
+                $categoryDataRow['is_blacklisted'] = (bool) $categoryDataRow['is_blacklisted'];
             }
 
             $indexData[$productId]['category'][] = array_filter($categoryDataRow);

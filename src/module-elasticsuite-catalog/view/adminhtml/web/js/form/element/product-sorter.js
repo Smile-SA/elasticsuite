@@ -1,14 +1,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -28,7 +28,11 @@ define([
             excludedPreviewFields : {},
             maxRefreshInterval: 1000,
             imports: {
-                formData: "${ $.provider }:data"
+                formData: "${ $.provider }:data",
+                blacklistedProducts: "${ $.provider }:data.blacklisted_products"
+            },
+            links: {
+                blacklistedProducts: "${ $.provider }.data.blacklisted_products"
             },
             messages : {
                 emptyText     : $.mage.__('Your product selection is empty.'),
@@ -36,7 +40,12 @@ define([
                 manualSort    : $.mage.__('Manual Sort'),
                 showMore      : $.mage.__('Show more')
             },
-            forceLoading : false
+            forceLoading : false,
+            allowBlacklist : false,
+            blacklistedProducts: [],
+            modules: {
+                provider: '${ $.provider }'
+            }
         },
 
         initialize: function ()
@@ -51,10 +60,10 @@ define([
             this.currentSize        = this.pageSize;
             this.enabled            = this.loadUrl != null;
 
-            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner']);
+            this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner', 'blacklistedProducts']);
 
             this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
-            
+
             if (this.forceLoading) {
                 this.refreshProductList();
             }
@@ -130,6 +139,11 @@ define([
             if (this.editPositions()[productData.id]) {
                 productData.position = this.editPositions()[productData.id];
             }
+
+            if ($.inArray(parseInt(productData.id, 10), this.blacklistedProducts()) >= 0) {
+                productData.is_blacklisted = true;
+            }
+
             return new Product({data : productData});
         },
 
@@ -229,6 +243,34 @@ define([
 
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
+        },
+
+        allowBlacklist: function() {
+            return this.allowBlacklist;
+        },
+
+        toggleBlackListed: function(product) {
+            var state = !product.isBlacklisted();
+            product.setIsBlacklisted(state);
+
+            if (state === true) {
+                this.blacklistedProducts().push(product.getId());
+            }
+
+            if (state === false) {
+                var index = this.blacklistedProducts().indexOf(product.getId());
+                if (index >= 0) {
+                    this.blacklistedProducts().splice(index, 1);
+                }
+            }
+
+            // Array unique callback.
+            var blacklistedProducts = this.blacklistedProducts().filter(function (value, index, self) {
+                return self.indexOf(value) === index;
+            });
+
+            this.blacklistedProducts(blacklistedProducts);
+            this.provider().data['blacklisted_products'] = this.blacklistedProducts();
         }
     });
 });

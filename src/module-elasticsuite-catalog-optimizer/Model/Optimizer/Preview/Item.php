@@ -1,18 +1,17 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticSuite________
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
-use Magento\Catalog\Helper\Product as ProductHelper;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Customer\Api\Data\GroupInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Document;

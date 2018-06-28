@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER :
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -107,7 +107,7 @@ class Mapping implements MappingInterface
         $properties = [];
 
         foreach ($this->defaultMappingFields as $fieldName => $analyzers) {
-            $properties = $this->addProperty($properties, $fieldName, FieldInterface::FIELD_TYPE_STRING, $analyzers);
+            $properties = $this->addProperty($properties, $fieldName, FieldInterface::FIELD_TYPE_TEXT, $analyzers);
         }
 
         foreach ($this->getFields() as $currentField) {
@@ -262,7 +262,7 @@ class Mapping implements MappingInterface
      */
     private function addProperty(array $properties, $propertyName, $propertyType, $analyzers = [])
     {
-        $property = ['type' => FieldInterface::FIELD_TYPE_STRING, 'analyzer' => FieldInterface::ANALYZER_STANDARD];
+        $property = ['type' => $propertyType, 'analyzer' => FieldInterface::ANALYZER_STANDARD];
 
         foreach ($analyzers as $analyzer) {
             if ($analyzer !== FieldInterface::ANALYZER_STANDARD) {

@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
@@ -256,11 +256,11 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $fields = [
             new Field('entity_id', Field::FIELD_TYPE_INTEGER),
-            new Field('simpleField', Field::FIELD_TYPE_STRING),
-            new Field('searchableField', Field::FIELD_TYPE_STRING, null, ['is_searchable' => true]),
-            new Field('nested.simpleField', Field::FIELD_TYPE_STRING, 'nested'),
-            new Field('nested.searchableField', Field::FIELD_TYPE_STRING, 'nested', ['is_searchable' => true]),
-            new Field('notFilterableField', Field::FIELD_TYPE_STRING, null, ['is_filterable' => false, 'is_searchable' => true]),
+            new Field('simpleField', Field::FIELD_TYPE_KEYWORD),
+            new Field('searchableField', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
+            new Field('nested.simpleField', Field::FIELD_TYPE_KEYWORD, 'nested'),
+            new Field('nested.searchableField', Field::FIELD_TYPE_TEXT, 'nested', ['is_searchable' => true]),
+            new Field('notFilterableField', Field::FIELD_TYPE_TEXT, null, ['is_filterable' => false, 'is_searchable' => true]),
         ];
 
         return new Mapping('entity_id', $fields);

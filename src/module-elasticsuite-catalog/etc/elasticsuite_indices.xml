@@ -5,14 +5,14 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -36,17 +36,17 @@
                 <field name="required_options" type="boolean" />
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
-                <field name="type_id" type="string" />
-                <field name="sku" type="string">
+                <field name="type_id" type="keyword" />
+                <field name="sku" type="text">
                     <isSearchable>1</isSearchable>
                     <isUsedForSortBy>1</isUsedForSortBy>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
-                    <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
+                    <defaultSearchAnalyzer>reference</defaultSearchAnalyzer>
                 </field>
                 <field name="visibility" type="integer" />
                 <field name="children_ids" type="integer" />
-                <field name="configurable_attributes" type="string" />
-                <field name="indexed_attributes" type="string" />
+                <field name="configurable_attributes" type="keyword" />
+                <field name="indexed_attributes" type="keyword" />
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />
@@ -62,7 +62,7 @@
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
-                <field name="category.name" type="string" nestedPath="category">
+                <field name="category.name" type="text" nestedPath="category">
                     <isSearchable>1</isSearchable>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
                     <isFilterable>0</isFilterable>
@@ -71,7 +71,8 @@
                 <!-- Static fields handled by the "searchPositions" datasource -->
                 <field name="search_query.query_id" type="integer" nestedPath="search_query" />
                 <field name="search_query.position" type="integer" nestedPath="search_query" />
-                
+                <field name="search_query.is_blacklisted" type="boolean" nestedPath="search_query" />
+
             </mapping>
         </type>
     </index>
@@ -88,7 +89,7 @@
                 <field name="parent_id" type="integer" />
                 <field name="created_at" type="date" />
                 <field name="updated_at" type="date" />
-                <field name="path" type="string" />
+                <field name="path" type="keyword" />
                 <field name="position" type="integer" />
                 <field name="level" type="integer" />
                 <field name="children_count" type="integer" />

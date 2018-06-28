@@ -5,14 +5,14 @@
  *
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -65,6 +65,9 @@
     <preference for="Magento\Search\Api\SearchInterface"
                 type="Smile\ElasticsuiteCore\Model\Search" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\ContextInterface"
+                type="Smile\ElasticsuiteCore\Search\Context"/>
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
@@ -89,7 +92,8 @@
                 <item name="matchQuery" xsi:type="object">matchQueryFactory</item>
                 <item name="commonQuery" xsi:type="object">commonQueryFactory</item>
                 <item name="multiMatchQuery" xsi:type="object">multiMatchQueryFactory</item>
-                <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory</item>
+                <item name="moreLikeThisQuery" xsi:type="object">moreLikeThisQueryFactory</item>
+                <item name="functionScore" xsi:type="object">functionScoreFactory</item>
             </argument>
         </arguments>
     </type>
@@ -106,6 +110,7 @@
     <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory" />
     <virtualType name="commonQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory" />
     <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
+    <virtualType name="moreLikeThisQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThisFactory" />
     <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
@@ -124,6 +129,7 @@
                 <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common\Proxy</item>
                 <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
+                <item name="moreLikeThisQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MoreLikeThis\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -135,6 +141,7 @@
                 <item name="histogramBucket" xsi:type="object">histogramBucketFactory</item>
                 <item name="dateHistogramBucket" xsi:type="object">dateHistogramBucketFactory</item>
                 <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
+                <item name="significantTermBucket" xsi:type="object">significantTermBucketFactory</item>
             </argument>
         </arguments>
     </type>
@@ -143,6 +150,7 @@
     <virtualType name="histogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\HistogramFactory" />
     <virtualType name="dateHistogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\DateHistogramFactory" />
     <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
+    <virtualType name="significantTermBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTermFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
         <arguments>
@@ -151,6 +159,7 @@
                 <item name="histogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Histogram\Proxy</item>
                 <item name="dateHistogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\DateHistogram\Proxy</item>
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
+                <item name="significantTermBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -402,11 +411,6 @@
                 <item name="elasticsuite" xsi:type="string">Magento\AdvancedSearch\Model\DataProvider\Suggestions</item>
             </argument>
         </arguments>
-    </type>
-
-    <!--  -->
-    <type name="Smile\ElasticsuiteCore\Index\Mapping\Field">
-        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\Mapping\FieldPlugin"/>
     </type>
 
     <!-- Sensitive / Environment Specific Configuration fields handling -->

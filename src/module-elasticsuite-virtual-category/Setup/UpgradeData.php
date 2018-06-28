@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteVirtualCategory\Setup;
@@ -66,6 +66,11 @@ class UpgradeData implements UpgradeDataInterface
 
         if (version_compare($context->getVersion(), '1.1.0', '<')) {
             $this->virtualCategorySetup->updateVirtualCategoryRootTypeToInt($this->eavSetupFactory->create(['setup' => $setup]));
+        }
+
+        if (version_compare($context->getVersion(), '1.3.0', '<')) {
+            $this->virtualCategorySetup->updateVirtualRuleBackend($this->eavSetupFactory->create(['setup' => $setup]));
+            $this->virtualCategorySetup->convertSerializedRulesToJson($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
         $setup->endSetup();

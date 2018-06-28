@@ -2,19 +2,17 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection;
 
-use Magento\CatalogInventory\Api\StockConfigurationInterface;
-use Magento\Catalog\Model\Product\Visibility;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
 use Magento\Search\Model\Autocomplete\Item as TermItem;
@@ -29,7 +27,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as
  */
 class Filter implements PreProcessorInterface
 {
-
     /**
      * Query factory
      *
@@ -43,31 +40,19 @@ class Filter implements PreProcessorInterface
     private $termDataProvider;
 
     /**
-     * @var StockConfigurationInterface
-     */
-    private $stockConfiguration;
-
-    /**
      * Constructor.
      *
-     * @param QueryFactory                $queryFactory       Search term query factory.
-     * @param TermDataProvider            $termDataProvider   Popular search terms provider.
-     * @param StockConfigurationInterface $stockConfiguration Stock configuration.
+     * @param QueryFactory     $queryFactory     Search term query factory.
+     * @param TermDataProvider $termDataProvider Popular search terms provider.
      */
-    public function __construct(
-        QueryFactory $queryFactory,
-        TermDataProvider $termDataProvider,
-        StockConfigurationInterface $stockConfiguration
-    ) {
-        $this->queryFactory       = $queryFactory;
-        $this->termDataProvider   = $termDataProvider;
-        $this->stockConfiguration = $stockConfiguration;
+    public function __construct(QueryFactory $queryFactory, TermDataProvider $termDataProvider)
+    {
+        $this->queryFactory     = $queryFactory;
+        $this->termDataProvider = $termDataProvider;
     }
 
     /**
      * Append filters to the product list :
-     *    - Visibility filters
-     *    - Is in stock filter
      *    - Search query filter
      *
      * @param ProductCollection $collection Product collection.
@@ -78,12 +63,7 @@ class Filter implements PreProcessorInterface
     {
         $terms = $this->getQueryText();
 
-        $collection->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH])
-            ->addSearchFilter($terms);
-
-        if (!$this->stockConfiguration->isShowOutOfStock()) {
-            $collection->addIsInStockFilter();
-        }
+        $collection->setSearchQuery($terms);
 
         return $collection;
     }

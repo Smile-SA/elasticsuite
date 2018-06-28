@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Setup;
@@ -24,6 +24,21 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
  */
 class OptimizerSetup
 {
+    /**
+     * @var \Magento\Framework\EntityManager\MetadataPool
+     */
+    private $metadataPool;
+
+    /**
+     * Class Constructor
+     *
+     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool Metadata Pool.
+     */
+    public function __construct(\Magento\Framework\EntityManager\MetadataPool $metadataPool)
+    {
+        $this->metadataPool = $metadataPool;
+    }
+
     /**
      * Create Optimizer main table.
      *
@@ -127,6 +142,13 @@ class OptimizerSetup
                     ['nullable' => false, 'primary' => true],
                     'Search Container'
                 )
+                ->addColumn(
+                    'apply_to',
+                    \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                    null,
+                    ['nullable' => false, 'default' => 0],
+                    'If this optimizer applies to specific entities or not.'
+                )
                 ->addIndex(
                     $setup->getIdxName(OptimizerInterface::TABLE_NAME, [OptimizerInterface::SEARCH_CONTAINER]),
                     [OptimizerInterface::SEARCH_CONTAINER]
@@ -146,6 +168,105 @@ class OptimizerSetup
                 ->setComment('Query type per optimizer table');
 
             $setup->getConnection()->createTable($table);
+        }
+    }
+
+    /**
+     * Adding "apply_to" column to smile_elasticsuite_optimizer_search_container table
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup instance
+     */
+    public function updateOptimizerSearchContainerTable(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()
+            ->addColumn(
+                $setup->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER),
+                'apply_to',
+                [
+                    'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                    'nullable' => false,
+                    'default'  => '0',
+                    'comment'  => 'If this optimizer applies to specific entities or not.',
+                ]
+            );
+    }
+
+    /**
+     * Create table containing entity association between optimizer and category_id or search_terms.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup instance
+     */
+    public function createOptimizerLimitationTable(SchemaSetupInterface $setup)
+    {
+        if (!$setup->getConnection()->isTableExists($setup->getTable(OptimizerInterface::TABLE_NAME_LIMITATION))) {
+            $categoryIdField = $this->metadataPool->getMetadata(\Magento\Catalog\Api\Data\CategoryInterface::class)->getIdentifierField();
+
+            $optimizerCategoryTable = $setup->getConnection()
+                ->newTable($setup->getTable(OptimizerInterface::TABLE_NAME_LIMITATION))
+                ->addColumn(
+                    OptimizerInterface::OPTIMIZER_ID,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                    null,
+                    ['nullable' => false],
+                    'Optimizer ID'
+                )
+                ->addColumn(
+                    'category_id',
+                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                    null,
+                    ['unsigned' => true, 'nullable' => true, 'default' => null],
+                    'Category ID'
+                )
+                ->addColumn(
+                    'query_id',
+                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                    null,
+                    ['unsigned' => true, 'nullable' => true, 'default' => null],
+                    'Query ID'
+                )
+                ->addForeignKey(
+                    $setup->getFkName(
+                        OptimizerInterface::TABLE_NAME_LIMITATION,
+                        OptimizerInterface::OPTIMIZER_ID,
+                        OptimizerInterface::TABLE_NAME,
+                        OptimizerInterface::OPTIMIZER_ID
+                    ),
+                    OptimizerInterface::OPTIMIZER_ID,
+                    $setup->getTable(OptimizerInterface::TABLE_NAME),
+                    OptimizerInterface::OPTIMIZER_ID,
+                    \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+                )
+                ->addForeignKey(
+                    $setup->getFkName(
+                        OptimizerInterface::TABLE_NAME_LIMITATION,
+                        'category_id',
+                        'catalog_category_entity',
+                        $categoryIdField
+                    ),
+                    'category_id',
+                    $setup->getTable('catalog_category_entity'),
+                    $categoryIdField,
+                    \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+                )
+                ->addForeignKey(
+                    $setup->getFkName(OptimizerInterface::TABLE_NAME_LIMITATION, 'query_id', 'search_query', 'query_id'),
+                    'query_id',
+                    $setup->getTable('search_query'),
+                    'query_id',
+                    \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+                )
+                ->addIndex(
+                    $setup->getIdxName(
+                        OptimizerInterface::TABLE_NAME_LIMITATION,
+                        [OptimizerInterface::OPTIMIZER_ID, 'category_id', 'query_id'],
+                        \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
+                    ),
+                    [OptimizerInterface::OPTIMIZER_ID, 'category_id', 'query_id'],
+                    ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+                )
+                ->setComment('Search optimizer limitation Table');
+
+            $setup->getConnection()->createTable($optimizerCategoryTable);
         }
     }
 }

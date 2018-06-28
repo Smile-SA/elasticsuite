@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
@@ -61,10 +61,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         parent::__construct($name, $data, $dataName);
 
         $this->fields = [
-            new Field('idField', 'integer'),
-            new Field('fulltextSearch1', 'string', null, ['is_searchable' => true]),
-            new Field('fulltextSearch2', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
-            new Field('fulltextSearch3', 'string', null, ['is_searchable' => true, 'is_used_in_spellcheck' => true]),
+            new Field('idField', Field::FIELD_TYPE_INTEGER),
+            new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
+            new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('fulltextSearch3', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_used_in_spellcheck' => true]),
         ];
     }
 

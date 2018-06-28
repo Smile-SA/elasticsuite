@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -63,6 +63,8 @@ class Full
 
             foreach ($products as $productData) {
                 $productId = (int) $productData['entity_id'];
+                $productData['has_options']      = (bool) $productData['has_options'];
+                $productData['required_options'] = (bool) $productData['required_options'];
                 yield $productId => $productData;
             }
         } while (!empty($products));

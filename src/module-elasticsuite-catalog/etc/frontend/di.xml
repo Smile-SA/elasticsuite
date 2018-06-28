@@ -3,13 +3,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -123,7 +123,7 @@
  
     <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
-            <argument name="searchRequestName" xsi:type="string">catalog_product_autocomplete</argument>
+            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
         </arguments>
     </virtualType>
     
@@ -181,5 +181,14 @@
         <arguments>
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
         </arguments>
+    </type>
+
+    <!-- Search Context init -->
+    <type name="Magento\Catalog\Model\Layer\Category">
+        <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Layer\CategoryPlugin"/>
+    </type>
+
+    <type name="Magento\Search\Model\QueryFactory">
+        <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Search\QueryFactoryPlugin"/>
     </type>
 </config>

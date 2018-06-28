@@ -10,7 +10,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Apache License Version 2.0
  */
 \Magento\Framework\Component\ComponentRegistrar::register(

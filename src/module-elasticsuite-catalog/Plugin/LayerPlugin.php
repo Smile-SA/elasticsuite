@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Plugin;
@@ -70,10 +70,6 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection $collection
     ) {
-        if ($this->_isEnabledShowOutOfStock() === false) {
-            $collection->addIsInStockFilter();
-        }
-
         $this->setSortParams($layer, $collection);
     }
 

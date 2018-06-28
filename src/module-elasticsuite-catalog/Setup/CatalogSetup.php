@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
@@ -445,8 +445,15 @@ class CatalogSetup
             'position',
             \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
             null,
-            ['nullable' => false, 'default' => '0'],
+            ['nullable' => true],
             'Position'
+        )
+        ->addColumn(
+            'is_blacklisted',
+            \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+            null,
+            ['nullable' => false, 'default' => '0'],
+            'If the product is blacklisted'
         )
         ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
         ->addForeignKey(
@@ -466,6 +473,43 @@ class CatalogSetup
         ->setComment('Catalog product position in search queries');
 
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * Add 'is_blacklisted' column to 'smile_elasticsuitecatalog_search_query_product_position'.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function addBlacklistColumnToSearchPositionTable(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_elasticsuitecatalog_search_query_product_position'),
+            'is_blacklisted',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'comment'  => 'If the product is blacklisted',
+            ]
+        );
+    }
+
+    /**
+     * Set the 'position' column of 'smile_elasticsuitecatalog_search_query_product_position' to nullable=true.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function setNullablePositionColumn(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable('smile_elasticsuitecatalog_search_query_product_position'),
+            'position',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'comment'  => 'Position',
+            ]
+        );
     }
 
     /**

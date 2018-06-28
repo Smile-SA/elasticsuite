@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -61,11 +61,12 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             ->where('cpi.store_id = ?', $storeId)
             ->where('cpi.product_id IN(?)', $productIds)
             ->columns([
-                'category_id' => 'cpi.category_id',
-                'product_id'  => 'cpi.product_id',
-                'is_parent'   => 'cpi.is_parent',
-                'is_virtual'  => new \Zend_Db_Expr(0),
-                'position'    => 'p.position',
+                'category_id'    => 'cpi.category_id',
+                'product_id'     => 'cpi.product_id',
+                'is_parent'      => 'cpi.is_parent',
+                'is_virtual'     => new \Zend_Db_Expr('"false"'),
+                'position'       => 'p.position',
+                'is_blacklisted' => 'p.is_blacklisted',
             ]);
 
         return $select;
@@ -91,11 +92,12 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             ->where('cpi.product_id IS NULL')
             ->columns(
                 [
-                    'category_id' => 'p.category_id',
-                    'product_id'  => 'p.product_id',
-                    'is_parent'   => new \Zend_Db_Expr('0'),
-                    'is_virtual'  => new \Zend_Db_Expr('1'),
-                    'position'    => 'p.position',
+                    'category_id'    => 'p.category_id',
+                    'product_id'     => 'p.product_id',
+                    'is_parent'      => new \Zend_Db_Expr('0'),
+                    'is_virtual'     => new \Zend_Db_Expr('"true"'),
+                    'position'       => 'p.position',
+                    'is_blacklisted' => 'p.is_blacklisted',
                 ]
             );
 

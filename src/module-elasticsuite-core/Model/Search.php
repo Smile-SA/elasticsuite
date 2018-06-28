@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -18,7 +18,7 @@ namespace Smile\ElasticsuiteCore\Model;
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Search implements \Magento\Search\Api\SearchInterface
 {
@@ -53,7 +53,6 @@ class Search implements \Magento\Search\Api\SearchInterface
             $this->searchEngine          = $searchEngine;
             $this->searchResponseBuilder = $searchResponseBuilder;
     }
-
 
     /**
      * Execute search.

@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER :
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -135,6 +135,22 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     public function getStoreId()
     {
         return $this->storeId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilters(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    {
+        $filters = [];
+
+        /** @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface $filter */
+        foreach ($this->readBaseConfigParam('filters') as $filter) {
+            // Not using the filter name as array key, to prevent collision with filters added via addFieldToFilter.
+            $filters[] = $filter->getFilterQuery($searchContext);
+        }
+
+        return array_filter($filters);
     }
 
     /**

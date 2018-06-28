@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER :
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -25,30 +25,16 @@ interface FieldInterface
 {
     /**
      * Field types declaration.
-     *
      */
+    const FIELD_TYPE_TEXT    = 'text';
+    const FIELD_TYPE_KEYWORD = 'keyword';
     const FIELD_TYPE_DOUBLE  = 'double';
     const FIELD_TYPE_INTEGER = 'integer';
     const FIELD_TYPE_LONG    = 'long';
     const FIELD_TYPE_DATE    = 'date';
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
-
     const FIELD_TYPE_OBJECT  = 'object';
-
-    /**
-     * Deprecated multi_field type.
-     *
-     * @deprecated
-     */
-    const FIELD_TYPE_MULTI   = 'multi_field';
-
-    /**
-     * Deprecated string type.
-     *
-     * @deprecated
-     */
-    const FIELD_TYPE_STRING  = 'string';
 
     /**
      * Analyzers declarations.

@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -65,7 +65,9 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
             ['varchar', false, null, 'validate-number', FieldInterface::FIELD_TYPE_DOUBLE],
             ['datetime', false, null, null, FieldInterface::FIELD_TYPE_DATE],
             ['varchar', true, null, null, FieldInterface::FIELD_TYPE_INTEGER],
-            ['varchar', false, null, null, FieldInterface::FIELD_TYPE_STRING],
+            ['varchar', false, null, null, FieldInterface::FIELD_TYPE_TEXT],
+            ['varchar', true, null, null, FieldInterface::FIELD_TYPE_INTEGER],
+            ['varchar', true, 'sourceModel', null, FieldInterface::FIELD_TYPE_KEYWORD],
         ];
     }
 }

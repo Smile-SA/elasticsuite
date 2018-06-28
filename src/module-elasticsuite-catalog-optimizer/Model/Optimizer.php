@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
@@ -158,9 +158,9 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * {@inheritDoc}
      */
-    public function getSearchContainer()
+    public function getSearchContainers()
     {
-        return $this->getData(self::SEARCH_CONTAINER);
+        return $this->getData('search_containers');
     }
 
     /**

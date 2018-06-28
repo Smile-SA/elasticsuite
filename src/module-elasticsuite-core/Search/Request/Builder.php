@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -111,15 +111,15 @@ class Builder
     /**
      * Create a new search request.
      *
-     * @param integer          $storeId       Search request store id.
-     * @param string           $containerName Search request name.
-     * @param integer          $from          Search request pagination from clause.
-     * @param integer          $size          Search request pagination size.
-     * @param string           $queryText     Search request fulltext query.
-     * @param array            $sortOrders    Search request sort orders.
-     * @param array            $filters       Search request filters.
-     * @param QueryInterface[] $queryFilters  Search request filters prebuilt as QueryInterface.
-     * @param array            $facets        Search request facets.
+     * @param integer               $storeId       Search request store id.
+     * @param string                $containerName Search request name.
+     * @param integer               $from          Search request pagination from clause.
+     * @param integer               $size          Search request pagination size.
+     * @param string|QueryInterface $query         Search request query.
+     * @param array                 $sortOrders    Search request sort orders.
+     * @param array                 $filters       Search request filters.
+     * @param QueryInterface[]      $queryFilters  Search request filters prebuilt as QueryInterface.
+     * @param array                 $facets        Search request facets.
      *
      * @return RequestInterface
      */
@@ -128,7 +128,7 @@ class Builder
         $containerName,
         $from,
         $size,
-        $queryText = null,
+        $query = null,
         $sortOrders = [],
         $filters = [],
         $queryFilters = [],
@@ -141,8 +141,8 @@ class Builder
 
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
-        if ($queryText) {
-            $spellingType = $this->getSpellingType($containerConfig, $queryText);
+        if ($query && is_string($query)) {
+            $spellingType = $this->getSpellingType($containerConfig, $query);
         }
 
         $requestParams = [
@@ -152,7 +152,7 @@ class Builder
             'from'         => $from,
             'size'         => $size,
             'dimensions'   => $this->buildDimensions($storeId),
-            'query'        => $this->queryBuilder->createQuery($containerConfig, $queryText, $queryFilters, $spellingType),
+            'query'        => $this->queryBuilder->createQuery($containerConfig, $query, $queryFilters, $spellingType),
             'sortOrders'   => $this->sortOrderBuilder->buildSordOrders($containerConfig, $sortOrders),
             'buckets'      => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
             'spellingType' => $spellingType,
@@ -171,7 +171,7 @@ class Builder
      * Retireve the spelling type for a fulltext query.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request configuration.
-     * @param string                          $queryText       Query text.
+     * @param string|string[]                 $queryText       Query text.
      *
      * @return int
      */

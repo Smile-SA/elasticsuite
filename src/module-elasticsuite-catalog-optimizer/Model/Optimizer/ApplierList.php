@@ -1,23 +1,20 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
-use Magento\Framework\App\CacheInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
@@ -37,7 +34,7 @@ class ApplierList
     const CACHE_KEY_PREFIX = 'optimizer_boost_function';
 
     /**
-     * @var QueryFactory
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
 
@@ -47,12 +44,12 @@ class ApplierList
     private $collectionProvider;
 
     /**
-     * @var ApplierInterface[]
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface[]
      */
     private $appliers;
 
     /**
-     * @var CacheInterface
+     * @var \Magento\Framework\App\CacheInterface
      */
     private $cache;
 
@@ -62,23 +59,31 @@ class ApplierList
     private $functions = [];
 
     /**
+     * @var OptimizerFilterInterface[]
+     */
+    private $filters;
+
+    /**
      * Constructor.
      *
-     * @param QueryFactory       $queryFactory       Search request query factory.
-     * @param ProviderInterface  $collectionProvider Optimizer Collection Provider
-     * @param CacheInterface     $cache              Application cache.
-     * @param ApplierInterface[] $appliers           Appliers interface.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                        $queryFactory       Query factory.
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider Collection Provider.
+     * @param \Magento\Framework\App\CacheInterface                                            $cache              Application cache.
+     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface[]           $appliers           Appliers interface.
+     * @param OptimizerFilterInterface[]                                                       $filters            Optimizer filters.
      */
     public function __construct(
-        QueryFactory $queryFactory,
-        ProviderInterface $collectionProvider,
-        CacheInterface $cache,
-        array $appliers = []
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider,
+        \Magento\Framework\App\CacheInterface $cache,
+        array $appliers = [],
+        array $filters = []
     ) {
         $this->queryFactory       = $queryFactory;
         $this->collectionProvider = $collectionProvider;
         $this->cache              = $cache;
         $this->appliers           = $appliers;
+        $this->filters            = $filters;
     }
 
     /**
@@ -92,6 +97,11 @@ class ApplierList
     public function applyOptimizers(ContainerConfigurationInterface $containerConfiguration, QueryInterface $query)
     {
         $functions = $this->getFunctions($containerConfiguration);
+
+        if (isset($this->filters[$containerConfiguration->getName()])) {
+            $optimizerIds = $this->filters[$containerConfiguration->getName()]->getOptimizerIds() ?? array_keys($functions);
+            $functions = array_intersect_key($functions, array_flip($optimizerIds));
+        }
 
         return $this->applyFunctions($query, $functions);
     }
@@ -168,7 +178,7 @@ class ApplierList
             $function = $this->getFunction($containerConfiguration, $optimizer);
 
             if ($function !== null) {
-                $functions[] = $function;
+                $functions[$optimizer->getId()] = $function;
             }
         }
 

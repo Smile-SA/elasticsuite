@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -104,13 +104,21 @@ class SaveProductsPositions extends AbstractIndexerPlugin
         $oldPositionProductIds = array_keys($this->saveHandler->getProductPositionsByCategory($category));
         $newPositionProductIds = array_keys($category->getSortedProducts());
 
-        $affectedProductIds = array_merge($oldPositionProductIds, $newPositionProductIds);
+        $oldBlacklistedProductIds = array_values($this->saveHandler->getProductBlacklistByCategory($category));
+        $newBlacklistedProductIds = array_values($category->getBlacklistedProducts() ?? []);
+
+        $affectedProductIds = array_merge(
+            $oldPositionProductIds,
+            $newPositionProductIds,
+            $oldBlacklistedProductIds,
+            $newBlacklistedProductIds
+        );
 
         if ($category->getAffectedProductIds()) {
             $affectedProductIds = array_merge($affectedProductIds, $category->getAffectedProductIds());
         }
 
-        return $affectedProductIds;
+        return array_unique($affectedProductIds);
     }
 
     /**

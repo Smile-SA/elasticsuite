@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Api\Data;
@@ -34,6 +34,11 @@ interface OptimizerInterface
      * Name of the join Mysql Table
      */
     const TABLE_NAME_SEARCH_CONTAINER = 'smile_elasticsuite_optimizer_search_container';
+
+    /**
+     * Name of the optimizer limitation Mysql Table
+     */
+    const TABLE_NAME_LIMITATION = 'smile_elasticsuite_optimizer_limitation';
 
     /**
      * Constant for field optimizer_id
@@ -142,11 +147,11 @@ interface OptimizerInterface
     public function getToDate();
 
     /**
-     * Get search_container
+     * Get search containers associated with this optimizer.
      *
-     * @return string
+     * @return array
      */
-    public function getSearchContainer();
+    public function getSearchContainers();
 
     /**
      * Get rule_condition

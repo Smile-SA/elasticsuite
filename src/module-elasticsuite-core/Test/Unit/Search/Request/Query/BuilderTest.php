@@ -2,18 +2,19 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query;
 
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -36,7 +37,13 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateQuery()
     {
-        $builder = new Builder($this->getQueryFactory(), $this->getFulltextQueryBuilder(), $this->getFilterQueryBuilder());
+        $builder = new Builder(
+            $this->getQueryFactory(),
+            $this->getFulltextQueryBuilder(),
+            $this->getFilterQueryBuilder(),
+            $this->getSearchContext()
+        );
+
         $query = $builder->createQuery(
             $this->getContainerConfiguration(),
             'test',
@@ -55,13 +62,27 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Mocks the search context.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getSearchContext()
+    {
+        return $this->getMockBuilder(ContextInterface::class)->getMock();
+    }
+
+    /**
      * Mocks the container configration.
      *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
     private function getContainerConfiguration()
     {
-        return $this->getMockBuilder(ContainerConfigurationInterface::class)->getMock();
+        $containerConfiguration = $this->getMockBuilder(ContainerConfigurationInterface::class)->getMock();
+
+        $containerConfiguration->method('getFilters')->will($this->returnValue([]));
+
+        return $containerConfiguration;
     }
 
     /**

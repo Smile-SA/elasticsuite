@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
@@ -68,6 +68,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.4.0', '<')) {
             $this->catalogSetup->createSearchPositionTable($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.5.0', '<')) {
+            $this->catalogSetup->addBlacklistColumnToSearchPositionTable($setup);
+            $this->catalogSetup->setNullablePositionColumn($setup);
         }
 
         $setup->endSetup();

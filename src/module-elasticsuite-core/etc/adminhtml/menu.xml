@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Smile_ElasticsuiteCore::elasticsuite_menu" title="Smile ElasticSuite" translate="title" module="Smile_ElasticsuiteCore" sortOrder="50" resource="Smile_ElasticsuiteCore::menu"/>
+        <add id="Smile_ElasticsuiteCore::elasticsuite_menu" title="ElasticSuite" translate="title" module="Smile_ElasticsuiteCore" sortOrder="50" resource="Smile_ElasticsuiteCore::menu"/>
         <add id="Smile_ElasticsuiteCore::manage_search" title="Search Engine" translate="title" module="Smile_ElasticsuiteCore" sortOrder="15" parent="Smile_ElasticsuiteCore::elasticsuite_menu" resource="Smile_ElasticsuiteCore::manage_search"/>
         <add
                 id="Smile_ElasticsuiteCore::manage_relevance"

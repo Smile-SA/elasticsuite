@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -92,9 +92,10 @@ class DataProviderPlugin
             $data[$currentCategory->getId()]['virtual_category_root'] = $currentCategory->getPathIds()[1];
         }
 
-        $data[$currentCategory->getId()]['sorted_products'] = $this->getProductSavedPositions($currentCategory);
+        $data[$currentCategory->getId()]['sorted_products']         = $this->getProductSavedPositions($currentCategory);
+        $data[$currentCategory->getId()]['blacklisted_products']    = $this->getBlacklistedProducts($currentCategory);
         $data[$currentCategory->getId()]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);
-        $data[$currentCategory->getId()]['price_format'] = $this->localeFormat->getPriceFormat();
+        $data[$currentCategory->getId()]['price_format']            = $this->localeFormat->getPriceFormat();
 
         return $data;
     }
@@ -136,6 +137,20 @@ class DataProviderPlugin
         }
 
         return json_encode($productPositions, JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * Return list of blacklisted products for the current category.
+     *
+     * @param Category $category Category.
+     *
+     * @return array
+     */
+    private function getBlacklistedProducts(Category $category)
+    {
+        $productIds = $this->productPositionResource->getProductBlacklistByCategory($category);
+
+        return array_map('intval', $productIds);
     }
 
     /**

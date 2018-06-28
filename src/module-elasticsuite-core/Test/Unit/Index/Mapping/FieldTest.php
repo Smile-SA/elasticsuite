@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Mapping;
@@ -36,7 +36,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $field = new Field('fieldName');
 
         $this->assertEquals('fieldName', $field->getName());
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $field->getType());
+        $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $field->getType());
         $this->assertEquals(false, $field->isSearchable());
         $this->assertEquals(1, $field->getSearchWeight());
         $this->assertEquals(true, $field->isFilterable());
@@ -47,7 +47,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $field->getNestedPath());
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $mappingPropertyConfig['type']);
         $this->assertEquals('fieldName', $field->getMappingProperty());
         $this->assertEquals(null, $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
     }
@@ -59,7 +59,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedField()
     {
-        $field = new Field('parent.child', FieldInterface::FIELD_TYPE_STRING, 'parent', ['is_searchable' => true]);
+        $field = new Field('parent.child', FieldInterface::FIELD_TYPE_TEXT, 'parent', ['is_searchable' => true]);
 
         $this->assertEquals(true, $field->isNested());
         $this->assertEquals('parent', $field->getNestedPath());
@@ -80,7 +80,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidNestedField()
     {
-        new Field('parent.child', FieldInterface::FIELD_TYPE_STRING, 'invalidparent');
+        new Field('parent.child', FieldInterface::FIELD_TYPE_TEXT, 'invalidparent');
     }
 
     /**
@@ -104,7 +104,6 @@ class FieldTest extends \PHPUnit\Framework\TestCase
 
             $mappingPropertyConfig = $field->getMappingPropertyConfig();
             $this->assertEquals($type, $mappingPropertyConfig['type']);
-            $this->assertEquals(true, $mappingPropertyConfig['doc_values']);
 
             if ($type === FieldInterface::FIELD_TYPE_DATE) {
                 $this->assertEquals('yyyy-MM-dd HH:mm:ss||yyyy-MM-dd', $mappingPropertyConfig['format']);
@@ -122,11 +121,11 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     public function testComplexSearchableStringField()
     {
         $fieldConfig = ['is_searchable' => true, 'is_used_for_sort_by' => true, 'search_weight' => 2];
-        $fieldType   = FieldInterface::FIELD_TYPE_STRING;
+        $fieldType   = FieldInterface::FIELD_TYPE_TEXT;
         $field       = new Field('field', $fieldType, null, $fieldConfig);
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $mappingPropertyConfig['type']);
 
         $this->assertEquals(FieldInterface::ANALYZER_STANDARD, $mappingPropertyConfig['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_WHITESPACE, $mappingPropertyConfig['fields']['whitespace']['analyzer']);
@@ -148,11 +147,11 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     public function testSimpleSearchableStringField()
     {
         $fieldConfig = ['is_searchable' => true, 'is_filterable' => false, 'search_weight' => 1];
-        $fieldType   = FieldInterface::FIELD_TYPE_STRING;
+        $fieldType   = FieldInterface::FIELD_TYPE_TEXT;
         $field       = new Field('field', $fieldType, null, $fieldConfig);
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
-        $this->assertEquals(FieldInterface::FIELD_TYPE_STRING, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $mappingPropertyConfig['type']);
 
         $this->assertEquals(null, $field->getMappingProperty());
         $this->assertEquals('field', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
@@ -167,7 +166,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsUsedInSpellcheckField($fieldConfig, $isSearchable, $isUsedInSpellcheck)
     {
-        $fieldType   = FieldInterface::FIELD_TYPE_STRING;
+        $fieldType   = FieldInterface::FIELD_TYPE_TEXT;
         $field       = new Field('field', $fieldType, null, $fieldConfig);
 
         $this->assertEquals($isSearchable, $field->isSearchable());

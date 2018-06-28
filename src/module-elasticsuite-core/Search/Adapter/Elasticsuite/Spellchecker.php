@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -144,6 +144,10 @@ class Spellchecker implements SpellcheckerInterface
             'index'           => $request->getIndex(),
             'type'            => $request->getType(),
             'term_statistics' => true,
+            'fields'          => [
+                MappingInterface::DEFAULT_SPELLING_FIELD,
+                MappingInterface::DEFAULT_SPELLING_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
+            ],
         ];
 
         $termVectorsQuery['body']['doc'] = [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()];
@@ -206,7 +210,7 @@ class Spellchecker implements SpellcheckerInterface
             if (in_array($analyzer, $analyzers)) {
                 foreach ($fieldData['terms'] as $term => $termStats) {
                     foreach ($termStats['tokens'] as $token) {
-                        $positionKey = sprintf("%s_%s", $token['start_offset'], $token['end_offset']);
+                        $positionKey = $token['position'];
 
                         if (!isset($termStats['doc_freq'])) {
                             $termStats['doc_freq'] = 0;

@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteVirtualCategory\Setup;
@@ -18,6 +18,8 @@ use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
  * Generic Setup class for Virtual Categories
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -31,13 +33,46 @@ class VirtualCategorySetup
     private $eavConfig;
 
     /**
+     * @var \Magento\Framework\DB\FieldDataConverterFactory
+     */
+    private $fieldDataConverterFactory;
+
+    /**
+     * @var \Magento\Framework\DB\Select\QueryModifierFactory
+     */
+    private $queryModifierFactory;
+
+    /**
+     * @var \Magento\Framework\Indexer\IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
+     * @var \Magento\Catalog\Model\Indexer\Category\Flat
+     */
+    private $flatCategoryIndexState;
+
+    /**
      * VirtualCategorySetup constructor.
      *
-     * @param \Magento\Eav\Model\Config $eavConfig EAV Config.
+     * @param \Magento\Eav\Model\Config                          $eavConfig                 EAV Config.
+     * @param \Magento\Framework\DB\FieldDataConverterFactory    $fieldDataConverterFactory Field Data converter factory.
+     * @param \Magento\Framework\DB\Select\QueryModifierFactory  $queryModifierFactory      Query Modifier Factory.
+     * @param \Magento\Framework\Indexer\IndexerRegistry         $indexerRegistry           Indexer Registry.
+     * @param \Magento\Catalog\Model\Indexer\Category\Flat\State $flatCategoryIndexState    Category flat index state.
      */
-    public function __construct(\Magento\Eav\Model\Config $eavConfig)
-    {
-        $this->eavConfig = $eavConfig;
+    public function __construct(
+        \Magento\Eav\Model\Config $eavConfig,
+        \Magento\Framework\DB\FieldDataConverterFactory $fieldDataConverterFactory,
+        \Magento\Framework\DB\Select\QueryModifierFactory $queryModifierFactory,
+        \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry,
+        \Magento\Catalog\Model\Indexer\Category\Flat\State $flatCategoryIndexState
+    ) {
+        $this->eavConfig                 = $eavConfig;
+        $this->fieldDataConverterFactory = $fieldDataConverterFactory;
+        $this->queryModifierFactory      = $queryModifierFactory;
+        $this->indexerRegistry           = $indexerRegistry;
+        $this->flatCategoryIndexState    = $flatCategoryIndexState;
     }
 
     /**
@@ -88,7 +123,6 @@ class VirtualCategorySetup
                 'type'       => 'text',
                 'label'      => 'Virtual rule',
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'backend'    => 'Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\Backend\VirtualRule',
                 'required'   => false,
                 'default'    => null,
                 'visible'    => true,
@@ -183,8 +217,15 @@ class VirtualCategorySetup
                 'position',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
-                ['nullable' => false, 'default' => '0'],
+                ['nullable' => true],
                 'Position'
+            )
+            ->addColumn(
+                'is_blacklisted',
+                \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                null,
+                ['nullable' => false, 'default' => '0'],
+                'If the product is blacklisted'
             )
             ->addIndex($setup->getIdxName($tableName, ['product_id']), ['product_id'])
             ->addForeignKey(
@@ -204,5 +245,107 @@ class VirtualCategorySetup
             ->setComment('Catalog product position for the virtual categories module.');
 
         $setup->getConnection()->createTable($table);
+    }
+
+    /**
+     * Add 'is_blacklisted' column to 'smile_virtualcategory_catalog_category_product_position'.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function addBlacklistColumnToPositionTable(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_virtualcategory_catalog_category_product_position'),
+            'is_blacklisted',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'comment'  => 'If the product is blacklisted',
+            ]
+        );
+    }
+
+    /**
+     * Set the 'position' column of 'smile_virtualcategory_catalog_category_product_position' to nullable=true.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup interface
+     */
+    public function setNullablePositionColumn(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->modifyColumn(
+            $setup->getTable('smile_virtualcategory_catalog_category_product_position'),
+            'position',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'comment'  => 'Position',
+            ]
+        );
+    }
+
+    /**
+     * Remove the backend model of the 'virtual_rule' attribute.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function updateVirtualRuleBackend(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        // Fix the attribute backend model.
+        $eavSetup->updateAttribute(
+            Category::ENTITY,
+            'virtual_rule',
+            'backend_model',
+            null
+        );
+    }
+
+    /**
+     * Upgrade legacy serialized data to JSON data.
+     * Targets :
+     *  - the catalog_category_entity_text for the virtual_rule attribute only
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV Setup
+     *
+     * @return void
+     */
+    public function convertSerializedRulesToJson(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        $setup = $eavSetup->getSetup();
+
+        $fieldDataConverter = $this->fieldDataConverterFactory->create(
+            \Magento\Framework\DB\DataConverter\SerializedToJson::class
+        );
+
+        $attributeId    = $eavSetup->getAttribute(Category::ENTITY, 'virtual_rule', 'attribute_id');
+        $attributeTable = $eavSetup->getAttributeTable(Category::ENTITY, $attributeId);
+
+        $queryModifier = $this->queryModifierFactory->create(
+            'in',
+            ['values' => ['attribute_id' => $attributeId]]
+        );
+
+        $fieldDataConverter->convert(
+            $setup->getConnection(),
+            $attributeTable,
+            'value_id',
+            'value',
+            $queryModifier
+        );
+
+        $this->reindexFlatCategories();
+    }
+
+    /**
+     * Process full reindexing of flat categories if enabled and not scheduled.
+     */
+    private function reindexFlatCategories()
+    {
+        if ($this->flatCategoryIndexState->isFlatEnabled()) {
+            $flatCategoryIndexer = $this->indexerRegistry->get(\Magento\Catalog\Model\Indexer\Category\Flat\State::INDEXER_ID);
+            $flatCategoryIndexer->reindexAll();
+        }
     }
 }

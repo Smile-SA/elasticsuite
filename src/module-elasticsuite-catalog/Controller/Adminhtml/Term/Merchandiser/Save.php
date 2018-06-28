@@ -54,8 +54,9 @@ class Save extends \Magento\Search\Controller\Adminhtml\Term
      */
     public function execute()
     {
-        $queryId = $this->getRequest()->getParam('query_id');
-        $sortedProducts = $this->getRequest()->getParam('sorted_products', []);
+        $queryId             = $this->getRequest()->getParam('query_id');
+        $sortedProducts      = $this->getRequest()->getParam('sorted_products', []);
+        $blacklistedProducts = $this->getRequest()->getParam('blacklisted_products', []);
 
         if (is_string($sortedProducts)) {
             try {
@@ -69,7 +70,7 @@ class Save extends \Magento\Search\Controller\Adminhtml\Term
             ->setPath('*/term/edit', ['id' => $queryId]);
 
         try {
-            $this->resourceModel->saveProductPositions($queryId, $sortedProducts);
+            $this->resourceModel->saveProductPositions($queryId, $sortedProducts, $blacklistedProducts);
 
             if ($this->getRequest()->getParam('back') == "edit") {
                 $result->setPath('*/*/edit', ['id' => $queryId]);

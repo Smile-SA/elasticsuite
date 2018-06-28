@@ -2,14 +2,14 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  *
  * @category  Smile_Elasticsuite
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Filter;
@@ -55,9 +55,9 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->fields = [
             new Field('idField', 'integer'),
-            new Field('simpleTextField', 'string'),
-            new Field('analyzedField', 'string', null, ['is_searchable' => true, 'is_filterable' => false]),
-            new Field('nested.child', 'string', 'nested'),
+            new Field('simpleTextField', Field::FIELD_TYPE_KEYWORD),
+            new Field('analyzedField', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
+            new Field('nested.child', Field::FIELD_TYPE_KEYWORD, 'nested'),
         ];
     }
 

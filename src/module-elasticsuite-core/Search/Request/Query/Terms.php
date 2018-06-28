@@ -2,13 +2,13 @@
 /**
  * DISCLAIMER
  *
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Query;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
- * Elastic suite request terms query.
+ * ElasticSuite request terms query.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -35,8 +35,10 @@ class Terms extends Term
      */
     public function __construct($values, $field, $name = null, $boost = QueryInterface::DEFAULT_BOOST_VALUE)
     {
-        if (!is_array($values)) {
+        if (!is_array($values) && is_string($values)) {
             $values = explode(',', $values);
+        } elseif (!is_array($values)) {
+            $values = [$values];
         }
 
         parent::__construct($values, $field, $name, $boost);

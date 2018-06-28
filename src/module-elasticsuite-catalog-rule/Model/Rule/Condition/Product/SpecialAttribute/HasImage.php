@@ -1,13 +1,13 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogRule
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
@@ -60,9 +60,7 @@ class HasImage implements SpecialAttributeInterface
      */
     public function getSearchQuery()
     {
-        $query = $this->queryFactory->create(QueryInterface::TYPE_MISSING, ['field' => 'image']);
-
-        return $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
+        return $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'image']);
     }
 
     /**
@@ -102,7 +100,7 @@ class HasImage implements SpecialAttributeInterface
      */
     public function getValue()
     {
-        return 1;
+        return true;
     }
 
     /**
