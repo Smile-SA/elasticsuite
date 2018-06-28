@@ -15,6 +15,11 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action;
 
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
+use Magento\Framework\App\ResourceConnection;
 
 /**
  * Elasticsearch product full indexer resource model.
@@ -25,6 +30,29 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
  */
 class Full extends Indexer
 {
+    /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
+     * Indexer constructor.
+     *
+     * @param ResourceConnection     $resource      Resource Connection
+     * @param StoreManagerInterface  $storeManager  Store Manager
+     * @param MetadataPool           $metadataPool  Metadata Pool
+     * @param ObjectManagerInterface $objectManager Object Manager
+     */
+    public function __construct(
+        ResourceConnection $resource,
+        StoreManagerInterface $storeManager,
+        MetadataPool $metadataPool,
+        ObjectManagerInterface $objectManager
+    ) {
+        parent::__construct($resource, $storeManager, $metadataPool);
+        $this->objectManager = $objectManager;
+    }
+
     /**
      * Load a bulk of product data.
      *
@@ -95,7 +123,13 @@ class Full extends Indexer
     private function addIsVisibleInStoreFilter($select, $storeId)
     {
         $rootCategoryId = $this->getRootCategoryId($storeId);
-        $indexTable = $this->getTable('catalog_category_product_index');
+        $indexTableName = $this->getTable('catalog_category_product_index');
+
+        if ($tableMaintainer = $this->objectManager->get(TableMaintainer::class)) {
+            $indexTableName = $tableMaintainer->getMainTable($storeId);
+        }
+
+        $indexTable = $this->getTable($indexTableName);
 
         $visibilityJoinCond = $this->getConnection()->quoteInto(
             'visibility.product_id = e.entity_id AND visibility.store_id = ?',
