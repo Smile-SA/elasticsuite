@@ -20,9 +20,13 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 
 /**
  * Categories data datasource resource model.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
@@ -51,20 +55,28 @@ class CategoryData extends Indexer
     private $eavConfig = null;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * CategoryData constructor.
      *
-     * @param \Magento\Framework\App\ResourceConnection     $resource     Connection Resource
-     * @param \Magento\Store\Model\StoreManagerInterface    $storeManager The store manager
-     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool Metadata Pool
-     * @param \Magento\Eav\Model\Config                     $eavConfig    EAV Configuration
+     * @param ResourceConnection     $resource      Connection Resource.
+     * @param StoreManagerInterface  $storeManager  The store manager.
+     * @param MetadataPool           $metadataPool  Metadata Pool.
+     * @param Config                 $eavConfig     EAV Configuration.
+     * @param ObjectManagerInterface $objectManager Object manager.
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
-        Config $eavConfig
+        Config $eavConfig,
+        ObjectManagerInterface $objectManager
     ) {
-        $this->eavConfig = $eavConfig;
+        $this->eavConfig     = $eavConfig;
+        $this->objectManager = $objectManager;
         parent::__construct($resource, $storeManager, $metadataPool);
     }
 
@@ -110,7 +122,7 @@ class CategoryData extends Indexer
     protected function getCategoryProductSelect($productIds, $storeId)
     {
         $select = $this->getConnection()->select()
-            ->from(['cpi' => $this->getTable('catalog_category_product_index')])
+            ->from(['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))])
             ->where('cpi.store_id = ?', $storeId)
             ->where('cpi.product_id IN(?)', $productIds);
 
@@ -150,6 +162,24 @@ class CategoryData extends Indexer
     protected function getEavConfig()
     {
         return $this->eavConfig;
+    }
+
+    /**
+     * Get category product index table name.
+     *
+     * @param integer $storeId Store id.
+     *
+     * @return string
+     */
+    protected function getCategoryProductIndexTable($storeId)
+    {
+        $indexTable = 'catalog_category_product_index';
+
+        if ($tableMaintainer = $this->objectManager->get(TableMaintainer::class)) {
+            $indexTable = $tableMaintainer->getMainTable($storeId);
+        }
+
+        return $indexTable;
     }
 
     /**

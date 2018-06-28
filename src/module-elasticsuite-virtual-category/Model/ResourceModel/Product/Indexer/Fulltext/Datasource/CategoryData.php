@@ -34,7 +34,7 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
         $select = $this->getConnection()->select()->union(
             [
                 $this->getBaseSelect($productIds, $storeId),
-                $this->getVirtualSelect($productIds),
+                $this->getVirtualSelect($productIds, $storeId),
             ]
         );
 
@@ -52,7 +52,7 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
     private function getBaseSelect($productIds, $storeId)
     {
         $select = $this->getConnection()->select()
-            ->from(['cpi' => $this->getTable('catalog_category_product_index')], [])
+            ->from(['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))], [])
             ->joinLeft(
                 ['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
@@ -74,16 +74,17 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
     /**
      * Retrieve the virtual categories product data (categories ids, positions, ...).
      *
-     * @param array $productIds Product ids.
+     * @param array   $productIds Product ids.
+     * @param integer $storeId    Store id.
      *
      * @return \Zend_Db_Select
      */
-    private function getVirtualSelect($productIds)
+    private function getVirtualSelect($productIds, $storeId)
     {
         $select = $this->getConnection()->select()
             ->from(['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
             ->joinLeft(
-                ['cpi' => $this->getTable('catalog_category_product_index')],
+                ['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
                 []
             )
