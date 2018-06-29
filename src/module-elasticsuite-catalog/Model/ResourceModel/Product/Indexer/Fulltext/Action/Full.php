@@ -18,7 +18,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 use Magento\Framework\App\ResourceConnection;
 
 /**
@@ -125,7 +124,7 @@ class Full extends Indexer
         $rootCategoryId = $this->getRootCategoryId($storeId);
         $indexTableName = $this->getTable('catalog_category_product_index');
 
-        if ($tableMaintainer = $this->objectManager->get(TableMaintainer::class)) {
+        if ($tableMaintainer = $this->getTableMaintainer()) {
             $indexTableName = $tableMaintainer->getMainTable($storeId);
         }
 
@@ -141,5 +140,15 @@ class Full extends Indexer
             ->where('visibility.category_id = ?', (int) $rootCategoryId);
 
         return $this;
+    }
+
+    /**
+     * Get category products index table maintainer.
+     *
+     * @return TableMaintainer|null
+     */
+    private function getTableMaintainer()
+    {
+        return $this->objectManager->get('Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer');
     }
 }
