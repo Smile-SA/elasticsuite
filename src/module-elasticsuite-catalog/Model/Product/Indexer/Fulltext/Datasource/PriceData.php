@@ -14,8 +14,11 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Magento\Tax\Api\TaxCalculationInterface;
+use Magento\Tax\Model\Config;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -37,15 +40,39 @@ class PriceData implements DatasourceInterface
     private $priceReaderPool = [];
 
     /**
+     * @var TaxCalculationInterface
+     */
+    private $taxCalculation;
+
+    /**
+     * @var PriceCurrencyInterface
+     */
+    private $priceCurrency;
+
+    /**
+     * @var Config
+     */
+    private $taxConfig;
+
+    /**
      * Constructor.
      *
      * @param ResourceModel                        $resourceModel   Resource model
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
      */
-    public function __construct(ResourceModel $resourceModel, $priceReaderPool = [])
+    public function __construct(
+        ResourceModel $resourceModel,
+        $priceReaderPool = [],
+        TaxCalculationInterface $taxCalculation,
+        PriceCurrencyInterface $priceCurrency,
+        Config $taxConfig
+    )
     {
-        $this->resourceModel     = $resourceModel;
+        $this->resourceModel   = $resourceModel;
         $this->priceReaderPool = $priceReaderPool;
+        $this->taxCalculation  = $taxCalculation;
+        $this->priceCurrency   = $priceCurrency;
+        $this->taxConfig       = $taxConfig;
     }
 
     /**
@@ -60,10 +87,17 @@ class PriceData implements DatasourceInterface
         foreach ($priceData as $priceDataRow) {
             $productId     = (int) $priceDataRow['entity_id'];
             $productTypeId = $indexData[$productId]['type_id'];
+
             $priceModifier = $this->getPriceDataReader($productTypeId);
 
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
+
+            if (!$this->taxConfig->priceIncludesTax($storeId)) {
+                $rate = $this->taxCalculation->getCalculatedRate($priceDataRow['tax_class_id']);
+                $price = $this->priceCurrency->round($price * (1 + ($rate / 100)));
+                $originalPrice = $this->priceCurrency->round($originalPrice * (1 + ($rate / 100)));
+            }
 
             $indexData[$productId]['price'][] = [
                 'price'             => $price,
