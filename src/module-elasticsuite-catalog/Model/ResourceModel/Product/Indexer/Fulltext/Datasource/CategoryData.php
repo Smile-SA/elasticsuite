@@ -21,7 +21,6 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 
 /**
  * Categories data datasource resource model.
@@ -173,10 +172,15 @@ class CategoryData extends Indexer
      */
     protected function getCategoryProductIndexTable($storeId)
     {
-        $indexTable = 'catalog_category_product_index';
+        // Init table name as legacy table name.
+        $indexTable = $this->getTable('catalog_category_product_index');
 
-        if ($tableMaintainer = $this->objectManager->get(TableMaintainer::class)) {
-            $indexTable = $tableMaintainer->getMainTable($storeId);
+        try {
+            // Retrieve table name for the current store Id from the TableMaintainer.
+            $tableMaintainer = $this->objectManager->get(\Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer::class);
+            $indexTable      = $tableMaintainer->getMainTable($storeId);
+        } catch (\Exception $exception) {
+            // Occurs in Magento version where TableMaintainer is not implemented. Will default to legacy table.
         }
 
         return $indexTable;

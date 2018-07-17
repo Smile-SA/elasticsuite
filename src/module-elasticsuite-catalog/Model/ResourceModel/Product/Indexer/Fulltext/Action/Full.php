@@ -18,7 +18,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer;
 use Magento\Framework\App\ResourceConnection;
 
 /**
@@ -123,13 +122,7 @@ class Full extends Indexer
     private function addIsVisibleInStoreFilter($select, $storeId)
     {
         $rootCategoryId = $this->getRootCategoryId($storeId);
-        $indexTableName = $this->getTable('catalog_category_product_index');
-
-        if ($tableMaintainer = $this->objectManager->get(TableMaintainer::class)) {
-            $indexTableName = $tableMaintainer->getMainTable($storeId);
-        }
-
-        $indexTable = $this->getTable($indexTableName);
+        $indexTable     = $this->getCategoryProductIndexTable($storeId);
 
         $visibilityJoinCond = $this->getConnection()->quoteInto(
             'visibility.product_id = e.entity_id AND visibility.store_id = ?',
@@ -141,5 +134,28 @@ class Full extends Indexer
             ->where('visibility.category_id = ?', (int) $rootCategoryId);
 
         return $this;
+    }
+
+    /**
+     * Retrieve category/product index table.
+     *
+     * @param int $storeId The store Id
+     *
+     * @return string
+     */
+    private function getCategoryProductIndexTable($storeId)
+    {
+        // Init table name as legacy table name.
+        $indexTable = $this->getTable('catalog_category_product_index');
+
+        try {
+            // Retrieve table name for the current store Id from the TableMaintainer.
+            $tableMaintainer = $this->objectManager->get(\Magento\Catalog\Model\Indexer\Category\Product\TableMaintainer::class);
+            $indexTable      = $tableMaintainer->getMainTable($storeId);
+        } catch (\Exception $exception) {
+            // Occurs in Magento version where TableMaintainer is not implemented. Will default to legacy table.
+        }
+
+        return $indexTable;
     }
 }
