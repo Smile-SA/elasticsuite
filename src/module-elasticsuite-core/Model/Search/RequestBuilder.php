@@ -122,7 +122,7 @@ class RequestBuilder
      * Get current search container.
      *
      * @param int    $storeId       Store id.
-     * @param strint $containerName Container name.
+     * @param string $containerName Container name.
      *
      * @return \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface
      */
