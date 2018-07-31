@@ -166,6 +166,7 @@ abstract class AbstractAttributeData
                 }
             }
         }
+
         return $canIndex;
     }
 
