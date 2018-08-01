@@ -159,7 +159,7 @@
     </filters>
 
     <analyzers>
-        <analyzer name="standard" tokenizer="whitespace" language="default">
+        <analyzer name="standard" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
@@ -172,7 +172,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="whitespace" tokenizer="whitespace" language="default">
+        <analyzer name="whitespace" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
@@ -220,7 +220,7 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
-        <analyzer name="phonetic" tokenizer="whitespace" language="default">
+        <analyzer name="phonetic" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
