@@ -64,78 +64,87 @@ class AggregationBuilder
     /**
      * Build the list of buckets from the mapping.
      *
-     * @param ContainerConfigurationInterface $containerConfiguration Search request configuration
-     * @param array                           $aggregations           Facet definitions.
-     * @param array                           $filters                Facet filters to be added to buckets.
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration
+     * @param array                           $aggregations    Facet definitions.
+     * @param array                           $filters         Facet filters to be added to buckets.
      *
      * @return BucketInterface[]
      */
-    public function buildAggregations(
-        ContainerConfigurationInterface $containerConfiguration,
-        array $aggregations,
-        array $filters
-    ) {
+    public function buildAggregations(ContainerConfigurationInterface $containerConfig, array $aggregations, array $filters)
+    {
         $buckets = [];
-        $mapping = $containerConfiguration->getMapping();
 
-        foreach ($aggregations as $fieldName => $aggregationParams) {
-            $bucketType = $aggregationParams['type'];
-            try {
-                $field = $mapping->getField($fieldName);
-                $bucketParams = $this->getBucketParams($field, $aggregationParams, $filters);
-
-                if (isset($bucketParams['filter'])) {
-                    $bucketParams['filter'] = $this->createFilter($containerConfiguration, $bucketParams['filter']);
-                }
-
-                if (isset($bucketParams['nestedFilter'])) {
-                    $nestedFilter = $this->createFilter(
-                        $containerConfiguration,
-                        $bucketParams['nestedFilter'],
-                        $bucketParams['nestedPath']
-                    );
-                    $bucketParams['nestedFilter'] = $nestedFilter;
-                }
-
-                if (isset($bucketParams['childBuckets'])) {
-                    $bucketParams['childBuckets'] = $this->buildAggregations($containerConfiguration, $bucketParams['childBuckets'], []);
-                }
-            } catch (\Exception $e) {
-                $bucketParams = $aggregationParams['config'];
-            }
-
-            $bucketParams['metrics'] = $this->getMetrics($containerConfiguration, $aggregationParams);
-
-            $buckets[] = $this->aggregationFactory->create($bucketType, $bucketParams);
+        foreach ($aggregations as $fieldName => $aggParams) {
+            $buckets[] = is_object($aggParams) ? $aggParams : $this->buildAggregation($containerConfig, $filters, $fieldName, $aggParams);
         }
 
         return $buckets;
     }
 
     /**
+     * Build the list of buckets from the mapping.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration
+     * @param array                           $filters         Facet filters to be added to buckets.
+     * @param string                          $fieldName       Current field name.
+     * @param array                           $aggParams       Current aggregation params.
+     *
+     * @return BucketInterface[]
+     */
+    private function buildAggregation(ContainerConfigurationInterface $containerConfig, $filters, $fieldName, $aggParams)
+    {
+        $mapping    = $containerConfig->getMapping();
+        $bucketType = $aggParams['type'];
+
+        try {
+            $field        = $mapping->getField($fieldName);
+            $bucketParams = $this->getBucketParams($field, $aggParams, $filters);
+
+            if (isset($bucketParams['filter'])) {
+                $bucketParams['filter'] = $this->createFilter($containerConfig, $bucketParams['filter']);
+            }
+
+            if (isset($bucketParams['nestedFilter'])) {
+                $nestedFilter = $this->createFilter($containerConfig, $bucketParams['nestedFilter'], $bucketParams['nestedPath']);
+                $bucketParams['nestedFilter'] = $nestedFilter;
+            }
+
+            if (isset($bucketParams['childBuckets'])) {
+                $bucketParams['childBuckets'] = $this->buildAggregations($containerConfig, $bucketParams['childBuckets'], []);
+            }
+        } catch (\Exception $e) {
+            $bucketParams = $aggParams['config'];
+        }
+
+        $bucketParams['metrics'] = $this->getMetrics($containerConfig, $aggParams);
+
+        return $this->aggregationFactory->create($bucketType, $bucketParams);
+    }
+
+    /**
      * Create a QueryInterface for a filter using the query builder.
      *
-     * @param ContainerConfigurationInterface $containerConfiguration Search container configuration
-     * @param array                           $filters                Filters definition.
-     * @param string|null                     $currentPath            Current nested path or null.
+     * @param ContainerConfigurationInterface $containerConfig Search container configuration
+     * @param array                           $filters         Filters definition.
+     * @param string|null                     $currentPath     Current nested path or null.
      *
      * @return QueryInterface
      */
-    private function createFilter(ContainerConfigurationInterface $containerConfiguration, array $filters, $currentPath = null)
+    private function createFilter(ContainerConfigurationInterface $containerConfig, array $filters, $currentPath = null)
     {
-        return $this->queryBuilder->create($containerConfiguration, $filters, $currentPath);
+        return $this->queryBuilder->create($containerConfig, $filters, $currentPath);
     }
 
     /**
      * Preprocess aggregations params before they are used into the aggregation factory.
      *
-     * @param FieldInterface $field             Bucket field.
-     * @param array          $aggregationParams Aggregation params.
-     * @param array          $filters           Filter applied to the search request.
+     * @param FieldInterface $field     Bucket field.
+     * @param array          $aggParams Aggregation params.
+     * @param array          $filters   Filter applied to the search request.
      *
      * @return array
      */
-    private function getBucketParams(FieldInterface $field, array $aggregationParams, array $filters)
+    private function getBucketParams(FieldInterface $field, array $aggParams, array $filters)
     {
         $bucketField = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
 
@@ -145,11 +154,11 @@ class AggregationBuilder
 
         $bucketParams = [
             'field'   => $bucketField,
-            'name'    => isset($aggregationParams['config']['name']) ? $aggregationParams['config']['name'] : $field->getName(),
+            'name'    => isset($aggParams['config']['name']) ? $aggParams['config']['name'] : $field->getName(),
             'filter' => array_diff_key($filters, [$field->getName() => true]),
         ];
 
-        $bucketParams += $aggregationParams['config'];
+        $bucketParams += $aggParams['config'];
 
         if (empty($bucketParams['filter'])) {
             unset($bucketParams['filter']);
@@ -167,18 +176,18 @@ class AggregationBuilder
     /**
      * Build buckets metric.
      *
-     * @param ContainerConfigurationInterface $containerConfiguration Container config.
-     * @param array                           $aggregationParams      Aggregation params.
+     * @param ContainerConfigurationInterface $containerConfig Container config.
+     * @param array                           $aggParams       Aggregation params.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\Aggregation\Metric[]
      */
-    private function getMetrics(ContainerConfigurationInterface $containerConfiguration, array $aggregationParams)
+    private function getMetrics(ContainerConfigurationInterface $containerConfig, array $aggParams)
     {
         $metrics = [];
-        if (isset($aggregationParams['config']['metrics'])) {
-            foreach ($aggregationParams['config']['metrics'] as $metricName => $metricConfig) {
+        if (isset($aggParams['config']['metrics'])) {
+            foreach ($aggParams['config']['metrics'] as $metricName => $metricConfig) {
                 try {
-                    $field = $containerConfiguration->getMapping()->getField($metricConfig['field']);
+                    $field = $containerConfig->getMapping()->getField($metricConfig['field']);
                     $metricConfig['field'] = $field->getName();
                 } catch (\Exception $e) {
                     ;
