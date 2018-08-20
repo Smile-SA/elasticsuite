@@ -142,6 +142,6 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      */
     public function isPhoneticSearchEnabled()
     {
-        return ($this->enablePhoneticSearch !== null);
+        return (bool) $this->enablePhoneticSearch;
     }
 }
