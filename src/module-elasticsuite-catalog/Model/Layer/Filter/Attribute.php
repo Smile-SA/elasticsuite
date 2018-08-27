@@ -256,7 +256,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             if (!empty($options)) {
                 foreach ($options as $option) {
                     if (isset($option['label'])) {
-                        $optionLabel = trim((string) $option['label']);
+                        // Manage labels that contains single quote.
+                        $optionLabel = trim((string) htmlspecialchars($option['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false));
                         $optionPosition++;
 
                         if ($optionLabel !== null && isset($items[$optionLabel])) {
