@@ -33,7 +33,7 @@ class Conditions extends Action
     protected $ruleFactory;
 
     /**
-     * @var arrray
+     * @var array
      */
     private $acls = [];
 

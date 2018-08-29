@@ -45,7 +45,7 @@ class Initial
     /**
      * Class constructor
      *
-     * @param \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Initial $reader The reader
+     * @param \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Initial\Reader $reader The reader
      * @param \Magento\Framework\App\Cache\Type\Config                                    $cache  Cache instance
      */
     public function __construct(

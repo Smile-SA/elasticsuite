@@ -72,7 +72,7 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     /**
      * Returns child buckets.
      *
-     * @return BuckerInterface[]
+     * @return BucketInterface[]
      */
     public function getChildBuckets();
 }
