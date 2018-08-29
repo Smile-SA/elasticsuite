@@ -16,6 +16,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer;
 
 use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
  * Create the virtual rule edit field in the category edit form.
