@@ -232,7 +232,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     {
         $form = $fieldset->getForm();
 
-        /* @var $synonymsRenderer \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonym */
+        /* @var $synonymsRenderer \Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonyms */
         $synonymsRenderer = $this->getLayout()->createBlock(
             'Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer\Synonyms'
         )->setForm($fieldset->getForm());
