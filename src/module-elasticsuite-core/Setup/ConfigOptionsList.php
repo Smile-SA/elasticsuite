@@ -162,7 +162,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      *
      * @param array            $options          Input options.
      * @param DeploymentConfig $deploymentConfig Deployment config.
-     * @param unknown          $inputKey         Name of the variable in the input options.
+     * @param string           $inputKey         Name of the variable in the input options.
      *
      * @return mixed
      */
