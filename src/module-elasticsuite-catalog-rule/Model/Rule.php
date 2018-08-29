@@ -74,7 +74,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel
      */
     public function getActionsInstance()
     {
-        throw new \LogicalException('Unsupported method.');
+        throw new \LogicException('Unsupported method.');
     }
 
     /**
