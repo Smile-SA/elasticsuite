@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 
 /**
  * Significant term bucket implementation.
@@ -56,7 +57,7 @@ class SignificantTerm extends AbstractBucket
      *
      * @param string            $name         Bucket name.
      * @param string            $field        Bucket field.
-     * @param Metric[]          $metrics      Bucket metrics.
+     * @param MetricInterface[] $metrics      Bucket metrics.
      * @param BucketInterface[] $childBuckets Child buckets.
      * @param string            $nestedPath   Nested path for nested bucket.
      * @param QueryInterface    $filter       Bucket filter.

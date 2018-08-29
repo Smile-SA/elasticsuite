@@ -15,8 +15,8 @@
 namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Magento\Framework\Search\Request\Aggregation\Metric;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 
 /**
  * Abstract bucket implementation.
@@ -37,12 +37,12 @@ abstract class AbstractBucket implements BucketInterface
     private $field;
 
     /**
-     * @var Metric[]
+     * @var MetricInterface[]
      */
     private $metrics;
 
     /**
-     * @var Metric[]
+     * @var BucketInterface[]
      */
     private $childBuckets;
 
@@ -66,7 +66,7 @@ abstract class AbstractBucket implements BucketInterface
      *
      * @param string            $name         Bucket name.
      * @param string            $field        Bucket field.
-     * @param Metric[]          $metrics      Bucket metrics.
+     * @param MetricInterface[] $metrics      Bucket metrics.
      * @param BucketInterface[] $childBuckets Child buckets.
      * @param string            $nestedPath   Nested path for nested bucket.
      * @param QueryInterface    $filter       Bucket filter.
