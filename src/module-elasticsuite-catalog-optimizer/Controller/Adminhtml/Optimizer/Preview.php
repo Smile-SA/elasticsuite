@@ -17,7 +17,6 @@ use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
-use Magento\Store\Model\Store;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\PreviewFactory;

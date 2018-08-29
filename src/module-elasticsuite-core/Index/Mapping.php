@@ -188,7 +188,7 @@ class Mapping implements MappingInterface
     /**
      * Return the search property for a field present in defaultMappingFields.
      *
-     * @throws \InvalidArgument If the field / analyzer does not exists.
+     * @throws \InvalidArgumentException If the field / analyzer does not exists.
      *
      * @param string $field    Field.
      * @param string $analyzer Required analyzer.

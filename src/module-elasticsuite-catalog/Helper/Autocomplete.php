@@ -25,7 +25,7 @@ use Magento\Framework\App\Helper\Context;
 class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
 {
     /**
-     * @var Attribute
+     * @var ProductAttribute
      */
     private $attributeHelper;
 
@@ -34,7 +34,7 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
      *
      * @param Context               $context         Helper context.
      * @param StoreManagerInterface $storeManager    Store manager.
-     * @param Attribute             $attributeHelper Attribute helper.
+     * @param ProductAttribute      $attributeHelper Attribute helper.
      */
     public function __construct(Context $context, StoreManagerInterface $storeManager, ProductAttribute $attributeHelper)
     {
@@ -46,7 +46,7 @@ class Autocomplete extends \Smile\ElasticsuiteCore\Helper\Autocomplete
     /**
      * ES field used in attribute autocomplete.
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute $attribute Attribute.
+     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute Attribute.
      *
      * @return string
      */

@@ -31,16 +31,16 @@ class Builder
     private $queryBuilder;
 
     /**
-     * @var \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[]
+     * @var BuilderInterface[]
      */
     private $builders;
 
     /**
      * Constructor.
      *
-     * @param QueryBuilder                                                  $queryBuilder Query builder used to build
-     *                                                                                    queries inside sort orders.
-     * @param \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface[] $builders     Aggregation builder implementations
+     * @param QueryBuilder       $queryBuilder Query builder used to build
+     *                                         Queries inside sort orders.
+     * @param BuilderInterface[] $builders     Aggregation builder implementations
      */
     public function __construct(QueryBuilder $queryBuilder, array $builders = [])
     {
@@ -109,7 +109,7 @@ class Builder
      *
      * @param string $bucketType Bucket type to be built.
      *
-     * @return \Magento\Elasticsearch\Model\Adapter\Index\BuilderInterface
+     * @return BuilderInterface
      */
     private function getBuilder($bucketType)
     {

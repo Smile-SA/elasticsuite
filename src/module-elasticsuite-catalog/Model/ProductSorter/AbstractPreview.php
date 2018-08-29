@@ -58,7 +58,7 @@ abstract class AbstractPreview implements PreviewInterface
      * @param ProductCollectionFactory $collectionFactory Product collection factory.
      * @param ItemDataFactory          $itemFactory       Preview item factory.
      * @param QueryFactory             $queryFactory      ES query factory.
-     * @param unknown                  $storeId           Store id.
+     * @param integer                  $storeId           Store id.
      * @param number                   $size              Preview size.
      */
     public function __construct(
@@ -112,7 +112,7 @@ abstract class AbstractPreview implements PreviewInterface
      *
      * @param \Magento\Catalog\Model\ResourceModel\Product[] $products Product list.
      *
-     * @return Preview\Item[]
+     * @return array
      */
     private function preparePreviewItems($products = [])
     {

@@ -24,7 +24,7 @@ interface OptimizerFilterInterface
     /**
      * Return the list of optimizers to be applied.
      *
-     * @return arrray|null
+     * @return array|null
      */
     public function getOptimizerIds();
 }

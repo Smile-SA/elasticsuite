@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Fulltext;
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\RequestInterface;
 
 /**
  * Search engine category collection for Autocomplete.
