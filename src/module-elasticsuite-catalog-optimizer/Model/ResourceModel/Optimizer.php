@@ -34,15 +34,18 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Context.
      * @param RuleFactory                                       $ruleFactory    Rule factory.
+     * @param \Magento\Framework\Serialize\SerializerInterface  $serializer     Serializer.
      * @param string                                            $connectionName Connection name.
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         RuleFactory $ruleFactory,
+        \Magento\Framework\Serialize\SerializerInterface $serializer,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->ruleFactory = $ruleFactory;
+        $this->serializer  = $serializer;
     }
 
     /**
@@ -117,7 +120,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
         if (is_array($object->getConfig())) {
-            $object->setConfig(serialize($object->getConfig()));
+            $object->setConfig($this->serializer->serialize($object->getConfig()));
         }
 
         $rule = $this->ruleFactory->create();
@@ -128,7 +131,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         } elseif (is_array($ruleCondition)) {
             $rule->getConditions()->loadArray($ruleCondition);
         }
-        $object->setRuleCondition(serialize($rule->getConditions()->asArray()));
+        $object->setRuleCondition($this->serializer->serialize($rule->getConditions()->asArray()));
 
         return parent::_beforeSave($object);
     }
