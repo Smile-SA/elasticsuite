@@ -118,7 +118,8 @@ class AttributeData extends AbstractAttributeData
 
     /**
      * Allow to filter an attribute collection on attributes that are indexed into the search engine.
-     * Overriden to enforce "status" attribute indexing for products.
+     *
+     * Inherited to enforce "status" and "sku" attribute indexing for products.
      *
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection Attribute Collection
      *
@@ -129,7 +130,7 @@ class AttributeData extends AbstractAttributeData
     ) {
         $attributeCollection = parent::addIndexedFilterToAttributeCollection($attributeCollection);
 
-        $attributeCollection->getSelect()->orWhere("attribute_code = 'status'");
+        $attributeCollection->getSelect()->orWhere("attribute_code IN ('status', 'sku')");
 
         return $attributeCollection;
     }

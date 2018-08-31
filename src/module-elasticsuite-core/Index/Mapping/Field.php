@@ -226,6 +226,14 @@ class Field implements FieldInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Check if an ES property as the right analyzer.
      *
      * @param array  $property         ES Property.

@@ -120,24 +120,15 @@ class Config extends \Magento\Framework\Config\Data
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
             $datasources  = [];
-            $staticFields = [];
 
             foreach ($typeConfigData['datasources'] as $datasourceName => $datasourceClass) {
                 $datasources[$datasourceName] = $this->objectManager->get($datasourceClass);
             }
 
-            $dynamicFieldProviders = array_filter($datasources, array($this, 'isDynamicFieldsProvider'));
-
-            foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
-                $staticFields[$fieldName] = $this->mappingFieldFactory->create(['name' => $fieldName] + $fieldConfig);
-            }
+            $fields  = $this->getMappingFields($typeConfigData, $datasources);
 
             $mapping = $this->mappingFactory->create(
-                [
-                    'idFieldName'           => $typeConfigData['idFieldName'],
-                    'staticFields'          => $staticFields,
-                    'dynamicFieldProviders' => $dynamicFieldProviders,
-                ]
+                ['idFieldName' => $typeConfigData['idFieldName'], 'fields' => $fields]
             );
 
             $types[$typeName] = $this->typeFactory->create(
@@ -152,6 +143,40 @@ class Config extends \Magento\Framework\Config\Data
         $defaultSearchType = $indexConfigData['defaultSearchType'];
 
         return ['types' => $types, 'defaultSearchType' => $defaultSearchType];
+    }
+
+    /**
+     * Prepare mapping fields by merging static fields with dynamic ones.
+     *
+     * @param array $typeConfigData Processed type configuration.
+     * @param array $dataSources    Data sources for current type.
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
+     */
+    private function getMappingFields($typeConfigData, $dataSources)
+    {
+        /** @var DynamicFieldProviderInterface[] $dynamicFieldProviders */
+        $dynamicFieldProviders = array_filter($dataSources, [$this, 'isDynamicFieldsProvider']);
+
+        $fields = [];
+
+        foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
+            $fields += $dynamicFieldProvider->getFields();
+        }
+
+        foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
+            if (isset($fields[$fieldName])) {
+                // Field also exists with dynamic providers.
+                // We merge the dynamic config and the config coming from configuration file.
+                // XML file has precedence.
+                $config                     = $fields[$fieldName]->getConfig();
+                $fieldConfig['fieldConfig'] = array_merge($config, $fieldConfig['fieldConfig'] ?? []);
+            }
+
+            $fields[$fieldName] = $this->mappingFieldFactory->create(['name' => $fieldName] + $fieldConfig);
+        }
+
+        return $fields;
     }
 
     /**

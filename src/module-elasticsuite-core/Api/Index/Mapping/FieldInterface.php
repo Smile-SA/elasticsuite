@@ -139,4 +139,11 @@ interface FieldInterface
      * @return string
      */
     public function getDefaultSearchAnalyzer();
+
+    /**
+     * Return the string config
+     *
+     * @return array
+     */
+    public function getConfig();
 }
