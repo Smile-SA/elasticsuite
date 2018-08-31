@@ -34,9 +34,9 @@ class RequestBuilder
     private $searchRequestBuilder;
 
     /**
-     * @var \Magento\Store\Api\StoreResolverInterface
+     * @var \Magento\Store\Model\StoreManagerInterface
      */
-    private $storeResolver;
+    private $storeManager;
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory
@@ -53,19 +53,19 @@ class RequestBuilder
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder                                    $searchRequestBuilder   Search request
      *                                                                                                                  builder.
-     * @param \Magento\Store\Api\StoreResolverInterface                                         $storeResolver          Store resolver.
+     * @param \Magento\Store\Model\StoreManagerInterface                                        $storeManager           Store resolver.
      * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory Container config
      *                                                                                                                  factory.
      * @param RequestMapper                                                                     $requestMapper          Request mapper.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
-        \Magento\Store\Api\StoreResolverInterface $storeResolver,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory,
         RequestMapper $requestMapper
     ) {
         $this->searchRequestBuilder   = $searchRequestBuilder;
-        $this->storeResolver          = $storeResolver;
+        $this->storeManager           = $storeManager;
         $this->requestMapper          = $requestMapper;
         $this->containerConfigFactory = $containerConfigFactory;
     }
@@ -79,7 +79,7 @@ class RequestBuilder
      */
     public function getRequest(\Magento\Framework\Api\Search\SearchCriteriaInterface $searchCriteria)
     {
-        $storeId       = $this->storeResolver->getCurrentStoreId();
+        $storeId       = $this->storeManager->getStore()->getId();
         $containerName = $searchCriteria->getRequestName();
 
         $containerConfiguration = $this->getSearchContainerConfiguration($storeId, $containerName);
