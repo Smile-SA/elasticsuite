@@ -1,0 +1,79 @@
+Merchandiser,Merchandiser
+Back,Back
+Reset,Reset
+"Save and Continue Edit","Save and Continue Edit"
+Save,Save
+"<%- count %> products","<%- count %> products"
+"No products in the selected range.","No products in the selected range."
+"Search Configuration","Search Configuration"
+"Display in autocomplete","Display in autocomplete"
+"Facet coverage rate","Facet coverage rate"
+"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Brand facet will be displayed only if 90% of the product have a brand."
+"Facet max. size","Facet max. size"
+"Max number of values returned by a facet query.","Max number of values returned by a facet query."
+"Facet sort order","Facet sort order"
+"Search Weight","Search Weight"
+"Used in spellcheck","Used in spellcheck"
+"Slider Display Configuration","Slider Display Configuration"
+"Display pattern","Display pattern"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €"
+"Display Precision","Display Precision"
+"The number of digits to use for precision when displaying.","The number of digits to use for precision when displaying."
+"No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","No exact results found for: <b>'%1'</b>. The displayed items are the closest matches."
+"No search specified.","No search specified."
+"This search no longer exists.","This search no longer exists."
+"Search results for ""%1""","Search results for ""%1"""
+"Unable to save positions.","Unable to save positions."
+Auto,Auto
+"Always hidden","Always hidden"
+"Always displayed","Always displayed"
+"Result count","Result count"
+"Admin sort","Admin sort"
+Name,Name
+Relevance,Relevance
+"%1 and above","%1 and above"
+"%1 - %2","%1 - %2"
+"%1 is the only product matching your '%2' search.","%1 is the only product matching your '%2' search."
+item,item
+items,items
+OK,OK
+"Shop By","Shop By"
+"Clear All","Clear All"
+"Shopping Options","Shopping Options"
+"Your product selection is empty.","Your product selection is empty."
+"Automatic Sort","Automatic Sort"
+"Manual Sort","Manual Sort"
+"Show more","Show more"
+"In Stock","In Stock"
+"Out Of Stock","Out Of Stock"
+"Show less","Show less"
+"No value matching the search <b>%s</b>.","No value matching the search <b>%s</b>."
+"Search (%s)","Search (%s)"
+"Product Autocomplete","Product Autocomplete"
+"Max Size","Max Size"
+"Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."
+"Product Attributes Autocomplete","Product Attributes Autocomplete"
+"Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."
+"Category Autocomplete","Category Autocomplete"
+"Maximum number of categories to display in autocomplete results.","Maximum number of categories to display in autocomplete results."
+"Catalog Search","Catalog Search"
+"Catalog Search Configuration","Catalog Search Configuration"
+"Redirect to product page if only one result","Redirect to product page if only one result"
+"If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
+"Expanded facets","Expanded facets"
+"Number of facets to display expanded by default.","Number of facets to display expanded by default."
+"ElasticSuite Category Indexing","ElasticSuite Category Indexing"
+"Reindex ElasticSuite catalog categories.","Reindex ElasticSuite catalog categories."
+"Is Spellchecked","Is Spellchecked"
+Yes,Yes
+No,No
+"Layered Navigation Filters","Layered Navigation Filters"
+Attribute,Attribute
+"Display Mode","Display Mode"
+"Sort Order","Sort Order"
+Pinned,Pinned
+"Use Category Name in product search","Use Category Name in product search"
+"No search result for the current search.","No search result for the current search."
+Products,Products
+Categories,Categories
+Attributes,Attributes

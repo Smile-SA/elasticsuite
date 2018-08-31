@@ -1,0 +1,49 @@
+Thesaurus,Thesaurus
+"Add New Thesaurus","Add New Thesaurus"
+"Create Thesaurus","Create Thesaurus"
+"Create a Thesaurus","Create a Thesaurus"
+Synonym,Synonym
+Expansion,Expansion
+Type,Type
+"Thesaurus Type","Thesaurus Type"
+"Save Thesaurus","Save Thesaurus"
+"Save and Continue Edit","Save and Continue Edit"
+"Delete Thesaurus","Delete Thesaurus"
+"Edit a Thesaurus","Edit a Thesaurus"
+"General Information","General Information"
+"Thesaurus Name","Thesaurus Name"
+Active,Active
+Store,Store
+"Bag of words","Bag of words"
+Synonyms,Synonyms
+"Reference Term","Reference Term"
+"Expansion terms","Expansion terms"
+"Add Expansion","Add Expansion"
+"Synonym terms","Synonym terms"
+"Add Synonym","Add Synonym"
+"This thesaurus no longer exists.","This thesaurus no longer exists."
+"You deleted the thesaurus %1.","You deleted the thesaurus %1."
+"Edit %1 (%2)","Edit %1 (%2)"
+"Something went wrong while editing the thesaurus.","Something went wrong while editing the thesaurus."
+"New Thesaurus (%1)","New Thesaurus (%1)"
+"Please select searches.","Please select searches."
+"Total of %1 record(s) were deleted.","Total of %1 record(s) were deleted."
+"You saved the thesaurus %1.","You saved the thesaurus %1."
+"Thesaurus Configuration","Thesaurus Configuration"
+"Synonyms Configuration","Synonyms Configuration"
+"Enable Synonyms Search","Enable Synonyms Search"
+"Synonyms Weight Divider","Synonyms Weight Divider"
+"Query Expansions Configuration","Query Expansions Configuration"
+"Enable Search Expansions","Enable Search Expansions"
+"Concepts Weight Divider","Concepts Weight Divider"
+"ElasticSuite Thesaurus Indexing","ElasticSuite Thesaurus Indexing"
+"Reindex ElasticSuite search engine thesaurus.","Reindex ElasticSuite search engine thesaurus."
+Delete,Delete
+"Are you sure?","Are you sure?"
+Name,Name
+Expansions,Expansions
+Terms,Terms
+Status,Status
+Inactive,Inactive
+Action,Action
+Edit,Edit
