@@ -1,79 +1,79 @@
 Merchandiser,Merchandiser
 Back,Zurück
-Reset,Reset
-"Save and Continue Edit","Save and Continue Edit"
-Save,Save
-"<%- count %> products","<%- count %> products"
-"No products in the selected range.","No products in the selected range."
-"Search Configuration","Search Configuration"
-"Display in autocomplete","Display in autocomplete"
-"Facet coverage rate","Facet coverage rate"
-"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Brand facet will be displayed only if 90% of the product have a brand."
-"Facet max. size","Facet max. size"
-"Max number of values returned by a facet query.","Max number of values returned by a facet query."
-"Facet sort order","Facet sort order"
-"Search Weight","Search Weight"
-"Used in spellcheck","Used in spellcheck"
-"Slider Display Configuration","Slider Display Configuration"
-"Display pattern","Display pattern"
-"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €"
-"Display Precision","Display Precision"
-"The number of digits to use for precision when displaying.","The number of digits to use for precision when displaying."
-"No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","No exact results found for: <b>'%1'</b>. The displayed items are the closest matches."
+Reset,Zurücksetzen
+"Save and Continue Edit","Speichern und weiter editieren"
+Save,Speichern
+"<%- count %> products","<%- count %> Produkte"
+"No products in the selected range.","Keine Produkte in der gewählten Spanne."
+"Search Configuration","Sucheinstellungen"
+"Display in autocomplete","In der Autovervollständigung anzeigen"
+"Facet coverage rate","Rate der Abdeckung von Abwandlungen / Facetten"
+"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Markenabdeckung wird nur angezeigt wenn 90% der Produkte eine Marke haben."
+"Facet max. size","Abdeckung max. Größe"
+"Max number of values returned by a facet query.","Maximale Anzahl der Werte einer Abdeckungsabfrage"
+"Facet sort order","Abdeckung Reihenfolge der Sortierung"
+"Search Weight","Suchgewichtung"
+"Used in spellcheck","in der Rechtschreibprüfung verwendet"
+"Slider Display Configuration","Slider Anzeigeeinstellungen"
+"Display pattern","Anzeigemuster"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","Ein Muster wie %s UNIT bei dem %s der Wert ist. z.B.: $%s => $20 oder %s € => 20 €"
+"Display Precision","Darstellungsgenauigkeit"
+"The number of digits to use for precision when displaying.","Die Anzahl der Ziffern zur Verfeinerung der Ergebnisse."
+"No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","Wir konnten für: <b>'%1'</b> keine exakten Ergebnisse finden. Die gezeigten Elemente entsprechen den besten Übereinstimmungen."
 "No search specified.","No search specified."
-"This search no longer exists.","This search no longer exists."
-"Search results for ""%1""","Search results for ""%1"""
-"Unable to save positions.","Unable to save positions."
+"This search no longer exists.","Diese Suche existiert nicht mehr."
+"Search results for ""%1""","Suchergebnisse für ""%1"""
+"Unable to save positions.","Positionen konnten nicht gespeichert werden"
 Auto,Auto
-"Always hidden","Always hidden"
-"Always displayed","Always displayed"
-"Result count","Result count"
-"Admin sort","Admin sort"
+"Always hidden","Immer ausgeblendet"
+"Always displayed","Immer angezeigt"
+"Result count","Ergebnisse erzielt"
+"Admin sort","Admin Sortierung"
 Name,Name
-Relevance,Relevance
-"%1 and above","%1 and above"
+Relevance,Relevanz
+"%1 and above","%1 und höher"
 "%1 - %2","%1 - %2"
-"%1 is the only product matching your '%2' search.","%1 is the only product matching your '%2' search."
-item,item
-items,items
+"%1 is the only product matching your '%2' search.","%1 ist das einzige passende Produkt zu Ihrer Suchanfrage '%2'."
+item,Artikel
+items,Artikel
 OK,OK
-"Shop By","Shop By"
-"Clear All","Clear All"
-"Shopping Options","Shopping Options"
-"Your product selection is empty.","Your product selection is empty."
-"Automatic Sort","Automatic Sort"
-"Manual Sort","Manual Sort"
-"Show more","Show more"
-"In Stock","In Stock"
-"Out Of Stock","Out Of Stock"
-"Show less","Show less"
-"No value matching the search <b>%s</b>.","No value matching the search <b>%s</b>."
-"Search (%s)","Search (%s)"
-"Product Autocomplete","Product Autocomplete"
-"Max Size","Max Size"
-"Maximum number of products to display in autocomplete results.","Maximum number of products to display in autocomplete results."
-"Product Attributes Autocomplete","Product Attributes Autocomplete"
-"Maximum number of product attributes to display in autocomplete results.","Maximum number of product attributes to display in autocomplete results."
-"Category Autocomplete","Category Autocomplete"
-"Maximum number of categories to display in autocomplete results.","Maximum number of categories to display in autocomplete results."
-"Catalog Search","Catalog Search"
-"Catalog Search Configuration","Catalog Search Configuration"
-"Redirect to product page if only one result","Redirect to product page if only one result"
-"If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
-"Expanded facets","Expanded facets"
-"Number of facets to display expanded by default.","Number of facets to display expanded by default."
-"ElasticSuite Category Indexing","ElasticSuite Category Indexing"
-"Reindex ElasticSuite catalog categories.","Reindex ElasticSuite catalog categories."
-"Is Spellchecked","Is Spellchecked"
-Yes,Yes
-No,No
-"Layered Navigation Filters","Layered Navigation Filters"
-Attribute,Attribute
-"Display Mode","Display Mode"
-"Sort Order","Sort Order"
-Pinned,Pinned
-"Use Category Name in product search","Use Category Name in product search"
-"No search result for the current search.","No search result for the current search."
-Products,Products
-Categories,Categories
-Attributes,Attributes
+"Shop By","Einkaufen nach"
+"Clear All","Alles löschen"
+"Shopping Options","Einkaufoptionen"
+"Your product selection is empty.","Ihre Produktauswahl ist leer."
+"Automatic Sort","Automatische Sortierung"
+"Manual Sort","Manuelle Sortierung"
+"Show more","Mehr anzeigen"
+"In Stock","Auf Lager"
+"Out Of Stock","Nicht lieferbar"
+"Show less","Weniger anzeigen"
+"No value matching the search <b>%s</b>.","Keine Ergebnisse für die Suche <b>%s</b>."
+"Search (%s)","Suche (%s)"
+"Product Autocomplete",">Autovervollständigung Produkte"
+"Max Size","Maximale Größe"
+"Maximum number of products to display in autocomplete results.","Maximale Anzahl angezeigter Produkte in den Ergebnissen der Autovervollständigung."
+"Product Attributes Autocomplete","Autovervollständigung Produktattribute"
+"Maximum number of product attributes to display in autocomplete results.","Maximale Anzahl angezeigter Produktattribute in den Ergebnissen der Autovervollständigung."
+"Category Autocomplete","Autovervollständigung Kategorie"
+"Maximum number of categories to display in autocomplete results.","Maximale Anzahl angezeigter Kategorien in den Ergebnissen der Autovervollständigung."
+"Catalog Search","Katalogsuche"
+"Catalog Search Configuration","Einstellungen der Katalogsuche"
+"Redirect to product page if only one result","Weiterleitung zur Produktseite bei nur einem Ergebnis"
+"If there is only one product matching a given search query, the user will be redirect to this product page.","Wenn nur ein Produkt zur Suchanfrage passt, wird der Nutzer direkt zur Produktseite weitergeleitet."
+"Expanded facets","Erweiterte Bereiche"
+"Number of facets to display expanded by default.","Anzahl der standardmäßig angezeigten erweiterten Bereiche."
+"ElasticSuite Category Indexing","ElasticSuite Kategorie Indexierung"
+"Reindex ElasticSuite catalog categories.","Reindexierung der ElasticSuite Katalog-Kategorien."
+"Is Spellchecked","Ist rechtschreibgeprüft"
+Yes,Ja
+No,Nein
+"Layered Navigation Filters","Layered Navigation Filter"
+Attribute,Attribut
+"Display Mode","Display Modus"
+"Sort Order","Reihenfolge der Sortierung"
+Pinned,Angeheftet
+"Use Category Name in product search","Benutze Kategorienamen in der Produktsuche"
+"No search result for the current search.","Keine Suchergebnisse für die aktuelle Suche."
+Products,Produkte
+Categories,Kategorien
+Attributes,Attribute
