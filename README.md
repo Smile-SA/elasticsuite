@@ -6,7 +6,7 @@
 
 Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite >2.4 and Magento 2.1.x versions.
 
-If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.5.x release**.
+If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.6.x release**.
 
 **Which version should I use ?**
 
@@ -14,7 +14,7 @@ Magento Version                                     | ElasticSuite Latest Versio
 ----------------------------------------------------|------------------------------------------------------------------------
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ^2.1.0```
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ^2.3.0```
-Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.5.x** latest release : ```composer require smile/elasticsuite ^2.5.0```
+Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ^2.5.0```
 
 ### Magento2 B2B Compatibility
 
@@ -68,9 +68,9 @@ A demonstration store including the latest version of ElasticSuite is available 
 
 ### Current version
 
-The current version **2.5.0** has been focused on the **Elasticsearch 5.x compatibility**, **Search Terms Merchandiser**, **Facet management by category** and **Behavioral data tracking** features.
+The current version **2.6.0** has been focused on the **Elasticsearch 6.x compatibility**, improving **Merchandising features** and technical update that aims to bring support for **Magento 2.3.x**.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.5.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.6.0)
 
 This version is designed to be used on both Magento Open Source and Commerce versions >2.2.
 
