@@ -8,7 +8,7 @@ Save,Speichern
 "Search Configuration","Sucheinstellungen"
 "Display in autocomplete","In der Autovervollständigung anzeigen"
 "Facet coverage rate","Rate der Abdeckung von Abwandlungen / Facetten"
-"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Markenabdeckung wird nur angezeigt wenn 90% der Produkte eine Marke haben."
+"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Bsp.: Markenabdeckung wird nur angezeigt wenn 90% der Produkte eine Marke haben."
 "Facet max. size","Abwandlungen max. Größe"
 "Max number of values returned by a facet query.","Maximale Anzahl der Werte einer Abwandlungsabfrage (Facetten)"
 "Facet sort order","Reihenfolge der Sortierung bei Abwandlungen / Facetten"
