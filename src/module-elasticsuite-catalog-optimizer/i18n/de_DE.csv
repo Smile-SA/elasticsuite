@@ -1,50 +1,50 @@
-Back,Back
-Delete,Delete
-"Are you sure you want to do this?","Are you sure you want to do this?"
-Save,Save
-"Save and Continue Edit","Save and Continue Edit"
-"Rule conditions","Rule conditions"
+Back,Zurück
+Delete,Löschen
+"Are you sure you want to do this?","Sind Sie sicher?"
+Save,Speichern
+"Save and Continue Edit","Speichern und weiter bearbeiten"
+"Rule conditions","Regelbedingungen"
 Optimizer,Optimizer
-"New Optimizer","New Optimizer"
-"This optimizer no longer exists.","This optimizer no longer exists."
-"You deleted the optimizer %1.","You deleted the optimizer %1."
-"Edit %1","Edit %1"
-"Something went wrong while editing the optimizer.","Something went wrong while editing the optimizer."
-"Optimizers List","Optimizers List"
+"New Optimizer","Neuer Optimizer"
+"This optimizer no longer exists.","Dieser Optimizer existiert nicht mehr."
+"You deleted the optimizer %1.","Der Optimizer %1 wurde gelöscht."
+"Edit %1","%1 bearbeiten"
+"Something went wrong while editing the optimizer.","Etwas ging schief beim Bearbeiten des Optimizers."
+"Optimizers List","Liste des Optimizers"
 Optimizers,Optimizers
-"You saved the optimizer %1.","You saved the optimizer %1."
-"End Date must follow Start Date.","End Date must follow Start Date."
-"Could not save the optimizer: %1","Could not save the optimizer: %1"
-label,label
-Edit,Edit
-"Delete ${ $.$data.name }","Delete ${ $.$data.name }"
-"Are you sure you want to delete ${ $.$data.name } ?","Are you sure you want to delete ${ $.$data.name } ?"
-"Search Query","Search Query"
-Preview,Preview
-"Base Results","Base Results"
-"Optimized Results","Optimized Results"
-"Show more","Show more"
-"Score : ","Score : "
+"You saved the optimizer %1.","Der Optimizer %1 wurde gespeichert."
+"End Date must follow Start Date.","Das Enddatum muss nach dem Startdatum liegen."
+"Could not save the optimizer: %1","Der Optimizer konnte nicht gespeichert werden: %1"
+label,Label
+Edit,Bearbeiten
+"Delete ${ $.$data.name }","Lösche ${ $.$data.name }"
+"Are you sure you want to delete ${ $.$data.name } ?","${ $.$data.name } sicher löschen?"
+"Search Query","Suchanfrage"
+Preview,Vorschau
+"Base Results","Standardergebnisse"
+"Optimized Results","Optimierte Ergebnisse"
+"Show more","Mehr zeigen"
+"Score : ","Treffer: "
 "Optimizer Information","Optimizer Information"
-"Enable optimizer","Enable optimizer"
+"Enable optimizer","Aktiviere Optimizer"
 "Store View","Store View"
-Constant,Constant
-Model,Model
+Constant,Konstant
+Model,Modell
 "Optimizer Name","Optimizer Name"
-"Active from","Active from"
-"Active to","Active to"
-"Request type","Request type"
-Configuration,Configuration
-"Boost value (%)","Boost value (%)"
-"From -99 to 10000","From -99 to 10000"
-"Apply to products","Apply to products"
-"Query Text","Query Text"
-"Category Preview","Category Preview"
-"Add New Optimizer","Add New Optimizer"
-"All Store Views","All Store Views"
+"Active from","Aktiv ab"
+"Active to","Aktiv bis"
+"Request type","Anfragetyp"
+Configuration,Einstellung
+"Boost value (%)","Boost Wert (%)"
+"From -99 to 10000","Von -99 bis 10000"
+"Apply to products","Auf Produkte anwenden"
+"Query Text","Anfragetext"
+"Category Preview","Kategorie-Vorschau"
+"Add New Optimizer","Neuen Optimizer hinzufügen"
+"All Store Views","Alle Store Views"
 ID,ID
 Name,Name
-"Constant Score","Constant Score"
-Active,Active
-Inactive,Inactive
+"Constant Score","Konstante Treffer"
+Active,Aktiv
+Inactive,Inaktiv
 Status,Status
