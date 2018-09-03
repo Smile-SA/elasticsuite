@@ -1,7 +1,7 @@
 Merchandiser,Merchandiser
 Back,Zurück
 Reset,Zurücksetzen
-"Save and Continue Edit","Speichern und weiter editieren"
+"Save and Continue Edit","Speichern und weiter bearbeiten"
 Save,Speichern
 "<%- count %> products","<%- count %> Produkte"
 "No products in the selected range.","Keine Produkte in der gewählten Spanne."
@@ -11,7 +11,7 @@ Save,Speichern
 "Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Markenabdeckung wird nur angezeigt wenn 90% der Produkte eine Marke haben."
 "Facet max. size","Abdeckung max. Größe"
 "Max number of values returned by a facet query.","Maximale Anzahl der Werte einer Abdeckungsabfrage"
-"Facet sort order","Abdeckung Reihenfolge der Sortierung"
+"Facet sort order","Reihenfolge der Sortierung bei Abdeckungen"
 "Search Weight","Suchgewichtung"
 "Used in spellcheck","in der Rechtschreibprüfung verwendet"
 "Slider Display Configuration","Slider Anzeigeeinstellungen"
@@ -43,10 +43,10 @@ OK,OK
 "Your product selection is empty.","Ihre Produktauswahl ist leer."
 "Automatic Sort","Automatische Sortierung"
 "Manual Sort","Manuelle Sortierung"
-"Show more","Mehr anzeigen"
+"Show more","Mehr zeigen"
 "In Stock","Auf Lager"
 "Out Of Stock","Nicht lieferbar"
-"Show less","Weniger anzeigen"
+"Show less","Weniger zeigen"
 "No value matching the search <b>%s</b>.","Keine Ergebnisse für die Suche <b>%s</b>."
 "Search (%s)","Suche (%s)"
 "Product Autocomplete",">Autovervollständigung Produkte"
