@@ -4,14 +4,14 @@
 "[CONTAINER - STORE VIEW]","[CONTAINER - STORE VIEW]"
 "Use Default","Standardeinstellungen verwenden"
 "Use Container","Container verwenden"
-"All Store Views","All Store Views"
+"All Store Views","Alle Store Views"
 "Search Engine","Suchmaschine"
 Relevance,Relevanz
 "Relevance configuration","Einstellungen der Relevanz"
 "You saved the configuration.","Die Einstellungen wurden gespeichert."
 "Something went wrong while saving this configuration:","Etwas ging schief beim Speichern der Einstellungen:"
 Automatic,Automatisch
-"Only default scope allowed","Nur der Standard Bereich ist erlaubt."
+"Only default scope allowed","Nur der Standardbereich ist erlaubt."
 label,Label
 View:,Ansicht:
 "Please confirm scope switching. All data that hasn't been saved will be lost.","Bitte bestätigen Sie die Umstellung des Bereichs. Ungespeicherte Änderungen gehen verloren."
