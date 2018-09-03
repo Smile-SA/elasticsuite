@@ -1,0 +1,14 @@
+Tracking,Tracking
+"Global Configuration","Globale Einstellungen"
+Enabled,Aktiviert
+"Session Configuration","Session Einstellungen"
+"Visit Cookie Name","Besuchs-Cookie Name"
+"Visit Cookie Lifetime","Besuchs-Cookie Lifetime"
+"In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.","In Sekunden (Standard sind 3600 sek.).<br /> Ohne Aktivität während dieser Verzögerung wird ein neuer Besuch gestartet."
+"Visitor Cookie Name","Besucher-Cookie Name"
+"Visitor Cookie Lifetime","Besucher-Cookie Lifetime"
+"In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.","In Tagen (Standard sind 365 Tage).<br /> Dieser Cookie wird bei dem Besucher langfristig platziert um mehrfache Besuche nachvollziehen zu können."
+"Tracking Anonymization","Tracking Anonymisierung"
+"Anonymize customer data after a delay.","Anonymisiere Käuferdaten bei einer Verzögerung."
+"Anonymization Delay","Anonymisierungsverzögerung"
+"In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay.","In Tagen (Standard sind 365 Tage).<br /> Gemessene Käuferdaten werden nach dieser Verzögerung anonymisiert."

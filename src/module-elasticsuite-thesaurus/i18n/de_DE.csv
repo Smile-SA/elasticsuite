@@ -1,0 +1,49 @@
+Thesaurus,Thesaurus
+"Add New Thesaurus","Neuen Thesaurus hinzufügen"
+"Create Thesaurus","Thesaurus erstellen"
+"Create a Thesaurus","Einen Thesaurus erstellen"
+Synonym,Synonym
+Expansion,Erweiterung
+Type,Typ
+"Thesaurus Type","Thesaurus Typ"
+"Save Thesaurus","Thesaurus speichern"
+"Save and Continue Edit","Speichern und weiter bearbeiten"
+"Delete Thesaurus","Thesaurus löschen"
+"Edit a Thesaurus","Einen Thesaurus bearbeiten"
+"General Information","Allgemeine Informationen"
+"Thesaurus Name","Thesaurus Name"
+Active,Aktiv
+Store,Store
+"Bag of words","Wortliste"
+Synonyms,Synonyme
+"Reference Term","Referenzbegriff"
+"Expansion terms","Erweiterte Begriffe"
+"Add Expansion","Erweiterung hinzufügen"
+"Synonym terms","Synonyme"
+"Add Synonym","Synonym hinzufügen"
+"This thesaurus no longer exists.","Dieser Thesaurus existiert nicht mehr."
+"You deleted the thesaurus %1.","Der thesaurus %1 wurde gelöscht."
+"Edit %1 (%2)","%1 (%2) bearbeiten"
+"Something went wrong while editing the thesaurus.","Etwas ging schief beim Bearbeiten des Thesaurus."
+"New Thesaurus (%1)","Neuer Thesaurus (%1)"
+"Please select searches.","Bitte Suchen auswählen."
+"Total of %1 record(s) were deleted.","%1 Eintrag / Einträge wurden gelöscht."
+"You saved the thesaurus %1.","Der Thesaurus %1 wurde gespeichert."
+"Thesaurus Configuration","Thesaurus Einstellungen"
+"Synonyms Configuration","Synonyme Einstellungen"
+"Enable Synonyms Search","Aktiviere Suche nach Synonymen"
+"Synonyms Weight Divider","Verteilung der Gewichtung von Synonymen"
+"Query Expansions Configuration","Einstellungen der Erweiterungen von Suchanfragen"
+"Enable Search Expansions","Aktiviere Sucherweiterungen"
+"Concepts Weight Divider","Verteilung der Gewichtung von Begriffen"
+"ElasticSuite Thesaurus Indexing","ElasticSuite Thesaurus Indexierung"
+"Reindex ElasticSuite search engine thesaurus.","Reindexierung der ElasticSuite Suchmaschine Thesaurus."
+Delete,Löschen
+"Are you sure?","Sind Sie sicher?"
+Name,Name
+Expansions,Erweiterungen
+Terms,Begriffe
+Status,Status
+Inactive,Inaktiv
+Action,Aktion
+Edit,Bearbeiten

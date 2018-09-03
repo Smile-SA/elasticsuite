@@ -1,0 +1,50 @@
+Back,Zurück
+Delete,Löschen
+"Are you sure you want to do this?","Sind Sie sicher?"
+Save,Speichern
+"Save and Continue Edit","Speichern und weiter bearbeiten"
+"Rule conditions","Regelbedingungen"
+Optimizer,Optimizer
+"New Optimizer","Neuer Optimizer"
+"This optimizer no longer exists.","Dieser Optimizer existiert nicht mehr."
+"You deleted the optimizer %1.","Der Optimizer %1 wurde gelöscht."
+"Edit %1","%1 bearbeiten"
+"Something went wrong while editing the optimizer.","Etwas ging schief beim Bearbeiten des Optimizers."
+"Optimizers List","Liste des Optimizers"
+Optimizers,Optimizers
+"You saved the optimizer %1.","Der Optimizer %1 wurde gespeichert."
+"End Date must follow Start Date.","Das Enddatum muss nach dem Startdatum liegen."
+"Could not save the optimizer: %1","Der Optimizer konnte nicht gespeichert werden: %1"
+label,Label
+Edit,Bearbeiten
+"Delete ${ $.$data.name }","Lösche ${ $.$data.name }"
+"Are you sure you want to delete ${ $.$data.name } ?","${ $.$data.name } sicher löschen?"
+"Search Query","Suchanfrage"
+Preview,Vorschau
+"Base Results","Standardergebnisse"
+"Optimized Results","Optimierte Ergebnisse"
+"Show more","Mehr zeigen"
+"Score : ","Treffer: "
+"Optimizer Information","Optimizer Information"
+"Enable optimizer","Aktiviere Optimizer"
+"Store View","Store View"
+Constant,Konstant
+Model,Modell
+"Optimizer Name","Optimizer Name"
+"Active from","Aktiv ab"
+"Active to","Aktiv bis"
+"Request type","Anfragetyp"
+Configuration,Einstellung
+"Boost value (%)","Boost Wert (%)"
+"From -99 to 10000","Von -99 bis 10000"
+"Apply to products","Auf Produkte anwenden"
+"Query Text","Anfragetext"
+"Category Preview","Kategorie-Vorschau"
+"Add New Optimizer","Neuen Optimizer hinzufügen"
+"All Store Views","Alle Store Views"
+ID,ID
+Name,Name
+"Constant Score","Konstante Treffer"
+Active,Aktiv
+Inactive,Inaktiv
+Status,Status
