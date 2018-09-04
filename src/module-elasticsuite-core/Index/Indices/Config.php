@@ -165,15 +165,16 @@ class Config extends \Magento\Framework\Config\Data
         }
 
         foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
+            $field = $this->mappingFieldFactory->create(['name' => $fieldName] + $fieldConfig);
+
             if (isset($fields[$fieldName])) {
                 // Field also exists with dynamic providers.
                 // We merge the dynamic config and the config coming from configuration file.
                 // XML file has precedence.
-                $config                     = $fields[$fieldName]->getConfig();
-                $fieldConfig['fieldConfig'] = array_merge($config, $fieldConfig['fieldConfig'] ?? []);
+                $field = $fields[$fieldName]->mergeConfig($fieldConfig['fieldConfig'] ?? []);
             }
 
-            $fields[$fieldName] = $this->mappingFieldFactory->create(['name' => $fieldName] + $fieldConfig);
+            $fields[$fieldName] = $field;
         }
 
         return $fields;

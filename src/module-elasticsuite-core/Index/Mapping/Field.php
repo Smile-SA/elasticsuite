@@ -228,9 +228,11 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfig()
+    public function mergeConfig(array $config = [])
     {
-        return $this->config;
+        $config = array_merge($this->config, $config);
+
+        return new static($this->name, $this->type, $this->nestedPath, $config);
     }
 
     /**
