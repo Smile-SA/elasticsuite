@@ -30,22 +30,22 @@ class FrontPlugin
     private $registry;
 
     /**
-     * @var \Magento\Swatches\Model\SwatchAttributeType
+     * @var \Magento\Swatches\Helper\Data
      */
-    private $swatchAttributeType;
+    private $swatchHelper;
 
     /**
      * FrontPlugin constructor.
      *
-     * @param \Magento\Framework\Registry                 $registry            Registry
-     * @param \Magento\Swatches\Model\SwatchAttributeType $swatchAttributeType Swatch Attribute Type
+     * @param \Magento\Framework\Registry   $registry     Registry
+     * @param \Magento\Swatches\Helper\Data $swatchHelper Swatch Attribute Helper
      */
     public function __construct(
         \Magento\Framework\Registry $registry,
-        \Magento\Swatches\Model\SwatchAttributeType $swatchAttributeType
+        \Magento\Swatches\Helper\Data $swatchHelper
     ) {
-        $this->registry            = $registry;
-        $this->swatchAttributeType = $swatchAttributeType;
+        $this->registry     = $registry;
+        $this->swatchHelper = $swatchHelper;
     }
 
     /**
@@ -57,7 +57,7 @@ class FrontPlugin
      */
     public function afterSetForm(\Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front $subject)
     {
-        if ($this->getAttribute() && $this->swatchAttributeType->isSwatchAttribute($this->getAttribute())) {
+        if ($this->getAttribute() && $this->swatchHelper->isSwatchAttribute($this->getAttribute())) {
             if ($subject->getForm() && $subject->getForm()->getElement('facet_max_size')) {
                 $subject->getForm()->getElement('facet_max_size')->setDisabled(true);
             }
