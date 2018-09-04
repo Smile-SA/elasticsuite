@@ -226,6 +226,16 @@ class Field implements FieldInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function mergeConfig(array $config = [])
+    {
+        $config = array_merge($this->config, $config);
+
+        return new static($this->name, $this->type, $this->nestedPath, $config);
+    }
+
+    /**
      * Check if an ES property as the right analyzer.
      *
      * @param array  $property         ES Property.

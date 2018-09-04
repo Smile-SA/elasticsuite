@@ -141,6 +141,11 @@ abstract class AbstractAttributeData
 
                 $this->initField($attribute);
             }
+
+            if ($attribute->getAttributeCode() === 'sku') {
+                // SKU has no backend table.
+                $this->initField($attribute);
+            }
         }
 
         return $this;
