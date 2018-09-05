@@ -104,9 +104,9 @@
     </xs:complexType>
 
     <xs:complexType name="metricsDefinition">
-        <xs:all>
-            <xs:element name="metric" type="metricDefinition" minOccurs="0"/>
-        </xs:all>
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="metric" type="metricDefinition" />
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="metricDefinition">
