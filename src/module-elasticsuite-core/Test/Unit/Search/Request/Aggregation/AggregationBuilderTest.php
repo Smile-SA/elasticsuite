@@ -44,8 +44,8 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
-            'simpleField'            => ['type' => 'aggType', 'config' => ['foo' => 'bar']],
-            'searchableField'        => ['type' => 'aggType', 'config' => ['foo' => 'bar']],
+            ['name' => 'simpleField', 'type' => 'aggType', 'foo' => 'bar'],
+            ['name' => 'searchableField', 'type' => 'aggType', 'foo' => 'bar'],
         ];
 
         $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
@@ -54,12 +54,10 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('simpleField', $buckets[0]['field']);
         $this->assertEquals('simpleField', $buckets[0]['name']);
-        $this->assertEquals([], $buckets[0]['metrics']);
         $this->assertEquals('bar', $buckets[0]['foo']);
 
         $this->assertEquals('searchableField.untouched', $buckets[1]['field']);
         $this->assertEquals('searchableField', $buckets[1]['name']);
-        $this->assertEquals([], $buckets[1]['metrics']);
         $this->assertEquals('bar', $buckets[1]['foo']);
     }
 
@@ -74,13 +72,13 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
-            'simpleField'            => ['type' => 'aggType', 'config' => ['foo' => 'bar']],
-            'searchableField'        => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'nestedPath' => 'invalidNestedPath']],
+            ['name' => 'simpleField', 'type' => 'aggType', 'foo' => 'bar'],
+            ['name' => 'searchableField', 'type' => 'aggType', 'foo' => 'bar', 'nestedPath' => 'invalidNestedPath'],
         ];
 
         $filters = [
-            'simpleField'            => 'simpleFieldFilter',
-            'searchableField'        => 'searchableFieldFilter',
+            'simpleField'     => 'simpleFieldFilter',
+            'searchableField' => 'searchableFieldFilter',
         ];
 
         $buckets = $builder->buildAggregations($containerConfig, $aggregations, $filters);
@@ -89,13 +87,11 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('simpleField', $buckets[0]['field']);
         $this->assertEquals('simpleField', $buckets[0]['name']);
-        $this->assertEquals([], $buckets[0]['metrics']);
         $this->assertEquals('bar', $buckets[0]['foo']);
         $this->assertInstanceOf(QueryInterface::class, $buckets[0]['filter']);
 
         $this->assertEquals('searchableField.untouched', $buckets[1]['field']);
         $this->assertEquals('searchableField', $buckets[1]['name']);
-        $this->assertEquals([], $buckets[1]['metrics']);
         $this->assertEquals('bar', $buckets[1]['foo']);
         $this->assertInstanceOf(QueryInterface::class, $buckets[1]['filter']);
     }
@@ -111,8 +107,8 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
-            'nested.simpleField' => ['type' => 'aggType', 'config' => ['foo' => 'bar']],
-            'nested.searchableField' => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'nestedPath' => 'invalidNestedPath']],
+            ['name' => 'nested.simpleField', 'type' => 'aggType', 'foo' => 'bar'],
+            ['name' => 'nested.searchableField', 'type' => 'aggType', 'foo' => 'bar', 'nestedPath' => 'invalidNestedPath'],
         ];
 
         $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
@@ -121,13 +117,11 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('nested.simpleField', $buckets[0]['field']);
         $this->assertEquals('nested.simpleField', $buckets[0]['name']);
-        $this->assertEquals([], $buckets[0]['metrics']);
         $this->assertEquals('nested', $buckets[1]['nestedPath']);
         $this->assertEquals('bar', $buckets[0]['foo']);
 
         $this->assertEquals('nested.searchableField.untouched', $buckets[1]['field']);
         $this->assertEquals('nested.searchableField', $buckets[1]['name']);
-        $this->assertEquals([], $buckets[1]['metrics']);
         $this->assertEquals('nested', $buckets[1]['nestedPath']);
         $this->assertEquals('bar', $buckets[1]['foo']);
     }
@@ -143,9 +137,10 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations    = [
-            'nested.simpleField' => [
+            [
+                'name' => 'nested.simpleField',
                 'type' => 'aggType',
-                'config' => ['nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter']],
+                'nestedFilter' => ['nested.searchableField' => 'simpleNestedFieldFilter'],
             ],
         ];
 
@@ -157,46 +152,9 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals('nested.simpleField', $buckets[0]['field']);
         $this->assertEquals('nested.simpleField', $buckets[0]['name']);
-        $this->assertEquals([], $buckets[0]['metrics']);
         $this->assertEquals('nested', $buckets[0]['nestedPath']);
         $this->assertInstanceOf(QueryInterface::class, $buckets[0]['nestedFilter']);
         $this->assertInstanceOf(QueryInterface::class, $buckets[0]['filter']);
-    }
-
-    /**
-     * Test building aggregations using a field not present into the mapping.
-     *
-     * @return void
-     */
-    public function testUnknownFieldAggregation()
-    {
-        $builder         = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
-        $containerConfig = $this->getContainerConfiguration();
-        $aggregations    = ['invalidField' => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'metrics' => []]]];
-
-        $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
-
-        $this->assertCount(1, $buckets);
-
-        $this->assertEquals($aggregations['invalidField']['config'], $buckets[0]);
-    }
-
-    /**
-     * Test building aggregation using a field that is not filetrable.
-     *
-     * @return void
-     */
-    public function testNotFilterableFieldAggregation()
-    {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
-
-        $containerConfig = $this->getContainerConfiguration();
-        $aggregations    = ['notFilterableField' => ['type' => 'aggType', 'config' => ['foo' => 'bar', 'metrics' => []]]];
-
-        $buckets = $builder->buildAggregations($containerConfig, $aggregations, []);
-
-        $this->assertCount(1, $buckets);
-        $this->assertEquals($aggregations['notFilterableField']['config'], $buckets[0]);
     }
 
     /**
