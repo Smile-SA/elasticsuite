@@ -53,7 +53,7 @@ class Histogram extends AbstractBucket
     public function __construct(
         $name,
         $field,
-        array $metrics,
+        array $metrics = [],
         array $childBuckets = [],
         $nestedPath = null,
         QueryInterface $filter = null,
