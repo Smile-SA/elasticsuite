@@ -77,13 +77,10 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     public function addFacetToCollection($config = [])
     {
         $facetQueries = $this->getFacetQueries();
-
-        $facetType   = BucketInterface::TYPE_QUERY_GROUP;
-        $facetField  = $this->getFilterField();
-        $facetConfig = ['name' => $facetField, 'queries' => $facetQueries];
+        $facetConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => $this->getFilterField(), 'queries' => $facetQueries];
 
         $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
+        $productCollection->addFacet($facetConfig);
 
         return $this;
     }

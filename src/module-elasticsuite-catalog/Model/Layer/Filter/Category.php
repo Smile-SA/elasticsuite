@@ -110,12 +110,9 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category implem
      */
     public function addFacetToCollection($config = [])
     {
-        $facetField  = $this->getFilterField();
-        $facetType   = BucketInterface::TYPE_TERM;
-        $facetConfig = ['size' => 0];
-
+        $facetConfig = ['name' => 'categories', 'field' => $this->getFilterField(), 'type' => BucketInterface::TYPE_TERM, 'size' => 0];
         $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
+        $productCollection->addFacet($facetConfig);
 
         return $this;
     }
@@ -131,7 +128,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category implem
 
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
-        $optionsFacetedData = $productCollection->getFacetedData($this->getFilterField());
+        $optionsFacetedData = $productCollection->getFacetedData('categories');
 
         $currentCategory = $this->dataProvider->getCategory();
         $categories = $this->getChildrenCategories();

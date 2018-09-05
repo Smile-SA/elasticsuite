@@ -62,7 +62,7 @@ class AttributeAggregation implements PreProcessorInterface
         foreach ($this->attributeConfig->getAutocompleteAttributeCollection() as $attribute) {
             $facetSize   = $this->autocompleteHelper->getMaxSize(DataProvider::AUTOCOMPLETE_TYPE);
             $filterField = $this->attributeConfig->getFilterField($attribute);
-            $collection->addFacet($filterField, BucketInterface::TYPE_TERM, ['size' => $facetSize]);
+            $collection->addFacet(['name' => $filterField, BucketInterface::TYPE_TERM, 'size' => $facetSize]);
         }
 
         return $collection;
