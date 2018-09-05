@@ -14,10 +14,6 @@
 
 namespace Smile\ElasticsuiteTracker\Model\ResourceModel;
 
-use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
-
 /**
  * Session index resource model.
  *
@@ -28,29 +24,9 @@ use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 class SessionIndex
 {
     /**
-     * @var array
+     * @var string
      */
-    private $buckets = [
-      [
-        'name'         => 'session_id',
-        'field'        => 'session.uid',
-        'type'         => BucketInterface::TYPE_TERM,
-        'childBuckets' => [
-            ['name' => 'visitor_id', 'type' => BucketInterface::TYPE_TERM, 'field' => 'session.vid'],
-            ['name' => 'product_view', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.product.id'],
-            ['name' => 'category_view', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.category.id'],
-            ['name' => 'category_view', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.category.id'],
-            ['name' => 'search_query', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.search.query.sortable'],
-            ['name' => 'product_cart', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.cart.product_id'],
-            ['name' => 'product_sale', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.order.items.product_id'],
-            ['name' => 'category_sale', 'type' => BucketInterface::TYPE_TERM, 'field' => 'page.order.items.category_ids'],
-        ],
-        'metrics'      => [
-          ['name' => 'start_date', 'type' => MetricInterface::TYPE_MIN, 'field' => 'date'],
-          ['name' => 'end_date', 'type' => MetricInterface::TYPE_MAX, 'field' => 'date'],
-        ],
-      ],
-    ];
+    const SEARCH_REQUEST_CONTAINER = 'session_aggregator';
 
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Builder
@@ -111,11 +87,9 @@ class SessionIndex
      */
     private function getSearchRequest($storeId, $sessionIds)
     {
-        $eventIndexIdentifier = EventIndexInterface::INDEX_IDENTIFIER;
-
         $queryFilters = ['session.uid' => $sessionIds];
 
-        return $this->searchRequestBuilder->create($storeId, $eventIndexIdentifier, 0, 0, null, [], [], $queryFilters, $this->buckets);
+        return $this->searchRequestBuilder->create($storeId, self::SEARCH_REQUEST_CONTAINER, 0, 0, null, [], [], $queryFilters);
     }
 
     /**

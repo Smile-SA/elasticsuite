@@ -17,8 +17,25 @@
 <requests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_search_request.xsd">
 
-    <request name="tracking_log_event" label="Tracking Log Event" index="tracking_log_event" type="event" fulltext="false" />
-
-    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" type="session" fulltext="false" />
+    <request name="session_aggregator" label="Session log aggregator" index="tracking_log_event" type="event" fulltext="false">
+        <aggregations>
+            <aggregation xsi:type="termBucket" name="session_id" field="session.uid">
+                <aggregations>
+                    <aggregation xsi:type="termBucket" name="visitor_id" field="session.vid" />
+                    <aggregation xsi:type="termBucket" name="product_view" field="page.product.id"/>
+                    <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
+                    <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
+                    <aggregation xsi:type="termBucket" name="search_query" field="page.search.query.sortable" />
+                    <aggregation xsi:type="termBucket" name="product_cart" field="page.cart.product_id" />
+                    <aggregation xsi:type="termBucket" name="product_sale" field="page.order.items.product_id" />
+                    <aggregation xsi:type="termBucket" name="category_sale" field="page.order.items.category_ids" />
+                </aggregations>
+                <metrics>
+                    <metric name="start_date" type="min" field="date" />
+                    <metric name="end_date" type="max" field="date" />
+                </metrics>
+            </aggregation>
+        </aggregations>
+    </request>
 
 </requests>
