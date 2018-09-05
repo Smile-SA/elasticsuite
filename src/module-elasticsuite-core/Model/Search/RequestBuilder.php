@@ -79,7 +79,8 @@ class RequestBuilder
      */
     public function getRequest(\Magento\Framework\Api\Search\SearchCriteriaInterface $searchCriteria)
     {
-        $storeId       = $this->storeManager->getStore()->getId();
+        $storeId = $this->getCurrentStoreId();
+
         $containerName = $searchCriteria->getRequestName();
 
         $containerConfiguration = $this->getSearchContainerConfiguration($storeId, $containerName);
@@ -94,6 +95,22 @@ class RequestBuilder
         $facets     = $this->requestMapper->getFacets($containerConfiguration, $searchCriteria);
 
         return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, [], $facets);
+    }
+
+    /**
+     * Return current store id.
+     *
+     * @return integer
+     */
+    private function getCurrentStoreId()
+    {
+        $storeId = $this->storeManager->getStore()->getId();
+
+        if ($storeId == 0) {
+            $storeId = $this->storeManager->getDefaultStoreView()->getId();
+        }
+
+        return $storeId;
     }
 
     /**
