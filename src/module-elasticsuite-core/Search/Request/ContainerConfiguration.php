@@ -145,7 +145,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
         $filters = [];
 
         /** @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface $filter */
-        foreach ($this->readBaseConfigParam('filters') as $filter) {
+        foreach ($this->readBaseConfigParam('filters', []) as $filter) {
             // Not using the filter name as array key, to prevent collision with filters added via addFieldToFilter.
             $filters[] = $filter->getFilterQuery($searchContext);
         }
@@ -158,19 +158,20 @@ class ContainerConfiguration implements ContainerConfigurationInterface
      */
     public function getAggregations(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
     {
-        return $this->readBaseConfigParam('aggregations');
+        return $this->readBaseConfigParam('aggregations', []);
     }
 
     /**
      * Read configuration param from base config.
      *
-     * @param string $param Param name.
-     *
+     * @param string $param   Param name.
+     * @param mixed  $default Default value if not set.
+      *
      * @return mixed
      */
-    private function readBaseConfigParam($param)
+    private function readBaseConfigParam($param, $default = null)
     {
-        return $this->baseConfig->get($this->containerName . '/' . $param);
+        return $this->baseConfig->get($this->containerName . '/' . $param) ?? $default;
     }
 
     /**
