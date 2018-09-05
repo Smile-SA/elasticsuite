@@ -24,6 +24,7 @@ use Magento\Framework\Search\Request\Dimension;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * ElasticSuite search requests builder.
@@ -76,6 +77,12 @@ class Builder
      */
     private $dimensionFactory;
 
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
     /**
      * Constructor.
      *
@@ -87,6 +94,7 @@ class Builder
      * @param ContainerConfigurationFactory $containerConfigFactory   Search requests configuration.
      * @param SpellcheckRequestFactory      $spellcheckRequestFactory Spellchecking request factory.
      * @param SpellcheckerInterface         $spellchecker             Spellchecker.
+     * @param ContextInterface              $searchContext            Search Context.
      */
     public function __construct(
         RequestFactory $requestFactory,
@@ -96,7 +104,8 @@ class Builder
         AggregationBuilder $aggregationBuilder,
         ContainerConfigurationFactory $containerConfigFactory,
         SpellcheckRequestFactory $spellcheckRequestFactory,
-        SpellcheckerInterface $spellchecker
+        SpellcheckerInterface $spellchecker,
+        ContextInterface $searchContext
     ) {
         $this->spellcheckRequestFactory = $spellcheckRequestFactory;
         $this->spellchecker             = $spellchecker;
@@ -106,6 +115,7 @@ class Builder
         $this->sortOrderBuilder         = $sortOrderBuilder;
         $this->aggregationBuilder       = $aggregationBuilder;
         $this->containerConfigFactory   = $containerConfigFactory;
+        $this->searchContext            = $searchContext;
     }
 
     /**
@@ -134,10 +144,10 @@ class Builder
         $queryFilters = [],
         $facets = []
     ) {
-        $containerConfig = $this->getRequestContainerConfiguration($storeId, $containerName);
-
-        $facetFilters  = array_intersect_key($filters, $facets);
-        $queryFilters  = array_merge($queryFilters, array_diff_key($filters, $facetFilters));
+        $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
+        $containerFilters = $this->getContainerFilters($containerConfig);
+        $facetFilters     = array_intersect_key($filters, $facets);
+        $queryFilters     = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
 
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
@@ -165,6 +175,18 @@ class Builder
         $request = $this->requestFactory->create($requestParams);
 
         return $request;
+    }
+
+    /**
+     * Returns search request applied to each request for a given search container.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
+     */
+    private function getContainerFilters(ContainerConfigurationInterface $containerConfig)
+    {
+        return $containerConfig->getFilters($this->searchContext);
     }
 
     /**
