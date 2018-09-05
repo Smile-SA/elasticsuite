@@ -146,6 +146,7 @@ class Builder
     ) {
         $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
         $containerFilters = $this->getContainerFilters($containerConfig);
+        $facets           = array_merge($facets, $this->getContainerAggregations($containerConfig));
         $facetFilters     = array_intersect_key($filters, $facets);
         $queryFilters     = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
 
@@ -187,6 +188,18 @@ class Builder
     private function getContainerFilters(ContainerConfigurationInterface $containerConfig)
     {
         return $containerConfig->getFilters($this->searchContext);
+    }
+
+    /**
+     * Returns aggregations configured in the search container.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
+     *
+     * @return array
+     */
+    private function getContainerAggregations(ContainerConfigurationInterface $containerConfig)
+    {
+        return $containerConfig->getAggregations($this->searchContext);
     }
 
     /**

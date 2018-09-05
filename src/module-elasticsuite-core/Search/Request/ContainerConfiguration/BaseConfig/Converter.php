@@ -23,7 +23,20 @@ namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfi
  */
 class Converter extends \Magento\Framework\Search\Request\Config\Converter
 {
+    /**
+     * @var string
+     */
     const FILTERS_PATH = 'filters/filter';
+
+    /**
+     * @var string
+     */
+    const AGGREGATIONS_PATH = 'aggregations/aggregation';
+
+    /**
+     * @var string
+     */
+    const METRICS_PATH = 'metrics/metric';
 
     /**
      * Convert config.
@@ -47,7 +60,8 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
             /** @var \DOMElement $requestNode */
             $name               = $requestNode->getAttribute('name');
             $request            = $this->mergeAttributes((array) $simpleXmlNode);
-            $request['filters'] = $this->parseFilters($xpath, $requestNode);
+            $request['filters']      = $this->parseFilters($xpath, $requestNode);
+            $request['aggregations'] = $this->parseAggregations($xpath, $requestNode);
             $requests[$name]    = $request;
         }
 
@@ -89,5 +103,55 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
         }
 
         return $filters;
+    }
+
+    /**
+     * Parse aggregations from request node configuration.
+     *
+     * @param \DOMXPath $xpath    XPath access to the document parsed.
+     * @param \DOMNode  $rootNode Request node to be parsed.
+     *
+     * @return array
+     */
+    private function parseAggregations(\DOMXPath $xpath, \DOMNode $rootNode)
+    {
+        $aggs = [];
+
+        foreach ($xpath->query(self::AGGREGATIONS_PATH, $rootNode) as $aggNode) {
+            $bucketName   = $aggNode->getAttribute('name');
+            $bucketConfig = [];
+
+            foreach ($aggNode->attributes as $attribute) {
+                $bucketConfig[$attribute->name] = $attribute->value;
+            }
+            $bucketConfig['childBuckets'] = $this->parseAggregations($xpath, $aggNode);
+            $bucketConfig['metrics'] = $this->parseMetrics($xpath, $aggNode);
+            $aggs[$bucketName] = $bucketConfig;
+        }
+
+        return $aggs;
+    }
+
+    /**
+     * Parse metrics from a bucket.
+     *
+     * @param \DOMXPath $xpath    XPath access to the document parsed.
+     * @param \DOMNode  $rootNode Aggregation node to be parsed.
+     *
+     * @return array
+     */
+    private function parseMetrics(\DOMXPath $xpath, \DOMNode $rootNode)
+    {
+        $metrics = [];
+
+        foreach ($xpath->query(self::METRICS_PATH, $rootNode) as $metricNode) {
+            $metric = [];
+            foreach ($metricNode->attributes as $attribute) {
+                $metric[$attribute->name] = $attribute->value;
+            }
+            $metrics[$metric['name']] = $metric;
+        }
+
+        return $metrics;
     }
 }

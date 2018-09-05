@@ -154,6 +154,14 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getAggregations(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    {
+        return $this->readBaseConfigParam('aggregations');
+    }
+
+    /**
      * Read configuration param from base config.
      *
      * @param string $param Param name.

@@ -83,4 +83,13 @@ interface ContainerConfigurationInterface
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getFilters(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext);
+
+    /**
+     * Get aggregations configured in the search container.
+     *
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext Search context.$this
+     *
+     * @return array
+     */
+    public function getAggregations(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext);
 }

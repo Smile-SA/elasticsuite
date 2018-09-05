@@ -29,6 +29,7 @@
     <xs:complexType name="request">
         <xs:all>
             <xs:element name="filters" type="filtersDefinition" minOccurs="0"/>
+            <xs:element name="aggregations" type="aggregationsDefinition" minOccurs="0"/>
         </xs:all>
         <xs:attribute type="xs:string" name="name" use="required" />
         <xs:attribute type="xs:string" name="label" use="required" />
@@ -43,6 +44,12 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="aggregationsDefinition">
+        <xs:sequence maxOccurs="unbounded" minOccurs="1">
+            <xs:element name="aggregation" type="aggregationDefinition" />
+        </xs:sequence>
+    </xs:complexType>
+
     <xs:complexType name="filterDefinition">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -50,4 +57,62 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+
+    <xs:complexType name="aggregationDefinition" abstract="true">
+        <xs:all>
+            <xs:element name="aggregations" type="aggregationsDefinition" minOccurs="0" />
+            <xs:element name="metrics" type="metricsDefinition" minOccurs="0"/>
+        </xs:all>
+        <xs:attribute type="xs:string" name="name" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="termBucket">
+        <xs:complexContent>
+            <xs:extension base="aggregationDefinition">
+                <xs:attribute type="xs:string" name="field" use="optional" />
+                <xs:attribute type="xs:integer" name="size" use="optional" />
+                <xs:attribute type="xs:integer" name="sortOrder" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="significantTermBucket">
+        <xs:complexContent>
+            <xs:extension base="aggregationDefinition">
+                <xs:attribute type="xs:string" name="field" use="optional" />
+                <xs:attribute type="xs:integer" name="size" use="optional" />
+                <xs:attribute type="xs:integer" name="minDocCount" use="optional" />
+                <xs:attribute type="xs:string" name="algotithm" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="histogramBucket">
+        <xs:complexContent>
+            <xs:extension base="aggregationDefinition">
+                <xs:attribute type="xs:string" name="field" use="optional" />
+                <xs:attribute type="xs:string" name="interval" use="optional" />
+                <xs:attribute type="xs:integer" name="minDocCount" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="dateHistogramBucket">
+        <xs:complexContent>
+            <xs:extension base="histogramBucket" />
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="metricsDefinition">
+        <xs:all>
+            <xs:element name="metric" type="metricDefinition" minOccurs="0"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="metricDefinition">
+        <xs:attribute type="xs:string" name="name" use="required" />
+        <xs:attribute type="xs:string" name="type" use="required" />
+        <xs:attribute type="xs:string" name="field" use="required" />
+    </xs:complexType>
+
 </xs:schema>
