@@ -58,11 +58,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
     private $queryFilters = [];
 
     /**
-     * @var array
-     */
-    private $facets = [];
-
-    /**
      * @var QueryResponse
      */
     private $queryResponse;
@@ -215,23 +210,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
     }
 
     /**
-     * Append a facet to the collection
-     *
-     * @param string $field       Facet field.
-     * @param string $facetType   Facet type.
-     * @param array  $facetConfig Facet config params.
-     * @param array  $facetFilter Facet filter.
-     *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
-     */
-    public function addFacet($field, $facetType, $facetConfig, $facetFilter = null)
-    {
-        $this->facets[$field] = ['type' => $facetType, 'filter' => $facetFilter, 'config' => $facetConfig];
-
-        return $this;
-    }
-
-    /**
      * Return field faceted data from faceted search result.
      *
      * @param string $field Facet field.
@@ -349,8 +327,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
             $this->query,
             $sortOrders,
             $this->filters,
-            $this->queryFilters,
-            $this->facets
+            $this->queryFilters
         );
 
         return $searchRequest;
