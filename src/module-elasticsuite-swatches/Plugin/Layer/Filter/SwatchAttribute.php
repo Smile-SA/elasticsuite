@@ -22,18 +22,18 @@ namespace Smile\ElasticsuiteSwatches\Plugin\Layer\Filter;
 class SwatchAttribute
 {
     /**
-     * @var \Magento\Swatches\Model\SwatchAttributeType
+     * @var \Magento\Swatches\Helper\Data
      */
-    private $swatchAttributeType;
+    private $swatchHelper;
 
     /**
-     * ProductAttribute constructor.
+     * FrontPlugin constructor.
      *
-     * @param \Magento\Swatches\Model\SwatchAttributeType $swatchAttributeType Swatch Attribute Type
+     * @param \Magento\Swatches\Helper\Data $swatchHelper Swatch Attribute Helper
      */
-    public function __construct(\Magento\Swatches\Model\SwatchAttributeType $swatchAttributeType)
+    public function __construct(\Magento\Swatches\Helper\Data $swatchHelper)
     {
-        $this->swatchAttributeType = $swatchAttributeType;
+        $this->swatchHelper = $swatchHelper;
     }
 
     /**
@@ -48,7 +48,7 @@ class SwatchAttribute
         \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Attribute $subject,
         $config = []
     ) {
-        if ($this->swatchAttributeType->isSwatchAttribute($subject->getAttributeModel())) {
+        if ($this->swatchHelper->isSwatchAttribute($subject->getAttributeModel())) {
             $config['size'] = 0;
         }
 
