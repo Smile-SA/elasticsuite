@@ -41,5 +41,12 @@
                           template="Smile_ElasticsuiteCatalog::layer/filter/slider.phtml" />
             </block>
         </referenceBlock>
+
+        <referenceContainer name="content">
+            <block class = "Smile\ElasticsuiteCatalog\Block\CatalogSearch\Result\Cache"
+                   name  = "smile.elasticsuite.catalogsearch.result.cache"
+                   as    = "smile.elasticsuite.catalogsearch.result.cache"
+            />
+        </referenceContainer>
     </body>
 </page>
