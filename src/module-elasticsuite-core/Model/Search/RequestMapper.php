@@ -71,19 +71,4 @@ class RequestMapper
 
         return $filters;
     }
-
-    /**
-     * Extract facets from the search criteria.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @param ContainerConfigurationInterface $containerConfiguration Container config.
-     * @param SearchCriteriaInterface         $searchCriteria         Search criteria.
-     *
-     * @return array
-     */
-    public function getFacets(ContainerConfigurationInterface $containerConfiguration, SearchCriteriaInterface $searchCriteria)
-    {
-        return [];
-    }
 }

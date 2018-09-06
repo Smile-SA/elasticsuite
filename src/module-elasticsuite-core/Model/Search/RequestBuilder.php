@@ -49,6 +49,16 @@ class RequestBuilder
     private $requestMapper;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
+     * @var \Magento\Search\Model\QueryFactory
+     */
+    private $queryFactory;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder                                    $searchRequestBuilder   Search request
@@ -56,18 +66,24 @@ class RequestBuilder
      * @param \Magento\Store\Model\StoreManagerInterface                                        $storeManager           Store resolver.
      * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory Container config
      *                                                                                                                  factory.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                               $searchContext          Search context.
+     * @param \Magento\Search\Model\QueryFactory                                                $queryFactory           Search query factory
      * @param RequestMapper                                                                     $requestMapper          Request mapper.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
+        \Magento\Search\Model\QueryFactory $queryFactory,
         RequestMapper $requestMapper
     ) {
         $this->searchRequestBuilder   = $searchRequestBuilder;
         $this->storeManager           = $storeManager;
         $this->requestMapper          = $requestMapper;
         $this->containerConfigFactory = $containerConfigFactory;
+        $this->searchContext          = $searchContext;
+        $this->queryFactory           = $queryFactory;
     }
 
     /**
@@ -92,9 +108,30 @@ class RequestBuilder
 
         $sortOrders = $this->requestMapper->getSortOrders($containerConfiguration, $searchCriteria);
         $filters    = $this->requestMapper->getFilters($containerConfiguration, $searchCriteria);
-        $facets     = $this->requestMapper->getFacets($containerConfiguration, $searchCriteria);
 
-        return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, [], $facets);
+        $this->updateSearchContext($storeId, $queryText);
+
+        return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, []);
+    }
+
+    /**
+     * Update the search context using current store id and query text.
+     *
+     * @param integer $storeId   Store id.
+     * @param string  $queryText Fulltext query text.
+     *
+     * @return void
+     */
+    private function updateSearchContext($storeId, $queryText)
+    {
+        $this->searchContext->setStoreId($storeId);
+        $query = $this->queryFactory->create();
+        $query->setStoreId($storeId);
+        $query->loadByQueryText($queryText);
+
+        if ($query->getId()) {
+            $this->searchContext->setCurrentSearchQuery($query);
+        }
     }
 
     /**
