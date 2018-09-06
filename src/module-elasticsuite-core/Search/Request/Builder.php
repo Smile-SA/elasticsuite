@@ -24,7 +24,6 @@ use Magento\Framework\Search\Request\Dimension;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
-use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * ElasticSuite search requests builder.
