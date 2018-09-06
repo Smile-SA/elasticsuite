@@ -30,7 +30,7 @@ class VisibleInSearch implements FilterInterface
     private $queryFactory;
 
     /**
-     * Visibility filter constructor.
+     * Search Blacklist filter constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
      */
@@ -42,7 +42,7 @@ class VisibleInSearch implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilterQuery()
     {
         $query = $this->queryFactory->create(
             QueryInterface::TYPE_TERMS,

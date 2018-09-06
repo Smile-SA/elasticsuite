@@ -30,31 +30,52 @@ class SearchBlacklist implements FilterInterface
     private $queryFactory;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Search Blacklist filter constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory  Query Factory
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface       $searchContext Current search context.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext
     ) {
-        $this->queryFactory       = $queryFactory;
+        $this->queryFactory  = $queryFactory;
+        $this->searchContext = $searchContext;
     }
 
     /**
-     * Get filter query according to current search context.
-     *
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext Search Context
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * {@inheritDoc}
      */
-    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilterQuery()
     {
         $query = null;
-        if ($searchContext->getCurrentSearchQuery() && ($searchContext->getCurrentSearchQuery()->getId() !== null)) {
-            $query = $this->getIsNotBlacklistedQuery((int) $searchContext->getCurrentSearchQuery()->getId());
+
+        if ($this->getSearchQueryId() !== null) {
+            $query = $this->getIsNotBlacklistedQuery((int) $this->getSearchQueryId());
         }
 
         return $query;
+    }
+
+    /**
+     * Returns search query id.
+     *
+     * @return NULL|integer
+     */
+    private function getSearchQueryId()
+    {
+        $queryId = null;
+
+        if ($this->searchContext->getCurrentSearchQuery()) {
+            $queryId = $this->searchContext->getCurrentSearchQuery()->getId();
+        }
+
+        return $queryId;
     }
 
     /**

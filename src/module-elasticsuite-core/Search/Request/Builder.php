@@ -77,12 +77,6 @@ class Builder
      */
     private $dimensionFactory;
 
-
-    /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
-     */
-    private $searchContext;
-
     /**
      * Constructor.
      *
@@ -94,7 +88,6 @@ class Builder
      * @param ContainerConfigurationFactory $containerConfigFactory   Search requests configuration.
      * @param SpellcheckRequestFactory      $spellcheckRequestFactory Spellchecking request factory.
      * @param SpellcheckerInterface         $spellchecker             Spellchecker.
-     * @param ContextInterface              $searchContext            Search Context.
      */
     public function __construct(
         RequestFactory $requestFactory,
@@ -104,8 +97,7 @@ class Builder
         AggregationBuilder $aggregationBuilder,
         ContainerConfigurationFactory $containerConfigFactory,
         SpellcheckRequestFactory $spellcheckRequestFactory,
-        SpellcheckerInterface $spellchecker,
-        ContextInterface $searchContext
+        SpellcheckerInterface $spellchecker
     ) {
         $this->spellcheckRequestFactory = $spellcheckRequestFactory;
         $this->spellchecker             = $spellchecker;
@@ -115,7 +107,6 @@ class Builder
         $this->sortOrderBuilder         = $sortOrderBuilder;
         $this->aggregationBuilder       = $aggregationBuilder;
         $this->containerConfigFactory   = $containerConfigFactory;
-        $this->searchContext            = $searchContext;
     }
 
     /**
@@ -187,7 +178,7 @@ class Builder
      */
     private function getContainerFilters(ContainerConfigurationInterface $containerConfig)
     {
-        return $containerConfig->getFilters($this->searchContext);
+        return $containerConfig->getFilters();
     }
 
     /**
@@ -199,7 +190,7 @@ class Builder
      */
     private function getContainerAggregations(ContainerConfigurationInterface $containerConfig)
     {
-        return $containerConfig->getAggregations($this->searchContext);
+        return $containerConfig->getAggregations();
     }
 
     /**

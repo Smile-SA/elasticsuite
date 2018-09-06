@@ -42,7 +42,7 @@ class VisibleInCatalog implements FilterInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilterQuery()
     {
         $query = $this->queryFactory->create(
             QueryInterface::TYPE_TERMS,
