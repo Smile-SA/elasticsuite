@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\Optimizer;
 
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\AbstractOptimizer as OptimizerController;
 
 /**
@@ -36,7 +37,7 @@ class Save extends OptimizerController
         $redirectBack = $this->getRequest()->getParam('back', false);
 
         if ($data) {
-            $identifier = $this->getRequest()->getParam('id');
+            $identifier = $this->getRequest()->getParam(OptimizerInterface::OPTIMIZER_ID);
             $model = $this->optimizerFactory->create();
 
             if ($identifier) {
