@@ -58,7 +58,7 @@
                 <field name="stock.is_in_stock" type="boolean" />
                 <field name="stock.qty" type="integer" />
 
-                <!-- Static fields handled by the "prices" datasource -->
+                <!-- Static fields handled by the "categories" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
