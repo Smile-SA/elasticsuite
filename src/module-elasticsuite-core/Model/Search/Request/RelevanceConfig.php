@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCore\Model\Search\Request;
 
 use Magento\Config\Model\Config\Loader;
+use Magento\Config\Model\Config\Reader\Source\Deployed\SettingChecker;
 use Magento\Config\Model\Config\Structure;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
 use Magento\Framework\App\Config\ValueFactory;
@@ -73,6 +74,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
         StoreManagerInterface $storeManager,
         Containers $containersSource,
         ScopePool $scopePool,
+        SettingChecker $settingChecker = null,
         array $data = []
     ) {
         $this->containersSource = $containersSource;
@@ -86,6 +88,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             $configLoader,
             $configValueFactory,
             $storeManager,
+            $settingChecker,
             $data
         );
     }
