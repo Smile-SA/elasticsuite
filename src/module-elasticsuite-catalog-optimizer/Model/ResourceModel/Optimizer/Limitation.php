@@ -86,7 +86,7 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $optimizerId = (int) $optimizer->getId();
 
         $this->getConnection()->delete(
-            OptimizerInterface::TABLE_NAME_LIMITATION,
+            $this->getMainTable(),
             $this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", $optimizerId)
         );
 
@@ -126,7 +126,7 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $select = $this->getConnection()
             ->select()
-            ->from(OptimizerInterface::TABLE_NAME_LIMITATION, $column)
+            ->from($this->getMainTable(), $column)
             ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
 
         return $this->getConnection()->fetchCol($select);
