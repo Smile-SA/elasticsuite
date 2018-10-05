@@ -198,4 +198,124 @@ class FieldTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getMergeConfigFieldConfigDataProvider
+     *
+     * @param array  $fieldConfig        Field configuration from data provider
+     * @param array  $config             Field configuration to merge, from data provider
+     * @param bool   $isSearchable       Expected result for is_searchable property
+     * @param bool   $isFilterable       Expected result for is_filterable property
+     * @param bool   $isUsedForSortBy    Expected result for is_used_for_sort_by property
+     * @param bool   $isUsedInSpellcheck Expected result for is_used_in_spellcheck property
+     * @param int    $searchWeight       Expected result for search_weight property
+     * @param string $defaultAnalyzer    Expected result for default_search_analyzer property
+     */
+    public function testMergeConfig(
+        $fieldConfig,
+        $config,
+        $isSearchable,
+        $isFilterable,
+        $isUsedForSortBy,
+        $isUsedInSpellcheck,
+        $searchWeight,
+        $defaultAnalyzer
+    ) {
+        $fieldType = FieldInterface::FIELD_TYPE_TEXT;
+        $field     = new Field('field', $fieldType, null, $fieldConfig);
+
+        $field = $field->mergeConfig($config);
+
+        $this->assertEquals($isSearchable, $field->isSearchable());
+        $this->assertEquals($isFilterable, $field->isFilterable());
+        $this->assertEquals($isUsedForSortBy, $field->isUsedForSortBy());
+        $this->assertEquals($isUsedInSpellcheck, $field->isUsedInSpellcheck());
+        $this->assertEquals($searchWeight, $field->getSearchWeight());
+        $this->assertEquals($defaultAnalyzer, $field->getDefaultSearchAnalyzer());
+    }
+
+    /**
+     * Data provider to test proper merging of existing field config with new config.
+
+     * @return array
+     */
+    public function getMergeConfigFieldConfigDataProvider()
+    {
+        return [
+            [
+                [
+                    'is_searchable'           => true,
+                    'is_filterable'           => true,
+                    'is_used_for_sort_by'     => false,
+                    'is_used_in_spellcheck'   => false,
+                    'search_weight'           => 1,
+                    'default_search_analyzer' => 'standard',
+                ],
+                [
+                    'is_searchable'           => true,
+                    'is_filterable'           => true,
+                    'is_used_for_sort_by'     => true,
+                    'is_used_in_spellcheck'   => true,
+                    'search_weight'           => 6,
+                    'default_search_analyzer' => 'reference',
+                ],
+                true,
+                true,
+                true,
+                true,
+                6,
+                'reference',
+            ],
+            [
+                ['is_searchable' => true, 'is_used_in_spellcheck' => false],
+                ['is_searchable' => true, 'is_used_in_spellcheck' => true, 'search_weight' => 6, 'default_search_analyzer' => 'reference' ],
+                true,
+                true,
+                false,
+                true,
+                6,
+                'reference',
+            ],
+            [
+                ['is_searchable' => true, 'is_used_in_spellcheck' => false],
+                ['is_searchable' => true, 'is_used_in_spellcheck' => true ],
+                true,
+                true,
+                false,
+                true,
+                1,
+                'standard',
+            ],
+            [
+                ['is_searchable' => true, 'is_used_in_spellcheck' => false],
+                [],
+                true,
+                true,
+                false,
+                false,
+                1,
+                'standard',
+            ],
+            [
+                [],
+                ['search_weight' => 6, 'default_search_analyzer' => 'reference'],
+                false,
+                true,
+                false,
+                false,
+                6,
+                'reference',
+            ],
+            [
+                [],
+                [],
+                false,
+                true,
+                false,
+                false,
+                1,
+                'standard',
+            ],
+        ];
+    }
 }

@@ -52,16 +52,8 @@ class MappingTest extends \PHPUnit\Framework\TestCase
             new Field('object.child2', FieldInterface::FIELD_TYPE_TEXT),
         ];
 
-        // Stubing a dynanyc data provider.
-        $dynamicDataProvider       = $this->getMockBuilder(DynamicFieldProviderInterface::class)->getMock();
-        $dynamicDataProviderFields = [
-            new Field('title', FieldInterface::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
-        ];
-        $dynamicDataProvider->method('getFields')
-            ->will($this->returnValue($dynamicDataProviderFields));
-
         // Create a mapping.
-        $this->mapping = new Mapping('entity_id', $fields, [$dynamicDataProvider]);
+        $this->mapping = new Mapping('entity_id', $fields);
     }
 
     /**
@@ -120,13 +112,11 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $fields     = $this->mapping->getFields();
         $properties = $this->mapping->getProperties();
 
-        $this->assertCount(6, $fields);
-        $this->assertCount(7, $properties);
+        $this->assertCount(5, $fields);
+        $this->assertCount(6, $properties);
 
         $this->assertEquals('entity_id', $this->mapping->getIdField()->getName());
         $this->assertArrayHasKey('entity_id', $fields);
-
-        $this->assertArrayHasKey('title', $fields);
     }
 
     /**
@@ -180,7 +170,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $mapping = $this->mapping->asArray();
         $this->assertArrayHasKey('_all', $mapping);
         $this->assertArrayHasKey('properties', $mapping);
-        $this->assertCount(7, $mapping['properties']);
+        $this->assertCount(6, $mapping['properties']);
     }
 
     /**
