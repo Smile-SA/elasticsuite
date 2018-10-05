@@ -28,7 +28,7 @@
                     <a data-bind="click: $parent.toggleBlackListed.bind($parent), attr: { title: isBlacklisted() ? $t('Blacklisted') : $t('Visible') }"></a>
                 </div>
                 <div class="totop-handle" data-bind="if: hasPosition()">
-                    <a data-bind="click: $parent.sendToTop.bind($parent), attr: { title: isBlacklisted() ? $t('Blacklisted') : $t('Visible') }"></a>
+                    <a data-bind="click: $parent.sendToTop.bind($parent), attr: { title: $t('To Top') }"></a>
                 </div>
 
                 <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
