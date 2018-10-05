@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Product price filter implementation.
@@ -44,6 +45,11 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
     private $priceCurrency;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     */
+    private $queryFactory;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -58,6 +64,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface             $priceCurrency       Price currency.
      * @param \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory  $algorithmFactory    Algorithm factory.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory Data provider.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory     $queryFactory        Query Factory.
      * @param array                                                         $data                Custom data.
      */
     public function __construct(
@@ -71,6 +78,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory $algorithmFactory,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
         parent::__construct(
@@ -90,6 +98,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
         $this->dataProvider    = $dataProviderFactory->create(['layer' => $this->getLayer()]);
         $this->customerSession = $customerSession;
         $this->priceCurrency   = $priceCurrency;
+        $this->queryFactory    = $queryFactory;
     }
 
     /**
@@ -143,5 +152,43 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
     private function getFilterField()
     {
         return 'price.price';
+    }
+
+    /**
+     * Create the proper query filter for price, according to current customer group Id.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
+     * @param array $bounds The price bounds to apply
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getRangeCondition($bounds)
+    {
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+
+        $priceQuery = $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path'  => 'price',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_BOOL,
+                    [
+                        'must' => [
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_TERM,
+                                ['field' => 'price.customer_group_id', 'value' => $customerGroupId]
+                            ),
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_RANGE,
+                                ['field' => 'price.price', 'bounds' => $bounds]
+                            ),
+                        ],
+                    ]
+                ),
+            ]
+        );
+
+        return $priceQuery;
     }
 }
