@@ -52,7 +52,7 @@ trait DecimalFilterTrait
 
                 $this->getLayer()->getProductCollection()->addFieldToFilter(
                     $this->getAttributeModel()->getAttributeCode(),
-                    ['gte' => $fromValue, 'lt' => $toValue]
+                    array_filter(['gte' => $fromValue, 'lt' => $toValue])
                 );
 
                 $this->getLayer()->getState()->addFilter(

@@ -62,13 +62,13 @@ abstract class AbstractAttributeData
      * @var array
      */
     protected $indexedBackendModels = [
-        'Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend',
-        'Magento\Eav\Model\Entity\Attribute\Backend\Datetime',
-        'Magento\Catalog\Model\Attribute\Backend\Startdate',
-        'Magento\Catalog\Model\Product\Attribute\Backend\Boolean',
-        'Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend',
-        'Magento\Catalog\Model\Product\Attribute\Backend\Weight',
-        'Magento\Catalog\Model\Product\Attribute\Backend\Price',
+        \Magento\Eav\Model\Entity\Attribute\Backend\ArrayBackend::class,
+        \Magento\Eav\Model\Entity\Attribute\Backend\Datetime::class,
+        \Magento\Catalog\Model\Attribute\Backend\Startdate::class,
+        \Magento\Catalog\Model\Product\Attribute\Backend\Boolean::class,
+        \Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend::class,
+        \Magento\Catalog\Model\Product\Attribute\Backend\Weight::class,
+        \Magento\Catalog\Model\Product\Attribute\Backend\Price::class,
     ];
 
     /**
@@ -141,6 +141,11 @@ abstract class AbstractAttributeData
 
                 $this->initField($attribute);
             }
+
+            if ($attribute->getAttributeCode() === 'sku') {
+                // SKU has no backend table.
+                $this->initField($attribute);
+            }
         }
 
         return $this;
@@ -159,7 +164,12 @@ abstract class AbstractAttributeData
         $canIndex = $attribute->getBackendType() != 'static' && $attribute->getAttributeCode() !== 'price';
 
         if ($canIndex && $attribute->getBackendModel()) {
-            $canIndex = in_array($attribute->getBackendModel(), $this->indexedBackendModels);
+            foreach ($this->indexedBackendModels as $indexedBackendModel) {
+                $canIndex = is_a($attribute->getBackendModel(), $indexedBackendModel, true);
+                if ($canIndex) {
+                    return $canIndex;
+                }
+            }
         }
 
         return $canIndex;

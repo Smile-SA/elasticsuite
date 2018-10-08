@@ -142,7 +142,6 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     {
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
-
         $optionsFacetedData = $productCollection->getFacetedData($this->getFilterField());
 
         $items     = [];
@@ -152,12 +151,16 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             unset($optionsFacetedData['__other_docs']);
         }
 
-        foreach ($optionsFacetedData as $value => $data) {
-            $items[$value] = [
-                'label' => $this->tagFilter->filter($value),
-                'value' => $value,
-                'count' => $data['count'],
-            ];
+        $minCount = !empty($optionsFacetedData) ? min(array_column($optionsFacetedData, 'count')) : 0;
+
+        if (!empty($this->currentFilterValue) || $minCount < $productCollection->getSize()) {
+            foreach ($optionsFacetedData as $value => $data) {
+                $items[$value] = [
+                    'label' => $this->tagFilter->filter($value),
+                    'value' => $value,
+                    'count' => $data['count'],
+                ];
+            }
         }
 
         $items = $this->addOptionsData($items);
@@ -256,7 +259,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             if (!empty($options)) {
                 foreach ($options as $option) {
                     if (isset($option['label'])) {
-                        $optionLabel = trim((string) $option['label']);
+                        // Manage labels that contains single quote.
+                        $optionLabel = trim((string) htmlspecialchars($option['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false));
                         $optionPosition++;
 
                         if ($optionLabel !== null && isset($items[$optionLabel])) {

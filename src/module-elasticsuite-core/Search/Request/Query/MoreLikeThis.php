@@ -47,7 +47,7 @@ class MoreLikeThis implements QueryInterface
     /**
      * @var integer
      */
-    const DEFAULT_MIN_DOC_FREQ = 5;
+    const DEFAULT_MIN_DOC_FREQ = 2;
 
     /**
      * @var integer

@@ -61,7 +61,6 @@ class RelevanceConfig extends \Magento\Config\Model\Config
      * @param StoreManagerInterface     $storeManager       Store Manager
      * @param Containers                $containersSource   The Containers source model
      * @param ScopePool                 $scopePool          RelevanceConfiguration Scope Pool
-     * @param array                     $data               The data
      */
     public function __construct(
         ReinitableConfigInterface $config,
@@ -72,8 +71,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
         ValueFactory $configValueFactory,
         StoreManagerInterface $storeManager,
         Containers $containersSource,
-        ScopePool $scopePool,
-        array $data = []
+        ScopePool $scopePool
     ) {
         $this->containersSource = $containersSource;
         $this->fullConfig = true;
@@ -85,8 +83,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
             $transactionFactory,
             $configLoader,
             $configValueFactory,
-            $storeManager,
-            $data
+            $storeManager
         );
     }
 

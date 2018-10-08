@@ -34,7 +34,7 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     /**
      * Date
      *
-     * @var date
+     * @var \Magento\Framework\Stdlib\DateTime\DateTime
      */
     private $date;
 

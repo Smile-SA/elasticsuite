@@ -139,4 +139,13 @@ interface FieldInterface
      * @return string
      */
     public function getDefaultSearchAnalyzer();
+
+    /**
+     * Merge field config and return a new instance with the updated config.
+     *
+     * @param array $config field configuration to merge with existing.
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
+     */
+    public function mergeConfig(array $config = []);
 }

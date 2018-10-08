@@ -135,7 +135,7 @@ class IndexHandler
     private function addAnalyzerSettings($settings, $type, $values)
     {
         $settings['analysis']['analyzer'][$type] = [
-            'tokenizer' => 'standard',
+            'tokenizer' => 'whitespace',
             'filter' => ['lowercase', 'shingle'],
         ];
 
