@@ -93,7 +93,7 @@ class PriceData implements DatasourceInterface
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
 
-            if (!$this->taxConfig->priceIncludesTax($storeId)) {
+            if ($this->taxConfig->needPriceConversion($storeId)) {
                 $rate = $this->taxCalculation->getCalculatedRate($priceDataRow['tax_class_id']);
                 $price = $this->priceCurrency->round($price * (1 + ($rate / 100)));
                 $originalPrice = $this->priceCurrency->round($originalPrice * (1 + ($rate / 100)));
