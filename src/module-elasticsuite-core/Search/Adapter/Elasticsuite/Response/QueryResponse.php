@@ -50,15 +50,17 @@ class QueryResponse implements ResponseInterface
      *
      * @param DocumentFactory    $documentFactory    Document factory.
      * @param AggregationFactory $aggregationFactory Aggregation factory.
-     * @param array              $searchResponse     Engine raw response.
+     * @param mixed $searchResponse     Engine raw response.
      */
     public function __construct(
         DocumentFactory $documentFactory,
         AggregationFactory $aggregationFactory,
-        array $searchResponse
+        $searchResponse
     ) {
-        $this->prepareDocuments($searchResponse, $documentFactory);
-        $this->prepareAggregations($searchResponse, $aggregationFactory);
+        if (is_array($searchResponse)) {
+            $this->prepareDocuments($searchResponse, $documentFactory);
+            $this->prepareAggregations($searchResponse, $aggregationFactory);
+        }
     }
 
     /**
