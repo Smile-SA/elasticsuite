@@ -143,4 +143,18 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
 
         return $value;
     }
+
+    /**
+     * Create the proper query filter for price, according to current customer group Id.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     *
+     * @param array $bounds The price bounds to apply
+     *
+     * @return array
+     */
+    private function getRangeCondition($bounds)
+    {
+        return $bounds;
+    }
 }
