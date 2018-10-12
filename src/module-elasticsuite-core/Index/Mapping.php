@@ -75,15 +75,14 @@ class Mapping implements MappingInterface
     ];
 
     /**
-     * Instanciate a new mapping.
+     * Instantiate a new mapping.
      *
-     * @param string                          $idFieldName           Field use as unique id for the documents.
-     * @param FieldInterface[]                $staticFields          List of static fields.
-     * @param DynamicFieldProviderInterface[] $dynamicFieldProviders Dynamic fields providers.
+     * @param string           $idFieldName Field use as unique id for the documents.
+     * @param FieldInterface[] $fields      List of mapping fields.
      */
-    public function __construct($idFieldName, array $staticFields = [], array $dynamicFieldProviders = [])
+    public function __construct($idFieldName, array $fields = [])
     {
-        $this->fields      = $this->prepareFields($staticFields) + $this->getDynamicFields($dynamicFieldProviders);
+        $this->fields      = $this->prepareFields($fields);
         $this->idFieldName = $idFieldName;
 
         if (!isset($this->fields[$this->idFieldName])) {
@@ -230,24 +229,6 @@ class Mapping implements MappingInterface
         }
 
         return $preparedFields;
-    }
-
-    /**
-     * Retrieve the fields provided by differents providers.
-     *
-     * @param DynamicFieldProviderInterface[] $dynamicFieldProviders List of dynamic fields providers
-     *
-     * @return FieldInterface[]
-     */
-    private function getDynamicFields(array $dynamicFieldProviders)
-    {
-        $fields = [];
-
-        foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
-            $fields += $this->prepareFields($dynamicFieldProvider->getFields());
-        }
-
-        return $fields;
     }
 
     /**
