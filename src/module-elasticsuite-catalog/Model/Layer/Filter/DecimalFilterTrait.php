@@ -23,7 +23,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 trait DecimalFilterTrait
 {
     /**
-     * Apply decimal range filter
+     * Apply price range filter
      *
      * @param \Magento\Framework\App\RequestInterface $request The request
      *
@@ -50,9 +50,11 @@ trait DecimalFilterTrait
                 list($fromValue, $toValue) = $filter;
                 $this->setCurrentValue(['from' => $fromValue, 'to' => $toValue]);
 
+                $bounds = array_filter(['gte' => $fromValue, 'lt' => $toValue]);
+
                 $this->getLayer()->getProductCollection()->addFieldToFilter(
                     $this->getAttributeModel()->getAttributeCode(),
-                    array_filter(['gte' => $fromValue, 'lt' => $toValue])
+                    $this->getRangeCondition($bounds)
                 );
 
                 $this->getLayer()->getState()->addFilter(
