@@ -300,9 +300,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $this->_renderFilters();
         $result = [];
+        $bucket = [];
         $aggregations = $this->queryResponse->getAggregations();
 
-        $bucket = $aggregations->getBucket($field);
+        if ($aggregations)
+            $bucket = $aggregations->getBucket($field);
 
         if ($bucket) {
             foreach ($bucket->getValues() as $value) {
@@ -629,9 +631,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->countByAttributeSet  = [];
         $this->countByAttributeCode = [];
         $this->isSpellchecked       = $searchRequest->isSpellchecked();
+        $attributeSetIdBucket       = [];
+        $attributeCodeBucket        = [];
 
-        $attributeSetIdBucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
-        $attributeCodeBucket  = $searchResponse->getAggregations()->getBucket('indexed_attributes');
+        if ($searchResponse !== null
+            && ($getAggregations = $searchResponse->getAggregations() !== null)
+            && ($getBucket       = $getAggregations->getBucket('attribute_set_id') !== null)
+        ) {
+            $attributeSetIdBucket = $getBucket;
+            $attributeCodeBucket  = $getAggregations->getBucket('indexed_attributes');
+        }
 
         if ($attributeSetIdBucket) {
             foreach ($attributeSetIdBucket->getValues() as $value) {
