@@ -12,23 +12,26 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
+//
+//  Common
+//  _____________________________________________
+
 & when (@media-common = true) {
     .smile-es-range-slider {
-
         [data-role=from-label] {
             display: block;
             float: left;
-            padding: 0 0 5px;
+            padding: 0 0 @indent__xs;
         }
 
         [data-role=to-label] {
             display: block;
             float: right;
-            padding: 0 0 5px;
+            padding: 0 0 @indent__xs;
         }
 
         [data-role=message-box] {
-            font-size: 90%;
+            font-size: @font-size__s;
             flex: 1;
             padding: 6px 0 0;
 
@@ -44,47 +47,47 @@
         }
 
         .ui-slider {
-            margin: 5px;
+            margin: @indent__xs;
             clear: both;
         }
 
         .ui-slider-handle {
+            .lib-css(background, @active__color);
             padding: 0;
             margin: -3px 0 0 -7px;
-            -webkit-border-radius: 15px;
+            border-radius: 15px;
             width: 15px;
             height: 15px;
-            background: @active__color;
         }
     }
 
     .filter {
         .filter-content .item {
-            margin: 10px 0 0 10px;
+            margin: @indent__s 0 0 @indent__s;
         }
 
         .block-subtitle {
             border-bottom: none;
-            font-weight: bold;
+            font-weight: @font-weight__bold;
         }
 
         .field.search {
             input[type="text"] {
-                font-size: 85%;
+                font-size: @font-size__s;
             }
         }
 
         .actions {
             text-align: right;
-            margin: 10px 0 0;
+            margin: @indent__s 0 0;
 
             div.secondary {
                 display: inline-block;
 
                 a {
+                    .lib-css(color, @link__color);
                     text-decoration: underline;
                     cursor: pointer;
-                    color: @link__color;
 
                     &:hover {
                         background: transparent;
@@ -98,7 +101,7 @@
 
                     &.show-less {
                         span:after {
-                            content: " \2212";
+                            content: "-";
                         }
                     }
                 }
@@ -107,14 +110,14 @@
 
         .filter-options {
             dt.filter-options-title[aria-expanded="true"]:after {
-                content: "\e621"
+                .lib-css(content, @icon-up);
             }
         }
 
         .no-results-message p {
-            margin: 9px 10px 0;
+            margin: 9px @indent__s 0;
             background-color: #FFEEEE;
-            padding: 5px;
+            padding: @indent__xs;
             color: #AA0000;
         }
     }
@@ -122,13 +125,13 @@
     .smile-elasticsuite-autocomplete-result {
         .product-image-box {
             float: left;
-            padding: 0 5px;
+            padding: 0 @indent__xs;
             width: 55px;
         }
 
         .product-shop {
             float: left;
-            margin: 0 10px 0 0;
+            margin: 0 @indent__s 0 0;
             padding: 0;
             white-space: normal;
             width: 60%;
@@ -136,22 +139,22 @@
 
         .product-item {
             .price-box {
-                margin: 5px 0;
+                margin: @indent__xs 0;
             }
         }
 
         .category-mini-crumb {
             font-style: italic;
             display: block;
-            margin-bottom: 0.2em;
-            font-size: 85%;
+            margin-bottom: 2px;
+            font-size: @font-size__s;
             color: #929292;
         }
 
         .product-attribute-label {
             text-transform: uppercase;
             vertical-align: super;
-            font-size: 63%;
+            font-size: @font-size__xs;
             color: #777;
         }
 
@@ -161,15 +164,19 @@
             }
         }
     }
+}
 
-    .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
-        .page-layout-1column {
-            .filter-options {
-                .filter {
-                    &-options {
-                        &-content {
-                            padding: @indent__s;
-                        }
+//
+//  Desktop
+//  _____________________________________________
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .page-layout-1column {
+        .filter-options {
+            .filter {
+                &-options {
+                    &-content {
+                        padding: @indent__s;
                     }
                 }
             }
