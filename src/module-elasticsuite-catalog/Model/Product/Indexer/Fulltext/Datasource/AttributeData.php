@@ -220,6 +220,6 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         }
 
         $parentData['sku'][] = $relation['sku'];
-        array_unique($parentData['sku']);
+        $parentData['sku'] = array_unique($parentData['sku']);
     }
 }
