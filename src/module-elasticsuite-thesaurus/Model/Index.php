@@ -257,8 +257,8 @@ class Index
             foreach ($currentPositionSynonyms as $synonym) {
                 $startOffset = $synonym['start_offset'] + $offset;
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
-                $rewrittenQueryText = substr_replace($queryText, $synonym['token'], $startOffset, $length);
-                $newOffset = strlen($rewrittenQueryText) - strlen($queryText) + $offset;
+                $rewrittenQueryText = $this->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
+                $newOffset = mb_strlen($rewrittenQueryText) - mb_strlen($queryText) + $offset;
                 $combinations[$rewrittenQueryText] = $substitutions + 1;
 
                 if (!empty($remainingSynonyms)) {
@@ -296,5 +296,30 @@ class Index
         };
 
         return array_map($mapper, $queryRewrites);
+    }
+
+    /**
+     * Partial implementation of a multi-byte aware version of substr_replace.
+     * Required because the tokens offsets used as for parameters start and length
+     * are expressed as a number of (UTF-8) characters, independently of the number of bytes.
+     * Does not accept arrays as first and second parameters.
+     * Source: https://github.com/fluxbb/utf8/blob/master/functions/substr_replace.php
+     * Alternative: https://gist.github.com/bantya/563d7d070c286ba1b5a83b9036f0561a
+     *
+     * @param string $string      Input string
+     * @param string $replacement Replacement string
+     * @param mixed  $start       Start offset
+     * @param mixed  $length      Length of replacement
+     *
+     * @return mixed
+     */
+    private function mbSubstrReplace($string, $replacement, $start, $length = null)
+    {
+        preg_match_all('/./us', $string, $stringChars);
+        preg_match_all('/./us', $replacement, $replacementChars);
+        $length = is_int($length) ? $length : mb_strlen($string);
+        array_splice($stringChars[0], $start, $length, $replacementChars[0]);
+
+        return implode($stringChars[0]);
     }
 }
