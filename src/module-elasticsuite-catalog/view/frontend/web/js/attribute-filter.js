@@ -122,13 +122,13 @@ define([
                    var isValidItem = true;
                    var itemTokens = this.slugify(item.label).split('-');
                    searchTokens.forEach(function(currentToken) {
-                       if (!itemTokens.includes(currentToken)) {
+                       if (itemTokens.indexOf(currentToken) === -1) {
                            isValidItem = false;
                        }
                    })
                    if (isValidItem && lastSearchToken) {
                        var ngrams = itemTokens.map(function(token) {return token.substring(0, lastSearchToken.length)});
-                       isValidItem = ngrams.includes(lastSearchToken);
+                       isValidItem = ngrams.indexOf(lastSearchToken) !== -1;
                    }
                    return isValidItem;
                }.bind(this))
