@@ -38,8 +38,11 @@ class QueryBuilder
      */
     private $mappedConditions = [
         'eq'       => 'values',
+        'neq'      => 'values',
         'seq'      => 'values',
+        'sneq'     => 'values',
         'in'       => 'values',
+        'nin'      => 'values',
         'from'     => 'gte',
         'moreq'    => 'gte',
         'gteq'     => 'gte',
@@ -54,6 +57,11 @@ class QueryBuilder
      * @var array
      */
     private $rangeConditions = ['gt', 'gte', 'lt', 'lte'];
+
+    /**
+     * @var array
+     */
+    private $negativeConditions = ['neq', 'sneq', 'nin'];
 
     /**
      * Constructor.
@@ -141,6 +149,10 @@ class QueryBuilder
             $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $queryParams);
         }
 
+        if (isset($condition['negative'])) {
+            $query = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $query]);
+        }
+
         return $query;
     }
 
@@ -196,6 +208,10 @@ class QueryBuilder
             if (isset($this->mappedConditions[$key])) {
                 $condition[$this->mappedConditions[$key]] = $value;
                 unset($condition[$key]);
+            }
+
+            if (in_array($key, $this->negativeConditions)) {
+                $condition['negative'] = true;
             }
         }
 

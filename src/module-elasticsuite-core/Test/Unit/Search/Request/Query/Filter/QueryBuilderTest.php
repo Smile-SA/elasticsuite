@@ -151,13 +151,13 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      * Test using an not supported exception throws an exception.
      *
      * @expectedException \LogicException
-     * @expectedExceptionMessage Condition neq is not supported.
+     * @expectedExceptionMessage Condition regexp is not supported.
      *
      * @return void
      */
     public function testUnsupportedCondition()
     {
-        $this->buildQuery(['simpleTextField' => ['neq' => 'filterValue']]);
+        $this->buildQuery(['simpleTextField' => ['regexp' => 'filterValue']]);
     }
 
     /**
