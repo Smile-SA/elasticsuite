@@ -85,20 +85,13 @@ class QueryRewrite
         $rewriteCacheKey = $requestName . '|' . $storeId . '|' . md5(json_encode($queryText));
 
         if (!isset($this->rewritesCache[$rewriteCacheKey])) {
-            $query  = $proceed($containerConfig, $queryText, $spellingType, $boost);
-
-            $rewrites = [];
-
-            if (!is_array($queryText)) {
-                $queryText = [$queryText];
-            }
-
-            foreach ($queryText as $currentQueryText) {
-                $rewrites = array_merge($rewrites, $this->index->getQueryRewrites($containerConfig, $currentQueryText));
-            }
+            $rewrites     = $this->getWeightedRewrites($queryText, $containerConfig);
+            // Set base query as SPELLING_TYPE_EXACT if synonyms/expansions are found.
+            $spellingType = empty($rewrites) ? $spellingType : SpellcheckerInterface::SPELLING_TYPE_EXACT;
+            $query        = $proceed($containerConfig, $queryText, $spellingType, $boost);
 
             if (!empty($rewrites)) {
-                $synonymQueries = [$query];
+                $synonymQueries           = [$query];
                 $synonymQueriesSpellcheck = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
                 foreach ($rewrites as $rewrittenQuery => $weight) {
@@ -107,9 +100,34 @@ class QueryRewrite
 
                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $synonymQueries]);
             }
+
             $this->rewritesCache[$rewriteCacheKey] = $query;
         }
 
         return $this->rewritesCache[$rewriteCacheKey];
+    }
+
+    /**
+     * Get weighted rewrites for a given query text.
+     * Returns an associative array of ['rewritten query' => weight] if any matches are found.
+     *
+     * @param string|array                    $queryText       The query text
+     * @param ContainerConfigurationInterface $containerConfig Container Configuration
+     *
+     * @return array
+     */
+    private function getWeightedRewrites($queryText, $containerConfig)
+    {
+        $rewrites = [];
+
+        if (!is_array($queryText)) {
+            $queryText = [$queryText];
+        }
+
+        foreach ($queryText as $currentQueryText) {
+            $rewrites = array_merge($rewrites, $this->index->getQueryRewrites($containerConfig, $currentQueryText));
+        }
+
+        return $rewrites;
     }
 }
