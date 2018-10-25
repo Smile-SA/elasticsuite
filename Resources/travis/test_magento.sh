@@ -29,8 +29,8 @@ composer create-project --repository-url=https://repo.magento.com magento/projec
 cd "magento"
 
 # Require the extension to make it usable (autoloading)
-echo "==> Requiring smile/elasticsuite from the dev-$TRAVIS_BRANCH branch"
-composer require --dev "smile/elasticsuite:dev-$TRAVIS_BRANCH" --quiet
+echo "==> Requiring smile/elasticsuite from the $TRAVIS_BRANCH-dev branch"
+composer require --dev "smile/elasticsuite:$TRAVIS_BRANCH-dev" --quiet
 
 # Arbitray copy the pulled build (current travis build) in place of the required one.
 echo "==> Copying the current build to the Magento 2 installation."
