@@ -24,11 +24,11 @@ namespace Smile\ElasticsuiteCore\Api\Search\Request\Container;
 interface FilterInterface
 {
     /**
-     * Get filter query according to current search context.
+     * Get filter query according to current search context. Return null to unset filter query.
      *
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext Search Context
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface|null
      */
     public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext);
 }
