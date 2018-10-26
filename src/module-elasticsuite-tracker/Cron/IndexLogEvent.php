@@ -39,20 +39,28 @@ class IndexLogEvent
     private $sessionIndex;
 
     /**
+     * @var integer
+     */
+    private $chunkSize;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface   $eventQueue   Pending events queue.
      * @param \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $eventIndex   Event index.
      * @param \Smile\ElasticsuiteTracker\Api\EventIndexInterface   $sessionIndex Session index.
+     * @param integer                                              $chunkSize    Size of the chunk of events to index.
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue,
         \Smile\ElasticsuiteTracker\Api\EventIndexInterface $eventIndex,
-        \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $sessionIndex
+        \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $sessionIndex,
+        $chunkSize = 10000
     ) {
         $this->eventQueue   = $eventQueue;
         $this->eventIndex   = $eventIndex;
         $this->sessionIndex = $sessionIndex;
+        $this->chunkSize    = $chunkSize;
     }
 
     /**
@@ -62,7 +70,7 @@ class IndexLogEvent
      */
     public function execute()
     {
-        $events = $this->eventQueue->getEvents();
+        $events = $this->eventQueue->getEvents($this->chunkSize);
         if (!empty($events)) {
             $this->eventIndex->indexEvents($events);
             $this->sessionIndex->indexEvents($events);

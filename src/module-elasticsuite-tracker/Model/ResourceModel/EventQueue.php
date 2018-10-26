@@ -66,7 +66,7 @@ class EventQueue extends AbstractDb
      *
      * @param integer $limit Max number of events to be retrieved.
      *
-     * @return void
+     * @return array
      */
     public function getEvents($limit = null)
     {

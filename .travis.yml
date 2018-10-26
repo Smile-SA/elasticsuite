@@ -1,23 +1,77 @@
+sudo: required
+dist: trusty
+
+services:
+  - elasticsearch
+
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
+    - postfix
+    - oracle-java8-set-default
+
 language: php
 
 php:
-- '7.0'
-- '7.1'
+- 7.0
+- 7.1
+- 7.2
 
-install: [
-  "mkdir -p app/etc var",
-  "echo \"{\\\"http-basic\\\":{\\\"repo.magento.com\\\":{\\\"username\\\":\\\"${MAGENTO_USERNAME}\\\",\\\"password\\\":\\\"${MAGENTO_PASSWORD}\\\"}}}\" > auth.json",
-  "composer require magento/magento2-base --no-update",
-  "composer install --prefer-dist"
-]
+env:
+  matrix:
+    - MAGENTO_VERSION=2.2.5 MAGENTO_EDITION=community
+    - MAGENTO_VERSION=2.2.5 MAGENTO_EDITION=enterprise
+    - MAGENTO_VERSION=2.2.6 MAGENTO_EDITION=community
+    - MAGENTO_VERSION=2.2.6 MAGENTO_EDITION=enterprise
+    - MAGENTO_VERSION=2.3.0 MAGENTO_EDITION=community MAGENTO_STABILITY=beta
+#    - MAGENTO_VERSION=2.3.0 MAGENTO_EDITION=enterprise MAGENTO_STABILITY=beta
+
+matrix:
+  fast_finish: true
+  exclude:
+    - php: 7.2
+      env: MAGENTO_VERSION=2.2.5 MAGENTO_EDITION=community
+    - php: 7.2
+      env: MAGENTO_VERSION=2.2.5 MAGENTO_EDITION=enterprise
+    - php: 7.2
+      env: MAGENTO_VERSION=2.2.6 MAGENTO_EDITION=community
+    - php: 7.2
+      env: MAGENTO_VERSION=2.2.6 MAGENTO_EDITION=enterprise
+    - php: 7.0
+      env: MAGENTO_VERSION=2.3.0 MAGENTO_EDITION=community MAGENTO_STABILITY=beta
+#    - php: 7.0
+#      env: MAGENTO_VERSION=2.3.0 MAGENTO_EDITION=enterprise MAGENTO_STABILITY=beta
+
+before_install:
+  - sudo service elasticsearch stop
+  - export ES_HOME=/usr/share/elasticsearch
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.deb
+  - sudo dpkg -i --force-confnew elasticsearch-6.4.0.deb
+  - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-icu
+  - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-phonetic
+  - sudo service elasticsearch start
+  - sleep 5
+  - composer config -g http-basic.repo.magento.com $MAGENTO_USERNAME $MAGENTO_PASSWORD
+  - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
+  - composer global require hirak/prestissimo:0.3.4
+  - chmod +x ./Resources/travis/*
+  - ./Resources/travis/prepare_php.sh
+  - ./Resources/travis/before_install.sh
+
+install:
+  - composer install --prefer-dist
 
 cache:
   directories:
     - $HOME/.composer/cache
 
 script:
-    - vendor/bin/phpcs --config-set installed_paths vendor/magento/marketplace-eqp/
-    - vendor/bin/phpcs --standard=vendor/magento/marketplace-eqp/MEQP2 --severity=9 src/
-    - vendor/bin/phpcs --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php src/
-    - vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
-    - vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
+  - ./Resources/travis/test_magento.sh
+  - vendor/bin/phpcs --config-set installed_paths vendor/magento/marketplace-eqp/
+  - vendor/bin/phpcs --standard=vendor/magento/marketplace-eqp/MEQP2 --severity=9 src/
+  - vendor/bin/phpcs --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php src/
+  - vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
+  - vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml

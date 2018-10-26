@@ -153,7 +153,7 @@ class GenericIndexerHandler implements IndexerInterface
     /**
      * {@inheritDoc}
      */
-    public function isAvailable()
+    public function isAvailable($dimensions = [])
     {
         return $this->indexOperation->isAvailable();
     }
