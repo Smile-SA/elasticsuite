@@ -15,6 +15,11 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory as AttributeCollectionFactory;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 
@@ -33,13 +38,38 @@ class DataProviderPlugin
     private $attributeCollectionFactory;
 
     /**
+     * @var FulltextCollectionFactory
+     */
+    private $fulltextCollectionFactory;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * DataProviderPlugin constructor.
      *
      * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
+     * @param FulltextCollectionFactory  $fulltextCollectionFactory  Fulltext Collection Factory.
+     * @param StoreManagerInterface      $storeManager               Store Manager.
+     * @param ContextInterface           $searchContext              Search context.
      */
-    public function __construct(AttributeCollectionFactory $attributeCollectionFactory)
-    {
+    public function __construct(
+        AttributeCollectionFactory $attributeCollectionFactory,
+        FulltextCollectionFactory $fulltextCollectionFactory,
+        StoreManagerInterface $storeManager,
+        ContextInterface $searchContext
+    ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
+        $this->fulltextCollectionFactory  = $fulltextCollectionFactory;
+        $this->storeManager               = $storeManager;
+        $this->searchContext              = $searchContext;
     }
 
     /**
@@ -117,7 +147,67 @@ class DataProviderPlugin
     }
 
     /**
-     * Retrieve attribute collection pre-filtered with only attribute filterable.
+     * Retrieve default store view id.
+     *
+     * @return int
+     */
+    private function getDefaultStoreId()
+    {
+        $store = $this->storeManager->getDefaultStoreView();
+
+        if (null === $store) {
+            // Occurs when current user does not have access to default website (due to AdminGWS ACLS on Magento EE).
+            $store = !empty($this->storeManager->getWebsites()) ? current($this->storeManager->getWebsites())->getDefaultStore() : null;
+        }
+
+        return $store ? $store->getId() : 0;
+    }
+
+    /**
+     * Get store id for the current category.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return int
+     */
+    private function getStoreId(CategoryInterface $category)
+    {
+        $storeId = $category->getStoreId();
+
+        if ($storeId === 0) {
+            $defaultStoreId   = $this->getDefaultStoreId();
+            $categoryStoreIds = array_filter($category->getStoreIds());
+            $storeId          = current($categoryStoreIds);
+            if (in_array($defaultStoreId, $categoryStoreIds)) {
+                $storeId = $defaultStoreId;
+            }
+        }
+
+        return $storeId;
+    }
+
+    /**
+     * Return category filter param
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return int|QueryInterface
+     */
+    private function getCategoryFilterParam(CategoryInterface $category)
+    {
+        $filterParam = $category->getId();
+
+        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
+            $category->setIsActive(true);
+
+            $filterParam = $category->getVirtualRule()->getCategorySearchQuery($category);
+        }
+
+        return $filterParam;
+    }
+
+    /**
+     * Retrieve attribute collection pre-filtered with only filterable attributes.
      *
      * @param CategoryInterface $category Category
      *
@@ -131,6 +221,24 @@ class DataProviderPlugin
             ->addIsFilterableFilter()
             ->addStoreLabel($category->getStoreId())
             ->setOrder('position', 'ASC');
+
+        $storeId = $this->getStoreId($category);
+
+        if ($storeId && $category->getId()) {
+            // Make a side effect on the context that will be used by the fulltext collection's request builder.
+            $this->searchContext->setCurrentCategory($category)
+                ->setStoreId($storeId);
+
+            /** @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $fulltextCollection */
+            $fulltextCollection = $this->fulltextCollectionFactory->create();
+            $fulltextCollection->setStoreId($storeId)
+                ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
+
+            $attributeSetIds = array_keys($fulltextCollection->getProductCountByAttributeSetId());
+            if (!empty($attributeSetIds)) {
+                $collection->setAttributeSetFilter($attributeSetIds);
+            }
+        }
 
         return $collection->getItems();
     }
