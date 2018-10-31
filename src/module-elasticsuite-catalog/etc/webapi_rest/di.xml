@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalog dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- For now, consider using this plugin only for search WebAPI. Will be refactored later. -->
+    <type name="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface">
+        <plugin name="catalogProductContainerConfiguration" type="Smile\ElasticsuiteCatalog\Plugin\Search\ContainerConfigurationPlugin" sortOrder="10"/>
+    </type>
+
+</config>
