@@ -19,6 +19,8 @@ label,label
 Edit,Edit
 "Delete ${ $.$data.name }","Delete ${ $.$data.name }"
 "Are you sure you want to delete ${ $.$data.name } ?","Are you sure you want to delete ${ $.$data.name } ?"
+Yes,Yes
+No,No
 "Search Query","Search Query"
 Preview,Preview
 "Base Results","Base Results"
@@ -29,20 +31,45 @@ Preview,Preview
 "Enable optimizer","Enable optimizer"
 "Store View","Store View"
 Constant,Constant
+"Based on attribute value","Based on attribute value"
 Model,Model
 "Optimizer Name","Optimizer Name"
 "Active from","Active from"
 "Active to","Active to"
 "Request type","Request type"
+"Catalog Product Search","Catalog Product Search"
+"All search terms","All search terms"
+"Selected search terms","Selected search terms"
+"Apply to","Apply to"
+"Select the search terms for which you want the optimizer to apply.","Select the search terms for which you want the optimizer to apply."
+"Add Search Terms","Add Search Terms"
+Remove,Remove
+ID,ID
+"Query Text","Query Text"
+"Is Spellchecked","Is Spellchecked"
+Actions,Actions
+"Select Search Terms","Select Search Terms"
+Cancel,Cancel
+"Add Selected Terms","Add Selected Terms"
+"Category Product View","Category Product View"
+"All Categories","All Categories"
+"Selected categories","Selected categories"
+"Apply to categories","Apply to categories"
 Configuration,Configuration
 "Boost value (%)","Boost value (%)"
 "From -99 to 10000","From -99 to 10000"
+Attribute,Attribute
+"Only numeric attributes are available here.","Only numeric attributes are available here."
+Logarithmic,Logarithmic
+"Square Root","Square Root"
+Linear,Linear
+"Scale function","Scale function"
+"Boost value (multiply)","Boost value (multiply)"
+"Value the field will be multiplied by before applying the scale function","Value the field will be multiplied by before applying the scale function"
 "Apply to products","Apply to products"
-"Query Text","Query Text"
 "Category Preview","Category Preview"
 "Add New Optimizer","Add New Optimizer"
 "All Store Views","All Store Views"
-ID,ID
 Name,Name
 "Constant Score","Constant Score"
 Active,Active
