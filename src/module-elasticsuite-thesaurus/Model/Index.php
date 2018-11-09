@@ -224,7 +224,7 @@ class Index
 
         $synonymByPositions = [];
 
-        foreach ($analysis['tokens'] as $token) {
+        foreach ($analysis['tokens'] ?? [] as $token) {
             if ($token['type'] == 'SYNONYM') {
                 $positionKey = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
                 $token['token'] = str_replace('_', ' ', $token['token']);
