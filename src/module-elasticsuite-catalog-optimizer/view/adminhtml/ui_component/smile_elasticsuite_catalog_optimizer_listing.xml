@@ -141,6 +141,10 @@
                         <item name="value" xsi:type="string">constant_score</item>
                         <item name="label" xsi:type="string" translate="true">Constant Score</item>
                     </item>
+                    <item name="attribute_value" xsi:type="array">
+                        <item name="value" xsi:type="string">attribute_value</item>
+                        <item name="label" xsi:type="string" translate="true">Based on attribute value</item>
+                    </item>
                 </item>
                 <item name="config" xsi:type="array">
                     <item name="filter" xsi:type="string">select</item>

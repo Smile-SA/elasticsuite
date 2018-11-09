@@ -19,6 +19,8 @@ label,label
 Edit,Éditer
 "Delete ${ $.$data.name }","Supprimer ${ $.$data.name }"
 "Are you sure you want to delete ${ $.$data.name } ?","Êtes-vous sur de vouloir supprimer ${ $.$data.name } ?"
+Yes,Oui
+No,Non
 "Search Query","Recherche"
 Preview,Prévisualisation
 "Base Results","Résultats de base"
@@ -29,14 +31,41 @@ Preview,Prévisualisation
 "Enable optimizer","Activer l'optimiseur"
 "Store View","Vue Magasin"
 Constant,Constante
+"Based on attribute value","Basé sur une valeur d'attribut"
 Model,Model
 "Optimizer Name","Nom de l'optimiseur"
 "Active to","Actif jusque"
 "Active from","Actif depuis"
 "Request type","Type de requête"
+"Catalog Product Search","Recherche catalogue"
+"All search terms","Tous les termes de recherche"
+"Selected search terms","Termes de recherche sélectionnés"
+"Apply to","Appliquer à"
+"Select the search terms for which you want the optimizer to apply.","Sélectionnez les termes de recherche auxquels appliquer l'optimiseur."
+"Add Search Terms","Ajouter un terme de recherche"
+Remove,Supprimer
+ID,ID
+"Query Text","Terme de recherche"
+"Is Spellchecked","Recherche floue"
+Actions,Actions
+"Select Search Terms","Sélectionner un terme de recherche"
+Cancel,Annuler
+"Add Selected Terms","Ajouter les termes sélectionnés"
+"Category Product View","Navigation Catalogue"
+"All Categories","Toutes les catégories"
+"Selected categories","Catégories sélectionnées"
+"Apply to categories","Appliquer aux catégories"
 Configuration,Configuration
 "Boost value (%)","Valeur du boost (%)"
 "From -99 to 10000","Entre -99 et 10000"
+Attribute,Attribut
+"Only numeric attributes are available here.","Seuls les attributs basés sur des valeurs numériques sont disponibles ici."
+Logarithmic,Logarithmique
+"Square Root","Racine carrée"
+Linear,Linéaire
+"Scale function","Fonction"
+"Boost value (multiply)","Valeur de boost (multiplicateur)"
+"Value the field will be multiplied by before applying the scale function","Multiplicateur appliqué à la valeur de l'attribut avant d'appliquer la fonction"
 "Apply to products","Appliquer aux produits"
 "Query Text","Recherche"
 "Category Preview","Prévisualiser une catégorie"
