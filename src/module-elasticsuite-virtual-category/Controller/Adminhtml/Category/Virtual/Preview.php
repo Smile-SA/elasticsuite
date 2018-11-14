@@ -92,8 +92,9 @@ class Preview extends Action
     {
         $category = $this->getCategory();
         $pageSize = $this->getPageSize();
+        $search = $this->getRequest()->getParam('search');
 
-        return $this->previewModelFactory->create(['category' => $category, 'size' => $pageSize]);
+        return $this->previewModelFactory->create(['category' => $category, 'size' => $pageSize, 'search' => $search]);
     }
 
     /**
