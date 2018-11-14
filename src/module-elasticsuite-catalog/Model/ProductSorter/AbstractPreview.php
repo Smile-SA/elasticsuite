@@ -43,6 +43,11 @@ abstract class AbstractPreview implements PreviewInterface
     private $size;
 
     /**
+     * @var string
+     */
+    private $search;
+
+    /**
      * @var integer
      */
     private $storeId;
@@ -60,19 +65,22 @@ abstract class AbstractPreview implements PreviewInterface
      * @param QueryFactory             $queryFactory      ES query factory.
      * @param integer                  $storeId           Store id.
      * @param number                   $size              Preview size.
+     * @param string                   $search            Preview search.
      */
     public function __construct(
         ProductCollectionFactory $collectionFactory,
         ItemDataFactory $itemFactory,
         QueryFactory $queryFactory,
         $storeId,
-        $size = 10
+        $size = 10,
+        $search = ''
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->itemFactory       = $itemFactory;
         $this->queryFactory      = $queryFactory;
         $this->storeId           = $storeId;
         $this->size              = $size;
+        $this->search            = $search;
     }
 
     /**
@@ -147,7 +155,10 @@ abstract class AbstractPreview implements PreviewInterface
      */
     private function getUnsortedProductData()
     {
-        $productCollection = $this->getProductCollection()->setPageSize($this->size);
+        $productCollection = $this->getProductCollection()
+            ->setSearchQuery($this->search)
+            ->setPageSize($this->size)
+        ;
 
         return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
     }

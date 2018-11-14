@@ -38,6 +38,7 @@ define([
                 emptyText     : $.mage.__('Your product selection is empty.'),
                 automaticSort : $.mage.__('Automatic Sort'),
                 manualSort    : $.mage.__('Manual Sort'),
+                search      : $.mage.__('Search'),
                 showMore      : $.mage.__('Show more')
             },
             forceLoading : false,
@@ -108,6 +109,7 @@ define([
                 }.bind(this));
 
                 formData['page_size'] = this.currentSize();
+                formData['search'] = $('#elasticsuite-preview-search').val();
 
                 if (this.enabled) {
                     this.loadXhr = $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
@@ -153,6 +155,11 @@ define([
 
         hasMoreProducts: function () {
             return this.products().length < this.countTotalProducts();
+        },
+
+        searchProducts: function () {
+            // this.currentSize(this.pageSize);
+            this.refreshProductList();
         },
 
         showMoreProducts: function () {

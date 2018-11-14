@@ -17,6 +17,11 @@
     </div>
     
     <div data-bind="if: hasProducts()">
+
+        <p>
+            <input type="text" name="search" id="elasticsuite-preview-search" class="admin__control-text"/>
+            <a href="#" data-bind="click: searchProducts, text: messages.search" class="action-default"></a>
+        </p>
         
         <ul data-bind="foreach: products, afterRender: enableSortableList" class="product-list">
             <li class="product-list-item" data-bind="
