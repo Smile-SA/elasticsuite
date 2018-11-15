@@ -69,6 +69,37 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     }
 
     /**
+     * Specify attribute set filter
+     *
+     * @param array|int $setId Attribute Set Id(s)
+     *
+     * @return $this
+     */
+    public function setAttributeSetFilter($setId)
+    {
+        if (is_array($setId)) {
+            if (!empty($setId)) {
+                $this->join(
+                    ['entity_attribute' => $this->getTable('eav_entity_attribute')],
+                    'entity_attribute.attribute_id = main_table.attribute_id',
+                    []
+                );
+                $this->addFieldToFilter('entity_attribute.attribute_set_id', ['in' => $setId]);
+                $this->addAttributeGrouping();
+            }
+        } elseif ($setId) {
+            $this->join(
+                ['entity_attribute' => $this->getTable('eav_entity_attribute')],
+                'entity_attribute.attribute_id = main_table.attribute_id',
+                []
+            );
+            $this->addFieldToFilter('entity_attribute.attribute_set_id', $setId);
+        }
+
+        return $this;
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
