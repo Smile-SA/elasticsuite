@@ -15,7 +15,6 @@
 var config = {
     map: {
         '*': {
-            mageQuickSearch : 'Magento_Search/form-mini',
             quickSearch: 'Smile_ElasticsuiteCore/js/form-mini'
         }
     }
