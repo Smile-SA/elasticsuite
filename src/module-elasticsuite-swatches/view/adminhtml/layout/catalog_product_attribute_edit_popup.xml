@@ -9,16 +9,16 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteSwatches
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @author    Richard BAYET <richard.bayet@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page layout="admin-1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="attribute_edit_js">
             <action method="setTemplate">
-                <argument name="template" xsi:type="string">Smile_ElasticsuiteSwatches::catalog/product/attribute/js.phtml</argument>
+                <argument name="template" xsi:type="string">Magento_Swatches::catalog/product/attribute/js.phtml</argument>
             </action>
         </referenceBlock>
     </body>
