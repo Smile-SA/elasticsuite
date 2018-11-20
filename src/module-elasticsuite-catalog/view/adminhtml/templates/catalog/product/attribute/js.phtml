@@ -66,7 +66,7 @@
                 ($('frontend_input').value == 'select'
                 || $('frontend_input').value == 'multiselect'
                 || $('frontend_input').value == 'price'
-                || $('frontend_input').value == 'text')
+                || $('frontend_input').value == 'text'
                 || $('frontend_input').value == 'boolean')
             ) {
                 if($('is_filterable') && !$('is_filterable').getAttribute('readonly')){
@@ -209,21 +209,27 @@
 
             <?php foreach ($this->helper('Magento\Catalog\Helper\Data')->getAttributeHiddenFields() as $type => $fields): ?>
                 case '<?php /* @escapeNotVerified */ echo $type; ?>':
+                var isFrontTabHidden = false;
                 <?php foreach ($fields as $one): ?>
                 <?php if ($one == '_front_fieldset'): ?>
                     getFrontTab().hide();
+                    isFrontTabHidden = true;
                 <?php elseif ($one == '_default_value'): ?>
                     defaultValueTextVisibility =
-                        defaultValueTextareaVisibility =
-                            defaultValueDateVisibility =
-                                defaultValueYesnoVisibility = false;
+                    defaultValueTextareaVisibility =
+                    defaultValueDateVisibility =
+                    defaultValueYesnoVisibility = false;
                 <?php elseif ($one == '_scope'): ?>
                     scopeVisibility = false;
                 <?php else: ?>
                     setRowVisibility('<?php /* @escapeNotVerified */ echo $one; ?>', false);
                 <?php endif; ?>
                 <?php endforeach; ?>
-                    break;
+
+                if (!isFrontTabHidden){
+                    getFrontTab().show();
+                }
+                break;
             <?php endforeach; ?>
 
                 default:
@@ -338,6 +344,7 @@
 
         jQuery(function($) {
             bindAttributeInputType();
+            // @todo: refactor collapsable component
             $('.attribute-popup .collapse, [data-role="advanced_fieldset-content"]')
                 .collapsable()
                 .collapse('hide');
@@ -348,7 +355,6 @@
         window.setRowVisibility = setRowVisibility;
         window.showDefaultRows = showDefaultRows;
         window.switchDefaultValueField = switchDefaultValueField;
-        window.switchIsFilterable = switchIsFilterable;
         window.switchIsFilterable = switchIsFilterable;
         window.bindAttributeInputType = bindAttributeInputType;
         window.checkOptionsPanelVisibility = checkOptionsPanelVisibility;
