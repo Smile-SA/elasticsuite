@@ -77,6 +77,7 @@ class ClientBuilder
 
         if ($options['is_debug_mode_enabled']) {
             $clientBuilder->setLogger($this->logger);
+            $clientBuilder->setTracer($this->logger);
         }
 
         return $clientBuilder->build();
