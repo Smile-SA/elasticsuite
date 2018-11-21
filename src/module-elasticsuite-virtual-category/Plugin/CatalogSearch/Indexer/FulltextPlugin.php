@@ -69,6 +69,12 @@ class FulltextPlugin
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categories */
         $categories = $this->categoryCollectionFactory->create();
+
+        // Can occur during setup:install.
+        if (false === $categories->getEntity()->getAttribute('is_virtual_category')) {
+            return;
+        }
+
         $categories->addAttributeToSelect(['is_virtual_category'])
             ->addIsActiveFilter()
             ->addAttributeToFilter('is_virtual_category', 1);
