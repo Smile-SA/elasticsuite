@@ -41,6 +41,11 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     private $dateFilter;
 
     /**
+     * @var \Magento\Framework\Serialize\SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * @var string
      */
     protected $_cacheTag = self::CACHE_TAG;
@@ -52,6 +57,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
      * @param \Magento\Framework\Registry                             $registry           Registry.
      * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory        $ruleFactory        Rule factory.
      * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter         Date Filter.
+     * @param \Magento\Framework\Serialize\SerializerInterface        $serializer         Serializer.
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Resource.
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Resource collection.
      * @param array                                                   $data               Data.
@@ -61,6 +67,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         \Magento\Framework\Registry $registry,
         \Smile\ElasticsuiteCatalogRule\Model\RuleFactory  $ruleFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
+        \Magento\Framework\Serialize\SerializerInterface $serializer,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -68,6 +75,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
         $this->ruleFactory = $ruleFactory;
         $this->dateFilter  = $dateFilter;
+        $this->serializer  = $serializer;
     }
 
     /**
@@ -118,7 +126,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     public function getConfig($key = null)
     {
         if (is_string($this->getData(self::CONFIG))) {
-            $this->setData(self::CONFIG, unserialize($this->getData(self::CONFIG)));
+            $this->setData(self::CONFIG, $this->serializer->unserialize($this->getData(self::CONFIG)));
         }
 
         $result = $this->getData(self::CONFIG);
@@ -173,7 +181,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
             $rule     = $this->ruleFactory->create();
 
             if (is_string($ruleData)) {
-                $ruleData = unserialize($ruleData);
+                $ruleData = $this->serializer->unserialize($ruleData);
             }
 
             if (is_array($ruleData)) {
