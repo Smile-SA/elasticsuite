@@ -223,4 +223,12 @@
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
+
+    <!-- Cleanup popular searches tag after fulltext reindex -->
+    <type name="Magento\CatalogSearch\Model\Indexer\Fulltext">
+        <plugin name="smile_elasticsuite_cleanup_popular_searches_cache"
+                type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\Indexer\FulltextPlugin"
+                sortOrder="100"
+        />
+    </type>
 </config>

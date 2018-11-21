@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model;
 
+use Magento\Framework\DataObject\IdentityInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 
 /**
@@ -23,7 +24,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Fanny DECLERCK <fadec@smile.fr>
  */
-class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface
+class Optimizer extends \Magento\Framework\Model\AbstractModel implements OptimizerInterface, IdentityInterface
 {
     /**
      * @var string
@@ -46,6 +47,12 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     private $serializer;
 
     /**
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Limitation\IdentitiesFactory
+     */
+    private $limitationIdentitiesFactory;
+
+    /**
+    /**
      * @var string
      */
     protected $_cacheTag = self::CACHE_TAG;
@@ -53,14 +60,15 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Class constructor
      *
-     * @param \Magento\Framework\Model\Context                        $context            Context.
-     * @param \Magento\Framework\Registry                             $registry           Registry.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory        $ruleFactory        Rule factory.
-     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter         Date Filter.
-     * @param \Magento\Framework\Serialize\SerializerInterface        $serializer         Serializer.
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Resource.
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Resource collection.
-     * @param array                                                   $data               Data.
+     * @param \Magento\Framework\Model\Context                        $context                     Context.
+     * @param \Magento\Framework\Registry                             $registry                    Registry.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory        $ruleFactory                 Rule factory.
+     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter                  Date Filter.
+     * @param \Magento\Framework\Serialize\SerializerInterface        $serializer                  Serializer.
+     * @param Optimizer\Limitation\IdentitiesFactory                  $limitationIdentitiesFactory Limitation Identities.
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource                    Resource.
+     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection          Resource collection.
+     * @param array                                                   $data                        Data.
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -68,14 +76,16 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         \Smile\ElasticsuiteCatalogRule\Model\RuleFactory  $ruleFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
         \Magento\Framework\Serialize\SerializerInterface $serializer,
+        Optimizer\Limitation\IdentitiesFactory $limitationIdentitiesFactory,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-        $this->ruleFactory = $ruleFactory;
-        $this->dateFilter  = $dateFilter;
-        $this->serializer  = $serializer;
+        $this->ruleFactory                 = $ruleFactory;
+        $this->dateFilter                  = $dateFilter;
+        $this->serializer                  = $serializer;
+        $this->limitationIdentitiesFactory = $limitationIdentitiesFactory;
     }
 
     /**
@@ -302,6 +312,17 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         }
 
         return !empty($result) ? $result : true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIdentities()
+    {
+        $limitationIdentities = $this->limitationIdentitiesFactory->create(['optimizer' => $this]);
+        $identities           = array_merge($this->getCacheTags(), $limitationIdentities->get());
+
+        return $identities;
     }
 
     /**

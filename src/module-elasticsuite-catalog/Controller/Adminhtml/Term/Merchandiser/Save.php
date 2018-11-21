@@ -29,24 +29,23 @@ class Save extends \Magento\Search\Controller\Adminhtml\Term
     private $jsonHelper;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search\Position
+     * @var \Smile\ElasticsuiteCatalog\Model\Product\Search\Position
      */
-    private $resourceModel;
+    private $positionModel;
 
     /**
-     *
-     * @param \Magento\Backend\App\Action\Context                                    $context       Context.
-     * @param \Magento\Framework\Json\Helper\Data                                    $jsonHelper    JSON helper.
-     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search\Position $resourceModel Resource model.
+     * @param \Magento\Backend\App\Action\Context                      $context       Context.
+     * @param \Magento\Framework\Json\Helper\Data                      $jsonHelper    JSON helper.
+     * @param \Smile\ElasticsuiteCatalog\Model\Product\Search\Position $positionModel Position model.
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search\Position $resourceModel
+        \Smile\ElasticsuiteCatalog\Model\Product\Search\Position $positionModel
     ) {
         parent::__construct($context);
-        $this->jsonHelper = $jsonHelper;
-        $this->resourceModel = $resourceModel;
+        $this->jsonHelper    = $jsonHelper;
+        $this->positionModel = $positionModel;
     }
 
     /**
@@ -70,7 +69,7 @@ class Save extends \Magento\Search\Controller\Adminhtml\Term
             ->setPath('*/term/edit', ['id' => $queryId]);
 
         try {
-            $this->resourceModel->saveProductPositions($queryId, $sortedProducts, $blacklistedProducts);
+            $this->positionModel->saveProductPositions($queryId, $sortedProducts, $blacklistedProducts);
 
             if ($this->getRequest()->getParam('back') == "edit") {
                 $result->setPath('*/*/edit', ['id' => $queryId]);

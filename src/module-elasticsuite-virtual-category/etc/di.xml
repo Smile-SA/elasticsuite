@@ -97,4 +97,12 @@
         </arguments>
     </type>
 
+    <!-- Cleanup virtual categories related pages after fulltext reindex -->
+    <type name="Magento\CatalogSearch\Model\Indexer\Fulltext">
+        <plugin name="smile_elasticsuite_cleanup_virtual_categories_cache"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\CatalogSearch\Indexer\FulltextPlugin"
+                sortOrder="200"
+        />
+    </type>
+
 </config>
