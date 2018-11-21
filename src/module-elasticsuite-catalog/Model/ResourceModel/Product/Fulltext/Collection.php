@@ -275,6 +275,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Append a facet to the collection
      *
+     * @deprecated : facets/aggregations will be managed by ContainerConfiguration.
+     *
      * @param array $facetConfig Facet configuration.
      *
      * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
