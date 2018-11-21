@@ -6,8 +6,8 @@
  *
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @package   Smile\ElasticsuiteSwatches
+ * @author    Richard BAYET <richard.bayet@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -15,7 +15,7 @@
 var config = {
     map: {
         '*': {
-            quickSearch: 'Smile_ElasticsuiteCore/js/form-mini'
+            swatchesProductAttributes: 'Smile_ElasticsuiteSwatches/js/product-attributes'
         }
     }
 };
