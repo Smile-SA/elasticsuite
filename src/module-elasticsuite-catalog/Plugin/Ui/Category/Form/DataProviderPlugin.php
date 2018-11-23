@@ -220,7 +220,8 @@ class DataProviderPlugin
             ->setCategory($category)
             ->addIsFilterableFilter()
             ->addStoreLabel($category->getStoreId())
-            ->setOrder('position', 'ASC');
+            ->setOrder('position', 'ASC')
+            ->setOrder('attribute_id', 'ASC');
 
         $storeId = $this->getStoreId($category);
 
