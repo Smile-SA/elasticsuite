@@ -158,7 +158,6 @@ define([
         },
 
         searchProducts: function () {
-            // this.currentSize(this.pageSize);
             this.refreshProductList();
         },
 
