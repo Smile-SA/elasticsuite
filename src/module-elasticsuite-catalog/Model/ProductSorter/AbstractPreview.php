@@ -64,7 +64,7 @@ abstract class AbstractPreview implements PreviewInterface
      * @param ItemDataFactory          $itemFactory       Preview item factory.
      * @param QueryFactory             $queryFactory      ES query factory.
      * @param integer                  $storeId           Store id.
-     * @param number                   $size              Preview size.
+     * @param integer                  $size              Preview size.
      * @param string                   $search            Preview search.
      */
     public function __construct(
