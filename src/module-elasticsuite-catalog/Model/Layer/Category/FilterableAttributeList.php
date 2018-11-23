@@ -52,6 +52,7 @@ class FilterableAttributeList extends \Magento\Catalog\Model\Layer\Category\Filt
     {
         $collection->addSetInfo(true);
         $collection->addIsFilterableFilter();
+        $collection->setOrder('attribute_id', 'ASC');
 
         $category = $this->layerResolver->get()->getCurrentCategory();
         if ($category && $category->getId()) {
