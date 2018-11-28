@@ -41,17 +41,27 @@ class Standard implements SortOrderInterface
     private $direction;
 
     /**
+     * @var string
+     */
+    private $missing;
+
+    /**
      * Constructor.
      *
      * @param string $field     Sort order field.
      * @param string $direction Sort order direction.
      * @param string $name      Sort order name.
+     * @param string $missing   How to treat missing values.
      */
-    public function __construct($field, $direction = self::SORT_ASC, $name = null)
+    public function __construct($field, $direction = self::SORT_ASC, $name = null, $missing = null)
     {
         $this->field     = $field;
         $this->direction = $direction;
         $this->name      = $name;
+        $this->missing   = $missing;
+        if ($this->missing === null) {
+            $this->missing = $direction == self::SORT_ASC ? self::MISSING_LAST : self::MISSING_FIRST;
+        }
     }
 
     /**
@@ -84,5 +94,13 @@ class Standard implements SortOrderInterface
     public function getType()
     {
         return SortOrderInterface::TYPE_STANDARD;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMissing()
+    {
+        return $this->missing;
     }
 }

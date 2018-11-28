@@ -77,3 +77,9 @@ Pinned,Pinned
 Products,Products
 Categories,Categories
 Attributes,Attributes
+"No value matching the search <b>%1</b>.","No value matching the search <b>%1</b>."
+"Sort products without value when sorting ASC","Sort products without value when sorting ASC"
+"Sort products without value when sorting DESC","Sort products without value when sorting DESC"
+"How the products which are missing values for this attribute should be treated when using it to sort.","How the products which are missing values for this attribute should be treated when using it to sort."
+"First","First"
+"Last","Last"

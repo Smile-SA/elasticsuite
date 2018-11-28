@@ -77,3 +77,9 @@ No,Non
 Products,Produits
 Categories,Catégories
 Attributes,Attributs
+"No value matching the search <b>%1</b>.","Aucun résultat pour la recherche <b>%s</b>."
+"Sort products without value when sorting ASC","Trier les produits sans valeurs lors d'un tri ASC"
+"Sort products without value when sorting DESC","Trier les produits sans valeurs lors d'un tri DESC"
+"How the products which are missing values for this attribute should be treated when using it to sort.","Comment sont traités les produits sans valeur lorsque cet attribut est utilisé pour trier."
+"First","En premier"
+"Last","En dernier"

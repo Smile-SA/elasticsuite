@@ -513,6 +513,43 @@ class CatalogSetup
     }
 
     /**
+     * Add "sort_order_asc_missing" and "sort_order_desc_missing" fields to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     */
+    public function addSortOrderMissingFields(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'sort_order_asc_missing' into the db.
+        $connection->addColumn(
+            $table,
+            'sort_order_asc_missing',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'default'  => \Smile\ElasticsuiteCore\Search\Request\SortOrderInterface::MISSING_LAST,
+                'length'   => 10,
+                'comment'  => 'Sort products without value when sorting ASC',
+            ]
+        );
+
+        // Append a column 'sort_order_desc_missing' into the db.
+        $connection->addColumn(
+            $table,
+            'sort_order_desc_missing',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'default'  => \Smile\ElasticsuiteCore\Search\Request\SortOrderInterface::MISSING_FIRST,
+                'length'   => 10,
+                'comment'  => 'Sort products without value when sorting DESC',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *

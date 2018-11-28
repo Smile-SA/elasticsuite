@@ -75,6 +75,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->setNullablePositionColumn($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.5.1', '<')) {
+            $this->catalogSetup->addSortOrderMissingFields($setup);
+        }
+
         $setup->endSetup();
     }
 }

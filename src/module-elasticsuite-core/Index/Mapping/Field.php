@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Index\Mapping;
 
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Default implementation for ES mapping field (Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface).
@@ -233,6 +234,24 @@ class Field implements FieldInterface
         $config = array_merge($this->config, $config);
 
         return new static($this->name, $this->type, $this->nestedPath, $config);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSortMissing($direction = SortOrderInterface::SORT_ASC)
+    {
+        // @codingStandardsIgnoreStart
+        $missing = $direction === SortOrderInterface::SORT_ASC ? SortOrderInterface::MISSING_LAST : SortOrderInterface::MISSING_FIRST;
+        // @codingStandardsIgnoreEnd
+
+        if ($direction === SortOrderInterface::SORT_ASC && isset($this->config['sort_order_asc_missing'])) {
+            $missing = $this->config['sort_order_asc_missing'];
+        } elseif ($direction === SortOrderInterface::SORT_DESC && isset($this->config['sort_order_desc_missing'])) {
+            $missing = $this->config['sort_order_desc_missing'];
+        }
+
+        return $missing;
     }
 
     /**

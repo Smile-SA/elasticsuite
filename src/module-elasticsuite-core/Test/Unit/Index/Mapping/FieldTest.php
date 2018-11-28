@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Index\Mapping;
 
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Mapping field test case.
@@ -45,6 +46,9 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(false, $field->isNested());
         $this->assertEquals(null, $field->getNestedFieldName());
         $this->assertEquals(null, $field->getNestedPath());
+        $this->assertEquals('_last', $field->getSortMissing());
+        $this->assertEquals('_last', $field->getSortMissing(SortOrderInterface::SORT_ASC));
+        $this->assertEquals('_first', $field->getSortMissing(SortOrderInterface::SORT_DESC));
 
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
         $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $mappingPropertyConfig['type']);

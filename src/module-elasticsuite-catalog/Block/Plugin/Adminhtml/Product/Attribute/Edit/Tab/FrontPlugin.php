@@ -99,7 +99,7 @@ class FrontPlugin
         $this->addSearchFields($fieldset);
         $this->addAutocompleteFields($fieldset);
         $this->addFacetFields($fieldset);
-
+        $this->addSortFields($fieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
@@ -273,6 +273,47 @@ class FrontPlugin
     }
 
     /**
+     * Append sorting related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addSortFields(Fieldset $fieldset)
+    {
+        $sortFieldsOptions = [
+            ['value' => '_first', 'label' => __("First")],
+            ['value' => '_last',  'label' => __("Last")],
+        ];
+
+        $fieldset->addField(
+            'sort_order_asc_missing',
+            'select',
+            [
+                'name'   => 'sort_order_asc_missing',
+                'label'  => __('Sort products without value when sorting ASC'),
+                'values' => $sortFieldsOptions,
+                'note'   => __('How the products which are missing values for this attribute should be treated when using it to sort.'),
+            ],
+            'used_for_sortby'
+        );
+
+        $fieldset->addField(
+            'sort_order_desc_missing',
+            'select',
+            [
+                'name'   => 'sort_order_desc_missing',
+                'label'  => __('Sort products without value when sorting DESC'),
+                'values' => $sortFieldsOptions,
+                'note'   => __('How the products which are missing values for this attribute should be treated when using it to sort.'),
+            ],
+            'sort_order_asc_missing'
+        );
+
+        return $this;
+    }
+
+    /**
      * Append the "Slider Display Configuration" fieldset to the tab.
      *
      * @param Form  $form    Target form.
@@ -368,8 +409,13 @@ class FrontPlugin
                 ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
                 ->addFieldMap('is_searchable', 'is_searchable')
                 ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
+                ->addFieldMap('used_for_sort_by', 'used_for_sort_by')
+                ->addFieldMap('sort_order_asc_missing', 'sort_order_asc_missing')
+                ->addFieldMap('sort_order_desc_missing', 'sort_order_desc_missing')
                 ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
-                ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1');
+                ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1')
+                ->addFieldDependence('sort_order_asc_missing', 'used_for_sort_by', '1')
+                ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1');
         }
 
         return $this;
