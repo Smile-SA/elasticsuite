@@ -243,4 +243,6 @@
         </arguments>
     </type>
 
+    <preference for="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryDataInterface"
+                type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData" />
 </config>
