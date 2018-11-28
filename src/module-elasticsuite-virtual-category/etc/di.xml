@@ -105,4 +105,12 @@
         />
     </type>
 
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationResolver">
+        <arguments>
+            <argument name="aggregations" xsi:type="array">
+                <item name="category" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Search\Request\Product\Attribute\Aggregation\Category</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

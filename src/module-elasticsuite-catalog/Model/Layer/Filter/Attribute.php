@@ -112,12 +112,9 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      */
     public function addFacetToCollection($config = [])
     {
-        $facetField  = $this->getFilterField();
-        $facetType   = BucketInterface::TYPE_TERM;
         $facetConfig = $this->getFacetConfig($config);
-
         $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
+        $productCollection->addFacet($facetConfig);
 
         return $this;
     }
@@ -216,6 +213,8 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         $attribute = $this->getAttributeModel();
 
         $defaultConfig = [
+            'name'      => $this->getFilterField(),
+            'type'      => BucketInterface::TYPE_TERM,
             'size'      => $this->getFacetSize(),
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];

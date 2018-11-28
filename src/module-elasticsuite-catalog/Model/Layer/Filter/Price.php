@@ -106,11 +106,13 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
      */
     public function addFacetToCollection($config = [])
     {
-        $facetField      = $this->getFilterField();
-        $facetType       = BucketInterface::TYPE_HISTOGRAM;
         $customerGroupId = $this->customerSession->getCustomerGroupId();
 
-        $facetConfig = ['nestedFilter' => ['price.customer_group_id' => $customerGroupId], 'minDocCount' => 1];
+        $facetConfig = [
+            'name'         => $this->getFilterField(),
+            'type'         => BucketInterface::TYPE_HISTOGRAM,
+            'nestedFilter' => ['price.customer_group_id' => $customerGroupId], 'minDocCount' => 1,
+        ];
 
         $calculation = $this->dataProvider->getRangeCalculationValue();
         if ($calculation === \Magento\Catalog\Model\Layer\Filter\DataProvider\Price::RANGE_CALCULATION_MANUAL) {
@@ -120,7 +122,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
         }
 
         $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, $facetConfig);
+        $productCollection->addFacet($facetConfig);
 
         return $this;
     }

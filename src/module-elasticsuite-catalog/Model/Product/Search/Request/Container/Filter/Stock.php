@@ -14,6 +14,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filte
 
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Magento\CatalogInventory\Api\StockConfigurationInterface;
 
 /**
  * Product Stock Default filter.
@@ -30,32 +31,40 @@ class Stock implements FilterInterface
     private $queryFactory;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var \Magento\CatalogInventory\Api\StockConfigurationInterface
      */
-    private $scopeConfiguration;
+    private $stockConfiguration;
 
     /**
-     * Visibility filter constructor.
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
+     * Search Blacklist filter constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory       Query Factory
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface        $scopeConfiguration scope Configuration Interface
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface       $searchContext      Current search context.
+     * @param \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration Stock configuration.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfiguration
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
     ) {
-        $this->queryFactory       = $queryFactory;
-        $this->scopeConfiguration = $scopeConfiguration;
+            $this->queryFactory       = $queryFactory;
+            $this->searchContext      = $searchContext;
+            $this->stockConfiguration = $stockConfiguration;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilterQuery()
     {
         $query = null;
 
-        if (false === $this->isEnabledShowOutOfStock($searchContext->getStoreId())) {
+        if (false === $this->isEnabledShowOutOfStock($this->searchContext->getStoreId())) {
             $query = $this->queryFactory->create(QueryInterface::TYPE_TERM, ['field' => 'stock.is_in_stock', 'value' => true]);
         }
 
@@ -71,10 +80,6 @@ class Stock implements FilterInterface
      */
     private function isEnabledShowOutOfStock($storeId = null)
     {
-        return $this->scopeConfiguration->isSetFlag(
-            'cataloginventory/options/show_out_of_stock',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
+        return $this->stockConfiguration->isShowOutOfStock($storeId);
     }
 }

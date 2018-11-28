@@ -231,4 +231,16 @@
                 sortOrder="100"
         />
     </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationResolver">
+        <arguments>
+            <argument name="aggregations" xsi:type="array">
+                <item name="price" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\Price</item>
+                <item name="decimal" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\Decimal</item>
+                <item name="category" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\Category</item>
+            </argument>
+            <argument name="defaultAggregation" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\DefaultAttribute</argument>
+        </arguments>
+    </type>
+
 </config>

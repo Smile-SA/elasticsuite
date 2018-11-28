@@ -275,16 +275,15 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * Append a facet to the collection
      *
-     * @param string $field       Facet field.
-     * @param string $facetType   Facet type.
-     * @param array  $facetConfig Facet config params.
-     * @param array  $facetFilter Facet filter.
+     * @deprecated : facets/aggregations will be managed by ContainerConfiguration.
+     *
+     * @param array $facetConfig Facet configuration.
      *
      * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
-    public function addFacet($field, $facetType, $facetConfig, $facetFilter = null)
+    public function addFacet($facetConfig)
     {
-        $this->facets[$field] = ['type' => $facetType, 'filter' => $facetFilter, 'config' => $facetConfig];
+        $this->facets[$facetConfig['name']] = $facetConfig;
 
         return $this;
     }
@@ -607,8 +606,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $requestName = $this->searchRequestName;
 
         $facets = [
-            'attribute_set_id'   => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
-            'indexed_attributes' => ['type' => BucketInterface::TYPE_TERM, 'config' => ['size' => 0]],
+            ['name' => 'attribute_set_id', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
+            ['name' => 'indexed_attributes', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
         ];
 
         $searchRequest = $this->requestBuilder->create(

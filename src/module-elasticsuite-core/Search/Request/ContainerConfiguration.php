@@ -140,29 +140,38 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getFilters(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilters()
     {
         $filters = [];
 
         /** @var \Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface $filter */
-        foreach ($this->readBaseConfigParam('filters') as $filter) {
+        foreach ($this->readBaseConfigParam('filters', []) as $filter) {
             // Not using the filter name as array key, to prevent collision with filters added via addFieldToFilter.
-            $filters[] = $filter->getFilterQuery($searchContext);
+            $filters[] = $filter->getFilterQuery();
         }
 
         return array_filter($filters);
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getAggregations()
+    {
+        return $this->readBaseConfigParam('aggregations', []);
+    }
+
+    /**
      * Read configuration param from base config.
      *
-     * @param string $param Param name.
-     *
+     * @param string $param   Param name.
+     * @param mixed  $default Default value if not set.
+      *
      * @return mixed
      */
-    private function readBaseConfigParam($param)
+    private function readBaseConfigParam($param, $default = null)
     {
-        return $this->baseConfig->get($this->containerName . '/' . $param);
+        return $this->baseConfig->get($this->containerName . '/' . $param) ?? $default;
     }
 
     /**

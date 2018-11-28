@@ -30,28 +30,33 @@ class CategoryBlacklist implements FilterInterface
     private $queryFactory;
 
     /**
+     *
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Category Blacklist filter constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory  Query factory.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface       $searchContext Current search context.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext
     ) {
-        $this->queryFactory       = $queryFactory;
+        $this->queryFactory  = $queryFactory;
+        $this->searchContext = $searchContext;
     }
 
     /**
-     * Get filter query according to current search context.
-     *
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext Search Context
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * {@inheritDoc}
      */
-    public function getFilterQuery(\Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext)
+    public function getFilterQuery()
     {
         $query = null;
-        if ($searchContext->getCurrentCategory()) {
-            $query = $this->getIsNotBlacklistedQuery((int) $searchContext->getCurrentCategory()->getId());
+        if ($this->searchContext->getCurrentCategory()) {
+            $query = $this->getIsNotBlacklistedQuery((int) $this->searchContext->getCurrentCategory()->getId());
         }
 
         return $query;

@@ -134,10 +134,11 @@ class Builder
         $queryFilters = [],
         $facets = []
     ) {
-        $containerConfig = $this->getRequestContainerConfiguration($storeId, $containerName);
-
-        $facetFilters  = array_intersect_key($filters, $facets);
-        $queryFilters  = array_merge($queryFilters, array_diff_key($filters, $facetFilters));
+        $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
+        $containerFilters = $this->getContainerFilters($containerConfig);
+        $facets           = array_merge($facets, $this->getContainerAggregations($containerConfig));
+        $facetFilters     = array_intersect_key($filters, $facets);
+        $queryFilters     = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
 
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
@@ -165,6 +166,30 @@ class Builder
         $request = $this->requestFactory->create($requestParams);
 
         return $request;
+    }
+
+    /**
+     * Returns search request applied to each request for a given search container.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
+     */
+    private function getContainerFilters(ContainerConfigurationInterface $containerConfig)
+    {
+        return $containerConfig->getFilters();
+    }
+
+    /**
+     * Returns aggregations configured in the search container.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request configuration.
+     *
+     * @return array
+     */
+    private function getContainerAggregations(ContainerConfigurationInterface $containerConfig)
+    {
+        return $containerConfig->getAggregations();
     }
 
     /**

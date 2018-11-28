@@ -82,10 +82,9 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
      */
     public function addFacetToCollection($config = [])
     {
-        $facetField = $this->getFilterField();
-        $facetType = BucketInterface::TYPE_HISTOGRAM;
+        $facetConfig = ['name' => $this->getFilterField(), 'type' => BucketInterface::TYPE_HISTOGRAM, 'minDocCount' => 1];
         $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetField, $facetType, ['minDocCount' => 1]);
+        $productCollection->addFacet($facetConfig);
 
         return $this;
     }
