@@ -24,7 +24,7 @@ define([
     'Magento_Ui/js/lib/knockout/template/loader',
     'jquery/ui',
     'mage/translate',
-    'Magento_Search/form-mini'
+    'Magento_Search/js/form-mini'
 ], function (ko, $, _, mageTemplate, priceUtil, templateLoader) {
     'use strict';
 
