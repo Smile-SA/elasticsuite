@@ -95,10 +95,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
                 $indexData[$productId] += $indexValues;
 
-                if (!isset($indexData[$productId]['indexed_attributes'])) {
-                    $indexData[$productId]['indexed_attributes'] = [];
-                }
-                $indexData[$productId]['indexed_attributes'][] = $attribute->getAttributeCode();
+                $this->addIndexedAttribute($indexData[$productId], $attribute);
             }
         }
 
@@ -221,5 +218,23 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
         $parentData['sku'][] = $relation['sku'];
         $parentData['sku'] = array_unique($parentData['sku']);
+    }
+
+    /**
+     * Append an indexed attributes to indexed data of a given product.
+     *
+     * @param array                                                  $productIndexData Product Index data
+     * @param \Magento\Eav\Model\Entity\Attribute\AttributeInterface $attribute        The attribute
+     */
+    private function addIndexedAttribute(&$productIndexData, $attribute)
+    {
+        if (!isset($productIndexData['indexed_attributes'])) {
+            $productIndexData['indexed_attributes'] = [];
+        }
+
+        // Data can be missing for this attribute (Eg : due to null value being escaped).
+        if (isset($productIndexData[$attribute->getAttributeCode()])) {
+            $productIndexData['indexed_attributes'][] = $attribute->getAttributeCode();
+        }
     }
 }
