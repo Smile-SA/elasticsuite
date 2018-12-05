@@ -4,9 +4,11 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to an update of the Unit test framework in Magento 2.2, we cannot ensure compatibility between ElasticSuite >2.4 and Magento 2.1.x versions.
+Due to the introduction of Multi Source Inventory (MSI) in Magento 2.3.x, we cannot ensure compatibility between ElasticSuite <2.7 and Magento 2.3.x versions.
 
-If your project is based on Magento 2.2.x you can start working with ElasticSuite today using the latest **2.6.x release**.
+If your project is based on **Magento 2.2.x**, you can continue working with Elasticsuite using the latest **2.6.x release**.
+
+If your project is based on **Magento 2.3.x**, you can start working with ElasticSuite today using the latest **2.7.x release**.
 
 **Which version should I use ?**
 
@@ -15,6 +17,7 @@ Magento Version                                     | ElasticSuite Latest Versio
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ^2.1.0```
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ^2.3.0```
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ^2.6.0```
+Magento **2.3.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.7.x** latest release : ```composer require smile/elasticsuite ^2.7.0```
 
 ### Magento2 B2B Compatibility
 
