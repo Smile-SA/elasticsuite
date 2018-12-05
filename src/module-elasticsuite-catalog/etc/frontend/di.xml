@@ -173,6 +173,14 @@
         </arguments>
     </type>
 
+    <!-- Ensure category RSS feed dataprovider is using fulltext collection, to prevent error when it sends it through the Layer -->
+    <type name="Magento\Catalog\Model\Rss\Category">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+        </arguments>
+        <plugin name="apply_category_filter" type="Smile\ElasticsuiteCatalog\Plugin\Rss\CategoryPlugin"/>
+    </type>
+
     <type name="Magento\CatalogSearch\Controller\Result\Index">
         <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
     </type>
