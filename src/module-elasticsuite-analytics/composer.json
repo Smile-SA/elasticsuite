@@ -1,0 +1,38 @@
+{
+    "name": "smile/module-elasticsuite-analytics",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [{
+            "name": "Aurélien FOUCRET",
+            "email": "aurelien.foucret@smile.fr"
+        }
+    ],
+    "description": "Smile ElasticSuite - Search Analytics Module.",
+    "homepage": "https://github.com/Smile-SA/elasticsuite",
+    "keywords": [
+        "magento",
+        "magento2",
+        "elasticsearch",
+        "search",
+        "merchandising",
+        "core",
+        "setup",
+        "analytics"
+    ],
+    "require": {
+        "magento/framework": ">=101.0.0",
+        "smile/elasticsuite" : "^2.6.0@dev"
+    },
+    "require-dev": {
+        "smile/magento2-smilelab-quality-suite": "^1.0.4"
+    },
+    "version": "2.4.0",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Smile\\ElasticsuiteAnalytics\\": ""
+        }
+    }
+}

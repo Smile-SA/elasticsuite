@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ElasticSuite.io Catalog Optimizers routes configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @copyright 2016 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="smile_elasticsuite_analytics" frontName="smile_elasticsuite_analytics">
+            <module name="Smile_ElasticsuiteAnalytics" before="Magento_Backend" />
+        </route>
+    </router>
+</config>

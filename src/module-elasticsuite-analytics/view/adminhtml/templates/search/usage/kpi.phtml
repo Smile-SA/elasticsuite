@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi $block
+ */
+
+$data = $block->getKpi();
+?>
+
+<div class="dashboard-main col-m-10 col-m-push-1">
+    <div class="dashboard-totals">
+        <ul class="dashboard-totals-list">
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Searches</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['search_page_views_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Page views</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['page_views_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Sessions</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['sessions_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Sessions with search</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['search_sessions_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Searches per session</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['search_usage_rate']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+                <span class="dashboard-totals-label">Visitors</span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['visitors_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+        </ul>
+    </div>
+</div>
+

@@ -1,0 +1,67 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Apache License Version 2.0
+ */
+?>
+
+<?php
+/**
+ * Date range picker template.
+ *
+ * @var \Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher $block
+ */
+?>
+
+<div class="page-actions-inner">
+    <div class="page-actions-buttons">
+
+        <div class="range" id="<?= $block->getJsId('date-range-picker'); ?>">
+            <label>
+                <span><?= __('From :'); ?></span>
+                <span class="input">
+                    <input type="text"
+                           id="<?= $block->getJsId('date-range-picker', 'from'); ?>"
+                           value="<?= $block->getMinDate(); ?>"
+                           class="admin__control-text input-text" />
+               </span>
+            </label>
+            <label>
+                <span><?= __('To :'); ?></span>
+                <span class="input">
+                    <input type="text"
+                           id="<?= $block->getJsId('date-range-picker', 'to'); ?>"
+                           value="<?= $block->getMaxDate(); ?>"
+                           class="admin__control-text input-text" />
+               </span>
+            </label>
+            <button id="<?= $block->getJsId('date-range-picker', 'apply'); ?>"
+                    title="><?= __('Apply'); ?>"
+                    type="button"
+                    class="action- scalable primary">
+                <span><?= __('Apply'); ?></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+require(['jquery', 'mage/calendar'], function ($) {
+    $('#<?= $block->getJsId('date-range-picker'); ?>').dateRange(<?= $block->getJsConfig(); ?>);
+    $('#<?= $block->getJsId('date-range-picker', 'apply'); ?>').on('click', function() {
+        var url = "<?= $block->getUrl('*/*/*', ['from' => '__from__', 'to' => '__to__']); ?>"
+            .replace('__from__', encodeURIComponent($("#<?= $block->getJsId('date-range-picker', 'from'); ?>")[0].value))
+            .replace('__to__', encodeURIComponent($("#<?= $block->getJsId('date-range-picker', 'to'); ?>")[0].value));
+        window.location = url;
+    });
+});
+</script>
+

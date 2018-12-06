@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ElasticSuite Catalog Optimizers menu configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Smile_ElasticsuiteAnalytics::analytics"
+             title="Analytics"
+             translate="title"
+             module="Smile_ElasticsuiteAnalytics"
+             sortOrder="30"
+             parent="Smile_ElasticsuiteCore::elasticsuite_menu"
+             resource="Smile_ElasticsuiteCore::analytics"
+         />
+        <add id="Smile_ElasticsuiteAnalytics::search_usage"
+             title="Search Usage"
+             module="Smile_ElasticsuiteCatalogOptimizer"
+             sortOrder="30"
+             parent="Smile_ElasticsuiteAnalytics::analytics"
+             action="smile_elasticsuite_analytics/search/usage"
+             resource="Smile_ElasticsuiteAnalytics::search_usage"
+         />
+    </menu>
+</config>

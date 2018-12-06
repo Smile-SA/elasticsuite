@@ -1,0 +1,41 @@
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms $block
+ */
+?>
+<div class="dashboard-item">
+    <div class="dashboard-item-title"><?= $block->getTitle() ;?></div>
+    <div class="dashboard-item-content">
+        <table class="admin__table-primary dashboard-data" id="lastOrdersGrid_table">
+            <thead>
+                <tr>
+                    <th class="data-grid-th no-link"><span><?= __('Term');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('# Results (avg.)');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('Conv. rate');?></span></th>
+            </thead>
+            <tbody>
+                <?php $termsData = $block->getTermsData(); ?>
+                <?php if (empty($termsData)) : ?>
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding: 20px;">
+                            <em><?= __('No data over the selected period.'); ?></em>
+                        </td>
+                    </tr>
+                <?php else : ?>
+                    <?php foreach($termsData as $termData) : ?>
+                        <tr>
+                        <td><a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a></td>
+                        <td><?= $termData['sessions']; ?></td>
+                        <td><?= $termData['visitors']; ?></td>
+                        <td><?= $termData['result_count']; ?></td>
+                        <td><?= number_format($termData['conversion_rate'] * 100, 2); ?> %</td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+            </tbody>
+        </table>
+    </div>
+</div>

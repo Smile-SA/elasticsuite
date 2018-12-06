@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles" />
+    <body>
+        <referenceContainer name="page.main.actions">
+            <block class="Magento\Backend\Block\Store\Switcher" name="report.store.switcher">
+                <arguments>
+                    <argument name="use_confirm" xsi:type="boolean">false</argument>
+                </arguments>
+            </block>
+            <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher" name="report.dateRange.switcher"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <container name="dashboard-container" htmlTag="div" htmlClass="dashboard-container row">
+                <block name="elasticsuite.analytics.search_uage.kpi" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi" template="Smile_ElasticsuiteAnalytics::search/usage/kpi.phtml" />
+                
+                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-7">
+
+                </container>
+                
+                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-5">
+                    <block name="elasticsuite.analytics.search_uage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</argument>
+                            <argument name="title" xsi:type="string">Popular search terms</argument>
+                        </arguments>
+                    </block>
+                    
+                    <block name="elasticsuite.analytics.search_uage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</argument>
+                            <argument name="title" xsi:type="string">Spellchecked search terms</argument>
+                        </arguments>
+                    </block>
+                    
+                    <block name="elasticsuite.analytics.search_uage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</argument>
+                            <argument name="title" xsi:type="string">0 result search terms</argument>
+                        </arguments>
+                    </block>
+                </container>
+            </container>
+        </referenceContainer>
+    </body>
+</page>

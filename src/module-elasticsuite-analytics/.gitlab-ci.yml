@@ -1,0 +1,46 @@
+image: chialab/php:7.1
+
+stages:
+  - install
+  - qa
+
+install_deps:
+  before_script:
+    - "apt-get update && apt-get install -y libxslt-dev"
+    - "docker-php-ext-install dom xsl > /dev/null"
+    - "mkdir -p app/etc var"
+    - "composer config cache-files-dir /cache/composer"
+    - "composer config repositories.magento composer https://repo.magento.com/"
+  script: "composer install --prefer-dist"
+  stage: install
+  cache:
+    paths:
+    - /cache/composer
+    - ./vendor
+
+phpcs_eqp:
+  stage: qa
+  script:
+    - "vendor/bin/phpcs --config-set installed_paths vendor/magento/marketplace-eqp/"
+    - "vendor/bin/phpcs --ignore=/vendor/ --standard=vendor/magento/marketplace-eqp/MEQP2 --severity=9 ./"
+  cache:
+    paths:
+    - /cache/composer
+    - ./vendor
+
+phpcs_smile:
+  stage: qa
+  script: 
+    - vendor/bin/phpcs --ignore=/vendor/ --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php ./
+  cache:
+    paths:
+    - /cache/composer
+    - ./vendor
+    
+phpmd:
+  stage: qa
+  script: vendor/bin/phpmd ./ text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml --exclude vendor
+  cache:
+    paths:
+    - /cache/composer
+    - ./vendor
