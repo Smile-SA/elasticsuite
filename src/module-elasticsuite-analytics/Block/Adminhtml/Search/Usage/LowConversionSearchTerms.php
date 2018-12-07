@@ -16,6 +16,13 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 
+/**
+ * Class LowConversionSearchTerms
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ * @deprecated
+ */
 class LowConversionSearchTerms extends PopularSearchTerms
 {
     public function getTitle()

@@ -17,7 +17,7 @@ class SearchRequestBuilder
     /**
      * @var string
      */
-    private $searchIndexName;
+    private $containerName;
 
     /**
      * @var QueryProviderInterface[]
@@ -36,18 +36,18 @@ class SearchRequestBuilder
      * @param Context                                        $context
      * @param AggregationProviderInterface[]                 $aggregationProviders
      * @param QueryProviderInterface[]                       $queryProviders
-     * @param string                                         $searchIndexName
+     * @param string                                         $containerName
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
         Context $context,
         array $aggregationProviders = [],
         array $queryProviders = [],
-        $searchIndexName = \Smile\ElasticsuiteTracker\Api\EventIndexInterface::INDEX_IDENTIFIER
+        $containerName = \Smile\ElasticsuiteTracker\Model\ResourceModel\SessionIndex::SEARCH_REQUEST_CONTAINER
     ) {
         $this->searchRequestBuilder = $searchRequestBuilder;
         $this->context              = $context;
-        $this->searchIndexName      = $searchIndexName;
+        $this->containerName        = $containerName;
         $this->aggregationProviders = $aggregationProviders;
         $this->queryProviders       = $queryProviders;
     }
@@ -62,7 +62,7 @@ class SearchRequestBuilder
         $aggregations = $this->getAggregations();
         $searchQuery  = $this->getSearchQuery();
 
-        return $this->searchRequestBuilder->create($storeId, $this->searchIndexName, 0, 0, null, [], [], $searchQuery, $aggregations);
+        return $this->searchRequestBuilder->create($storeId, $this->containerName, 0, 0, null, [], [], $searchQuery, $aggregations);
     }
 
     private function getSearchQuery()

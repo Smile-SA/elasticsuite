@@ -16,6 +16,13 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 
+/**
+ * Class PopularSearchTerms
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ * @deprecated
+ */
 class PopularSearchTerms extends \Magento\Backend\Block\Template
 {
     protected $searchRequestBuilder;
