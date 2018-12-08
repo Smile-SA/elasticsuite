@@ -93,7 +93,9 @@ class InventoryData extends Indexer implements InventoryDataInterface
                     'stock_status'  => 'stock_index.' . IndexStructure::IS_SALABLE,
                     'qty'           => 'stock_index.' . IndexStructure::QUANTITY,
                 ]
-            );
+            )
+            ->where('product.entity_id IN (?)', $productIds)
+            ->group('product.entity_id');
 
         return $this->getConnection()->fetchAll($select);
     }
