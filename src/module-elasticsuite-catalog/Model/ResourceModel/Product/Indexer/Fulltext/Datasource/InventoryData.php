@@ -84,16 +84,12 @@ class InventoryData extends Indexer implements InventoryDataInterface
         $tableName = $this->stockIndexTableProvider->execute($stockId);
 
         $select = $this->getConnection()->select()
-            ->from(['product' => $this->getTable('catalog_product_entity')], [])
-            ->join(
-                ['stock_index' => $tableName],
-                'product.sku = stock_index.' . IndexStructure::SKU,
-                [
-                    'product_id'    => 'product.entity_id',
-                    'stock_status'  => 'stock_index.' . IndexStructure::IS_SALABLE,
-                    'qty'           => 'stock_index.' . IndexStructure::QUANTITY,
-                ]
-            );
+            ->from($tableName, [
+                'product_id'    => 'product_id',
+                'stock_status'  => IndexStructure::IS_SALABLE,
+                'qty'           => IndexStructure::QUANTITY,
+            ])
+            ->where('product_id IN(?)', $productIds);
 
         return $this->getConnection()->fetchAll($select);
     }
