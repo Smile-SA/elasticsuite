@@ -38,5 +38,10 @@
                 <expanded_facets>3</expanded_facets>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
+        <smile_elasticsuite_product_listing_settings>
+            <product_listing>
+                <use_for_product_listing>0</use_for_product_listing>
+            </product_listing>
+        </smile_elasticsuite_product_listing_settings>
     </default>
 </config>

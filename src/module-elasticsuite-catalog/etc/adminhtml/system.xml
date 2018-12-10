@@ -62,5 +62,19 @@
                 </field>
             </group>
         </section>
+
+        <section id="smile_elasticsuite_product_listing_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Catalog Listing</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_catalogsearch</resource>
+
+            <group id="product_listing" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Catalog Listing Configuration</label>
+                <field id="use_for_product_listing" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use Elastic Suite for product listing</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

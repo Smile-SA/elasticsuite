@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Smile\ElasticsuiteCatalog\Helper\ProductListing;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -50,20 +51,22 @@ class AttributeData extends AbstractAttributeData
     /**
      * Constructor.
      *
-     * @param ResourceConnection    $resource           Database adpater.
-     * @param StoreManagerInterface $storeManager       Store manager.
-     * @param MetadataPool          $metadataPool       Metadata Pool.
-     * @param ProductType           $catalogProductType Product type.
-     * @param string                $entityType         Product entity type.
+     * @param ResourceConnection    $resource             Database adpater.
+     * @param StoreManagerInterface $storeManager         Store manager.
+     * @param MetadataPool          $metadataPool         Metadata Pool.
+     * @param ProductType           $catalogProductType   Product type.
+     * @param ProductListing        $productListingHelper Product listing helper
+     * @param string                $entityType           Product entity type.
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
+        ProductListing $productListingHelper,
         $entityType = ProductInterface::class
     ) {
-        parent::__construct($resource, $storeManager, $metadataPool, $entityType);
+        parent::__construct($resource, $storeManager, $metadataPool, $productListingHelper, $entityType);
         $this->catalogProductType = $catalogProductType;
     }
 

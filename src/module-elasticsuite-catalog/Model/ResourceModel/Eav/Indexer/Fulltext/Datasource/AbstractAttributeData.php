@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Dat
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalog\Helper\ProductListing;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 
@@ -41,6 +42,11 @@ class AbstractAttributeData extends Indexer
     ];
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Helper\ProductListing
+     */
+    private $productListingHelper;
+
+    /**
      * @var null|string
      */
     private $entityTypeId = null;
@@ -48,18 +54,21 @@ class AbstractAttributeData extends Indexer
     /**
      * AbstractAttributeData constructor.
      *
-     * @param \Magento\Framework\App\ResourceConnection     $resource     Resource Connection
-     * @param \Magento\Store\Model\StoreManagerInterface    $storeManager Store Manager
-     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool Entity Metadata Pool
-     * @param string                                        $entityType   Entity Type
+     * @param \Magento\Framework\App\ResourceConnection     $resource             Resource Connection
+     * @param \Magento\Store\Model\StoreManagerInterface    $storeManager         Store Manager
+     * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool         Entity Metadata Pool
+     * @param ProductListing                                $productListingHelper Product Listing Helper
+     * @param string                                        $entityType           Entity Type
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
+        ProductListing $productListingHelper,
         $entityType = null
     ) {
         $this->entityTypeId = $entityType;
+        $this->productListingHelper = $productListingHelper;
         parent::__construct($resource, $storeManager, $metadataPool);
     }
 
@@ -67,12 +76,15 @@ class AbstractAttributeData extends Indexer
      * Allow to filter an attribute collection on attributes that are indexed into the search engine.
      *
      * @param AttributeCollection $attributeCollection Attribute collection (not loaded).
-     *
      * @return AttributeCollection
      */
     public function addIndexedFilterToAttributeCollection(AttributeCollection $attributeCollection)
     {
         $conditions = [];
+
+        if ($this->productListingHelper->isEnabled()) {
+            $this->indexedAttributesConditions['used_in_product_listing'] = ['operator' => '=', 'value' => 1];
+        }
 
         foreach ($this->indexedAttributesConditions as $fieldName => $condition) {
             if ($condition['operator'] == 'IN' || is_array($condition['value'])) {
@@ -98,7 +110,6 @@ class AbstractAttributeData extends Indexer
      * @param array  $entityIds    Entity ids.
      * @param string $tableName    Attribute table.
      * @param array  $attributeIds Attribute ids to get loaded.
-     *
      * @return array
      */
     public function getAttributesRawData($storeId, array $entityIds, $tableName, array $attributeIds)
@@ -122,17 +133,20 @@ class AbstractAttributeData extends Indexer
             $storeId
         );
 
-        $select->from(['entity' => $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable()], [$entityIdField])
-            ->joinInner(
-                ['t_default' => $tableName],
-                new \Zend_Db_Expr("entity.{$linkField} = t_default.{$linkField}"),
-                ['attribute_id']
-            )
-            ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
-            ->where('t_default.store_id=?', 0)
-            ->where('t_default.attribute_id IN (?)', $attributeIds)
-            ->where("entity.{$entityIdField} IN (?)", $entityIds)
-            ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
+        $select->from(
+            ['entity' => $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable()],
+            [$entityIdField]
+        )
+               ->joinInner(
+                   ['t_default' => $tableName],
+                   new \Zend_Db_Expr("entity.{$linkField} = t_default.{$linkField}"),
+                   ['attribute_id']
+               )
+               ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
+               ->where('t_default.store_id=?', 0)
+               ->where('t_default.attribute_id IN (?)', $attributeIds)
+               ->where("entity.{$entityIdField} IN (?)", $entityIds)
+               ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
 
         return $this->connection->fetchAll($select);
     }

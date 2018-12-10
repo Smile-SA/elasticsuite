@@ -199,4 +199,10 @@
     <type name="Magento\Search\Model\QueryFactory">
         <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Search\QueryFactoryPlugin"/>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="fetchStrategy" xsi:type="object">Smile\ElasticsuiteCatalog\Data\Collection\Db\FetchStrategy\SearchQuery</argument>
+        </arguments>
+    </type>
 </config>
