@@ -25,6 +25,9 @@
             <module name="Magento_LayeredNavigation" />
             <module name="Magento_CatalogInventory" />
             <module name="Magento_LayeredNavigationStaging" />
+            <module name="Magento_InventorySalesApi" />
+            <module name="Magento_InventorySales" />
+            <module name="Magento_InventoryIndexer" />
         </sequence>
     </module>
 </config>
