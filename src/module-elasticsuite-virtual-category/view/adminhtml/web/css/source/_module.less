@@ -16,3 +16,47 @@
 .catalog-category-edit {
 
 }
+
+.elasticsuite-admin-product-sorter-container {
+
+    margin: 40px 20px;
+
+    > span.title {
+        font-size: 1.7rem;
+        font-weight: 600;
+        letter-spacing: .025em;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .elasticsuite-admin-product-sorter {
+        margin: 0;
+
+        .elasticsuite-admin-product-sorter-empty {
+            margin: 0 100px;
+        }
+    }
+
+    .elasticsuite-admin-product-sorter-preview-mode {
+        margin-bottom: 10px;
+    }
+
+    .admin__field {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        #mix-grid .row();
+
+        &:after {
+            clear: both;
+            content: '';
+            display: table;
+        }
+        > .admin__field-label {
+            #mix-grid .column(@field-label-grid__column, @field-grid__columns);
+        }
+        > .admin__field-control {
+            #mix-grid .column(@field-control-grid__column, @field-grid__columns);
+        }
+    }
+}

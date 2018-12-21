@@ -92,6 +92,21 @@ class DataProviderPlugin
             $data[$currentCategory->getId()]['virtual_category_root'] = $currentCategory->getPathIds()[1];
         }
 
+        $data[$currentCategory->getId()]['use_default']['show_use_store_positions'] = true;
+        if (!$currentCategory->getStoreId() || $currentCategory->getId() === null) {
+            $data[$currentCategory->getId()]['use_default']['show_use_store_positions'] = false;
+        }
+
+        // To restore global/"All store views" positions/blacklist.
+        $data[$currentCategory->getId()]['default']['sorted_products'] = [];
+        $data[$currentCategory->getId()]['default']['blacklisted_products'] = [];
+        if ($currentCategory->getStoreId()) {
+            $globalCategory = clone $currentCategory;
+            $globalCategory->setUseStorePositions(false);
+            $data[$currentCategory->getId()]['default']['sorted_products'] = $this->getProductSavedPositions($globalCategory);
+            $data[$currentCategory->getId()]['default']['blacklisted_products'] = $this->getBlacklistedProducts($globalCategory);
+        }
+
         $data[$currentCategory->getId()]['sorted_products']         = $this->getProductSavedPositions($currentCategory);
         $data[$currentCategory->getId()]['blacklisted_products']    = $this->getBlacklistedProducts($currentCategory);
         $data[$currentCategory->getId()]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);

@@ -40,12 +40,17 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getProductPositionsByCategory($category)
     {
+        $storeId = 0;
         if (is_object($category)) {
+            if ($category->getUseStorePositions()) {
+                $storeId = $category->getStoreId();
+            }
             $category = $category->getId();
         }
 
         $select = $this->getBaseSelect()
             ->where('category_id = ?', (int) $category)
+            ->where('store_id = ?', (int) $storeId)
             ->where('position IS NOT NULL')
             ->columns(['product_id', 'position']);
 
@@ -61,20 +66,25 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getProductBlacklistByCategory($category)
     {
+        $storeId = 0;
         if (is_object($category)) {
+            if ($category->getUseStorePositions()) {
+                $storeId = $category->getStoreId();
+            }
             $category = $category->getId();
         }
 
         $select = $this->getBaseSelect()
             ->columns(['product_id'])
             ->where('category_id = ?', (int) $category)
+            ->where('store_id = ?', (int) $storeId)
             ->where('is_blacklisted = ?', (int) true);
 
         return $this->getConnection()->fetchCol($select);
     }
 
     /**
-     * Save the product postions.
+     * Save the product positions.
      *
      * @param CategoryInterface $category Saved category.
      *
@@ -82,11 +92,21 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function saveProductPositions(CategoryInterface $category)
     {
+        // Can be 0 if not on a store view.
+        $storeId = (int) $category->getStoreId();
+
+        // If on a store view, and no store override of positions, clean up existing store records.
+        if ($storeId && !$category->getUseStorePositions()) {
+            $category->setSortedProducts([]);
+            $category->setBlacklistedProducts([]);
+        }
+
         $newProductPositions  = $category->getSortedProducts();
         $blacklistedProducts  = $category->getBlacklistedProducts() ?? [];
 
         $deleteConditions = [
             $this->getConnection()->quoteInto('category_id = ?', (int) $category->getId()),
+            $this->getConnection()->quoteInto('store_id = ?', $storeId),
         ];
 
         if (!empty($newProductPositions) || !empty($blacklistedProducts)) {
@@ -97,6 +117,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 $insertData[] = [
                     'category_id'    => $category->getId(),
                     'product_id'     => $productId,
+                    'store_id'       => $storeId,
                     'position'       => $newProductPositions[$productId] ?? null,
                     'is_blacklisted' => in_array($productId, $blacklistedProducts),
                 ];

@@ -73,6 +73,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->virtualCategorySetup->convertSerializedRulesToJson($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
+        if (version_compare($context->getVersion(), '1.4.0', '<')) {
+            $this->virtualCategorySetup->addUseStorePositionsAttribute($this->eavSetupFactory->create(['setup' => $setup]));
+        }
+
         $setup->endSetup();
     }
 }
