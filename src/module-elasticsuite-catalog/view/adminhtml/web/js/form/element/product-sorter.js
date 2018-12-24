@@ -245,6 +245,28 @@ define([
             this.editPositions(editPositions);
         },
 
+        sendToTop: function(product) {
+            var products      = this.products();
+            var editPositions = this.editPositions();
+            var position      = 1;
+
+            var currentProductId = product.getId();
+            var list = $('li.product-list-item[data-product-id=' + currentProductId + ']').parent();
+            list.find('li.product-list-item').each(function (index, element) {
+                var currentProduct = this.getProductById(element.getAttribute('data-product-id'));
+                if(currentProduct.getPosition() && currentProduct.getId() !== currentProductId) {
+                    position = position + 1;
+                    currentProduct.setPosition(position);
+                    editPositions[currentProduct.getId()] = position;
+                }
+            }.bind(this));
+
+            editPositions[product.getId()] = 1;
+            product.setPosition(1);
+            this.products(this.sortProduct(products));
+            this.editPositions(editPositions);
+        },
+
         allowBlacklist: function() {
             return this.allowBlacklist;
         },
