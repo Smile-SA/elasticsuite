@@ -62,6 +62,9 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationResolverInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\Aggregation\Resolver" />
+
     <preference for="Magento\Search\Api\SearchInterface"
                 type="Smile\ElasticsuiteCore\Model\Search" />
 

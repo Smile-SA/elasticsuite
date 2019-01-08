@@ -87,5 +87,5 @@ interface ContainerConfigurationInterface
      *
      * @return array
      */
-    public function getAggregations();
+    public function getAggregations($query = null, $filters = [], $queryFilters = []);
 }

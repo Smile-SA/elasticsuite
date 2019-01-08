@@ -12,9 +12,11 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationResolver as ProductAttributesAggregationResolver;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as ProductAttributesCollectionFactory;
+use Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory as CoverageProviderFactory;
 
 /**
  * Plugin on Container Configuration to dynamically add Aggregations from product attributes.
@@ -36,6 +38,16 @@ class ContainerConfigurationPlugin
     private $aggregationResolver;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\Builder
+     */
+    private $coverageRequestBuilder;
+
+    /**
+     * @var \Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory
+     */
+    private $coverageProviderFactory;
+
+    /**
      * @var array
      */
     private $defaultProductContainers = [
@@ -49,15 +61,21 @@ class ContainerConfigurationPlugin
     private $productContainers = [];
 
     /**
-     * @param ProductAttributesCollectionFactory   $productAttributeCollectionFactory Product Attributes Collection Factory.
-     * @param ProductAttributesAggregationResolver $aggregationResolver               Product Attributes Aggregation Resolver.
-     * @param array                                $productContainers                 Product Containers.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Builder $coverageRequestBuilder            Coverage Request Builder.
+     * @param ProductAttributesCollectionFactory             $productAttributeCollectionFactory Product Attributes Collection Factory.
+     * @param ProductAttributesAggregationResolver           $aggregationResolver               Product Attributes Aggregation Resolver.
+     * @param CoverageProviderFactory                        $coverageProviderFactory           Coverage Provider Factory
+     * @param array                                          $productContainers                 Product Containers.
      */
     public function __construct(
+        \Smile\ElasticsuiteCore\Search\Request\Builder $coverageRequestBuilder,
         ProductAttributesCollectionFactory $productAttributeCollectionFactory,
         ProductAttributesAggregationResolver $aggregationResolver,
+        CoverageProviderFactory $coverageProviderFactory,
         array $productContainers = []
     ) {
+        $this->coverageRequestBuilder            = $coverageRequestBuilder;
+        $this->coverageProviderFactory           = $coverageProviderFactory;
         $this->productAttributeCollectionFactory = $productAttributeCollectionFactory;
         $this->aggregationResolver               = $aggregationResolver;
         $this->productContainers                 = array_merge($this->defaultProductContainers, $productContainers);
@@ -66,28 +84,82 @@ class ContainerConfigurationPlugin
     /**
      * Dynamically add aggregation to product related containers.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface $subject Container
-     * @param array                                                                      $result  Aggregations
+     * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface $subject      Container
+     * @param \Closure                                                                   $proceed      Parent function
+     * @param null                                                                       $query        Current Query
+     * @param array                                                                      $filters      Applied filters
+     * @param array                                                                      $queryFilters Applied Query Filters
      *
      * @return array
+     * @internal param array $result Aggregations
      */
-    public function afterGetAggregations(ContainerConfigurationInterface $subject, $result)
-    {
+    public function aroundGetAggregations(
+        ContainerConfigurationInterface $subject,
+        \Closure $proceed,
+        $query = null,
+        $filters = [],
+        $queryFilters = []
+    ) {
+        $result = $proceed($query, $filters, $queryFilters);
+
         if (in_array($subject->getName(), array_keys($this->productContainers))) {
-            $result = array_merge($result, $this->getProductAttributesAggregations($this->productContainers[$subject->getName()]));
+
+            $coverageRates = $this->getCoverageRates($subject, $query, $filters, $queryFilters);
+
+            $aggregations = $this->getProductAttributesAggregations(
+                $this->productContainers[$subject->getName()],
+                $coverageRates
+            );
+
+            $result = array_merge($result, $aggregations);
         }
 
         return $result;
     }
 
     /**
-     * Get product attributes aggregations.
+     * Get coverage rate of attributes for current search request.
      *
-     * @param string $attributeType Condition value on attributes.
+     * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface $subject      Container
+     * @param null                                                                       $query        Current Query
+     * @param array                                                                      $filters      Applied filters
+     * @param array                                                                      $queryFilters Applied Query Filters
      *
      * @return array
      */
-    private function getProductAttributesAggregations($attributeType)
+    private function getCoverageRates(ContainerConfigurationInterface $subject, $query, $filters, $queryFilters)
+    {
+        $coverageRequest = $this->coverageRequestBuilder->create(
+            $subject->getStoreId(),
+            $subject->getName(),
+            0,
+            0,
+            $query,
+            [],
+            $filters,
+            $queryFilters
+        );
+
+        $coverage      = $this->coverageProviderFactory->create(['request' => $coverageRequest]);
+        $coverageRates = [];
+        $totalCount    = $coverage->getSize();
+
+        foreach ($coverage->getProductCountByAttributeCode() as $attributeCode => $productCount) {
+            $coverageRates[$attributeCode] = $productCount / $totalCount * 100;
+        }
+
+        return $coverageRates;
+    }
+
+    /**
+     * Get product attributes aggregations.
+     *
+     * @param string $attributeType Condition value on attributes.
+     * @param array $coverageRates  Current coverage rates of attributes for query.
+     *
+     * @return array
+     */
+    private function getProductAttributesAggregations($attributeType, $coverageRates)
     {
         $aggregations = [];
         $attributes   = $this->getFilterableAttributes();
@@ -96,6 +168,21 @@ class ContainerConfigurationPlugin
             if ($attribute->getData($attributeType) || ('category_ids' === $attribute->getAttributeCode())) {
                 $bucketConfig                        = $this->getBucketConfig($attribute);
                 $aggregations[$bucketConfig['name']] = $bucketConfig;
+
+                try {
+                    $attributeCode   = $attribute->getAttributeCode();
+                    $minCoverageRate = $attribute->getFacetMinCoverageRate();
+
+                    $isRelevant   = isset($coverageRates[$attributeCode]) && ($coverageRates[$attributeCode] >= $minCoverageRate);
+                    $forceDisplay = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_DISPLAYED;
+                    $isHidden     = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_HIDDEN;
+
+                    if ($isHidden || !($isRelevant || $forceDisplay)) {
+                        unset($aggregations[$bucketConfig['name']]);
+                    }
+                } catch (\Exception $e) {
+                    ;
+                }
             }
         }
 
@@ -129,6 +216,7 @@ class ContainerConfigurationPlugin
         );
 
         $productAttributes->getSelect()->orWhere('attribute_code = "category_ids"');
+        $productAttributes->setOrder('position', 'ASC');
 
         return $productAttributes;
     }

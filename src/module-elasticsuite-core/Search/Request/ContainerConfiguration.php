@@ -156,7 +156,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getAggregations()
+    public function getAggregations($query = null, $filters = [], $queryFilters = [])
     {
         return $this->readBaseConfigParam('aggregations', []);
     }

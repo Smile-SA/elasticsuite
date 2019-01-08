@@ -245,4 +245,21 @@
 
     <preference for="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryDataInterface"
                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData" />
+
+    <type name="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface">
+        <plugin name="catalogProductContainerConfiguration" type="Smile\ElasticsuiteCatalog\Plugin\Search\ContainerConfigurationPlugin" sortOrder="10"/>
+    </type>
+    
+    <virtualType name="Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder"
+        type="\Smile\ElasticsuiteCore\Search\Request\Builder">
+        <arguments>
+            <argument name="aggregationResolver" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Aggregation\Resolver</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Search\ContainerConfigurationPlugin">
+        <arguments>
+            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+        </arguments>
+    </type>
 </config>

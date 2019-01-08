@@ -25,6 +25,9 @@
             <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
+        <aggregations>
+            <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
+        </aggregations>
     </request>
 
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
@@ -32,6 +35,9 @@
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
         </filters>
+        <aggregations>
+            <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
+        </aggregations>
     </request>
 
     <request name="category_search_container" label="Catalog Category Search" index="catalog_category" type="category" fulltext="true"/>

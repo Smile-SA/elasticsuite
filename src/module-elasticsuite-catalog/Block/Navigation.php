@@ -36,11 +36,6 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     private $moduleManager;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList
-     */
-    private $relevantFilterList;
-
-    /**
      * @var string[]
      */
     private $inlineLayouts = ['1column'];
@@ -53,14 +48,13 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     /**
      * Navigation constructor.
      *
-     * @param \Magento\Framework\View\Element\Template\Context          $context            Application context
-     * @param \Magento\Catalog\Model\Layer\Resolver                     $layerResolver      Layer Resolver
-     * @param \Magento\Catalog\Model\Layer\FilterList                   $filterList         Filter List
-     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface    $visibilityFlag     Visibility Flag
-     * @param \Magento\Framework\ObjectManagerInterface                 $objectManager      Object Manager
-     * @param \Magento\Framework\Module\Manager                         $moduleManager      Module Manager
-     * @param \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList Attribute coverage rate provider.
-     * @param array                                                     $data               Block Data
+     * @param \Magento\Framework\View\Element\Template\Context       $context        Application context
+     * @param \Magento\Catalog\Model\Layer\Resolver                  $layerResolver  Layer Resolver
+     * @param \Magento\Catalog\Model\Layer\FilterList                $filterList     Filter List
+     * @param \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag Visibility Flag
+     * @param \Magento\Framework\ObjectManagerInterface              $objectManager  Object Manager
+     * @param \Magento\Framework\Module\Manager                      $moduleManager  Module Manager
+     * @param array                                                  $data           Block Data
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -69,14 +63,12 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         \Magento\Catalog\Model\Layer\AvailabilityFlagInterface $visibilityFlag,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\Module\Manager $moduleManager,
-        \Smile\ElasticsuiteCatalog\Model\Layer\RelevantFilterList $relevantFilterList,
         array $data
     ) {
         parent::__construct($context, $layerResolver, $filterList, $visibilityFlag, $data);
         $this->pageLayout         = $context->getPageConfig()->getPageLayout() ?: $this->getLayout()->getUpdate()->getPageLayout();
         $this->objectManager      = $objectManager;
         $this->moduleManager      = $moduleManager;
-        $this->relevantFilterList = $relevantFilterList;
     }
 
     /**
@@ -161,30 +153,5 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
     public function isInline()
     {
         return in_array($this->pageLayout, $this->inlineLayouts);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-        $this->addFacets();
-
-        return $this;
-    }
-
-    /**
-     * Append facets to the search requests using the coverage rate defined in admin.
-     *
-     * @return void
-     */
-    private function addFacets()
-    {
-        foreach ($this->relevantFilterList->getRelevantFilters($this->getLayer(), $this->getFilters()) as $filter) {
-            $filter->addFacetToCollection();
-        }
     }
 }

@@ -1,7 +1,6 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
@@ -15,6 +14,7 @@
 namespace Smile\ElasticsuiteCore\Search\Request;
 
 use Magento\Framework\Search\Request\DimensionFactory;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationResolverInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
@@ -27,7 +27,6 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 
 /**
  * ElasticSuite search requests builder.
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
@@ -77,6 +76,11 @@ class Builder
     private $dimensionFactory;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationResolverInterface
+     */
+    private $aggregationResolver;
+
+    /**
      * Constructor.
      *
      * @param RequestFactory                $requestFactory           Factory used to build the request.
@@ -87,6 +91,7 @@ class Builder
      * @param ContainerConfigurationFactory $containerConfigFactory   Search requests configuration.
      * @param SpellcheckRequestFactory      $spellcheckRequestFactory Spellchecking request factory.
      * @param SpellcheckerInterface         $spellchecker             Spellchecker.
+     * @param AggregationResolverInterface  $aggregationResolver      Aggregation Resolver.
      */
     public function __construct(
         RequestFactory $requestFactory,
@@ -96,7 +101,8 @@ class Builder
         AggregationBuilder $aggregationBuilder,
         ContainerConfigurationFactory $containerConfigFactory,
         SpellcheckRequestFactory $spellcheckRequestFactory,
-        SpellcheckerInterface $spellchecker
+        SpellcheckerInterface $spellchecker,
+        AggregationResolverInterface $aggregationResolver
     ) {
         $this->spellcheckRequestFactory = $spellcheckRequestFactory;
         $this->spellchecker             = $spellchecker;
@@ -106,6 +112,7 @@ class Builder
         $this->sortOrderBuilder         = $sortOrderBuilder;
         $this->aggregationBuilder       = $aggregationBuilder;
         $this->containerConfigFactory   = $containerConfigFactory;
+        $this->aggregationResolver      = $aggregationResolver;
     }
 
     /**
@@ -136,9 +143,11 @@ class Builder
     ) {
         $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
         $containerFilters = $this->getContainerFilters($containerConfig);
-        $facets           = array_merge($facets, $this->getContainerAggregations($containerConfig));
-        $facetFilters     = array_intersect_key($filters, $facets);
-        $queryFilters     = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
+        $containerAggs    = $this->getContainerAggregations($containerConfig, $query, $filters, $queryFilters);
+
+        $facets       = array_merge($facets, $containerAggs);
+        $facetFilters = array_intersect_key($filters, $facets);
+        $queryFilters = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
 
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
@@ -184,12 +193,15 @@ class Builder
      * Returns aggregations configured in the search container.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request configuration.
+     * @param string|QueryInterface           $query           Search Query.
+     * @param array                           $filters         Search request filters.
+     * @param QueryInterface[]                $queryFilters    Search request filters prebuilt as QueryInterface.
      *
      * @return array
      */
-    private function getContainerAggregations(ContainerConfigurationInterface $containerConfig)
+    private function getContainerAggregations(ContainerConfigurationInterface $containerConfig, $query, $filters, $queryFilters)
     {
-        return $containerConfig->getAggregations();
+        return $this->aggregationResolver->getContainerAggregations($containerConfig, $query, $filters, $queryFilters);
     }
 
     /**
@@ -214,7 +226,7 @@ class Builder
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
-        $spellingType = $this->spellchecker->getSpellingType($spellcheckRequest);
+        $spellingType      = $this->spellchecker->getSpellingType($spellcheckRequest);
 
         return $spellingType;
     }
