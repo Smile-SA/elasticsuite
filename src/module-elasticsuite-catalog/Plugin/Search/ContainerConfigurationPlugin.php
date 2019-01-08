@@ -51,8 +51,9 @@ class ContainerConfigurationPlugin
      * @var array
      */
     private $defaultProductContainers = [
-        'catalog_view_container' => 'is_filterable',
-        'quick_search_container' => 'is_filterable_in_search',
+        'catalog_view_container'       => 'is_filterable',
+        'quick_search_container'       => 'is_filterable_in_search',
+        'catalog_product_autocomplete' => 'is_displayed_in_autocomplete'
     ];
 
     /**

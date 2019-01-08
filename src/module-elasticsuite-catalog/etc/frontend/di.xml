@@ -123,7 +123,7 @@
  
     <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
-            <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+            <argument name="searchRequestName" xsi:type="string">catalog_product_autocomplete</argument>
         </arguments>
     </virtualType>
     
@@ -133,7 +133,6 @@
             <argument name="collectionProcessors" xsi:type="array">
                 <item name="filters" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Filter</item>
                 <item name="attributeSelect" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeSelector</item>
-                <item name="attributeAggregations" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\AttributeAggregation</item>
             </argument>
         </arguments>
     </type>

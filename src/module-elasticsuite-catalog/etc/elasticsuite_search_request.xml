@@ -30,6 +30,14 @@
         </aggregations>
     </request>
 
+    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" type="product" fulltext="true">
+        <filters>
+            <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
+            <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
+        </filters>
+    </request>
+
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
         <filters>
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
