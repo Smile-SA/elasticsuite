@@ -76,6 +76,12 @@
         </arguments>
     </type>
 
+    <virtualType name="autocompleteOptimizerFilter" type="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Search\OptimizerFilter">
+        <arguments>
+            <argument name="containerName" xsi:type="string">catalog_product_autocomplete</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\DefaultProvider</argument>
@@ -86,6 +92,7 @@
             <argument name="filters" xsi:type="array">
                 <item name="quick_search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Search\OptimizerFilter</item>
                 <item name="catalog_view_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Category\OptimizerFilter</item>
+                <item name="catalog_product_autocomplete" xsi:type="object">autocompleteOptimizerFilter</item>
             </argument>
         </arguments>
     </type>

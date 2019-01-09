@@ -85,11 +85,12 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
      */
     private function getSearchQueryLimitation($entity, $searchContainers)
     {
-        $applyTo = (bool) ($searchContainers['quick_search_container'] ?? false);
+        $applyTo = (bool) ($searchContainers['quick_search_container'] ?? ($searchContainers['catalog_product_autocomplete'] ?? false));
 
         if ($applyTo) {
             $containerData = ['apply_to' => (int) true];
             $queryIds      = $this->resource->getQueryIdsByOptimizer($entity);
+
             if (!empty($queryIds)) {
                 $containerData['query_ids'] = $queryIds;
             }

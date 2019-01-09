@@ -39,17 +39,25 @@ class OptimizerFilter implements OptimizerFilterInterface
     private $searchContext;
 
     /**
+     * @var string
+     */
+    private $containerName;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                          $searchContext      Search context.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource Optimizer Limitation.
+     * @param string                                                                       $containerName      Container Name.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource
+        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource,
+        $containerName = 'quick_search_container'
     ) {
         $this->limitationResource = $limitationResource;
         $this->searchContext      = $searchContext;
+        $this->containerName      = $containerName;
     }
 
     /**
@@ -65,7 +73,7 @@ class OptimizerFilter implements OptimizerFilterInterface
             $cacheKey = sprintf("%s_%s", $queryId, $storeId);
 
             if (!isset($this->cache[$cacheKey])) {
-                $this->cache[$cacheKey] = $this->limitationResource->getApplicableOptimizerIdsByQueryId($queryId);
+                $this->cache[$cacheKey] = $this->limitationResource->getApplicableOptimizerIdsByQueryId($queryId, $this->containerName);
             }
 
             $optimizerIds = $this->cache[$cacheKey];

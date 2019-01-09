@@ -68,7 +68,11 @@ class Limitation implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
                 $data[$optimizer->getId()]['catalog_view_container'] = $containerData;
             }
 
-            $applyToQueries = (bool) ($searchContainers['quick_search_container'] ?? false);
+            // @codingStandardsIgnoreStart
+            $applyToQueries = (bool) ($searchContainers['quick_search_container']
+                ?? ($searchContainers['catalog_product_autocomplete'] ?? false));
+            // @codingStandardsIgnoreEnd
+
             if ($applyToQueries) {
                 $containerData = ['apply_to' => (int) true];
                 $queryIds      = $this->resource->getQueryIdsByOptimizer($optimizer);

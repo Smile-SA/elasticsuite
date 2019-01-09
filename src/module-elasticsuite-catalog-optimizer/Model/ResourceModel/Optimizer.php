@@ -152,9 +152,14 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $deleteCondition = OptimizerInterface::OPTIMIZER_ID . " = " . $object->getId();
 
             foreach ($searchContainers as $searchContainer) {
-                $searchContainerData = $object->getData($searchContainer);
+                $searchContainerName = (string) $searchContainer;
+                // Treat autocomplete apply_to like the quick search.
+                if ($searchContainerName === 'catalog_product_autocomplete') {
+                    $searchContainerName = 'quick_search_container';
+                }
+                $searchContainerData = $object->getData($searchContainerName);
                 $applyTo = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
-                $searchContainerLinks[] = [
+                $searchContainerLinks[(string) $searchContainer] = [
                     OptimizerInterface::OPTIMIZER_ID     => (int) $object->getId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,
                     'apply_to'                           => (int) $applyTo,

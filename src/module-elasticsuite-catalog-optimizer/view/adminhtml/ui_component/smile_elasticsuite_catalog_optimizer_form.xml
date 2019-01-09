@@ -204,6 +204,10 @@
                 <item name="listens" xsi:type="array">
                     <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
                 </item>
+                <item name="displayedForValues" xsi:type="array">
+                    <item name="quick_search_container" xsi:type="string">quick_search_container</item>
+                    <item name="catalog_product_autocomplete" xsi:type="string">catalog_product_autocomplete</item>
+                </item>
             </item>
         </argument>
         <field name="search_term_apply_to">
