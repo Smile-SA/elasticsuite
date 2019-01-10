@@ -257,9 +257,15 @@
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticsuiteCatalog\Plugin\Search\ContainerConfigurationPlugin">
+    <preference for="\Smile\ElasticsuiteCatalog\Search\Request\Product\AggregationProviderInterface"
+                type="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider"/>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider">
         <arguments>
-            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+            <argument name="providersPool" xsi:type="array">
+                <item name="filterableAttributes" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes</item>
+            </argument>
         </arguments>
     </type>
+
 </config>

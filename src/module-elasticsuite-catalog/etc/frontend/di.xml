@@ -198,4 +198,20 @@
     <type name="Magento\Search\Model\QueryFactory">
         <plugin name="initSearchContext" type="Smile\ElasticsuiteCatalog\Plugin\Search\QueryFactoryPlugin"/>
     </type>
+
+    <!-- Layered navigation filtering : Aggregation building and modifying -->
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage">
+        <arguments>
+            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+        </arguments>
+    </type>
+
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+                <item name="ajaxFilterModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\AjaxFilter</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

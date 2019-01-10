@@ -140,10 +140,6 @@ class Ajax extends \Magento\Framework\App\Action\Action
 
         foreach ($filterList->getFilters($layer) as $filter) {
             $filter->apply($this->getRequest());
-
-            if ($filter->getRequestVar() == $this->getFilterName()) {
-                $filter->addFacetToCollection(['size' => 0]);
-            }
         }
 
         $layer->apply();

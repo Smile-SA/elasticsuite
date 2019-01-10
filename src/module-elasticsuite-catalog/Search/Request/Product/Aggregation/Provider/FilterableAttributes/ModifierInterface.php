@@ -1,0 +1,60 @@
+<?php
+/**
+ * DISCLAIMER
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2019 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes;
+
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+
+/**
+ * Modifier Interface for filterable attributes aggregations provider.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ */
+interface ModifierInterface
+{
+    /**
+     * @param ContainerConfigurationInterface                          $containerConfig Container Configuration.
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute[] $attributes      The attributes
+     * @param string|QueryInterface                                    $query           Search request query.
+     * @param array                                                    $filters         Search request filters.
+     * @param QueryInterface[]                                         $queryFilters    Search request filters prebuilt as QueryInterface.
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute[]
+     */
+    public function modifyAttributes(
+        ContainerConfigurationInterface $containerConfig,
+        $attributes,
+        $query,
+        $filters,
+        $queryFilters
+    );
+
+    /**
+     * @param ContainerConfigurationInterface $containerConfig Container Configuration.
+     * @param array                           $aggregations    The aggregations
+     * @param string|QueryInterface           $query           Search request query.
+     * @param array                           $filters         Search request filters.
+     * @param QueryInterface[]                $queryFilters    Search request filters prebuilt as QueryInterface.
+     *
+     * @return array
+     */
+    public function modifyAggregations(
+        ContainerConfigurationInterface $containerConfig,
+        $aggregations,
+        $query,
+        $filters,
+        $queryFilters
+    );
+}

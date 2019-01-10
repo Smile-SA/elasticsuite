@@ -13,8 +13,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-
 /**
  * Product category filter implementation.
  *
@@ -22,7 +20,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category implements FilterInterface
+class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 {
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
@@ -101,18 +99,6 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category implem
                 $this->getLayer()->getState()->addFilter($this->_createItem($category->getName(), $categoryId));
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addFacetToCollection($config = [])
-    {
-        $facetConfig = ['name' => 'categories', 'field' => $this->getFilterField(), 'type' => BucketInterface::TYPE_TERM, 'size' => 0];
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetConfig);
 
         return $this;
     }

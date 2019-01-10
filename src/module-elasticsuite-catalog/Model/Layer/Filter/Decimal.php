@@ -12,8 +12,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-
 /**
  * Decimal filter model
  *
@@ -21,7 +19,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implements FilterInterface
+class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
 {
     use DecimalFilterTrait;
 
@@ -78,18 +76,6 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function addFacetToCollection($config = [])
-    {
-        $facetConfig = ['name' => $this->getFilterField(), 'type' => BucketInterface::TYPE_HISTOGRAM, 'minDocCount' => 1];
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetConfig);
-
-        return $this;
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * {@inheritDoc}
      */
@@ -108,6 +94,8 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal implemen
 
     /**
      * Retrieve ES filter field.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return string
      */

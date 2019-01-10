@@ -12,8 +12,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage;
 
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-
 /**
  * Catalog Product Search Request coverage provider
  *
