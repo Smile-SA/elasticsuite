@@ -16,8 +16,9 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'jquery',
     'Smile_ElasticsuiteCatalog/js/form/element/product-sorter/item',
-    'MutationObserver'
-], function (Component, $, Product) {
+    'MutationObserver',
+    'ko'
+], function (Component, $, Product, MutationObserver, ko) {
     'use strict';
 
     return Component.extend({
@@ -38,10 +39,14 @@ define([
                 emptyText     : $.mage.__('Your product selection is empty.'),
                 automaticSort : $.mage.__('Automatic Sort'),
                 manualSort    : $.mage.__('Manual Sort'),
+                search        : $.mage.__('Search'),
+                clearSearch   : $.mage.__('Clear search'),
+                noResultsText : $.mage.__('Your search returned no results.'),
                 showMore      : $.mage.__('Show more')
             },
             forceLoading : false,
             allowBlacklist : false,
+            allowSearch: false,
             blacklistedProducts: [],
             modules: {
                 provider: '${ $.provider }'
@@ -59,6 +64,7 @@ define([
             this.pageSize           = parseInt(this.pageSize, 10);
             this.currentSize        = this.pageSize;
             this.enabled            = this.loadUrl != null;
+            this.search             = ko.observable("");
 
             this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner', 'blacklistedProducts']);
 
@@ -93,7 +99,7 @@ define([
                 });
             }
         },
-        
+
         refreshProductList: function () {
             if (this.refreshRateLimiter !== undefined) {
                 clearTimeout();
@@ -108,26 +114,27 @@ define([
                 }.bind(this));
 
                 formData['page_size'] = this.currentSize();
+                formData['search'] = this.search();
 
                 if (this.enabled) {
                     this.loadXhr = $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
                 }
             }.bind(this), this.maxRefreshInterval);
         },
-        
+
         onProductListLoad: function (loadedData) {
             var products = this.sortProduct(loadedData.products.map(this.createProduct.bind(this)));
             this.products(products);
             this.countTotalProducts(parseInt(loadedData.size, 10));
             this.currentSize(Math.max(this.currentSize(), this.products().length));
-            
+
             var productIds = products.map(function (product) { return product.getId() });
             var editPositions = this.editPositions();
 
             for (var productId in editPositions) {
                 if ($.inArray(parseInt(productId, 10), productIds) < 0) {
                     delete editPositions[productId];
-                } 
+                }
             }
 
             this.editPositions(editPositions);
@@ -153,6 +160,24 @@ define([
 
         hasMoreProducts: function () {
             return this.products().length < this.countTotalProducts();
+        },
+
+        enterSearch: function (d, e) {
+            e.keyCode === 13 && this.refreshProductList();
+            return true;
+        },
+
+        resetSearch: function () {
+            this.search('');
+            this.refreshProductList();
+        },
+
+        hasSearch: function () {
+            return (this.search() !== '');
+        },
+
+        searchProducts: function () {
+            this.refreshProductList();
         },
 
         showMoreProducts: function () {
@@ -216,11 +241,11 @@ define([
             this.products(this.sortProduct(products));
             this.editPositions(editPositions);
         },
-        
+
         toggleSortType: function (product) {
             var products      = this.products();
             var editPositions = this.editPositions();
-            
+
             if (product.getPosition() !== undefined) {
                 var lastProduct = products[products.length -1];
                 if (lastProduct.hasPosition() || lastProduct.getScore() >= product.getScore()) {

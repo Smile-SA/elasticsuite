@@ -50,15 +50,17 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      * @param ItemDataFactory           $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             QueryInterface factory.
      * @param int                       $size                     Preview size.
+     * @param string                    $search                   Preview search.
      */
     public function __construct(
         CategoryInterface $category,
         FulltextCollectionFactory $productCollectionFactory,
         ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
-        $size = 10
+        $size = 10,
+        $search = ''
     ) {
-        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size);
+        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size, $search);
         $this->category     = $category;
         $this->queryFactory = $queryFactory;
     }
