@@ -25,16 +25,18 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 interface ModifierInterface
 {
     /**
-     * @param ContainerConfigurationInterface                          $containerConfig Container Configuration.
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute[] $attributes      The attributes
-     * @param string|QueryInterface                                    $query           Search request query.
-     * @param array                                                    $filters         Search request filters.
-     * @param QueryInterface[]                                         $queryFilters    Search request filters prebuilt as QueryInterface.
+     * @param int                                                      $storeId      The Store ID.
+     * @param string                                                   $requestName  The Request name.
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute[] $attributes   The attributes
+     * @param string|QueryInterface                                    $query        Search request query.
+     * @param array                                                    $filters      Search request filters.
+     * @param QueryInterface[]                                         $queryFilters Search request filters prebuilt as QueryInterface.
      *
      * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute[]
      */
     public function modifyAttributes(
-        ContainerConfigurationInterface $containerConfig,
+        $storeId,
+        $requestName,
         $attributes,
         $query,
         $filters,
@@ -42,16 +44,18 @@ interface ModifierInterface
     );
 
     /**
-     * @param ContainerConfigurationInterface $containerConfig Container Configuration.
-     * @param array                           $aggregations    The aggregations
-     * @param string|QueryInterface           $query           Search request query.
-     * @param array                           $filters         Search request filters.
-     * @param QueryInterface[]                $queryFilters    Search request filters prebuilt as QueryInterface.
+     * @param int                   $storeId      The Store ID.
+     * @param string                $requestName  The Request name.
+     * @param array                 $aggregations The aggregations.
+     * @param string|QueryInterface $query        Search request query.
+     * @param array                 $filters      Search request filters.
+     * @param QueryInterface[]      $queryFilters Search request filters prebuilt as QueryInterface.
      *
      * @return array
      */
     public function modifyAggregations(
-        ContainerConfigurationInterface $containerConfig,
+        $storeId,
+        $requestName,
         $aggregations,
         $query,
         $filters,

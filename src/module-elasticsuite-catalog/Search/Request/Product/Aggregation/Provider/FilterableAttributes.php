@@ -12,13 +12,11 @@
  */
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider;
 
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\AttributeListInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\ModifierInterface;
-use Smile\ElasticsuiteCatalog\Search\Request\Product\AggregationProviderInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationResolver as ProductAttributesAggregationResolver;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as ProductAttributesCollectionFactory;
-use Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory as CoverageProviderFactory;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 
 /**
  * Default Aggregations Provider for product Requests.
@@ -27,12 +25,12 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class FilterableAttributes implements AggregationProviderInterface
+class FilterableAttributes implements \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationProviderInterface
 {
     /**
-     * @var ProductAttributesCollectionFactory
+     * @var AttributeListInterface
      */
-    private $productAttributeCollectionFactory;
+    private $attributeList;
 
     /**
      * @var \Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationResolver
@@ -40,18 +38,9 @@ class FilterableAttributes implements AggregationProviderInterface
     private $aggregationResolver;
 
     /**
-     * @var array
+     * @var string
      */
-    private $defaultProductContainers = [
-        'catalog_view_container'       => 'is_filterable',
-        'quick_search_container'       => 'is_filterable_in_search',
-        'catalog_product_autocomplete' => 'is_displayed_in_autocomplete',
-    ];
-
-    /**
-     * @var array
-     */
-    private $productContainers = [];
+    private $requestName;
 
     /**
      * @var \Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\ModifierInterface[]
@@ -59,54 +48,42 @@ class FilterableAttributes implements AggregationProviderInterface
     private $modifiersPool;
 
     /**
-     * @param ProductAttributesCollectionFactory   $productAttributeCollectionFactory Product Attributes Collection Factory.
-     * @param ProductAttributesAggregationResolver $aggregationResolver               Product Attributes Aggregation Resolver.
-     * @param ModifierInterface[]                  $modifiersPool                     Product Attributes modifiers.
-     * @param array                                $productContainers                 Default product containers.
+     * @param AttributeListInterface               $attributeList       Attributes List.
+     * @param ProductAttributesAggregationResolver $aggregationResolver Product Attributes Aggregation Resolver.
+     * @param string                               $requestName         Container Configuration name.
+     * @param ModifierInterface[]                  $modifiersPool       Product Attributes modifiers.
      */
     public function __construct(
-        ProductAttributesCollectionFactory $productAttributeCollectionFactory,
+        AttributeListInterface $attributeList,
         ProductAttributesAggregationResolver $aggregationResolver,
-        array $modifiersPool = [],
-        array $productContainers = []
+        string $requestName,
+        array $modifiersPool = []
     ) {
-        $this->productAttributeCollectionFactory = $productAttributeCollectionFactory;
-        $this->aggregationResolver               = $aggregationResolver;
-        $this->modifiersPool                     = $modifiersPool;
-        $this->productContainers                 = array_merge($this->defaultProductContainers, $productContainers);
+        $this->attributeList          = $attributeList;
+        $this->aggregationResolver    = $aggregationResolver;
+        $this->requestName            = $requestName;
+        $this->modifiersPool          = $modifiersPool;
     }
 
     /**
-     * Get aggregations for a container and a current combination of query/filters/queryFilters.
-     *
-     * @param ContainerConfigurationInterface $containerConfig Container Configuration.
-     * @param string|QueryInterface           $query           Search request query.
-     * @param array                           $filters         Search request filters.
-     * @param QueryInterface[]                $queryFilters    Search request filters prebuilt as QueryInterface.
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getAggregations(
-        ContainerConfigurationInterface $containerConfig,
+        $storeId,
         $query = null,
         $filters = [],
         $queryFilters = []
     ) {
-        $aggregations = [];
+        $attributes = $this->attributeList->getList();
 
-        if (in_array($containerConfig->getName(), array_keys($this->productContainers))) {
-            $attributes = $this->getFilterableAttributes()->getItems();
+        foreach ($this->modifiersPool as $modifier) {
+            $attributes = $modifier->modifyAttributes($storeId, $this->requestName, $attributes, $query, $filters, $queryFilters);
+        }
 
-            foreach ($this->modifiersPool as $modifier) {
-                $attributes = $modifier->modifyAttributes($containerConfig, $attributes, $query, $filters, $queryFilters);
-            }
+        $aggregations = $this->getAggregationsConfig($attributes);
 
-            $aggregations = $this->getAggregationsConfig($this->productContainers[$containerConfig->getName()], $attributes);
-
-            foreach ($this->modifiersPool as $modifier) {
-                $aggregations = $modifier->modifyAggregations($containerConfig, $aggregations, $query, $filters, $queryFilters);
-            }
-
+        foreach ($this->modifiersPool as $modifier) {
+            $aggregations = $modifier->modifyAggregations($storeId, $this->requestName, $aggregations, $query, $filters, $queryFilters);
         }
 
         return $aggregations;
@@ -115,19 +92,16 @@ class FilterableAttributes implements AggregationProviderInterface
     /**
      * Get aggregations config.
      *
-     * @param string                                                            $attributeCondition The attribute condition to test
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection $attributes         The attributes
+     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection $attributes The attributes
      *
      * @return array
      */
-    private function getAggregationsConfig($attributeCondition, $attributes)
+    private function getAggregationsConfig($attributes)
     {
         $aggregations = [];
         foreach ($attributes as $attribute) {
-            if ($attribute->getData($attributeCondition) || ('category_ids' === $attribute->getAttributeCode())) {
-                $bucketConfig                        = $this->getBucketConfig($attribute);
-                $aggregations[$bucketConfig['name']] = $bucketConfig;
-            }
+            $bucketConfig                        = $this->getBucketConfig($attribute);
+            $aggregations[$bucketConfig['name']] = $bucketConfig;
         }
 
         return $aggregations;
@@ -143,25 +117,5 @@ class FilterableAttributes implements AggregationProviderInterface
     private function getBucketConfig($attribute)
     {
         return $this->aggregationResolver->getAggregationData($attribute);
-    }
-
-    /**
-     * Get a list of filterable product attributes.
-     *
-     * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
-     */
-    private function getFilterableAttributes()
-    {
-        /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection $productAttributes */
-        $productAttributes = $this->productAttributeCollectionFactory->create();
-        $productAttributes->addFieldToFilter(
-            ['is_filterable', 'is_filterable_in_search'],
-            [[1, 2], 1]
-        );
-
-        $productAttributes->getSelect()->orWhere('attribute_code = "category_ids"');
-        $productAttributes->setOrder('position', 'ASC');
-
-        return $productAttributes;
     }
 }

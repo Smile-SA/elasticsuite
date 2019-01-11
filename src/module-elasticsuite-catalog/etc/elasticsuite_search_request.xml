@@ -26,6 +26,7 @@
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
         <aggregations>
+            <provider name="filterableAttributesProvider">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
         </aggregations>
     </request>
@@ -44,6 +45,7 @@
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
         </filters>
         <aggregations>
+            <provider name="filterableAttributesProvider">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
         </aggregations>
     </request>

@@ -53,11 +53,10 @@ class Coverage implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyAttributes(
-        ContainerConfigurationInterface $containerConfig, $attributes, $query, $filters, $queryFilters)
+    public function modifyAttributes($storeId, $requestName, $attributes, $query, $filters, $queryFilters)
     {
         $relevantAttributes = [];
-        $coverageRates      = $this->getCoverageRates($containerConfig, $query, $filters, $queryFilters);
+        $coverageRates      = $this->getCoverageRates($storeId, $requestName, $query, $filters, $queryFilters);
 
         foreach ($attributes as $attribute) {
             if ('category_ids' === $attribute->getAttributeCode()) {
@@ -87,7 +86,7 @@ class Coverage implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyAggregations(ContainerConfigurationInterface $containerConfig, $aggregations, $query, $filters, $queryFilters)
+    public function modifyAggregations($storeId, $requestName, $aggregations, $query, $filters, $queryFilters)
     {
         return $aggregations;
     }
@@ -95,18 +94,19 @@ class Coverage implements ModifierInterface
     /**
      * Get coverage rate of attributes for current search request.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface $containerConfig Container
-     * @param null                                                                       $query           Current Query
-     * @param array                                                                      $filters         Applied filters
-     * @param array                                                                      $queryFilters    Applied Query Filters
+     * @param int    $storeId      The Store ID.
+     * @param string $requestName  The Request name.
+     * @param null   $query        Current Query
+     * @param array  $filters      Applied filters
+     * @param array  $queryFilters Applied Query Filters
      *
      * @return array
      */
-    private function getCoverageRates(ContainerConfigurationInterface $containerConfig, $query, $filters, $queryFilters)
+    private function getCoverageRates($storeId, $requestName, $query = null, $filters = [], $queryFilters = [])
     {
         $coverageRequest = $this->coverageRequestBuilder->create(
-            $containerConfig->getStoreId(),
-            $containerConfig->getName(),
+            $storeId,
+            $requestName,
             0,
             0,
             $query,

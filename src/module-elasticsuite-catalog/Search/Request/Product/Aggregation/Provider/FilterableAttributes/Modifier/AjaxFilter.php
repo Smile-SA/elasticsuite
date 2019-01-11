@@ -59,7 +59,7 @@ class AjaxFilter implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyAttributes(ContainerConfigurationInterface $containerConfig, $attributes, $query, $filters, $queryFilters)
+    public function modifyAttributes($storeId, $requestName, $attributes, $query, $filters, $queryFilters)
     {
         $relevantAttributes = $attributes;
         if ($this->getAttributeCode()) {
@@ -75,10 +75,10 @@ class AjaxFilter implements ModifierInterface
     /**
      * {@inheritdoc}
      */
-    public function modifyAggregations(ContainerConfigurationInterface $containerConfig, $aggregations, $query, $filters, $queryFilters)
+    public function modifyAggregations($storeId, $requestName, $aggregations, $query, $filters, $queryFilters)
     {
         if ($this->getAttributeCode()) {
-            $aggregationName = $this->getFilterField($containerConfig);
+            $aggregationName = $this->getFilterField();
             if ($aggregationName) {
                 $aggregations[$aggregationName]['size'] = 0;
             }
@@ -116,22 +116,15 @@ class AjaxFilter implements ModifierInterface
     /**
      * Get filter field
      *
-     * @param ContainerConfigurationInterface $containerConfig container configuration
-     *
      * @return bool|string
      */
-    private function getFilterField(ContainerConfigurationInterface $containerConfig)
+    private function getFilterField()
     {
         try {
             $attribute = $this->getAttribute();
             $field     = $this->mappingHelper->getFilterField($attribute);
         } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
-            try {
-                $field = $containerConfig->getMapping()->getField($this->getAttributeCode());
-                $field = $field->getName();
-            } catch (\LogicException $exception) {
-                $field = $this->getAttributeCode();
-            }
+            $field = $this->getAttributeCode();
         }
 
         return $field;
