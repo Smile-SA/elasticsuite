@@ -26,7 +26,7 @@
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
         <aggregations>
-            <provider name="filterableAttributesProvider">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes</provider>
+            <provider name="filterableAttributesProvider">searchFilterableAttributesProvider</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
         </aggregations>
     </request>
@@ -37,6 +37,9 @@
             <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
         </filters>
+        <aggregations>
+            <provider name="autocompleteAttributesProvider">autocompleteFilterableAttributesProvider</provider>
+        </aggregations>
     </request>
 
     <request name="catalog_view_container" label="Category Product View" index="catalog_product" type="product" fulltext="false">
@@ -45,7 +48,7 @@
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
         </filters>
         <aggregations>
-            <provider name="filterableAttributesProvider">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes</provider>
+            <provider name="filterableAttributesProvider">categoryFilterableAttributesProvider</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
         </aggregations>
     </request>

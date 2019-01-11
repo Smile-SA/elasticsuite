@@ -162,7 +162,10 @@ class ContainerConfiguration implements ContainerConfigurationInterface
 
         /** @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationProviderInterface $provider */
         foreach ($this->readBaseConfigParam('aggregationsProviders', []) as $provider) {
-            $aggregations = array_merge($aggregations, $provider->getAggregations($this->getStoreId(), $query = null, $filters = [], $queryFilters = []));
+            $aggregations = array_merge(
+                $aggregations,
+                $provider->getAggregations($this->getStoreId(), $query, $filters, $queryFilters)
+            );
         }
 
         return $aggregations;

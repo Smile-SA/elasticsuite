@@ -15,7 +15,6 @@ namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\ModifierInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory as CoverageProviderFactory;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Coverage Modifier for filterable attributes provider.

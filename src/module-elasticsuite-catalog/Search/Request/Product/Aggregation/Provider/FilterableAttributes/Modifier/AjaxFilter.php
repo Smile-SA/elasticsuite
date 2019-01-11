@@ -13,7 +13,6 @@
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier;
 
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\ModifierInterface;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * AjaxFilter modifier for filterable attributes aggregation provider.
@@ -79,7 +78,7 @@ class AjaxFilter implements ModifierInterface
     {
         if ($this->getAttributeCode()) {
             $aggregationName = $this->getFilterField();
-            if ($aggregationName) {
+            if ($aggregationName && isset($aggregations[$aggregationName])) {
                 $aggregations[$aggregationName]['size'] = 0;
             }
         }

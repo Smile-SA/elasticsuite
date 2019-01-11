@@ -12,11 +12,10 @@
  */
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes;
 
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
- * Modifier Interface for filterable attributes aggregations provider.
+ * Modifier Interface for attributes aggregations provider.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
