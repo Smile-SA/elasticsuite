@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category;
 
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory as AttributeCollectionFactory;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\AttributeListInterface;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
@@ -25,7 +26,7 @@ use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 class AttributeList implements AttributeListInterface
 {
     /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory
      */
     private $collectionFactory;
 
@@ -37,11 +38,11 @@ class AttributeList implements AttributeListInterface
     /**
      * FilterableAttributeList constructor
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory Collection Factory
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                      $searchContext     Search Context
+     * @param AttributeCollectionFactory                          $collectionFactory Attributes Collection Factory
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext     Search Context
      */
     public function __construct(
-        \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $collectionFactory,
+        AttributeCollectionFactory $collectionFactory,
         ContextInterface $searchContext
     ) {
         $this->collectionFactory = $collectionFactory;
@@ -53,7 +54,7 @@ class AttributeList implements AttributeListInterface
      */
     public function getList()
     {
-        /** @var $collection \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection */
+        /** @var $collection \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\Collection */
         $collection = $this->collectionFactory->create();
         $collection->setItemObjectClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
             ->setOrder('position', 'ASC');

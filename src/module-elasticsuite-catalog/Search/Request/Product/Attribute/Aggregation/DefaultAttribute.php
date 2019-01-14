@@ -46,7 +46,7 @@ class DefaultAttribute implements AggregationInterface
     {
         $bucketConfig = [
             'name'      => $this->getFilterField($attribute),
-            'size'      => $attribute->getFacetMaxSize(),
+            'size'      => (int) $attribute->getFacetMaxSize(),
             'type'      => \Smile\ElasticsuiteCore\Search\Request\BucketInterface::TYPE_TERM,
             'sortOrder' => $attribute->getFacetSortOrder(),
         ];

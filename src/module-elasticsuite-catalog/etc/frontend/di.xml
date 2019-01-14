@@ -28,7 +28,7 @@
         </arguments>
     </type>
 
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory" type="Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory">
+    <virtualType name="smileEScategoryFilterableAttributesCollection" type="Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\Collection</argument>
         </arguments>
@@ -36,7 +36,7 @@
 
     <type name="Smile\ElasticsuiteCatalog\Model\Layer\Category\FilterableAttributeList">
         <arguments>
-            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory</argument>
+            <argument name="collectionFactory" xsi:type="object">smileEScategoryFilterableAttributesCollection</argument>
         </arguments>
     </type>
 

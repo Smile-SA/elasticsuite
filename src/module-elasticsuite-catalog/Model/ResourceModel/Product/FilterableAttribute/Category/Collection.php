@@ -107,7 +107,9 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     protected function _beforeLoad()
     {
         parent::_beforeLoad();
-        $this->applyCategory();
+        if ($this->category && $this->category->getId()) {
+            $this->applyCategory();
+        }
     }
 
     /**
