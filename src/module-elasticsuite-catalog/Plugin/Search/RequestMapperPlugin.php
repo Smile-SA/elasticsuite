@@ -12,6 +12,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
@@ -60,20 +61,36 @@ class RequestMapperPlugin
     private $mappingHelper;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
+     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
+     */
+    private $categoryRepository;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Customer\Model\Session            $customerSession Customer session.
-     * @param \Magento\Store\Model\StoreManagerInterface $storeManager    Store manager.
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping     $mappingHelper   Mapping helper.
+     * @param \Magento\Customer\Model\Session                     $customerSession    Customer session.
+     * @param \Magento\Store\Model\StoreManagerInterface          $storeManager       Store manager.
+     * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper      Mapping helper.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext      Search context.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository Category Repository.
      */
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper
+        \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
+        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository
     ) {
-        $this->customerSession = $customerSession;
-        $this->storeManager    = $storeManager;
-        $this->mappingHelper   = $mappingHelper;
+        $this->customerSession    = $customerSession;
+        $this->storeManager       = $storeManager;
+        $this->mappingHelper      = $mappingHelper;
+        $this->searchContext      = $searchContext;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -145,6 +162,13 @@ class RequestMapperPlugin
             }
 
             $result = $filters;
+
+            if ($containerConfiguration->getName() === 'catalog_view_container') {
+                $this->updateSearchContext(
+                    $containerConfiguration->getStoreId(),
+                    $this->getCurrentCategoryId($containerConfiguration, $searchCriteria)
+                );
+            }
         }
 
         return $result;
@@ -197,6 +221,24 @@ class RequestMapperPlugin
         }
 
         return $categoryId;
+    }
+
+    /**
+     * Update the search context using current store id and category Id.
+     *
+     * @param integer $storeId    Store id.
+     * @param integer $categoryId Category Id.
+     *
+     * @return void
+     */
+    private function updateSearchContext($storeId, $categoryId)
+    {
+        $this->searchContext->setStoreId($storeId);
+        $category = $this->categoryRepository->get($categoryId, $storeId);
+
+        if ($category->getId()) {
+            $this->searchContext->setCurrentCategory($category);
+        }
     }
 
     /**
