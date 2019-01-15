@@ -40,6 +40,7 @@ class RequestMapperPlugin
     private $fieldMapper = [
         'price'        => 'price.price',
         'position'     => 'category.position',
+        'category_id'  => 'category.category_id',
         'category_ids' => 'category.category_id',
     ];
 
