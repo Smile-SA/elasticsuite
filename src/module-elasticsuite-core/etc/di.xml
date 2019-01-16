@@ -429,4 +429,14 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- PageSize Provider for Elasticsuite -->
+    <type name="Magento\Search\Model\Search\PageSizeProvider">
+        <arguments>
+            <argument name="pageSizeBySearchEngine" xsi:type="array">
+                <!-- Consistent with index.max_result_window default value. No real point about getting more docs at once. -->
+                <item name="elasticsuite" xsi:type="number">100000</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
