@@ -125,12 +125,38 @@
             
         </container>
         
-        <container name="product_sorter_container">
+        <container name="product_sorter_container" template="Smile_ElasticsuiteVirtualCategory/form/element/container">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="label" xsi:type="string" translate="true">Products List Preview and Sorting</item>
                 </item>
             </argument>
+
+            <field name="use_store_positions">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="dataType" xsi:type="string">boolean</item>
+                        <item name="formElement" xsi:type="string">checkbox</item>
+                        <item name="source" xsi:type="string">category</item>
+                        <item name="prefer" xsi:type="string">toggle</item>
+                        <!-- Label and mapping use negative/reversed logic -->
+                        <item name="label" xsi:type="string" translate="true">Use default positions</item>
+                        <item name="valueMap" xsi:type="array">
+                            <item name="true" xsi:type="string">0</item>
+                            <item name="false" xsi:type="string">1</item>
+                        </item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="default" xsi:type="number">0</item>
+                        <item name="imports" xsi:type="array">
+                            <item name="visible" xsi:type="string">${ $.provider }:data.use_default.show_use_store_positions</item>
+                        </item>
+                    </item>
+                </argument>
+            </field>
+
             <field name="sorted_products">
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
@@ -139,13 +165,15 @@
                         <item name="formElement" xsi:type="string">text</item>
                         <item name="source" xsi:type="string">category</item>
                         <item name="component" xsi:type="string">Smile_ElasticsuiteCatalog/js/form/element/product-sorter</item>
-                        <item name="label" xsi:type="string" translate="true">Products List Preview and Sorting</item>
                         <item name="dataScope" xsi:type="string">sorted_products</item>
                         <item name="pageSize" xsi:type="string">20</item>
                         <item name="allowBlacklist" xsi:type="boolean">true</item>
                         <item name="allowSearch" xsi:type="boolean">true</item>
                         <item name="messages" xsi:type="array">
                             <item name="emptyText" xsi:type="string" translate="true"><![CDATA[Your product selection is empty for the selected Store View. If you are running a multi-store setup, please check this <a href='https://github.com/Smile-SA/elasticsuite/wiki/VirtualCategories#previewing-virtual-categories-on-a-multi-store-setup'>manual page</a> for more informations.]]></item>
+                            <item name="previewOnlyModeText" xsi:type="string" translate="true"><![CDATA[In this mode, you can only preview products position and visibility but not change them. If you want to change them globally, switch to the 'All Store Views' Store View. If you want to change them for the currently selected Store View, change 'Use default positions' to 'No'.]]></item>
+                            <item name="resetAllQuestionText" xsi:type="string" translate="true"><![CDATA[Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.]]></item>
+
                         </item>
                         <item name="refreshFields" xsi:type="array">
                             <item name="is_virtual_category" xsi:type="string">is_virtual_category</item>
@@ -162,9 +190,15 @@
                             <item name="loadUrl" xsi:type="string">${ $.provider }:data.product_sorter_load_url</item>
                             <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>
                             <item name="blacklistedProducts" xsi:type="string">${ $.provider }:data.blacklisted_products</item>
+                            <item name="defaultBlacklistedProducts" xsi:type="string">${ $.provider }:data.default.blacklisted_products</item>
+                            <item name="defaultSortedProducts" xsi:type="string">${ $.provider }:data.default.sorted_products</item>
+                            <item name="scopeSwitcher" xsi:type="string">${ $.provider }:data.use_store_positions</item>
                         </item>
-                  </item>
-                  </argument>
+                        <item name="listens" xsi:type="array">
+                            <item name="${ $.provider }:data.use_store_positions" xsi:type="string">switchScope</item>
+                        </item>
+                    </item>
+                </argument>
             </field>
         </container>
     </fieldset>
