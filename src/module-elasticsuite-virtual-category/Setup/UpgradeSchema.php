@@ -53,6 +53,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->virtualCategorySetup->setNullablePositionColumn($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.4.0', '<')) {
+            $this->virtualCategorySetup->addStoreIdColumnToPositionTable($setup);
+        }
+
         $setup->endSetup();
     }
 }

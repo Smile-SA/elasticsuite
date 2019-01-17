@@ -77,4 +77,9 @@ Pinned,Angeheftet
 Products,Produkte
 Categories,Kategorien
 Attributes,Attribute
+"Refine search","Suche einschränken"
+"Clear search","Suche abbrechen"
+"Your search returned no results.","Ihre Suche ergab keine Treffer."
+"Clear product positions","Produktpositionen löschen"
+"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Alle Produktpositionen und Blacklist-Status löschen ? Alle Produkte werden auf 'Sichtbar' und 'Automatische Sortierung' zurückgesetzt."
 "Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Kann nur mit Katalog Eingabetyp Text field, Dropdown, Multiple Select und Price verwendet werden"

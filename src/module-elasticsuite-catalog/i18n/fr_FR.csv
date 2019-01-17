@@ -77,6 +77,11 @@ No,Non
 Products,Produits
 Categories,Catégories
 Attributes,Attributs
+"Refine search","Affiner votre recherche"
+"Clear search","Annuler la recherche"
+"Your search returned no results.","Votre recherche n'a donné aucun résultat."
+"Clear product positions","Réinitialiser les positions"
+"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Réinitialiser les positions et le masquage des produits ? Tous les produits seront rétablis en 'Tri Automatique' et visibles."
 "No value matching the search <b>%1</b>.","Aucun résultat pour la recherche <b>%s</b>."
 "Sort products without value when sorting ASC","Trier les produits sans valeurs lors d'un tri ASC"
 "Sort products without value when sorting DESC","Trier les produits sans valeurs lors d'un tri DESC"

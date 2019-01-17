@@ -77,6 +77,11 @@ Pinned,Pinned
 Products,Products
 Categories,Categories
 Attributes,Attributes
+"Refine search","Refine search"
+"Clear search","Clear search"
+"Your search returned no results.","Your search returned no results."
+"Clear product positions","Clear product positions"
+"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'."
 "No value matching the search <b>%1</b>.","No value matching the search <b>%1</b>."
 "Sort products without value when sorting ASC","Sort products without value when sorting ASC"
 "Sort products without value when sorting DESC","Sort products without value when sorting DESC"
