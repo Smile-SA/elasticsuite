@@ -77,9 +77,15 @@ Pinned,Pinned
 Products,Products
 Categories,Categories
 Attributes,Attributes
+"Refine search","Refine search"
+"Clear search","Clear search"
+"Your search returned no results.","Your search returned no results."
+"Clear product positions","Clear product positions"
+"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'."
 "No value matching the search <b>%1</b>.","No value matching the search <b>%1</b>."
 "Sort products without value when sorting ASC","Sort products without value when sorting ASC"
 "Sort products without value when sorting DESC","Sort products without value when sorting DESC"
 "How the products which are missing values for this attribute should be treated when using it to sort.","How the products which are missing values for this attribute should be treated when using it to sort."
 "First","First"
 "Last","Last"
+"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price."

@@ -36,6 +36,11 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
     private $tagFilter;
 
     /**
+     * @var \Magento\Framework\Escaper
+     */
+    private $escaper;
+
+    /**
      * @var boolean
      */
     private $hasMoreItems = false;
@@ -53,6 +58,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
      * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
      * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
+     * @param \Magento\Framework\Escaper                           $escaper           Html Escaper.
      * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute   $mappingHelper     Mapping helper.
      * @param array                                                $data              Custom data.
      */
@@ -62,6 +68,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Filter\StripTags $tagFilter,
+        \Magento\Framework\Escaper $escaper,
         \Smile\ElasticsuiteCatalog\Helper\ProductAttribute $mappingHelper,
         array $data = []
     ) {
@@ -75,6 +82,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
         );
 
         $this->tagFilter     = $tagFilter;
+        $this->escaper       = $escaper;
         $this->mappingHelper = $mappingHelper;
     }
 
@@ -99,7 +107,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute impl
             $layerState = $this->getLayer()->getState();
 
             foreach ($this->currentFilterValue as $currentFilter) {
-                $filter = $this->_createItem($currentFilter, $this->currentFilterValue);
+                $filter = $this->_createItem($this->escaper->escapeHtml($currentFilter), $this->currentFilterValue);
                 $layerState->addFilter($filter);
             }
         }

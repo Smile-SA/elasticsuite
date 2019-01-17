@@ -47,7 +47,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                     $row['value']
                 );
 
-                $indexData[$productId] += $indexValues;
+                $indexData[$productId] = array_replace($indexData[$productId], $indexValues);
             }
         }
 

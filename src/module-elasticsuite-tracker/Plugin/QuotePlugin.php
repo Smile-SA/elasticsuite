@@ -43,20 +43,28 @@ class QuotePlugin
     private $trackerHelper;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue    Tracker event queue.
      * @param \Magento\Framework\Stdlib\CookieManagerInterface   $cookieManager Cookie manager.
      * @param \Smile\ElasticsuiteTracker\Helper\Data             $trackerHelper Tracker helper.
+     * @param \Psr\Log\LoggerInterface                           $logger        Logger.
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
-        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper
+        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->eventQueue    = $eventQueue;
         $this->cookieManager = $cookieManager;
         $this->trackerHelper = $trackerHelper;
+        $this->logger        = $logger;
     }
 
     /**
@@ -64,40 +72,44 @@ class QuotePlugin
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param Quote                                    $subject     Quote.
-     * @param callable                                 $proceed     Original method.
-     * @param Product                                  $product     Product added.
-     * @param null|float|\Magento\Framework\DataObject $request     Add to cart request.
-     * @param null|string                              $processMode Process Mode.
+     * @param Quote                           $subject Quote.
+     * @param \Magento\Quote\Model\Quote\Item $result  Quote Item.
      *
      * @return \Magento\Quote\Model\Quote\Item|string
      */
-    public function aroundAddProduct(
+    public function afterAddProduct(
         Quote $subject,
-        callable $proceed,
-        Product $product,
-        $request = null,
-        $processMode = AbstractType::PROCESS_MODE_FULL
+        $result
     ) {
-        $returnValue = $proceed($product, $request, $processMode);
+        try {
+            if ($result instanceof \Magento\Quote\Model\Quote\Item) {
+                /** @var \Magento\Quote\Model\Quote\Item $result */
+                $product = $result->getProduct();
+                if ($product !== null) {
+                    $this->logEvent($product->getId(), $product->getStoreId());
+                }
+            }
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage(), []);
+        }
 
-        $this->logEvent($product);
-
-        return $returnValue;
+        return $result;
     }
+
 
     /**
      * Log the event.
      *
-     * @param Product $product Product added.
+     * @param int $productId Product Id
+     * @param int $storeId   Store Id
      *
      * @return void
      */
-    private function logEvent(Product $product)
+    private function logEvent(int $productId, int $storeId): void
     {
         $pageData = [];
-        $pageData['store_id']           = $product->getStoreId();
-        $pageData['cart']['product_id'] = $product->getId();
+        $pageData['store_id']           = $storeId;
+        $pageData['cart']['product_id'] = $productId;
 
         $eventData = ['page' => $pageData, 'session' => $this->getSessionData()];
 

@@ -81,8 +81,10 @@
                         <item name="pageSize" xsi:type="string">20</item>
                         <item name="forceLoading" xsi:type="boolean">true</item>
                         <item name="allowBlacklist" xsi:type="boolean">true</item>
+                        <item name="allowSearch" xsi:type="boolean">false</item>
                         <item name="messages" xsi:type="array">
                             <item name="emptyText" xsi:type="string" translate="true"><![CDATA[No search result for the current search.]]></item>
+                            <item name="resetAllQuestionText" xsi:type="string" translate="true"><![CDATA[Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.]]></item>
                         </item>
                         <item name="imports" xsi:type="array">
                             <item name="loadUrl" xsi:type="string">${ $.provider }:data.product_sorter_load_url</item>
