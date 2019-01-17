@@ -78,10 +78,12 @@ class SessionIndex implements SessionIndexInterface
             $sessionData = $this->resourceModel->getSessionData($storeId, $sessionIds);
 
             foreach ($sessionData as $session) {
-                $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $session['store_id'], $session['start_date']);
-                if ($index !== null) {
-                    $indices[$index->getName()] = $index;
-                    $bulk->addDocument($index, $index->getDefaultSearchType(), $session['session_id'], $session);
+                if (isset($session['store_id'])) {
+                    $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $session['store_id'], $session['start_date']);
+                    if ($index !== null) {
+                        $indices[$index->getName()] = $index;
+                        $bulk->addDocument($index, $index->getDefaultSearchType(), $session['session_id'], $session);
+                    }
                 }
             }
         }
