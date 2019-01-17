@@ -32,6 +32,44 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     const TABLE_NAME = 'smile_virtualcategory_catalog_category_product_position';
 
     /**
+     * Get product positions for a given categoryId and Store Id.
+     *
+     * @param int $categoryId The Category Id.
+     * @param int $storeId    The Store Id.
+     *
+     * @return array
+     */
+    public function getProductPositions($categoryId, $storeId)
+    {
+        $select = $this->getBaseSelect()
+            ->where('category_id = ?', (int) $categoryId)
+            ->where('store_id = ?', (int) $storeId)
+            ->where('position IS NOT NULL')
+            ->columns(['product_id', 'position']);
+
+        return $this->getConnection()->fetchPairs($select);
+    }
+
+    /**
+     * Get product blacklist for a given categoryId and Store Id.
+     *
+     * @param int $categoryId The Category Id.
+     * @param int $storeId    The Store Id.
+     *
+     * @return array
+     */
+    public function getProductBlacklist($categoryId, $storeId)
+    {
+        $select = $this->getBaseSelect()
+            ->columns(['product_id'])
+            ->where('category_id = ?', (int) $categoryId)
+            ->where('store_id = ?', (int) $storeId)
+            ->where('is_blacklisted = ?', (int) true);
+
+        return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
      * Load product positions for the given category.
      *
      * @param CategoryInterface|int $category Category.
@@ -40,7 +78,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getProductPositionsByCategory($category)
     {
-        $storeId = 0;
+        $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         if (is_object($category)) {
             if ($category->getUseStorePositions()) {
                 $storeId = $category->getStoreId();
@@ -48,13 +86,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $category = $category->getId();
         }
 
-        $select = $this->getBaseSelect()
-            ->where('category_id = ?', (int) $category)
-            ->where('store_id = ?', (int) $storeId)
-            ->where('position IS NOT NULL')
-            ->columns(['product_id', 'position']);
-
-        return $this->getConnection()->fetchPairs($select);
+        return $this->getProductPositions($category, $storeId);
     }
 
     /**
@@ -66,7 +98,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     public function getProductBlacklistByCategory($category)
     {
-        $storeId = 0;
+        $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         if (is_object($category)) {
             if ($category->getUseStorePositions()) {
                 $storeId = $category->getStoreId();
@@ -74,13 +106,7 @@ class Position extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $category = $category->getId();
         }
 
-        $select = $this->getBaseSelect()
-            ->columns(['product_id'])
-            ->where('category_id = ?', (int) $category)
-            ->where('store_id = ?', (int) $storeId)
-            ->where('is_blacklisted = ?', (int) true);
-
-        return $this->getConnection()->fetchCol($select);
+        return $this->getProductBlacklist($category, $storeId);
     }
 
     /**
