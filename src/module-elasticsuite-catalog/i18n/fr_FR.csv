@@ -83,3 +83,4 @@ Attributes,Attributs
 "How the products which are missing values for this attribute should be treated when using it to sort.","Comment sont traités les produits sans valeur lorsque cet attribut est utilisé pour trier."
 "First","En premier"
 "Last","En dernier"
+"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Ne peut être utilisé qu’avec un type de saisie ""champ texte"", ""liste déroulante"", ""choix multiple"", ou ""prix""."

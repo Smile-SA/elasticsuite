@@ -77,3 +77,4 @@ Pinned,Angeheftet
 Products,Produkte
 Categories,Kategorien
 Attributes,Attribute
+"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Kann nur mit Katalog Eingabetyp Text field, Dropdown, Multiple Select und Price verwendet werden"
