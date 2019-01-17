@@ -83,3 +83,4 @@ Attributes,Attributes
 "How the products which are missing values for this attribute should be treated when using it to sort.","How the products which are missing values for this attribute should be treated when using it to sort."
 "First","First"
 "Last","Last"
+"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price."

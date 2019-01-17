@@ -163,6 +163,15 @@ class FrontPlugin
             }
         }
 
+        $filterableFieldNote = __('Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.');
+        if ($form->getElement('is_filterable')) {
+            $form->getElement('is_filterable')->addData(['note' => $filterableFieldNote]);
+        }
+
+        if ($form->getElement('is_filterable_in_search')) {
+            $form->getElement('is_filterable_in_search')->addData(['note' => $filterableFieldNote]);
+        }
+
         return $this;
     }
 
