@@ -32,7 +32,7 @@ class AttributeConfig
     /**
      * @var string[]
      */
-    private $defaultSelectedAttributes = ['name', 'thumbnail', 'special_price', 'special_from_date', 'special_to_date'];
+    private $defaultSelectedAttributes = ['name', 'thumbnail', 'special_price', 'special_from_date', 'special_to_date', 'price_type'];
 
     /**
      * @var string[]
