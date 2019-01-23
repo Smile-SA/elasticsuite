@@ -28,9 +28,9 @@ use \Magento\Catalog\Model\Product\Type\AbstractType;
 class QuotePlugin
 {
     /**
-     * @var \Smile\ElasticsuiteTracker\Api\EventQueueInterface
+     * @var \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface
      */
-    private $eventQueue;
+    private $service;
 
     /**
      * @var \Magento\Framework\Stdlib\CookieManagerInterface
@@ -50,18 +50,18 @@ class QuotePlugin
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue    Tracker event queue.
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface   $cookieManager Cookie manager.
-     * @param \Smile\ElasticsuiteTracker\Helper\Data             $trackerHelper Tracker helper.
-     * @param \Psr\Log\LoggerInterface                           $logger        Logger.
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service       Tracker service.
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager Cookie manager.
+     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper Tracker helper.
+     * @param \Psr\Log\LoggerInterface                                        $logger        Logger.
      */
     public function __construct(
-        \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue,
+        \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Psr\Log\LoggerInterface $logger
     ) {
-        $this->eventQueue    = $eventQueue;
+        $this->service       = $service;
         $this->cookieManager = $cookieManager;
         $this->trackerHelper = $trackerHelper;
         $this->logger        = $logger;
@@ -113,7 +113,7 @@ class QuotePlugin
 
         $eventData = ['page' => $pageData, 'session' => $this->getSessionData()];
 
-        $this->eventQueue->addEvent($eventData);
+        $this->service->addEvent($eventData);
     }
 
     /**
