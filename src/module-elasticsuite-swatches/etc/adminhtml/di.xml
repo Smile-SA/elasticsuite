@@ -25,4 +25,17 @@
         />
     </type>
 
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Attribute\Validate">
+        <plugin
+                name="elasticsuite_swatches_product_attribute_validate"
+                type="Smile\ElasticsuiteSwatches\Plugin\Catalog\Controller\Adminhtml\Product\Attribute\ValidatePlugin"
+        />
+    </type>
+
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Attribute\Save">
+        <plugin
+                name="elasticsuite_swatches_product_attribute_save"
+                type="Smile\ElasticsuiteSwatches\Plugin\Catalog\Controller\Adminhtml\Product\Attribute\SavePlugin"
+        />
+    </type>
 </config>
