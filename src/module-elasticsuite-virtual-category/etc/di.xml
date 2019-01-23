@@ -61,6 +61,8 @@
     <type name="\Magento\Catalog\Model\Category">
         <plugin name="smile_elasticsuite_virtual_categories_reindex_on_change"
                 type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ReindexOnChange" />
+        <plugin name="smile_elasticsuite_virtual_categories_reindex_on_update_store_positions"
+                type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ReindexOnUpdateStorePositions" />
     </type>
     
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData">
