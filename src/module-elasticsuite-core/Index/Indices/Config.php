@@ -116,6 +116,15 @@ class Config extends \Magento\Framework\Config\Data
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        parent::reset();
+        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [$this->cacheId]);
+    }
+
+    /**
      * Init data for configuration.
      *
      * @return void
@@ -229,7 +238,7 @@ class Config extends \Magento\Framework\Config\Data
                 ];
             }
 
-            $this->cache->save($this->serializer->serialize($fieldsConfig), $cacheId, $this->cacheTags);
+            $this->cache->save($this->serializer->serialize($fieldsConfig), $cacheId, $this->cacheTags + [$this->cacheId]);
         } else {
             $fieldsConfig = $this->serializer->unserialize($fieldsConfig);
         }

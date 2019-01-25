@@ -298,4 +298,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
+        <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
+    </type>
 </config>
