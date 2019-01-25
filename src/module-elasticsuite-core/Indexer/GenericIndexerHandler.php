@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Indexer;
 
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
@@ -55,21 +56,34 @@ class GenericIndexerHandler implements IndexerInterface
     private $cacheHelper;
 
     /**
-     * Cosntructor
-     *
-     * @param IndexOperationInterface $indexOperation Index operation service.
-     * @param CacheHelper             $cacheHelper    Index caching helper.
-     * @param Batch                   $batch          Batch handler.
-     * @param string                  $indexName      The index name.
-     * @param string                  $typeName       The type name.
+     * @var \Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterface
      */
-    public function __construct(IndexOperationInterface $indexOperation, CacheHelper $cacheHelper, Batch $batch, $indexName, $typeName)
-    {
-        $this->indexOperation = $indexOperation;
-        $this->batch          = $batch;
-        $this->indexName      = $indexName;
-        $this->typeName       = $typeName;
-        $this->cacheHelper    = $cacheHelper;
+    private $dataSourceResolver;
+
+    /**
+     * Constructor
+     *
+     * @param IndexOperationInterface     $indexOperation     Index operation service.
+     * @param CacheHelper                 $cacheHelper        Index caching helper.
+     * @param Batch                       $batch              Batch handler.
+     * @param DataSourceResolverInterface $dataSourceResolver DataSource resolver.
+     * @param string                      $indexName          The index name.
+     * @param string                      $typeName           The type name.
+     */
+    public function __construct(
+        IndexOperationInterface $indexOperation,
+        CacheHelper $cacheHelper,
+        Batch $batch,
+        DataSourceResolverInterface $dataSourceResolver,
+        $indexName,
+        $typeName
+    ) {
+        $this->indexOperation     = $indexOperation;
+        $this->batch              = $batch;
+        $this->indexName          = $indexName;
+        $this->typeName           = $typeName;
+        $this->cacheHelper        = $cacheHelper;
+        $this->dataSourceResolver = $dataSourceResolver;
     }
 
     /**
@@ -90,7 +104,7 @@ class GenericIndexerHandler implements IndexerInterface
             $batchSize = $this->indexOperation->getBatchIndexingSize();
 
             foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
-                foreach ($type->getDatasources() as $datasource) {
+                foreach ($this->dataSourceResolver->getDataSources($this->indexName, $this->typeName) as $datasource) {
                     if (!empty($batchDocuments)) {
                         $batchDocuments = $datasource->addData($storeId, $batchDocuments);
                     }

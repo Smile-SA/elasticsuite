@@ -41,24 +41,15 @@ class Type implements TypeInterface
     private $mapping;
 
     /**
-     * Type datasources.
+     * Type constructor.
      *
-     * @var \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
+     * @param string           $name    Name of the type.
+     * @param MappingInterface $mapping Mapping of the type.
      */
-    private $datasources;
-
-    /**
-     * Type construcor.
-     *
-     * @param string                                                  $name        Name of the type.
-     * @param MappingInterface                                        $mapping     Mapping of the type.
-     * @param \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[] $datasources Datasources of the type.
-     */
-    public function __construct($name, MappingInterface $mapping, array $datasources = [])
+    public function __construct($name, MappingInterface $mapping)
     {
         $this->name        = $name;
         $this->mapping     = $mapping;
-        $this->datasources = $datasources;
     }
 
     /**
@@ -77,25 +68,6 @@ class Type implements TypeInterface
         return $this->mapping;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDatasources()
-    {
-        return $this->datasources;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDatasource($name)
-    {
-        if (!isset($this->datasources[$name])) {
-            throw new \InvalidArgumentException("Datasource $name does not exists.");
-        }
-
-        return $this->datasources[$name];
-    }
     /**
     * {@inheritDoc}
     */

@@ -38,22 +38,6 @@ interface TypeInterface
     public function getMapping();
 
     /**
-     * List of datasources used by this type.
-     *
-     * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
-     */
-    public function getDatasources();
-
-    /**
-     * Retrieve a datasource by name for the current type.
-     *
-     * @param string $name Datasource name.
-     *
-     * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface
-     */
-    public function getDatasource($name);
-
-    /**
      * Field use as unique id for the doc.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
