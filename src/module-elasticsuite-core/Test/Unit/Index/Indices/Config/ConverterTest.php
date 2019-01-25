@@ -75,8 +75,6 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
         $typeData = $this->getTypeData('index1', 'simpleType');
         $this->assertEquals('idField', $typeData['idFieldName']);
         $this->assertArrayHasKey('mapping', $typeData);
-        $this->assertArrayHasKey('datasources', $typeData);
-        $this->assertCount(0, $typeData['datasources']);
     }
 
     /**
@@ -99,29 +97,6 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('stringField', $mappingData['staticFields']);
         $this->assertEquals('string', $mappingData['staticFields']['stringField']['type']);
-
-        $this->assertArrayHasKey('dynamicFieldProviders', $mappingData);
-        $this->assertCount(0, $mappingData['dynamicFieldProviders']);
-    }
-
-    /**
-     * Test datasources in complex type.
-     *
-     * @return void
-     */
-    public function testDatasources()
-    {
-        $indexData = $this->getIndexData('index1');
-        $this->assertArrayHasKey('complexType', $indexData['types']);
-
-        $typeData = $this->getTypeData('index1', 'complexType');
-        $this->assertArrayHasKey('datasources', $typeData);
-
-        $datasources = $typeData['datasources'];
-        $this->assertArrayHasKey('ds1', $datasources);
-        $this->assertEquals('DatasourceClass1', $datasources['ds1']);
-        $this->assertArrayHasKey('ds2', $datasources);
-        $this->assertEquals('DatasourceClass2', $datasources['ds2']);
     }
 
     /**
