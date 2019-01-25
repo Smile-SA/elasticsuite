@@ -101,16 +101,36 @@ class SaveProductsPositions extends AbstractIndexerPlugin
      */
     private function getAffectedProductIds($category)
     {
-        $oldPositionProductIds = array_keys($this->saveHandler->getProductPositionsByCategory($category));
-        $newPositionProductIds = array_keys($category->getSortedProducts());
+        $oldPositionProductIds     = array_keys($this->saveHandler->getProductPositionsByCategory($category));
+        $defaultPositionProductIds = [];
+        $newPositionProductIds     = array_keys($category->getSortedProducts());
 
-        $oldBlacklistedProductIds = array_values($this->saveHandler->getProductBlacklistByCategory($category));
-        $newBlacklistedProductIds = array_values($category->getBlacklistedProducts() ?? []);
+        $oldBlacklistedProductIds     = array_values($this->saveHandler->getProductBlacklistByCategory($category));
+        $defaultBlacklistedProductIds = [];
+        $newBlacklistedProductIds     = array_values($category->getBlacklistedProducts() ?? []);
+
+        if (true === (bool) $category->getUseStorePositions()) {
+            $defaultPositionProductIds = array_keys(
+                $this->saveHandler->getProductPositions(
+                    $category->getId(),
+                    \Magento\Store\Model\Store::DEFAULT_STORE_ID
+                )
+            );
+
+            $defaultBlacklistedProductIds = array_values(
+                $this->saveHandler->getProductBlacklist(
+                    $category->getId(),
+                    \Magento\Store\Model\Store::DEFAULT_STORE_ID
+                )
+            );
+        }
 
         $affectedProductIds = array_merge(
             $oldPositionProductIds,
+            $defaultPositionProductIds,
             $newPositionProductIds,
             $oldBlacklistedProductIds,
+            $defaultBlacklistedProductIds,
             $newBlacklistedProductIds
         );
 
