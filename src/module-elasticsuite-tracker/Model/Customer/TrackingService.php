@@ -66,8 +66,10 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
      */
     public function addEvent($eventData)
     {
-        $this->eventQueue->addEvent($eventData);
-        $this->addCustomerLink($eventData);
+        if ($this->helper->isEnabled()) {
+            $this->eventQueue->addEvent($eventData);
+            $this->addCustomerLink($eventData);
+        }
     }
 
     /**
