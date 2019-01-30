@@ -13,9 +13,31 @@
 namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms;
 
 use Smile\ElasticsuiteAnalytics\Model\AbstractReport;
+use Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder;
 
 class Report extends AbstractReport implements \Magento\Framework\View\Element\Block\ArgumentInterface
 {
+    /**
+     * @var array
+     */
+    private $postProcessors;
+
+    /**
+     * Constructor.
+     *
+     * @param \Magento\Search\Model\SearchEngine $searchEngine         Search engine.
+     * @param SearchRequestBuilder               $searchRequestBuilder Search request builder.
+     * @param array                              $postProcessors       Response post processors.
+     */
+    public function __construct(
+        \Magento\Search\Model\SearchEngine $searchEngine,
+        SearchRequestBuilder $searchRequestBuilder,
+        array $postProcessors = []
+    ) {
+        parent::__construct($searchEngine, $searchRequestBuilder);
+        $this->postProcessors = $postProcessors;
+    }
+
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
         $data = [];
@@ -28,6 +50,10 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
                 'visitors'        => round($value->getMetrics()['unique_visitors'] ?: 0),
                 'conversion_rate' => number_format(0, 2),
             ];
+        }
+        
+        foreach($this->postProcessors as $postProcessor) {
+            $data = $postProcessor->postProcessResponse($data);
         }
 
         return $data;

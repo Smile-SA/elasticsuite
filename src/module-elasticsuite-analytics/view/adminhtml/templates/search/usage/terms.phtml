@@ -13,13 +13,15 @@
                     <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('# Results (avg.)');?></span></th>
-                    <th class="data-grid-th no-link"><span><?= __('Conv. rate');?></span></th>
+                    <?php if ($block->getShowConversionRate()): ?>
+                        <th class="data-grid-th no-link"><span><?= __('Conv. rate');?></span></th>
+                    <?php endif; ?>
             </thead>
             <tbody>
                 <?php $termsData = $block->getTermsData(); ?>
                 <?php if (empty($termsData)) : ?>
                     <tr>
-                        <td colspan="5" style="text-align:center; padding: 20px;">
+                        <td colspan="<?= ($block->getShowConversionRate() ? 5 : 4) ?>" style="text-align:center; padding: 20px;">
                             <em><?= __('No data over the selected period.'); ?></em>
                         </td>
                     </tr>
@@ -30,7 +32,9 @@
                         <td><?= $termData['sessions']; ?></td>
                         <td><?= $termData['visitors']; ?></td>
                         <td><?= $termData['result_count']; ?></td>
-                        <td><?= number_format($termData['conversion_rate'] * 100, 2); ?> %</td>
+                        <?php if ($block->getShowConversionRate()): ?>
+                            <td><?= number_format($termData['conversion_rate'] * 100, 2); ?> %</td>
+                        <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

@@ -37,6 +37,7 @@
                     <block name="elasticsuite.analytics.search_uage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string">Popular search terms</argument>
                         </arguments>
                     </block>
@@ -44,6 +45,7 @@
                     <block name="elasticsuite.analytics.search_uage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string">Spellchecked search terms</argument>
                         </arguments>
                     </block>
@@ -51,6 +53,7 @@
                     <block name="elasticsuite.analytics.search_uage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string">0 result search terms</argument>
                         </arguments>
                     </block>

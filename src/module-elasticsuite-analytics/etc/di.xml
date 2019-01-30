@@ -50,6 +50,9 @@
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
         </arguments>
     </virtualType>
     
@@ -69,6 +72,9 @@
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
         </arguments>
     </virtualType>
     
@@ -88,7 +94,18 @@
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
         </arguments>
     </virtualType>
 
+    <!-- Search terms reports post-processors -->
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor">
+        <arguments>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
