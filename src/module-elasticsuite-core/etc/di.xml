@@ -155,6 +155,16 @@
     <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
     <virtualType name="significantTermBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTermFactory" />
 
+    <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="bucketSelectorPipeline" xsi:type="object">bucketSelectorPipelineFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="bucketSelectorPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\BucketSelectorFactory" />
+
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
         <arguments>
             <argument name="builders" xsi:type="array">
@@ -163,6 +173,9 @@
                 <item name="dateHistogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\DateHistogram\Proxy</item>
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
                 <item name="significantTermBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm\Proxy</item>
+            </argument>
+            <argument name="pipelineBuilders" xsi:type="array">
+                <item name="bucketSelectorPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector\Proxy</item>
             </argument>
         </arguments>
     </type>

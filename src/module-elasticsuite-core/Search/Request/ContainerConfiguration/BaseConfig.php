@@ -67,6 +67,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
         $this->addMappings();
         $this->addFilters();
         $this->addAggregationProviders();
+        $this->addAggregationFilters();
     }
 
     /**
@@ -126,5 +127,57 @@ class BaseConfig extends \Magento\Framework\Config\Data
                 $this->_data[$requestName]['aggregationsProviders'] = $providers;
             }
         }
+    }
+
+    /**
+     * Append the aggregation filters to search requests configuration.
+     *
+     * @return BaseConfig
+     */
+    private function addAggregationFilters()
+    {
+        foreach ($this->_data as $requestName => $requestConfig) {
+            if (isset($requestConfig['aggregations'])) {
+                $aggregations = [];
+
+                foreach ($requestConfig['aggregations'] as $aggName => $aggConfig) {
+                    $aggregations[$aggName] = $this->replaceAggregationFilter($aggConfig);
+                }
+
+                $this->_data[$requestName]['aggregations'] = $aggregations;
+            }
+        }
+    }
+
+    /**
+     * Instanciates aggregation filter classes.
+     *
+     * @param array $aggregationConfig Aggregation config
+     *
+     * @return array
+     */
+    private function replaceAggregationFilter($aggregationConfig)
+    {
+        if (isset($aggregationConfig['filters'])) {
+            $filters = [];
+
+            foreach ($aggregationConfig['filters'] as $filterName => $filterClass) {
+                // Done in \Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration for query filters.
+                $filters[$filterName] = $this->objectManager->get($filterClass)->getFilterQuery();
+            }
+
+            $aggregationConfig['filters'] = $filters;
+        }
+
+        if (isset($aggregationConfig['childBuckets'])) {
+            $childBuckets = [];
+            foreach ($aggregationConfig['childBuckets'] as $aggName => $aggConfig) {
+                $childBuckets[$aggName] = $this->replaceAggregationFilter($aggConfig);
+            }
+
+            $aggregationConfig['childBuckets'] = $childBuckets;
+        }
+
+        return $aggregationConfig;
     }
 }

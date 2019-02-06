@@ -161,6 +161,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $bucket->method('getName')->will($this->returnValue($name));
         $bucket->method('getType')->will($this->returnValue($type));
         $bucket->method('getMetrics')->will($this->returnValue([]));
+        $bucket->method('getPipelines')->will($this->returnValue([]));
 
         return $bucket;
     }

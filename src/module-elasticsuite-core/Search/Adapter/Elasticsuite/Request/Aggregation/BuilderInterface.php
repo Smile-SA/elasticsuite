@@ -28,7 +28,7 @@ interface BuilderInterface
     /**
      * Build the ES aggregation from a search request bucket.
      *
-     * @param BucketInterface $bucket Bucketto be built.
+     * @param BucketInterface $bucket Bucket to be built.
      *
      * @return array
      */

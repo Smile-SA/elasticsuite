@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
+use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
 
 /**
  * Significant term bucket implementation.
@@ -55,22 +56,24 @@ class SignificantTerm extends AbstractBucket
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string            $name         Bucket name.
-     * @param string            $field        Bucket field.
-     * @param MetricInterface[] $metrics      Bucket metrics.
-     * @param BucketInterface[] $childBuckets Child buckets.
-     * @param string            $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface    $filter       Bucket filter.
-     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
-     * @param integer           $size         Bucket size.
-     * @param integer           $minDocCount  Min doc count.
-     * @param string            $algotithm    Algorithm used
+     * @param string              $name         Bucket name.
+     * @param string              $field        Bucket field.
+     * @param MetricInterface[]   $metrics      Bucket metrics.
+     * @param BucketInterface[]   $childBuckets Child buckets.
+     * @param PipelineInterface[] $pipelines    Bucket pipelines.
+     * @param string              $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface      $filter       Bucket filter.
+     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
+     * @param integer             $size         Bucket size.
+     * @param integer             $minDocCount  Min doc count.
+     * @param string              $algotithm    Algorithm used
      */
     public function __construct(
         $name,
         $field,
         array $metrics = [],
         array $childBuckets = [],
+        array $pipelines = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
@@ -78,7 +81,7 @@ class SignificantTerm extends AbstractBucket
         $minDocCount = 5,
         $algotithm = self::ALGORITHM_GND
     ) {
-        parent::__construct($name, $field, $metrics, $childBuckets, $nestedPath, $filter, $nestedFilter);
+        parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 
         $this->minDocCount = $minDocCount;
         $this->algorithm   = $algotithm;

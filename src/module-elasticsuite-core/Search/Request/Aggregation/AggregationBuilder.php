@@ -45,19 +45,27 @@ class AggregationBuilder
     private $metricFactory;
 
     /**
+     * @var PipelineFactory
+     */
+    private $pipelineFactory;
+
+    /**
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
      * @param MetricFactory      $metricFactory      Factory used to instantiate metrics.
+     * @param PipelineFactory    $pipelineFactory    Factory used to instantiate pipelines.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
         AggregationFactory $aggregationFactory,
         MetricFactory $metricFactory,
+        PipelineFactory $pipelineFactory,
         QueryBuilder $queryBuilder
     ) {
         $this->aggregationFactory = $aggregationFactory;
         $this->metricFactory      = $metricFactory;
+        $this->pipelineFactory    = $pipelineFactory;
         $this->queryBuilder       = $queryBuilder;
     }
 
@@ -107,6 +115,11 @@ class AggregationBuilder
             $bucketParams['field'] = $fieldName;
         }
 
+        if (!empty($bucketParams['filters'])) {
+            $filters = array_merge($filters, $bucketParams['filters']);
+            unset($bucketParams['filters']);
+        }
+
         $bucketFilters = array_diff_key($filters, [$fieldName => true]);
         if (!empty($bucketFilters)) {
             $bucketParams['filter'] = $this->createFilter($containerConfig, $bucketFilters);
@@ -123,6 +136,13 @@ class AggregationBuilder
         if (isset($bucketParams['nestedFilter'])) {
             $nestedFilter = $this->createFilter($containerConfig, $bucketParams['nestedFilter'], $bucketParams['nestedPath']);
             $bucketParams['nestedFilter'] = $nestedFilter;
+        }
+
+        if (isset($bucketParams['pipelines'])) {
+            foreach ($bucketParams['pipelines'] as &$pipelineParams) {
+                $pipelineType   = $pipelineParams['type'];
+                $pipelineParams = $this->pipelineFactory->create($pipelineType, $pipelineParams);
+            }
         }
 
         return $this->aggregationFactory->create($bucketType, $bucketParams);
