@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Api\Search\Request;
 
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Search request container configuration interface.
@@ -85,7 +86,11 @@ interface ContainerConfigurationInterface
     /**
      * Get aggregations configured in the search container.
      *
+     * @param string|QueryInterface $query        Search request query.
+     * @param array                 $filters      Search request filters.
+     * @param QueryInterface[]      $queryFilters Search request filters prebuilt as QueryInterface.
+     *
      * @return array
      */
-    public function getAggregations();
+    public function getAggregations($query = null, $filters = [], $queryFilters = []);
 }

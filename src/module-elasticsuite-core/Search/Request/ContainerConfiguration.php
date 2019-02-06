@@ -156,9 +156,19 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getAggregations()
+    public function getAggregations($query = null, $filters = [], $queryFilters = [])
     {
-        return $this->readBaseConfigParam('aggregations', []);
+        $aggregations = $this->readBaseConfigParam('aggregations', []);
+
+        /** @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfiguration\AggregationProviderInterface $provider */
+        foreach ($this->readBaseConfigParam('aggregationsProviders', []) as $provider) {
+            $aggregations = array_merge(
+                $aggregations,
+                $provider->getAggregations($this->getStoreId(), $query, $filters, $queryFilters)
+            );
+        }
+
+        return $aggregations;
     }
 
     /**

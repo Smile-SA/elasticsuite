@@ -36,6 +36,11 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
     /**
      * @var string
      */
+    const AGGREGATIONS_PROVIDERS_PATH = 'aggregations/provider';
+
+    /**
+     * @var string
+     */
     const METRICS_PATH = 'metrics/metric';
 
     /**
@@ -58,11 +63,12 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
         foreach ($requestNodes as $requestNode) {
             $simpleXmlNode = simplexml_import_dom($requestNode);
             /** @var \DOMElement $requestNode */
-            $name               = $requestNode->getAttribute('name');
-            $request            = $this->mergeAttributes((array) $simpleXmlNode);
-            $request['filters']      = $this->parseFilters($xpath, $requestNode);
-            $request['aggregations'] = $this->parseAggregations($xpath, $requestNode);
-            $requests[$name]    = $request;
+            $name                             = $requestNode->getAttribute('name');
+            $request                          = $this->mergeAttributes((array) $simpleXmlNode);
+            $request['filters']               = $this->parseFilters($xpath, $requestNode);
+            $request['aggregations']          = $this->parseAggregations($xpath, $requestNode);
+            $request['aggregationsProviders'] = $this->parseAggregationsProviders($xpath, $requestNode);
+            $requests[$name]                  = $request;
         }
 
         return $requests;
@@ -130,6 +136,25 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
         }
 
         return $aggs;
+    }
+
+    /**
+     * Parse aggregations providers from request node configuration.
+     *
+     * @param \DOMXPath $xpath    XPath access to the document parsed.
+     * @param \DOMNode  $rootNode Request node to be parsed.
+     *
+     * @return array
+     */
+    private function parseAggregationsProviders(\DOMXPath $xpath, \DOMNode $rootNode)
+    {
+        $providers = [];
+
+        foreach ($xpath->query(self::AGGREGATIONS_PROVIDERS_PATH, $rootNode) as $providerNode) {
+            $providers[$providerNode->getAttribute('name')] = $providerNode->nodeValue;
+        }
+
+        return $providers;
     }
 
     /**

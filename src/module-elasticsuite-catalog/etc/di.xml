@@ -245,4 +245,35 @@
 
     <preference for="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryDataInterface"
                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData" />
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder"
+        type="\Smile\ElasticsuiteCore\Search\Request\Builder">
+        <arguments>
+            <argument name="aggregationResolver" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Aggregation\Resolver</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="searchFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Search\AttributeList</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="categoryFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category\AttributeList</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="autocompleteFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Autocomplete\AttributeList</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category\AttributeList">
+        <arguments>
+            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\FilterableAttribute\Category\CollectionFactory</argument>
+        </arguments>
+    </type>
 </config>

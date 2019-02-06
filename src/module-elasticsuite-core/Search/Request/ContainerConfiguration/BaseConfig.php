@@ -66,6 +66,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
         $this->objectManager = $objectManager;
         $this->addMappings();
         $this->addFilters();
+        $this->addAggregationProviders();
     }
 
     /**
@@ -103,6 +104,26 @@ class BaseConfig extends \Magento\Framework\Config\Data
                 }
 
                 $this->_data[$requestName]['filters'] = $filters;
+            }
+        }
+    }
+
+    /**
+     * Append the aggregation providers to search requests configuration.
+     *
+     * @return BaseConfig
+     */
+    private function addAggregationProviders()
+    {
+        foreach ($this->_data as $requestName => $requestConfig) {
+            if (isset($requestConfig['aggregationsProviders'])) {
+                $providers = [];
+
+                foreach ($requestConfig['aggregationsProviders'] as $providerName => $providerClass) {
+                    $providers[$providerName] = $this->objectManager->create($providerClass, ['requestName' => $requestName]);
+                }
+
+                $this->_data[$requestName]['aggregationsProviders'] = $providers;
             }
         }
     }

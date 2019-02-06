@@ -5,7 +5,6 @@
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
- *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -16,12 +15,12 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Model\Product\Visibility;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
 use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
-use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
 
 /**
  * Virtual category preview model.
@@ -43,12 +42,18 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
     private $queryFactory;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param CategoryInterface         $category                 Category to preview.
      * @param FulltextCollectionFactory $productCollectionFactory Fulltext product collection factory.
      * @param ItemDataFactory           $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             QueryInterface factory.
+     * @param ContextInterface          $searchContext            Search Context
      * @param int                       $size                     Preview size.
      * @param string                    $search                   Preview search.
      */
@@ -57,12 +62,14 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
         FulltextCollectionFactory $productCollectionFactory,
         ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
+        ContextInterface $searchContext,
         $size = 10,
         $search = ''
     ) {
         parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size, $search);
-        $this->category     = $category;
-        $this->queryFactory = $queryFactory;
+        $this->category      = $category;
+        $this->queryFactory  = $queryFactory;
+        $this->searchContext = $searchContext;
     }
 
     /**
@@ -70,6 +77,8 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      */
     protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
     {
+        $this->searchContext->setCurrentCategory($this->category);
+        $this->searchContext->setStoreId($this->category->getStoreId());
         $collection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
 
         $queryFilter = $this->getQueryFilter();

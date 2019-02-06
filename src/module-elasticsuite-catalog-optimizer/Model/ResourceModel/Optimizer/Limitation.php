@@ -38,13 +38,14 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Retrieve applicable optimizer Ids for a given query Id.
      *
-     * @param int $queryId The query Id
+     * @param int    $queryId       The query Id
+     * @param string $containerName The container name if needed.
      *
      * @return array
      */
-    public function getApplicableOptimizerIdsByQueryId($queryId)
+    public function getApplicableOptimizerIdsByQueryId($queryId, $containerName = 'quick_search_container')
     {
-        return $this->getApplicationData('quick_search_container', 'query_id', $queryId);
+        return $this->getApplicationData($containerName, 'query_id', $queryId);
     }
 
     /**

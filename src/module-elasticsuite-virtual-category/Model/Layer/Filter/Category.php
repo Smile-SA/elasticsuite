@@ -74,20 +74,6 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     /**
      * {@inheritDoc}
      */
-    public function addFacetToCollection($config = [])
-    {
-        $facetQueries = $this->getFacetQueries();
-        $facetConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => $this->getFilterField(), 'queries' => $facetQueries];
-
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetConfig);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected function getFilterField()
     {
         return 'categories';
@@ -105,16 +91,6 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         }
 
         return $this;
-    }
-
-    /**
-     * List of subcategories queries by category id.
-     *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
-     */
-    private function getFacetQueries()
-    {
-        return $this->loadUsingCache('getSearchQueriesByChildren');
     }
 
     /**

@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-define(['Magento_Ui/js/form/components/fieldset'], function(Fieldset) {
+define(['Magento_Ui/js/form/components/fieldset', 'underscore'], function(Fieldset, _) {
     return Fieldset.extend({
         defaults: {
             imports: {
@@ -20,7 +20,8 @@ define(['Magento_Ui/js/form/components/fieldset'], function(Fieldset) {
             },
             listens: {
                 "${ $.provider }:data.model" : "onChange"
-            }
+            },
+            displayedForValues : {}
         },
         initialize: function() {
             this._super();
@@ -28,10 +29,23 @@ define(['Magento_Ui/js/form/components/fieldset'], function(Fieldset) {
             this.onChange(this.initValue);
         },
         onChange: function(value)  {
+
             var isVisible = this.index == value;
+
             if (Array.isArray(value)) {
                 isVisible = (value.indexOf(this.index) !== -1);
             }
+
+            if (! _.isEmpty(this.displayedForValues)) {
+                if (Array.isArray(value)) {
+                    isVisible = value.some(function (v) {
+                        return Object.values(this.displayedForValues).indexOf(v) >= 0;
+                    }.bind(this));
+                } else {
+                    isVisible = Object.values(this.displayedForValues).indexOf(value) !== -1;
+                }
+            }
+
             this.visible(isVisible);
             this.disableChildren(!isVisible);
         }

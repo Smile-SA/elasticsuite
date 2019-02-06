@@ -44,10 +44,11 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="aggregationsDefinition">
-        <xs:sequence maxOccurs="unbounded" minOccurs="1">
-            <xs:element name="aggregation" type="aggregationDefinition" />
-        </xs:sequence>
+    <xs:complexType name="aggregationsDefinition" mixed="true">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="aggregation" type="aggregationDefinition" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="provider" type="aggregationProviderDefinition" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="filterDefinition">
@@ -66,6 +67,14 @@
         <xs:attribute type="xs:string" name="name" use="required" />
     </xs:complexType>
 
+    <xs:complexType name="aggregationProviderDefinition">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <xs:complexType name="termBucket">
         <xs:complexContent>
             <xs:extension base="aggregationDefinition">
@@ -82,7 +91,7 @@
                 <xs:attribute type="xs:string" name="field" use="optional" />
                 <xs:attribute type="xs:integer" name="size" use="optional" />
                 <xs:attribute type="xs:integer" name="minDocCount" use="optional" />
-                <xs:attribute type="xs:string" name="algotithm" use="optional" />
+                <xs:attribute type="xs:string" name="algorithm" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

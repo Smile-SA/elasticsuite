@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements FilterInterface
+class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
 {
     use DecimalFilterTrait;
 
@@ -102,32 +102,6 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function addFacetToCollection($config = [])
-    {
-        $customerGroupId = $this->customerSession->getCustomerGroupId();
-
-        $facetConfig = [
-            'name'         => $this->getFilterField(),
-            'type'         => BucketInterface::TYPE_HISTOGRAM,
-            'nestedFilter' => ['price.customer_group_id' => $customerGroupId], 'minDocCount' => 1,
-        ];
-
-        $calculation = $this->dataProvider->getRangeCalculationValue();
-        if ($calculation === \Magento\Catalog\Model\Layer\Filter\DataProvider\Price::RANGE_CALCULATION_MANUAL) {
-            if ((int) $this->dataProvider->getRangeStepValue() > 0) {
-                $facetConfig['interval'] = (int) $this->dataProvider->getRangeStepValue();
-            }
-        }
-
-        $productCollection = $this->getLayer()->getProductCollection();
-        $productCollection->addFacet($facetConfig);
-
-        return $this;
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
@@ -148,6 +122,8 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price implements F
 
     /**
      * Retrieve ES filter field.
+     *
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
      *
      * @return string
      */

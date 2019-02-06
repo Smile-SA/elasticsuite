@@ -235,7 +235,7 @@ class DataProviderPlugin
             $fulltextCollection->setStoreId($storeId)
                 ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
 
-            $attributeSetIds = array_keys($fulltextCollection->getProductCountByAttributeSetId());
+            $attributeSetIds = array_keys($fulltextCollection->getFacetedData('attribute_set_id'));
             if (!empty($attributeSetIds)) {
                 $collection->setAttributeSetFilter($attributeSetIds);
             }

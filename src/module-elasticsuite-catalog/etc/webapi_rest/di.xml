@@ -17,9 +17,18 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
-    <!-- For now, consider using this plugin only for search WebAPI. Will be refactored later. -->
-    <type name="Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface">
-        <plugin name="catalogProductContainerConfiguration" type="Smile\ElasticsuiteCatalog\Plugin\Search\ContainerConfigurationPlugin" sortOrder="10"/>
+    <!-- Layered navigation filtering : Aggregation building and modifying -->
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage">
+        <arguments>
+            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+        </arguments>
     </type>
 
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
