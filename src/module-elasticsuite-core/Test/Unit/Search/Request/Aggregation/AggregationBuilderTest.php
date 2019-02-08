@@ -6,7 +6,7 @@
  * versions in the future.
  *
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
@@ -26,9 +26,9 @@ use Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
 
 /**
- * Search request query builder test case.
+ * Search request aggregation builder test case.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
