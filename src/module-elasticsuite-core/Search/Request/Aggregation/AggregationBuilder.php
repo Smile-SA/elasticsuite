@@ -101,7 +101,7 @@ class AggregationBuilder
     private function buildAggregation(ContainerConfigurationInterface $containerConfig, $filters, $bucketParams)
     {
         $bucketType = $bucketParams['type'];
-        $fieldName  = isset($bucketParams['field']) ? $bucketParams['field'] : $bucketParams['name'];
+        $fieldName  = $bucketParams['field'] ?? $bucketParams['name'];
 
         try {
             $field = $containerConfig->getMapping()->getField($fieldName);
@@ -115,11 +115,11 @@ class AggregationBuilder
             $bucketParams['field'] = $fieldName;
         }
 
-        if (!empty($bucketParams['filters'])) {
-            $filters = array_merge($filters, $bucketParams['filters']);
-            unset($bucketParams['filters']);
-        }
+        // Merge container/aggregation defined aggregation filters with global request filters.
+        $filters = array_merge($filters, $bucketParams['filters'] ?? []);
+        unset($bucketParams['filters']);
 
+        // Ensure any globally applied (attribute layered navigation) filter is NOT applied on the (most likely) originating agg.
         $bucketFilters = array_diff_key($filters, [$fieldName => true]);
         if (!empty($bucketFilters)) {
             $bucketParams['filter'] = $this->createFilter($containerConfig, $bucketFilters);
@@ -138,12 +138,7 @@ class AggregationBuilder
             $bucketParams['nestedFilter'] = $nestedFilter;
         }
 
-        if (isset($bucketParams['pipelines'])) {
-            foreach ($bucketParams['pipelines'] as &$pipelineParams) {
-                $pipelineType   = $pipelineParams['type'];
-                $pipelineParams = $this->pipelineFactory->create($pipelineType, $pipelineParams);
-            }
-        }
+        $bucketParams = $this->createPipelines($bucketParams);
 
         return $this->aggregationFactory->create($bucketType, $bucketParams);
     }
@@ -160,5 +155,24 @@ class AggregationBuilder
     private function createFilter(ContainerConfigurationInterface $containerConfig, array $filters, $currentPath = null)
     {
         return $this->queryBuilder->create($containerConfig, $filters, $currentPath);
+    }
+
+    /**
+     * Parse bucket params and create PipelineInterface instances
+     *
+     * @param array $bucketParams Bucket params.
+     *
+     * @return array
+     */
+    private function createPipelines($bucketParams)
+    {
+        if (isset($bucketParams['pipelines'])) {
+            foreach ($bucketParams['pipelines'] as &$pipelineParams) {
+                $pipelineType = $pipelineParams['type'];
+                $pipelineParams = $this->pipelineFactory->create($pipelineType, $pipelineParams);
+            }
+        }
+
+        return $bucketParams;
     }
 }

@@ -72,8 +72,8 @@ class Builder
         foreach ($buckets as $bucket) {
             $bucketType = $bucket->getType();
             $builder    = $this->getBuilder($bucketType);
-            $aggregation = $builder->buildBucket($bucket);
-            $subAggregations = isset($aggregation['aggregations']) ? $aggregation['aggregations'] : [];
+            $aggregation     = $builder->buildBucket($bucket);
+            $subAggregations = $aggregation['aggregations'] ?? [];
 
             if (!empty($bucket->getChildBuckets())) {
                 $subAggregations = array_merge($subAggregations, $this->buildAggregations($bucket->getChildBuckets()));
