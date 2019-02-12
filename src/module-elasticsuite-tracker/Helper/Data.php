@@ -47,6 +47,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_ANONYMIZATION_DELAY_XPATH      = 'smile_elasticsuite_tracker/anonymization/delay';
 
     /**
+     * Module retention delay configuration path
+     * @var string
+     */
+    const CONFIG_RETENTION_DELAY_XPATH = 'smile_elasticsuite_tracker/general/retention_delay';
+
+    /**
      * Magento Configuration
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -151,5 +157,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getAnonymizationDelay()
     {
         return (int) $this->scopeConfig->getValue(self::CONFIG_ANONYMIZATION_DELAY_XPATH);
+    }
+
+    /**
+     * Return the tracking data retention delay, in days
+     *
+     * @return int
+     */
+    public function getRetentionDelay()
+    {
+        return (int) $this->scopeConfig->getValue(self::CONFIG_RETENTION_DELAY_XPATH);
     }
 }
