@@ -24,5 +24,8 @@
         <job name="elasticsuite_anonymize_log_event" instance="Smile\ElasticsuiteTracker\Cron\ExpireCustomerLink" method="execute">
             <schedule>0 0 * * *</schedule>
         </job>
+        <job name="elasticsuite_purge_log_event" instance="Smile\ElasticsuiteTracker\Cron\CleanTrackingData" method="execute">
+            <schedule>0 1 * * *</schedule>
+        </job>
     </group>
 </config>
