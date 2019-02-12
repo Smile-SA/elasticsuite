@@ -41,7 +41,27 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
     /**
      * @var string
      */
+    const AGGREGATION_FILTERS_PATH = 'filters/filter';
+
+    /**
+     * @var string
+     */
     const METRICS_PATH = 'metrics/metric';
+
+    /**
+     * @var string
+     */
+    const PIPELINES_PATH = 'pipelines/pipeline';
+
+    /**
+     * @var string
+     */
+    const PIPELINE_SIMPLE_BUCKETS_PATH = 'bucketsPath/path';
+
+    /**
+     * @var string
+     */
+    const PIPELINE_COMPLEX_BUCKETS_PATH = 'bucketsPath/mapping';
 
     /**
      * Convert config.
@@ -130,8 +150,13 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
             foreach ($aggNode->attributes as $attribute) {
                 $bucketConfig[$attribute->name] = $attribute->value;
             }
+            $aggFilters = $this->parseAggregationFilters($xpath, $aggNode);
+            if (!empty($aggFilters)) {
+                $bucketConfig['filters'] = $aggFilters;
+            }
             $bucketConfig['childBuckets'] = $this->parseAggregations($xpath, $aggNode);
             $bucketConfig['metrics'] = $this->parseMetrics($xpath, $aggNode);
+            $bucketConfig['pipelines'] = $this->parsePipelines($xpath, $aggNode);
             $aggs[$bucketName] = $bucketConfig;
         }
 
@@ -158,6 +183,25 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
     }
 
     /**
+     * Parse filters from a bucket.
+     *
+     * @param \DOMXPath $xpath    XPath access to the document parsed.
+     * @param \DOMNode  $rootNode Aggregation node to be parsed.
+     *
+     * @return null|string
+     */
+    private function parseAggregationFilters(\DOMXPath $xpath, \DOMNode $rootNode)
+    {
+        $filters = [];
+
+        foreach ($xpath->query(self::AGGREGATION_FILTERS_PATH, $rootNode) as $filterNode) {
+            $filters[$filterNode->getAttribute('name')] = $filterNode->nodeValue;
+        }
+
+        return $filters;
+    }
+
+    /**
      * Parse metrics from a bucket.
      *
      * @param \DOMXPath $xpath    XPath access to the document parsed.
@@ -178,5 +222,59 @@ class Converter extends \Magento\Framework\Search\Request\Config\Converter
         }
 
         return $metrics;
+    }
+
+    /**
+     * Parse pipelines from a bucket.
+     *
+     * @param \DOMXPath $xpath    XPath access to the document parsed.
+     * @param \DOMNode  $rootNode Aggregation node to be parsed for pipeline aggregations.
+     *
+     * @return array
+     */
+    private function parsePipelines(\DOMXPath $xpath, \DOMNode $rootNode)
+    {
+        $pipelines = [];
+
+        foreach ($xpath->query(self::PIPELINES_PATH, $rootNode) as $pipelineNode) {
+            $pipeline = [];
+            foreach ($pipelineNode->attributes as $attribute) {
+                $pipeline[$attribute->name] = $attribute->value;
+            }
+            $pipeline['bucketsPath'] = $this->parsePipelineBucketsPath($xpath, $pipelineNode);
+            $pipelines[$pipeline['name']] = $pipeline;
+        }
+
+        return $pipelines;
+    }
+
+    /**
+     * Parse the buckets path of a pipeline aggregation.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param \DOMNode  $pipelineNode Pipeline aggregation node to be parsed for buckets path.
+     *
+     * @return null|array|string
+     */
+    private function parsePipelineBucketsPath(\DOMXPath $xpath, \DOMNode $pipelineNode)
+    {
+        $bucketsPath = null;
+
+        foreach ($xpath->query(self::PIPELINE_COMPLEX_BUCKETS_PATH, $pipelineNode) as $bucketsPathMappingNode) {
+            $paramName = $bucketsPathMappingNode->getAttribute('paramName');
+            $path      = $bucketsPathMappingNode->textContent;
+            if (empty($paramName) || empty($path)) {
+                continue;
+            }
+            $bucketsPath[$paramName] = $path;
+        }
+
+        if (empty($bucketsPath)) {
+            foreach ($xpath->query(self::PIPELINE_SIMPLE_BUCKETS_PATH, $pipelineNode) as $bucketsPathNode) {
+                $bucketsPath = $bucketsPathNode->nodeValue;
+            }
+        }
+
+        return $bucketsPath;
     }
 }

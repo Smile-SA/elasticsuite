@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
+use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
 
 /**
  * Query group aggregations.
@@ -35,24 +36,26 @@ class QueryGroup extends AbstractBucket
     /**
      * Constructor.
      *
-     * @param string            $name         Bucket name.
-     * @param QueryInterface[]  $queries      Query group children queries.
-     * @param MetricInterface[] $metrics      Bucket metrics.
-     * @param BucketInterface[] $childBuckets Child buckets.
-     * @param string            $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface    $filter       Bucket filter.
-     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
+     * @param string              $name         Bucket name.
+     * @param QueryInterface[]    $queries      Query group children queries.
+     * @param MetricInterface[]   $metrics      Bucket metrics.
+     * @param BucketInterface[]   $childBuckets Child buckets.
+     * @param PipelineInterface[] $pipelines    Bucket pipelines.
+     * @param string              $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface      $filter       Bucket filter.
+     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
      */
     public function __construct(
         $name,
         array $queries,
         array $metrics = [],
         array $childBuckets = [],
+        array $pipelines = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null
     ) {
-        parent::__construct($name, $name, $metrics, $childBuckets, $nestedPath, $filter, $nestedFilter);
+        parent::__construct($name, $name, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
         $this->queries = $queries;
     }
 

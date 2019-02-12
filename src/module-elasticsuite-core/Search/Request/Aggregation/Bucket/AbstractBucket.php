@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
+use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
 
 /**
  * Abstract bucket implementation.
@@ -47,6 +48,11 @@ abstract class AbstractBucket implements BucketInterface
     private $childBuckets;
 
     /**
+     * @var PipelineInterface[]
+     */
+    private $pipelines;
+
+    /**
      * @var string
      */
     private $nestedPath;
@@ -64,19 +70,21 @@ abstract class AbstractBucket implements BucketInterface
     /**
      * Constructor.
      *
-     * @param string            $name         Bucket name.
-     * @param string            $field        Bucket field.
-     * @param MetricInterface[] $metrics      Bucket metrics.
-     * @param BucketInterface[] $childBuckets Child buckets.
-     * @param string            $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface    $filter       Bucket filter.
-     * @param QueryInterface    $nestedFilter Nested filter for the bucket.
+     * @param string              $name         Bucket name.
+     * @param string              $field        Bucket field.
+     * @param MetricInterface[]   $metrics      Bucket metrics.
+     * @param BucketInterface[]   $childBuckets Child buckets.
+     * @param PipelineInterface[] $pipelines    Bucket pipelines.
+     * @param string              $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface      $filter       Bucket filter.
+     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
      */
     public function __construct(
         $name,
         $field,
         array $metrics = [],
         array $childBuckets = [],
+        array $pipelines = [],
         $nestedPath = null,
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null
@@ -85,6 +93,7 @@ abstract class AbstractBucket implements BucketInterface
         $this->field        = $field;
         $this->metrics      = $metrics;
         $this->childBuckets = $childBuckets;
+        $this->pipelines    = $pipelines;
         $this->nestedPath   = $nestedPath;
         $this->filter       = $filter;
         $this->nestedFilter = $nestedFilter;
@@ -153,5 +162,13 @@ abstract class AbstractBucket implements BucketInterface
     public function getChildBuckets()
     {
         return $this->childBuckets;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPipelines()
+    {
+        return $this->pipelines;
     }
 }

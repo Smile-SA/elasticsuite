@@ -6,7 +6,7 @@
  * versions in the future.
  *
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
@@ -19,11 +19,13 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilderInterface;
 
 /**
  * Search adapter aggregation builder test case.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
@@ -46,7 +48,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
 
         for ($i = 1; $i <= 2; $i++) {
             $aggregationName = sprintf('aggregation%s', $i);
-            $this->processSimpleAggregartionAssertions($aggregationName, $aggregations);
+            $this->processSimpleAggregationAssertions($aggregationName, $aggregations);
         }
     }
 
@@ -67,7 +69,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
+        $this->processSimpleAggregationAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -92,7 +94,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
+        $this->processSimpleAggregationAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -111,7 +113,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $aggregation);
 
         $aggregations = $this->getSubAggregations($aggregation);
-        $this->processSimpleAggregartionAssertions('aggregation', $aggregations);
+        $this->processSimpleAggregationAssertions('aggregation', $aggregations);
     }
 
     /**
@@ -129,6 +131,22 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test building an aggregation with a simple pipeline aggregation
+     *
+     * @return void
+     */
+    public function testBuildPipelinedAggregation()
+    {
+        $buckets = [$this->createPipelinedBucket('aggregation', 'bucketType', 'pipeline', 'pipelineType')];
+        $aggregations = $this->getAggregationBuilder()->buildAggregations($buckets);
+
+        $aggregation = $this->getAggregationByName($aggregations, 'aggregation');
+        $subAggregations = $this->getSubAggregations($aggregation);
+        $this->assertArrayHasKey('pipeline', $subAggregations);
+        $this->assertEquals(['type' => 'pipelineType'], $subAggregations['pipeline']);
+    }
+
+    /**
      * Prepare the aggregation builder used by the test case.
      *
      * @return AggregationBuilder
@@ -143,24 +161,37 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         };
         $aggregationBuilderMock->method('buildBucket')->will($this->returnCallback($buildBucketCallback));
 
-        return new AggregationBuilder($queryBuilder, ['bucketType' => $aggregationBuilderMock]);
+        $pipelineBuilderMock = $this->getMockBuilder(PipelineBuilderInterface::class)->getMock();
+        $buildPipelineCallback = function (PipelineInterface $pipeline) {
+            return ['type' => $pipeline->getType()];
+        };
+        $pipelineBuilderMock->method('buildPipeline')->will($this->returnCallback($buildPipelineCallback));
+
+        return new AggregationBuilder(
+            $queryBuilder,
+            ['bucketType' => $aggregationBuilderMock],
+            ['pipelineType' => $pipelineBuilderMock]
+        );
     }
 
     /**
      * Create a simple bucket.
      *
-     * @param string $name Bucket name.
-     * @param string $type Bucket type.
+     * @param string $name      Bucket name.
+     * @param string $type      Bucket type.
+     * @param array  $metrics   Bucket metrics.
+     * @param array  $pipelines Bucket pipeline aggregations.
      *
      * @return PHPUnit_Framework_MockObject_MockObject
      */
-    private function createBucket($name, $type)
+    private function createBucket($name, $type, $metrics = [], $pipelines = [])
     {
         $bucket = $this->getMockBuilder(BucketInterface::class)->getMock();
 
         $bucket->method('getName')->will($this->returnValue($name));
         $bucket->method('getType')->will($this->returnValue($type));
-        $bucket->method('getMetrics')->will($this->returnValue([]));
+        $bucket->method('getMetrics')->will($this->returnValue($metrics));
+        $bucket->method('getPipelines')->will($this->returnValue($pipelines));
 
         return $bucket;
     }
@@ -219,6 +250,42 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Create a bucket aggregation with a single pipeline.
+     *
+     * @param string $name         Bucket name.
+     * @param string $type         Bucket type.
+     * @param string $pipelineName Pipeline name.
+     * @param string $pipelineType Pipeline type.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createPipelinedBucket($name, $type, $pipelineName, $pipelineType)
+    {
+        $pipeline = $this->createPipeline($pipelineName, $pipelineType);
+        $bucket   = $this->createBucket($name, $type, [], [$pipeline]);
+
+        return $bucket;
+    }
+
+    /**
+     * Create a pipeline aggregation.
+     *
+     * @param string $name Pipeline name.
+     * @param string $type Pipeline type.
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createPipeline($name, $type)
+    {
+        $pipeline = $this->getMockBuilder(PipelineInterface::class)->getMock();
+
+        $pipeline->method('getName')->will($this->returnValue($name));
+        $pipeline->method('getType')->will($this->returnValue($type));
+
+        return $pipeline;
+    }
+
+    /**
      * Mock a query builder.
      *
      * @return \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder
@@ -239,7 +306,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    private function processSimpleAggregartionAssertions($aggregationName, $aggregations)
+    private function processSimpleAggregationAssertions($aggregationName, $aggregations)
     {
         $this->assertArrayHasKey($aggregationName, $aggregations);
         $this->assertEquals(['type' => 'bucketType'], $aggregations[$aggregationName]);
@@ -264,9 +331,9 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * Return all subaggregations of parent aggregation.
      *
      * @param string $aggregation   Parent aggregation.
-     * @param number $expectedCount Expected number of subaggregation.
+     * @param int    $expectedCount Expected number of subaggregation.
      *
-     * @return string
+     * @return array
      */
     private function getSubAggregations($aggregation, $expectedCount = 1)
     {

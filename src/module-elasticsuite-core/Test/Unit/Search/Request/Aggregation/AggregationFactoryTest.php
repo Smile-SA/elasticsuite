@@ -6,7 +6,7 @@
  * versions in the future.
  *
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
@@ -15,10 +15,10 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
-use Smile\ElasticsuiteCore\Search\Request\AggregationInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
- * Search request aggregation builder test case.
+ * Search request bucket aggregation factory test case.
  *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore
@@ -34,7 +34,7 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
     public function testAggregationCreate()
     {
         $aggregation = $this->getAggregationFactory()->create('aggregationType', []);
-        $this->assertInstanceOf(AggregationInterface::class, $aggregation);
+        $this->assertInstanceOf(BucketInterface::class, $aggregation);
     }
 
     /**
@@ -57,9 +57,9 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private function getAggregationFactory()
     {
-        $aggregationMock = $this->getMockBuilder(AggregationInterface::class)->getMock();
+        $aggregationMock = $this->getMockBuilder(BucketInterface::class)->getMock();
 
-        $factoryName      = sprintf("%s%s", AggregationInterface::class, 'Factory');
+        $factoryName      = sprintf("%s%s", BucketInterface::class, 'Factory');
         $aggregationFactoryMock = $this->getMockBuilder($factoryName)
             ->setMethods(['create'])
             ->getMock();

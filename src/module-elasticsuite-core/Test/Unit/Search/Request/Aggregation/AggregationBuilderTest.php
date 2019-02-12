@@ -6,7 +6,7 @@
  * versions in the future.
  *
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
@@ -23,11 +23,12 @@ use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory;
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
 
 /**
- * Search request query builder test case.
+ * Search request aggregation builder test case.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
@@ -40,7 +41,12 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testSimpleAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder(
+            $this->getAggregationFactory(),
+            $this->getMetricFactory(),
+            $this->getPipelineFactory(),
+            $this->getQueryBuilder()
+        );
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -68,7 +74,12 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testFilteredAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder(
+            $this->getAggregationFactory(),
+            $this->getMetricFactory(),
+            $this->getPipelineFactory(),
+            $this->getQueryBuilder()
+        );
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -103,7 +114,12 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder(
+            $this->getAggregationFactory(),
+            $this->getMetricFactory(),
+            $this->getPipelineFactory(),
+            $this->getQueryBuilder()
+        );
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations           = [
@@ -133,7 +149,12 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     public function testNestedFilteredAggBuilder()
     {
-        $builder = new AggregationBuilder($this->getAggregationFactory(), $this->getMetricFactory(), $this->getQueryBuilder());
+        $builder = new AggregationBuilder(
+            $this->getAggregationFactory(),
+            $this->getMetricFactory(),
+            $this->getPipelineFactory(),
+            $this->getQueryBuilder()
+        );
 
         $containerConfig = $this->getContainerConfiguration();
         $aggregations    = [
@@ -232,5 +253,15 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     private function getMetricFactory()
     {
         return $this->getMockBuilder(MetricFactory::class)->getMock();
+    }
+
+    /**
+     * Pipeline aggregation factory used during tests.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getPipelineFactory()
+    {
+        return $this->getMockBuilder(PipelineFactory::class)->getMock();
     }
 }

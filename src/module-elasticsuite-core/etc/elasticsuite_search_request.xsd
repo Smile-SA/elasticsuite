@@ -16,7 +16,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="requests">
         <xs:complexType>
@@ -62,7 +62,9 @@
     <xs:complexType name="aggregationDefinition" abstract="true">
         <xs:all>
             <xs:element name="aggregations" type="aggregationsDefinition" minOccurs="0" />
+            <xs:element name="filters" type="filtersDefinition" minOccurs="0" />
             <xs:element name="metrics" type="metricsDefinition" minOccurs="0"/>
+            <xs:element name="pipelines" type="pipelinesDefinition" minOccurs="0" />
         </xs:all>
         <xs:attribute type="xs:string" name="name" use="required" />
     </xs:complexType>
@@ -111,7 +113,7 @@
             <xs:extension base="histogramBucket" />
         </xs:complexContent>
     </xs:complexType>
-
+    
     <xs:complexType name="metricsDefinition">
         <xs:sequence maxOccurs="unbounded" minOccurs="0">
             <xs:element name="metric" type="metricDefinition" />
@@ -124,4 +126,42 @@
         <xs:attribute type="xs:string" name="field" use="required" />
     </xs:complexType>
 
+    <xs:complexType name="pipelinesDefinition">
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="pipeline" type="pipelineDefinition" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="pipelineDefinition">
+        <xs:all>
+            <!-- bucket sort pipeline does not require buckets_path. -->
+            <xs:element name="bucketsPath" type="bucketsPathDefinition" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+        <xs:attribute type="xs:string" name="name" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="bucketsPathDefinition">
+        <xs:choice>
+            <xs:element name="path" type="xs:string" />
+            <xs:element name="mapping" type="bucketsPathMappingDefinition" maxOccurs="unbounded" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="bucketsPathMappingDefinition">
+        <!-- mapping text value is the path, paramName holds the variable which it is mapped to. -->
+        <xs:simpleContent>
+            <xsd:extension base="xs:string">
+                <xs:attribute name="paramName" type="xs:string" use="required" />
+            </xsd:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="bucketSelectorPipeline">
+        <xs:complexContent>
+            <xs:extension base="pipelineDefinition">
+                <xs:attribute type="xs:string" name="script" use="required" />
+                <xs:attribute type="xs:string" name="gapPolicy" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 </xs:schema>

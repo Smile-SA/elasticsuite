@@ -75,4 +75,11 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
      * @return BucketInterface[]
      */
     public function getChildBuckets();
+
+    /**
+     * Returns child pipeline aggregations
+     *
+     * @return PipelineInterface[]
+     */
+    public function getPipelines();
 }

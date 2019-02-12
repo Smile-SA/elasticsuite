@@ -45,19 +45,27 @@ class AggregationBuilder
     private $metricFactory;
 
     /**
+     * @var PipelineFactory
+     */
+    private $pipelineFactory;
+
+    /**
      * Constructor.
      *
      * @param AggregationFactory $aggregationFactory Factory used to instantiate buckets.
      * @param MetricFactory      $metricFactory      Factory used to instantiate metrics.
+     * @param PipelineFactory    $pipelineFactory    Factory used to instantiate pipelines.
      * @param QueryBuilder       $queryBuilder       Factory used to create queries inside filtered or nested aggs.
      */
     public function __construct(
         AggregationFactory $aggregationFactory,
         MetricFactory $metricFactory,
+        PipelineFactory $pipelineFactory,
         QueryBuilder $queryBuilder
     ) {
         $this->aggregationFactory = $aggregationFactory;
         $this->metricFactory      = $metricFactory;
+        $this->pipelineFactory    = $pipelineFactory;
         $this->queryBuilder       = $queryBuilder;
     }
 
@@ -93,7 +101,7 @@ class AggregationBuilder
     private function buildAggregation(ContainerConfigurationInterface $containerConfig, $filters, $bucketParams)
     {
         $bucketType = $bucketParams['type'];
-        $fieldName  = isset($bucketParams['field']) ? $bucketParams['field'] : $bucketParams['name'];
+        $fieldName  = $bucketParams['field'] ?? $bucketParams['name'];
 
         try {
             $field = $containerConfig->getMapping()->getField($fieldName);
@@ -107,6 +115,11 @@ class AggregationBuilder
             $bucketParams['field'] = $fieldName;
         }
 
+        // Merge container/aggregation defined aggregation filters with global request filters.
+        $filters = array_merge($filters, $bucketParams['filters'] ?? []);
+        unset($bucketParams['filters']);
+
+        // Ensure any globally applied (attribute layered navigation) filter is NOT applied on the (most likely) originating agg.
         $bucketFilters = array_diff_key($filters, [$fieldName => true]);
         if (!empty($bucketFilters)) {
             $bucketParams['filter'] = $this->createFilter($containerConfig, $bucketFilters);
@@ -125,6 +138,8 @@ class AggregationBuilder
             $bucketParams['nestedFilter'] = $nestedFilter;
         }
 
+        $bucketParams = $this->createPipelines($bucketParams);
+
         return $this->aggregationFactory->create($bucketType, $bucketParams);
     }
 
@@ -140,5 +155,24 @@ class AggregationBuilder
     private function createFilter(ContainerConfigurationInterface $containerConfig, array $filters, $currentPath = null)
     {
         return $this->queryBuilder->create($containerConfig, $filters, $currentPath);
+    }
+
+    /**
+     * Parse bucket params and create PipelineInterface instances
+     *
+     * @param array $bucketParams Bucket params.
+     *
+     * @return array
+     */
+    private function createPipelines($bucketParams)
+    {
+        if (isset($bucketParams['pipelines'])) {
+            foreach ($bucketParams['pipelines'] as &$pipelineParams) {
+                $pipelineType = $pipelineParams['type'];
+                $pipelineParams = $this->pipelineFactory->create($pipelineType, $pipelineParams);
+            }
+        }
+
+        return $bucketParams;
     }
 }

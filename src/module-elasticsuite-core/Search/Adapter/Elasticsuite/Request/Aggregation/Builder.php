@@ -36,16 +36,26 @@ class Builder
     private $builders;
 
     /**
+     * @var PipelineBuilderInterface[]
+     */
+    private $pipelineBuilders;
+
+    /**
      * Constructor.
      *
-     * @param QueryBuilder       $queryBuilder Query builder used to build
-     *                                         Queries inside sort orders.
-     * @param BuilderInterface[] $builders     Aggregation builder implementations
+     * @param QueryBuilder               $queryBuilder     Query builder used to build
+     *                                                     Queries inside sort orders.
+     * @param BuilderInterface[]         $builders         Aggregation builder implementations
+     * @param PipelineBuilderInterface[] $pipelineBuilders Pipeline aggregation builder implementations
      */
-    public function __construct(QueryBuilder $queryBuilder, array $builders = [])
-    {
+    public function __construct(
+        QueryBuilder $queryBuilder,
+        array $builders = [],
+        array $pipelineBuilders = []
+    ) {
         $this->queryBuilder = $queryBuilder;
         $this->builders     = $builders;
+        $this->pipelineBuilders = $pipelineBuilders;
     }
 
     /**
@@ -62,8 +72,8 @@ class Builder
         foreach ($buckets as $bucket) {
             $bucketType = $bucket->getType();
             $builder    = $this->getBuilder($bucketType);
-            $aggregation = $builder->buildBucket($bucket);
-            $subAggregations = isset($aggregation['aggregations']) ? $aggregation['aggregations'] : [];
+            $aggregation     = $builder->buildBucket($bucket);
+            $subAggregations = $aggregation['aggregations'] ?? [];
 
             if (!empty($bucket->getChildBuckets())) {
                 $subAggregations = array_merge($subAggregations, $this->buildAggregations($bucket->getChildBuckets()));
@@ -71,6 +81,13 @@ class Builder
 
             foreach ($bucket->getMetrics() as $metric) {
                 $subAggregations[$metric->getName()] = [$metric->getType() => ['field' => $metric->getField()]];
+            }
+
+            foreach ($bucket->getPipelines() as $pipeline) {
+                $pipelineType    = $pipeline->getType();
+                $pipelineBuilder = $this->getPipelineBuilder($pipelineType);
+                $pipelineAgg     = $pipelineBuilder->buildPipeline($pipeline);
+                $subAggregations[$pipeline->getName()] = $pipelineAgg;
             }
 
             if (!empty($subAggregations)) {
@@ -118,5 +135,21 @@ class Builder
         }
 
         return $this->builders[$bucketType];
+    }
+
+    /**
+     * Retrieve the builder used to convert a pipeline into an ES aggregation.
+     *
+     * @param string $pipelineType Pipeline type to be built.
+     *
+     * @return PipelineBuilderInterface
+     */
+    private function getPipelineBuilder($pipelineType)
+    {
+        if (!isset($this->pipelineBuilders[$pipelineType])) {
+            throw new \InvalidArgumentException("No builder found for pipeline aggregation type {$pipelineType}.");
+        }
+
+        return $this->pipelineBuilders[$pipelineType];
     }
 }
