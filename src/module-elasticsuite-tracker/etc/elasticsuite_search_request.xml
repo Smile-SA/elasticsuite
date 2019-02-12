@@ -26,7 +26,26 @@
                     <aggregation xsi:type="termBucket" name="product_view" field="page.product.id"/>
                     <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
                     <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
-                    <aggregation xsi:type="termBucket" name="search_query" field="page.search.query.sortable" />
+                    <aggregation xsi:type="termBucket" name="search_query" field="page.search.query.sortable">
+                        <!-- only collect search terms with (in average) a number of results greater than 0 -->
+                        <!-- TODO decide if we really want to alter the session aggregation behavior in such a non-BC way -->
+                        <metrics>
+                            <metric name="search_result_count" type="sum" field="page.product_list.product_count" />
+                        </metrics>
+                        <pipelines>
+                            <pipeline xsi:type="bucketSelectorPipeline" name="query_with_results" script="params.search_result_count > 0">
+                                <bucketsPath>
+                                    <mapping paramName="search_result_count"><![CDATA[search_result_count]]></mapping>
+                                </bucketsPath>
+                            </pipeline>
+                        </pipelines>
+                    </aggregation>
+                    <!-- search terms which return 0 results -->
+                    <aggregation xsi:type="termBucket" name="search_query_void" field="page.search.query.sortable">
+                        <filters>
+                            <filter name="with_results">Smile\ElasticsuiteTracker\Model\Event\Search\Request\Container\AggregationFilter\WithoutSearchResults</filter>
+                        </filters>
+                    </aggregation>
                     <aggregation xsi:type="termBucket" name="product_cart" field="page.cart.product_id" />
                     <aggregation xsi:type="termBucket" name="product_sale" field="page.order.items.product_id" />
                     <aggregation xsi:type="termBucket" name="category_sale" field="page.order.items.category_ids" />

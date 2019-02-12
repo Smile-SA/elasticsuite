@@ -22,11 +22,16 @@ namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage;
 class Kpi extends \Magento\Backend\Block\Template
 {
     /**
+     * @var \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report
+     */
+    private $report;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Backend\Block\Template\Context                    $context
-     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report
-     * @param array                                                      $data
+     * @param \Magento\Backend\Block\Template\Context                    $context Context.
+     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report  Report model.
+     * @param array                                                      $data    Data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -38,6 +43,7 @@ class Kpi extends \Magento\Backend\Block\Template
     }
 
     /**
+     * Get report data
      *
      * @return array()
      */

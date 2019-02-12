@@ -5,7 +5,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @package   Smile\ElasticsuiteAnalytics
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -17,6 +17,12 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 use Smile\ElasticsuiteAnalytics\Model\Report\AggregationProviderInterface;
 
+/**
+ * Search usage KPI AggregationProvider
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class AggregationProvider implements AggregationProviderInterface
 {
     /**
@@ -30,11 +36,16 @@ class AggregationProvider implements AggregationProviderInterface
     private $metricFactory;
 
     /**
-     *
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
 
+    /**
+     * AggregationProvider constructor.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory Aggregation factory.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory      $metricFactory      Metric factory.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory             $queryFactory       Query factory.
+     */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory,
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory $metricFactory,
@@ -45,6 +56,9 @@ class AggregationProvider implements AggregationProviderInterface
         $this->queryFactory         = $queryFactory;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAggregation()
     {
         $aggParams = [
@@ -56,16 +70,30 @@ class AggregationProvider implements AggregationProviderInterface
         return $this->aggregationFactory->create(BucketInterface::TYPE_QUERY_GROUP, $aggParams);
     }
 
+    /**
+     * Return metrics aggregations to apply to the main bucket aggregation
+     *
+     * @return array
+     */
     private function getMetrics()
     {
         $metrics = [
-            $this->metricFactory->create(['name' => 'unique_sessions', 'field' => 'session.uid', 'type' => MetricInterface::TYPE_CARDINALITY]),
-            $this->metricFactory->create(['name' => 'unique_visitors', 'field' => 'session.vid', 'type' => MetricInterface::TYPE_CARDINALITY]),
+            $this->metricFactory->create(
+                ['name' => 'unique_sessions', 'field' => 'session.uid', 'type' => MetricInterface::TYPE_CARDINALITY]
+            ),
+            $this->metricFactory->create(
+                ['name' => 'unique_visitors', 'field' => 'session.vid', 'type' => MetricInterface::TYPE_CARDINALITY]
+            ),
         ];
 
         return $metrics;
     }
 
+    /**
+     * Return the queries of the query group aggregation.
+     *
+     * @return array
+     */
     private function getQueries()
     {
         $queries = [
@@ -77,7 +105,7 @@ class AggregationProvider implements AggregationProviderInterface
                 QueryInterface::TYPE_TERM,
                 [
                     'field' => 'page.type.identifier',
-                    'value' => 'catalogsearch_result_index'
+                    'value' => 'catalogsearch_result_index',
                 ]
             ),
         ];

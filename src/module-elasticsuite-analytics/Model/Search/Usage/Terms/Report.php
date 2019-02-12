@@ -5,8 +5,8 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
- * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -15,6 +15,12 @@ namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms;
 use Smile\ElasticsuiteAnalytics\Model\AbstractReport;
 use Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder;
 
+/**
+ * Search terms Report
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class Report extends AbstractReport implements \Magento\Framework\View\Element\Block\ArgumentInterface
 {
     /**
@@ -38,6 +44,9 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
         $this->postProcessors = $postProcessors;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
         $data = [];
@@ -51,14 +60,21 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
                 'conversion_rate' => number_format(0, 2),
             ];
         }
-        
-        foreach($this->postProcessors as $postProcessor) {
+
+        foreach ($this->postProcessors as $postProcessor) {
             $data = $postProcessor->postProcessResponse($data);
         }
 
         return $data;
-     }
+    }
 
+    /**
+     * Return the bucket values from the main aggregation
+     *
+     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response ES Query response.
+     *
+     * @return \Magento\Framework\Api\Search\AggregationValueInterface[]
+     */
     private function getValues(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
         $bucket = $response->getAggregations()->getBucket('search_terms');

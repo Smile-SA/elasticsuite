@@ -74,5 +74,5 @@ abstract class AbstractReport
      *
      * @return array
      */
-    protected abstract function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response);
+    abstract protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response);
 }

@@ -5,13 +5,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
- * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage;
 
+/**
+ * Block used to display search terms in the search usage dashboard.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class SearchTerms extends \Magento\Backend\Block\Template
 {
     /**
@@ -19,6 +25,12 @@ class SearchTerms extends \Magento\Backend\Block\Template
      */
     private $queryFactory;
 
+    /**
+     * SearchTerms constructor.
+     * @param \Magento\Backend\Block\Template\Context $context      Context.
+     * @param \Magento\Search\Model\QueryFactory      $queryFactory Query factory.
+     * @param array                                   $data         Data.
+     */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Search\Model\QueryFactory $queryFactory,
@@ -28,6 +40,11 @@ class SearchTerms extends \Magento\Backend\Block\Template
         $this->queryFactory = $queryFactory;
     }
 
+    /**
+     * Get terms data from the report.
+     *
+     * @return mixed
+     */
     public function getTermsData()
     {
         $data = $this->getReport()->getData();
@@ -39,6 +56,13 @@ class SearchTerms extends \Magento\Backend\Block\Template
         return $data;
     }
 
+    /**
+     * Get the term merchandiser URL for a given search term.
+     *
+     * @param string $term Search term.
+     *
+     * @return string
+     */
     private function getMerchandiserUrl($term)
     {
         $query = $this->queryFactory->create();

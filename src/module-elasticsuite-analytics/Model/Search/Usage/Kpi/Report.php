@@ -14,10 +14,29 @@ namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi;
 
 use Smile\ElasticsuiteAnalytics\Model\AbstractReport;
 
+/**
+ * Search usage KPI Report
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class Report extends AbstractReport
 {
-    private $defaultKeys = ['page_view_counts', 'sessions_count', 'visitors_count', 'search_page_views_count', 'search_sessions_count', 'search_usage_rate'];
+    /**
+     * @var array
+     */
+    private $defaultKeys = [
+        'page_view_counts',
+        'sessions_count',
+        'visitors_count',
+        'search_page_views_count',
+        'search_sessions_count',
+        'search_usage_rate',
+    ];
 
+    /**
+     * {@inheritdoc}
+     */
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
         $data = array_merge(array_fill_keys($this->defaultKeys, 0), ['page_views_count' => $response->count()]);
@@ -36,10 +55,17 @@ class Report extends AbstractReport
         return $data;
      }
 
-     private function getBucketValues(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
-     {
+    /**
+     * Return the bucket values from the main aggregation
+     *
+     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response ES Query response.
+     *
+     * @return \Magento\Framework\Api\Search\AggregationValueInterface[]
+     */
+    private function getBucketValues(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
+    {
          $bucket = $response->getAggregations()->getBucket('data');
 
          return $bucket !== null ? $bucket->getValues() : [];
-     }
+    }
 }

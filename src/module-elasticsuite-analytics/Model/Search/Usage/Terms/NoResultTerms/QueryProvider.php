@@ -5,18 +5,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @package   Smile\ElasticsuiteAnalytics
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms;
 
-
 use Smile\ElasticsuiteAnalytics\Model\Report\QueryProviderInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 
+/**
+ * No result terms QueryProvider
+ *
+ * @category   Smile
+ * @package    Smile\ElasticsuiteAnalytics
+ * @deprecated Using instead a customer aggregation provider with a pipeline filtering out on avg number of results.
+ */
 class QueryProvider implements QueryProviderInterface
 {
     /**
@@ -24,6 +30,11 @@ class QueryProvider implements QueryProviderInterface
      */
     private $queryFactory;
 
+    /**
+     * QueryProvider constructor.
+     *
+     * @param QueryFactory $queryFactory Query factory.
+     */
     public function __construct(QueryFactory $queryFactory)
     {
         $this->queryFactory = $queryFactory;
