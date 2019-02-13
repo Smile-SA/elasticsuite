@@ -93,6 +93,9 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
         $this->containerName        = $containerName;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function postProcessResponse($data)
     {
         $terms = array_keys($data);
@@ -100,7 +103,10 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
         $storeId        = $this->context->getStoreId();
         $from           = 0;
         $size           = 0;
-        $searchQuery    = $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'search_query.untouched', 'values' => $terms]);
+        $searchQuery    = $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            ['field' => 'search_query.untouched', 'values' => $terms]
+        );
         $queryFilters   = $this->getQueryFilters();
 
         $facets = [
@@ -111,19 +117,31 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
                         $this->aggregationFactory->create(
                             BucketInterface::TYPE_QUERY_GROUP,
                             [
-                                'queries' => ['sales' => $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'product_sale'])],
+                                'queries' => [
+                                    'sales' => $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'product_sale']),
+                                ],
                                 'name' => 'conversion',
                             ]
-                        )
+                        ),
                     ],
                     'size' => count($terms),
                     'field' => 'search_query.untouched',
                     'name' => 'search_terms',
                 ]
-            )
+            ),
         ];
 
-        $searchRequest  = $this->searchRequestBuilder->create($storeId, $this->containerName, $from, $size, $searchQuery, [], [], $queryFilters, $facets);
+        $searchRequest  = $this->searchRequestBuilder->create(
+            $storeId,
+            $this->containerName,
+            $from,
+            $size,
+            $searchQuery,
+            [],
+            [],
+            $queryFilters,
+            $facets
+        );
         $searchResponse = $this->searchEngine->search($searchRequest);
 
         foreach ($searchResponse->getAggregations()->getBucket('search_terms')->getValues() as $value) {
@@ -143,6 +161,11 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
         return $data;
     }
 
+    /**
+     * Get query filters.
+     *
+     * @return array
+     */
     private function getQueryFilters()
     {
         $queries = [];

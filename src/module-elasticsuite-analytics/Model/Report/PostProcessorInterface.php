@@ -15,6 +15,12 @@
 
 namespace Smile\ElasticsuiteAnalytics\Model\Report;
 
+/**
+ * Post processor interface.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 interface PostProcessorInterface
 {
     /**

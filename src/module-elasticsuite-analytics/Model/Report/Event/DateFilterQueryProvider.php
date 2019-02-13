@@ -5,19 +5,24 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @package   Smile\ElasticsuiteAnalytics
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteAnalytics\Model\Report\Event;
 
-
 use Smile\ElasticsuiteAnalytics\Model\Report\QueryProviderInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteAnalytics\Model\Report\Context;
 
+/**
+ * Date filter query provider
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class DateFilterQueryProvider implements QueryProviderInterface
 {
     /**
@@ -30,6 +35,12 @@ class DateFilterQueryProvider implements QueryProviderInterface
      */
     private $context;
 
+    /**
+     * DateFilterQueryProvider constructor.
+     *
+     * @param QueryFactory $queryFactory Query factory.
+     * @param Context      $context      Report context.
+     */
     public function __construct(QueryFactory $queryFactory, Context $context)
     {
         $this->queryFactory = $queryFactory;
@@ -46,6 +57,11 @@ class DateFilterQueryProvider implements QueryProviderInterface
         return $this->queryFactory->create(QueryInterface::TYPE_RANGE, $queryParams);
     }
 
+    /**
+     * Get date range.
+     *
+     * @return array
+     */
     private function getDateRange()
     {
         $range = $this->context->getDateRange();

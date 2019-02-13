@@ -36,6 +36,7 @@ class Report extends AbstractReport
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
@@ -53,7 +54,7 @@ class Report extends AbstractReport
         }
 
         return $data;
-     }
+    }
 
     /**
      * Return the bucket values from the main aggregation

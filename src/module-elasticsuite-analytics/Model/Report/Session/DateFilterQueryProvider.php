@@ -18,7 +18,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteAnalytics\Model\Report\Context;
 
 /**
- * Class DateFilterQueryProvider
+ * Date filter query provider
  *
  * @category Smile
  * @package  Smile\ElasticsuiteAnalytics

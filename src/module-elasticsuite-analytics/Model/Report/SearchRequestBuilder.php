@@ -1,7 +1,24 @@
 <?php
+/**
+ * DISCLAIMER
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
 
 namespace Smile\ElasticsuiteAnalytics\Model\Report;
 
+/**
+ * Search request builder.
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
 class SearchRequestBuilder
 {
     /**
@@ -32,11 +49,11 @@ class SearchRequestBuilder
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder
-     * @param Context                                        $context
-     * @param AggregationProviderInterface[]                 $aggregationProviders
-     * @param QueryProviderInterface[]                       $queryProviders
-     * @param string                                         $containerName
+     * @param \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder Search request builder.
+     * @param Context                                        $context              Report context.
+     * @param AggregationProviderInterface[]                 $aggregationProviders Aggregation providers.
+     * @param QueryProviderInterface[]                       $queryProviders       Query providers.
+     * @param string                                         $containerName        Container name.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
@@ -53,6 +70,7 @@ class SearchRequestBuilder
     }
 
     /**
+     * Get request.
      *
      * @return \Smile\ElasticsuiteCore\Search\RequestInterface
      */
@@ -65,6 +83,11 @@ class SearchRequestBuilder
         return $this->searchRequestBuilder->create($storeId, $this->containerName, 0, 0, null, [], [], $searchQuery, $aggregations);
     }
 
+    /**
+     * Get query filters.
+     *
+     * @return array
+     */
     private function getSearchQuery()
     {
         $queries = [];
@@ -76,6 +99,11 @@ class SearchRequestBuilder
         return array_filter($queries);
     }
 
+    /**
+     * Get aggregations.
+     *
+     * @return array
+     */
     private function getAggregations()
     {
         $aggs = [];
