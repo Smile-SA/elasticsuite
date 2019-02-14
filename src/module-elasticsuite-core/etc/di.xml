@@ -471,4 +471,10 @@
     <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
         <plugin name="stemmer_override_plugin" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\IndexSettings"/>
     </type>
+
+    <!-- ElasticSearch <7 deprecation plugins -->
+    <type name="Smile\ElasticsuiteCore\Index\Mapping">
+        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\MappingPlugin"/>
+    </type>
+
 </config>
