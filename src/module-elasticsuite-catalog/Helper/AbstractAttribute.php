@@ -172,7 +172,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        $value = array_diff(array_map('trim', $value), ['', null, false]);
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
@@ -272,7 +272,7 @@ abstract class AbstractAttribute extends Mapping
     private function prepareSimpleIndexAttributeValue(AttributeInterface $attribute, $value)
     {
         if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
-            $value = boolval($value);
+            $value = intval($value);
         } elseif ($attribute->getBackendType() == 'decimal') {
             $value = floatval($value);
         } elseif ($attribute->getBackendType() == 'int') {

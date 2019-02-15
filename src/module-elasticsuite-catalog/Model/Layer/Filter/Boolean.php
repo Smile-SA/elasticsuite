@@ -26,9 +26,9 @@ class Boolean extends Attribute
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        $attributeValue = (bool) $request->getParam($this->_requestVar);
+        $attributeValue = $request->getParam($this->_requestVar, null);
 
-        if (!empty($attributeValue)) {
+        if ($attributeValue !== null) {
             if (!is_array($attributeValue)) {
                 $attributeValue = [$attributeValue];
             }
@@ -88,11 +88,9 @@ class Boolean extends Attribute
         foreach ($this->_items as $item) {
             $applyValue = $item->getLabel();
 
-            if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
-                if (is_numeric($item->getLabel())) {
-                    $label = $this->getAttributeModel()->getSource()->getOptionText((int) $item->getLabel());
-                    $item->setLabel((string) $label);
-                }
+            if (is_numeric($item->getLabel())) {
+                $label = $this->getAttributeModel()->getSource()->getOptionText((int) $item->getLabel());
+                $item->setLabel((string) $label);
             }
 
             if (($valuePos = array_search($applyValue, $this->currentFilterValue)) !== false) {
