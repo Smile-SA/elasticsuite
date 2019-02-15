@@ -88,4 +88,13 @@ interface IndexSettingsInterface
      * @return integer
      */
     public function getBatchIndexingSize();
+
+    /**
+     * Get dynamic index settings per store (language).
+     *
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store Store.
+     *
+     * @return array
+     */
+    public function getDynamicIndexSettings($store);
 }

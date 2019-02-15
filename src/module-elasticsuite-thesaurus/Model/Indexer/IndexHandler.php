@@ -112,6 +112,7 @@ class IndexHandler
             'max_shingle_size' => ThesaurusIndex::MAX_SIZE,
         ];
 
+        $settings['max_shingle_diff'] = $this->indexSettingsHelper->getMaxShingleDiff($settings['analysis']);
         $settings['analysis']['filter']['type_filter'] = [
             'type' => 'keep_types',
             'types' => [ "SYNONYM" ],

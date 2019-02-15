@@ -477,4 +477,8 @@
         <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\MappingPlugin"/>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Api\Client\ClientInterface">
+        <plugin name="indexSettingsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\ClientPlugin"/>
+    </type>
+
 </config>
