@@ -57,10 +57,9 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * Get min/from data.
+     * Get min/from date from context.
      *
      * @return string
-     * TODO ribay@smile.fr change from string to other format ?
      */
     public function getMinDate()
     {
@@ -68,10 +67,9 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * Get max/to date
+     * Get max/to date from context.
      *
      * @return string
-     * TODO ribay@smile.fr change from string to other format ?
      */
     public function getMaxDate()
     {
@@ -96,8 +94,8 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
     }
 
     /**
-     * Return the date format
-     * TODO ribay@smile.fr be more explicit, which date format ?
+     * Return the date format used by the JS date picker.
+     *
      * @return string
      */
     private function getDateFormat()

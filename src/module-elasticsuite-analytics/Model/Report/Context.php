@@ -22,6 +22,16 @@ namespace Smile\ElasticsuiteAnalytics\Model\Report;
 class Context
 {
     /**
+     * @var string
+     */
+    const DEFAULT_FROM_DATE = 'today - 7 days';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_TO_DATE = 'today';
+
+    /**
      * @var \Magento\Framework\App\RequestInterface
      */
     private $request;
@@ -53,17 +63,25 @@ class Context
      */
     public function getDateRange()
     {
+        $fromDate = $this->request->getParam('from', self::DEFAULT_FROM_DATE);
+        if ($fromDate !== self::DEFAULT_FROM_DATE) {
+            $fromDate = base64_decode($fromDate);
+        }
+        $toDate = $this->request->getParam('to', self::DEFAULT_TO_DATE);
+        if ($toDate !== self::DEFAULT_TO_DATE) {
+            $toDate = base64_decode($toDate);
+        }
+
         $dateRange = [
-            'from' => $this->createDateFromText($this->request->getParam('from', 'today - 7days')),
-            'to'   => $this->createDateFromText($this->request->getParam('to', 'today')),
+            'from' => $this->createDateFromText($fromDate),
+            'to'   => $this->createDateFromText($toDate),
         ];
 
         return $this->sortDateRange($dateRange);
     }
 
     /**
-     * Convert and format string date to format expected by component.
-     * TODO ribay@smile.fr clarify
+     * Convert a DateTime compatible date or expression into an ES compatible date format
      *
      * @param string $text Date as text.
      *
@@ -71,7 +89,13 @@ class Context
      */
     private function createDateFromText($text)
     {
-        return (new \DateTime($text))->format('Y-m-d');
+        try {
+            $date = new \DateTime($text);
+        } catch (\Exception $e) {
+            $date = new \DateTime(self::DEFAULT_TO_DATE);
+        }
+
+        return $date->format('Y-m-d');
     }
 
     /**

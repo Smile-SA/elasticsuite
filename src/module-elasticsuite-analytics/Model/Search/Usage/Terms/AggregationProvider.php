@@ -75,7 +75,7 @@ class AggregationProvider implements AggregationProviderInterface
             'name'      => 'search_terms',
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
-            'sortOrder' => ['unique_sessions' => 'desc'],
+            'sortOrder' => ['unique_sessions' => 'desc', 'result_count' => 'desc'],
             'size'      => 100, //@todo
         ];
 
