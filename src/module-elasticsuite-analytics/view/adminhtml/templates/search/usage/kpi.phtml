@@ -8,6 +8,11 @@ $data = $block->getKpi();
 
 <div class="dashboard-main col-m-10 col-m-push-1">
     <div class="dashboard-totals">
+        <?php if (empty($data)) : ?>
+            <div class="empty-text" style="width:100%; text-align:center">
+                <em><?= __('No data over the selected period.'); ?></em>
+            </div>
+        <?php else : ?>
         <ul class="dashboard-totals-list">
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
                 <span class="dashboard-totals-label">Searches</span>
@@ -52,6 +57,6 @@ $data = $block->getKpi();
                 </strong>
             </li>
         </ul>
+        <?php endif; ?>
     </div>
 </div>
-

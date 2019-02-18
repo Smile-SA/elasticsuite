@@ -15,6 +15,10 @@ namespace Smile\ElasticsuiteAnalytics\Controller\Adminhtml\Search;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\View\Result\PageFactory;
+use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteAnalytics\Model\Report\Context as ReportContext;
+use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
+use Smile\ElasticsuiteTracker\Api\SessionIndexInterface;
 
 /**
  * Search usage analytics dashboard controller.
@@ -26,6 +30,16 @@ use Magento\Framework\View\Result\PageFactory;
 class Usage extends Action
 {
     /**
+     * @var IndexOperationInterface
+     */
+    private $indexOperation;
+
+    /**
+     * @var ReportContext
+     */
+    private $reportContext;
+
+    /**
      * @var PageFactory
      */
     private $resultPageFactory;
@@ -33,13 +47,21 @@ class Usage extends Action
     /**
      * Constructor.
      *
-     * @param Context     $context           Context
-     * @param PageFactory $resultPageFactory Result page factory.
+     * @param Context                 $context           Context.
+     * @param IndexOperationInterface $indexOperation    Index operation.
+     * @param ReportContext           $reportContext     Report context.
+     * @param PageFactory             $resultPageFactory Result page factory.
      */
-    public function __construct(Context $context, PageFactory $resultPageFactory)
-    {
+    public function __construct(
+        Context $context,
+        IndexOperationInterface $indexOperation,
+        ReportContext $reportContext,
+        PageFactory $resultPageFactory
+    ) {
         parent::__construct($context);
-        $this->resultPageFactory = $resultPageFactory;
+        $this->indexOperation           = $indexOperation;
+        $this->reportContext            = $reportContext;
+        $this->resultPageFactory        = $resultPageFactory;
     }
 
     /**
@@ -49,6 +71,15 @@ class Usage extends Action
      */
     public function execute()
     {
+        $indexIdentifiers = [SessionIndexInterface::INDEX_IDENTIFIER, EventIndexInterface::INDEX_IDENTIFIER];
+        foreach ($indexIdentifiers as $indexIdentifier) {
+            if (!$this->checkIndexPresence($indexIdentifier)) {
+                $this->messageManager->addWarningMessage(
+                    "{$indexIdentifier} index does not exist yet. Make sure everything is reindexed."
+                );
+            }
+        }
+
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('Smile_ElasticsuiteAnalytics::search_usage');
@@ -56,5 +87,17 @@ class Usage extends Action
         $resultPage->getConfig()->getTitle()->prepend(__('Search Usage Analytics'));
 
         return $resultPage;
+    }
+
+    /**
+     * Check an index is available
+     *
+     * @param string $indexIdentifier Index identifier.
+     *
+     * @return boolean
+     */
+    private function checkIndexPresence($indexIdentifier)
+    {
+        return $this->indexOperation->indexExists($indexIdentifier, $this->reportContext->getStoreId());
     }
 }

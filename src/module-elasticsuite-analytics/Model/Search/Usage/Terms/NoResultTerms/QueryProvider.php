@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
  *
  * @category   Smile
  * @package    Smile\ElasticsuiteAnalytics
- * @deprecated Using instead a customer aggregation provider with a pipeline filtering out on avg number of results.
+ * @deprecated Using instead a custom aggregation provider with a pipeline filtering out on avg number of results.
  */
 class QueryProvider implements QueryProviderInterface
 {

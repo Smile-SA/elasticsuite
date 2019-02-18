@@ -49,6 +49,14 @@ class Kpi extends \Magento\Backend\Block\Template
      */
     public function getKpi()
     {
-        return $this->report->getData();
+        $data = [];
+
+        try {
+            $data = $this->report->getData();
+        } catch (\LogicException $e) {
+            ;
+        }
+
+        return $data;
     }
 }

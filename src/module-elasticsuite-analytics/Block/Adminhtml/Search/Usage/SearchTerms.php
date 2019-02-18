@@ -47,7 +47,13 @@ class SearchTerms extends \Magento\Backend\Block\Template
      */
     public function getTermsData()
     {
-        $data = $this->getReport()->getData();
+        $data = [];
+
+        try {
+            $data = $this->getReport()->getData();
+        } catch (\LogicException $e) {
+            ;
+        }
 
         foreach ($data as &$value) {
             $value['url'] = $this->getMerchandiserUrl($value['term']);
