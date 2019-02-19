@@ -13,7 +13,7 @@
                     <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('# Results (avg.)');?></span></th>
-                    <?php if ($block->getShowConversionRate()): ?>
+                    <?php if ($block->getShowConversionRate()) : ?>
                         <th class="data-grid-th no-link"><span><?= __('Conv. rate');?></span></th>
                     <?php endif; ?>
             </thead>
@@ -26,13 +26,13 @@
                         </td>
                     </tr>
                 <?php else : ?>
-                    <?php foreach($termsData as $termData) : ?>
+                    <?php foreach ($termsData as $termData) : ?>
                         <tr>
                         <td><a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a></td>
                         <td><?= $termData['sessions']; ?></td>
                         <td><?= $termData['visitors']; ?></td>
                         <td><?= $termData['result_count']; ?></td>
-                        <?php if ($block->getShowConversionRate()): ?>
+                        <?php if ($block->getShowConversionRate()) : ?>
                             <td><?= number_format($termData['conversion_rate'] * 100, 2); ?> %</td>
                         <?php endif; ?>
                         </tr>

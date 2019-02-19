@@ -15,42 +15,42 @@ $data = $block->getKpi();
         <?php else : ?>
         <ul class="dashboard-totals-list">
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Searches</span>
+                <span class="dashboard-totals-label"><?= __('Searches') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_page_views_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Page views</span>
+                <span class="dashboard-totals-label"><?= __('Page views') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['page_views_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Sessions</span>
+                <span class="dashboard-totals-label"><?= __('Sessions') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['sessions_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Sessions with search</span>
+                <span class="dashboard-totals-label"><?= __('Sessions with search') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_sessions_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Searches per session</span>
+                <span class="dashboard-totals-label"><?= __('Searches per session') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_usage_rate']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
             <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label">Visitors</span>
+                <span class="dashboard-totals-label"><?= __('Visitors') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['visitors_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
