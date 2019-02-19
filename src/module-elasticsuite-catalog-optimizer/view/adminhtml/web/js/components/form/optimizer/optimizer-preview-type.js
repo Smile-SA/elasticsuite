@@ -60,6 +60,26 @@ define([
             }, this);
 
             return result;
+        },
+
+        /**
+         * Prevent previewing containers not currently attached to the optimizer.
+         *
+         * @param searchContainers Current value of search_container field
+         * @returns {void}
+         */
+        onContainersUpdate: function(searchContainers) {
+            var options = [];
+
+            if (searchContainers.length > 0) {
+                this.initialOptions.forEach(function (option) {
+                    if (searchContainers.indexOf(option.value) !== -1) {
+                        options.push(option);
+                    }
+                }, this);
+
+                this.options(options);
+            }
         }
     });
 });

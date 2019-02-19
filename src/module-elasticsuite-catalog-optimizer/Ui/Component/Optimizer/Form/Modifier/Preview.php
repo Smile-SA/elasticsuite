@@ -60,13 +60,6 @@ class Preview implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
      */
     public function modifyData(array $data)
     {
-        $optimizer = $this->locator->getOptimizer();
-
-        if ($optimizer && $optimizer->getId()) {
-            $data[$optimizer->getId()]['preview_url']  = $this->getPreviewUrl();
-            $data[$optimizer->getId()]['price_format'] = $this->localeFormat->getPriceFormat();
-        }
-
         return $data;
     }
 
@@ -75,6 +68,13 @@ class Preview implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
      */
     public function modifyMeta(array $meta)
     {
+        $config = [
+            'loadUrl'      => $this->getPreviewUrl(),
+            'price_format' => $this->localeFormat->getPriceFormat(),
+        ];
+
+        $meta['optimizer_preview_fieldset']['children']['optimizer_preview']['arguments']['data']['config'] = $config;
+
         return $meta;
     }
 
