@@ -101,16 +101,19 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      */
     public function loadAttributeOptions()
     {
-        $productAttributes = $this->attributeList->getAttributeCollection();
-
-        $attributes = [];
-        foreach ($productAttributes as $attribute) {
-            $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendLabel();
-        }
-
+        $attributes        = [];
+        $productAttributes = [];
         $this->_addSpecialAttributes($attributes);
 
-        asort($attributes);
+        foreach ($this->attributeList->getAttributeCollection() as $attribute) {
+            if ($attribute->getFrontendLabel()) {
+                $label = sprintf('%s (%s)', $attribute->getFrontendLabel(), $attribute->getAttributeCode());
+                $productAttributes[$attribute->getAttributeCode()] = $label;
+            }
+        }
+
+        asort($productAttributes);
+        $attributes += $productAttributes;
         $this->setAttributeOption($attributes);
 
         return $this;
