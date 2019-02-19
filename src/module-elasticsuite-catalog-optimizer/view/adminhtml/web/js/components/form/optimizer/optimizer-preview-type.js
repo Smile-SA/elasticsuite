@@ -71,7 +71,12 @@ define([
         onContainersUpdate: function(searchContainers) {
             var options = [];
 
+            if (searchContainers.length === 0) {
+                this.disabled(true);
+            }
+
             if (searchContainers.length > 0) {
+                this.disabled(false);
                 this.initialOptions.forEach(function (option) {
                     if (searchContainers.indexOf(option.value) !== -1) {
                         options.push(option);
