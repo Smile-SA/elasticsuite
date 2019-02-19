@@ -86,7 +86,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
 
         $conditions = [
             $this->_getConditionSql('backend_type', ['in' => $this->availableBackendTypes]),
-            "backend_type = 'varchar' AND frontend_class = 'validate-number'",
+            "(backend_type = 'varchar' AND frontend_class = 'validate-number')",
+            "(backend_type = 'varchar' AND frontend_class = 'validate-digits')",
         ];
 
         $this->getSelect()->where(implode(' OR ', $conditions));
