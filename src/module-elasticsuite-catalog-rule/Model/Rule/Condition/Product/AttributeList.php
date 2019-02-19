@@ -113,9 +113,7 @@ class AttributeList
     {
         if ($this->attributeCollection === null) {
             $this->attributeCollection = $this->attributeCollectionFactory->create();
-
-            $mapping              = $this->getMapping();
-            $attributeNameMapping = array_flip($this->fieldNameMapping);
+            $attributeNameMapping      = array_flip($this->fieldNameMapping);
 
             $arrayNameCb = function (FieldInterface $field) use ($attributeNameMapping) {
                 $attributeName = $field->getName();
@@ -127,19 +125,7 @@ class AttributeList
                 return $attributeName;
             };
 
-            $attributeFilterCb = function (FieldInterface $field) use ($mapping) {
-                try {
-                    $fieldName           = $field->getName();
-                    $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
-                    $field               = $mapping->getField($optionTextFieldName);
-                } catch (\Exception $e) {
-                    ;
-                }
-
-                return $field->isFilterable() || $field->isSearchable();
-            };
-
-            $fieldNames = array_map($arrayNameCb, array_filter($this->getMapping()->getFields(), $attributeFilterCb));
+            $fieldNames = array_map($arrayNameCb, $this->getMapping()->getFields());
 
             $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames)
                  ->addFieldToFilter('backend_type', ['neq' => 'datetime']);
