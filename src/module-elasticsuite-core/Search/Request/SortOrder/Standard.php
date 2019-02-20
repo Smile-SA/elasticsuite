@@ -60,7 +60,7 @@ class Standard implements SortOrderInterface
         $this->name      = $name;
         $this->missing   = $missing;
         if ($this->missing === null) {
-            $this->missing = $direction == self::SORT_ASC ? self::MISSING_LAST : self::MISSING_FIRST;
+            $this->missing = strtolower($direction) == self::SORT_ASC ? self::MISSING_LAST : self::MISSING_FIRST;
         }
     }
 
