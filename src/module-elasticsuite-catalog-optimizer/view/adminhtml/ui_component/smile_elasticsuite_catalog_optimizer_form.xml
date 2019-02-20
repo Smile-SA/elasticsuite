@@ -702,6 +702,9 @@
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
                     </item>
+                    <item name="listens" xsi:type="array">
+                        <item name="${ $.provider }:data.search_container" xsi:type="string">onContainersUpdate</item>
+                    </item>
                     <item name="additionalClasses" xsi:type="string">search-container</item>
                 </item>
             </argument>
@@ -771,8 +774,6 @@
                         <item name="search_container_preview" xsi:type="string">search_container_preview</item>
                     </item>
                     <item name="imports" xsi:type="array">
-                        <item name="loadUrl" xsi:type="string">${ $.provider }:data.preview_url</item>
-                        <item name="priceFormat" xsi:type="string">${ $.provider }:data.price_format</item>
                         <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
                     </item>
                     <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
