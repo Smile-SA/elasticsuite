@@ -87,7 +87,7 @@ class Preview
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
         CategoryInterface $category = null,
-        $queryText = '',
+        $queryText = null,
         $size = 10
     ) {
         $this->size                   = $size;
