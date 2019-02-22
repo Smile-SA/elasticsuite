@@ -101,16 +101,19 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      */
     public function loadAttributeOptions()
     {
-        $productAttributes = $this->attributeList->getAttributeCollection();
-
-        $attributes = [];
-        foreach ($productAttributes as $attribute) {
-            $attributes[$attribute->getAttributeCode()] = $attribute->getFrontendLabel();
-        }
-
+        $attributes        = [];
+        $productAttributes = [];
         $this->_addSpecialAttributes($attributes);
 
-        asort($attributes);
+        foreach ($this->attributeList->getAttributeCollection() as $attribute) {
+            if ($attribute->getFrontendLabel()) {
+                $label = sprintf('%s (%s)', $attribute->getFrontendLabel(), $attribute->getAttributeCode());
+                $productAttributes[$attribute->getAttributeCode()] = $label;
+            }
+        }
+
+        asort($productAttributes);
+        $attributes += $productAttributes;
         $this->setAttributeOption($attributes);
 
         return $this;
@@ -141,6 +144,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * {@inheritDoc}
      */
     public function getInputType()
@@ -157,11 +161,14 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $inputType = 'numeric';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
+            $frontendClass = $this->getAttributeObject()->getFrontendClass();
 
             if ($this->getAttributeObject()->getAttributeCode() === 'category_ids') {
                 $inputType = 'category';
             } elseif (in_array($frontendInput, ['select', 'multiselect'])) {
                 $inputType = 'multiselect';
+            } elseif (in_array($frontendClass, ['validate-digits', 'validate-number'])) {
+                $inputType = 'numeric';
             } elseif ($frontendInput === 'date') {
                 $inputType = 'date';
             } elseif ($frontendInput === 'boolean') {
