@@ -208,6 +208,18 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Reset the sort order.
+     *
+     * @return self
+     */
+    public function resetOrder()
+    {
+        $this->_orders = [];
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function addFieldToFilter($field, $condition = null)
