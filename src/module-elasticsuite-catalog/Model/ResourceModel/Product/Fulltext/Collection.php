@@ -21,11 +21,12 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 /**
  * Search engine product collection.
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -203,6 +204,18 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
         $this->_orders[$attribute] = $dir;
+
+        return $this;
+    }
+
+    /**
+     * Reset the sort order.
+     *
+     * @return self
+     */
+    public function resetOrder()
+    {
+        $this->_orders = [];
 
         return $this;
     }
