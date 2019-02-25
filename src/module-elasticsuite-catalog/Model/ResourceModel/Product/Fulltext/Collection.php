@@ -202,7 +202,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
-        $this->_orders[$attribute] = $dir;
+        $this->_orders[$attribute] = strtolower($dir);
 
         return $this;
     }
