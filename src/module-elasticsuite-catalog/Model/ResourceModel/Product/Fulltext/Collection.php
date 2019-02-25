@@ -22,6 +22,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
  * Search engine product collection.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
