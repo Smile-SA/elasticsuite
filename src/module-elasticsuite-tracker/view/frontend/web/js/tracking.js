@@ -145,6 +145,7 @@ var smileTracker = (function () {
                 var trackingUrl = getTrackerUrl.bind(this)();
                 var imgNode = document.createElement('img');
                 imgNode.setAttribute('src', trackingUrl);
+                imgNode.setAttribute('alt', '');
                 setTrackerStyle(imgNode);
                 bodyNode.appendChild(imgNode);
                 this.trackerSent = true;
