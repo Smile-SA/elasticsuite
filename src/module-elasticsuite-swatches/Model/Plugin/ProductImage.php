@@ -14,8 +14,6 @@
 
 namespace Smile\ElasticsuiteSwatches\Model\Plugin;
 
-use Magento\Eav\Model\Entity\Attribute;
-
 /**
  * Plugin that allow to select the right product image when a filter is selected.
  *
@@ -39,7 +37,7 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
             && ($location == self::CATEGORY_PAGE_GRID_LOCATION || $location == self::CATEGORY_PAGE_LIST_LOCATION)) {
             $request = $this->request->getParams();
             if (is_array($request)) {
-                $filterArray = $this->getFilterArray($request, $product);
+                $filterArray = $this->getFilterAndConvertArray($request, $product);
                 if (!empty($filterArray)) {
                     $product = $this->loadSimpleVariation($product, $filterArray);
                 }
@@ -57,7 +55,7 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
      *
      * @return array
      */
-    private function getFilterArray(array $request, \Magento\Catalog\Model\Product $product)
+    private function getFilterAndConvertArray(array $request, \Magento\Catalog\Model\Product $product)
     {
         $filterArray = [];
         $attributes = $this->eavConfig->getEntityAttributes(\Magento\Catalog\Model\Product::ENTITY, $product);
