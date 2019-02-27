@@ -47,7 +47,7 @@
         "smile/module-elasticsuite-virtual-category": "self.version"
     },
     "require-dev": {
-        "smile/magento2-smilelab-quality-suite": "~1.1.0"
+        "smile/magento2-smilelab-quality-suite": "~2.0.0"
     },
     "autoload": {
         "files": [
