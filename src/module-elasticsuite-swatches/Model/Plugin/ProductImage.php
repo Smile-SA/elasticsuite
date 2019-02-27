@@ -15,9 +15,12 @@
 namespace Smile\ElasticsuiteSwatches\Model\Plugin;
 
 use Magento\Eav\Model\Entity\Attribute;
+use Magento\Catalog\Model\Product;
 
 /**
  * Plugin that allow to select the right product image when a filter is selected.
+ * Please note: the custom behavior is restricted to getFilterArray, the other methods (loadSimpleVariation, canReplaceImageWithSwatch)
+ * had to be redefined for visibility reasons.
  *
  * @category   Smile
  * @package    Smile\ElasticsuiteSwatches
@@ -80,5 +83,52 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
         }
 
         return $filterArray;
+    }
+
+    /**
+     * Load simple product variation of a given configurable product with swatches.
+     * (copy/paste of parent method).
+     *
+     * @param Product $parentProduct Parent configurable product.
+     * @param array   $filterArray   Swatch attributes values.
+     *
+     * @return bool|Product
+     */
+    private function loadSimpleVariation(Product $parentProduct, array $filterArray)
+    {
+        $childProduct = $this->swatchHelperData->loadVariationByFallback($parentProduct, $filterArray);
+        if ($childProduct && !$childProduct->getImage()) {
+            $childProduct = $this->swatchHelperData->loadFirstVariationWithImage($parentProduct, $filterArray);
+        }
+        if (!$childProduct) {
+            $childProduct = $parentProduct;
+        }
+
+        return $childProduct;
+    }
+
+    /**
+     * Check if we can replace original image with swatch image on catalog/category/list page
+     * (copy/paste of parent method).
+     *
+     * @param Attribute $attribute Swatch attribute.
+     *
+     * @return bool
+     */
+    private function canReplaceImageWithSwatch($attribute)
+    {
+        $result = true;
+        if (!$this->swatchHelperData->isSwatchAttribute($attribute)) {
+            $result = false;
+        }
+
+        if (!$attribute->getUsedInProductListing()
+            || !$attribute->getIsFilterable()
+            || !$attribute->getData('update_product_preview_image')
+        ) {
+            $result = false;
+        }
+
+        return $result;
     }
 }
