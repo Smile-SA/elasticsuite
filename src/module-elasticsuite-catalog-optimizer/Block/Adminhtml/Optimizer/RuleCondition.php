@@ -72,7 +72,7 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
      */
     protected function _toHtml()
     {
-        return $this->escapeJsQuote($this->getForm()->toHtml());
+        return $this->getForm()->toHtml();
     }
 
     /**
