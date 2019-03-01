@@ -2,7 +2,16 @@
     "name": "smile/elasticsuite",
     "type": "magento2-component",
     "license": "OSL-3.0",
-    "authors": [{
+    "authors": [
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        },
+        {
+            "name": "Richard Bayet",
+            "email": "richard.bayet@smile.fr"
+        },
+        {
             "name": "Aurélien FOUCRET",
             "email": "aurelien.foucret@smile.fr"
         }

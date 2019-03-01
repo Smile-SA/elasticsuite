@@ -35,7 +35,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $tieBreaker;
 
     /**
-     * @var int|null
+     * @var integer|null
      */
     private $phraseMatchBoost;
 

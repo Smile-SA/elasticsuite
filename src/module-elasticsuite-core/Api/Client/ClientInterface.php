@@ -129,7 +129,7 @@ interface ClientInterface
      *
      * @param array $bulkParams Bulk data.
      *
-     * return array
+     * @return array
      */
     public function bulk($bulkParams);
 
