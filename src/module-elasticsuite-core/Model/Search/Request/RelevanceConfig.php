@@ -38,7 +38,7 @@ class RelevanceConfig extends \Magento\Config\Model\Config
     protected $containersSource;
 
     /**
-     * @var bool If getting full config or not
+     * @var boolean If getting full config or not
      */
     protected $fullConfig;
 

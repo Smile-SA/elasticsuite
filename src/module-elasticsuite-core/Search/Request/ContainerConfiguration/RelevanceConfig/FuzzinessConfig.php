@@ -29,12 +29,12 @@ class FuzzinessConfig implements FuzzinessConfigurationInterface
     private $value;
 
     /**
-     * @var int The prefix length
+     * @var integer The prefix length
      */
     private $prefixLength;
 
     /**
-     * @var int Max. expansion
+     * @var integer Max. expansion
      */
     private $maxExpansion;
 
