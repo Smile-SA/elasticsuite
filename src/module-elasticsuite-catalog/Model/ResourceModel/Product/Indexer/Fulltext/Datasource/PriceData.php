@@ -18,9 +18,7 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Catalog\Model\Indexer\Product\Price\DimensionCollectionFactory;
-use Magento\Catalog\Model\Indexer\Product\Price\PriceTableResolver;
-use Magento\Store\Model\Indexer\WebsiteDimensionProvider;
+use Magento\Framework\ObjectManagerInterface;
 
 /**
  * Prices data datasource resource model.
@@ -32,11 +30,6 @@ use Magento\Store\Model\Indexer\WebsiteDimensionProvider;
 class PriceData extends Indexer
 {
     /**
-     * @var DimensionCollectionFactory
-     */
-    private $dimensionCollectionFactory;
-
-    /**
      * @var array
      */
     private $dimensions;
@@ -47,30 +40,27 @@ class PriceData extends Indexer
     private $dimensionsByWebsite;
 
     /**
-     * @var PriceTableResolver
+     * @var ObjectManagerInterface
      */
-    private $priceTableResolver;
+    private $objectManager;
 
     /**
      * PriceData constructor.
      *
-     * @param ResourceConnection         $resource                   Database adapter.
-     * @param StoreManagerInterface      $storeManager               Store Manager.
-     * @param MetadataPool               $metadataPool               Metadata Pool.
-     * @param DimensionCollectionFactory $dimensionCollectionFactory Dimension collection factory.
-     * @param PriceTableResolver         $priceTableResolver         Price index table resolver.
+     * @param ResourceConnection     $resource      Database adapter.
+     * @param StoreManagerInterface  $storeManager  Store Manager.
+     * @param MetadataPool           $metadataPool  Metadata Pool.
+     * @param ObjectManagerInterface $objectManager Object manager.
      */
     public function __construct(
         ResourceConnection $resource,
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
-        DimensionCollectionFactory $dimensionCollectionFactory,
-        PriceTableResolver $priceTableResolver
+        ObjectManagerInterface $objectManager
     ) {
-        $this->dimensionCollectionFactory = $dimensionCollectionFactory;
         $this->dimensions = null;
         $this->dimensionsByWebsite = [];
-        $this->priceTableResolver = $priceTableResolver;
+        $this->objectManager = $objectManager;
         parent::__construct($resource, $storeManager, $metadataPool);
     }
 
@@ -123,11 +113,20 @@ class PriceData extends Indexer
      */
     private function getPriceIndexDimensionsTables($websiteId)
     {
-        $tables = [];
+        $tables = ['catalog_product_index_price'];
 
-        $indexDimensions = $this->getPriceIndexDimensions($websiteId);
-        foreach ($indexDimensions as $dimensions) {
-            $tables[] = $this->priceTableResolver->resolve('catalog_product_index_price', $dimensions);
+        try {
+            $dimensionsTables = [];
+
+            $indexDimensions = $this->getPriceIndexDimensions($websiteId);
+            $priceTableResolver = $this->objectManager->get(\Magento\Catalog\Model\Indexer\Product\Price\PriceTableResolver::class);
+            foreach ($indexDimensions as $dimensions) {
+                $dimensionsTables[] = $priceTableResolver->resolve('catalog_product_index_price', $dimensions);
+            }
+
+            $tables = $dimensionsTables;
+        } catch (\Exception $exception) {
+            // Occurs in Magento versions (< 2.2.6) where DimensionCollectionFactory/PriceTableResolver are not implemented yet.
         }
 
         return $tables;
@@ -148,8 +147,8 @@ class PriceData extends Indexer
 
             $relevantDimensions = [];
             foreach ($indexDimensions as $dimensions) {
-                if (array_key_exists(WebsiteDimensionProvider::DIMENSION_NAME, $dimensions)) {
-                    $websiteDimension = $dimensions[WebsiteDimensionProvider::DIMENSION_NAME];
+                if (array_key_exists('ws', $dimensions)) {
+                    $websiteDimension = $dimensions['ws'];
                     if ((string) $websiteDimension->getValue() == $websiteId) {
                         $relevantDimensions[] = $dimensions;
                     }
@@ -172,7 +171,10 @@ class PriceData extends Indexer
     private function getAllPriceIndexDimensions()
     {
         if ($this->dimensions === null) {
-            $this->dimensions = $this->dimensionCollectionFactory->create();
+            $dimensionCollectionFactory = $this->objectManager->get(
+                \Magento\Catalog\Model\Indexer\Product\Price\DimensionCollectionFactory::class
+            );
+            $this->dimensions = $dimensionCollectionFactory->create();
         }
 
         return $this->dimensions;
