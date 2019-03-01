@@ -34,12 +34,12 @@ class Context implements \Smile\ElasticsuiteCore\Api\Search\ContextInterface
     private $searchQuery = null;
 
     /**
-     * @var null|int
+     * @var null|integer
      */
     private $storeId = null;
 
     /**
-     * @var null|int
+     * @var null|integer
      */
     private $customerGroupId = null;
 

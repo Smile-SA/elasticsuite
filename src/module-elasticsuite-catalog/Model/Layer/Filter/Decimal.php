@@ -44,7 +44,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      * @param \Magento\Catalog\Model\Layer                                              $layer                The Layer
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder                      $itemDataBuilder      The data builder
      * @param \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory          $filterDecimalFactory Factory for
-     *                                                                                              decimal items
+     *                                                                                                        decimal items
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface                         $priceCurrency        Price Currency
      * @param \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory  Decimal DataProvider
      *                                                                                                        Factory

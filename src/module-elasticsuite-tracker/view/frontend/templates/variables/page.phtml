@@ -20,9 +20,13 @@
 <?php if ($block->isEnabled() && !empty($variables)) : ?>
     <script type="text/javascript">
     <!--
+    try {
     <?php foreach ($variables as $varName => $value) : ?>
         smileTracker.addPageVar('<?php /* @noEscape */ echo $this->escapeJsQuote($varName)?>', '<?php /* @noEscape */ echo $block->stripTags($this->escapeJsQuote($value), null, true) ?>')
     <?php endforeach; ?>
+    } catch (err) {
+        ;
+    }
     //-->
     </script>
 <?php endif; ?>

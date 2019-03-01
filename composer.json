@@ -2,7 +2,16 @@
     "name": "smile/elasticsuite",
     "type": "magento2-component",
     "license": "OSL-3.0",
-    "authors": [{
+    "authors": [
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        },
+        {
+            "name": "Richard Bayet",
+            "email": "richard.bayet@smile.fr"
+        },
+        {
             "name": "Aurélien FOUCRET",
             "email": "aurelien.foucret@smile.fr"
         }
@@ -47,7 +56,7 @@
         "smile/module-elasticsuite-virtual-category": "self.version"
     },
     "require-dev": {
-        "smile/magento2-smilelab-quality-suite": "^1.0.4"
+        "smile/magento2-smilelab-quality-suite": "~2.0.0"
     },
     "autoload": {
         "files": [

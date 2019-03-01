@@ -22,7 +22,7 @@ namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer;
 class Synonyms extends AbstractRenderer
 {
     /**
-     * @var int Size of the textarea to display
+     * @var integer Size of the textarea to display
      */
     protected $textAreaColsNumber = 120;
 
