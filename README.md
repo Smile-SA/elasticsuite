@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Smile-SA/elasticsuite.svg?branch=master)](https://travis-ci.org/Smile-SA/elasticsuite)
+
 <p align="center">
     <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
 </p>
