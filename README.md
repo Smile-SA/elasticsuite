@@ -67,15 +67,23 @@ Together we explore, invent, and test technologies of the future, to better serv
 
 A demonstration store including the latest version of ElasticSuite is available here : [ElasticSuite Demo](http://demo.magento-elastic-suite.io/)
 
+## How to contribute ?
+
+Contributions can take the form of new components or features, changes to existing features, tests, documentation (such as developer guides, user guides, examples, or specifications), bug fixes, optimizations, or just good suggestions.
+
+To learn about how to make a contribution, click [here](https://github.com/Smile-SA/elasticsuite/blob/master/.github/CONTRIBUTING.md).
+
+To learn about issues, click here. To open an issue, click [here](https://github.com/Smile-SA/elasticsuite/issues/new/choose).
+
 ## Main Features
 
 ### Current version
 
-The current version **2.6.0** has been focused on the **Elasticsearch 6.x compatibility**, improving **Merchandising features** and technical update that aims to bring support for **Magento 2.3.x**.
+The current version **2.7.0** has been focused on the **Magento 2.3.x compatibility** and improving **Merchandising features**.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.6.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.7.0)
 
-This version is designed to be used on both Magento Open Source and Commerce versions >2.2.
+This version is designed to be used on both Magento Open Source and Commerce versions >2.3.
 
 Actually, there are the features actually included :
 
