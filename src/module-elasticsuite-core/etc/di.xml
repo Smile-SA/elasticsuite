@@ -71,8 +71,8 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\ContextInterface"
                 type="Smile\ElasticsuiteCore\Search\Context"/>
 
-    <preference for="Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterface"
-                type="Smile\ElasticsuiteCore\Index\Type\DataSourceResolver" />
+    <preference for="Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface"
+                type="Smile\ElasticsuiteCore\Index\DataSourceResolver" />
 
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>

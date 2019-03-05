@@ -10,9 +10,9 @@
  * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Index\Type;
+namespace Smile\ElasticsuiteCore\Index;
 
-use Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterface;
+use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface;
 
 /**
  * Datasource Resolver for index types.
@@ -39,19 +39,18 @@ class DataSourceResolver implements DataSourceResolverInterface
     }
 
     /**
-     * Get Data sources of a given index/type combination.
+     * Get Data sources of a given index.
      *
      * @param string $indexName The index name.
-     * @param string $typeName  The type name.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
      */
-    public function getDataSources(string $indexName, string $typeName)
+    public function getDataSources(string $indexName)
     {
         $sources = [];
 
-        if (isset($this->datasources[$indexName]) && isset($this->datasources[$indexName][$typeName])) {
-            foreach ($this->datasources[$indexName][$typeName] as $name => $datasource) {
+        if (isset($this->datasources[$indexName]) && isset($this->datasources[$indexName])) {
+            foreach ($this->datasources[$indexName] as $name => $datasource) {
                 if (! $datasource instanceof \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface) {
                     throw new \InvalidArgumentException(
                         'Datasource must implement ' . \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface::class

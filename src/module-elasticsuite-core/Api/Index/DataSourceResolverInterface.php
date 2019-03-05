@@ -10,7 +10,7 @@
  * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Api\Index\Type;
+namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
  * Datasources Resolver interface.
@@ -25,9 +25,8 @@ interface DataSourceResolverInterface
      * Get Data sources of a given index/type combination.
      *
      * @param string $indexName The index name.
-     * @param string $typeName  The type name.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
      */
-    public function getDataSources(string $indexName, string $typeName);
+    public function getDataSources(string $indexName);
 }

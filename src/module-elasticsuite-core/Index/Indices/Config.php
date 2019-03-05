@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterfaceFactory as TypeFactory;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterfaceFactory as MappingFactory;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterfaceFactory as MappingFieldFactory;
-use Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterfaceFactory as DataSourceResolverFactory;
+use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterfaceFactory as DataSourceResolverFactory;
 
 /**
  * ElasticSuite indices configuration;
@@ -63,7 +63,7 @@ class Config extends \Magento\Framework\Config\Data
     private $mappingFieldFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterfaceFactory
+     * @var \Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterfaceFactory
      */
     private $dataSourceResolverFactory;
 
@@ -150,7 +150,7 @@ class Config extends \Magento\Framework\Config\Data
         $types = [];
 
         foreach ($indexConfigData['types'] as $typeName => $typeConfigData) {
-            $fields  = $this->getMappingFields($indexName, $typeName, $typeConfigData);
+            $fields  = $this->getMappingFields($indexName, $typeConfigData);
             $mapping = $this->mappingFactory->create(
                 ['idFieldName' => $typeConfigData['idFieldName'], 'fields' => $fields]
             );
@@ -175,15 +175,14 @@ class Config extends \Magento\Framework\Config\Data
      * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @param string $indexName      Index Name.
-     * @param string $typeName       Type Name.
      * @param array  $typeConfigData Processed type configuration.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
-    private function getMappingFields($indexName, $typeName, $typeConfigData)
+    private function getMappingFields($indexName, $typeConfigData)
     {
         \Magento\Framework\Profiler::start('ES:Get dynamic fields config');
-        $fields = $this->getDynamicFields($indexName, $typeName);
+        $fields = $this->getDynamicFields($indexName);
         \Magento\Framework\Profiler::stop('ES:Get dynamic fields config');
 
         foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
@@ -208,19 +207,18 @@ class Config extends \Magento\Framework\Config\Data
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param string $indexName Index Name.
-     * @param string $typeName  Type Name.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
-    private function getDynamicFields($indexName, $typeName)
+    private function getDynamicFields($indexName)
     {
         $fields       = [];
-        $cacheId      = implode('|', [$this->cacheId, $indexName, $typeName]);
+        $cacheId      = implode('|', [$this->cacheId, $indexName]);
         $fieldsConfig = $this->cache->load($cacheId);
 
         if (false === $fieldsConfig) {
             $resolver     = $this->dataSourceResolverFactory->create();
-            $dataSources  = $resolver->getDataSources($indexName, $typeName);
+            $dataSources  = $resolver->getDataSources($indexName);
 
             /** @var DynamicFieldProviderInterface[] $dynamicFieldProviders */
             $dynamicFieldProviders = array_filter($dataSources, [$this, 'isDynamicFieldsProvider']);

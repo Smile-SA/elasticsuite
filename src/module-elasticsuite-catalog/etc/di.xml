@@ -278,22 +278,18 @@
     </type>
 
     <!-- Datasources resolver -->
-    <type name="Smile\ElasticsuiteCore\Index\Type\DataSourceResolver">
+    <type name="Smile\ElasticsuiteCore\Index\DataSourceResolver">
         <arguments>
             <argument name="datasources" xsi:type="array">
                 <item name="catalog_product" xsi:type="array">
-                    <item name="product" xsi:type="array">
-                        <item name="prices" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</item>
-                        <item name="categories" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</item>
-                        <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</item>
-                        <item name="stock" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</item>
-                        <item name="searchPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</item>
-                    </item>
+                    <item name="prices" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</item>
+                    <item name="categories" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</item>
+                    <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</item>
+                    <item name="stock" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</item>
+                    <item name="searchPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</item>
                 </item>
                 <item name="catalog_category" xsi:type="array">
-                    <item name="category" xsi:type="array">
-                        <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</item>
-                    </item>
+                    <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</item>
                 </item>
             </argument>
         </arguments>
