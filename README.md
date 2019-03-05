@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/Smile-SA/elasticsuite.svg?branch=master)](https://travis-ci.org/Smile-SA/elasticsuite)
+[![Build Status](https://travis-ci.org/Smile-SA/elasticsuite.svg?branch=master)](https://travis-ci.org/Smile-SA/elasticsuite)  ![Packagist](https://img.shields.io/packagist/dt/smile/elasticsuite.svg?style=square)
+[![star this repo](http://githubbadges.com/star.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite)
+ [![fork this repo](http://githubbadges.com/fork.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite/fork) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
 
 <p align="center">
     <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
