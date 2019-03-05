@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * ElasticSuite.io Catalog Optimizers routes configuration
+ * ElasticSuite Analytics routes configuration
  *
  * DISCLAIMER
  *
@@ -9,9 +9,9 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogOptimizer
- * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2016 Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
  * @license   Apache License Version 2.0
  */
 -->

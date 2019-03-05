@@ -45,22 +45,30 @@ class AggregationProvider implements AggregationProviderInterface
     protected $queryFactory;
 
     /**
+     * @var \Smile\ElasticsuiteAnalytics\Helper\Data
+     */
+    protected $helper;
+
+    /**
      * AggregationProvider constructor.
      * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory Bucket aggregation factory.
      * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory      $metricFactory      Metrics aggregation factory.
      * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory    $pipelineFactory    Pipeline aggregation factory.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory             $queryFactory       Query Factory.
+     * @param \Smile\ElasticsuiteAnalytics\Helper\Data                              $helper             Data helper.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory,
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\MetricFactory $metricFactory,
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory $pipelineFactory,
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteAnalytics\Helper\Data $helper
     ) {
         $this->aggregationFactory   = $aggregationFactory;
         $this->metricFactory        = $metricFactory;
         $this->pipelineFactory      = $pipelineFactory;
         $this->queryFactory         = $queryFactory;
+        $this->helper               = $helper;
     }
 
     /**
@@ -76,7 +84,7 @@ class AggregationProvider implements AggregationProviderInterface
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
             'sortOrder' => ['unique_sessions' => 'desc', 'result_count' => 'desc'],
-            'size'      => 100, //@todo
+            'size'      => $this->helper->getMaxSearchTerms(),
         ];
 
         return $this->aggregationFactory->create(BucketInterface::TYPE_TERM, $aggParams);

@@ -64,6 +64,7 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
 
     /**
      * ConversionRatePostProcessor constructor.
+     * Warning: only works because there is a search request container with the same name as the index identifier
      *
      * @param \Magento\Search\Model\SearchEngine                                    $searchEngine         Search engine.
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder                        $searchRequestBuilder Search request builder.
@@ -72,8 +73,6 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory             $queryFactory         Query factory.
      * @param array                                                                 $queryProviders       Query filters providers.
      * @param string                                                                $containerName        Container name.
-     *
-     * Warning: only works because there is a search request container with the same name as the index identifier
      */
     public function __construct(
         \Magento\Search\Model\SearchEngine $searchEngine,

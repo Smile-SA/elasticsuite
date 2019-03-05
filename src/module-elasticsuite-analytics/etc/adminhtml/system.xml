@@ -1,0 +1,34 @@
+<!--
+/**
+ * Elasticsuite Analytics module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2019 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="smile_elasticsuite_analytics" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Analytics</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Smile_ElasticsuiteAnalytics::analytics</resource>
+
+            <group id="search_terms" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Search terms configuration</label>
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Max search terms</label>
+                    <validate>integer</validate>
+                    <comment><![CDATA[Maximum number of search terms to display in the search usage report blocks.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

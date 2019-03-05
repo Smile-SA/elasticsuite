@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * ElasticSuite Catalog Optimizers menu configuration
+ * ElasticSuite Analytics menu configuration
  *
  * DISCLAIMER
  *
@@ -23,7 +23,7 @@
              module="Smile_ElasticsuiteAnalytics"
              sortOrder="30"
              parent="Smile_ElasticsuiteCore::elasticsuite_menu"
-             resource="Smile_ElasticsuiteCore::analytics"
+             resource="Smile_ElasticsuiteAnalytics::analytics"
          />
         <add id="Smile_ElasticsuiteAnalytics::search_usage"
              title="Search Usage"

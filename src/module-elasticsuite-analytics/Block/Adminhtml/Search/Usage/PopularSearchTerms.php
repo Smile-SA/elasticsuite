@@ -53,9 +53,8 @@ class PopularSearchTerms extends \Magento\Backend\Block\Template
 
     /**
      * @var \Magento\Search\Model\QueryFactory
-     * TODO ribay@smile.fr why private instead of protected
      */
-    private $searchTermFactory;
+    protected $searchTermFactory;
 
     /**
      * PopularSearchTerms constructor.
@@ -126,7 +125,10 @@ class PopularSearchTerms extends \Magento\Backend\Block\Template
 
         $storeId       = 1;
         $containerName = \Smile\ElasticsuiteTracker\Api\SessionIndexInterface::INDEX_IDENTIFIER;
-        $searchQuery   = $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'search_query.untouched', 'values' => $terms]);
+        $searchQuery   = $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            ['field' => 'search_query.untouched', 'values' => $terms]
+        );
         $from          = 0;
         $size          = 0;
 

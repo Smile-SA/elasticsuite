@@ -52,13 +52,16 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
         $data = [];
 
         foreach ($this->getValues($response) as $value) {
-            $data[$value->getValue()] = [
-                'term'            => $value->getValue(),
-                'result_count'    => round($value->getMetrics()['result_count'] ?: 0),
-                'sessions'        => round($value->getMetrics()['unique_sessions'] ?: 0),
-                'visitors'        => round($value->getMetrics()['unique_visitors'] ?: 0),
-                'conversion_rate' => number_format(0, 2),
-            ];
+            $searchTerm = $value->getValue();
+            if ($searchTerm !== '__other_docs') {
+                $data[$searchTerm] = [
+                    'term'            => $searchTerm,
+                    'result_count'    => round($value->getMetrics()['result_count'] ?: 0),
+                    'sessions'        => round($value->getMetrics()['unique_sessions'] ?: 0),
+                    'visitors'        => round($value->getMetrics()['unique_visitors'] ?: 0),
+                    'conversion_rate' => number_format(0, 2),
+                ];
+            }
         }
 
         foreach ($this->postProcessors as $postProcessor) {

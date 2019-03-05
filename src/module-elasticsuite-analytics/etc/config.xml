@@ -1,0 +1,25 @@
+<!--
+/**
+ * Elasticsuite Analytics module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile Searchandising Suite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2019 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <smile_elasticsuite_analytics>
+            <search_terms>
+                <max_size>20</max_size>
+            </search_terms>
+        </smile_elasticsuite_analytics>
+    </default>
+</config>
