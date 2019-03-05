@@ -1,4 +1,6 @@
-![ElasticSuite](doc/static/elasticsuite-logo.jpg)
+<p align="center">
+    <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
+</p>
 
 ## News
 
@@ -54,10 +56,15 @@ The project was originally created by Smile and released to the Open Source comm
 ## Who is developing ElasticSuite ?
 
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
+    <a href="http://www.smile-oss.com"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
+</p>
+<p align="center">
+    <a href="http://www.smile-oss.com"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016) and **Global Elite Partner** (2017) awarded by Magento.
+ElasticSuite is built by the Innovation board of Smile. 
+
+Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016), **Global Elite Partner** (2017-now), and **Regional Commercial Partner** (2018) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
