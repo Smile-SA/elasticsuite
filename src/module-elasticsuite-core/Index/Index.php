@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Index;
 
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
 
 /**
@@ -42,6 +43,7 @@ class Index implements IndexInterface
 
     /**
      * Index types.
+     * @deprecated
      *
      * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
      */
@@ -60,25 +62,38 @@ class Index implements IndexInterface
     private $defaultSearchType;
 
     /**
-     * Instanciate a new index.
+     * @var MappingInterface
+     */
+    private $mapping;
+
+    /**
+     * Instantiate a new index.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @throws \InvalidArgumentException When the default search type is invalid.
      *
-     * @param string          $identifier        Index real name.
-     * @param string          $name              Index real name.
-     * @param TypeInterface[] $types             Index current types.
-     * @param string          $defaultSearchType Default type used in searches.
-     * @param boolean         $needInstall       Indicates if the index needs to be installed.
+     * @param string           $identifier        Index real name.
+     * @param string           $name              Index real name.
+     * @param TypeInterface[]  $types             Index current types.
+     * @param string           $defaultSearchType Default type used in searches.
+     * @param MappingInterface $mapping           Index Mapping.
+     * @param boolean          $needInstall       Indicates if the index needs to be installed.
      */
-    public function __construct($identifier, $name, array $types, $defaultSearchType, $needInstall = false)
+    public function __construct(
+        $identifier,
+        $name,
+        array $types,
+        $defaultSearchType,
+        MappingInterface $mapping,
+        $needInstall = false)
     {
         $this->identifier         = $identifier;
         $this->name               = $name;
         $this->types              = $this->prepareTypes($types);
         $this->needInstall        = $needInstall;
         $this->defaultSearchType  = $defaultSearchType;
+        $this->mapping            = $mapping;
 
         if (!isset($this->types[$defaultSearchType])) {
             throw new \InvalidArgumentException("Default search $defaultSearchType does not exists in the index.");
@@ -112,6 +127,8 @@ class Index implements IndexInterface
     /**
      * @throws \InvalidArgumentException When the type does not exists.
      *
+     * @deprecated
+     *
      * {@inheritdoc}
      */
     public function getType($typeName)
@@ -140,7 +157,25 @@ class Index implements IndexInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getMapping()
+    {
+        return $this->mapping;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIdField()
+    {
+        return $this->getMapping()->getIdField();
+    }
+
+    /**
      * Prepare the types added to the index (rekey the array).
+     *
+     * @deprecated
      *
      * @param TypeInterface[] $types Installed types.
      *

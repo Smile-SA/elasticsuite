@@ -115,10 +115,7 @@ class ContainerConfiguration implements ContainerConfigurationInterface
      */
     public function getMapping()
     {
-        $typeName = $this->getTypeName();
-        $type     = $this->getIndex()->getType($typeName);
-
-        return $type->getMapping();
+        return $this->getIndex()->getMapping();
     }
 
     /**

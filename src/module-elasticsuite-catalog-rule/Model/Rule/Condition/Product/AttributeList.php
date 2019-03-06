@@ -161,7 +161,7 @@ class AttributeList
             $defaultStore = $this->getDefaultStoreView();
             $index        = $this->indexManager->getIndexByName($this->indexName, $defaultStore);
 
-            $this->mapping = $index->getType($this->typeName)->getMapping();
+            $this->mapping = $index->getMapping();
         }
 
         return $this->mapping;

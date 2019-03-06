@@ -44,12 +44,16 @@ interface IndexInterface
     /**
      * List of the types handled by the index.
      *
+     * @deprecated
+     *
      * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
      */
     public function getTypes();
 
     /**
      * Retrieve an type by it's name.
+     *
+     * @deprecated
      *
      * @param string $typeName Name of the retrieved type.
      *
@@ -61,6 +65,8 @@ interface IndexInterface
      * Each index has a default type that can be used to search.
      * This method returns this default type.
      *
+     * @deprecated
+     *
      * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface
      */
     public function getDefaultSearchType();
@@ -71,4 +77,18 @@ interface IndexInterface
      * @return boolean
      */
     public function needInstall();
+
+    /**
+     * Mapping describing all the field of the current type.
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\MappingInterface
+     */
+    public function getMapping();
+
+    /**
+     * Field use as unique id for the doc.
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
+     */
+    public function getIdField();
 }

@@ -17,6 +17,8 @@ namespace Smile\ElasticsuiteCore\Api\Index;
 /**
  * Representation of a document type in an Elasticsearch index.
  *
+ * @deprecated
+ *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -26,6 +28,8 @@ interface TypeInterface
     /**
      * Type name.
      *
+     * @deprecated
+     *
      * @return string
      */
     public function getName();
@@ -33,12 +37,16 @@ interface TypeInterface
     /**
      * Mapping describing all the field of the current type.
      *
+     * @deprecated
+     *
      * @return \Smile\ElasticsuiteCore\Api\Index\MappingInterface
      */
     public function getMapping();
 
     /**
      * Field use as unique id for the doc.
+     *
+     * @deprecated
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
