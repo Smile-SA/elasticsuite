@@ -1,4 +1,10 @@
-![ElasticSuite](doc/static/elasticsuite-logo.jpg)
+[![Build Status](https://travis-ci.org/Smile-SA/elasticsuite.svg?branch=master)](https://travis-ci.org/Smile-SA/elasticsuite)  ![Packagist](https://img.shields.io/packagist/dt/smile/elasticsuite.svg?style=square)
+[![star this repo](http://githubbadges.com/star.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite)
+ [![fork this repo](http://githubbadges.com/fork.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite/fork) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
+
+<p align="center">
+    <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
+</p>
 
 ## News
 
@@ -54,10 +60,15 @@ The project was originally created by Smile and released to the Open Source comm
 ## Who is developing ElasticSuite ?
 
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="SmileLab" src="doc/static/smilelab-logo.png" /></a>
+    <a href="http://www.smile-oss.com"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
+</p>
+<p align="center">
+    <a href="http://www.smile-oss.com"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
 </p>
 
-SmileLab is the innovation and experimentation department of Smile. Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016) and **Global Elite Partner** (2017) awarded by Magento.
+ElasticSuite is built by the Innovation board of Smile. 
+
+Smile is the **European leader of Open Source** and also a four-times **Europe Partner of the the Year** (2010-2014), two-times **Spirit of Excellence** (2015-2016), **Global Elite Partner** (2017-now), and **Regional Commercial Partner** (2018) awarded by Magento.
 
 Our multidisciplinary team brings together experts in technology, innovation, and new applications.
 
@@ -67,15 +78,23 @@ Together we explore, invent, and test technologies of the future, to better serv
 
 A demonstration store including the latest version of ElasticSuite is available here : [ElasticSuite Demo](http://demo.magento-elastic-suite.io/)
 
+## How to contribute ?
+
+Contributions can take the form of new components or features, changes to existing features, tests, documentation (such as developer guides, user guides, examples, or specifications), bug fixes, optimizations, or just good suggestions.
+
+To learn about how to make a contribution, click [here](https://github.com/Smile-SA/elasticsuite/blob/master/.github/CONTRIBUTING.md).
+
+To learn about issues, click here. To open an issue, click [here](https://github.com/Smile-SA/elasticsuite/issues/new/choose).
+
 ## Main Features
 
 ### Current version
 
-The current version **2.6.0** has been focused on the **Elasticsearch 6.x compatibility**, improving **Merchandising features** and technical update that aims to bring support for **Magento 2.3.x**.
+The current version **2.7.0** has been focused on the **Magento 2.3.x compatibility** and improving **Merchandising features**.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.6.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.7.0)
 
-This version is designed to be used on both Magento Open Source and Commerce versions >2.2.
+This version is designed to be used on both Magento Open Source and Commerce versions >2.3.
 
 Actually, there are the features actually included :
 
