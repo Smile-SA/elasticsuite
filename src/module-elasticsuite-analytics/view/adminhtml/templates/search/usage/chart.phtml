@@ -1,0 +1,33 @@
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\ChartInterface $block
+ */
+$chartContainerId = $block->getJsId();
+$chartType = $block->getChartType() ?: 'PieChart';
+?>
+<div class="dashboard-item">
+    <div class="dashboard-item-title"><?= $block->getTitle() ;?></div>
+    <div class="dashboard-item-content">
+        <div id="<?= $chartContainerId ?>" style="min-height:250px"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(function () {
+
+        var containerId = '<?= $chartContainerId ?>';
+
+        var wrapper = new google.visualization.ChartWrapper({
+            chartType: '<?= $block->escapeJs($chartType) ?>',
+            dataTable: <?= $block->getChartData() ?>,
+            options: <?= $block->getChartOptions() ?>,
+            containerId: containerId
+        });
+
+        if (wrapper.getDataTable().getNumberOfRows() == 0) {
+            document.getElementById(containerId).append('No data over the selected period.');
+        } else {
+            wrapper.draw();
+        }
+    });
+</script>

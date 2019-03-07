@@ -15,6 +15,9 @@
 -->
 
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="https://www.gstatic.com/charts/loader.js" src_type="url" />
+    </head>
     <update handle="styles" />
     <body>
         <referenceContainer name="page.main.actions">
@@ -27,34 +30,45 @@
         </referenceContainer>
         <referenceContainer name="content">
             <container name="dashboard-container" htmlTag="div" htmlClass="dashboard-container row">
-                <block name="elasticsuite.analytics.search_uage.kpi" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi" template="Smile_ElasticsuiteAnalytics::search/usage/kpi.phtml" />
+                <block name="elasticsuite.analytics.search_usage.kpi" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi" template="Smile_ElasticsuiteAnalytics::search/usage/kpi.phtml" />
                 
-                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-7">
-
-                </container>
-                
-                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-5">
-                    <block name="elasticsuite.analytics.search_uage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-5">
+                    <block name="elasticsuite.analytics.search_usage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</argument>
                             <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string" translate="true">Popular search terms</argument>
                         </arguments>
                     </block>
-                    
-                    <block name="elasticsuite.analytics.search_uage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+
+                    <block name="elasticsuite.analytics.search_usage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</argument>
                             <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string" translate="true">Spellchecked search terms</argument>
                         </arguments>
                     </block>
-                    
-                    <block name="elasticsuite.analytics.search_uage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+
+                    <block name="elasticsuite.analytics.search_usage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</argument>
                             <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
                             <argument name="title" xsi:type="string" translate="true">0 result search terms</argument>
+                        </arguments>
+                    </block>
+                </container>
+                
+                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-5">
+                    <block name="elasticsuite.analytics.search_usage.sessions" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Sessions" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Sessions</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                        </arguments>
+                    </block>
+                    <block name="elasticsuite.analytics.search_usage.graph2" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Conversion rate</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">BarChart</argument>
                         </arguments>
                     </block>
                 </container>

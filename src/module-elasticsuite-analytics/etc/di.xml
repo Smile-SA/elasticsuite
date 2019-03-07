@@ -33,7 +33,25 @@
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\SearchRequestBuilder</argument>
         </arguments>
     </type>
-    
+
+    <!-- Search usage and conversion rates report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+            </argument>
+            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
     
     <!-- Popular search terms report config -->
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
