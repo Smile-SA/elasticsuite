@@ -34,6 +34,11 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
     private $reportContext;
 
     /**
+     * @var \Smile\ElasticsuiteTracker\Model\IndexManager
+     */
+    private $indexManager;
+
+    /**
      * @var \Magento\Framework\Serialize\Serializer\Json
      */
     private $jsonSerializer;
@@ -42,17 +47,20 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
      * DateRangeSwitcher constructor.
      * @param \Magento\Backend\Block\Template\Context           $context        Context.
      * @param \Smile\ElasticsuiteAnalytics\Model\Report\Context $reportContext  Report context.
+     * @param \Smile\ElasticsuiteTracker\Model\IndexManager     $indexManager   Index manager.
      * @param \Magento\Framework\Serialize\Serializer\Json      $jsonSerializer Json serializer/unserializer.
      * @param array                                             $data           Data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Smile\ElasticsuiteAnalytics\Model\Report\Context $reportContext,
+        \Smile\ElasticsuiteTracker\Model\IndexManager $indexManager,
         \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->reportContext  = $reportContext;
+        $this->indexManager   = $indexManager;
         $this->jsonSerializer = $jsonSerializer;
     }
 
@@ -87,8 +95,17 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
             'dateFormat' => $this->getDateFormat(),
             'from'       => ['id' => $this->getJsId('date-range-picker', 'from')],
             'to'         => ['id' => $this->getJsId('date-range-picker', 'to')],
-
         ];
+
+        $dateBounds = $this->indexManager->getIndicesDateBounds(
+            \Smile\ElasticsuiteTracker\Api\EventIndexInterface::INDEX_IDENTIFIER,
+            $this->reportContext->getStoreId()
+        );
+        if (!empty($dateBounds)) {
+            list($minDate, $maxDate) = $dateBounds;
+            $config['minDate'] = $this->formatDate($minDate, \IntlDateFormatter::SHORT, false, 'UTC');
+            $config['maxDate'] = $this->formatDate($maxDate, \IntlDateFormatter::SHORT, false, 'UTC');
+        }
 
         return $this->jsonSerializer->serialize($config);
     }
