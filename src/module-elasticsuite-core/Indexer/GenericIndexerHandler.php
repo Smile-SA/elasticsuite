@@ -136,7 +136,7 @@ class GenericIndexerHandler implements IndexerInterface
     }
 
     /**
-     * This override does not delete data into the old index as expected but only create a new index.
+     * This override does not delete data into the old index as expected but only create a new index if it does not exist.
      * It allows to keep old index in place during full reindex.
      *
      * {@inheritDoc}
@@ -144,7 +144,11 @@ class GenericIndexerHandler implements IndexerInterface
     public function cleanIndex($dimensions)
     {
         foreach ($dimensions as $dimension) {
-            $this->indexOperation->createIndex($this->indexName, $dimension->getValue());
+            try {
+                $this->indexOperation->getIndexByName($this->indexName, $dimension->getValue());
+            } catch (\Exception $e) {
+                $this->indexOperation->createIndex($this->indexName, $dimension->getValue());
+            }
         }
 
         return $this;
