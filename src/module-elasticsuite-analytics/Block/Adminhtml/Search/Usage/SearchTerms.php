@@ -21,6 +21,11 @@ namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage;
 class SearchTerms extends \Magento\Backend\Block\Template
 {
     /**
+     * Constant for the max visible terms when the report is first displayed.
+     */
+    const MAX_VISIBLE_TERMS = 15;
+
+    /**
      * @var \Magento\Search\Model\QueryFactory
      */
     private $queryFactory;
@@ -60,6 +65,16 @@ class SearchTerms extends \Magento\Backend\Block\Template
         }
 
         return $data;
+    }
+
+    /**
+     * Return the number of max initially visible terms.
+     *
+     * @return int
+     */
+    public function getMaxVisibleTerms()
+    {
+        return self::MAX_VISIBLE_TERMS;
     }
 
     /**

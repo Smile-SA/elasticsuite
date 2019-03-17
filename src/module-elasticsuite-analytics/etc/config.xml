@@ -18,7 +18,7 @@
     <default>
         <smile_elasticsuite_analytics>
             <search_terms>
-                <max_size>20</max_size>
+                <max_size>100</max_size>
             </search_terms>
         </smile_elasticsuite_analytics>
     </default>
