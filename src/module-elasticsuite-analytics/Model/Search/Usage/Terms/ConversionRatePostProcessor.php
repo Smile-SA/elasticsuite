@@ -72,7 +72,7 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
      * @param \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory   Aggregation factory.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory             $queryFactory         Query factory.
      * @param array                                                                 $queryProviders       Query filters providers.
-     * @param string                                                                $containerName        Container name.
+     * @param string                                                                $containerName        Search request container.
      */
     public function __construct(
         \Magento\Search\Model\SearchEngine $searchEngine,
@@ -81,7 +81,7 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
         \Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory $aggregationFactory,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $queryProviders = [],
-        $containerName = \Smile\ElasticsuiteTracker\Api\SessionIndexInterface::INDEX_IDENTIFIER
+        $containerName = 'tracking_log_session'
     ) {
         $this->searchEngine         = $searchEngine;
         $this->searchRequestBuilder = $searchRequestBuilder;
@@ -143,17 +143,19 @@ class ConversionRatePostProcessor implements \Smile\ElasticsuiteAnalytics\Model\
         );
         $searchResponse = $this->searchEngine->search($searchRequest);
 
-        foreach ($searchResponse->getAggregations()->getBucket('search_terms')->getValues() as $value) {
-            $currentTerm  = $value->getValue();
-            $sessionCount = $value->getMetrics()['count'];
-            $salesCount   = 0;
+        if ($searchResponse->getAggregations()->getBucket('search_terms')) {
+            foreach ($searchResponse->getAggregations()->getBucket('search_terms')->getValues() as $value) {
+                $currentTerm  = $value->getValue();
+                $sessionCount = $value->getMetrics()['count'];
+                $salesCount   = 0;
 
-            $conversionBucket = $value->getAggregations()->getBucket('conversion');
-            if ($conversionBucket) {
-                $salesCount = current($value->getAggregations()->getBucket('conversion')->getValues())->getMetrics()['count'];
-            }
-            if (isset($data[$currentTerm])) {
-                $data[$currentTerm]['conversion_rate'] = $salesCount / $sessionCount;
+                $conversionBucket = $value->getAggregations()->getBucket('conversion');
+                if ($conversionBucket) {
+                    $salesCount = current($value->getAggregations()->getBucket('conversion')->getValues())->getMetrics()['count'];
+                }
+                if (isset($data[$currentTerm])) {
+                    $data[$currentTerm]['conversion_rate'] = $salesCount / $sessionCount;
+                }
             }
         }
 

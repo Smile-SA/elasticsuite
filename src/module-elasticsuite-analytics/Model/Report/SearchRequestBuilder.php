@@ -53,14 +53,14 @@ class SearchRequestBuilder
      * @param Context                                        $context              Report context.
      * @param AggregationProviderInterface[]                 $aggregationProviders Aggregation providers.
      * @param QueryProviderInterface[]                       $queryProviders       Query providers.
-     * @param string                                         $containerName        Container name.
+     * @param string                                         $containerName        Search request container name.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
         Context $context,
         array $aggregationProviders = [],
         array $queryProviders = [],
-        $containerName = \Smile\ElasticsuiteTracker\Model\ResourceModel\SessionIndex::SEARCH_REQUEST_CONTAINER
+        $containerName = 'tracking_log_event'
     ) {
         $this->searchRequestBuilder = $searchRequestBuilder;
         $this->context              = $context;
