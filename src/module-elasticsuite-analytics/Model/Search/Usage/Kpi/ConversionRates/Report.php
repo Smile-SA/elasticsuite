@@ -34,24 +34,18 @@ class Report extends AbstractReport
         $data = [];
 
         foreach ($this->getBucketValues($response) as $value) {
-            if ($value->getValue() == 'all') {
-                $sessions   = $response->count();
-                $sales      = (int) $value->getMetrics()['product_sale'];
-                if ($sessions > 0) {
-                    $data['all'] = (float) $sales / $sessions;
-                }
-            } elseif ($value->getValue() == 'searches') {
-                $sessions   = (int) $value->getMetrics()['count'];
-                $sales      = (int) $value->getMetrics()['product_sale'];
-                if ($sessions > 0) {
-                    $data['searches'] = (float) $sales / $sessions;
-                }
+            $sessionType = $value->getValue();
+            if ($sessionType == 'all') {
+                $sessions = $response->count();
             } else {
-                $sessions   = (int) $value->getMetrics()['count'];
-                $sales      = (int) $value->getMetrics()['product_sale'];
-                if ($sessions > 0) {
-                    $data['no_searches'] = (float) $sales / $sessions;
-                }
+                $sessions = (int) $value->getMetrics()['count'];
+            }
+            $sales = 0;
+            if ($conversionBucket = $value->getAggregations()->getBucket('conversion')) {
+                $sales = (int) current($conversionBucket->getValues())->getMetrics()['count'];
+            }
+            if ($sessions > 0) {
+                $data[$sessionType] = (float) $sales / $sessions;
             }
         }
 

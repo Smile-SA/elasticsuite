@@ -67,26 +67,10 @@ class AggregationProvider implements AggregationProviderInterface
         $aggParams = [
             'name'    => 'data',
             'queries' => $this->getQueries(),
-            'metrics' => $this->getMetrics(),
+            'childBuckets' => [ $this->getConversionRateAggregation() ],
         ];
 
         return $this->aggregationFactory->create(BucketInterface::TYPE_QUERY_GROUP, $aggParams);
-    }
-
-    /**
-     * Return metrics aggregations to apply to the main bucket aggregation
-     *
-     * @return array
-     */
-    private function getMetrics()
-    {
-        $metrics = [
-            $this->metricFactory->create(
-                ['name' => 'product_sale', 'field' => 'product_sale', 'type' => MetricInterface::TYPE_CARDINALITY]
-            ),
-        ];
-
-        return $metrics;
     }
 
     /**
@@ -116,5 +100,23 @@ class AggregationProvider implements AggregationProviderInterface
         ];
 
         return $queries;
+    }
+
+    /**
+     * Return the child aggregation used to compute the conversion rate of sessions.
+     *
+     * @return BucketInterface
+     */
+    private function getConversionRateAggregation()
+    {
+        return $this->aggregationFactory->create(
+            BucketInterface::TYPE_QUERY_GROUP,
+            [
+                'queries' => [
+                    'sales' => $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'product_sale']),
+                ],
+                'name' => 'conversion',
+            ]
+        );
     }
 }
