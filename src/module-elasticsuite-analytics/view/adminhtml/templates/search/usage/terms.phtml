@@ -28,7 +28,12 @@
                 <?php else : ?>
                     <?php foreach ($termsData as $termData) : ?>
                         <tr>
-                        <td><a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a></td>
+                        <td><?php if ($termData['url']) : ?>
+                                <a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a>
+                            <?php else : ?>
+                                <?= $termData['term']; ?>
+                            <?php endif; ?>
+                        </td>
                         <td><?= $termData['sessions']; ?></td>
                         <td><?= $termData['visitors']; ?></td>
                         <td><?= $termData['result_count']; ?></td>

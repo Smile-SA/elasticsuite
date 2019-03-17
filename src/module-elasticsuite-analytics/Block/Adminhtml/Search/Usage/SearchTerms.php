@@ -67,13 +67,18 @@ class SearchTerms extends \Magento\Backend\Block\Template
      *
      * @param string $term Search term.
      *
-     * @return string
+     * @return null|string
      */
     private function getMerchandiserUrl($term)
     {
+        $url = null;
+
         $query = $this->queryFactory->create();
         $query->loadByQueryText($term);
+        if ($query->getId()) {
+            $url = $this->getUrl('search/term/edit', ['id' => $query->getId()]);
+        }
 
-        return $this->getUrl('search/term_merchandiser/edit', ['id' => $query->getId()]);
+        return $url;
     }
 }
