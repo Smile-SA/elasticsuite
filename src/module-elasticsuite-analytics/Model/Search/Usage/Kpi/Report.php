@@ -32,6 +32,8 @@ class Report extends AbstractReport
         'search_page_views_count',
         'search_sessions_count',
         'search_usage_rate',
+        'spellcheck_usage_count',
+        'spellcheck_usage_rate',
     ];
 
     /**
@@ -50,6 +52,8 @@ class Report extends AbstractReport
                 $data['search_page_views_count'] = (int) $value->getMetrics()['count'];
                 $data['search_sessions_count']   = (int) $value->getMetrics()['unique_sessions'];
                 $data['search_usage_rate']       = round($data['search_page_views_count'] / ($data['search_sessions_count'] ?: 1), 1);
+                $data['spellcheck_usage_count']  = (int) $value->getMetrics()['spellcheck_usage']['sum'];
+                $data['spellcheck_usage_rate']   = $value->getMetrics()['spellcheck_usage']['avg'];
             }
         }
 

@@ -66,6 +66,7 @@ class ConversionRates extends \Magento\Backend\Block\Template implements ChartIn
                 'easing'   => 'out',
             ],
             'hAxis' => ['baseline' => 0],
+            'legend' => ['position' => 'none'],
             'colors' => [self::COLOR_BLUE],
         ];
 

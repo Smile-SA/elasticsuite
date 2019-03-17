@@ -65,7 +65,13 @@
                             <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
                         </arguments>
                     </block>
-                    <block name="elasticsuite.analytics.search_usage.graph2" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                    <block name="elasticsuite.analytics.search_usage.spellcheck" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Spellcheck" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Spellcheck usage</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                        </arguments>
+                    </block>
+                    <block name="elasticsuite.analytics.search_usage.conversion" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Conversion rate</argument>
                             <argument name="chart_type" xsi:type="string" translate="true">BarChart</argument>

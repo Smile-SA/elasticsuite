@@ -84,6 +84,9 @@ class AggregationProvider implements AggregationProviderInterface
             $this->metricFactory->create(
                 ['name' => 'unique_visitors', 'field' => 'session.vid', 'type' => MetricInterface::TYPE_CARDINALITY]
             ),
+            $this->metricFactory->create(
+                ['name' => 'spellcheck_usage', 'field' => 'page.search.is_spellchecked', 'type' => MetricInterface::TYPE_STATS]
+            ),
         ];
 
         return $metrics;
