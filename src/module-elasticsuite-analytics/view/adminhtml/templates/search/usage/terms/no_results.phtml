@@ -1,0 +1,88 @@
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms $block
+ */
+$maxVisibleTerms    = $block->getMaxVisibleTerms();
+$termsData          = $block->getTermsData();
+$visibleTermsData   = array_slice($termsData, 0, $maxVisibleTerms);
+$hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
+?>
+<div class="dashboard-item">
+    <div class="dashboard-item-title"><?= $block->getTitle() ;?></div>
+    <div class="dashboard-item-content">
+        <table class="admin__table-primary dashboard-data terms-report">
+            <thead>
+            <tr>
+                <th class="data-grid-th no-link"><span><?= __('Term');?></span></th>
+                <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
+                <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
+            </thead>
+            <?php if (empty($termsData)) : ?>
+                <tbody>
+                <tr>
+                    <td colspan="3" style="text-align:center; padding: 20px;">
+                        <em><?= __('No data over the selected period.'); ?></em>
+                    </td>
+                </tr>
+                </tbody>
+            <?php else : ?>
+                <tbody>
+                <?php foreach ($visibleTermsData as $termData) : ?>
+                    <tr>
+                        <td><?php if ($termData['url']) : ?>
+                                <a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a>
+                            <?php else : ?>
+                                <?= $termData['term']; ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= $termData['sessions']; ?></td>
+                        <td><?= $termData['visitors']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+                <tbody class="extra" id="<?php echo $block->getJsId() ?>_extra">
+                <?php foreach ($hiddenTermsData as $termData) : ?>
+                    <tr>
+                        <td><?php if ($termData['url']) : ?>
+                                <a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a>
+                            <?php else : ?>
+                                <?= $termData['term']; ?>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= $termData['sessions']; ?></td>
+                        <td><?= $termData['visitors']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            <?php endif; ?>
+            <?php if (!empty($hiddenTermsData)) : ?>
+                <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align:right; padding: 20px;">
+                        <a href="javascript:void(0)" id="<?= $block->getJsId() ?>_toggle"><?= __('Show more...'); ?></a>
+                    </td>
+                </tr>
+                </tfoot>
+            <?php endif; ?>
+        </table>
+    </div>
+</div>
+
+<script>
+    require([
+        "jquery"
+    ], function($){
+        $(function() {
+            $("#<?= $block->getJsId() ?>_toggle").click(function() {
+                if ($("#<?= $block->getJsId() ?>_extra").is(":hidden")) {
+                    $(this).text('<?= $block->escapeJs(__('Show less...')) ?>');
+                } else {
+                    $(this).text('<?= $block->escapeJs(__('Show more...')) ?>');
+                }
+                $("#<?= $block->getJsId() ?>_extra").slideToggle();
+                return false;
+            });
+        });
+    });
+</script>
+

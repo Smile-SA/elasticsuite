@@ -99,6 +99,7 @@
     <!-- No result search terms DI config. -->
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
         <arguments>
+            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\AggregationProvider</item>
             </argument>
@@ -106,7 +107,7 @@
                 <!--
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\QueryProvider</item>
                 -->
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>

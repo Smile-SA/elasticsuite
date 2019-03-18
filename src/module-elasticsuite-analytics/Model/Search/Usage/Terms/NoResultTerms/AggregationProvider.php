@@ -16,7 +16,8 @@
 namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms;
 
 use Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\AggregationProvider as TermsAggregationProvider;
-use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 
 /**
  * Aggregation provider for terms that always return 0 results
@@ -29,19 +30,34 @@ class AggregationProvider extends TermsAggregationProvider
     /**
      * {@inheritdoc}
      */
-    protected function getPipelines()
+    public function getAggregation()
     {
-        $pipelines = [
-            $this->pipelineFactory->create(
-                PipelineInterface::TYPE_BUCKET_SELECTOR,
-                [
-                    'name' => 'result_count_filter',
-                    'bucketsPath' => ['avg_result_count' => 'result_count'],
-                    'script' => 'params.avg_result_count == 0',
-                ]
+        $aggParams = [
+            'field'     => 'search_query_void.sortable',
+            'name'      => 'search_terms',
+            'metrics'   => $this->getMetrics(),
+            'pipelines' => $this->getPipelines(),
+            'sortOrder' => ['unique_sessions' => 'desc'],
+            'size'      => $this->helper->getMaxSearchTerms(),
+        ];
+
+        return $this->aggregationFactory->create(BucketInterface::TYPE_TERM, $aggParams);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getMetrics()
+    {
+        $metrics = [
+            $this->metricFactory->create(
+                ['name' => 'unique_sessions', 'field' => 'session_id', 'type' => MetricInterface::TYPE_CARDINALITY]
+            ),
+            $this->metricFactory->create(
+                ['name' => 'unique_visitors', 'field' => 'visitor_id', 'type' => MetricInterface::TYPE_CARDINALITY]
             ),
         ];
 
-        return $pipelines;
+        return $metrics;
     }
 }

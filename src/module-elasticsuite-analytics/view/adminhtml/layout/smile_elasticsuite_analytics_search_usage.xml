@@ -49,10 +49,10 @@
                         </arguments>
                     </block>
 
-                    <block name="elasticsuite.analytics.search_usage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                    <block name="elasticsuite.analytics.search_usage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms/no_results.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</argument>
-                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">false</argument>
                             <argument name="title" xsi:type="string" translate="true">0 result search terms</argument>
                         </arguments>
                     </block>
