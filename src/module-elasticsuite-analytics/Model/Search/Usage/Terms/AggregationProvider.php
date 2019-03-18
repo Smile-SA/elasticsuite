@@ -83,7 +83,7 @@ class AggregationProvider implements AggregationProviderInterface
             'name'      => 'search_terms',
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
-            'sortOrder' => ['unique_sessions' => 'desc', 'result_count' => 'desc'],
+            'sortOrder' => ['unique_sessions' => 'desc'],
             'size'      => $this->helper->getMaxSearchTerms(),
         ];
 
