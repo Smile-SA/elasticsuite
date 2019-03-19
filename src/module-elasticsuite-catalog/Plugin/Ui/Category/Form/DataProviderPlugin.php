@@ -20,6 +20,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider as CategoryFilterProvider;
 
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 
@@ -53,23 +54,31 @@ class DataProviderPlugin
     private $searchContext;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
+     */
+    private $filterProvider;
+
+    /**
      * DataProviderPlugin constructor.
      *
      * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
      * @param FulltextCollectionFactory  $fulltextCollectionFactory  Fulltext Collection Factory.
      * @param StoreManagerInterface      $storeManager               Store Manager.
      * @param ContextInterface           $searchContext              Search context.
+     * @param CategoryFilterProvider     $categoryFilterProvider     Category Filter Provider.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
         FulltextCollectionFactory $fulltextCollectionFactory,
         StoreManagerInterface $storeManager,
-        ContextInterface $searchContext
+        ContextInterface $searchContext,
+        CategoryFilterProvider $categoryFilterProvider
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
         $this->fulltextCollectionFactory  = $fulltextCollectionFactory;
         $this->storeManager               = $storeManager;
         $this->searchContext              = $searchContext;
+        $this->filterProvider             = $categoryFilterProvider;
     }
 
     /**
@@ -198,14 +207,7 @@ class DataProviderPlugin
     private function getCategoryFilterParam(CategoryInterface $category)
     {
         $filterParam = $category->getId();
-
-        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
-            $category->setIsActive(true);
-
-            $filterParam = $category->getVirtualRule()->getCategorySearchQuery($category);
-        }
-
-        return $filterParam;
+        return $this->filterProvider->getQueryFilter($category);
     }
 
     /**

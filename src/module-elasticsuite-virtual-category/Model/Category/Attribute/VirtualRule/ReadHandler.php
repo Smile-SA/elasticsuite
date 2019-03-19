@@ -63,7 +63,10 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
             $rule = $this->ruleFactory->create();
             $rule->setStoreId($entity->getStoreId());
 
-            if ($attributeData !== null && is_string($attributeData)) {
+            if (is_array($attributeData)) {
+                $rule->loadPost($attributeData);
+                $attributeData = null;
+            } elseif ($attributeData !== null && is_string($attributeData)) {
                 $attributeData = $this->jsonSerializer->unserialize($attributeData);
             }
 
