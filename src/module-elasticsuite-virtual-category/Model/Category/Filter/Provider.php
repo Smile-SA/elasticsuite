@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteVirtualCategory\Model\Category\Filter;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 
 /**
  * Category filter provider
@@ -30,12 +31,26 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
      */
     private $readHandler;
 
+    /**
+     * @var \Magento\Framework\App\CacheInterface
+     */
+    private $cache;
+
+    /**
+     * Provider constructor.
+     *
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                           $queryFactory Query Factory
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler  Read Handler
+     * @param \Magento\Framework\App\CacheInterface                                               $cache        Cache
+     */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler
+        \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler,
+        \Magento\Framework\App\CacheInterface $cache
     ) {
         parent::__construct($queryFactory);
         $this->readHandler = $readHandler;
+        $this->cache       = $cache;
     }
 
     /**
@@ -43,7 +58,7 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
      */
     public function getConditionValue(CategoryInterface $category)
     {
-        return $this->getVirtualRule($category)->getCategorySearchQuery($category);
+        return $this->getCategorySearchQuery($category);
     }
 
     /**
@@ -51,7 +66,24 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
      */
     public function getQueryFilter(CategoryInterface $category)
     {
-        return $this->getVirtualRule($category)->getCategorySearchQuery($category);
+        return $this->getCategorySearchQuery($category);
+    }
+
+    /**
+     * Get category search query
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getCategorySearchQuery(CategoryInterface $category)
+    {
+        $virtualRule = $category->getVirtualRule();
+        if (!($virtualRule instanceof VirtualRuleInterface)) {
+            return $this->loadVirtualRule($category)->getCategorySearchQuery($category);
+        }
+
+        return $this->loadUsingCache($category, 'getCategorySearchQuery');
     }
 
     /**
@@ -62,10 +94,38 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
      *
      * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
      */
-    private function getVirtualRule(CategoryInterface $category)
+    private function loadVirtualRule(CategoryInterface $category)
     {
         $this->readHandler->execute($category);
 
         return $category->getVirtualRule();
+    }
+
+    /**
+     * Load data from the cache if exist. Use a callback on the current category if not yet present into the cache.
+     *
+     * @param CategoryInterface $category Category
+     * @param string            $callback Name of the virtual rule method to be used for actual loading.
+     *
+     * @return mixed
+     */
+    private function loadUsingCache(CategoryInterface $category, $callback)
+    {
+        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
+
+        $data = $this->cache->load($cacheKey);
+
+        if ($data !== false) {
+            $data = unserialize($data);
+        }
+
+        if ($data === false) {
+            $virtualRule = $category->getVirtualRule();
+            $data = call_user_func_array([$virtualRule, $callback], [$category]);
+            $cacheData = serialize($data);
+            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
+        }
+
+        return $data;
     }
 }

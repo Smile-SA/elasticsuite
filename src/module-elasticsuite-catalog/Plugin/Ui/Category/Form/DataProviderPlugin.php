@@ -206,7 +206,6 @@ class DataProviderPlugin
      */
     private function getCategoryFilterParam(CategoryInterface $category)
     {
-        $filterParam = $category->getId();
         return $this->filterProvider->getQueryFilter($category);
     }
 

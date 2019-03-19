@@ -99,7 +99,7 @@ class VirtualRule extends \Magento\Backend\Block\AbstractBlock
             ['name' => 'virtual_rule', 'label' => __('Virtual rule'), 'container_id' => 'virtual_rule']
         );
 
-        $virtualRule = $this->readHandler->execute($this->getCategory())->getVirtualRule();
+        $virtualRule = $this->getVirtualRule($this->getCategory());
 
         $virtualRuleField->setValue($virtualRule);
         $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
@@ -110,5 +110,23 @@ class VirtualRule extends \Magento\Backend\Block\AbstractBlock
         $virtualRuleField->setRenderer($virtualRuleRenderer);
 
         return $form;
+    }
+
+    /**
+     * Load virtual rule of a category. Can occurs when data is set directly as array to the category
+     * (Eg. when the category edit form is submitted with error and populated from session data).
+     *
+     * @param CategoryInterface $category Category
+     *
+     * @return \Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface
+     */
+    private function getVirtualRule(\Magento\Catalog\Api\Data\CategoryInterface $category)
+    {
+        if (!is_object($category->getVirtualRule())) {
+            $category = clone $category; // No side effect on category which is in registry.
+            $this->readHandler->execute($category);
+        }
+
+        return $category->getVirtualRule();
     }
 }
