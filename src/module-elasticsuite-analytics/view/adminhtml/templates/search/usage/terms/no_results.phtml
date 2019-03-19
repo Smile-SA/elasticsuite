@@ -7,8 +7,23 @@ $termsData          = $block->getTermsData();
 $visibleTermsData   = array_slice($termsData, 0, $maxVisibleTerms);
 $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
 ?>
-<div class="dashboard-item">
-    <div class="dashboard-item-title"><?= $block->getTitle() ;?></div>
+<div class="dashboard-item" id="<?= $block->getJsId() ?>">
+    <div class="dashboard-item-title">
+        <span><?= $block->getTitle() ;?></span>
+        <?php if ($block->hasHelp()) :?>
+            <div class="admin__field-tooltip tooltip">
+                <a href="#<?= $block->getJsId() ?>_help"
+                   title="<?= $block->escapeHtml(__('What is this ?')) ?>" class="admin__field-tooltip-action action-help">
+                    <span style="display: inline-block"><?= __('What is this ?') ?></span>
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php if ($block->hasHelp()) :?>
+        <div class="dashboard-item-help" id="<?= $block->getJsId() ?>_help">
+            <p><?= $block->getHelp() ?></p>
+        </div>
+    <?php endif; ?>
     <div class="dashboard-item-content">
         <table class="admin__table-primary dashboard-data terms-report">
             <thead>
@@ -70,9 +85,14 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
 
 <script>
     require([
-        "jquery"
+        'jquery'
     ], function($){
         $(function() {
+            $("#<?= $block->getJsId() ?> .action-help").click(function(event) {
+                event.preventDefault();
+                $("#<?= $block->getJsId() ?> .dashboard-item-help").slideToggle();
+            });
+
             $("#<?= $block->getJsId() ?>_toggle").click(function() {
                 if ($("#<?= $block->getJsId() ?>_extra").is(":hidden")) {
                     $(this).text('<?= $block->escapeJs(__('Show less...')) ?>');
