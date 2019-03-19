@@ -15,7 +15,8 @@ namespace Smile\ElasticsuiteCore\Indexer;
 
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
-use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface;
+use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterfaceFactory;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Magento\Framework\Indexer\SaveHandler\Batch;
 
@@ -56,34 +57,42 @@ class GenericIndexerHandler implements IndexerInterface
     private $cacheHelper;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\Type\DataSourceResolverInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterfaceFactory
      */
-    private $dataSourceResolver;
+    private $dataSourceResolverFactory;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface
+     */
+    private $indexSettings;
 
     /**
      * Constructor
      *
-     * @param IndexOperationInterface     $indexOperation     Index operation service.
-     * @param CacheHelper                 $cacheHelper        Index caching helper.
-     * @param Batch                       $batch              Batch handler.
-     * @param DataSourceResolverInterface $dataSourceResolver DataSource resolver.
-     * @param string                      $indexName          The index name.
-     * @param string                      $typeName           The type name.
+     * @param IndexOperationInterface            $indexOperation            Index operation service.
+     * @param CacheHelper                        $cacheHelper               Index caching helper.
+     * @param Batch                              $batch                     Batch handler.
+     * @param DataSourceResolverInterfaceFactory $dataSourceResolverFactory DataSource resolver.
+     * @param IndexSettingsInterface             $indexSettings             Index Settings.
+     * @param string                             $indexName                 The index name.
+     * @param string                             $typeName                  The type name.
      */
     public function __construct(
         IndexOperationInterface $indexOperation,
         CacheHelper $cacheHelper,
         Batch $batch,
-        DataSourceResolverInterface $dataSourceResolver,
+        DataSourceResolverInterfaceFactory $dataSourceResolverFactory,
+        IndexSettingsInterface $indexSettings,
         $indexName,
         $typeName
     ) {
-        $this->indexOperation     = $indexOperation;
-        $this->batch              = $batch;
-        $this->indexName          = $indexName;
-        $this->typeName           = $typeName;
-        $this->cacheHelper        = $cacheHelper;
-        $this->dataSourceResolver = $dataSourceResolver;
+        $this->indexOperation            = $indexOperation;
+        $this->batch                     = $batch;
+        $this->indexName                 = $indexName;
+        $this->typeName                  = $typeName;
+        $this->cacheHelper               = $cacheHelper;
+        $this->dataSourceResolverFactory = $dataSourceResolverFactory;
+        $this->indexSettings             = $indexSettings;
     }
 
     /**
@@ -104,7 +113,7 @@ class GenericIndexerHandler implements IndexerInterface
             $batchSize = $this->indexOperation->getBatchIndexingSize();
 
             foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
-                foreach ($this->dataSourceResolver->getDataSources($this->indexName) as $datasource) {
+                foreach ($this->getDatasources($this->indexName) as $datasource) {
                     if (!empty($batchDocuments)) {
                         $batchDocuments = $datasource->addData($storeId, $batchDocuments);
                     }
@@ -170,5 +179,25 @@ class GenericIndexerHandler implements IndexerInterface
     public function isAvailable($dimensions = [])
     {
         return $this->indexOperation->isAvailable();
+    }
+
+    /**
+     * Retrieve data sources of an index by name.
+     *
+     * @deprecated
+     *
+     * @param string $indexName The index name
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
+     */
+    private function getDatasources($indexName)
+    {
+        $config            = $this->indexSettings->getIndexConfig($indexName);
+        $legacyDatasources = $config['datasources'] ?? [];
+
+        $resolver = $this->dataSourceResolverFactory->create(['legacyDataSources' => [$indexName => $legacyDatasources]]);
+        $sources  = $resolver->getDataSources($this->indexName);
+
+        return $sources;
     }
 }

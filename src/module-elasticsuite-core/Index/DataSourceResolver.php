@@ -10,8 +10,10 @@
  * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticsuiteCore\Index;
 
+use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface;
 
 /**
@@ -31,11 +33,21 @@ class DataSourceResolver implements DataSourceResolverInterface
     /**
      * DataSourceResolver constructor.
      *
-     * @param array $datasources The datasources.
+     * @param ObjectManagerInterface $objectManager     Object Manager
+     * @param array                  $datasources       The datasources (from DI).
+     * @param array                  $legacyDataSources The legacy datasources (from elasticsuite_indices.xml, is @deprecated).
      */
-    public function __construct(array $datasources = [])
+    public function __construct(ObjectManagerInterface $objectManager, array $datasources = [], array $legacyDataSources = [])
     {
         $this->datasources = $datasources;
+
+        if (!empty($legacyDataSources)) {
+            foreach ($legacyDataSources as $indexName => $dataSources) {
+                foreach ($dataSources as $name => $source) {
+                    $this->datasources[$indexName][$name] = $objectManager->create($source);
+                }
+            }
+        }
     }
 
     /**
@@ -51,7 +63,7 @@ class DataSourceResolver implements DataSourceResolverInterface
 
         if (isset($this->datasources[$indexName]) && isset($this->datasources[$indexName])) {
             foreach ($this->datasources[$indexName] as $name => $datasource) {
-                if (! $datasource instanceof \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface) {
+                if (!$datasource instanceof \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface) {
                     throw new \InvalidArgumentException(
                         'Datasource must implement ' . \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface::class
                     );

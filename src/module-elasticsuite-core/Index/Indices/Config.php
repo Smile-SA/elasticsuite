@@ -166,7 +166,12 @@ class Config extends \Magento\Framework\Config\Data
 
         $defaultSearchType = $indexConfigData['defaultSearchType'];
 
-        return ['mapping' => $mapping, 'types' => $types, 'defaultSearchType' => $defaultSearchType];
+        return [
+            'mapping'           => $mapping,
+            'types'             => $types,
+            'defaultSearchType' => $defaultSearchType,
+            'datasources'       => $typeConfigData['datasources'] ?? [], // @deprecated.
+        ];
     }
 
     /**
@@ -182,7 +187,7 @@ class Config extends \Magento\Framework\Config\Data
     private function getMappingFields($indexName, $typeConfigData)
     {
         \Magento\Framework\Profiler::start('ES:Get dynamic fields config');
-        $fields = $this->getDynamicFields($indexName);
+        $fields = $this->getDynamicFields($indexName, $typeConfigData);
         \Magento\Framework\Profiler::stop('ES:Get dynamic fields config');
 
         foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
@@ -206,19 +211,21 @@ class Config extends \Magento\Framework\Config\Data
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @param string $indexName Index Name.
+     * @param string $indexName  Index Name.
+     * @param array  $configData Processed configuration.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
-    private function getDynamicFields($indexName)
+    private function getDynamicFields($indexName, $configData)
     {
         $fields       = [];
         $cacheId      = implode('|', [$this->cacheId, $indexName]);
         $fieldsConfig = $this->cache->load($cacheId);
 
         if (false === $fieldsConfig) {
-            $resolver     = $this->dataSourceResolverFactory->create();
-            $dataSources  = $resolver->getDataSources($indexName);
+            $legacyDataSources = [$indexName => $configData['datasources']]; // @deprecated.
+            $resolver          = $this->dataSourceResolverFactory->create(['legacyDataSources' => $legacyDataSources]);
+            $dataSources       = $resolver->getDataSources($indexName);
 
             /** @var DynamicFieldProviderInterface[] $dynamicFieldProviders */
             $dynamicFieldProviders = array_filter($dataSources, [$this, 'isDynamicFieldsProvider']);
