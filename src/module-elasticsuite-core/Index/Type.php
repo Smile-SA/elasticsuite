@@ -20,11 +20,10 @@ use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 /**
  * Default implementation for ES document types (Smile\ElasticsuiteCore\Api\Index\TypeInterface).
  *
- * @deprecated
- *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @deprecated since 2.8.0
  */
 class Type implements TypeInterface
 {

@@ -17,11 +17,10 @@ namespace Smile\ElasticsuiteCore\Api\Index;
 /**
  * Representation of a document type in an Elasticsearch index.
  *
- * @deprecated
- *
  * @category Smile_Elasticsuite
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @deprecated since 2.8.0
  */
 interface TypeInterface
 {

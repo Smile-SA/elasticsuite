@@ -42,8 +42,7 @@ class Index implements IndexInterface
     private $name;
 
     /**
-     * Index types.
-     * @deprecated
+     * Index types. @deprecated
      *
      * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
      */
@@ -86,8 +85,8 @@ class Index implements IndexInterface
         array $types,
         $defaultSearchType,
         MappingInterface $mapping,
-        $needInstall = false)
-    {
+        $needInstall = false
+    ) {
         $this->identifier         = $identifier;
         $this->name               = $name;
         $this->types              = $this->prepareTypes($types);
