@@ -99,4 +99,5 @@
         </arguments>
     </type>
 
+    <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 </config>
