@@ -14,6 +14,8 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use \Smile\ElasticsuiteCore\Index\Index;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
 
@@ -38,9 +40,15 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
+        $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
+
+        $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
+        $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
+
         $typeStub = $this->getMockBuilder(TypeInterface::class)->getMock();
         $typeStub->method('getName')->will($this->returnValue('type'));
-        $this->index = new Index('identifier', 'name', [$typeStub], 'type');
+
+        $this->index = new Index('identifier', 'name', [$typeStub], 'type', $mappingMock);
     }
 
     /**
@@ -56,6 +64,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $this->index->getTypes());
         $this->assertInstanceOf(TypeInterface::class, $this->index->getType('type'));
         $this->assertInstanceOf(TypeInterface::class, $this->index->getDefaultSearchType());
+        $this->assertInstanceOf(MappingInterface::class, $this->index->getMapping());
+        $this->assertInstanceOf(FieldInterface::class, $this->index->getIdField());
     }
 
     /**
@@ -81,6 +91,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidDefaultSearchType()
     {
-        new Index('identifier', 'name', [], 'defaultSearchType');
+        $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
+        $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
+        $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
+
+        new Index('identifier', 'name', [], 'defaultSearchType', $mappingMock);
     }
 }
