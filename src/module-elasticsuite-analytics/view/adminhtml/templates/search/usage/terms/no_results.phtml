@@ -20,7 +20,7 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
         <?php endif; ?>
     </div>
     <?php if ($block->hasHelp()) :?>
-        <div class="dashboard-item-help" id="<?= $block->getJsId() ?>_help">
+        <div class="dashboard-item-help dashboard-data" id="<?= $block->getJsId() ?>_help">
             <p><?= $block->getHelp() ?></p>
         </div>
     <?php endif; ?>
