@@ -19,8 +19,7 @@ namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Visibility extends
-\Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility
+class Visibility extends \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Visibility
 {
     /**
      * Check a configuration element visibility
