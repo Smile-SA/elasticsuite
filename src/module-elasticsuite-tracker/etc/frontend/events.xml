@@ -17,4 +17,7 @@
     <event name="customer_logout">
         <observer name="clean_tracking_cookies_on_logout" instance="Smile\ElasticsuiteTracker\Observer\CleanCookiesOnLogout" />
     </event>
+    <event name="smile_elasticsuite_redirect_if_one_result">
+        <observer name="track_redirect_if_one_result" instance="Smile\ElasticsuiteTracker\Observer\TrackRedirectIfOneResult" />
+    </event>
 </config>
