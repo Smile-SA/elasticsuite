@@ -32,7 +32,7 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
     protected function getFilterOption(array $filterItems, Option $swatchOption)
     {
         $resultOption = false;
-        $filterItem = $this->getFilterItemById($filterItems, $swatchOption->getLabel());
+        $filterItem = $this->getFilterItemById($filterItems, $swatchOption->getValue());
         if ($filterItem && $this->isOptionVisible($filterItem)) {
             $resultOption = $this->getOptionViewData($filterItem, $swatchOption);
         }
