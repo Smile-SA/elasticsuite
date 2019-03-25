@@ -18,6 +18,7 @@ use Magento\CatalogSearch\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 
 /**
  * Plugin which is responsible to redirect to a product page when only one result is found.
@@ -61,6 +62,11 @@ class ResultPlugin
     private $resultFactory;
 
     /**
+     * @var EventManagerInterface
+     */
+    private $eventManager;
+
+    /**
      * RedirectIfOneResult constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Resolver              $layerResolver       Layer Resolver
@@ -68,19 +74,22 @@ class ResultPlugin
      * @param \Magento\CatalogSearch\Helper\Data                 $catalogSearchHelper Catalog Search Helper
      * @param \Magento\Framework\Message\ManagerInterface        $messageManager      Message Manager
      * @param \Magento\Framework\Controller\ResultFactory        $resultFactory       Result Interface Factory
+     * @param \Magento\Framework\Event\ManagerInterface          $eventManager        Event Manager
      */
     public function __construct(
         Resolver $layerResolver,
         ScopeConfigInterface $scopeConfig,
         Data $catalogSearchHelper,
         ManagerInterface $messageManager,
-        ResultFactory $resultFactory
+        ResultFactory $resultFactory,
+        EventManagerInterface $eventManager
     ) {
         $this->layerResolver  = $layerResolver;
         $this->scopeConfig    = $scopeConfig;
         $this->messageManager = $messageManager;
         $this->helper         = $catalogSearchHelper;
         $this->resultFactory  = $resultFactory;
+        $this->eventManager   = $eventManager;
     }
 
     /**
@@ -110,6 +119,14 @@ class ResultPlugin
                         $this->addRedirectMessage($product);
                         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
                         $result->setUrl($product->getProductUrl());
+
+                        $this->eventManager->dispatch(
+                            'smile_elasticsuite_redirect_if_one_result',
+                            [
+                                'store_id'           => $product->getStoreId(),
+                                'product_collection' => $productCollection,
+                            ]
+                        );
                     }
                 }
             }

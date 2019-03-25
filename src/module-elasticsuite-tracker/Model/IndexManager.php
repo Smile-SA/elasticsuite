@@ -112,6 +112,36 @@ class IndexManager
     }
 
     /**
+     * Returns a [from, to] date range of available data based on horodated indices presence.
+     *
+     * @param string $indexIdentifier Index identifier.
+     * @param int    $storeId         Store id.
+     *
+     * @return \DateTime[]
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+    public function getIndicesDateBounds($indexIdentifier, $storeId)
+    {
+        $bounds = [];
+
+        $indexAlias = $this->getIndexAlias($indexIdentifier, $storeId);
+        $indices    = $this->client->getIndicesNameByAlias($indexAlias);
+
+        if (!empty($indices)) {
+            arsort($indices); // Sort horodated indices. Oldest will be at the end.
+            $latest     = current($indices);
+            $earliest   = array_pop($indices);
+
+            $latestDate     = \DateTime::createFromFormat('Ymd', str_replace("{$indexAlias}_", "", $latest));
+            $earliestDate   = \DateTime::createFromFormat('Ymd', str_replace("{$indexAlias}_", "", $earliest));
+
+            $bounds = [$earliestDate, $latestDate];
+        }
+
+        return $bounds;
+    }
+
+    /**
      * Build index name from an event.
      *
      * @param string $indexIdentifier Index identifier.

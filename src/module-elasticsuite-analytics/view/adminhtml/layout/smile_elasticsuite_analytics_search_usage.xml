@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Apache License Version 2.0
+ */
+-->
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <script src="https://www.gstatic.com/charts/loader.js" src_type="url" />
+    </head>
+    <update handle="styles" />
+    <body>
+        <referenceContainer name="page.main.actions">
+            <block class="Magento\Backend\Block\Store\Switcher" name="report.store.switcher">
+                <arguments>
+                    <argument name="use_confirm" xsi:type="boolean">false</argument>
+                </arguments>
+            </block>
+            <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher" name="report.dateRange.switcher"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <container name="dashboard-container" htmlTag="div" htmlClass="dashboard-container row">
+                <block name="elasticsuite.analytics.search_usage.kpi" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi" template="Smile_ElasticsuiteAnalytics::search/usage/kpi.phtml" />
+                
+                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-5">
+                    <block name="elasticsuite.analytics.search_usage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
+                            <argument name="title" xsi:type="string" translate="true">Popular search terms</argument>
+                            <argument name="help" xsi:type="string" translate="true"><![CDATA[The terms listed below are the most popular search terms, whether they lead to exact or close matches.<br />The link on a term leads to its edit screen where you can either <a href="https://github.com/Smile-SA/elasticsuite/wiki/ProductSorting#using-the-merchandiser" target="_blank">merchandise</a> the search results page or configure a redirection - for instance to redirect the user to a dedicated category.<br />The "conversion rate" column value is computed as the ratio of the number of sessions where an order was placed and the term(s) searched for on the total number of sessions where the term(s) were searched for.]]></argument>
+                        </arguments>
+                    </block>
+
+                    <block name="elasticsuite.analytics.search_usage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">true</argument>
+                            <argument name="title" xsi:type="string" translate="true">Spellchecked search terms</argument>
+                            <argument name="help" xsi:type="string" translate="true"><![CDATA[The terms listed below were those for which they were no exact results and only close matches were displayed.<br />If a term is a "popular mispelling" with not many results while you know the correct search term would return more products, you might want to add a rule in the <a href="https://github.com/Smile-SA/elasticsuite/wiki/ThesaurusAdministration" target="blank">Thesaurus</a>.]]></argument>
+                        </arguments>
+                    </block>
+
+                    <block name="elasticsuite.analytics.search_usage.no_result_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms/no_results.phtml">
+                        <arguments>
+                            <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</argument>
+                            <argument name="show_conversion_rate" xsi:type="boolean">false</argument>
+                            <argument name="title" xsi:type="string" translate="true">0 results search terms</argument>
+                            <argument name="help" xsi:type="string" translate="true"><![CDATA[The terms listed below were those for which they were neither exact results nor close matches.<br />If you have nonetheless some related products, you probably should add a rule in the <a href="https://github.com/Smile-SA/elasticsuite/wiki/ThesaurusAdministration" target="blank">Thesaurus</a>.<br />For instance, if you have a lot of "running" related products and visitors are searching repeatly for "jogging" without any results, you should definitely add a <a href="https://github.com/Smile-SA/elasticsuite/wiki/ThesaurusAdministration#synonym" target="_blank">synonym</a> or <a href="https://github.com/Smile-SA/elasticsuite/wiki/ThesaurusAdministration#expansion" target="_blank">expansion</a> rule in the Thesaurus to associate the terms "running" and "jogging".]]></argument>
+                        </arguments>
+                    </block>
+                </container>
+                
+                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-5">
+                    <block name="elasticsuite.analytics.search_usage.sessions" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Sessions" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Sessions</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                        </arguments>
+                    </block>
+                    <block name="elasticsuite.analytics.search_usage.spellcheck" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Spellcheck" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Spellcheck usage</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                        </arguments>
+                    </block>
+                    <block name="elasticsuite.analytics.search_usage.conversion" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Conversion rate</argument>
+                            <argument name="chart_type" xsi:type="string" translate="true">BarChart</argument>
+                        </arguments>
+                    </block>
+                </container>
+            </container>
+        </referenceContainer>
+    </body>
+</page>

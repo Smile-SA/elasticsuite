@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Search usage KPI report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
+
+    <!-- Search usage and conversion rates report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+            </argument>
+            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
+    
+    <!-- Popular search terms report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- Spellchecked search terms DI config. -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\QueryProvider</item>
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <!-- No result search terms DI config. -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder</argument>
+            <argument name="postProcessors" xsi:type="array">
+                <item name="conversionRate" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Search terms reports post-processors -->
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor">
+        <arguments>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

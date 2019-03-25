@@ -129,6 +129,10 @@
                 <field name="search_query" type="text">
                     <isSearchable>true</isSearchable>
                 </field>
+                <field name="search_query_void" type="text">
+                    <isSearchable>true</isSearchable>
+                    <isUsedForSortBy>true</isUsedForSortBy>
+                </field>
                 <field name="product_sale" type="integer" />
                 <field name="category_sale" type="integer" />
             </mapping>

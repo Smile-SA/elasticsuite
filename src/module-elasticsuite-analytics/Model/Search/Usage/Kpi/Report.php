@@ -1,0 +1,76 @@
+<?php
+/**
+ * DISCLAIMER
+ * Do not edit or add to this file if you wish to upgrade this module to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @copyright 2018 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi;
+
+use Smile\ElasticsuiteAnalytics\Model\AbstractReport;
+
+/**
+ * Search usage KPI Report
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteAnalytics
+ */
+class Report extends AbstractReport
+{
+    /**
+     * @var array
+     */
+    private $defaultKeys = [
+        'page_view_counts',
+        'sessions_count',
+        'visitors_count',
+        'search_page_views_count',
+        'search_sessions_count',
+        'search_usage_rate',
+        'spellcheck_usage_count',
+        'spellcheck_usage_rate',
+    ];
+
+    /**
+     * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
+    protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
+    {
+        $data = array_merge(array_fill_keys($this->defaultKeys, 0), ['page_views_count' => $response->count()]);
+
+        foreach ($this->getBucketValues($response) as $value) {
+            if ($value->getValue() == 'all') {
+                $data['sessions_count'] = (int) $value->getMetrics()['unique_sessions'];
+                $data['visitors_count'] = (int) $value->getMetrics()['unique_visitors'];
+            } else {
+                $data['search_page_views_count'] = (int) $value->getMetrics()['count'];
+                $data['search_sessions_count']   = (int) $value->getMetrics()['unique_sessions'];
+                $data['search_usage_rate']       = round($data['search_page_views_count'] / ($data['search_sessions_count'] ?: 1), 1);
+                $data['spellcheck_usage_count']  = (int) $value->getMetrics()['spellcheck_usage']['sum'];
+                $data['spellcheck_usage_rate']   = $value->getMetrics()['spellcheck_usage']['avg'];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Return the bucket values from the main aggregation
+     *
+     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response ES Query response.
+     *
+     * @return \Magento\Framework\Api\Search\AggregationValueInterface[]
+     */
+    private function getBucketValues(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
+    {
+         $bucket = $response->getAggregations()->getBucket('data');
+
+         return $bucket !== null ? $bucket->getValues() : [];
+    }
+}
