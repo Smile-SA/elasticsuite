@@ -12,7 +12,6 @@
  */
 namespace Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config;
 
-use Magento\Framework\App\Config\ScopeCodeResolver;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
@@ -60,14 +59,14 @@ class ScopePool
      * @param \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool $readerPool        Reader Pool
      * @param \Magento\Framework\App\Config\DataFactory                               $dataFactory       Config Data Factory
      * @param \Magento\Framework\App\CacheInterface                                   $cache             Cache Interface
-     * @param \Magento\Framework\App\Config\ScopeCodeResolver                         $scopeCodeResolver Scope Code Resolver
+     * @param ScopeCodeResolver                                                       $scopeCodeResolver Scope Code Resolver
      * @param string                                                                  $cacheId           Cache Id
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ReaderPool $readerPool,
         \Magento\Framework\App\Config\DataFactory $dataFactory,
         \Magento\Framework\App\CacheInterface $cache,
-        \Magento\Framework\App\Config\ScopeCodeResolver $scopeCodeResolver,
+        ScopeCodeResolver $scopeCodeResolver,
         $cacheId = 'default_config_cache'
     ) {
         $this->readerPool        = $readerPool;
