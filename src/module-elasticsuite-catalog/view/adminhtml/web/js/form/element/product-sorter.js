@@ -79,8 +79,7 @@ define([
             this.currentSize        = this.pageSize;
             this.enabled            = this.loadUrl != null;
             this.search             = ko.observable("");
-            this.previewOnlyMode    = (this.scopeSwitcher != null) && (parseInt(this.scopeSwitcher, 10) == 0) && (this.formData.store_id != 0);
-            this.initialSwitchCopy  = this.previewOnlyMode;
+            this.previewOnlyMode    = this.isComponentLinked() && this.isInitialSwitchCopy();
 
             this.observe(['products', 'countTotalProducts', 'currentSize', 'editPositions', 'loading', 'showSpinner', 'blacklistedProducts', 'previewOnlyMode']);
 
@@ -116,7 +115,27 @@ define([
             }
         },
 
+        isComponentLinked: function() {
+            return this.scopeSwitcher !== undefined && this.scopeSwitcher !== null;
+        },
+
+        isInitialSwitchCopy: function () {
+            if (!this.isComponentLinked()) {
+                return true;
+            }
+
+            if (this.initialSwitchCopy === undefined) {
+                this.initialSwitchCopy = parseInt(this.scopeSwitcher, 10) == 0 && this.formData['store_id'] != 0;
+            }
+
+            return this.initialSwitchCopy;
+        },
+
         switchScope: function(useStorePositions) {
+            if (!this.isComponentLinked()) {
+                return;
+            }
+
             if (parseInt(useStorePositions, 10) == 0) {
                 // Backup current store level positions and blacklist.
                 this.storeSortedProducts = JSON.stringify(this.editPositions());
@@ -125,7 +144,7 @@ define([
                 this.editPositions = JSON.parse(this.defaultSortedProducts);
                 this.blacklistedProducts(this.defaultBlacklistedProducts.slice(0));
             } else {
-                if (this.initialSwitchCopy) {
+                if (this.isInitialSwitchCopy()) {
                     // Copy current (default) positions and blacklist to store level.
                     this.storeSortedProducts = JSON.stringify(this.editPositions());
                     this.storeBlacklistedProducts = this.blacklistedProducts().slice(0);
