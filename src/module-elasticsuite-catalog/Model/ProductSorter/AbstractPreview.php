@@ -155,10 +155,11 @@ abstract class AbstractPreview implements PreviewInterface
      */
     private function getUnsortedProductData()
     {
-        $productCollection = $this->getProductCollection()
-            ->setSearchQuery($this->search)
-            ->setPageSize($this->size)
-        ;
+        $productCollection = $this->getProductCollection()->setPageSize($this->size);
+
+        if (!in_array($this->search, [null, ''])) {
+            $productCollection->setSearchQuery($this->search);
+        }
 
         return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
     }
