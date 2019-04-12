@@ -32,7 +32,7 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
     protected function getFilterOption(array $filterItems, Option $swatchOption)
     {
         $resultOption = false;
-        $filterItem = $this->getFilterItemById($filterItems, $swatchOption->getLabel());
+        $filterItem = $this->getFilterItemByLabel($filterItems, $swatchOption->getLabel());
         if ($filterItem && $this->isOptionVisible($filterItem)) {
             $resultOption = $this->getOptionViewData($filterItem, $swatchOption);
         }
@@ -63,5 +63,25 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
             'link'         => $linkToOption,
             'custom_style' => $customStyle,
         ];
+    }
+
+
+    /**
+     * Fetch Filter item by it's label.
+     *
+     * @param FilterItem[] $filterItems All Filter items
+     * @param string       $filterLabel Filter Label
+     *
+     * @return bool|FilterItem
+     */
+    protected function getFilterItemByLabel(array $filterItems, $filterLabel)
+    {
+        foreach ($filterItems as $item) {
+            if ((string) $item->getValue() === (string) $filterLabel) {
+                return $item;
+            }
+        }
+
+        return false;
     }
 }
