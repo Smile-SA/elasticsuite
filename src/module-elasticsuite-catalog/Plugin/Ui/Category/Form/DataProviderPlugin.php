@@ -118,7 +118,7 @@ class DataProviderPlugin
 
         $currentCategory = $dataProvider->getCurrentCategory();
 
-        if ($currentCategory->getId() !== null && $currentCategory->getLevel() > 2) {
+        if ($currentCategory->getId() !== null && $currentCategory->getLevel() >= 2) {
             $data[$currentCategory->getId()]['facet_config'] = $this->getFilterableAttributeList($currentCategory);
         }
 
