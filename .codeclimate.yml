@@ -1,11 +1,77 @@
 ---
-engines:
-  duplication:
+version: "2"
+checks:
+  argument-count:
     enabled: true
     config:
+      threshold: 4
       languages:
-      - javascript
-      - php
+        - javascript
+        - php
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 4
+      languages:
+        - javascript
+        - php
+  file-lines:
+    enabled: true
+    config:
+      threshold: 250
+      languages:
+        - javascript
+        - php
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 5
+      languages:
+        - javascript
+        - php
+  method-count:
+    enabled: true
+    config:
+      threshold: 10
+      languages:
+        - javascript
+        - php
+  method-lines:
+    enabled: true
+    config:
+      threshold: 40
+      languages:
+        - javascript
+        - php
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 4
+      languages:
+        - javascript
+        - php
+  return-statements:
+    enabled: true
+    config:
+      threshold: 2
+      languages:
+        - javascript
+        - php
+  similar-code:
+    enabled: true
+    config:
+      threshold: 60
+      languages:
+        - javascript
+        - php
+  identical-code:
+    enabled: true
+    config:
+      threshold: 40
+      languages:
+        - javascript
+        - php
+plugins:
   eslint:
     enabled: true
   fixme:
@@ -15,11 +81,8 @@ engines:
     config:
       file_extensions: php
       ignore-undeclared: true
-ratings:
-  paths:
-  - "**.js"
-  - "**.php"
-exclude_paths:
-  - src/*/Test
-  - vendor/*
-  - Resources/*
+exclude_patterns:
+  - "src/*/Test"
+  - "src/*/Setup/*Setup.php"
+  - "vendor/*"
+  - "Resources/*"
