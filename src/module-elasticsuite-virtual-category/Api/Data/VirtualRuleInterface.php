@@ -42,4 +42,11 @@ interface VirtualRuleInterface
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface[]
      */
     public function getSearchQueriesByChildren(CategoryInterface $rootCategory);
+
+    /**
+     * Return Condition of the Rule. Mostly used with API calls.
+     *
+     * @return \Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface|null
+     */
+    public function getCondition();
 }

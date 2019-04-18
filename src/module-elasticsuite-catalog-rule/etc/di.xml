@@ -28,4 +28,5 @@
         </arguments>
     </type>
 
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface" type="Smile\ElasticsuiteCatalogRule\Model\Data\Condition"/>
 </config>

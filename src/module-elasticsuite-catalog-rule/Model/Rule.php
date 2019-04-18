@@ -1,10 +1,8 @@
 <?php
 /**
  * DISCLAIMER
- *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
- *
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogRule
@@ -12,6 +10,7 @@
  * @copyright 2018 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticsuiteCatalogRule\Model;
 
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -36,14 +35,20 @@ class Rule extends \Magento\Rule\Model\AbstractModel
     protected $elementName;
 
     /**
+     * @var \Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory
+     */
+    private $conditionDataFactory;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Framework\Model\Context                                   $context           Context.
-     * @param \Magento\Framework\Registry                                        $registry          Registry.
-     * @param \Magento\Framework\Data\FormFactory                                $formFactory       Form factory.
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface               $localeDate        Locale date.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory Search engine rule condition factory.
-     * @param array                                                              $data              Additional data.
+     * @param \Magento\Framework\Model\Context                                   $context              Context.
+     * @param \Magento\Framework\Registry                                        $registry             Registry.
+     * @param \Magento\Framework\Data\FormFactory                                $formFactory          Form factory.
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface               $localeDate           Locale date.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory    Search engine rule condition factory.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory         $conditionDataFactory Condition Data Factory.
+     * @param array                                                              $data                 Additional data.
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -51,9 +56,11 @@ class Rule extends \Magento\Rule\Model\AbstractModel
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\CombineFactory $conditionsFactory,
+        \Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory $conditionDataFactory,
         array $data = []
     ) {
-        $this->conditionsFactory = $conditionsFactory;
+        $this->conditionsFactory    = $conditionsFactory;
+        $this->conditionDataFactory = $conditionDataFactory;
         parent::__construct($context, $registry, $formFactory, $localeDate, null, null, $data);
     }
 
@@ -118,5 +125,47 @@ class Rule extends \Magento\Rule\Model\AbstractModel
         }
 
         return $query;
+    }
+
+    /**
+     * Convert recursive array into condition data model
+     *
+     * @param array $input Conditions arrays.
+     *
+     * @return \Smile\ElasticsuiteCatalogRule\Model\Data\Condition
+     */
+    protected function arrayToConditionDataModel(array $input)
+    {
+        /** @var \Smile\ElasticsuiteCatalogRule\Model\Data\Condition $conditionDataModel */
+        $conditionDataModel = $this->conditionDataFactory->create();
+        foreach ($input as $key => $value) {
+            switch ($key) {
+                case 'type':
+                    $conditionDataModel->setConditionType($value);
+                    break;
+                case 'attribute':
+                    $conditionDataModel->setAttributeName($value);
+                    break;
+                case 'operator':
+                    $conditionDataModel->setOperator($value);
+                    break;
+                case 'value':
+                    $conditionDataModel->setValue($value);
+                    break;
+                case 'aggregator':
+                    $conditionDataModel->setAggregatorType($value);
+                    break;
+                case 'conditions':
+                    $conditions = [];
+                    foreach ($value as $condition) {
+                        $conditions[] = $this->arrayToConditionDataModel($condition);
+                    }
+                    $conditionDataModel->setConditions($conditions);
+                    break;
+                default:
+            }
+        }
+
+        return $conditionDataModel;
     }
 }

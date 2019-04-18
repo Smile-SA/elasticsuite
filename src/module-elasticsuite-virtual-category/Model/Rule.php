@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory as ConditionDataFactory ;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
@@ -72,7 +73,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
     /**
      * Constructor.
-     *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param Context                 $context                   Context.
@@ -80,6 +80,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param FormFactory             $formFactory               Form factory.
      * @param TimezoneInterface       $localeDate                Locale date.
      * @param CombineConditionFactory $combineConditionsFactory  Search engine rule (combine) condition factory.
+     * @param ConditionDataFactory    $conditionDataFactory      Condition Data factory.
      * @param ProductConditionFactory $productConditionsFactory  Search engine rule (product) condition factory.
      * @param QueryFactory            $queryFactory              Search query factory.
      * @param CategoryFactory         $categoryFactory           Product category factorty.
@@ -94,6 +95,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         FormFactory $formFactory,
         TimezoneInterface $localeDate,
         CombineConditionFactory $combineConditionsFactory,
+        ConditionDataFactory  $conditionDataFactory,
         ProductConditionFactory $productConditionsFactory,
         QueryFactory $queryFactory,
         CategoryFactory $categoryFactory,
@@ -109,7 +111,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->queryBuilder              = $queryBuilder;
         $this->storeManager              = $storeManagerInterface;
 
-        parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $data);
+        parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
 
     /**
@@ -189,6 +191,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $queries;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCondition()
+    {
+        $conditions = $this->getConditions()->asArray();
+
+        return $this->arrayToConditionDataModel($conditions);
     }
 
     /**
