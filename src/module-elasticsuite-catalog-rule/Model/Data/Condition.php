@@ -5,9 +5,9 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuite________
+ * @package   Smile\ElasticsuiteCatalogRule
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -17,10 +17,10 @@ use Magento\Framework\Api\AbstractSimpleObject;
 use Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface;
 
 /**
- * _________________________________________________
+ * CatalogRule Condition Data Model. Mostly used with WebAPI.
  *
  * @category Smile
- * @package  Smile\ElasticSuite______________
+ * @package  Smile\ElasticsuiteCatalogRule
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class Condition extends AbstractSimpleObject implements ConditionInterface

@@ -49,4 +49,13 @@ interface VirtualRuleInterface
      * @return \Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface|null
      */
     public function getCondition();
+
+    /**
+     * Set Condition of the Rule. Mostly used with API calls.
+     *
+     * @param \Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface $condition The condition
+     *
+     * @return VirtualRuleInterface
+     */
+    public function setCondition($condition);
 }

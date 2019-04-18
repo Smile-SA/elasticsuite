@@ -168,4 +168,34 @@ class Rule extends \Magento\Rule\Model\AbstractModel
 
         return $conditionDataModel;
     }
+
+    /**
+     * Convert recursive array into condition data model
+     *
+     * @param \Smile\ElasticsuiteCatalogRule\Model\Data\Condition $condition The condition
+     * @param string                                              $key       The key
+     *
+     * @return array
+     */
+    protected function dataModelToArray(\Smile\ElasticsuiteCatalogRule\Model\Data\Condition $condition, $key = 'conditions')
+    {
+        $output              = [];
+        $output['type']      = $condition->getConditionType();
+        $output['value']     = $condition->getValue();
+        $output['attribute'] = $condition->getAttributeName();
+        $output['operator']  = $condition->getOperator();
+
+        if ($condition->getAggregatorType()) {
+            $output['aggregator'] = $condition->getAggregatorType();
+        }
+        if ($condition->getConditions()) {
+            $conditions = [];
+            foreach ($condition->getConditions() as $subCondition) {
+                $conditions[] = $this->dataModelToArray($subCondition, $key);
+            }
+            $output[$key] = $conditions;
+        }
+
+        return $output;
+    }
 }

@@ -204,6 +204,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setCondition($condition)
+    {
+        $this->getConditions()->setConditions([])->loadArray($this->dataModelToArray($condition));
+
+        return $this;
+    }
+
+    /**
      * Load the root category used for a virtual category.
      *
      * @param CategoryInterface $category Virtual category.
