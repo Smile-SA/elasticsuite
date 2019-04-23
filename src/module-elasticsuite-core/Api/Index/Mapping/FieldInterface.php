@@ -158,4 +158,9 @@ interface FieldInterface
      * @return mixed
      */
     public function getSortMissing($direction = SortOrderInterface::SORT_ASC);
+
+    /**
+     * @return array
+     */
+    public function getConfig();
 }

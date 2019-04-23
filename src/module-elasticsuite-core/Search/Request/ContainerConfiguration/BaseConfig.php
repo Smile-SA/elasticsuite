@@ -81,9 +81,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
 
         foreach ($this->_data as $requestName => $requestConfig) {
             $index = $requestConfig['index'];
-            $type  = $requestConfig['type'];
-
-            $this->_data[$requestName]['mapping'] = $indicesSettings[$index]['types'][$type]->getMapping();
+            $this->_data[$requestName]['mapping'] = $indicesSettings[$index]['mapping'];
         }
 
         return $this;

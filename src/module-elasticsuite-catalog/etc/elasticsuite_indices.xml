@@ -21,13 +21,6 @@
 
     <index identifier="catalog_product" defaultSearchType="product">
         <type name="product" idFieldName="entity_id">
-            <datasources>
-                <datasource name="prices">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData</datasource>
-                <datasource name="categories">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData</datasource>
-                <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\AttributeData</datasource>
-                <datasource name="stock">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</datasource>
-                <datasource name="searchPositions">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</datasource>
-            </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->
                 <field name="entity_id" type="integer" />
@@ -79,9 +72,6 @@
 
     <index identifier="catalog_category" defaultSearchType="category">
         <type name="category" idFieldName="entity_id">
-            <datasources>
-                <datasource name="attributes">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</datasource>
-            </datasources>
             <mapping>
                 <!-- Static fields handled by the base indexer (not datasource) -->
                 <field name="entity_id" type="integer" />

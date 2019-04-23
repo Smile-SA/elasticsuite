@@ -44,7 +44,6 @@ class Reader extends Filesystem
     protected $_idAttributes = [
         '/indices/index'                             => 'identifier',
         '/indices/index/type'                        => 'name',
-        '/indices/index/type/datasources/datasource' => 'name',
         '/indices/index/type/mapping/field'          => 'name',
     ];
 

@@ -71,6 +71,9 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\ContextInterface"
                 type="Smile\ElasticsuiteCore\Search\Context"/>
 
+    <preference for="Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface"
+                type="Smile\ElasticsuiteCore\Index\DataSourceResolver" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">

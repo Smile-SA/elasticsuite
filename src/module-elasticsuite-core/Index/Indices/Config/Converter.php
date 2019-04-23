@@ -99,16 +99,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         $idFieldName   = $typeRootNode->getAttribute('idFieldName');
         $datasources   = $this->parseDatasources($xpath, $typeRootNode);
 
-        $dynamicFieldProviders = array_filter(
-            $datasources,
-            function ($datasource) {
-                return $datasource instanceof DynamicFieldProviderInterface;
-            }
-        );
+        $mappingParams = ['staticFields' => $staticFields];
 
-        $mappingParams = ['staticFields' => $staticFields, 'dynamicFieldProviders' => $dynamicFieldProviders];
-
-        return ['mapping' => $mappingParams, 'datasources' => $datasources, 'idFieldName' => $idFieldName];
+        return ['mapping' => $mappingParams, 'idFieldName' => $idFieldName, 'datasources' => $datasources];
     }
 
     /**
@@ -133,6 +126,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
     /**
      * Parse datasources from type node configuration.
+     *
+     * @deprecated
      *
      * @param \DOMXPath $xpath        XPath access to the document parsed.
      * @param \DOMNode  $typeRootNode Type node to be parsed.

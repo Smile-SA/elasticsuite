@@ -136,7 +136,7 @@ class IndexOperation implements IndexOperationInterface
         $this->client->createIndex($index->getName(), $indexSettings);
 
         foreach ($index->getTypes() as $currentType) {
-            $this->client->putMapping($index->getName(), $currentType->getName(), $currentType->getMapping()->asArray());
+            $this->client->putMapping($index->getName(), $currentType->getName(), $index->getMapping()->asArray());
         }
 
 

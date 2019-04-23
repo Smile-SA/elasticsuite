@@ -45,9 +45,7 @@ class TypeTest extends \PHPUnit\Framework\TestCase
         $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
         $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
 
-        $datasourcesMock = ['datasource' => $this->getMockBuilder(DatasourceInterface::class)->getMock()];
-
-        $this->type = new \Smile\ElasticsuiteCore\Index\Type('typeName', $mappingMock, $datasourcesMock);
+        $this->type = new \Smile\ElasticsuiteCore\Index\Type('typeName', $mappingMock);
     }
 
     /**
@@ -60,20 +58,5 @@ class TypeTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('typeName', $this->type->getName());
         $this->assertInstanceOf(MappingInterface::class, $this->type->getMapping());
         $this->assertInstanceOf(FieldInterface::class, $this->type->getIdField());
-        $this->assertCount(1, $this->type->getDatasources());
-        $this->assertInstanceOf(DatasourceInterface::class, $this->type->getDatasource('datasource'));
-    }
-
-    /**
-     * Trying to access an invalid datasource.
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Datasource invalidDatasource does not exists.
-     *
-     * @return void
-     */
-    public function testInvalidDatasource()
-    {
-        $this->type->getDatasource('invalidDatasource');
     }
 }
