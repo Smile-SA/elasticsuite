@@ -6,6 +6,7 @@ Save,Save
 "<%- count %> products","<%- count %> products"
 "No products in the selected range.","No products in the selected range."
 "Search Configuration","Search Configuration"
+"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price."
 "Display in autocomplete","Display in autocomplete"
 "Facet coverage rate","Facet coverage rate"
 "Ex: Brand facet will be displayed only if 90% of the product have a brand.","Ex: Brand facet will be displayed only if 90% of the product have a brand."
@@ -14,6 +15,11 @@ Save,Save
 "Facet sort order","Facet sort order"
 "Search Weight","Search Weight"
 "Used in spellcheck","Used in spellcheck"
+First,First
+Last,Last
+"Sort products without value when sorting ASC","Sort products without value when sorting ASC"
+"How the products which are missing values for this attribute should be treated when using it to sort.","How the products which are missing values for this attribute should be treated when using it to sort."
+"Sort products without value when sorting DESC","Sort products without value when sorting DESC"
 "Slider Display Configuration","Slider Display Configuration"
 "Display pattern","Display pattern"
 "A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €"
@@ -44,6 +50,13 @@ OK,OK
 "Automatic Sort","Automatic Sort"
 "Manual Sort","Manual Sort"
 "Show more","Show more"
+Search,Search
+"Refine search","Refine search"
+"Clear search","Clear search"
+"Your search returned no results.","Your search returned no results."
+"Preview Only Mode","Preview Only Mode"
+"Clear product positions","Clear product positions"
+"Clear all products positions and blacklist status ?","Clear all products positions and blacklist status ?"
 "In Stock","In Stock"
 "Out Of Stock","Out Of Stock"
 "Show less","Show less"
@@ -60,6 +73,8 @@ OK,OK
 "Catalog Search Configuration","Catalog Search Configuration"
 "Redirect to product page if only one result","Redirect to product page if only one result"
 "If there is only one product matching a given search query, the user will be redirect to this product page.","If there is only one product matching a given search query, the user will be redirect to this product page."
+"Use URL Rewrites for Category Filter in category navigation","Use URL Rewrites for Category Filter in category navigation"
+"When set to yes, users are redirected (and all filters are reset) to the chosen category page when they use the category filter in layered navigation.","When set to yes, users are redirected (and all filters are reset) to the chosen category page when they use the category filter in layered navigation."
 "Expanded facets","Expanded facets"
 "Number of facets to display expanded by default.","Number of facets to display expanded by default."
 "ElasticSuite Category Indexing","ElasticSuite Category Indexing"
@@ -73,19 +88,14 @@ Attribute,Attribute
 "Sort Order","Sort Order"
 Pinned,Pinned
 "Use Category Name in product search","Use Category Name in product search"
+"Add New Optimizer","Add New Optimizer"
+"All Store Views","All Store Views"
+"Store View","Store View"
+ID,ID
+"Query Text","Query Text"
 "No search result for the current search.","No search result for the current search."
+"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'."
 Products,Products
 Categories,Categories
 Attributes,Attributes
-"Refine search","Refine search"
-"Clear search","Clear search"
-"Your search returned no results.","Your search returned no results."
-"Clear product positions","Clear product positions"
-"Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'.","Clear all products positions and blacklist status ? All products will be reset to be visible and in 'Automatic Sort'."
 "No value matching the search <b>%1</b>.","No value matching the search <b>%1</b>."
-"Sort products without value when sorting ASC","Sort products without value when sorting ASC"
-"Sort products without value when sorting DESC","Sort products without value when sorting DESC"
-"How the products which are missing values for this attribute should be treated when using it to sort.","How the products which are missing values for this attribute should be treated when using it to sort."
-"First","First"
-"Last","Last"
-"Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price."

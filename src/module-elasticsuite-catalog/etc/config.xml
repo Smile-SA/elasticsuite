@@ -35,6 +35,7 @@
         <smile_elasticsuite_catalogsearch_settings>
             <catalogsearch>
                 <redirect_if_one_result>1</redirect_if_one_result>
+                <category_filter_use_url_rewrites>1</category_filter_use_url_rewrites>
                 <expanded_facets>3</expanded_facets>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
