@@ -55,7 +55,12 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If there is only one product matching a given search query, the user will be redirect to this product page.]]></comment>
                 </field>
-                <field id="expanded_facets" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="category_filter_use_url_rewrites" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use URL Rewrites for Category Filter in category navigation</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When set to yes, users are redirected (and all filters are reset) to the chosen category page when they use the category filter in layered navigation.]]></comment>
+                </field>
+                <field id="expanded_facets" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Expanded facets</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Number of facets to display expanded by default.]]></comment>

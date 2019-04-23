@@ -16,12 +16,19 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 /**
  * Product category filter implementation.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 {
+    /**
+     * Configuration path for URL rewrite usage.
+     */
+    const XML_CATEGORY_FILTER_USE_URL_REWRITE = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/category_filter_use_url_rewrites';
+
     /**
      * @var \Magento\Catalog\Model\Layer\Filter\DataProvider\Category
      */
@@ -43,9 +50,15 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     private $childrenCategories;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory   Filter item factory.
      * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager        Store manager.
@@ -53,6 +66,8 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder     Item data builder.
      * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface               $scopeConfig         Scope configuration.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface              $context             Search Context.
      * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                            $data                Custom data.
      */
@@ -63,22 +78,29 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
         $useUrlRewrites = false,
         array $data = []
     ) {
-            parent::__construct(
-                $filterItemFactory,
-                $storeManager,
-                $layer,
-                $itemDataBuilder,
-                $escaper,
-                $dataProviderFactory,
-                $data
-            );
+        parent::__construct(
+            $filterItemFactory,
+            $storeManager,
+            $layer,
+            $itemDataBuilder,
+            $escaper,
+            $dataProviderFactory,
+            $data
+        );
 
-            $this->escaper        = $escaper;
-            $this->dataProvider   = $dataProviderFactory->create(['layer' => $this->getLayer()]);
-            $this->useUrlRewrites = $useUrlRewrites;
+        $this->escaper        = $escaper;
+        $this->dataProvider   = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->searchContext  = $context;
+        $this->useUrlRewrites = ($useUrlRewrites === true) ? (bool) $scopeConfig->isSetFlag(
+            self::XML_CATEGORY_FILTER_USE_URL_REWRITE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeManager->getStore()->getId()
+        ) : false;
     }
 
     /**
@@ -93,6 +115,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
 
             $category = $this->dataProvider->getCategory();
 
+            $this->searchContext->setCurrentCategory($category);
             $this->applyCategoryFilterToCollection($category);
 
             if ($request->getParam('id') != $category->getId() && $this->dataProvider->isValid()) {

@@ -15,8 +15,6 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
-
 /**
  * Product category filter implementation using virtual categories.
  *
@@ -36,6 +34,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory   Filter item factory.
      * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager        Store manager.
@@ -43,6 +42,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder     Item data builder.
      * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface               $scopeConfig         Scope config.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface              $context             Search context.
      * @param \Magento\Framework\App\CacheInterface                            $cache               Cache.
      * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                            $data                Custom data.
@@ -54,6 +55,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
         \Magento\Framework\Escaper $escaper,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
         \Magento\Framework\App\CacheInterface $cache,
         $useUrlRewrites = false,
         array $data = []
@@ -65,6 +68,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $itemDataBuilder,
             $escaper,
             $dataProviderFactory,
+            $scopeConfig,
+            $context,
             $useUrlRewrites,
             $data
         );
