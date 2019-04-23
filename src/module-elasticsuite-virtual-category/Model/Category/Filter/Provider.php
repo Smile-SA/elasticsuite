@@ -32,25 +32,25 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
     private $readHandler;
 
     /**
-     * @var \Magento\Framework\App\CacheInterface
+     * @var \Smile\ElasticsuiteVirtualCategory\Helper\Rule
      */
-    private $cache;
+    private $helper;
 
     /**
      * Provider constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                           $queryFactory Query Factory
      * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler  Read Handler
-     * @param \Magento\Framework\App\CacheInterface                                               $cache        Cache
+     * @param \Smile\ElasticsuiteVirtualCategory\Helper\Rule                                      $helper       Rule Helper
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler $readHandler,
-        \Magento\Framework\App\CacheInterface $cache
+        \Smile\ElasticsuiteVirtualCategory\Helper\Rule $helper
     ) {
         parent::__construct($queryFactory);
         $this->readHandler = $readHandler;
-        $this->cache       = $cache;
+        $this->helper      = $helper;
     }
 
     /**
@@ -83,7 +83,7 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
             return $this->loadVirtualRule($category)->getCategorySearchQuery($category);
         }
 
-        return $this->loadUsingCache($category, 'getCategorySearchQuery');
+        return $this->helper->loadUsingCache($category, 'getCategorySearchQuery');
     }
 
     /**
@@ -99,33 +99,5 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
         $this->readHandler->execute($category);
 
         return $category->getVirtualRule();
-    }
-
-    /**
-     * Load data from the cache if exist. Use a callback on the current category if not yet present into the cache.
-     *
-     * @param CategoryInterface $category Category
-     * @param string            $callback Name of the virtual rule method to be used for actual loading.
-     *
-     * @return mixed
-     */
-    private function loadUsingCache(CategoryInterface $category, $callback)
-    {
-        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
-
-        $data = $this->cache->load($cacheKey);
-
-        if ($data !== false) {
-            $data = unserialize($data);
-        }
-
-        if ($data === false) {
-            $virtualRule = $category->getVirtualRule();
-            $data = call_user_func_array([$virtualRule, $callback], [$category]);
-            $cacheData = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
-        }
-
-        return $data;
     }
 }

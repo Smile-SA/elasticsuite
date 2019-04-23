@@ -25,10 +25,9 @@ namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
 {
     /**
-     *
-     * @var \Magento\Framework\App\CacheInterface
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider
      */
-    private $cache;
+    private $filterProvider;
 
     /**
      * Constructor.
@@ -36,17 +35,17 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                  $filterItemFactory   Filter item factory.
-     * @param \Magento\Store\Model\StoreManagerInterface                       $storeManager        Store manager.
-     * @param \Magento\Catalog\Model\Layer                                     $layer               Search layer.
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder             $itemDataBuilder     Item data builder.
-     * @param \Magento\Framework\Escaper                                       $escaper             HTML escaper.
-     * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface               $scopeConfig         Scope config.
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface              $context             Search context.
-     * @param \Magento\Framework\App\CacheInterface                            $cache               Cache.
-     * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
-     * @param array                                                            $data                Custom data.
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                   $filterItemFactory   Filter item factory.
+     * @param \Magento\Store\Model\StoreManagerInterface                        $storeManager        Store manager.
+     * @param \Magento\Catalog\Model\Layer                                      $layer               Search layer.
+     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder              $itemDataBuilder     Item data builder.
+     * @param \Magento\Framework\Escaper                                        $escaper             HTML escaper.
+     * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory  $dataProviderFactory Data provider.
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface                $scopeConfig         Scope config.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface               $context             Search context.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider      Category Filter provider.
+     * @param boolean                                                           $useUrlRewrites      Uses URLs rewrite for rendering.
+     * @param array                                                             $data                Custom data.
      */
     public function __construct(
         \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
@@ -57,7 +56,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
-        \Magento\Framework\App\CacheInterface $cache,
+        \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -73,7 +72,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $useUrlRewrites,
             $data
         );
-        $this->cache = $cache;
+
+        $this->filterProvider = $filterProvider;
     }
 
     /**
@@ -105,34 +105,6 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      */
     private function getFilterQuery()
     {
-        return $this->loadUsingCache('getCategorySearchQuery');
-    }
-
-    /**
-     * Load data from the cache if exits. Use a callback on the current category virtual root if not yet present into the cache.
-     *
-     * @param string $callback name of the virtual rule method to be used for actual loading.
-     *
-     * @return mixed
-     */
-    private function loadUsingCache($callback)
-    {
-        $category = $this->getDataProvider()->getCategory();
-        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
-
-        $data = $this->cache->load($cacheKey);
-
-        if ($data !== false) {
-            $data = unserialize($data);
-        }
-
-        if ($data === false) {
-            $virtualRule = $category->getVirtualRule();
-            $data = call_user_func_array([$virtualRule, $callback], [$category]);
-            $cacheData = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
-        }
-
-        return $data;
+        return $this->filterProvider->getQueryFilter($this->getDataProvider()->getCategory());
     }
 }
