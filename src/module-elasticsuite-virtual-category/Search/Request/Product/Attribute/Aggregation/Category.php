@@ -25,9 +25,9 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 class Category implements AggregationInterface
 {
     /**
-     * @var \Magento\Framework\App\CacheInterface
+     * @var \Smile\ElasticsuiteVirtualCategory\Helper\Rule
      */
-    private $cache;
+    private $helper;
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
@@ -48,17 +48,17 @@ class Category implements AggregationInterface
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface   Search Context
-     * @param \Magento\Framework\App\CacheInterface               $cache              Cache
+     * @param \Smile\ElasticsuiteVirtualCategory\Helper\Rule      $helper             Rule Helper
      * @param \Magento\Store\Model\StoreManagerInterface          $storeManager       Store Manager
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository Category Repository
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface,
-        \Magento\Framework\App\CacheInterface $cache,
+        \Smile\ElasticsuiteVirtualCategory\Helper\Rule $helper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository
     ) {
-        $this->cache              = $cache;
+        $this->helper             = $helper;
         $this->context            = $contextInterface;
         $this->storeManager       = $storeManager;
         $this->categoryRepository = $categoryRepository;
@@ -82,35 +82,7 @@ class Category implements AggregationInterface
      */
     private function getFacetQueries()
     {
-        return $this->loadUsingCache('getSearchQueriesByChildren');
-    }
-
-    /**
-     * Load data from the cache if exits. Use a callback on the current category virtual root if not yet present into the cache.
-     *
-     * @param string $callback name of the virtual rule method to be used for actual loading.
-     *
-     * @return mixed
-     */
-    private function loadUsingCache($callback)
-    {
-        $category = $this->getCurrentCategory();
-        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
-
-        $data = $this->cache->load($cacheKey);
-
-        if ($data !== false) {
-            $data = unserialize($data);
-        }
-
-        if ($data === false) {
-            $virtualRule = $category->getVirtualRule();
-            $data = call_user_func_array([$virtualRule, $callback], [$category]);
-            $cacheData = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
-        }
-
-        return $data;
+        return $this->helper->loadUsingCache($this->getCurrentCategory(), 'getSearchQueriesByChildren');
     }
 
     /**
