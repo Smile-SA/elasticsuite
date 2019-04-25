@@ -132,6 +132,24 @@ class QueryBuilder
     {
         $query = null;
 
+        if ($productCondition->getAttribute() === 'sku') {
+            $queryParams = [];
+            $fieldName   = $this->getSearchFieldName($productCondition);
+
+            // SKU values can be an array of value, due to the picker.
+            foreach (explode(',', $productCondition->getValue()) as $value) {
+                // We add all of these values as a should match sub query.
+                $queryParams['should'][] = $this->prepareQuery(
+                    QueryInterface::TYPE_MATCH,
+                    ['field' => $fieldName, 'queryText' => trim($value), 'minimumShouldMatch' => "100%"]
+                );
+            }
+
+            // One clause must match between all.
+            $queryParams['minimumShouldMatch'] = 1;
+            $query = $this->prepareQuery(QueryInterface::TYPE_BOOL, $queryParams);
+        }
+
         if (in_array($productCondition->getAttribute(), array_keys($this->specialAttributesProvider->getList()))) {
             $specialAttribute = $this->specialAttributesProvider->getAttribute($productCondition->getAttribute());
             $query            = $specialAttribute->getSearchQuery();
