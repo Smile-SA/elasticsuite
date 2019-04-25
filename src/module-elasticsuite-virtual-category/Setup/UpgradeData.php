@@ -77,6 +77,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->virtualCategorySetup->addUseStorePositionsAttribute($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
+        if (version_compare($context->getVersion(), '1.4.1', '<')) {
+            $this->virtualCategorySetup->updateVirtualCategoryRootDefaultValue($this->eavSetupFactory->create(['setup' => $setup]));
+        }
+
         $setup->endSetup();
     }
 }
