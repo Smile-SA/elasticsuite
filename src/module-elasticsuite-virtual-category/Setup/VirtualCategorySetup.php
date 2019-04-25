@@ -118,7 +118,7 @@ class VirtualCategorySetup
                 'input'      => null,
                 'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
                 'required'   => false,
-                'default'    => 0,
+                'default'    => null,
                 'visible'    => true,
                 'note'       => "Root display of the virtual category (usefull to display a facet category on virtual).",
                 'sort_order' => 200,
@@ -201,6 +201,40 @@ class VirtualCategorySetup
 
         // Delete old value.
         $setup->getConnection()->delete($originalTable, "attribute_id = {$virtualRootAttributeId}");
+
+        return $this;
+    }
+
+    /**
+     * Migration from 1.4.0 to 1.4.1 :
+     *   - Updating the attribute virtual_category_root default value from 0 to NULL
+     *   - Deleting the attribute storage table rows with 0 as value
+     *     (new default value of NULL means no rows in storage table for newly created categories)
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return $this
+     */
+    public function updateVirtualCategoryRootDefaultValue(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        $setup = $eavSetup->getSetup();
+
+        // Fix the attribute default value.
+        $eavSetup->updateAttribute(Category::ENTITY, 'virtual_category_root', 'default_value', null);
+
+        // Retrieve information about the attribute and storage config.
+        $virtualRootAttributeId = $eavSetup->getAttribute(Category::ENTITY, 'virtual_category_root', 'attribute_id');
+
+        $targetTable = $setup->getTable('catalog_category_entity_int');
+
+        // Delete rows with the old default value.
+        $setup->getConnection()->delete(
+            $targetTable,
+            [
+                "attribute_id = {$virtualRootAttributeId}",
+                "value = 0",
+            ]
+        );
 
         return $this;
     }
