@@ -61,31 +61,18 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
      */
     private function getBaseSelectGlobal($productIds, $storeId)
     {
-        $useStorePositionsAttr  = $this->getUseStorePositionsAttribute();
-        $linkField              = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
-
-        $conditions    = [
-            "cpi.category_id = use_store_positions.{$linkField}",
-            "use_store_positions.store_id = " . $storeId,
-            "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
-        ];
-        $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
-
         $select = $this->getConnection()->select()
             ->from(['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))], [])
             ->joinLeft(
                 ['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id AND p.store_id = 0',
                 []
-            )
-            ->joinLeft(
-                ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],
-                $joinCondition,
-                []
-            )
-            ->where('cpi.store_id = ?', $storeId)
+            );
+
+        $this->joinStorePosition($select, $storeId, 0);
+
+        $select->where('cpi.store_id = ?', (int) $storeId)
             ->where('cpi.product_id IN(?)', $productIds)
-            ->where(new \Zend_Db_Expr("COALESCE(use_store_positions.value, 0) = 0"))
             ->columns([
                 'category_id'    => 'cpi.category_id',
                 'product_id'     => 'cpi.product_id',
@@ -109,31 +96,18 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
      */
     private function getBaseSelectStore($productIds, $storeId)
     {
-        $useStorePositionsAttr  = $this->getUseStorePositionsAttribute();
-        $linkField              = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
-
-        $conditions    = [
-            "cpi.category_id = use_store_positions.{$linkField}",
-            "use_store_positions.store_id = " . $storeId,
-            "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
-        ];
-        $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
-
         $select = $this->getConnection()->select()
             ->from(['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))], [])
             ->joinLeft(
                 ['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id AND p.store_id = cpi.store_id',
                 []
-            )
-            ->joinLeft(
-                ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],
-                $joinCondition,
-                []
-            )
-            ->where('cpi.store_id = ?', $storeId)
+            );
+
+        $this->joinStorePosition($select, $storeId, 1);
+
+        $select->where('cpi.store_id = ?', (int) $storeId)
             ->where('cpi.product_id IN(?)', $productIds)
-            ->where(new \Zend_Db_Expr("COALESCE(use_store_positions.value, 0) = 1"))
             ->columns([
                 'category_id'    => 'cpi.category_id',
                 'product_id'     => 'cpi.product_id',
@@ -157,31 +131,18 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
      */
     private function getVirtualSelectGlobal($productIds, $storeId)
     {
-        $useStorePositionsAttr  = $this->getUseStorePositionsAttribute();
-        $linkField              = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
-
-        $conditions    = [
-            "p.category_id = use_store_positions.{$linkField}",
-            "use_store_positions.store_id = " . $storeId,
-            "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
-        ];
-        $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
-
         $select = $this->getConnection()->select()
             ->from(['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
             ->joinLeft(
                 ['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
                 []
-            )
-            ->joinLeft(
-                ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],
-                $joinCondition,
-                []
-            )
-            ->where('p.product_id IN(?)', $productIds)
+            );
+
+        $this->joinStorePosition($select, $storeId, 0);
+
+        $select->where('p.product_id IN(?)', $productIds)
             ->where('cpi.product_id IS NULL')
-            ->where(new \Zend_Db_Expr("COALESCE(use_store_positions.value, 0) = 0"))
             ->where('p.store_id = 0')
             ->columns(
                 [
@@ -208,32 +169,19 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
      */
     private function getVirtualSelectStore($productIds, $storeId)
     {
-        $useStorePositionsAttr  = $this->getUseStorePositionsAttribute();
-        $linkField              = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
-
-        $conditions    = [
-            "p.category_id = use_store_positions.{$linkField}",
-            "use_store_positions.store_id = " . $storeId,
-            "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
-        ];
-        $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
-
         $select = $this->getConnection()->select()
             ->from(['p' => $this->getTable(ProductPositionResourceModel::TABLE_NAME)], [])
             ->joinLeft(
                 ['cpi' => $this->getTable($this->getCategoryProductIndexTable($storeId))],
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
                 []
-            )
-            ->joinLeft(
-                ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],
-                $joinCondition,
-                []
-            )
-            ->where('p.product_id IN(?)', $productIds)
+            );
+
+        $this->joinStorePosition($select, $storeId, 1);
+
+        $select->where('p.product_id IN(?)', $productIds)
             ->where('cpi.product_id IS NULL')
-            ->where(new \Zend_Db_Expr("COALESCE(use_store_positions.value, 0) = 1"))
-            ->where('p.store_id = ?', $storeId)
+            ->where('p.store_id = ?', (int) $storeId)
             ->columns(
                 [
                     'category_id'    => 'p.category_id',
@@ -246,6 +194,42 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             );
 
         return $select;
+    }
+
+    /**
+     * Process left join on a select to the 'use_store_positions' attribute backend table.
+     *
+     * @param \Magento\Framework\Db\Select $select                 The select to alter
+     * @param int                          $storeId                The store id
+     * @param int                          $useStorePositionsValue The value of the use_store_positions attribute to select.
+     */
+    private function joinStorePosition(\Magento\Framework\Db\Select &$select, $storeId, $useStorePositionsValue)
+    {
+        $useStorePositionsAttr  = $this->getUseStorePositionsAttribute();
+
+        if ($useStorePositionsAttr && $useStorePositionsAttr->getAttributeId()) {
+            $linkField = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
+
+            $conditions    = [
+                "p.category_id = use_store_positions.{$linkField}",
+                "use_store_positions.store_id = " . (int) $storeId,
+                "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
+            ];
+            $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
+
+            $select->joinLeft(
+                ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],
+                $joinCondition,
+                []
+            );
+
+            $select->where(
+                $this->getConnection()->quoteInto(
+                    "COALESCE(use_store_positions.value, 0) = ?",
+                    $useStorePositionsValue
+                )
+            );
+        }
     }
 
     /**
