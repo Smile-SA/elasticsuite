@@ -34,6 +34,7 @@
                     <isSearchable>1</isSearchable>
                     <isUsedForSortBy>1</isUsedForSortBy>
                     <isUsedInSpellcheck>1</isUsedInSpellcheck>
+                    <isFilterable>1</isFilterable>
                     <defaultSearchAnalyzer>reference</defaultSearchAnalyzer>
                 </field>
                 <field name="visibility" type="integer" />
