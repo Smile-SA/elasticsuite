@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2018 Smile
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Listing\Column;

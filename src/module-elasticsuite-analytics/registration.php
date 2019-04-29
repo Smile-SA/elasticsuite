@@ -9,7 +9,7 @@
  * @category  Smile
  * @package   Smile\Smile_ElasticsuiteAnalytics
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
