@@ -19,7 +19,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 /**
  * Search request bucket aggregation factory test case.
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */

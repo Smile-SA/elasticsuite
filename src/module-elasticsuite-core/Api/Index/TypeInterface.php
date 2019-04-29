@@ -5,7 +5,7 @@
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2019 Smile
@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Api\Index;
 /**
  * Representation of a document type in an Elasticsearch index.
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @deprecated since 2.8.0

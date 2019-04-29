@@ -20,7 +20,7 @@ use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute;
 /**
  * Attribute helper unit test.
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */

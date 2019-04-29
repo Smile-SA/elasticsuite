@@ -23,7 +23,7 @@ use Magento\Framework\Config\ValidationStateInterface;
  *
  * @SuppressWarnings(PHPMD.CamelCasePropertyName)
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */

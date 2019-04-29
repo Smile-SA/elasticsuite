@@ -21,7 +21,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList;
 /**
  * Plugin that handle query rewriting (synonym substitution) during fulltext query building phase.
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Fanny DECLERCK <fadec@smile.fr>
  */
