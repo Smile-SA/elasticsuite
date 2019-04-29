@@ -1,6 +1,6 @@
 <?php
 /**
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Spellchecker;
 use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface;
 
 /**
- * DISCLAIMER
+ * DISCLAIMER :
  *
  * Spellchecker request implementation
  *
