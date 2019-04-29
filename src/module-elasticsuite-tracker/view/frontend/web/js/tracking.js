@@ -4,7 +4,7 @@
 /* exported smileTracker */
 
 /**
- * DISCLAIMER :
+ * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
