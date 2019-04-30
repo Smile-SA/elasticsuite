@@ -2,7 +2,8 @@
     "name": "smile/module-elasticsuite-admin-notification",
     "type": "magento2-module",
     "license": "OSL-3.0",
-    "authors": [{
+    "authors": [
+        {
             "name": "Romain Ruaud",
             "email": "romain.ruaud@smile.fr"
         }

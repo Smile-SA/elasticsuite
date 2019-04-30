@@ -2,7 +2,16 @@
     "name": "smile/module-elasticsuite-core",
     "type": "magento2-module",
     "license": "OSL-3.0",
-    "authors": [{
+    "authors": [
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        },
+        {
+            "name": "Richard Bayet",
+            "email": "richard.bayet@smile.fr"
+        },
+        {
             "name": "Aurélien FOUCRET",
             "email": "aurelien.foucret@smile.fr"
         }
@@ -28,7 +37,7 @@
         "magento/magento-composer-installer": "*",
         "elasticsearch/elasticsearch": "~5.1"
     },
-    "version": "2.4.0",
+    "version": "2.8.0",
     "autoload": {
         "files": [
             "registration.php"

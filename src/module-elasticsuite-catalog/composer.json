@@ -2,7 +2,16 @@
     "name": "smile/module-elasticsuite-catalog",
     "type": "magento2-module",
     "license": "OSL-3.0",
-    "authors": [{
+    "authors": [
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        },
+        {
+            "name": "Richard Bayet",
+            "email": "richard.bayet@smile.fr"
+        },
+        {
             "name": "Aurélien FOUCRET",
             "email": "aurelien.foucret@smile.fr"
         }
@@ -26,7 +35,7 @@
         "magento/module-catalog-search": ">=100.2.0",
         "magento/magento-composer-installer": "*"
     },
-    "version": "2.4.0",
+    "version": "2.8.0",
     "autoload": {
         "files": [
             "registration.php"
