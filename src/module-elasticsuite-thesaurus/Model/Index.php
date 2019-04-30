@@ -1,14 +1,14 @@
 <?php
 /**
- * DISCLAIMER :
+ * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2018 Smile
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 /**
  * Thesaurus index.
  *
- * @category  Smile_Elasticsuite
+ * @category  Smile
  * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */

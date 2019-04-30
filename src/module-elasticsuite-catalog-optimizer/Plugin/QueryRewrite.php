@@ -1,13 +1,14 @@
 <?php
 /**
  * DISCLAIMER
+ *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2018 Smile
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Plugin;
@@ -20,7 +21,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList;
 /**
  * Plugin that handle query rewriting (synonym substitution) during fulltext query building phase.
  *
- * @category Smile_Elasticsuite
+ * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Fanny DECLERCK <fadec@smile.fr>
  */
