@@ -14,7 +14,7 @@ Due to the introduction of Multi Source Inventory (MSI) in Magento 2.3.x, we can
 
 If your project is based on **Magento 2.2.x**, you can continue working with Elasticsuite using the latest **2.6.x release**.
 
-If your project is based on **Magento 2.3.x**, you can start working with ElasticSuite today using the latest **2.7.x release**.
+If your project is based on **Magento 2.3.x**, you can start working with ElasticSuite today using the latest **2.8.x release**.
 
 **Which version should I use ?**
 
@@ -23,7 +23,7 @@ Magento Version                                     | ElasticSuite Latest Versio
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ~2.1.0```
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ~2.3.0```
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ~2.6.0```
-Magento **2.3.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.7.x** latest release : ```composer require smile/elasticsuite ^2.7.0```
+Magento **2.3.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.8.0```
 
 ### Magento2 B2B Compatibility
 
@@ -90,9 +90,9 @@ To learn about issues, click here. To open an issue, click [here](https://github
 
 ### Current version
 
-The current version **2.7.0** has been focused on the **Magento 2.3.x compatibility** and improving **Merchandising features**.
+The current version **2.8.0** has been focused on the **Search Analytics Dashboard**.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.7.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.8.0)
 
 This version is designed to be used on both Magento Open Source and Commerce versions >2.3.
 
@@ -152,6 +152,24 @@ Actually, there are the features actually included :
     This allow you to have a deeper level of configuration for your layered navigation for each category.
 
     ![Facet by category](doc/static/facet-by-category.png)
+
+<br/>
+
+* **Search Analytics : **
+
+    ElasticSuite features a **Search Usage dashboard**.
+
+    It gives to the merchants merchandising team a dashboard displaying the following panels :
+
+    - Global metrics : **number of searches**, pages views, **sessions with/without search** and number of unique visitors.
+    - **Popular search terms** : to see what is actually **trending**, and **how often a given search term is bringing conversion**.
+    - **Spellchecked search terms** : to **identify common mistakes** and fix them with [Thesaurus](https://github.com/Smile-SA/elasticsuite/wiki/ThesaurusAdministration).
+    - **0 results search terms** : to create a redirect for these search terms or to customize them.
+    - Percentage of **sessions with search against sessions without search**.
+    - Percentage of **spellchecked requests**.
+    - **Conversion rate** for session with search against sessions without search.
+
+    ![Search Analytics](doc/static/search-analytics.png)
 
 <br/>
 
