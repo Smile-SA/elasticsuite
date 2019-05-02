@@ -13,14 +13,12 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
-use Magento\Catalog\Model\Product\Visibility;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 
 /**
  * Search Query Builder for Optimizer Preview
@@ -42,11 +40,6 @@ class SearchQuery
     private $queryBuilder;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
      * @var \Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory
      */
     private $spellcheckRequestFactory;
@@ -63,20 +56,17 @@ class SearchQuery
      * @param QueryFactory             $queryFactory             Query Factory
      * @param SpellcheckRequestFactory $spellcheckRequestFactory Spellcheck Request Factory
      * @param SpellcheckerInterface    $spellchecker             Spellchecker
-     * @param ScopeConfigInterface     $scopeConfig              Scope Configuration
      */
     public function __construct(
         QueryBuilder $queryBuilder,
         QueryFactory $queryFactory,
         SpellcheckRequestFactory $spellcheckRequestFactory,
-        SpellcheckerInterface $spellchecker,
-        ScopeConfigInterface $scopeConfig
+        SpellcheckerInterface $spellchecker
     ) {
         $this->queryBuilder             = $queryBuilder;
         $this->queryFactory             = $queryFactory;
         $this->spellcheckRequestFactory = $spellcheckRequestFactory;
         $this->spellchecker             = $spellchecker;
-        $this->scopeConfig              = $scopeConfig;
     }
 
     /**
@@ -91,16 +81,7 @@ class SearchQuery
     {
         $spellingType = $this->getSpellingType($containerConfiguration, $queryText);
         $query        = $this->createFullTextQuery($containerConfiguration, $queryText, $spellingType);
-
-        $filterParams = [
-            'visibility' => [Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH],
-        ];
-
-        if (!$this->isEnabledShowOutOfStock($containerConfiguration->getStoreId())) {
-            $filterParams['stock.is_in_stock'] = true;
-        }
-
-        $filterQuery = $this->queryBuilder->createFilterQuery($containerConfiguration, $filterParams);
+        $filterQuery  = $this->queryBuilder->createFilterQuery($containerConfiguration, $containerConfiguration->getFilters());
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, ['filter' => $filterQuery, 'query' => $query]);
     }
@@ -151,21 +132,5 @@ class SearchQuery
         $spellingType      = $this->spellchecker->getSpellingType($spellcheckRequest);
 
         return $spellingType;
-    }
-
-    /**
-     * Get config value for 'display out of stock' option
-     *
-     * @param int $storeId The Store Id
-     *
-     * @return bool
-     */
-    private function isEnabledShowOutOfStock($storeId = null)
-    {
-        return $this->scopeConfig->isSetFlag(
-            'cataloginventory/options/show_out_of_stock',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
     }
 }

@@ -54,7 +54,7 @@ class Only implements ProviderInterface
      */
     public function getType()
     {
-        return self::TYPE_ONLY_ONE;
+        return self::TYPE_ONLY;
     }
 
     /**

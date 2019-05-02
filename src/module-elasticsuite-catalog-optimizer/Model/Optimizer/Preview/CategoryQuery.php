@@ -14,7 +14,6 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -41,25 +40,25 @@ class CategoryQuery
     private $queryBuilder;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
      */
-    private $scopeConfig;
+    private $categoryFilterProvider;
 
     /**
      * CategoryQuery constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\Builder      $queryBuilder Query Builder
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query Factory
-     * @param ScopeConfigInterface                                      $scopeConfig  Scope Configuration
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\Builder      $queryBuilder           Query Builder
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory           Query Factory
+     * @param \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider $categoryFilterProvider Category Filter Provider
      */
     public function __construct(
         QueryBuilder $queryBuilder,
         QueryFactory $queryFactory,
-        ScopeConfigInterface $scopeConfig
+        \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider $categoryFilterProvider
     ) {
-        $this->queryBuilder = $queryBuilder;
-        $this->queryFactory = $queryFactory;
-        $this->scopeConfig  = $scopeConfig;
+        $this->queryBuilder           = $queryBuilder;
+        $this->queryFactory           = $queryFactory;
+        $this->categoryFilterProvider = $categoryFilterProvider;
     }
 
     /**
@@ -74,21 +73,12 @@ class CategoryQuery
         ContainerConfigurationInterface $containerConfigurationInterface,
         CategoryInterface $category
     ) {
-        $filterParams = [
-            'category.category_id' => $category->getId(),
-            'visibility'           => [Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH],
-        ];
+        $filters = array_merge(
+            ['category' => $this->categoryFilterProvider->getQueryFilter($category)],
+            $containerConfigurationInterface->getFilters()
+        );
 
-        if (!$this->isEnabledShowOutOfStock($category->getStoreId())) {
-            $filterParams['stock.is_in_stock'] = true;
-        }
-
-        if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
-            $filterParams['category'] = $category->getVirtualRule()->getCategorySearchQuery($category);
-            unset($filterParams['category.category_id']);
-        }
-
-        $filterQuery = $this->queryBuilder->createFilterQuery($containerConfigurationInterface, $filterParams);
+        $filterQuery  = $this->queryBuilder->createFilterQuery($containerConfigurationInterface, $filters);
 
         return $this->queryFactory->create(QueryInterface::TYPE_FILTER, ['filter' => $filterQuery]);
     }
@@ -110,21 +100,5 @@ class CategoryQuery
                 'nestedFilter' => ['category.category_id' => $category->getId()],
             ],
         ];
-    }
-
-    /**
-     * Get config value for 'display out of stock' option
-     *
-     * @param int $storeId The Store Id
-     *
-     * @return bool
-     */
-    private function isEnabledShowOutOfStock($storeId = null)
-    {
-        return $this->scopeConfig->isSetFlag(
-            'cataloginventory/options/show_out_of_stock',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
-            $storeId
-        );
     }
 }
