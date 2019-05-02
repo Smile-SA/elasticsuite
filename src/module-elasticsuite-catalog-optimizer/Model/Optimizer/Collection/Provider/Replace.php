@@ -55,7 +55,7 @@ class Replace implements ProviderInterface
      */
     public function getType()
     {
-        return self::TYPE_ONLY;
+        return self::TYPE_REPLACE;
     }
 
     /**
@@ -74,7 +74,6 @@ class Replace implements ProviderInterface
                 'main_table.' . OptimizerInterface::OPTIMIZER_ID,
                 ['neq' => $this->optimizer->getId()]
             );
-            $this->optimizer->setId(null);
         }
 
         $collection->addItem($this->optimizer);
