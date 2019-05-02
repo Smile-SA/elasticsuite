@@ -34,21 +34,11 @@ class DataSourceResolver implements DataSourceResolverInterface
     /**
      * DataSourceResolver constructor.
      *
-     * @param ObjectManagerInterface $objectManager     Object Manager
-     * @param array                  $datasources       The datasources (from DI).
-     * @param array                  $legacyDataSources The legacy datasources (from elasticsuite_indices.xml, is @deprecated).
+     * @param array $datasources The datasources (from DI).
      */
-    public function __construct(ObjectManagerInterface $objectManager, array $datasources = [], array $legacyDataSources = [])
+    public function __construct(array $datasources = [])
     {
         $this->datasources = $datasources;
-
-        if (!empty($legacyDataSources)) {
-            foreach ($legacyDataSources as $indexName => $dataSources) {
-                foreach ($dataSources as $name => $source) {
-                    $this->datasources[$indexName][$name] = $objectManager->create($source);
-                }
-            }
-        }
     }
 
     /**
