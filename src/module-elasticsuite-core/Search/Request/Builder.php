@@ -159,7 +159,6 @@ class Builder
         $requestParams = [
             'name'         => $containerName,
             'indexName'    => $containerConfig->getIndexName(),
-            'type'         => $containerConfig->getTypeName(),
             'from'         => $from,
             'size'         => $size,
             'dimensions'   => $this->buildDimensions($storeId),

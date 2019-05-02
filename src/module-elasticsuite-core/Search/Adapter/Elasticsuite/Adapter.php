@@ -101,7 +101,6 @@ class Adapter implements AdapterInterface
     {
         $searchRequest = [
             'index' => $request->getIndex(),
-            'type'  => $request->getType(),
             'body'  => $this->requestMapper->buildSearchRequest($request),
         ];
 

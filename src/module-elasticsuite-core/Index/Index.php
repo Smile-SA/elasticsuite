@@ -42,13 +42,6 @@ class Index implements IndexInterface
     private $name;
 
     /**
-     * Index types. @deprecated
-     *
-     * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
-     */
-    private $types;
-
-    /**
      * Indicates if index is installed.
      *
      * @var boolean
@@ -74,7 +67,6 @@ class Index implements IndexInterface
      *
      * @param string           $identifier        Index real name.
      * @param string           $name              Index real name.
-     * @param TypeInterface[]  $types             Index current types.
      * @param string           $defaultSearchType Default type used in searches.
      * @param MappingInterface $mapping           Index Mapping.
      * @param boolean          $needInstall       Indicates if the index needs to be installed.
@@ -82,21 +74,15 @@ class Index implements IndexInterface
     public function __construct(
         $identifier,
         $name,
-        array $types,
         $defaultSearchType,
         MappingInterface $mapping,
         $needInstall = false
     ) {
         $this->identifier         = $identifier;
         $this->name               = $name;
-        $this->types              = $this->prepareTypes($types);
         $this->needInstall        = $needInstall;
         $this->defaultSearchType  = $defaultSearchType;
         $this->mapping            = $mapping;
-
-        if (!isset($this->types[$defaultSearchType])) {
-            throw new \InvalidArgumentException("Default search $defaultSearchType does not exists in the index.");
-        }
     }
 
     /**
@@ -118,30 +104,6 @@ class Index implements IndexInterface
     /**
      * {@inheritdoc}
      */
-    public function getTypes()
-    {
-        return $this->types;
-    }
-
-    /**
-     * @throws \InvalidArgumentException When the type does not exists.
-     *
-     * @deprecated
-     *
-     * {@inheritdoc}
-     */
-    public function getType($typeName)
-    {
-        if (!isset($this->types[$typeName])) {
-            throw new \InvalidArgumentException("Type $typeName does not exists in the index.");
-        }
-
-        return $this->types[$typeName];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function needInstall()
     {
         return $this->needInstall;
@@ -152,7 +114,7 @@ class Index implements IndexInterface
      */
     public function getDefaultSearchType()
     {
-        return $this->getType($this->defaultSearchType);
+        return $this->defaultSearchType;
     }
 
     /**
@@ -169,25 +131,5 @@ class Index implements IndexInterface
     public function getIdField()
     {
         return $this->getMapping()->getIdField();
-    }
-
-    /**
-     * Prepare the types added to the index (rekey the array).
-     *
-     * @deprecated
-     *
-     * @param TypeInterface[] $types Installed types.
-     *
-     * @return TypeInterface[]
-     */
-    private function prepareTypes($types)
-    {
-        $preparedTypes = [];
-
-        foreach ($types as $type) {
-            $preparedTypes[$type->getName()] = $type;
-        }
-
-        return $preparedTypes;
     }
 }

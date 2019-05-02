@@ -80,7 +80,7 @@ class EventIndex implements EventIndexInterface
                 if ($index !== null) {
                     $event = $this->mappingEnforcer->enforce($index, $event);
                     $indices[$index->getName()] = $index;
-                    $bulk->addDocument($index, $index->getDefaultSearchType(), $event['event_id'], $event);
+                    $bulk->addDocument($index, $event['event_id'], $event);
                 }
             }
         }

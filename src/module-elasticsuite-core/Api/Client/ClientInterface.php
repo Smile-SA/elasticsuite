@@ -81,12 +81,11 @@ interface ClientInterface
      * Update index mapping.
      *
      * @param string $indexName Index name.
-     * @param string $type      Type.
      * @param array  $mapping   Mapping definition.
      *
      * @return void
      */
-    public function putMapping($indexName, $type, $mapping);
+    public function putMapping($indexName, $mapping);
 
     /**
      * Optimize an index (force segment merging).

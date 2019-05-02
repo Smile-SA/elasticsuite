@@ -42,13 +42,6 @@ interface ContainerConfigurationInterface
     public function getIndexName();
 
     /**
-     * Search request container document type name.
-     *
-     * @return string
-     */
-    public function getTypeName();
-
-    /**
      * Search request container label.
      *
      * @return string

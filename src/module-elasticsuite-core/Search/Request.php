@@ -30,11 +30,6 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 class Request extends \Magento\Framework\Search\Request implements RequestInterface
 {
     /**
-     * @var string
-     */
-    private $type;
-
-    /**
      * @var SortOrderInterface
      */
     private $sortOrders;
@@ -56,7 +51,6 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      *
      * @param string               $name         Search request name.
      * @param string               $indexName    Index name.
-     * @param string               $type         Searched document type.
      * @param QueryInterface       $query        Search query.
      * @param QueryInterface       $filter       Search filter.
      * @param SortOrderInterface[] $sortOrders   Sort orders specification.
@@ -69,7 +63,6 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function __construct(
         $name,
         $indexName,
-        $type,
         QueryInterface $query,
         QueryInterface $filter = null,
         array $sortOrders = null,
@@ -80,21 +73,12 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $spellingType = null
     ) {
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
-        $this->type = $type;
         $this->filter = $filter;
         $this->sortOrders = $sortOrders;
 
         if ($spellingType !== null) {
             $this->spellingType = $spellingType;
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 
     /**

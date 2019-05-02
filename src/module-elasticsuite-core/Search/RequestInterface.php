@@ -32,13 +32,6 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 interface RequestInterface extends \Magento\Framework\Search\RequestInterface
 {
     /**
-     * Searched doucument type.
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
      * Hits filter (does not apply to aggregations).
 
      * Filter are actually using QueryInterface since there is no differences

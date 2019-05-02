@@ -95,9 +95,9 @@ class Client implements ClientInterface
     /**
      * {@inheritDoc}
      */
-    public function putMapping($indexName, $type, $mapping)
+    public function putMapping($indexName, $mapping)
     {
-        $this->esClient->indices()->putMapping(['index' => $indexName, 'type'  => $type, 'body'  => [$type => $mapping]]);
+        $this->esClient->indices()->putMapping(['index' => $indexName, 'body'  => $mapping]);
     }
 
     /**

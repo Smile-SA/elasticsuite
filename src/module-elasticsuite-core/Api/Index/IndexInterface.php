@@ -42,26 +42,6 @@ interface IndexInterface
     public function getName();
 
     /**
-     * List of the types handled by the index.
-     *
-     * @deprecated
-     *
-     * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface[]
-     */
-    public function getTypes();
-
-    /**
-     * Retrieve an type by it's name.
-     *
-     * @deprecated
-     *
-     * @param string $typeName Name of the retrieved type.
-     *
-     * @return \Smile\ElasticsuiteCore\Api\Index\TypeInterface
-     */
-    public function getType($typeName);
-
-    /**
      * Each index has a default type that can be used to search.
      * This method returns this default type.
      *

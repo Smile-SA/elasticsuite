@@ -37,9 +37,6 @@
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface"
                 type="Smile\ElasticsuiteCore\Index\IndexOperation" />
 
-    <preference for="Smile\ElasticsuiteCore\Api\Index\TypeInterface"
-                type="Smile\ElasticsuiteCore\Index\Type" />
-
     <preference for="Smile\ElasticsuiteCore\Api\Index\MappingInterface"
                 type="Smile\ElasticsuiteCore\Index\Mapping" />
 
