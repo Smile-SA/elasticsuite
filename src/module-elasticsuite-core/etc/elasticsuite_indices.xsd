@@ -36,25 +36,10 @@
 
     <xs:complexType name="typeDefinition">
         <xs:all>
-            <xs:element name="datasources" type="datasourcesDefinition" minOccurs="0"/>
             <xs:element name="mapping" type="mappingDefinition"/>
         </xs:all>
         <xs:attribute type="xs:string" name="name" use="required"/>
         <xs:attribute type="xs:string" name="idFieldName" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="datasourcesDefinition">
-        <xs:sequence maxOccurs="unbounded" minOccurs="1">
-            <xs:element name="datasource" type="datasourceDefinition" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="datasourceDefinition">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="name" use="required"/>
-            </xs:extension>
-        </xs:simpleContent>
     </xs:complexType>
 
     <xs:complexType name="mappingDefinition">

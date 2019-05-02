@@ -187,7 +187,7 @@ class Config extends \Magento\Framework\Config\Data
     private function getMappingFields($indexName, $typeConfigData)
     {
         \Magento\Framework\Profiler::start('ES:Get dynamic fields config');
-        $fields = $this->getDynamicFields($indexName, $typeConfigData);
+        $fields = $this->getDynamicFields($indexName);
         \Magento\Framework\Profiler::stop('ES:Get dynamic fields config');
 
         foreach ($typeConfigData['mapping']['staticFields'] as $fieldName => $fieldConfig) {
@@ -211,27 +211,25 @@ class Config extends \Magento\Framework\Config\Data
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @param string $indexName  Index Name.
-     * @param array  $configData Processed configuration.
+     * @param string $indexName Index Name.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[]
      */
-    private function getDynamicFields($indexName, $configData)
+    private function getDynamicFields($indexName)
     {
         $fields       = [];
         $cacheId      = implode('|', [$this->cacheId, $indexName]);
         $fieldsConfig = $this->cache->load($cacheId);
 
         if (false === $fieldsConfig) {
-            $legacyDataSources = [$indexName => $configData['datasources']]; // @deprecated.
-            $resolver          = $this->dataSourceResolverFactory->create(['legacyDataSources' => $legacyDataSources]);
-            $dataSources       = $resolver->getDataSources($indexName);
+            $resolver    = $this->dataSourceResolverFactory->create();
+            $dataSources = $resolver->getDataSources($indexName);
 
             /** @var DynamicFieldProviderInterface[] $dynamicFieldProviders */
             $dynamicFieldProviders = array_filter($dataSources, [$this, 'isDynamicFieldsProvider']);
 
             foreach ($dynamicFieldProviders as $dynamicFieldProvider) {
-                $fields   += $dynamicFieldProvider->getFields();
+                $fields += $dynamicFieldProvider->getFields();
             }
 
             $fieldsConfig = [];

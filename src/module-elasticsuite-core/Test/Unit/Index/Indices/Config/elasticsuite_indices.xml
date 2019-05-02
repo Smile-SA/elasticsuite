@@ -34,10 +34,6 @@
                     <param2>value2</param2>
                 </field>
             </mapping>
-            <datasources>
-                <datasource name="ds1">DatasourceClass1</datasource>
-                <datasource name="ds2">DatasourceClass2</datasource>
-            </datasources>
         </type>
     </index>
     
