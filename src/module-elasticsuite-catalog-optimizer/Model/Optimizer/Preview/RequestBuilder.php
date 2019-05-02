@@ -14,10 +14,10 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\SortOrderBuilder;
 use Smile\ElasticsuiteCore\Search\RequestFactory;
 
