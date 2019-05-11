@@ -51,11 +51,11 @@
 
                 if($('frontend_input') && ($('frontend_input').value=='select' || $('frontend_input').value=='multiselect')){
                     panel.show();
-                    panel.addClass(activePanelClass);
+                    panel.addClassName(activePanelClass);
                 }
                 else {
                     panel.hide();
-                    panel.removeClass(activePanelClass);
+                    panel.removeClassName(activePanelClass);
                 }
             }
         }
