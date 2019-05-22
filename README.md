@@ -155,7 +155,7 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Search Analytics : **
+* **Search Analytics :**
 
     ElasticSuite features a **Search Usage dashboard**.
 
