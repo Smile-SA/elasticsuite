@@ -70,7 +70,6 @@ class PriceConfigurable implements PriceDataReaderInterface
             $price =  $priceRow['final_price'] ?? $priceRow['price'] ?? 0;
             $originalPrice = $priceRow['price'] ?? 0;
 
-            var_dump($price . ' ' . $originalPrice);
             if ($price < $originalPrice) {
                 return true;
             }
