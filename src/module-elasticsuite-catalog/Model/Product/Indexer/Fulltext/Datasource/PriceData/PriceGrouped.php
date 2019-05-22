@@ -38,4 +38,11 @@ class PriceGrouped implements PriceDataReaderInterface
     {
         return $priceData['min_price'];
     }
+
+    // FIXME: might be wrong, see PriceConfigurable
+    public function getIsDiscount($priceData, $productId, $storeId, $customerGroupId) {
+        $originalPrice = $this->getOriginalPrice($priceData);
+        $price         = $this->getPrice($priceData);
+        return $price < $originalPrice;
+    }
 }

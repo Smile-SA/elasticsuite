@@ -68,7 +68,11 @@ class PriceData implements DatasourceInterface
             $indexData[$productId]['price'][] = [
                 'price'             => $price,
                 'original_price'    => $originalPrice,
-                'is_discount'       => $price < $originalPrice,
+                'is_discount'       => $priceModifier->getIsDiscount($priceDataRow,
+                    $productId,
+                    $storeId,
+                    $priceDataRow['customer_group_id']
+                ),
                 'customer_group_id' => $priceDataRow['customer_group_id'],
             ];
 

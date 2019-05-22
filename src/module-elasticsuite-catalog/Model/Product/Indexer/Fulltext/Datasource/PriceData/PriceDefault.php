@@ -38,4 +38,11 @@ class PriceDefault implements PriceDataReaderInterface
     {
         return $priceData['price'] ?? 0;
     }
+
+    public function getIsDiscount($priceData, $productId, $storeId, $customerGroupId) {
+        $originalPrice = $this->getOriginalPrice($priceData);
+        $price         = $this->getPrice($priceData);
+        return $price < $originalPrice;
+    }
+
 }

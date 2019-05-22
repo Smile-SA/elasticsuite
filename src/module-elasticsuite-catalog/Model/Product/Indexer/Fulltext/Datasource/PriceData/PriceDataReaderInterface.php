@@ -40,4 +40,7 @@ interface PriceDataReaderInterface
      * @return float
      */
     public function getOriginalPrice($priceData);
+
+    public function getIsDiscount($priceData, $productId, $storeId, $customerGroupId);
+
 }
