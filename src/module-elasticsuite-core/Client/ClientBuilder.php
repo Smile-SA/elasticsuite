@@ -100,16 +100,28 @@ class ClientBuilder
 
         foreach ($options['servers'] as $host) {
             if (!empty($host)) {
+
+                $path = '';
+                if (parse_url($host, PHP_URL_PORT)) {
+                    $path = parse_url($host, PHP_URL_PATH);
+                } else {
+                    $path = substr($host, strpos($host, '/'));
+                }
+
                 list($hostname, $port) = array_pad(explode(':', trim($host), 2), 2, 9200);
                 $currentHostConfig = [
-                    'host'   => $hostname,
-                    'port'   => $port,
+                    'host' => $hostname,
+                    'port' => $port,
                     'scheme' => isset($options['enable_https_mode']) ? 'https' : $options['scheme'] ?? 'http',
                 ];
 
                 if ($options['enable_http_auth']) {
                     $currentHostConfig['user'] = $options['http_auth_user'];
                     $currentHostConfig['pass'] = $options['http_auth_pwd'];
+                }
+
+                if ($path !== '') {
+                    $currentHostConfig['path'] = $path;
                 }
 
                 $hosts[] = $currentHostConfig;
