@@ -169,6 +169,18 @@ class Builder
             'spellingType' => $spellingType,
         ];
 
+        /**
+         * @see \Magento\Framework\Data\Collection::$_pageSize
+         * Collection $_pageSize defaults to false. The comment with the property states that false is expected to
+         * return all results. ElasticSearch's default index.max_result_window is 10,000 according to documentation.
+         * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-from-size.html
+         * It seems reasonable to use a page size then of 10000 if page size is set to false to more closely match
+         * intended core Magento functionality.
+         */
+        if (false === $size) {
+            $requestParams['size'] = 10000;
+        }
+
         if (!empty($facetFilters)) {
             $requestParams['filter'] = $this->queryBuilder->createFilterQuery($containerConfig, $facetFilters);
         }
