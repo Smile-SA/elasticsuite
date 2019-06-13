@@ -32,12 +32,12 @@ class Combine extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combin
     /**
      * Build a search query for the current rule.
      *
-     * @param array      $excludedCategories  Categories excluded of query building (avoid infinite recursion).
-     * @param int|string $virtualCategoryRoot Category root for Virtual Category.
+     * @param array    $excludedCategories  Categories excluded of query building (avoid infinite recursion).
+     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
      *
      * @return QueryInterface
      */
-    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = ''): QueryInterface
+    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = null): QueryInterface
     {
         $queryParams = [];
 

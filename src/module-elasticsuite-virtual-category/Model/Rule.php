@@ -218,9 +218,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @param CategoryInterface $category Virtual category.
      *
-     * @return CategoryInterface
+     * @return CategoryInterface|null
      */
-    private function getVirtualRootCategory(CategoryInterface $category): CategoryInterface
+    private function getVirtualRootCategory(CategoryInterface $category): ?CategoryInterface
     {
         $storeId      = $this->getStoreId();
         $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
@@ -273,14 +273,14 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @param CategoryInterface $category            Virtual category.
      * @param array             $excludedCategories  Category already used into the building stack. Avoid short circuit.
-     * @param int|string        $virtualCategoryRoot Category root for Virtual Category.
+     * @param int|null          $virtualCategoryRoot Category root for Virtual Category.
      *
      * @return QueryInterface
      */
     private function getVirtualCategoryQuery(
         CategoryInterface $category,
         $excludedCategories = [],
-        $virtualCategoryRoot = ''
+        $virtualCategoryRoot = null
     ): QueryInterface {
         $query          = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories, $virtualCategoryRoot);
         $parentCategory = $this->getVirtualRootCategory($category);
