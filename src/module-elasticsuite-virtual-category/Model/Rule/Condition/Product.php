@@ -95,12 +95,12 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     /**
      * Build a search query for the current rule.
      *
-     * @param array      $excludedCategories  Categories excluded of query building (avoid infinite recursion).
-     * @param int|string $virtualCategoryRoot Category root for Virtual Category.
+     * @param array    $excludedCategories  Categories excluded of query building (avoid infinite recursion).
+     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
      *
      * @return QueryInterface|null
      */
-    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = ''): ?QueryInterface
+    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = null): ?QueryInterface
     {
         $searchQuery = parent::getSearchQuery();
 
@@ -130,13 +130,13 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     /**
      * Retrieve a query used to apply category filter rule.
      *
-     * @param array      $excludedCategories  Category excluded from the loading (avoid infinite loop in query
-     *                                        building when circular references are present).
-     * @param int|string $virtualCategoryRoot Category root for Virtual Category.
+     * @param array    $excludedCategories  Category excluded from the loading (avoid infinite loop in query
+     *                                      building when circular references are present).
+     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
      *
      * @return QueryInterface|null
      */
-    private function getCategorySearchQuery($excludedCategories, $virtualCategoryRoot = ''): ?QueryInterface
+    private function getCategorySearchQuery($excludedCategories, $virtualCategoryRoot = null): ?QueryInterface
     {
         $categoryIds = [];
         $subQueries  = [];
