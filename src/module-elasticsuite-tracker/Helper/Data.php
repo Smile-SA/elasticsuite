@@ -77,20 +77,28 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     private $sessionManager;
 
     /**
+     * @var \Magento\Framework\Stdlib\CookieManagerInterface
+     */
+    private $cookieManager;
+
+    /**
      * PHP Constructor
      *
      * @param \Magento\Framework\App\Helper\Context              $context        The current context
      * @param \Magento\Store\Model\StoreManagerInterface         $storeManager   The Store Manager
      * @param \Magento\Framework\Session\SessionManagerInterface $sessionManager Session Manager
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface   $cookieManager  Cookie manager
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\Session\SessionManagerInterface $sessionManager
+        \Magento\Framework\Session\SessionManagerInterface $sessionManager,
+        \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager
     ) {
         $this->urlBuilder     = $context->getUrlBuilder();
         $this->storeManager   = $storeManager;
         $this->sessionManager = $sessionManager;
+        $this->cookieManager  = $cookieManager;
         parent::__construct($context);
     }
 
@@ -167,5 +175,41 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getRetentionDelay()
     {
         return (int) $this->scopeConfig->getValue(self::CONFIG_RETENTION_DELAY_XPATH);
+    }
+
+    /**
+     * Return the current tracker visitor id
+     *
+     * @return null|string
+     */
+    public function getCurrentVisitorId()
+    {
+        $visitorId = null;
+
+        $cookieConfig = $this->getCookieConfig();
+        if (array_key_exists('visitor_cookie_name', $cookieConfig)) {
+            $visitorCookieName = $cookieConfig['visitor_cookie_name'];
+            $visitorId = $this->cookieManager->getCookie($visitorCookieName);
+        }
+
+        return $visitorId;
+    }
+
+    /**
+     * Return the current tracker session id
+     *
+     * @return null|string
+     */
+    public function getCurrentSessionId()
+    {
+        $visitorId = null;
+
+        $cookieConfig = $this->getCookieConfig();
+        if (array_key_exists('visit_cookie_name', $cookieConfig)) {
+            $sessionCookieName = $cookieConfig['visit_cookie_name'];
+            $visitorId = $this->cookieManager->getCookie($sessionCookieName);
+        }
+
+        return $visitorId;
     }
 }
