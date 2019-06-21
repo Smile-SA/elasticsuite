@@ -164,6 +164,7 @@ class Preview
      * Indicates if the current optimizer can be applied to the search context.
      *
      * @return boolean
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function canApply() : bool
     {
