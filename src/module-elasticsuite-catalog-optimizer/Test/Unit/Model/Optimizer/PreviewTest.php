@@ -32,6 +32,7 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class PreviewTest extends TestCase
 {
@@ -145,6 +146,7 @@ class PreviewTest extends TestCase
      * Can apply test data provider.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function dataProvider(): array
     {
