@@ -42,15 +42,11 @@ class LayerPlugin
     /**
      * Constructor.
      *
-     * @param \Magento\CatalogInventory\Helper\Stock             $stockHelper   Stock helper.
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig   Configuration.
      * @param \Magento\Search\Model\QueryFactory                 $queryFactory  Search query factory.
      * @param \Magento\Catalog\Model\Config                      $catalogConfig Catalog Configuration.
      * @param \Smile\ElasticsuiteCore\Helper\Mapping             $mappingHelper Mapping Helper.
      */
     public function __construct(
-        \Magento\CatalogInventory\Helper\Stock $stockHelper,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Search\Model\QueryFactory $queryFactory,
         \Magento\Catalog\Model\Config $catalogConfig,
         \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper
