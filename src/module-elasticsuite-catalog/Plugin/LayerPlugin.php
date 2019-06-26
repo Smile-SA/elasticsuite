@@ -13,8 +13,6 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin;
 
-use Magento\CatalogInventory\Model\Plugin\Layer;
-
 /**
  * Replace is in stock native filter on layer.
  *
@@ -22,7 +20,7 @@ use Magento\CatalogInventory\Model\Plugin\Layer;
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
+class LayerPlugin
 {
     /**
      * @var \Magento\Search\Model\QueryFactory
@@ -57,7 +55,6 @@ class LayerPlugin extends \Magento\CatalogInventory\Model\Plugin\Layer
         \Magento\Catalog\Model\Config $catalogConfig,
         \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper
     ) {
-        parent::__construct($stockHelper, $scopeConfig);
         $this->queryFactory  = $queryFactory;
         $this->catalogConfig = $catalogConfig;
         $this->mappingHelper = $mappingHelper;
