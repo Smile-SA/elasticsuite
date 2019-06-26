@@ -16,6 +16,38 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<virtualType name="elasticsearchLayerCategoryItemCollectionProvider" type="Magento\Elasticsearch\Model\Layer\Category\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="elasticsuite" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\CatalogSearch\Model\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="elasticsuite" xsi:type="object">elasticsearchAdvancedCollectionFactory</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\CatalogSearch\Model\Advanced\ProductCollectionPrepareStrategyProvider">
+        <arguments>
+            <argument name="strategies" xsi:type="array">
+                <item name="elasticsuite" xsi:type="object">Magento\Elasticsearch\Model\Advanced\ProductCollectionPrepareStrategy</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="elasticsearchLayerSearchItemCollectionProvider" type="Magento\Elasticsearch\Model\Layer\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="elasticsuite" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
 
     <virtualType name="catalogProductSearchIndexHandler" type="\Smile\ElasticsuiteCore\Indexer\GenericIndexerHandler">
         <arguments>
