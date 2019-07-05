@@ -5,6 +5,8 @@
 <p align="center">
     <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
 </p>
+## Official Page
+https://www.smile.eu/en/innovation/elasticsuite
 
 ## News
 
