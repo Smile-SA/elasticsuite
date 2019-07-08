@@ -281,7 +281,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CategoryInterface $category,
         $excludedCategories = [],
         $virtualCategoryRoot = null
-    ): QueryInterface {
+    ): ?QueryInterface {
         $query          = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories, $virtualCategoryRoot);
         $parentCategory = $this->getVirtualRootCategory($category);
 
