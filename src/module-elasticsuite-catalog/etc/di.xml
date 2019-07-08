@@ -101,8 +101,9 @@
         </arguments>
     </virtualType>
 
+    <!-- Layer related configurations -->
     <type name="Magento\Catalog\Model\Layer">
-        <plugin name="addStockStatusOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
+        <plugin name="createSortOrdersOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
     </type>
     
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
@@ -123,7 +124,37 @@
             <argument name="stateKey" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\StateKey</argument>
         </arguments>
     </virtualType>
+
+    <!-- Since Magento 2.3.2 -->
+
+    <!-- Enforce Elasticsuite context (virtualType defined above) into the Layer. Otherwise the Magento_Elasticsearch module would take precedence -->
+    <type name="Magento\Catalog\Model\Layer\Search">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\CatalogSearch\Model\Layer\Search\Context</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Catalog\Model\Layer\Category">
+        <arguments>
+            <argument name="context" xsi:type="object">Magento\CatalogSearch\Model\Layer\Category\Context</argument>
+        </arguments>
+    </type>
+    <!-- End of enforcing context. -->
+
+    <!-- Ensure proper collection for Advanced Search -->
+    <type name="Magento\CatalogSearch\Model\Search\ItemCollectionProvider">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <!-- This collection is a virtual type -->
+                <item name="elasticsuite" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory</item>
+            </argument>
+        </arguments>
+    </type>
+    <!-- End of proper collection for Advanced Search -->
+
+    <!-- End since Magento 2.3.2 -->
     
+    <!-- End Layer related configuration -->
+
     <type name="Magento\CatalogSearch\Block\Result">
         <plugin name="smile_es_spellchecker" type="Smile\ElasticsuiteCatalog\Block\Plugin\ResultPlugin" />
     </type>
