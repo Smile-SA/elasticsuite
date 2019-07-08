@@ -102,7 +102,7 @@
     </virtualType>
 
     <type name="Magento\Catalog\Model\Layer">
-        <plugin name="addStockStatusOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
+        <plugin name="createSortOrdersOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
     </type>
     
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
