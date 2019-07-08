@@ -32,11 +32,12 @@ class Combine extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combin
     /**
      * Build a search query for the current rule.
      *
-     * @param array $excludedCategories Categories excluded of query building (avoid infinite recursion).
+     * @param array    $excludedCategories  Categories excluded of query building (avoid infinite recursion).
+     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
      *
      * @return QueryInterface
      */
-    public function getSearchQuery($excludedCategories = [])
+    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = null): QueryInterface
     {
         $queryParams = [];
 
@@ -46,8 +47,8 @@ class Combine extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combin
         $queryClause = $aggregator === 'all' ? 'must' : 'should';
 
         foreach ($this->getConditions() as $condition) {
-            $subQuery = $condition->getSearchQuery($excludedCategories);
-            if ($subQuery !== null && $subQuery instanceof QueryInterface) {
+            $subQuery = $condition->getSearchQuery($excludedCategories, $virtualCategoryRoot);
+            if (!empty($subQuery) && $subQuery instanceof QueryInterface) {
                 if ($value === false) {
                     $subQuery = $this->queryFactory->create(QueryInterface::TYPE_NOT, ['query' => $subQuery]);
                 }
