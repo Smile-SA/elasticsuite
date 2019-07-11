@@ -64,7 +64,7 @@ class SaveHandler implements \Magento\Framework\EntityManager\Operation\Extensio
             if (is_object($attributeData)) {
                 $rule = $attributeData;
             } elseif (is_array($attributeData)) {
-                $rule->loadPost($attributeData);
+                $rule->getConditions()->loadArray($this->mapCondition($attributeData['condition']));
             } elseif (is_string($attributeData)) {
                 $attributeData = $this->jsonSerializer->unserialize($attributeData);
                 $rule->getConditions()->loadArray($attributeData);
@@ -74,5 +74,36 @@ class SaveHandler implements \Magento\Framework\EntityManager\Operation\Extensio
         }
 
         return $entity;
+    }
+
+    /**
+     * Map recursive condition array
+     *
+     * @param array $condition condition
+     *
+     * @return array
+     */
+    private function mapCondition($condition): array
+    {
+        $output              = [];
+        $output['type']      = $condition['condition_type'];
+        $output['value']     = $condition['value'];
+        $output['operator']  = $condition['operator'];
+
+        if (isset($condition['attribute_name'])) {
+            $output['attribute'] = $condition['attribute_name'];
+        }
+        if (isset($condition['aggregator_type'])) {
+            $output['aggregator'] = $condition['aggregator_type'];
+        }
+        if (!empty($condition['conditions'])) {
+            $conditions = [];
+            foreach ($condition['conditions'] as $subCondition) {
+                $conditions[] = $this->mapCondition($subCondition);
+            }
+            $output['conditions'] = $conditions;
+        }
+
+        return $output;
     }
 }
