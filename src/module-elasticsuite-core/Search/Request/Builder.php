@@ -150,7 +150,7 @@ class Builder
         $facetFilters = array_intersect_key($filters, $facets);
         $queryFilters = array_merge($queryFilters, $containerFilters, array_diff_key($filters, $facetFilters));
 
-        $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
+        $spellingType = SpellcheckerInterface::SPELLING_TYPE_FUZZY;
 
         if ($query && is_string($query)) {
             $spellingType = $this->getSpellingType($containerConfig, $query);
