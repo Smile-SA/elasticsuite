@@ -6,6 +6,7 @@
         <div class="f-fix">
             <div class="product-primary"><div class="product-name"><%= data.title %></div></div>
             <div class="product-secondary">
+                <div data-bind="if: data.short_description"><%= data.short_description%></div>
                 <div class="price-box">
                     <span class="price"><%= data.price %></span>
                 </div>
