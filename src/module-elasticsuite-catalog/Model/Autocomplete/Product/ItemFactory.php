@@ -83,6 +83,18 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     }
 
     /**
+     *
+     * @param Product $product
+     * @param string $attributeCode
+     * @return mixed
+     */
+    private function getProductAttribute(Product $product, string $attributeCode) {
+        $documentSource = $product->getDocumentSource();
+        return array_key_exists($attributeCode, $documentSource) ?
+            $documentSource[$attributeCode] : null;
+    }
+
+    /**
      * Load product data and append them to the original data.
      *
      * @param array $data Autocomplete item data.
@@ -93,11 +105,15 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     {
         $product = $data['product'];
 
+        $shortDescriptions = $this->getProductAttribute($product, 'short_description');
+        $shortDescription  = is_array($shortDescriptions) ? reset($shortDescriptions) : $shortDescription;
+
         $productData = [
-            'title' => $product->getName(),
-            'image' => $this->getImageUrl($product),
-            'url'   => $product->getProductUrl(),
-            'price' => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
+            'title'             => $product->getName(),
+            'image'             => $this->getImageUrl($product),
+            'url'               => $product->getProductUrl(),
+            'price'             => $this->renderProductPrice($product, \Magento\Catalog\Pricing\Price\FinalPrice::PRICE_CODE),
+            'short_description' => $shortDescription,
         ];
 
         foreach ($this->attributes as $attributeCode) {
