@@ -85,13 +85,13 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     /**
      *
      * @param Product $product
-     * @param string $attributeCode
+     * @param string  $attributeCode
      * @return mixed
      */
-    private function getProductAttribute(Product $product, string $attributeCode) {
+    private function getProductAttribute(Product $product, string $attributeCode)
+    {
         $documentSource = $product->getDocumentSource();
-        return array_key_exists($attributeCode, $documentSource) ?
-            $documentSource[$attributeCode] : null;
+        return array_key_exists($attributeCode, $documentSource) ? $documentSource[$attributeCode] : null;
     }
 
     /**
