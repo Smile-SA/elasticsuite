@@ -14,6 +14,12 @@
 
 namespace Smile\ElasticsuiteTracker\Model\ResourceModel;
 
+use Magento\Framework\Api\Search\AggregationValueInterface;
+use Magento\Framework\Search\SearchEngineInterface;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\Value;
+use Smile\ElasticsuiteCore\Search\Request\Builder;
+use Smile\ElasticsuiteCore\Search\RequestInterface;
+
 /**
  * Session index resource model.
  *
@@ -26,26 +32,26 @@ class SessionIndex
     /**
      * @var string
      */
-    const SEARCH_REQUEST_CONTAINER = 'session_aggregator';
+    private const SEARCH_REQUEST_CONTAINER = 'session_aggregator';
 
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Builder
+     * @var Builder
      */
     private $searchRequestBuilder;
 
     /**
-     * @var \Magento\Framework\Search\SearchEngineInterface
+     * @var SearchEngineInterface
      */
     private $searchEngine;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Builder  $searchRequestBuilder Search request builder.
-     * @param \Magento\Framework\Search\SearchEngineInterface $searchEngine         Search engine.
+     * @param Builder               $searchRequestBuilder Search request builder.
+     * @param SearchEngineInterface $searchEngine         Search engine.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
+        Builder $searchRequestBuilder,
         \Magento\Framework\Search\SearchEngineInterface $searchEngine
     ) {
         $this->searchRequestBuilder = $searchRequestBuilder;
@@ -60,18 +66,19 @@ class SessionIndex
      *
      * @return array
      */
-    public function getSessionData($storeId, $sessionIds)
+    public function getSessionData($storeId, $sessionIds): array
     {
         $data = [];
         $searchRequest  = $this->getSearchRequest($storeId, $sessionIds);
         $searchResponse = $this->searchEngine->search($searchRequest);
+        if ($searchResponse->getAggregations()->getBucket('session_id') !== null) {
+            foreach ($searchResponse->getAggregations()->getBucket('session_id')->getValues() as $sessionValue) {
+                $sessionData = $this->processSessionData($sessionValue);
+                $sessionData['store_id'] = $storeId;
+                unset($sessionData['count']);
 
-        foreach ($searchResponse->getAggregations()->getBucket('session_id')->getValues() as $sessionValue) {
-            $sessionData = $this->processSessionData($sessionValue);
-            $sessionData['store_id'] = $storeId;
-            unset($sessionData['count']);
-
-            $data[] = array_filter($sessionData);
+                $data[] = array_filter($sessionData);
+            }
         }
 
         return $data;
@@ -83,9 +90,9 @@ class SessionIndex
      * @param int      $storeId    Current store Id.
      * @param string[] $sessionIds Session ids.
      *
-     * @return \Smile\ElasticsuiteCore\Search\RequestInterface
+     * @return RequestInterface
      */
-    private function getSearchRequest($storeId, $sessionIds)
+    private function getSearchRequest($storeId, $sessionIds): RequestInterface
     {
         $queryFilters = ['session.uid' => $sessionIds];
 
@@ -95,14 +102,15 @@ class SessionIndex
     /**
      * Prepare session data from search aggregation response.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\Value $value Aggregation value.
+     * @param AggregationValueInterface $value Aggregation value.
      *
      * @return array
      */
-    private function processSessionData(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\Value $value)
+    private function processSessionData(AggregationValueInterface $value): array
     {
         $data = ['session_id' => $value->getValue()];
 
+        /** @var Value $value */
         foreach ($value->getAggregations()->getBuckets() as $bucket) {
             $bucketName   = $bucket->getName();
             $bucketValues = [];
