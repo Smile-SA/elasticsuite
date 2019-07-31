@@ -188,6 +188,9 @@ class Preview
                         $categoryIds = array_filter($config['category_ids']);
                         $canApply = in_array($this->category->getId(), $categoryIds, true);
                     }
+                    if ((int) $config['apply_to'] === 0 && empty($config['category_ids'])) {
+                        $canApply = true;
+                    }
                     break;
             }
         }

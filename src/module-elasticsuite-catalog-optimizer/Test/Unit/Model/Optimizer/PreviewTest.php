@@ -205,7 +205,7 @@ class PreviewTest extends TestCase
                 ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
                 'quick_search_container',
                 [
-                    'apply_to' => false,
+                    'apply_to' => 0,
                     'query_ids' => [
                         [
                             'id' => 1,
@@ -244,7 +244,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 [
-                    'apply_to' => false,
+                    'apply_to' => 0,
                     'category_ids' => [
                         7, 3, 9,
                     ],
@@ -278,6 +278,31 @@ class PreviewTest extends TestCase
                 'skirt',
                 3,
                 true,
+            ],
+            [
+                ['catalog_view_container'],
+                'catalog_view_container',
+                null,
+                [
+                    'apply_to' => 0,
+                ],
+                null,
+                3,
+                true,
+            ],
+            [
+                ['catalog_view_container', 'catalog_product_autocomplete'],
+                'catalog_view_container',
+                null,
+                [
+                    'apply_to' => 1,
+                    'category_ids' => [
+                        7, 3, 9,
+                    ],
+                ],
+                null,
+                4,
+                false,
             ],
             [
                 ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
