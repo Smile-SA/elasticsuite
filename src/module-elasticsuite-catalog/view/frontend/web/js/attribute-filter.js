@@ -166,10 +166,10 @@ define([
          */
         slugify: function(text) {
           return text.toString().toLowerCase()
-            .replace(/\s+/g, '-')           // Replace spaces with -
-            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-            .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-            .replace(/^-+/, '')             // Trim - from start of text
+            .replace(/\s+/g, '-')                                              // Replace spaces with -
+            .replace(/[^\w\u0400-\u052F\u2DE0-\u2DFF\uA640-\uA69F'\-]+/g, '')  // Remove all non-word chars
+            .replace(/\-\-+/g, '-')                                            // Replace multiple - with single -
+            .replace(/^-+/, '')                                                // Trim - from start of text
         },
         
         /**
