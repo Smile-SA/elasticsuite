@@ -29,6 +29,11 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 class Field implements FieldInterface
 {
     /**
+     * @var int
+     */
+    private const IGNORE_ABOVE_COUNT = 256;
+
+    /**
      * @var string
      */
     private $name;
@@ -89,7 +94,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -97,7 +102,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -105,7 +110,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isSearchable()
+    public function isSearchable(): bool
     {
         return (bool) $this->config['is_searchable'];
     }
@@ -113,7 +118,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isFilterable()
+    public function isFilterable(): bool
     {
         return (bool) $this->config['is_filterable'];
     }
@@ -121,7 +126,7 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
-    public function isUsedForSortBy()
+    public function isUsedForSortBy(): bool
     {
         return (bool) $this->config['is_used_for_sort_by'];
     }
@@ -129,7 +134,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isUsedInSpellcheck()
+    public function isUsedInSpellcheck(): bool
     {
         return (bool) $this->config['is_used_in_spellcheck'] && (bool) $this->config['is_searchable'];
     }
@@ -137,7 +142,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function getSearchWeight()
+    public function getSearchWeight(): int
     {
         return (int) $this->config['search_weight'];
     }
@@ -145,7 +150,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function isNested()
+    public function isNested(): bool
     {
         return is_string($this->nestedPath) && !empty($this->nestedPath);
     }
@@ -153,7 +158,7 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function getNestedPath()
+    public function getNestedPath(): ?string
     {
         return $this->nestedPath;
     }
@@ -176,11 +181,11 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
-    public function getMappingPropertyConfig()
+    public function getMappingPropertyConfig(): array
     {
         $property = $this->getPropertyConfig();
 
-        if ($this->getType() == self::FIELD_TYPE_TEXT) {
+        if ($this->getType() === self::FIELD_TYPE_TEXT) {
             $analyzers = $this->getFieldAnalyzers();
             $property = $this->getPropertyConfig(current($analyzers));
 
@@ -200,14 +205,14 @@ class Field implements FieldInterface
         $fieldName    = $this->getName();
         $propertyName = $fieldName;
         $property     = $this->getMappingPropertyConfig();
-        $isDefaultAnalyzer = $analyzer == $this->getDefaultSearchAnalyzer();
+        $isDefaultAnalyzer = $analyzer === $this->getDefaultSearchAnalyzer();
 
-        if (isset($property['fields']) && !$isDefaultAnalyzer) {
+        if (!$isDefaultAnalyzer && isset($property['fields'])) {
             $propertyName = null;
 
             if (isset($property['fields'][$analyzer])) {
                 $property     = $property['fields'][$analyzer];
-                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf("%s.%s", $fieldName, $analyzer);
+                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf('%s.%s', $fieldName, $analyzer);
             }
         }
 
@@ -257,7 +262,7 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config ?? [];
     }
@@ -270,14 +275,14 @@ class Field implements FieldInterface
      *
      * @return boolean
      */
-    private function checkAnalyzer($property, $expectedAnalyzer)
+    private function checkAnalyzer($property, $expectedAnalyzer): bool
     {
         $isAnalyzerCorrect = true;
 
-        if ($property['type'] == self::FIELD_TYPE_TEXT || $property['type'] == self::FIELD_TYPE_KEYWORD) {
+        if ($property['type'] === self::FIELD_TYPE_TEXT || $property['type'] === self::FIELD_TYPE_KEYWORD) {
             $isAnalyzed = $expectedAnalyzer !== self::ANALYZER_UNTOUCHED;
 
-            if ($isAnalyzed && (!isset($property['analyzer']) || $property['analyzer'] != $expectedAnalyzer)) {
+            if ($isAnalyzed && (!isset($property['analyzer']) || $property['analyzer'] !== $expectedAnalyzer)) {
                 $isAnalyzerCorrect = false;
             } elseif (!$isAnalyzed && $property['type'] !== self::FIELD_TYPE_KEYWORD) {
                 $isAnalyzerCorrect = false;
@@ -299,13 +304,13 @@ class Field implements FieldInterface
      *
      * @return array
      */
-    private function getMultiFieldMappingPropertyConfig($analyzers)
+    private function getMultiFieldMappingPropertyConfig($analyzers): array
     {
         // Setting the field type to "multi_field".
         $property = [];
 
         foreach ($analyzers as $analyzer) {
-            if ($analyzer == $this->getDefaultSearchAnalyzer()) {
+            if ($analyzer === $this->getDefaultSearchAnalyzer()) {
                 $property = array_merge($property, $this->getPropertyConfig($analyzer));
             } else {
                 $property['fields'][$analyzer] = $this->getPropertyConfig($analyzer);
@@ -320,21 +325,20 @@ class Field implements FieldInterface
      *
      * @return array
      */
-    private function getFieldAnalyzers()
+    private function getFieldAnalyzers(): array
     {
         $analyzers = [];
 
         if ($this->isSearchable() || $this->isUsedForSortBy()) {
             // Default search analyzer.
             $analyzers = [$this->getDefaultSearchAnalyzer()];
-
-            if ($this->isSearchable() && $this->getSearchWeight() > 1) {
-                $analyzers[] = self::ANALYZER_WHITESPACE;
-                $analyzers[] = self::ANALYZER_SHINGLE;
-            }
+        }
+        if ($this->isSearchable() && $this->getSearchWeight() > 1) {
+            $analyzers[] = self::ANALYZER_WHITESPACE;
+            $analyzers[] = self::ANALYZER_SHINGLE;
         }
 
-        if ($this->isFilterable() || empty($analyzers)) {
+        if (empty($analyzers) || $this->isFilterable()) {
             // For filterable fields or fields without analyzer : append the untouched analyzer.
             $analyzers[] = self::ANALYZER_UNTOUCHED;
         }
@@ -354,19 +358,26 @@ class Field implements FieldInterface
      *
      * @return array
      */
-    private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED)
+    private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED): array
     {
         $fieldMapping = ['type' => $this->getType()];
 
-        if ($this->getType() == self::FIELD_TYPE_TEXT && $analyzer == self::ANALYZER_UNTOUCHED) {
-            $fieldMapping['type']  = self::FIELD_TYPE_KEYWORD;
-        } elseif ($this->getType() == self::FIELD_TYPE_TEXT) {
-            $fieldMapping['analyzer'] = $analyzer;
-            if ($analyzer === self::ANALYZER_SORTABLE) {
-                $fieldMapping['fielddata'] = true;
-            }
-        } elseif ($this->getType() == self::FIELD_TYPE_DATE) {
-            $fieldMapping['format'] = implode('||', $this->dateFormats);
+        switch ($this->getType()) {
+            case self::FIELD_TYPE_TEXT:
+                if ($analyzer === self::ANALYZER_UNTOUCHED) {
+                    $fieldMapping['type'] = self::FIELD_TYPE_KEYWORD;
+                    $fieldMapping['ignore_above'] = self::IGNORE_ABOVE_COUNT;
+                }
+                if ($analyzer !== self::ANALYZER_UNTOUCHED) {
+                    $fieldMapping['analyzer'] = $analyzer;
+                    if ($analyzer === self::ANALYZER_SORTABLE) {
+                        $fieldMapping['fielddata'] = true;
+                    }
+                }
+                break;
+            case self::FIELD_TYPE_DATE:
+                $fieldMapping['format'] = implode('||', $this->dateFormats);
+                break;
         }
 
         return $fieldMapping;
