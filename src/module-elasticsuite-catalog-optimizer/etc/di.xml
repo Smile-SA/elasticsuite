@@ -84,6 +84,7 @@
     <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\Provider\DefaultProvider</argument>
+            <argument name="cacheKeyProvider" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProvider</argument>
             <argument name="appliers" xsi:type="array">
                 <item name="constant_score" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\ConstantScore</item>
                 <item name="attribute_value" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Applier\AttributeValue</item>
