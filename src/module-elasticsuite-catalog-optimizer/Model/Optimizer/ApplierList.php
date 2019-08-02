@@ -19,6 +19,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface;
 
 /**
  * Apply the list of optimizations to a query for a given container.
@@ -29,11 +30,6 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
  */
 class ApplierList
 {
-    /**
-     * @var string
-     */
-    const CACHE_KEY_PREFIX = 'optimizer_boost_function';
-
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
@@ -55,6 +51,11 @@ class ApplierList
     private $cache;
 
     /**
+     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface
+     */
+    private $cacheKeyProvider;
+
+    /**
      * @var array
      */
     private $functions = [];
@@ -70,6 +71,7 @@ class ApplierList
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                        $queryFactory       Query factory.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider Collection Provider.
      * @param \Magento\Framework\App\CacheInterface                                            $cache              Application cache.
+     * @param CacheKeyProviderInterface                                                        $cacheKeyProvider   Cache key provider.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierInterface[]           $appliers           Appliers interface.
      * @param OptimizerFilterInterface[]                                                       $filters            Optimizer filters.
      */
@@ -77,12 +79,14 @@ class ApplierList
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface $collectionProvider,
         \Magento\Framework\App\CacheInterface $cache,
+        \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface $cacheKeyProvider,
         array $appliers = [],
         array $filters = []
     ) {
         $this->queryFactory       = $queryFactory;
         $this->collectionProvider = $collectionProvider;
         $this->cache              = $cache;
+        $this->cacheKeyProvider   = $cacheKeyProvider;
         $this->appliers           = $appliers;
         $this->filters            = $filters;
     }
@@ -140,10 +144,7 @@ class ApplierList
      */
     private function getFunctions(ContainerConfigurationInterface $containerConfiguration)
     {
-        $containerName = $containerConfiguration->getName();
-        $storeId       = $containerConfiguration->getStoreId();
-
-        $cacheKey = sprintf("%s_%s_%s", self::CACHE_KEY_PREFIX, $containerName, $storeId);
+        $cacheKey = $this->cacheKeyProvider->getCacheKey($containerConfiguration);
 
         if (!isset($this->functions[$cacheKey])) {
             if ($this->collectionProvider->useCache() && ($functions = $this->cache->load($cacheKey))) {
