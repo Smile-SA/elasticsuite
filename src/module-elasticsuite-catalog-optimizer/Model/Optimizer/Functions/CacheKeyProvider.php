@@ -15,7 +15,6 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions;
 
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList;
 
 /**
  * Provides the cache key to use when caching a container related boost functions.
