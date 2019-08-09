@@ -59,6 +59,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string"/>
+                <item name="sortOrder" xsi:type="number">20</item>
             </item>
         </argument>
         <field name="optimizer_id">
@@ -197,6 +198,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Catalog Product Search</item>
+                <item name="sortOrder" xsi:type="number">40</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
                 <item name="imports" xsi:type="array">
                     <item name="initValue" xsi:type="string">${ $.provider }:data.search_container</item>
@@ -443,6 +445,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Category Product View</item>
+                <item name="sortOrder" xsi:type="number">60</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
                 <item name="imports" xsi:type="array">
                     <item name="initValue" xsi:type="string">${ $.provider }:data.search_container</item>
@@ -533,6 +536,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
+                <item name="sortOrder" xsi:type="number">80</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
             </item>
         </argument>
@@ -563,6 +567,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Configuration</item>
+                <item name="sortOrder" xsi:type="number">100</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
             </item>
         </argument>
@@ -658,6 +663,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Apply to products</item>
+                <item name="sortOrder" xsi:type="number">120</item>
             </item>
         </argument>
 
@@ -684,6 +690,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Preview</item>
+                <item name="sortOrder" xsi:type="number">140</item>
                 <item name="additionalClasses" xsi:type="string">optimizer-preview-fieldset</item>
             </item>
         </argument>
