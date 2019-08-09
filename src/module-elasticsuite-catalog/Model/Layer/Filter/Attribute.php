@@ -219,7 +219,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
 
                         if ($optionLabel !== null && isset($items[$optionLabel])) {
                             $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                            $items[$optionLabel]['value']          = $option['value'];
+                            $items[$optionLabel]['value']          = $option['label'];
                         }
                     }
                 }
