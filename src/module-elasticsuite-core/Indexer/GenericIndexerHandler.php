@@ -168,7 +168,9 @@ class GenericIndexerHandler implements IndexerInterface
     public function cleanIndex($dimensions)
     {
         foreach ($dimensions as $dimension) {
-            $this->indexOperation->createIndex($this->indexName, $dimension->getValue());
+            if (!$this->indexOperation->indexExists($this->indexName, $dimension->getValue())) {
+                $this->indexOperation->createIndex($this->indexName, $dimension->getValue());
+            }
         }
 
         return $this;
