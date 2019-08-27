@@ -161,7 +161,7 @@ class IndexHandler
     private function prepareSynonymFilterData($rows)
     {
         $rowMaper = function ($row) {
-            return preg_replace('/([\w])[\s-](?=[\w])/', '\1_', $row);
+            return preg_replace('/([\w])[\s-](?=[\w])/u', '\1_', $row);
         };
 
         return array_map($rowMaper, $rows);
