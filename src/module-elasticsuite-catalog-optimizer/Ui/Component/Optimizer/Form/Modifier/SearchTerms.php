@@ -67,8 +67,11 @@ class SearchTerms implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
             if (isset($data[$optimizer->getId()]['quick_search_container'])
                 && isset($data[$optimizer->getId()]['quick_search_container']['query_ids'])) {
                 $queriesData = $this->fillQueryData($data[$optimizer->getId()]['quick_search_container']['query_ids']);
+                $data[$optimizer->getId()]['quick_search_container']['query_ids'] = [];
+                $data[$optimizer->getId()]['quick_search_container']['apply_to'] = (int) false;
                 if (!empty($queriesData)) {
                     $data[$optimizer->getId()]['quick_search_container']['query_ids'] = $queriesData;
+                    $data[$optimizer->getId()]['quick_search_container']['apply_to'] = (int) true;
                 }
             }
         }

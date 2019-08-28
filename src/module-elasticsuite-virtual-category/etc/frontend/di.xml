@@ -15,7 +15,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
+
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <virtualType name="categoryFilterUsingRewrite" type="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\Category">
@@ -35,6 +35,22 @@
     <type name="Magento\Catalog\Model\ResourceModel\Category\Flat">
         <plugin name="smile_elasticsuite_virtual_categories_flat"
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\FlatPlugin" />
+    </type>
+    <type name="Magento\Catalog\Model\Product">
+        <plugin name="smile_elasticsuite_virtual_categories_product"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Product\ProductPlugin"/>
+    </type>
+
+    <type name="Magento\Framework\App\RouterList">
+        <arguments>
+            <argument name="routerList" xsi:type="array">
+                <item name="smile_elasticsuite_virtualcategory" xsi:type="array">
+                    <item name="class" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Controller\Router</item>
+                    <item name="disable" xsi:type="boolean">false</item>
+                    <item name="sortOrder" xsi:type="string">50</item>
+                </item>
+            </argument>
+        </arguments>
     </type>
 
 </config>

@@ -27,7 +27,11 @@ Magento **2.3.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** late
 
 ### Magento2 B2B Compatibility
 
-If your are using Magento Commerce (formerly known as Enterprise Edition) B2B feature with Elasticsuite, you will need to install the **Elasticsuite Shared Catalog** module which is located [here](https://github.com/Smile-SA/magento2-module-elasticsuite-shared-catalog)
+If your are using Magento Commerce (formerly known as Enterprise Edition) B2B feature with Elasticsuite, you will need to install :
+
+- **Elasticsuite Shared Catalog** module which is located [here](https://github.com/Smile-SA/magento2-module-elasticsuite-shared-catalog)
+
+- **Elasticsuite Quick Order** module which is located [here](https://github.com/Smile-SA/magento2-module-elasticsuite-quick-order)
 
 ### Introducing Elasticsuite modules
 
@@ -37,8 +41,6 @@ Module Name                                                                     
 ------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------
 [CMS Search](https://github.com/Smile-SA/module-elasticsuite-cms-search)                              | Allow to search for CMS pages (in autocomplete and search results).
 [Ratings](https://github.com/Smile-SA/magento2-module-elasticsuite-rating)                            | Allow to filter and/or sort on ratings (based on standard Magento rating module).
-[Custom Entities](https://github.com/Smile-SA/magento2-module-elasticsuite-custom-entity)             | Ability to define complex entities as attributes (eg : having "brand" entities with pictures, description etc...)
-[TargetRules with Elasticsearch](https://github.com/Smile-SA/magento2-module-elasticsuite-targetrule) | This module allow to compute target rules via Elasticsearch instead of full MySQL (**require Magento Commerce (EE)**).
 [Elasticsuite for Retailers](https://github.com/Smile-SA/elasticsuite-for-retailer)                   | A complete suite of retail oriented modules : Store Locator, Price segmentation per store, etc...
 
 ### Community Add-ons
