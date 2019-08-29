@@ -16,10 +16,11 @@ namespace Smile\ElasticsuiteCatalog\Model\Search;
 
 use Magento\Search\Model\QueryInterface;
 use Magento\Catalog\Model\Product\Visibility;
+use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as FulltextCollectionFactory;
 use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
-use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
 
 /**
  * Search result preview model.
@@ -28,7 +29,7 @@ use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview
+class Preview extends AbstractPreview
 {
     /**
      * @var QueryInterface
@@ -41,6 +42,11 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
     private $queryFactory;
 
     /**
+     * @var string
+     */
+    private $search;
+
+    /**
      * Constructor.
      *
      * @param QueryInterface            $searchQuery              Search query to preview.
@@ -48,23 +54,39 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      * @param ItemDataFactory           $previewItemFactory       Preview item factory.
      * @param QueryFactory              $queryFactory             ES query factory.
      * @param int                       $size                     Preview size.
+     * @param string                    $search                   Preview search.
      */
     public function __construct(
         QueryInterface $searchQuery,
         FulltextCollectionFactory $productCollectionFactory,
         ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
-        $size = 10
+        $size = 10,
+        $search = ''
     ) {
-        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $searchQuery->getStoreId(), $size);
+        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $searchQuery->getStoreId(), $size, $search);
         $this->searchQuery  = $searchQuery;
         $this->queryFactory = $queryFactory;
+        $this->search = $search;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    public function getData() : array
+    {
+        $data = $this->getUnsortedProductData();
+
+        $sortedProducts = $this->getSortedProducts();
+        $data['products'] = $this->preparePreviewItems(array_merge($sortedProducts, $data['products']));
+
+        return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function prepareProductCollection(Collection $collection) : Collection
     {
         $collection->setVisibility([Visibility::VISIBILITY_IN_SEARCH, Visibility::VISIBILITY_BOTH]);
         $collection->setSearchQuery($this->searchQuery->getQueryText());
@@ -77,8 +99,24 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      *
      * @return array
      */
-    protected function getSortedProductIds()
+    protected function getSortedProductIds() : array
     {
         return $this->searchQuery->getSortedProductIds();
+    }
+
+    /**
+     * Return a collection with with products that match the current preview.
+     *
+     * @return array
+     */
+    private function getUnsortedProductData() : array
+    {
+        $productCollection = $this->getProductCollection()->setPageSize($this->size);
+
+        if (!in_array($this->search, [null, ''], true)) {
+            $productCollection->setSearchQuery($this->searchQuery->getQueryText() . ' ' . $this->search);
+        }
+
+        return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
     }
 }

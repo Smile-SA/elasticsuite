@@ -15,6 +15,8 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Model\Product\Visibility;
+use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -29,7 +31,7 @@ use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview
+class Preview extends AbstractPreview
 {
     /**
      * @var CategoryInterface
@@ -75,7 +77,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
     /**
      * {@inheritDoc}
      */
-    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    protected function prepareProductCollection(Collection $collection) : Collection
     {
         $this->searchContext->setCurrentCategory($this->category);
         $this->searchContext->setStoreId($this->category->getStoreId());
@@ -94,7 +96,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      *
      * @return array
      */
-    protected function getSortedProductIds()
+    protected function getSortedProductIds() : array
     {
         return $this->category->getSortedProductIds();
     }
@@ -104,7 +106,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      *
      * @return QueryInterface
      */
-    private function getQueryFilter()
+    private function getQueryFilter() : QueryInterface
     {
         $query = null;
 
@@ -145,7 +147,7 @@ class Preview extends \Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPre
      *
      * @return QueryInterface
      */
-    private function getEntityIdFilterQuery($ids)
+    private function getEntityIdFilterQuery($ids) : QueryInterface
     {
         return $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'entity_id', 'values' => $ids]);
     }

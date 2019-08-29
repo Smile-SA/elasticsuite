@@ -13,6 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\ProductSorter;
 
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Model\ResourceModel\Product;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
 use \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory as ProductCollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -39,7 +42,7 @@ abstract class AbstractPreview implements PreviewInterface
     /**
      * @var integer
      */
-    private $size;
+    protected $size;
 
     /**
      * @var string
@@ -85,7 +88,7 @@ abstract class AbstractPreview implements PreviewInterface
     /**
      * {@inheritDoc}
      */
-    public function getData()
+    public function getData() : array
     {
         $data = $this->getUnsortedProductData();
 
@@ -98,11 +101,11 @@ abstract class AbstractPreview implements PreviewInterface
     /**
      * Apply custom logic to product collection.
      *
-     * @param \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection Product collection.
+     * @param Collection $collection Product collection.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return Collection
      */
-    protected function prepareProductCollection(\Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $collection)
+    protected function prepareProductCollection(Collection $collection) : Collection
     {
         return $collection;
     }
@@ -112,16 +115,16 @@ abstract class AbstractPreview implements PreviewInterface
      *
      * @return array
      */
-    abstract protected function getSortedProductIds();
+    abstract protected function getSortedProductIds() : array;
 
     /**
      * Convert an array of products to an array of preview items.
      *
-     * @param \Magento\Catalog\Model\ResourceModel\Product[] $products Product list.
+     * @param Product[] $products Product list.
      *
      * @return array
      */
-    private function preparePreviewItems($products = [])
+    protected function preparePreviewItems($products = []) : array
     {
         $items = [];
 
@@ -135,9 +138,9 @@ abstract class AbstractPreview implements PreviewInterface
     /**
      * Preview base product collection.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     * @return Collection
      */
-    private function getProductCollection()
+    protected function getProductCollection() : Collection
     {
         $productCollection = $this->collectionFactory->create();
 
@@ -148,27 +151,11 @@ abstract class AbstractPreview implements PreviewInterface
     }
 
     /**
-     * Return a collection with with products that match the current preview.
-     *
-     * @return array
-     */
-    private function getUnsortedProductData()
-    {
-        $productCollection = $this->getProductCollection()->setPageSize($this->size);
-
-        if (!in_array($this->search, [null, ''])) {
-            $productCollection->setSearchQuery($this->search);
-        }
-
-        return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
-    }
-
-    /**
      * Return a collection with all products manually sorted loaded.
      *
-     * @return \Magento\Catalog\Api\Data\ProductInterface[]
+     * @return ProductInterface[]
      */
-    private function getSortedProducts()
+    protected function getSortedProducts() : array
     {
         $products   = [];
         $productIds = $this->getSortedProductIds();
@@ -192,5 +179,21 @@ abstract class AbstractPreview implements PreviewInterface
         }
 
         return $sortedProducts;
+    }
+
+    /**
+     * Return a collection with with products that match the current preview.
+     *
+     * @return array
+     */
+    private function getUnsortedProductData() : array
+    {
+        $productCollection = $this->getProductCollection()->setPageSize($this->size);
+
+        if (!in_array($this->search, [null, ''], true)) {
+            $productCollection->setSearchQuery($this->search);
+        }
+
+        return ['products' => $productCollection->getItems(), 'size' => $productCollection->getSize()];
     }
 }
