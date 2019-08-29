@@ -111,7 +111,7 @@ class Spellchecker implements SpellcheckerInterface
      */
     private function getCacheKey(RequestInterface $request)
     {
-        return implode('|', [$request->getIndex(), $request->getType(), $request->getQueryText()]);
+        return implode('|', [$request->getIndex(), $request->getQueryText()]);
     }
 
     /**
@@ -142,7 +142,6 @@ class Spellchecker implements SpellcheckerInterface
     {
         $termVectorsQuery = [
             'index'           => $request->getIndex(),
-            'type'            => $request->getType(),
             'term_statistics' => true,
             'fields'          => [
                 MappingInterface::DEFAULT_SPELLING_FIELD,

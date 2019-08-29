@@ -93,6 +93,8 @@ class Mapper
             $searchRequest['aggregations'] = $aggregations;
         }
 
+        $searchRequest['track_total_hits'] = $request->getTrackTotalHits();
+
         return $searchRequest;
     }
 

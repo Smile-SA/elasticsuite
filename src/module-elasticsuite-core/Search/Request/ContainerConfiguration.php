@@ -97,14 +97,6 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     /**
      * {@inheritDoc}
      */
-    public function getTypeName()
-    {
-        return $this->readBaseConfigParam('type');
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel()
     {
         return $this->readBaseConfigParam('label');
@@ -166,6 +158,14 @@ class ContainerConfiguration implements ContainerConfigurationInterface
         }
 
         return $aggregations;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTrackTotalHits()
+    {
+        return $this->readBaseConfigParam('track_total_hits');
     }
 
     /**

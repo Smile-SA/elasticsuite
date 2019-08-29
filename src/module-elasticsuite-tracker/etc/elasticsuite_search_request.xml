@@ -17,7 +17,7 @@
           xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_search_request.xsd">
 
     <!-- Session log event aggregator request using tracking_log_event to create tracking_log_session data -->
-    <request name="session_aggregator" label="Session log event aggregator" index="tracking_log_event" type="event" fulltext="false">
+    <request name="session_aggregator" label="Session log event aggregator" index="tracking_log_event" fulltext="false">
         <aggregations>
             <aggregation xsi:type="termBucket" name="session_id" field="session.uid">
                 <aggregations>
@@ -58,8 +58,8 @@
     </request>
 
     <!-- Simple request for tracker events -->
-    <request name="tracking_log_event" label="Tracking Log Events" index="tracking_log_event" type="event" fulltext="false" />
+    <request name="tracking_log_event" label="Tracking Log Events" index="tracking_log_event" fulltext="false" />
 
     <!-- Simple request for tracker sessions -->
-    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" type="session" fulltext="false" />
+    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" fulltext="false" />
 </requests>

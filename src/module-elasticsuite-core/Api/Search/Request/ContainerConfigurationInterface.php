@@ -86,4 +86,11 @@ interface ContainerConfigurationInterface
      * @return array
      */
     public function getAggregations($query = null, $filters = [], $queryFilters = []);
+
+    /**
+     * Get the value of the track_total_hits parameter, if any.
+     *
+     * @return int|bool
+     */
+    public function getTrackTotalHits();
 }

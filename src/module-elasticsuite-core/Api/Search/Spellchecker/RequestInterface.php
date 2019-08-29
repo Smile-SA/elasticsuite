@@ -31,13 +31,6 @@ interface RequestInterface
     public function getIndex();
 
     /**
-     * Spellcheck request document type.
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
      * Spellcheck fulltext query.
      *
      * @return string

@@ -54,4 +54,11 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return boolean
      */
     public function isSpellchecked();
+
+    /**
+     * Get the value of the track_total_hits parameter, if any.
+     *
+     * @return int|bool
+     */
+    public function getTrackTotalHits();
 }
