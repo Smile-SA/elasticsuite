@@ -13,6 +13,12 @@
  */
 namespace Smile\ElasticsuiteCatalog\Controller\Adminhtml\Term\Merchandiser;
 
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Search\Controller\Adminhtml\Term;
+use Magento\Search\Model\QueryFactory;
+use Smile\ElasticsuiteCatalog\Model\Search\PreviewFactory;
+
 /**
  * Search term merchandiser preview load controller.
  *
@@ -20,36 +26,36 @@ namespace Smile\ElasticsuiteCatalog\Controller\Adminhtml\Term\Merchandiser;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Load extends \Magento\Search\Controller\Adminhtml\Term
+class Load extends Term
 {
     /**
-     * @var \Magento\Search\Model\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var \Magento\Framework\Json\Helper\Data
+     * @var Data
      */
     private $jsonHelper;
 
     /**
-     * @var \Smile\ElasticsuiteCatalog\Model\Search\PreviewFactory
+     * @var PreviewFactory
      */
     private $previewFactory;
 
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\App\Action\Context                    $context        Controller context.
-     * @param \Magento\Search\Model\QueryFactory                     $queryFactory   Search query factory.
-     * @param \Magento\Framework\Json\Helper\Data                    $jsonHelper     Json Helper.
-     * @param \Smile\ElasticsuiteCatalog\Model\Search\PreviewFactory $previewFactory Preview factory.
+     * @param Context        $context        Controller context.
+     * @param QueryFactory   $queryFactory   Search query factory.
+     * @param Data           $jsonHelper     Json Helper.
+     * @param PreviewFactory $previewFactory Preview factory.
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
+        Context $context,
         \Magento\Search\Model\QueryFactory $queryFactory,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticsuiteCatalog\Model\Search\PreviewFactory $previewFactory
+        Data $jsonHelper,
+        PreviewFactory $previewFactory
     ) {
         parent::__construct($context);
         $this->queryFactory   = $queryFactory;
@@ -64,6 +70,7 @@ class Load extends \Magento\Search\Controller\Adminhtml\Term
     {
         $queryId = $this->getRequest()->getParam('query_id', 0);
         $pageSize = $this->getRequest()->getParam('page_size');
+        $search = $this->getRequest()->getParam('search');
 
         $query   = $this->queryFactory->create()->load($queryId);
 
@@ -71,8 +78,10 @@ class Load extends \Magento\Search\Controller\Adminhtml\Term
 
         if ($query->getId()) {
             $productPositions = $this->getRequest()->getParam('product_position', []);
+
             $query->setSortedProductIds(array_keys($productPositions));
-            $preview      = $this->previewFactory->create(['searchQuery' => $query, 'size' => $pageSize]);
+
+            $preview      = $this->previewFactory->create(['searchQuery' => $query, 'size' => $pageSize, 'search' => $search]);
             $responseData = $preview->getData();
         }
 
