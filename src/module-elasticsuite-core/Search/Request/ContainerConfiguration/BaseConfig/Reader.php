@@ -45,6 +45,7 @@ class Reader extends Filesystem
         '/requests/request' => 'name',
         '/requests/request/filters/filter' => 'name',
         '/requests/request/aggregations/aggregation' => 'name',
+        '/requests/request/aggregations/provider' => 'name',
     ];
 
     /**
