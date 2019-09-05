@@ -116,13 +116,5 @@
 
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
-    <!-- REST Api compatibility -->
-    <type name="Magento\Eav\Model\TypeLocator">
-        <arguments>
-            <argument name="typeLocators" xsi:type="array">
-                <item name="virtualCategoryType" sortOrder="1" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Webapi\TypeLocator\VirtualCategoryLocator</item>
-            </argument>
-        </arguments>
-    </type>
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
 </config>
