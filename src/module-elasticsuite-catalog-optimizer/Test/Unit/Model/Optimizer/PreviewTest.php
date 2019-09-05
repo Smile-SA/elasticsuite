@@ -172,7 +172,7 @@ class PreviewTest extends TestCase
             ],
             [null, 'quick_search_container', null, null, null, null, false],
             [[], 'quick_search_container', null, null, null, null, false],
-            [['quick_search_container'], 'quick_search_container', null, null, null, null, false],
+            [['quick_search_container'], 'quick_search_container', null, null, null, null, true],
             [
                 ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
                 'quick_search_container',
@@ -225,7 +225,7 @@ class PreviewTest extends TestCase
                 ],
                 'skirt',
                 3,
-                false,
+                true,
             ],
             [
                 ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
@@ -251,7 +251,7 @@ class PreviewTest extends TestCase
                 ],
                 'skirt',
                 3,
-                false,
+                true,
             ],
             [
                 ['catalog_view_container', 'catalog_product_autocomplete'],
