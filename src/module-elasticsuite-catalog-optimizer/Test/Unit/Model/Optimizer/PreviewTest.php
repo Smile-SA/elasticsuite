@@ -395,6 +395,28 @@ class PreviewTest extends TestCase
                 4,
                 false,
             ],
+            [
+                ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
+                'quick_search_container',
+                [
+                    'apply_to' => 1,
+                ],
+                null,
+                'skirt',
+                null,
+                true,
+            ],
+            [
+                ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
+                'catalog_view_container',
+                null,
+                [
+                    'apply_to' => 1,
+                ],
+                null,
+                3,
+                true,
+            ],
         ];
 
         return $data;
