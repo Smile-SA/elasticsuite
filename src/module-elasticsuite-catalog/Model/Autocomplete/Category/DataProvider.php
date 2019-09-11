@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Category;
 
+use Magento\Catalog\Model\Category;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
@@ -112,16 +113,34 @@ class DataProvider implements DataProviderInterface
             $categoryCollection = $this->getCategoryCollection();
             if ($categoryCollection) {
                 foreach ($categoryCollection as $category) {
-                    if ($category->getIsActive() && !$category->getIsHidden()) {
-                        $result[] = $this->itemFactory->create(
-                            ['category' => $category, 'type' => $this->getType()]
-                        );
+                    if (!$this->isCategoryAvailable($category)) {
+                        continue;
                     }
+
+                    $result[] = $this->itemFactory->create([
+                        'category' => $category,
+                        'type'     => $this->getType(),
+                    ]);
                 }
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Filter disabled categories
+     *
+     * @param Category $category Filterable category
+     *
+     * @return bool
+     */
+    private function isCategoryAvailable(Category $category): bool
+    {
+        return $category->getIsActive()
+            && !$category->getIsHidden()
+            && $category->isInRootCategoryList()
+        ;
     }
 
     /**
