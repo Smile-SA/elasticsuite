@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteSwatches\Block\Navigation\Renderer\Swatches;
 
 use Magento\Catalog\Model\Layer\Filter\Item as FilterItem;
+use Magento\Eav\Model\Entity\Attribute;
 use Magento\Eav\Model\Entity\Attribute\Option;
 
 /**
@@ -26,6 +27,50 @@ use Magento\Eav\Model\Entity\Attribute\Option;
  */
 class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLayered
 {
+    /**
+     * @return array
+     */
+    public function getSwatchData(): array
+    {
+        if (false === $this->eavAttribute instanceof Attribute) {
+            throw new \RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
+        }
+
+        $attributeOptions = [];
+        $attributeOptionsSort = [];
+
+        $sortingArr = [];
+        foreach ($this->filter->getItems() as $item) {
+            $sortingArr[] = $item['label'];
+        }
+
+        foreach ($this->eavAttribute->getOptions() as $option) {
+            if ($currentOption = $this->getFilterOption($this->filter->getItems(), $option)) {
+                $attributeOptions[$option->getLabel()] = array_merge($currentOption, ['id' => $option->getValue()]);
+            } elseif ($this->isShowEmptyResults()) {
+                $attributeOptions[$option->getLabel()] = array_merge($this->getUnusedOption($option), ['id' => $option->getValue()]);
+            }
+        }
+
+        foreach (array_merge(array_flip($sortingArr), $attributeOptions) as $item) {
+            $attributeOptionsSort[$item['id']] = $item;
+        }
+
+        $attributeOptionIds = array_keys($attributeOptionsSort);
+
+        $swatches = $this->swatchHelper->getSwatchesByOptionsId($attributeOptionIds);
+
+        $data = [
+            'attribute_id' => $this->eavAttribute->getId(),
+            'attribute_code' => $this->eavAttribute->getAttributeCode(),
+            'attribute_label' => $this->eavAttribute->getStoreLabel(),
+            'options' => $attributeOptionsSort,
+            'swatches' => $swatches,
+        ];
+
+        return $data;
+    }
+
     /**
      * {@inheritDoc}
      */
