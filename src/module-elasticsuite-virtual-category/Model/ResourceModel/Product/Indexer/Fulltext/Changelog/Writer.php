@@ -61,7 +61,7 @@ class Writer
         $fullTextIndexer    = $this->indexerRegistry->get(\Magento\CatalogSearch\Model\Indexer\Fulltext::INDEXER_ID);
         $indexerChangeLog   = $fullTextIndexer->getView()->getChangelog();
 
-        $changelogTableName = $indexerChangeLog->getName();
+        $changelogTableName = $this->resource->getTableName($indexerChangeLog->getName());
         $columnName         = $indexerChangeLog->getColumnName();
 
         try {
