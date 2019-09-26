@@ -80,7 +80,8 @@ class Builder
             }
 
             foreach ($bucket->getMetrics() as $metric) {
-                $subAggregations[$metric->getName()] = [$metric->getType() => ['field' => $metric->getField()]];
+                $metricDefinition = array_merge(['field' => $metric->getField()], $metric->getConfig() ?? []);
+                $subAggregations[$metric->getName()] = [$metric->getType() => $metricDefinition];
             }
 
             foreach ($bucket->getPipelines() as $pipeline) {
