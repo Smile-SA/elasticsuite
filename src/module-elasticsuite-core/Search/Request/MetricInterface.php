@@ -54,4 +54,11 @@ interface MetricInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Metric extra config.
+     *
+     * @return array
+     */
+    public function getConfig();
 }
