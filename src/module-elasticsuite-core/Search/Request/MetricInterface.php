@@ -33,6 +33,7 @@ interface MetricInterface
     const TYPE_STATS          = 'stats';
     const TYPE_EXTENDED_STATS = 'extended_stats';
     const TYPE_CARDINALITY    = 'cardinality';
+    const TYPE_PERCENTILES    = 'percentiles';
 
     /**
      * Metric type.
