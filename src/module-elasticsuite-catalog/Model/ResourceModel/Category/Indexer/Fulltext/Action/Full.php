@@ -62,7 +62,7 @@ class Full extends Indexer
      *
      * @return array
      */
-    public function getSearchableCategories($storeId, $categoryIds = null, $fromId = 0, $limit = 100)
+    public function getSearchableCategories($storeId, $categoryIds = null, $fromId = 0, $limit = 100): array
     {
         /**
          * @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection
@@ -90,13 +90,13 @@ class Full extends Indexer
      * @param \Zend_Db_Select $select  Product select to be filtered.
      * @param integer         $storeId Store Id
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full Self Reference
+     * @return Full Self Reference
      */
-    private function addIsVisibleInStoreFilter($select, $storeId)
+    private function addIsVisibleInStoreFilter($select, $storeId): Full
     {
         $rootCategoryId = $this->getRootCategoryId($storeId);
 
-        $select->where('e.path LIKE ?', "1/{$rootCategoryId}%");
+        $select->where('e.path LIKE ?', "1/{$rootCategoryId}/%");
 
         return $this;
     }
