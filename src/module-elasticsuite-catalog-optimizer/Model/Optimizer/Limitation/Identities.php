@@ -112,7 +112,7 @@ class Identities
 
         if (!empty($data['quick_search_container']['query_ids'])) {
             foreach ($data['quick_search_container']['query_ids'] as $query) {
-                $queryIds[] = $query['id'];
+                $queryIds[] = $query['id'] ?? $query;
             }
         }
 
