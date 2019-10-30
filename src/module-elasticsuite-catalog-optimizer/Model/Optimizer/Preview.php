@@ -168,30 +168,22 @@ class Preview
      */
     private function canApply() : bool
     {
-        $canApply = false;
-        if (!empty($this->optimizer->getSearchContainer())
-            && in_array($this->containerConfiguration->getName(), $this->optimizer->getSearchContainer(), true)) {
-            switch ($this->containerConfiguration->getName()) {
-                case 'catalog_product_autocomplete':
-                    $canApply = true;
-                    break;
-                case 'quick_search_container':
-                    $config = $this->optimizer->getQuickSearchContainer();
-                    if ((int) $config['apply_to'] === 1 && !empty($config['query_ids'])) {
-                        $queries = array_column($config['query_ids'], 'query_text');
-                        $canApply = in_array($this->queryText, $queries, true);
-                    }
-                    break;
-                case 'catalog_view_container':
-                    $config = $this->optimizer->getCatalogViewContainer();
-                    if ((int) $config['apply_to'] === 1 && !empty($config['category_ids'])) {
-                        $categoryIds = array_filter($config['category_ids']);
-                        $canApply = in_array($this->category->getId(), $categoryIds, true);
-                    }
-                    if ((int) $config['apply_to'] === 0 && empty($config['category_ids'])) {
-                        $canApply = true;
-                    }
-                    break;
+        if (empty($this->optimizer->getSearchContainer())) {
+            return false;
+        }
+
+        $canApply = in_array($this->containerConfiguration->getName(), $this->optimizer->getSearchContainer(), true);
+        if ($canApply && $this->containerConfiguration->getName() === 'quick_search_container') {
+            $config = $this->optimizer->getQuickSearchContainer();
+            if ((int) $config['apply_to'] === 1 && !empty($config['query_ids'])) {
+                $queries = array_column($config['query_ids'], 'query_text');
+                $canApply = in_array($this->queryText, $queries, true);
+            }
+        } elseif ($canApply && $this->containerConfiguration->getName() === 'catalog_view_container') {
+            $config = $this->optimizer->getCatalogViewContainer();
+            if ((int) $config['apply_to'] === 1 && !empty($config['category_ids'])) {
+                $categoryIds = array_filter($config['category_ids']);
+                $canApply = in_array($this->category->getId(), $categoryIds, true);
             }
         }
 

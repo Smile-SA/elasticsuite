@@ -209,9 +209,26 @@
     <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
         <arguments>
             <argument name="modifiersPool" xsi:type="array">
-                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
                 <item name="ajaxFilterModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\AjaxFilter</item>
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="searchFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Search\AttributeList</argument>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="categoryFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category\AttributeList</argument>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

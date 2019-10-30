@@ -36,17 +36,24 @@ class Metric extends \Magento\Framework\Search\Request\Aggregation\Metric implem
     private $name;
 
     /**
+     * @var array
+     */
+    private $config;
+
+    /**
      * Constructor.
      *
-     * @param string $name  Metric name.
-     * @param string $type  Metric type.
-     * @param string $field Metric field.
+     * @param string $name   Metric name.
+     * @param string $type   Metric type.
+     * @param string $field  Metric field.
+     * @param array  $config Metric extra config.
      */
-    public function __construct($name, $type, $field)
+    public function __construct($name, $type, $field, $config = [])
     {
         parent::__construct($type);
         $this->field = $field;
         $this->name  = $name;
+        $this->config = $config;
     }
 
     /**
@@ -63,5 +70,13 @@ class Metric extends \Magento\Framework\Search\Request\Aggregation\Metric implem
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 }

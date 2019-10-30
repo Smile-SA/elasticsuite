@@ -140,7 +140,7 @@ define([
                 this.storeSortedProducts = JSON.stringify(this.editPositions());
                 this.storeBlacklistedProducts = this.blacklistedProducts().slice(0);
                 // Switch positions and blacklist.
-                this.editPositions = JSON.parse(this.defaultSortedProducts);
+                this.editPositions(JSON.parse(this.defaultSortedProducts));
                 this.blacklistedProducts(this.defaultBlacklistedProducts.slice(0));
             } else {
                 if (this.isInitialSwitchCopy()) {
@@ -150,12 +150,9 @@ define([
                     this.initialSwitchCopy = false;
                 }
                 // Restore store level positions and blacklist.
-                this.editPositions = JSON.parse(this.storeSortedProducts);
+                this.editPositions(JSON.parse(this.storeSortedProducts));
                 this.blacklistedProducts(this.storeBlacklistedProducts.slice(0));
             }
-            // Recreate required observers/subscriptions.
-            this.observe(['editPositions']);
-            this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
 
             this.previewOnlyMode(!this.previewOnlyMode());
 
@@ -170,10 +167,7 @@ define([
                      * Confirm action.
                      */
                     confirm: function () {
-                        this.editPositions = JSON.parse("{}");
-                        // Recreate required observers/subscriptions.
-                        this.observe(['editPositions']);
-                        this.editPositions.subscribe(function () { this.value(JSON.stringify(this.editPositions())); }.bind(this));
+                        this.editPositions({});
 
                         this.blacklistedProducts([]);
                         this.provider().data['blacklisted_products'] = this.blacklistedProducts();

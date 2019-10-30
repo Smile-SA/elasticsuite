@@ -31,7 +31,13 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * @var array
      */
-    private $forbidenChildrenAttributeCode = ['visibility', 'status', 'price', 'tax_class_id'];
+    private $forbidenChildrenAttributeCode = [
+        'visibility',
+        'status',
+        'price',
+        'tax_class_id',
+        'name',
+    ];
 
     /**
      * {@inheritdoc}
@@ -67,9 +73,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             }
         }
 
-        $indexData = $this->filterCompositeProducts($indexData);
-
-        return $indexData;
+        return $this->filterCompositeProducts($indexData);
     }
 
     /**
@@ -142,7 +146,6 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     private function addRelationData(&$parentData, $childAttributes, $relation)
     {
         $childAttributeCodes  = array_keys($childAttributes);
-        $parentAttributeCodes = array_keys($parentData);
 
         if (!isset($parentData['children_attributes'])) {
             $parentData['children_attributes'] = ['indexed_attributes'];
@@ -154,28 +157,19 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         );
 
         if (isset($relation['configurable_attributes']) && !empty($relation['configurable_attributes'])) {
-            $addedChildrenAttributes = array_diff(
-                $childAttributeCodes,
-                $this->forbidenChildrenAttributeCode,
-                $parentAttributeCodes
-            );
-            $childrenAttributes = array_merge($addedChildrenAttributes, $parentData['children_attributes']);
-
-            if (!isset($parentData['configurable_attributes'])) {
-                $parentData['configurable_attributes'] = [];
-            }
-
-            $configurableAttributesCodes = array_map(
-                function ($attributeId) {
-                    if (isset($this->attributesById[(int) $attributeId])) {
-                        return $this->attributesById[(int) $attributeId]->getAttributeCode();
+            $attributesCodes = array_map(
+                function (int $attributeId) {
+                    if (isset($this->attributesById[$attributeId])) {
+                        return $this->attributesById[$attributeId]->getAttributeCode();
                     }
                 },
                 $relation['configurable_attributes']
             );
 
             $parentData['configurable_attributes'] = array_values(
-                array_unique(array_merge($configurableAttributesCodes, $parentData['configurable_attributes']))
+                array_unique(
+                    array_merge($attributesCodes, $parentData['configurable_attributes'] ?? [])
+                )
             );
         }
 

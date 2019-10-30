@@ -48,6 +48,8 @@ class AggregationResolver
      * @param \Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute Product EAV Attribute
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getAggregationData(\Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute)
     {
@@ -64,6 +66,12 @@ class AggregationResolver
 
         if ($attribute->getAttributeCode() == 'price') {
             $aggregation = $this->aggregations['price'];
+        }
+
+        if ($attribute->getFrontendInput() == 'boolean'
+            && $attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean'
+        ) {
+            $aggregation = $this->aggregations['boolean'];
         }
 
         if (!($aggregation instanceof AggregationInterface)) {

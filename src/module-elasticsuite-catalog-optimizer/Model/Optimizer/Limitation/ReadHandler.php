@@ -47,22 +47,22 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
     {
         if ($entity->getId()) {
             $searchContainers = $entity->getResource()->getSearchContainersFromOptimizerId($entity->getId());
-            $this->getCategoryLimitation($entity, $searchContainers);
-            $this->getSearchQueryLimitation($entity, $searchContainers);
+            $this->setCategoryLimitation($entity, $searchContainers);
+            $this->setSearchQueryLimitation($entity, $searchContainers);
         }
 
         return $entity;
     }
 
     /**
-     * Retrieve category ids limitation for the current optimizer, if any.
+     * Retrieve and set category ids limitation for the current optimizer, if any.
      *
-     * @param OptimizerInterface $entity           The optimizer being saved
+     * @param OptimizerInterface $entity           The optimizer being read
      * @param array              $searchContainers Search Containers data for the current optimizer.
      *
-     * @return array
+     * @return void
      */
-    private function getCategoryLimitation($entity, $searchContainers)
+    private function setCategoryLimitation($entity, $searchContainers)
     {
         $applyTo = (bool) ($searchContainers['catalog_view_container'] ?? false);
 
@@ -77,14 +77,14 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
     }
 
     /**
-     * Retrieve query ids limitation for the current optimizer, if any.
+     * Retrieve and set query ids limitation for the current optimizer, if any.
      *
-     * @param OptimizerInterface $entity           The optimizer being saved
+     * @param OptimizerInterface $entity           The optimizer being read
      * @param array              $searchContainers Search Containers data for the current optimizer.
      *
-     * @return array
+     * @return void
      */
-    private function getSearchQueryLimitation($entity, $searchContainers)
+    private function setSearchQueryLimitation($entity, $searchContainers)
     {
         $applyTo = (bool) ($searchContainers['quick_search_container'] ?? ($searchContainers['catalog_product_autocomplete'] ?? false));
 
@@ -97,7 +97,5 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
             }
             $entity->setData('quick_search_container', $containerData);
         }
-
-        return $entity;
     }
 }
