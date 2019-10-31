@@ -147,6 +147,7 @@
                 <item name="dateHistogramBucket" xsi:type="object">dateHistogramBucketFactory</item>
                 <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
                 <item name="significantTermBucket" xsi:type="object">significantTermBucketFactory</item>
+                <item name="reverseNestedBucket" xsi:type="object">reverseNestedBucketFactory</item>
             </argument>
         </arguments>
     </type>
@@ -156,16 +157,19 @@
     <virtualType name="dateHistogramBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\DateHistogramFactory" />
     <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
     <virtualType name="significantTermBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTermFactory" />
+    <virtualType name="reverseNestedBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\ReverseNestedFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory">
         <arguments>
             <argument name="factories" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">bucketSelectorPipelineFactory</item>
+                <item name="movingFunctionPipeline" xsi:type="object">movingFunctionPipelineFactory</item>
             </argument>
         </arguments>
     </type>
 
     <virtualType name="bucketSelectorPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\BucketSelectorFactory" />
+    <virtualType name="movingFunctionPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MovingFunctionFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
         <arguments>
@@ -175,9 +179,11 @@
                 <item name="dateHistogramBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\DateHistogram\Proxy</item>
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
                 <item name="significantTermBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm\Proxy</item>
+                <item name="reverseNestedBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\ReverseNested\Proxy</item>
             </argument>
             <argument name="pipelineBuilders" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector\Proxy</item>
+                <item name="movingFunctionPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\MovingFunction\Proxy</item>
             </argument>
         </arguments>
     </type>

@@ -26,6 +26,7 @@ interface PipelineInterface
      * Available pipeline types.
      */
     const TYPE_BUCKET_SELECTOR      = 'bucketSelectorPipeline';
+    const TYPE_MOVING_FUNCTION      = 'movingFunctionPipeline';
 
     /**
      * Available gap policies.
