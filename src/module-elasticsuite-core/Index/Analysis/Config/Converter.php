@@ -34,6 +34,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const ANALYZER_TYPE_NODE         = 'analyzer';
     const NORMALIZER_TYPE_ROOT_NODE  = 'normalizers';
     const NORMALIZER_TYPE_NODE       = 'normalizer';
+    const LANGUAGE_DEFAULT           = 'default';
 
     /**
      * @var Decoder
@@ -82,8 +83,17 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     {
         $charFilters = $this->parseFilters($xpath, self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
         $filters     = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
-        $analyzers   = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters));
-        $normalizers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), 'default', self::NORMALIZER_TYPE_ROOT_NODE, self::NORMALIZER_TYPE_NODE);
+        $charFilterKeys = array_keys($charFilters);
+        $filterKeys = array_keys($filters);
+        $analyzers   = $this->parseAnalyzers($xpath, $charFilterKeys,$filterKeys);
+        $normalizers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            self::LANGUAGE_DEFAULT,
+            self::NORMALIZER_TYPE_ROOT_NODE,
+            self::NORMALIZER_TYPE_NODE
+        );
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
@@ -124,9 +134,22 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $language
         );
         $filters = array_merge($defaultConfig[self::FILTER_TYPE_NODE], $languageFilters);
-
-        $analyzers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language);
-        $normalizers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language, self::NORMALIZER_TYPE_ROOT_NODE, self::NORMALIZER_TYPE_NODE);
+        $charFilterKeys = array_keys($charFilters);
+        $filterKeys = array_keys($filters);
+        $analyzers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            $language
+        );
+        $normalizers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            $language,
+            self::NORMALIZER_TYPE_ROOT_NODE,
+            self::NORMALIZER_TYPE_NODE
+        );
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
@@ -169,7 +192,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      *
      * @return array
      */
-    private function parseFilters(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = 'default')
+    private function parseFilters(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = self::LANGUAGE_DEFAULT)
     {
         $filters = [];
         $languagePath = sprintf("[@language='%s']", $language);
@@ -209,7 +232,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         \DOMXPath $xpath,
         array $availableCharFilters,
         array $availableFilters,
-        $language = 'default',
+        $language = self::LANGUAGE_DEFAULT,
         $typeRootNode = self::ANALYZER_TYPE_ROOT_NODE,
         $typeNode = self::ANALYZER_TYPE_NODE
     ) {
@@ -217,7 +240,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         $languagePath = "@language='default'";
 
-        if ($language != 'default') {
+        if ($language != self::LANGUAGE_DEFAULT) {
             $languagePath .= " or @language='{$language}'";
         }
 
