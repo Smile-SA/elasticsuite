@@ -85,7 +85,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         $filters     = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
         $charFilterKeys = array_keys($charFilters);
         $filterKeys = array_keys($filters);
-        $analyzers   = $this->parseAnalyzers($xpath, $charFilterKeys,$filterKeys);
+        $analyzers   = $this->parseAnalyzers($xpath, $charFilterKeys, $filterKeys);
         $normalizers = $this->parseAnalyzers(
             $xpath,
             $charFilterKeys,
@@ -223,8 +223,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      * @param array     $availableCharFilters List of available char filters.
      * @param array     $availableFilters     List of available filters.
      * @param string    $language             Language searched.
-     * @param string    $typeRootNode
-     * @param string    $typeNode
+     * @param string    $typeRootNode         Type root node name.
+     * @param string    $typeNode             Type sub-node name.
      *
      * @return array
      */
