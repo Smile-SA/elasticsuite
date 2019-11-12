@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCreateThesaurusSection">
+        <element name="createThesaurusButton" type="button" selector="#save" timeout="30"/>
+        <element name="typeDropdown" type="select" selector="select[name='type']"/>
+        <element name="activeDropdown" type="select" selector="select[name='is_active']"/>
+        <element name="storeId" type="select" selector="#store_id"/>
+        <element name="successMessage" type="text" selector=".message-success"/>
+    </section>
+</sections>

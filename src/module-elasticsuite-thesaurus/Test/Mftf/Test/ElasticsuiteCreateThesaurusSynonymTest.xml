@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteCreateThesaurusSynonymTest">
+        <annotations>
+            <features value="ElasticSuiteThesaurus"/>
+            <stories value="Create a Thesaurus with synonym type via the Admin"/>
+            <title value="We can create Synonym Thesaurus"/>
+            <description value="We can create Synonym Thesaurus"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteThesaurus-1"/>
+            <group value="elasticSuiteThesaurus"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <actionGroup ref="CreateThesaurusActionGroup" stepKey="createThesaurus"/>
+
+        <!-- select type of the Thesaurus -->
+        <selectOption selector="{{AdminCreateThesaurusSection.typeDropdown}}" userInput="{{SynonymThesaurus.type}}" stepKey="selectType"/>
+        <click selector="{{AdminCreateThesaurusSection.createThesaurusButton}}" stepKey="clickOnCreateNewThesaurus"/>
+        <waitForPageLoad stepKey="waitForPageToLoad3"/>
+        <fillField selector="{{AdminThesaurusGeneralFieldSection.thesaurusNameInput}}" userInput="{{SynonymThesaurus.name}}" stepKey="enterThesaurusName"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.activeDropdown}}" userInput="{{SynonymThesaurus.is_active}}" stepKey="selectActive"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.storeId}}" userInput="{{SynonymThesaurus.store_id}}" stepKey="selectStoreId"/>
+
+        <click selector="{{AdminThesaurusSynonymSection.addButton}}" stepKey="clickOnAddSynonym"/>
+        <fillField selector="{{AdminThesaurusSynonymSection.synonymTerms}}" userInput="{{SynonymThesaurus.values}}" stepKey="enterValues"/>
+
+        <click selector="{{AdminThesaurusGeneralFieldSection.saveButton}}" stepKey="saveThesaurus"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+        <see userInput="{{SynonymThesaurus.name}}" stepKey="seeSynonym"/>
+    </test>
+</tests>

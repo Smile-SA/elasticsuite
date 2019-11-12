@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteCheckSectionTest">
+        <annotations>
+            <features value="ElasticSuiteCore"/>
+            <stories value="Check section ElasticSuite in left menu"/>
+            <title value="Section ElasticSuite must be in left menu"/>
+            <description value="Section ElasticSuite must be in left menu"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteCore-1"/>
+            <group value="elasticSuiteCore"/>
+        </annotations>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <see userInput="ElasticSuite" selector="//ul[@id='nav']" stepKey="seeElasticSuite"/>
+        <actionGroup ref="logout" stepKey="logoutFromAdmin"/>
+    </test>
+</tests>

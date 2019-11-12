@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
+    <entity name="SynonymThesaurus" type="thesaurus">
+        <data key="type">synonym</data>
+        <data key="name" unique="suffix">Synonym</data>
+        <data key="is_active">1</data>
+        <data key="store_id">0</data>
+        <data key="values">watch,clock,timepiece</data>
+    </entity>
+    <entity name="SearchSynonymData" type="thesaurus">
+        <data key="text">timepiece</data>
+        <data key="product_name">Didi Sport Watch</data>
+    </entity>
+    <entity name="ExpansionThesaurus" type="thesaurus">
+        <data key="type">expansion</data>
+        <data key="name" unique="suffix">Expansion</data>
+        <data key="is_active">1</data>
+        <data key="store_id">0</data>
+        <data key="reference_terms">sport</data>
+        <data key="values">fitness,gym,running</data>
+    </entity>
+</entities>

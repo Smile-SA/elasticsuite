@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminElasticsuiteCategorySection">
+        <element name="virtualCategory" type="checkbox" selector="input[name='is_virtual_category']"/>
+        <element name="virtualCategoryLabel" type="text" selector="input[name='is_virtual_category']+label"/>
+    </section>
+</sections>
