@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteSearchThesaurusExpansionTest">
+        <annotations>
+            <features value="ElasticSuiteThesaurus"/>
+            <stories value="Expansion search"/>
+            <title value="We can search using expansion"/>
+            <description value="We can search using expansion"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteThesaurus-4"/>
+            <group value="elasticSuiteThesaurus"/>
+        </annotations>
+
+        <before>
+            <!--Run full reindex and clear caches -->
+            <magentoCLI command="indexer:reindex" stepKey="reindex"/>
+            <magentoCLI command="cache:flush" stepKey="flushCache"/>
+        </before>
+
+        <amOnPage url="{{StorefrontHomePage.url}}" stepKey="goToFrontHomePage"/>
+
+        <waitForPageLoad stepKey="waitForPageToLoad"/>
+        <fillField selector="{{StorefrontQuickSearchResultsSection.searchTextBox}}" userInput="{{SearchExpansionData.text}}" stepKey="fillAttribute"/>
+        <waitForPageLoad stepKey="waitForSearchTextBox"/>
+        <click selector="{{StorefrontQuickSearchResultsSection.searchTextBoxButton}}" stepKey="clickSearchTextBoxButton"/>
+        <waitForPageLoad stepKey="waitForSearch"/>
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{SearchExpansionData.product_name}}" stepKey="seeProductNameInSearchPage"/>
+    </test>
+</tests>

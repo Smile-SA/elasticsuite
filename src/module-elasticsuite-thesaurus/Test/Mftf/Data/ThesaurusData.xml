@@ -24,7 +24,11 @@
         <data key="name" unique="suffix">Expansion</data>
         <data key="is_active">1</data>
         <data key="store_id">0</data>
-        <data key="reference_terms">sport</data>
+        <data key="reference_terms">expansion sport</data>
         <data key="values">fitness,gym,running</data>
+    </entity>
+    <entity name="SearchExpansionData" type="thesaurus">
+        <data key="text">expansion sport</data>
+        <data key="product_name">Sparta Gym Tank</data>
     </entity>
 </entities>
