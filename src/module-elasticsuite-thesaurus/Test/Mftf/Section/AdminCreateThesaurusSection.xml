@@ -13,6 +13,8 @@
         <element name="typeDropdown" type="select" selector="select[name='type']"/>
         <element name="activeDropdown" type="select" selector="select[name='is_active']"/>
         <element name="storeId" type="select" selector="#store_id"/>
+        <element name="thesaurusNameInput" type="input" selector="input[name='name']"/>
+        <element name="saveButton" type="button" selector="#save" timeout="90"/>
         <element name="successMessage" type="text" selector=".message-success"/>
     </section>
 </sections>

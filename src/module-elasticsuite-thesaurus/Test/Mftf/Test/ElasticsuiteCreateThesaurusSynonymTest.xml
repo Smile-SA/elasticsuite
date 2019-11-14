@@ -29,14 +29,14 @@
         <selectOption selector="{{AdminCreateThesaurusSection.typeDropdown}}" userInput="{{SynonymThesaurus.type}}" stepKey="selectType"/>
         <click selector="{{AdminCreateThesaurusSection.createThesaurusButton}}" stepKey="clickOnCreateNewThesaurus"/>
         <waitForPageLoad stepKey="waitForPageToLoad3"/>
-        <fillField selector="{{AdminThesaurusGeneralFieldSection.thesaurusNameInput}}" userInput="{{SynonymThesaurus.name}}" stepKey="enterThesaurusName"/>
+        <fillField selector="{{AdminCreateThesaurusSection.thesaurusNameInput}}" userInput="{{SynonymThesaurus.name}}" stepKey="enterThesaurusName"/>
         <selectOption selector="{{AdminCreateThesaurusSection.activeDropdown}}" userInput="{{SynonymThesaurus.is_active}}" stepKey="selectActive"/>
         <selectOption selector="{{AdminCreateThesaurusSection.storeId}}" userInput="{{SynonymThesaurus.store_id}}" stepKey="selectStoreId"/>
 
         <click selector="{{AdminThesaurusSynonymSection.addButton}}" stepKey="clickOnAddSynonym"/>
         <fillField selector="{{AdminThesaurusSynonymSection.synonymTerms}}" userInput="{{SynonymThesaurus.values}}" stepKey="enterValues"/>
 
-        <click selector="{{AdminThesaurusGeneralFieldSection.saveButton}}" stepKey="saveThesaurus"/>
+        <click selector="{{AdminCreateThesaurusSection.saveButton}}" stepKey="saveThesaurus"/>
         <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
         <see userInput="{{SynonymThesaurus.name}}" stepKey="seeSynonym"/>
     </test>

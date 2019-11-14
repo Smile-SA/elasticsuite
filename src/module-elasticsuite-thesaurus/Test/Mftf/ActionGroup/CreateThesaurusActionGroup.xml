@@ -13,7 +13,7 @@
             <description>Create Thesaurus</description>
         </annotations>
 
-        <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminCategoryIndexPage"/>
+        <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminThesaurusIndexPage"/>
         <waitForPageLoad stepKey="waitForPageToLoad1"/>
         <click selector="{{AdminThesaurusSidebarActionSection.addThesaurusButton}}" stepKey="clickOnAddNewThesaurus"/>
         <waitForPageLoad stepKey="waitForPageToLoad2"/>

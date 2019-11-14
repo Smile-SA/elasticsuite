@@ -29,7 +29,7 @@
         <selectOption selector="{{AdminCreateThesaurusSection.typeDropdown}}" userInput="{{ExpansionThesaurus.type}}" stepKey="selectType"/>
         <click selector="{{AdminCreateThesaurusSection.createThesaurusButton}}" stepKey="clickOnCreateNewThesaurus"/>
         <waitForPageLoad stepKey="waitForPageToLoad3"/>
-        <fillField selector="{{AdminThesaurusGeneralFieldSection.thesaurusNameInput}}" userInput="{{ExpansionThesaurus.name}}" stepKey="enterThesaurusName"/>
+        <fillField selector="{{AdminCreateThesaurusSection.thesaurusNameInput}}" userInput="{{ExpansionThesaurus.name}}" stepKey="enterThesaurusName"/>
         <selectOption selector="{{AdminCreateThesaurusSection.activeDropdown}}" userInput="{{ExpansionThesaurus.is_active}}" stepKey="selectActive"/>
         <selectOption selector="{{AdminCreateThesaurusSection.storeId}}" userInput="{{ExpansionThesaurus.store_id}}" stepKey="selectStoreId"/>
 
@@ -37,7 +37,7 @@
         <fillField selector="{{AdminThesaurusExpansionSection.referenceTerms}}" userInput="{{ExpansionThesaurus.reference_terms}}" stepKey="enterReferenceTerms"/>
         <fillField selector="{{AdminThesaurusExpansionSection.expansionTerms}}" userInput="{{ExpansionThesaurus.values}}" stepKey="enterValues"/>
 
-        <click selector="{{AdminThesaurusGeneralFieldSection.saveButton}}" stepKey="saveThesaurus"/>
+        <click selector="{{AdminCreateThesaurusSection.saveButton}}" stepKey="saveThesaurus"/>
         <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
         <see userInput="{{ExpansionThesaurus.name}}" stepKey="seeExpansion"/>
     </test>

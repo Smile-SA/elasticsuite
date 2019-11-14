@@ -10,7 +10,6 @@
         xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
     <page name="AdminThesaurusPage" url="smile_elasticsuite_thesaurus/thesaurus/" area="admin" module="ElasticSuite_Thesaurus">
         <section name="AdminThesaurusSidebarActionSection"/>
-        <section name="AdminThesaurusGeneralFieldSection"/>
         <section name="AdminThesaurusCreateSection"/>
     </page>
 </pages>
