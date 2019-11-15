@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+    <page name="AdminOptimizerPage" url="smile_elasticsuite_catalog_optimizer/optimizer/" area="admin" module="ElasticSuite_Optimizer">
+        <section name="AdminOptimizerSidebarActionSection"/>
+        <section name="AdminCreateOptimizerSection"/>
+    </page>
+</pages>
