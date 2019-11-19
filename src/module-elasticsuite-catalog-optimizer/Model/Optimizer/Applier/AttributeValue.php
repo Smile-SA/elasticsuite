@@ -58,6 +58,10 @@ class AttributeValue implements ApplierInterface
         $field       = $this->getField($containerConfiguration, $optimizer);
         $scaleFactor = (float) $optimizer->getConfig('scale_factor');
 
+        if ($field === 'price') {
+            $field = 'price_optimizer';
+        }
+
         $function = [
             'field_value_factor' => [
                 'field'    => $field,

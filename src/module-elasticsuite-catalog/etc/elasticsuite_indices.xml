@@ -47,6 +47,9 @@
                 <field name="price.is_discount" type="boolean" nestedPath="price" />
                 <field name="price.customer_group_id" type="integer" nestedPath="price" />
 
+                <!-- Field for correctly working field_value_factor function in optimizer -->
+                <field name="price_optimizer" type="double"/>
+
                 <!-- Static fields handled by the "stock" datasource -->
                 <field name="stock.is_in_stock" type="boolean" />
                 <field name="stock.qty" type="integer" />

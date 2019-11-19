@@ -65,6 +65,7 @@ class PriceData implements DatasourceInterface
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
 
+            $indexData[$productId]['price_optimizer'] = $price;
             $indexData[$productId]['price'][] = [
                 'price'             => $price,
                 'original_price'    => $originalPrice,
