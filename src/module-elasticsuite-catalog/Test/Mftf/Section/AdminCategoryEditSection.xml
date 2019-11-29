@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * Copyright © Magento, Inc. All rights reserved.
+  * See COPYING.txt for license details.
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCategoryEditSection">
+        <element name="productsListSortingTab" type="text" selector=".elasticsuite-admin-product-sorter-container"/>
+        <element name="sortSwitch" type="button" selector="//li[contains(@class,'product-list-item')]//span[contains(text(), '{{productName}}')]/parent::h1/parent::div/parent::li//label" parameterized="true"/>
+        <element name="productDraggableHandle" type="text" selector="//li[contains(@class,'product-list-item')]//span[contains(text(), '{{productName}}')]/parent::h1/parent::div/parent::li//div[contains(@class,'draggable-handle')]" parameterized="true"/>
+        <element name="nthLi" type="block" selector="(//*[contains(@class,'product-list ui-sortable')]/li)[{{linum}}]/div[contains(@class,'info')]/h1/span" parameterized="true"/>
+        <element name="saveButton" type="button" selector="#save" timeout="30"/>
+    </section>
+</sections>
