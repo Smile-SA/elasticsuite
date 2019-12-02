@@ -452,6 +452,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
+
+        /**
+         * Elasticsearch result is already sorted (i.e., $docIds). Respect the order in MySQL query.
+         * @see https://dba.stackexchange.com/a/6053
+         * @see https://stackoverflow.com/a/8322898
+         */
+        $connection = $this->getSelect()->getConnection();
+        $this->getSelect()->order($connection->quoteInto('FIELD(?)', array_merge([
+            'e.entity_id',
+        ], $docIds)));
+
         $this->originalPageSize = $this->_pageSize;
         $this->_pageSize = false;
 
