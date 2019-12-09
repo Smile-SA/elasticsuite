@@ -8,8 +8,8 @@
 
 <sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
-    <section name="AdminThesaurusSynonymSection">
-        <element name="addButton" type="button" selector=".action-add" timeout="30"/>
-        <element name="synonymTerms" type="text" selector="//textarea[contains(@name, 'values')]"/>
+    <section name="AdminThesaurusListSection">
+        <element name="actionsSelect" type="text" selector="//td[contains(text(), '{{name}}')]/parent::tr/td[contains(@class,'col-action')]/select" parameterized="true"/>
+        <element name="name" type="text" selector="//td[contains(@class,'col-thesaurus_name')]"/>
     </section>
 </sections>

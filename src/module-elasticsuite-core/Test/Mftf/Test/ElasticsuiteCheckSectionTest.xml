@@ -20,7 +20,7 @@
         </annotations>
 
         <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
-        <see userInput="ElasticSuite" selector="//ul[@id='nav']" stepKey="seeElasticSuite"/>
+        <see userInput="ElasticSuite" selector="{{AdminDashboardSection.menuItem}}" stepKey="seeElasticSuite"/>
         <actionGroup ref="logout" stepKey="logoutFromAdmin"/>
     </test>
 </tests>

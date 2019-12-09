@@ -12,10 +12,18 @@
         <annotations>
             <description>Create Thesaurus</description>
         </annotations>
-
+        <arguments>
+            <argument name="thesaurusEntity"/>
+        </arguments>
         <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminThesaurusIndexPage"/>
         <waitForPageLoad stepKey="waitForPageToLoad1"/>
         <click selector="{{AdminThesaurusSidebarActionSection.addThesaurusButton}}" stepKey="clickOnAddNewThesaurus"/>
         <waitForPageLoad stepKey="waitForPageToLoad2"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.typeDropdown}}" userInput="{{thesaurusEntity.type}}" stepKey="selectType"/>
+        <click selector="{{AdminCreateThesaurusSection.createThesaurusButton}}" stepKey="clickOnCreateNewThesaurus"/>
+        <waitForPageLoad stepKey="waitForPageToLoad3"/>
+        <fillField selector="{{AdminCreateThesaurusSection.thesaurusNameInput}}" userInput="{{thesaurusEntity.name}}" stepKey="enterThesaurusName"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.activeDropdown}}" userInput="{{Thesaurus.is_active}}" stepKey="selectActive"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.storeId}}" userInput="{{Thesaurus.store_id}}" stepKey="selectStoreId"/>
     </actionGroup>
 </actionGroups>

@@ -8,8 +8,9 @@
 
 <sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
-    <section name="AdminThesaurusExpansionSection">
+    <section name="AdminThesaurusSection">
         <element name="addButton" type="button" selector=".action-add" timeout="30"/>
+        <element name="synonymTerms" type="text" selector="//textarea[contains(@name, 'values')]"/>
         <element name="referenceTerms" type="text" selector="//input[contains(@name, 'reference_term')]"/>
         <element name="expansionTerms" type="text" selector="//textarea[contains(@name, 'values')]"/>
     </section>
