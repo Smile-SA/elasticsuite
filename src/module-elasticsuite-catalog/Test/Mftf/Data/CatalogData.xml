@@ -8,7 +8,7 @@
 
 <entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:mftf:DataGenerator/etc/dataProfileSchema.xsd">
-    <entity name="ProductsSort" type="product">
+    <entity name="CatalogData" type="catalog">
         <data key="categoryId">6</data><!-- Watches -->
         <data key="categoryUrl">/gear/watches</data><!-- Watches -->
         <data key="productName1">Clamber Watch</data>

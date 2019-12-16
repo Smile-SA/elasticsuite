@@ -25,31 +25,31 @@
 
         <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
         <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage">
-            <argument name="id" value="{{ProductsSort.categoryId}}"/>
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
         </actionGroup>
 
         <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab" />
         <!-- set manually sort for two products -->
-        <click selector="{{AdminCategoryEditSection.sortSwitch(ProductsSort.productName1)}}" stepKey="changeSortType1"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName1)}}" stepKey="changeSortType1"/>
         <waitForPageLoad stepKey="waitForPageToLoad"/>
-        <click selector="{{AdminCategoryEditSection.sortSwitch(ProductsSort.productName2)}}" stepKey="changeSortType2"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName2)}}" stepKey="changeSortType2"/>
         <wait stepKey="waitFiveSecond" time="5"/>
 
         <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory"/>
         <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
 
         <!-- check first product in list-->
-        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{ProductsSort.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList1"/>
+        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList1"/>
 
         <!-- Navigate to category on store front -->
-        <amOnPage url="{{StorefrontProductPage.url(ProductsSort.categoryUrl)}}" stepKey="goToCategoryPage"/>
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage"/>
         <waitForPageLoad stepKey="waitForPageToLoad2"/>
 
         <!-- check first product in list-->
-        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{ProductsSort.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList"/>
+        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList"/>
 
         <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage2">
-            <argument name="id" value="{{ProductsSort.categoryId}}"/>
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
         </actionGroup>
 
         <waitForPageLoad stepKey="waitForPageToLoad3"/>
@@ -59,7 +59,7 @@
         <wait stepKey="waitFiveSecond2" time="5"/>
 
         <!-- change position -->
-        <dragAndDrop selector1="{{AdminCategoryEditSection.productDraggableHandle(ProductsSort.productName2)}}" selector2="{{AdminCategoryEditSection.productDraggableHandle(ProductsSort.productName1)}}" stepKey="moveProduct"/>
+        <dragAndDrop selector1="{{AdminCategoryEditSection.productDraggableHandle(CatalogData.productName2)}}" selector2="{{AdminCategoryEditSection.productDraggableHandle(CatalogData.productName1)}}" stepKey="moveProduct"/>
 
         <wait stepKey="waitFiveSecond3" time="5"/>
 
@@ -67,30 +67,30 @@
         <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess2"/>
 
         <!-- check first product in list-->
-        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{ProductsSort.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList2"/>
+        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList2"/>
 
         <!-- Navigate to category on store front -->
-        <amOnPage url="{{StorefrontProductPage.url(ProductsSort.categoryUrl)}}" stepKey="goToCategoryPage3"/>
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage3"/>
         <waitForPageLoad stepKey="waitForPageToLoad4"/>
 
         <!-- check first product in list-->
-        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{ProductsSort.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList3"/>
+        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList3"/>
 
         <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage3">
-            <argument name="id" value="{{ProductsSort.categoryId}}"/>
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
         </actionGroup>
 
         <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab3" />
         <!-- set manually sort for two products -->
-        <click selector="{{AdminCategoryEditSection.sortSwitch(ProductsSort.productName1)}}" stepKey="changeSortType3"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName1)}}" stepKey="changeSortType3"/>
         <waitForPageLoad stepKey="waitForPageToLoad5"/>
-        <click selector="{{AdminCategoryEditSection.sortSwitch(ProductsSort.productName2)}}" stepKey="changeSortType4"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName2)}}" stepKey="changeSortType4"/>
 
         <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory3"/>
         <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess3"/>
 
         <!-- check first product in list-->
-        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{ProductsSort.productName1}}" stepKey="seeFirstRowToVerifyProduct1PositionInList"/>
-        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{ProductsSort.productName2}}" stepKey="seeFirstRowToVerifyProduct2PositionInList"/>
+        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProduct1PositionInList"/>
+        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProduct2PositionInList"/>
     </test>
 </tests>
