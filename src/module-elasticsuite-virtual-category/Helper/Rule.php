@@ -64,7 +64,7 @@ class Rule
 
         if ($data === false) {
             $virtualRule = $category->getVirtualRule();
-             array_unshift($params, $category);
+            array_unshift($params, $category);
             $data        = call_user_func_array([$virtualRule, $callback], $params);
             $cacheData   = serialize($data);
             $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
