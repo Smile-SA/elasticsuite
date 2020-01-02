@@ -46,6 +46,7 @@ class Rule
      *
      * @param CategoryInterface $category Category
      * @param string            $callback Name of the virtual rule method to be used for actual loading.
+     * @param array             $params   Callback parameters
      *
      * @return mixed
      */
