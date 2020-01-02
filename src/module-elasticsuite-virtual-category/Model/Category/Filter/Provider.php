@@ -80,11 +80,12 @@ class Provider extends \Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider
     private function getCategorySearchQuery(CategoryInterface $category)
     {
         $virtualRule = $category->getVirtualRule();
+        $excludedCategories = [];
         if (!($virtualRule instanceof VirtualRuleInterface)) {
-            return $this->loadVirtualRule($category)->getCategorySearchQuery($category);
+            return $this->loadVirtualRule($category)->getCategorySearchQuery($category, $excludedCategories);
         }
 
-        return $this->helper->loadUsingCache($category, 'getCategorySearchQuery');
+        return $this->helper->loadUsingCache($category, 'getCategorySearchQuery', [&$excludedCategories]);
     }
 
     /**

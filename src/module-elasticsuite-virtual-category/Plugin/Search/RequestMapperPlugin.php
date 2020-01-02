@@ -73,7 +73,8 @@ class RequestMapperPlugin
             $storeId    = $containerConfiguration->getStoreId();
 
             $category = $this->categoryRepository->get($categoryId, $storeId);
-            $result[] = $category->getVirtualRule()->getCategorySearchQuery($category);
+            $excludedCategories = [];
+            $result[] = $category->getVirtualRule()->getCategorySearchQuery($category, $excludedCategories);
             unset($result['category.category_id']);
         }
 

@@ -136,7 +136,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return QueryInterface|null
      */
-    public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
+    public function getCategorySearchQuery($category, &$excludedCategories): ?QueryInterface
     {
         $query         = null;
 
@@ -181,9 +181,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 ->addIsActiveFilter()
                 ->addIdFilter($childrenIds)
                 ->addAttributeToSelect(['virtual_category_root', 'is_virtual_category', 'virtual_rule']);
-
+            $excludedCategories = [];
             foreach ($categoryCollection as $category) {
-                $childQuery = $this->getCategorySearchQuery($category);
+                $childQuery = $this->getCategorySearchQuery($category, $excludedCategories);
                 if ($childQuery !== null) {
                     $queries[$category->getId()] = $childQuery;
                 }
@@ -247,7 +247,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return QueryInterface
      */
-    private function getStandardCategoryQuery(CategoryInterface $category, $excludedCategories = []): QueryInterface
+    private function getStandardCategoryQuery(CategoryInterface $category, &$excludedCategories): QueryInterface
     {
         return $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
     }
@@ -279,7 +279,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function getVirtualCategoryQuery(
         CategoryInterface $category,
-        $excludedCategories = [],
+        &$excludedCategories,
         $virtualCategoryRoot = null
     ): ?QueryInterface {
         $query          = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories, $virtualCategoryRoot);
@@ -309,7 +309,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
-    private function addChildrenQueries($query, CategoryInterface $category, $excludedCategories = []): QueryInterface
+    private function addChildrenQueries($query, CategoryInterface $category, &$excludedCategories): QueryInterface
     {
         $childrenCategories    = $this->getChildrenCategories($category, $excludedCategories);
         $childrenCategoriesIds = [];

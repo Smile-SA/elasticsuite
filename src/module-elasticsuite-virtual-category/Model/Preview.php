@@ -113,7 +113,8 @@ class Preview extends AbstractPreview
         $this->category->setIsActive(true);
 
         if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
-            $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
+            $excludedCategories = [];
+            $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category, $excludedCategories);
         }
 
         if ((bool) $this->category->getIsVirtualCategory() === false) {

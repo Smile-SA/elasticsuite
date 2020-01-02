@@ -49,7 +49,7 @@ class Rule
      *
      * @return mixed
      */
-    public function loadUsingCache(CategoryInterface $category, $callback)
+    public function loadUsingCache(CategoryInterface $category, $callback, array $params = [])
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
         $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
@@ -64,7 +64,8 @@ class Rule
 
         if ($data === false) {
             $virtualRule = $category->getVirtualRule();
-            $data        = call_user_func_array([$virtualRule, $callback], [$category]);
+             array_unshift($params, $category);
+            $data        = call_user_func_array([$virtualRule, $callback], $params);
             $cacheData   = serialize($data);
             $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
         }

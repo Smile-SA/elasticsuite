@@ -59,8 +59,8 @@ class CategoryPlugin
 
         if ($category->getVirtualRule()) { // Implicit dependency to Virtual Categories module.
             $category->setIsActive(true);
-
-            $filterParam = $category->getVirtualRule()->getCategorySearchQuery($category);
+            $excludedCategories = [];
+            $filterParam = $category->getVirtualRule()->getCategorySearchQuery($category, $excludedCategories);
         }
 
         return $filterParam;
