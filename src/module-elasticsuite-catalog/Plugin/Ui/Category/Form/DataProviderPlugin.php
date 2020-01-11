@@ -237,6 +237,7 @@ class DataProviderPlugin
             /** @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $fulltextCollection */
             $fulltextCollection = $this->fulltextCollectionFactory->create();
             $fulltextCollection->setStoreId($storeId)
+                ->setPageSize(0)
                 ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
 
             $attributeSetIds = array_keys($fulltextCollection->getFacetedData('attribute_set_id'));

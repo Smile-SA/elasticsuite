@@ -15,7 +15,7 @@
 /*jshint browser:true jquery:true*/
 /*global alert*/
 
-define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"], function ($, priceUtil, mageTemplate) {
+define(['jquery', 'Magento_Catalog/js/price-utils', 'mage/template', 'Magento_Ui/js/modal/modal'], function ($, priceUtil, mageTemplate) {
 
     "use strict";
 
@@ -47,7 +47,7 @@ define(["jquery", 'Magento_Catalog/js/price-utils', 'mage/template', "jquery/ui"
             this.from         = Math.floor(this.options.currentValue.from * this.rate);
             this.to           = Math.round(this.options.currentValue.to * this.rate);
             this.intervals    = this.options.intervals.map(
-                function(item) { Math.round(item.value = item.value * this.rate); return item}.bind(this)
+                function(item) { item.value = Math.round(item.value * this.rate); return item}.bind(this)
             );
             this.minValue = Math.floor(this.options.minValue * this.rate);
             this.maxValue = Math.round(this.options.maxValue * this.rate);

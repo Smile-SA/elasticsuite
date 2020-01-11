@@ -45,7 +45,7 @@ define(['Magento_Ui/js/dynamic-rows/dynamic-rows'], function (DynamicRows) {
                     order = propOne.data().default_position - propTwo.data().default_position;
 
                     if (order === 0) {
-                        order = propOne.recordId - propTwo.recordId;
+                        order = propOne.data().attribute_id - propTwo.data().attribute_id;
                     }
                 }
 

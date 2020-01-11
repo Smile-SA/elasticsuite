@@ -116,6 +116,8 @@ class Ajax extends \Magento\Framework\App\Action\Action
 
         $this->applyFilters();
 
+        $this->layerResolver->get()->getProductCollection()->setPageSize(0);
+
         return $this;
     }
 

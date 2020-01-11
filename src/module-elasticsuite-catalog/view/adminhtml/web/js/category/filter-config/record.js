@@ -39,10 +39,15 @@ define(['Magento_Ui/js/dynamic-rows/record'], function (Component) {
         onPinChange : function() {
             if (this.data() && this.data().is_pinned !== undefined) {
                 this.isPinned(this.data().is_pinned);
-                if (this.isPinned()) {
-                    this.position = this.parentComponent().getPinnedRecords().length + 1;
+                // Wait for full initialization of record (and its parent component).
+                if (this.elems().length > 0) {
+                    if (this.isPinned()) {
+                        // Parent's getPinnedRecords relies on this.isPinned() so temporary new position is actually one more than expected.
+                        this.position = this.parentComponent().getPinnedRecords().length + 1;
+                    }
+                    // Sort method signature expected parameters are not actually used. Note that all records position are re-computed.
+                    this.parentComponent().sort(this.position, this);
                 }
-                this.parentComponent().sort(this.position, this);
             }
         },
 

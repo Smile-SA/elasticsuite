@@ -85,7 +85,7 @@ class InventoryData implements DatasourceInterface
      *
      * @return InventoryDataInterface
      */
-    private function getResourceModel() : InventoryDataInterface
+    private function getResourceModel()
     {
         if ($this->resourceModel === null) {
             $resourceName = InventoryDataInterface::class;

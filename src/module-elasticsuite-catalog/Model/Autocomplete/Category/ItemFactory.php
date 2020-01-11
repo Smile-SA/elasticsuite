@@ -128,9 +128,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         if ($documentSource && isset($documentSource['url_path'])) {
             $urlPath = is_array($documentSource['url_path']) ? current($documentSource['url_path']) : $documentSource['url_path'];
 
-            $url = trim($this->urlBuilder->getUrl($urlPath), '/') . $this->categoryUrlSuffix;
-
-            return $url;
+            return trim($this->urlBuilder->getDirectUrl($urlPath), '/') . $this->categoryUrlSuffix;
         }
 
         return $category->getUrl();
