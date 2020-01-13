@@ -116,7 +116,10 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
             $requestParams    = array_keys($this->getRequest()->getParams());
             $displayedFilters = $this->getDisplayedFilters();
             $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
-            $activeFilters    = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+            $activeFilters    = [];
+            if ($expandedFacets > 0) {
+                $activeFilters = range(0, min(count($displayedFilters), $expandedFacets) - 1);
+            }
 
             foreach ($displayedFilters as $index => $filter) {
                 if (in_array($filter->getRequestVar(), $requestParams)) {
