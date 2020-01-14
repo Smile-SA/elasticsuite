@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalog
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+
+    <test name="ElasticsuiteCatalogRedirectIfOneResultTest">
+        <annotations>
+            <features value="ElasticSuiteCatalog"/>
+            <stories value="Redirect if one result"/>
+            <title value="Redirect if one result must work"/>
+            <description value="Redirect if one result must work"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteCatalog-3"/>
+            <group value="elasticSuiteCatalog"/>
+        </annotations>
+
+        <magentoCLI command="config:set smile_elasticsuite_catalogsearch_settings/catalogsearch/redirect_if_one_result 0" stepKey="setDisableRedirectIfOneResult"/>
+
+        <!-- search with redirect if one result is NO-->
+        <actionGroup stepKey="storefrontSearch1" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{CatalogData.productName1}}"/>
+        </actionGroup>
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{CatalogData.productName1}}" stepKey="seeProductInProductsList"/>
+        <dontSee selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="Thorpe Track Pant is the only product matching your '{{CatalogData.productName1}}' search." stepKey="dontSeeSuccessMessage"/>
+
+        <magentoCLI command="config:set smile_elasticsuite_catalogsearch_settings/catalogsearch/redirect_if_one_result 1" stepKey="setEnableRedirectIfOneResult"/>
+
+        <!-- search with redirect if one result is YES-->
+        <actionGroup stepKey="storefrontSearch2" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{CatalogData.productName1}}"/>
+        </actionGroup>
+        <waitForPageLoad stepKey="waitForProductFrontPageToLoad"/>
+        <see selector="{{StorefrontProductInfoMainSection.productName}}" userInput="{{CatalogData.productName1}}" stepKey="seeProductNameInProductsPage"/>
+        <see selector="{{StorefrontCategoryMainSection.SuccessMsg}}" userInput="{{CatalogData.productName1}} is the only product matching your '{{CatalogData.productName1}}' search." stepKey="seeSuccessMessage"/>
+    </test>
+</tests>

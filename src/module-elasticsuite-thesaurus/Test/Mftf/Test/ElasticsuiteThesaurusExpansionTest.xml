@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteThesaurus
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteThesaurusExpansionTest">
+        <annotations>
+            <features value="ElasticSuiteThesaurus"/>
+            <stories value="Create, check and remove a Thesaurus with expansion type via the Admin"/>
+            <title value="We can create, check and remove Expansion Thesaurus"/>
+            <description value="We can create, check and remove Expansion Thesaurus"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteThesaurus-1"/>
+            <group value="elasticSuiteThesaurus"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+
+        <!-- Create Thesaurus with type Expansion -->
+        <actionGroup ref="CreateThesaurusActionGroup" stepKey="createThesaurus">
+            <argument name="thesaurusEntity" value="ExpansionThesaurus"/>
+        </actionGroup>
+        <click selector="{{AdminThesaurusSection.addButton}}" stepKey="clickOnAddExpansion"/>
+        <fillField selector="{{AdminThesaurusSection.referenceTerms}}" userInput="{{ExpansionThesaurus.reference_terms}}" stepKey="enterReferenceTerms"/>
+        <fillField selector="{{AdminThesaurusSection.expansionTerms}}" userInput="{{ExpansionThesaurus.values}}" stepKey="enterValues"/>
+
+        <click selector="{{AdminCreateThesaurusSection.saveButton}}" stepKey="saveThesaurus"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+        <see selector="{{AdminThesaurusListSection.name}}" userInput="{{ExpansionThesaurus.name}}" stepKey="seeExpansionName"/>
+
+        <!-- search with search using expansion-->
+        <actionGroup stepKey="storefrontSearch" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{SearchExpansionData.query}}"/>
+        </actionGroup>
+
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{SearchExpansionData.product_name}}" stepKey="seeProductNameInSearchPage"/>
+
+        <!-- remove thesaurus-->
+        <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminThesaurusIndexPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad1"/>
+        <selectOption selector="{{AdminThesaurusListSection.actionsSelect(ExpansionThesaurus.name)}}" userInput="Delete" stepKey="selectDeleteAction"/>
+
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess2"/>
+        <dontSee selector="{{AdminThesaurusListSection.name}}" userInput="{{ExpansionThesaurus.name}}" stepKey="dontSeeExpansionName"/>
+
+        <!-- search with search using expansion-->
+        <actionGroup stepKey="storefrontSearch2" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{SearchExpansionData.query}}"/>
+        </actionGroup>
+
+        <dontSee selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{SearchExpansionData.product_name}}" stepKey="dontSeeProductNameInSearchPage"/>
+    </test>
+</tests>

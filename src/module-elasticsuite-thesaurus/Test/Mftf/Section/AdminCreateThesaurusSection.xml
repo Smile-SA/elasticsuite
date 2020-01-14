@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteThesaurus
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCreateThesaurusSection">
+        <element name="createThesaurusButton" type="button" selector="#save" timeout="30"/>
+        <element name="typeDropdown" type="select" selector="select[name='type']"/>
+        <element name="activeDropdown" type="select" selector="select[name='is_active']"/>
+        <element name="storeId" type="select" selector="#store_id"/>
+        <element name="thesaurusNameInput" type="input" selector="input[name='name']"/>
+        <element name="saveButton" type="button" selector="#save" timeout="90"/>
+        <element name="successMessage" type="text" selector=".message-success"/>
+    </section>
+</sections>
