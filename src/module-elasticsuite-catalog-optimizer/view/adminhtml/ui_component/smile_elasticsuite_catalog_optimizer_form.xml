@@ -595,7 +595,7 @@
                 <dataScope>config.attribute_code</dataScope>
                 <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
                 <tooltip>
-                    <description translate="true">Only numeric attributes are available here.</description>
+                    <description translate="true">Only numeric attributes (with a non-nested index field) are available here.</description>
                 </tooltip>
             </settings>
             <formElements>

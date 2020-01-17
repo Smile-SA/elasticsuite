@@ -34,6 +34,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     private $availableBackendTypes = [];
 
     /**
+     * @var array
+     */
+    private $nestedFieldAttributes = [];
+
+    /**
      * Collection constructor.
      *
      * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory         Entity Factory
@@ -45,6 +50,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
      * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection            Connection
      * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null    $resource              Resource Connection
      * @param array                                                        $availableBackendTypes Available Backend Types.
+     * @param array                                                        $nestedFieldAttributes Attributes represented by a nested field in the index.
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
@@ -55,9 +61,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         \Magento\Eav\Model\EntityFactory $eavEntityFactory,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        $availableBackendTypes = []
+        $availableBackendTypes = [],
+        $nestedFieldAttributes = []
     ) {
+
         $this->availableBackendTypes = array_merge($this->defaultAvailableBackendTypes, $availableBackendTypes);
+        $this->nestedFieldAttributes = $nestedFieldAttributes;
 
         parent::__construct(
             $entityFactory,
@@ -92,6 +101,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         ];
 
         $this->getSelect()->where(implode(' OR ', $conditions));
+
+        if (!empty($this->nestedFieldAttributes)) {
+            $this->addFieldToFilter('attribute_code', ['nin' => $this->nestedFieldAttributes]);
+        }
 
         return $this;
     }

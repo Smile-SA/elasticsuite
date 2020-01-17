@@ -97,6 +97,14 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Config\Attributes\Collection">
+        <arguments>
+            <argument name="nestedFieldAttributes" xsi:type="array">
+                <item name="price" xsi:type="string">price</item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- Handle saving of relationship between optimizer and categories or search terms -->
     <type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
         <arguments>
