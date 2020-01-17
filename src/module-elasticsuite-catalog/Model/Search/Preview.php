@@ -70,6 +70,7 @@ class Preview extends AbstractPreview
      * @param ContainerConfigurationFactory $containerConfigFactory   Container Config Factory.
      * @param int                           $size                     Preview size.
      * @param string                        $search                   Preview search.
+     * @param string                        $searchRequestName        Search request name.
      */
     public function __construct(
         QueryInterface $searchQuery,
@@ -79,9 +80,10 @@ class Preview extends AbstractPreview
         QueryBuilder $queryBuilder,
         ContainerConfigurationFactory $containerConfigFactory,
         $size = 10,
-        $search = ''
+        $search = '',
+        $searchRequestName = 'quick_search_container'
     ) {
-        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $searchQuery->getStoreId(), $size, $search);
+        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $searchQuery->getStoreId(), $size, $search, $searchRequestName);
         $this->searchQuery            = $searchQuery;
         $this->queryFactory           = $queryFactory;
         $this->search                 = $search;
