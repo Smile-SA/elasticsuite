@@ -112,7 +112,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider" type="Magento\Catalog\Model\Layer\Search\ItemCollectionProvider">
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider" type="Magento\CatalogSearch\Model\Layer\Category\ItemCollectionProvider">
         <arguments>
             <argument name="collectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
         </arguments>
