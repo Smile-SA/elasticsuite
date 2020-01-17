@@ -83,7 +83,15 @@ class Preview extends AbstractPreview
         $search = '',
         $searchRequestName = 'quick_search_container'
     ) {
-        parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $searchQuery->getStoreId(), $size, $search, $searchRequestName);
+        parent::__construct(
+            $productCollectionFactory,
+            $previewItemFactory,
+            $queryFactory,
+            $searchQuery->getStoreId(),
+            $size,
+            $search,
+            $searchRequestName
+        );
         $this->searchQuery            = $searchQuery;
         $this->queryFactory           = $queryFactory;
         $this->search                 = $search;
