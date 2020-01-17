@@ -119,6 +119,16 @@ class RequestMapperPlugin
                 $result['position'] = ['direction' => SortOrderInterface::SORT_ASC];
             }
 
+            if ($containerConfiguration->getName() == "quick_search_container" && empty($result)) {
+                $searchQuery = $this->searchContext->getCurrentSearchQuery();
+                if ($searchQuery->getId()) {
+                    $result['search_query.position'] = [
+                        'direction'     => SortOrderInterface::SORT_ASC,
+                        'nestedFilter'  => ['search_query.query_id' => $searchQuery->getId()],
+                    ];
+                }
+            }
+
             foreach ($result as $sortField => $sortParams) {
                 if ($sortField == 'price') {
                     $sortParams['nestedFilter'] = ['price.customer_group_id' => $this->customerSession->getCustomerGroupId()];

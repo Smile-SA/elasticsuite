@@ -106,10 +106,10 @@ class RequestBuilder
 
         $queryText  = $this->getFulltextFilter($searchCriteria);
 
+        $this->updateSearchContext($storeId, $queryText);
+
         $sortOrders = $this->requestMapper->getSortOrders($containerConfiguration, $searchCriteria);
         $filters    = $this->requestMapper->getFilters($containerConfiguration, $searchCriteria);
-
-        $this->updateSearchContext($storeId, $queryText);
 
         return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, []);
     }
