@@ -72,13 +72,19 @@ class Products implements ResolverInterface
         $searchCriteria = $this->searchApiCriteriaBuilder->build($args);
         $searchResult   = $this->searchQuery->getResult($searchCriteria, $info);
 
+        // BC Comp for when $searchResult->getTotalPages() did not exist
+        $maxPages = 0;
+        if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
+            $maxPages = (int) ceil($searchResult->getTotalCount() / $searchCriteria->getPageSize());
+        }
+
         return [
             'total_count'   => $searchResult->getTotalCount(),
             'items'         => $searchResult->getProductsSearchResult(),
             'page_info'     => [
-                'page_size'    => $searchResult->getPageSize(),
-                'current_page' => $searchResult->getCurrentPage(),
-                'total_pages'  => $searchResult->getTotalPages(),
+                'page_size'    => $searchCriteria->getPageSize(),   // BC Comp for when $searchResult->getPageSize() did not exist
+                'current_page' => $searchCriteria->getCurrentPage(),// BC Comp for when $searchResult->getCurrentPage() did not exist
+                'total_pages'  => $maxPages,                        // BC Comp for when $searchResult->getTotalPages() did not exist
             ],
             'search_result' => $searchResult,
             'layer_type'    => isset($args['search']) ? Resolver::CATALOG_LAYER_SEARCH : Resolver::CATALOG_LAYER_CATEGORY,

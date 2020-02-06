@@ -18,8 +18,10 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Search\Api\SearchInterface;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Search as LegacyResolver;
 
 /**
  * Elasticsuite GraphQL Products Query Resolver.
@@ -41,31 +43,23 @@ class Search
     private $searchResultFactory;
 
     /**
-     * @var FieldSelection
+     * @var LegacyResolver
      */
-    private $fieldSelection;
-
-    /**
-     * @var ProductSearch
-     */
-    private $productsProvider;
+    private $legacyResolver;
 
     /**
      * @param SearchInterface     $search              Search Engine
      * @param SearchResultFactory $searchResultFactory Search Results Factory
-     * @param FieldSelection      $fieldSelection      Field Selection
-     * @param ProductSearch       $productsProvider    Product Provider
+     * @param LegacyResolver      $legacyResolver      Legacy Product Search resolver
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
-        FieldSelection $fieldSelection,
-        ProductSearch $productsProvider
+        LegacyResolver $legacyResolver
     ) {
         $this->search              = $search;
         $this->searchResultFactory = $searchResultFactory;
-        $this->fieldSelection      = $fieldSelection;
-        $this->productsProvider    = $productsProvider;
+        $this->legacyResolver      = $legacyResolver;
     }
 
     /**
@@ -79,9 +73,14 @@ class Search
      */
     public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info): SearchResult
     {
-        $queryFields   = $this->fieldSelection->getProductsFieldSelection($info);
+        $productProvider = $this->getProvider();
+        if (null === $productProvider) {
+            return $this->legacyResolver->getResult($searchCriteria, $info);
+        }
+
+        $queryFields   = $this->getQueryFields($info);
         $itemsResults  = $this->search->search($searchCriteria);
-        $searchResults = $this->productsProvider->getList($searchCriteria, $itemsResults, $queryFields);
+        $searchResults = $productProvider->getList($searchCriteria, $itemsResults, $queryFields);
         $productArray  = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
@@ -95,15 +94,43 @@ class Search
             $maxPages = (int) ceil($searchResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
-        return $this->searchResultFactory->create(
-            [
-                'totalCount'           => $searchResults->getTotalCount(),
-                'productsSearchResult' => $productArray,
-                'searchAggregation'    => $itemsResults->getAggregations(),
-                'pageSize'             => $searchCriteria->getPageSize(),
-                'currentPage'          => $searchCriteria->getCurrentPage(),
-                'totalPages'           => $maxPages,
-            ]
-        );
+        return $this->searchResultFactory->create([
+            'totalCount'           => $searchResults->getTotalCount(),
+            'productsSearchResult' => $productArray,
+            'searchAggregation'    => $itemsResults->getAggregations(),
+            'pageSize'             => $searchCriteria->getPageSize(),
+            'currentPage'          => $searchCriteria->getCurrentPage(),
+            'totalPages'           => $maxPages,
+        ]);
+    }
+
+    /**
+     * Get Product Provider in a BC manner.
+     * ProductSearch provider does not exist on Magento <2.3.4
+     *
+     * @return \Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch|null
+     */
+    private function getProvider()
+    {
+        try {
+            return ObjectManager::getInstance()->create(\Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch::class);
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    /**
+     * Get Query fields in a BC manner.
+     * FieldSelection not injected in constructor because non existing in Magento <2.3.4
+     *
+     * @param ResolveInfo $info Resolver Info
+     *
+     * @return array
+     */
+    private function getQueryFields(ResolveInfo $info)
+    {
+        $fieldSelection = ObjectManager::getInstance()->create(\Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection::class);
+
+        return $fieldSelection->getProductsFieldSelection($info);
     }
 }
