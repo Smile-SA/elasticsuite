@@ -66,7 +66,7 @@ class Full extends Indexer
         /**
          * @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection
          */
-        $categoryCollection = $this->categoryCollectionFactory->create();
+        $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
         $categoryCollection->addIsActiveFilter();
         $select = $categoryCollection->getSelect();
 
