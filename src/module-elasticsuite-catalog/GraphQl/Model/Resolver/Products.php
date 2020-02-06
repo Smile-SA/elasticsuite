@@ -14,12 +14,13 @@
 namespace Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\Layer\Resolver;
-use Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\SearchCriteriaBuilder;
-use Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products\Query\Search;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\SearchCriteriaBuilder;
+use Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products\ContextUpdater;
+use Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products\Query\Search;
 
 /**
  * Elasticsuite custom implementation of GraphQL Products Resolver
@@ -41,15 +42,23 @@ class Products implements ResolverInterface
     private $searchApiCriteriaBuilder;
 
     /**
-     * @param Search                     $searchQuery              Search Query
-     * @param SearchCriteriaBuilder|null $searchApiCriteriaBuilder Search Api Criteria Builder
+     * @var \Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products\ContextUpdater
+     */
+    private $contextUpdater;
+
+    /**
+     * @param Search                $searchQuery              Search Query
+     * @param SearchCriteriaBuilder $searchApiCriteriaBuilder Search Api Criteria Builder
+     * @param ContextUpdater        $contextUpdater           Context Updater
      */
     public function __construct(
         Search $searchQuery,
-        SearchCriteriaBuilder $searchApiCriteriaBuilder
+        SearchCriteriaBuilder $searchApiCriteriaBuilder,
+        ContextUpdater $contextUpdater
     ) {
         $this->searchQuery              = $searchQuery;
         $this->searchApiCriteriaBuilder = $searchApiCriteriaBuilder;
+        $this->contextUpdater           = $contextUpdater;
     }
 
     /**
@@ -58,6 +67,7 @@ class Products implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $this->validateArgs($args);
+        $this->contextUpdater->updateSearchContext($args);
 
         $searchCriteria = $this->searchApiCriteriaBuilder->build($args);
         $searchResult   = $this->searchQuery->getResult($searchCriteria, $info);
