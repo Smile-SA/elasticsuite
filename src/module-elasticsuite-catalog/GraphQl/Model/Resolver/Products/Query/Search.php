@@ -79,25 +79,30 @@ class Search
         }
 
         $queryFields   = $this->getQueryFields($info);
-        $itemsResults  = $this->search->search($searchCriteria);
-        $searchResults = $productProvider->getList($searchCriteria, $itemsResults, $queryFields);
-        $productArray  = [];
+        $searchResults = $this->search->search($searchCriteria);
+
+        // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
+        $providerSearchCriteria = clone($searchCriteria);
+        $providerSearchCriteria->setFilterGroups([]);
+
+        $productsResults = $productProvider->getList($providerSearchCriteria, $searchResults, $queryFields);
+        $productArray    = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
-        foreach ($searchResults->getItems() as $product) {
+        foreach ($productsResults->getItems() as $product) {
             $productArray[$product->getId()]          = $product->getData();
             $productArray[$product->getId()]['model'] = $product;
         }
 
         $maxPages = 0;
         if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
-            $maxPages = (int) ceil($searchResults->getTotalCount() / $searchCriteria->getPageSize());
+            $maxPages = (int) ceil($productsResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
         return $this->searchResultFactory->create([
             'totalCount'           => $searchResults->getTotalCount(),
             'productsSearchResult' => $productArray,
-            'searchAggregation'    => $itemsResults->getAggregations(),
+            'searchAggregation'    => $searchResults->getAggregations(),
             'pageSize'             => $searchCriteria->getPageSize(),
             'currentPage'          => $searchCriteria->getCurrentPage(),
             'totalPages'           => $maxPages,
