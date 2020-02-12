@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteSwatches
  * @author    Richard BAYET <richard.bayet@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -55,7 +55,7 @@ define([
                 get tabsFront() {
                     return this.attrTabsFront.length ? this.attrTabsFront.closest('li') : $('#front_fieldset-wrapper');
                 },
-                selectFields: ['select', 'multiselect', 'price', 'swatch_text', 'swatch_visual'],
+                selectFields: ['boolean', 'select', 'multiselect', 'price', 'swatch_text', 'swatch_visual'],
 
                 /**
                  * @this {swatchProductAttributes}
@@ -442,7 +442,7 @@ define([
 
             swatchProductAttributes.bindAttributeInputType();
 
-            // @todo: refactor collapsable component
+            // @todo: refactor collapsible component
             $('.attribute-popup .collapse, [data-role="advanced_fieldset-content"]')
                 .collapsable()
                 .collapse('hide');

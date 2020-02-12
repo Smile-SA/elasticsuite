@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form;
@@ -237,7 +237,7 @@ class DataProviderPlugin
             /** @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection $fulltextCollection */
             $fulltextCollection = $this->fulltextCollectionFactory->create();
             $fulltextCollection->setStoreId($storeId)
-                ->setPageSize(1)
+                ->setPageSize(0)
                 ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
 
             $attributeSetIds = array_keys($fulltextCollection->getFacetedData('attribute_set_id'));

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalog
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+
+    <test name="ElasticsuiteCatalogBlackListTest">
+        <annotations>
+            <features value="ElasticSuiteCatalog"/>
+            <stories value="Add products to blacklist via the Admin"/>
+            <title value="We can add products to blacklist"/>
+            <description value="We can add products to blacklist"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteCatalog-2"/>
+            <group value="elasticSuiteCatalog"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
+        </actionGroup>
+
+        <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab" />
+        <!-- add two products to blacklist -->
+        <click selector="{{AdminCategoryEditSection.blackListSwitch(CatalogData.productName1)}}" stepKey="changeBlackListType1"/>
+        <click selector="{{AdminCategoryEditSection.blackListSwitch(CatalogData.productName2)}}" stepKey="changeBlackListType2"/>
+        <wait stepKey="waitFiveSecond" time="5"/>
+
+        <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+
+        <!-- Navigate to category on store front -->
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad"/>
+
+        <!-- check products in list-->
+        <dontSee selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{CatalogData.productName1}}" stepKey="dontSeeProductInList1"/>
+        <dontSee selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{CatalogData.productName2}}" stepKey="dontSeeProductInList2"/>
+
+        <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage2">
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
+        </actionGroup>
+
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+
+        <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab2" />
+
+        <wait stepKey="waitFiveSecond2" time="5"/>
+
+        <!-- remove two products from blacklist -->
+        <click selector="{{AdminCategoryEditSection.blackListSwitch(CatalogData.productName1)}}" stepKey="changeBlackListType3"/>
+        <click selector="{{AdminCategoryEditSection.blackListSwitch(CatalogData.productName2)}}" stepKey="changeBlackListType4"/>
+        <wait stepKey="waitFiveSecond3" time="5"/>
+
+        <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory2"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess2"/>
+
+        <!-- Navigate to category on store front -->
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage3"/>
+        <waitForPageLoad stepKey="waitForPageToLoad3"/>
+
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{CatalogData.productName1}}" stepKey="seeProductInList1"/>
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{CatalogData.productName2}}" stepKey="seeProductInList2"/>
+    </test>
+</tests>

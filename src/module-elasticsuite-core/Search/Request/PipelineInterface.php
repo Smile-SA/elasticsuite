@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\Elasticsuite
  * @author    Richard BAYET <richard.bayet@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -26,6 +26,7 @@ interface PipelineInterface
      * Available pipeline types.
      */
     const TYPE_BUCKET_SELECTOR      = 'bucketSelectorPipeline';
+    const TYPE_MOVING_FUNCTION      = 'movingFunctionPipeline';
 
     /**
      * Available gap policies.

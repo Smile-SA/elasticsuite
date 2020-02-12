@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -128,9 +128,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         if ($documentSource && isset($documentSource['url_path'])) {
             $urlPath = is_array($documentSource['url_path']) ? current($documentSource['url_path']) : $documentSource['url_path'];
 
-            $url = trim($this->urlBuilder->getUrl($urlPath), '/') . $this->categoryUrlSuffix;
-
-            return $url;
+            return trim($this->urlBuilder->getDirectUrl($urlPath), '/') . $this->categoryUrlSuffix;
         }
 
         return $category->getUrl();

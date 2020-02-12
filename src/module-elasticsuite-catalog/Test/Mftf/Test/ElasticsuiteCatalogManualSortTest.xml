@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalog
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+
+    <test name="ElasticsuiteCatalogManualSortTest">
+        <annotations>
+            <features value="ElasticSuiteCatalog"/>
+            <stories value="Manually sort products via the Admin"/>
+            <title value="We can manually sort products"/>
+            <description value="We can manually sort products"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteCatalog-1"/>
+            <group value="elasticSuiteCatalog"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage">
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
+        </actionGroup>
+
+        <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab" />
+        <!-- set manually sort for two products -->
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName1)}}" stepKey="changeSortType1"/>
+        <waitForPageLoad stepKey="waitForPageToLoad"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName2)}}" stepKey="changeSortType2"/>
+        <wait stepKey="waitFiveSecond" time="5"/>
+
+        <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+
+        <!-- check first product in list-->
+        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList1"/>
+
+        <!-- Navigate to category on store front -->
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+
+        <!-- check first product in list-->
+        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProductPositionInList"/>
+
+        <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage2">
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
+        </actionGroup>
+
+        <waitForPageLoad stepKey="waitForPageToLoad3"/>
+
+        <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab2" />
+
+        <wait stepKey="waitFiveSecond2" time="5"/>
+
+        <!-- change position -->
+        <dragAndDrop selector1="{{AdminCategoryEditSection.productDraggableHandle(CatalogData.productName2)}}" selector2="{{AdminCategoryEditSection.productDraggableHandle(CatalogData.productName1)}}" stepKey="moveProduct"/>
+
+        <wait stepKey="waitFiveSecond3" time="5"/>
+
+        <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory2"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess2"/>
+
+        <!-- check first product in list-->
+        <see selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList2"/>
+
+        <!-- Navigate to category on store front -->
+        <amOnPage url="{{StorefrontProductPage.url(CatalogData.categoryUrl)}}" stepKey="goToCategoryPage3"/>
+        <waitForPageLoad stepKey="waitForPageToLoad4"/>
+
+        <!-- check first product in list-->
+        <see selector="{{StorefrontCategoryMainSection.productNameByPosition('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProductPositionInList3"/>
+
+        <actionGroup ref="goToAdminCategoryPageById" stepKey="goToAdminCategoryPage3">
+            <argument name="id" value="{{CatalogData.categoryId}}"/>
+        </actionGroup>
+
+        <scrollTo selector="{{AdminCategoryEditSection.productsListSortingTab}}" stepKey="scrollToProductsListSortingTab3" />
+        <!-- set manually sort for two products -->
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName1)}}" stepKey="changeSortType3"/>
+        <waitForPageLoad stepKey="waitForPageToLoad5"/>
+        <click selector="{{AdminCategoryEditSection.sortSwitch(CatalogData.productName2)}}" stepKey="changeSortType4"/>
+
+        <click selector="{{AdminCategoryEditSection.saveButton}}" stepKey="saveCategory3"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess3"/>
+
+        <!-- check first product in list-->
+        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName1}}" stepKey="seeFirstRowToVerifyProduct1PositionInList"/>
+        <dontSee selector="{{AdminCategoryEditSection.nthLi('1')}}" userInput="{{CatalogData.productName2}}" stepKey="seeFirstRowToVerifyProduct2PositionInList"/>
+    </test>
+</tests>

@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Controller\Navigation\Filter;
@@ -115,6 +115,8 @@ class Ajax extends \Magento\Framework\App\Action\Action
         }
 
         $this->applyFilters();
+
+        $this->layerResolver->get()->getProductCollection()->setPageSize(0);
 
         return $this;
     }

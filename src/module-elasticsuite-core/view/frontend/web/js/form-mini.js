@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -21,7 +21,7 @@ define([
     'mage/template',
     'Magento_Catalog/js/price-utils',
     'Magento_Ui/js/lib/knockout/template/loader',
-    'jquery/ui',
+    'Magento_Ui/js/modal/modal',
     'mage/translate',
     'Magento_Search/js/form-mini'
 ], function (ko, $, _, mageTemplate, priceUtil, templateLoader) {
@@ -62,7 +62,7 @@ define([
                 }
             }
         },
-        
+
         /**
          * Init templates used for rendering when instantiating the widget
          *

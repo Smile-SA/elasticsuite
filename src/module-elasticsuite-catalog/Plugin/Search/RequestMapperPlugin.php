@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
@@ -113,12 +113,9 @@ class RequestMapperPlugin
         SearchCriteriaInterface $searchCriteria
     ) {
         if ($this->isEnabled($containerConfiguration)) {
+            $result = $this->addDefaultSortOrders($result, $containerConfiguration);
+
             $sortOrders = [];
-
-            if ($containerConfiguration->getName() == "catalog_view_container" && empty($result)) {
-                $result['position'] = ['direction' => SortOrderInterface::SORT_ASC];
-            }
-
             foreach ($result as $sortField => $sortParams) {
                 if ($sortField == 'price') {
                     $sortParams['nestedFilter'] = ['price.customer_group_id' => $this->customerSession->getCustomerGroupId()];
@@ -173,6 +170,33 @@ class RequestMapperPlugin
         }
 
         return $result;
+    }
+
+    /**
+     * Add default sort orders according to context.
+     *
+     * @param array                           $sortOrders             Original sort orders.
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     *
+     * @return array
+     */
+    private function addDefaultSortOrders($sortOrders, $containerConfiguration)
+    {
+        if ($containerConfiguration->getName() == "catalog_view_container" && empty($sortOrders)) {
+            $sortOrders['position'] = ['direction' => SortOrderInterface::SORT_ASC];
+        }
+
+        if ($containerConfiguration->getName() == "quick_search_container" && empty($sortOrders)) {
+            $searchQuery = $this->searchContext->getCurrentSearchQuery();
+            if ($searchQuery->getId()) {
+                $sortOrders['search_query.position'] = [
+                    'direction'     => SortOrderInterface::SORT_ASC,
+                    'nestedFilter'  => ['search_query.query_id' => $searchQuery->getId()],
+                ];
+            }
+        }
+
+        return $sortOrders;
     }
 
     /**

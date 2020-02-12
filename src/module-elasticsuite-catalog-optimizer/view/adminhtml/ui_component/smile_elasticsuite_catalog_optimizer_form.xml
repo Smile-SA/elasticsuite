@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 -->
@@ -595,7 +595,7 @@
                 <dataScope>config.attribute_code</dataScope>
                 <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
                 <tooltip>
-                    <description translate="true">Only numeric attributes are available here.</description>
+                    <description translate="true">Only numeric attributes (with a non-nested index field) are available here.</description>
                 </tooltip>
             </settings>
             <formElements>
@@ -611,7 +611,7 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="array">
                     <item name="0" xsi:type="array">
-                        <item name="value" xsi:type="string">log</item>
+                        <item name="value" xsi:type="string">log1p</item>
                         <item name="label" xsi:type="string" translate="true">Logarithmic</item>
                     </item>
                     <item name="1" xsi:type="array">

@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticSuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter;

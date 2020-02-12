@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -30,6 +30,7 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     const TYPE_DATE_HISTOGRAM   = 'dateHistogramBucket';
     const TYPE_QUERY_GROUP      = 'queryGroupBucket';
     const TYPE_SIGNIFICANT_TERM = 'significantTermBucket';
+    const TYPE_REVERSE_NESTED   = 'reverseNestedBucket';
 
     const SORT_ORDER_COUNT     = '_count';
     const SORT_ORDER_TERM      = '_term';

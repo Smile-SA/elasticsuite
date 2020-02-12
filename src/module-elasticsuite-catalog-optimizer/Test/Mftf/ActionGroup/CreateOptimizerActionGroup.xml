@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalogOptimizer
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateOptimizerActionGroup">
+        <annotations>
+            <description>Create Optimizer</description>
+        </annotations>
+
+        <amOnPage url="{{AdminOptimizerPage.url}}" stepKey="openAdminOptimizerIndexPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad1"/>
+        <click selector="{{AdminOptimizerSidebarActionSection.addOptimizerButton}}" stepKey="clickOnAddNewOptimizer"/>
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+    </actionGroup>
+</actionGroups>

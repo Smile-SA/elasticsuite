@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
@@ -215,6 +215,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function resetOrder()
     {
         $this->_orders = [];
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPageSize($size)
+    {
+        /*
+         * Explicitely setting the page size to false or null is to be treated as having not set any page size.
+         * That is: no pagination, all items are expected.
+         */
+        $size = ($size === null) ? false : $size;
+        $this->_pageSize = $size;
 
         return $this;
     }
@@ -532,7 +547,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $searchRequestName = $this->searchRequestName;
 
         // Pagination params.
-        $size = $this->_pageSize ? $this->_pageSize : $this->getSize();
+        $size = ($this->_pageSize !== false) ? $this->_pageSize : $this->getSize();
         $from = $size * (max(1, $this->_curPage) - 1);
 
         // Setup sort orders.

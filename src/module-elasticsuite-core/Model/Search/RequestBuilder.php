@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -106,10 +106,10 @@ class RequestBuilder
 
         $queryText  = $this->getFulltextFilter($searchCriteria);
 
+        $this->updateSearchContext($storeId, $queryText);
+
         $sortOrders = $this->requestMapper->getSortOrders($containerConfiguration, $searchCriteria);
         $filters    = $this->requestMapper->getFilters($containerConfiguration, $searchCriteria);
-
-        $this->updateSearchContext($storeId, $queryText);
 
         return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, []);
     }

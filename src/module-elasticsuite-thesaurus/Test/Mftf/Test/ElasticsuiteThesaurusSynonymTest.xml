@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteThesaurus
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteThesaurusSynonymTest">
+        <annotations>
+            <features value="ElasticSuiteThesaurus"/>
+            <stories value="Create, check and remove a Thesaurus with synonym type via the Admin"/>
+            <title value="We can create, check and remove Synonym Thesaurus"/>
+            <description value="We can create, check and remove Synonym Thesaurus"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteThesaurus-2"/>
+            <group value="elasticSuiteThesaurus"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+
+        <!-- Create Thesaurus with type Synonym -->
+        <actionGroup ref="CreateThesaurusActionGroup" stepKey="createThesaurus">
+            <argument name="thesaurusEntity" value="SynonymThesaurus"/>
+        </actionGroup>
+        <click selector="{{AdminThesaurusSection.addButton}}" stepKey="clickOnAddSynonym"/>
+        <fillField selector="{{AdminThesaurusSection.synonymTerms}}" userInput="{{SynonymThesaurus.values}}" stepKey="enterValues"/>
+
+        <click selector="{{AdminCreateThesaurusSection.saveButton}}" stepKey="saveThesaurus"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+        <see selector="{{AdminThesaurusListSection.name}}" userInput="{{SynonymThesaurus.name}}" stepKey="seeSynonymName"/>
+
+        <!-- search with search using synonym-->
+        <actionGroup stepKey="storefrontSearch" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{SearchSynonymData.query}}"/>
+        </actionGroup>
+
+        <see selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{SearchSynonymData.product_name}}" stepKey="seeProductNameInSearchPage"/>
+
+        <!-- remove thesaurus-->
+        <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminThesaurusIndexPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad1"/>
+        <selectOption selector="{{AdminThesaurusListSection.actionsSelect(SynonymThesaurus.name)}}" userInput="Delete" stepKey="selectDeleteAction"/>
+
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess2"/>
+        <dontSee selector="{{AdminThesaurusListSection.name}}" userInput="{{SynonymThesaurus.name}}" stepKey="dontSeeSynonymName"/>
+
+        <!-- search with search using synonym-->
+        <actionGroup stepKey="storefrontSearch2" ref="StorefrontSearchActionGroup">
+            <argument name="searchQuery" value="{{SearchSynonymData.query}}"/>
+        </actionGroup>
+
+        <dontSee selector="{{StorefrontCategoryMainSection.productName}}" userInput="{{SearchSynonymData.product_name}}" stepKey="dontSeeProductNameInSearchPage"/>
+    </test>
+</tests>
