@@ -26,7 +26,7 @@
     <!-- Cluster namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
                 type="Smile\ElasticsuiteCore\Cluster\ClusterInfo" />
-                
+
     <!-- Indices namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexInterface"
                 type="Smile\ElasticsuiteCore\Index\Index" />
@@ -264,12 +264,12 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data" type="Magento\Config\Model\Config\Structure\Data">
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Data">
         <arguments>
             <argument name="reader" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\Structure\Reader</argument>
             <argument name="cacheId" xsi:type="string">smile_elasticsuite_relevance_configuration_structure</argument>
         </arguments>
-    </virtualType>
+    </type>
 
     <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure" type="Magento\Config\Model\Config\Structure" shared="false">
         <arguments>
