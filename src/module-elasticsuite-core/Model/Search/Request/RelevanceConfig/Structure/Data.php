@@ -11,12 +11,19 @@
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure;
 
 use Magento\Framework\Config\Data\Scoped;
 
+/**
+ * Provide scoped configuration for the elasticsuite components
+ *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCore
+ * @author   Thomas Klein <thomasklein876@gmail.com>
+ */
 class Data extends Scoped
 {
     public function merge(array $config): void
@@ -24,3 +31,4 @@ class Data extends Scoped
         parent::merge($config['config']['system'] ?? $config);
     }
 }
+
