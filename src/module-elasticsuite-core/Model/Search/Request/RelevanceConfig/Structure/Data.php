@@ -26,9 +26,14 @@ use Magento\Framework\Config\Data\Scoped;
  */
 class Data extends Scoped
 {
+    /**
+     * Merge default config data with extended settings
+     *
+     * @param array $config
+     * @return void
+     */
     public function merge(array $config): void
     {
         parent::merge($config['config']['system'] ?? $config);
     }
 }
-
