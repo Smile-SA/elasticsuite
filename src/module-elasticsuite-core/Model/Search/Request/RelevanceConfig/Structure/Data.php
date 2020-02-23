@@ -18,7 +18,7 @@ namespace Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure;
 use Magento\Framework\Config\Data\Scoped;
 
 /**
- * Provide scoped configuration for the elasticsuite components
+ * Provide scoped configuration for the elasticsuite components.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -27,9 +27,10 @@ use Magento\Framework\Config\Data\Scoped;
 class Data extends Scoped
 {
     /**
-     * Merge default config data with extended settings
+     * Merge default config data with extended settings.
      *
-     * @param array $config
+     * @param array $config Configuration settings
+     *
      * @return void
      */
     public function merge(array $config): void
