@@ -65,8 +65,8 @@ class Search
     /**
      * Return results of full text catalog search of given term, and will return filtered results if filter is specified
      *
-     * @param SearchCriteriaInterface $searchCriteria
-     * @param ResolveInfo             $info
+     * @param SearchCriteriaInterface $searchCriteria Search Criteria
+     * @param ResolveInfo             $info           Resolve Info
      *
      * @return SearchResult
      * @throws \Exception

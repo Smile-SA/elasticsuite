@@ -60,7 +60,7 @@ class SearchCriteriaBuilder
     /**
      * Build search criteria
      *
-     * @param array $args
+     * @param array $args GraphQL query arguments
      *
      * @return SearchCriteriaInterface
      */
@@ -86,9 +86,9 @@ class SearchCriteriaBuilder
     /**
      * Add filter to search criteria
      *
-     * @param SearchCriteriaInterface $searchCriteria
-     * @param string                  $field
-     * @param mixed                   $value
+     * @param SearchCriteriaInterface $searchCriteria Search Criteria
+     * @param string                  $field          Field
+     * @param mixed                   $value          Value
      */
     private function addFilter(SearchCriteriaInterface $searchCriteria, string $field, $value): void
     {

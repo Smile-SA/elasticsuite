@@ -38,8 +38,8 @@ class SearchResultApplier implements SearchResultApplierInterface
     private $searchResult;
 
     /**
-     * @param Collection            $collection
-     * @param SearchResultInterface $searchResult
+     * @param Collection            $collection   The Collection
+     * @param SearchResultInterface $searchResult The Search Results
      */
     public function __construct(
         Collection $collection,
