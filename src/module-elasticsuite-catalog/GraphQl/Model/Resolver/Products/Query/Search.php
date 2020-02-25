@@ -22,6 +22,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Search\Api\SearchInterface;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Search as LegacyResolver;
+use \Magento\CatalogGraphQl\Model\Layer\Context;
 
 /**
  * Elasticsuite GraphQL Products Query Resolver.
@@ -48,18 +49,26 @@ class Search
     private $legacyResolver;
 
     /**
+     * @var Context
+     */
+    private $layerContext;
+
+    /**
      * @param SearchInterface     $search              Search Engine
      * @param SearchResultFactory $searchResultFactory Search Results Factory
      * @param LegacyResolver      $legacyResolver      Legacy Product Search resolver
+     * @param Context             $layerContext        Layer Context
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
-        LegacyResolver $legacyResolver
+        LegacyResolver $legacyResolver,
+        Context $layerContext
     ) {
         $this->search              = $search;
         $this->searchResultFactory = $searchResultFactory;
         $this->legacyResolver      = $legacyResolver;
+        $this->layerContext        = $layerContext;
     }
 
     /**
@@ -74,7 +83,15 @@ class Search
     public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info): SearchResult
     {
         $productProvider = $this->getProvider();
-        if (null === $productProvider) {
+        if (null === $productProvider) { // BC comp for Magento < 2.3.4
+            $searchResults = $this->search->search($searchCriteria);
+            if ($searchResults->getAggregations()) {
+                $this->layerContext->getCollectionProvider()->setSearchResults(
+                    $searchResults->getAggregations(),
+                    $searchResults->getTotalCount()
+                );
+            }
+
             return $this->legacyResolver->getResult($searchCriteria, $info);
         }
 
