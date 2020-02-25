@@ -32,7 +32,7 @@ use Magento\Framework\App\ResourceConnection;
  *
  * @deprecated Will be moved to a dedicated module.
  */
-class Category implements LayerBuilderInterface
+class Category // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
 {
     /**
      * @var string

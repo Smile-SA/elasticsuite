@@ -29,7 +29,7 @@ use Smile\ElasticsuiteCore\Helper\Mapping;
  *
  * @deprecated Will be moved to a dedicated module.
  */
-class Attribute implements LayerBuilderInterface
+class Attribute // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
 {
     /**
      * @var string

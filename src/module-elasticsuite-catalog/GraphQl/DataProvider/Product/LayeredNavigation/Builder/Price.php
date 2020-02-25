@@ -27,7 +27,7 @@ use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\Laye
  *
  * @deprecated Will be moved to a dedicated module.
  */
-class Price implements LayerBuilderInterface
+class Price // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
 {
     /**
      * @var string
