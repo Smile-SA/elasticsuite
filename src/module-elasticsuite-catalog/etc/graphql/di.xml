@@ -29,4 +29,12 @@
             <argument name="searchResultsApplierFactory" xsi:type="object">elasticsuiteSearchResultApplierFactory</argument>
         </arguments>
     </type>
+
+    <!-- 'aggregations' Data Providers -->
+    <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Attribute"
+                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Attribute"/>
+    <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Category"
+                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Category"/>
+    <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"
+                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"/>
 </config>
