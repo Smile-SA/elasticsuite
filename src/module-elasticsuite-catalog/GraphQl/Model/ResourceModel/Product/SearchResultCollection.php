@@ -45,11 +45,7 @@ class SearchResultCollection extends \Smile\ElasticsuiteCatalog\Model\ResourceMo
     }
 
     /**
-     * Return field faceted data from previously set faceted search result.
-     *
-     * @param string $field
-     *
-     * @return array
+     * {@inheritDoc}
      */
     public function getFacetedData($field)
     {

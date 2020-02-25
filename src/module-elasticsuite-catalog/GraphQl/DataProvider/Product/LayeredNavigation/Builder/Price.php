@@ -45,7 +45,7 @@ class Price implements LayerBuilderInterface
     private static $bucketMap = [
         self::PRICE_BUCKET => [
             'request_name' => 'price',
-            'label'        => 'Price'
+            'label'        => 'Price',
         ],
     ];
 
@@ -89,7 +89,7 @@ class Price implements LayerBuilderInterface
     /**
      * Check that bucket contains data
      *
-     * @param BucketInterface|null $bucket
+     * @param BucketInterface|null $bucket Bucket
      *
      * @return bool
      */

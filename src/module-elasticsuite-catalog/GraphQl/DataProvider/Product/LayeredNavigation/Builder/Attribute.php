@@ -126,7 +126,7 @@ class Attribute implements LayerBuilderInterface
     /**
      * Get attribute buckets excluding specified bucket names
      *
-     * @param AggregationInterface $aggregation
+     * @param AggregationInterface $aggregation Aggregation
      *
      * @return \Generator|BucketInterface[]
      */
@@ -146,7 +146,7 @@ class Attribute implements LayerBuilderInterface
     /**
      * Check that bucket contains data
      *
-     * @param BucketInterface|null $bucket
+     * @param BucketInterface|null $bucket Bucket
      *
      * @return bool
      */

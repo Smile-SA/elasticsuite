@@ -80,7 +80,7 @@ class FiltersProvider extends \Magento\CatalogGraphQl\Model\Resolver\Layer\Filte
     /**
      * Get layer type filters.
      *
-     * @param string $layerType
+     * @param string $layerType The layer type
      *
      * @return array
      */

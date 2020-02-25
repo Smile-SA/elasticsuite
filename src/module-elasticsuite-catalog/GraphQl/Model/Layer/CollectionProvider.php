@@ -27,7 +27,6 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  *
- * @deprecated We will remove this when Magento will drop Filters Resolver (>= 2.4 ?).
  * @deprecated Will be moved to a dedicated module.
  */
 class CollectionProvider implements ItemCollectionProviderInterface

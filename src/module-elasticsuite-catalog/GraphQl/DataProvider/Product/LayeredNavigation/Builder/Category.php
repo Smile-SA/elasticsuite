@@ -154,7 +154,7 @@ class Category implements LayerBuilderInterface
     /**
      * Check that bucket contains data
      *
-     * @param BucketInterface|null $bucket
+     * @param BucketInterface|null $bucket Bucket
      *
      * @return bool
      */

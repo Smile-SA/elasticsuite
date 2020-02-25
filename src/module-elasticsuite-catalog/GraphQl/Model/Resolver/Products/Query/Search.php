@@ -85,7 +85,7 @@ class Search
     public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info): SearchResult
     {
         $productProvider = $this->getProvider();
-        if (null === $productProvider) { // BC comp for Magento < 2.3.4
+        if (null === $productProvider) { // BC comp for Magento < 2.3.4.
             $searchResults = $this->search->search($searchCriteria);
             if ($searchResults->getAggregations()) {
                 $this->layerContext->getCollectionProvider()->setSearchResults(

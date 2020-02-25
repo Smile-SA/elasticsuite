@@ -72,7 +72,7 @@ class LayerFilters
         if (!empty($value['search_result'])) {
             /** @var \Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult $searchResult */
             $searchResult = $value['search_result'];
-            if (method_exists($searchResult, 'getSearchAggregation')) { // BC for Magento < 2.3.4
+            if (method_exists($searchResult, 'getSearchAggregation')) { // BC for Magento < 2.3.4.
                 $this->layerContext->getCollectionProvider()->setSearchResults(
                     $searchResult->getSearchAggregation(),
                     $searchResult->getTotalCount()
