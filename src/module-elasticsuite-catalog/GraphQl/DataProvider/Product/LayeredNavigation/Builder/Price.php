@@ -24,6 +24,8 @@ use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\Laye
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class Price implements LayerBuilderInterface
 {

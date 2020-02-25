@@ -25,6 +25,8 @@ use Smile\ElasticsuiteCatalog\Model\Layer\FilterList;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class FiltersProvider extends \Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider
 {

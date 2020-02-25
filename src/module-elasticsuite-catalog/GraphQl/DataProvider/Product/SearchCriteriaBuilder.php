@@ -24,6 +24,8 @@ use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class SearchCriteriaBuilder
 {

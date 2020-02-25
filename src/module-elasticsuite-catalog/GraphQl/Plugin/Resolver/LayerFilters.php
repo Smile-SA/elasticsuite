@@ -27,6 +27,8 @@ use Magento\CatalogGraphQl\Model\Layer\Context as LayerContext;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class LayerFilters
 {

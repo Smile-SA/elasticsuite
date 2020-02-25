@@ -22,6 +22,8 @@ use Magento\Framework\Api\Search\AggregationInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class SearchResultCollection extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
 {

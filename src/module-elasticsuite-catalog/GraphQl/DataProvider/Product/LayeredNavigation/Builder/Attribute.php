@@ -26,6 +26,8 @@ use Smile\ElasticsuiteCore\Helper\Mapping;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class Attribute implements LayerBuilderInterface
 {

@@ -29,6 +29,8 @@ use Magento\Framework\App\ResourceConnection;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class Category implements LayerBuilderInterface
 {

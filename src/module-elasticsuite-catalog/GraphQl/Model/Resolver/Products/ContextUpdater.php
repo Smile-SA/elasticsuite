@@ -24,6 +24,8 @@ use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @deprecated Will be moved to a dedicated module.
  */
 class ContextUpdater
 {
