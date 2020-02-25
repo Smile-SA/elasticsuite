@@ -26,10 +26,9 @@ use Magento\Framework\App\ResourceConnection;
 /**
  * Layered Navigation Builder for Category items.
  *
- * @category Smile
- * @package  Smile\ElasticsuiteCatalog
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
+ * @category   Smile
+ * @package    Smile\ElasticsuiteCatalog
+ * @author     Romain Ruaud <romain.ruaud@smile.fr>
  * @deprecated Will be moved to a dedicated module.
  */
 class Category // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
@@ -75,24 +74,19 @@ class Category // Not implementing the LayerBuilderInterface because it did not 
     private $layerFormatter;
 
     /**
-     * @param CategoryAttributeQuery   $categoryAttributeQuery Category Attribute Query
-     * @param CategoryAttributesMapper $attributesMapper       Attributes Mapper
-     * @param RootCategoryProvider     $rootCategoryProvider   Root Category Provider
-     * @param ResourceConnection       $resourceConnection     Resource Connection
-     * @param LayerFormatter           $layerFormatter         Layer Formatter
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager      Object Manager
+     * @param ResourceConnection                        $resourceConnection Resource Connection
      */
     public function __construct(
-        CategoryAttributeQuery $categoryAttributeQuery,
-        CategoryAttributesMapper $attributesMapper,
-        RootCategoryProvider $rootCategoryProvider,
-        ResourceConnection $resourceConnection,
-        LayerFormatter $layerFormatter
+        \Magento\Framework\ObjectManagerInterface $objectManager,
+        ResourceConnection $resourceConnection
     ) {
-        $this->categoryAttributeQuery = $categoryAttributeQuery;
-        $this->attributesMapper       = $attributesMapper;
+        // Using Object Manager for BC with Magento <2.3.4.
+        $this->categoryAttributeQuery = $objectManager->get(CategoryAttributeQuery::class);
+        $this->attributesMapper       = $objectManager->get(CategoryAttributesMapper::class);
+        $this->rootCategoryProvider   = $objectManager->get(RootCategoryProvider::class);
+        $this->layerFormatter         = $objectManager->get(LayerFormatter::class);
         $this->resourceConnection     = $resourceConnection;
-        $this->rootCategoryProvider   = $rootCategoryProvider;
-        $this->layerFormatter         = $layerFormatter;
     }
 
     /**

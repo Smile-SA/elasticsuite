@@ -50,11 +50,12 @@ class Price // Not implementing the LayerBuilderInterface because it did not exi
     ];
 
     /**
-     * @param LayerFormatter $layerFormatter Layer Formatter
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager Object Manager
      */
-    public function __construct(LayerFormatter $layerFormatter)
+    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
     {
-        $this->layerFormatter = $layerFormatter;
+        // Using Object Manager for BC with Magento <2.3.4.
+        $this->layerFormatter = $objectManager->get(LayerFormatter::class);
     }
 
     /**

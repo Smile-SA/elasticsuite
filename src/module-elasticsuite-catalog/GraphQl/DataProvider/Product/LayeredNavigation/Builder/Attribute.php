@@ -23,10 +23,9 @@ use Smile\ElasticsuiteCore\Helper\Mapping;
 /**
  * Layered Navigation Builder for Default Attribute.
  *
- * @category Smile
- * @package  Smile\ElasticsuiteCatalog
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
+ * @category   Smile
+ * @package    Smile\ElasticsuiteCatalog
+ * @author     Romain Ruaud <romain.ruaud@smile.fr>
  * @deprecated Will be moved to a dedicated module.
  */
 class Attribute // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
@@ -62,16 +61,17 @@ class Attribute // Not implementing the LayerBuilderInterface because it did not
     ];
 
     /**
-     * @param LayerFormatter      $layerFormatter      Layer Formatter
-     * @param AttributeRepository $attributeRepository Attribute Repository
-     * @param array               $bucketNameFilter    Bucket Filter
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager       Object Manager
+     * @param AttributeRepository                       $attributeRepository Attribute Repository
+     * @param array                                     $bucketNameFilter    Bucket Filter
      */
     public function __construct(
-        LayerFormatter $layerFormatter,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         AttributeRepository $attributeRepository,
         $bucketNameFilter = []
     ) {
-        $this->layerFormatter      = $layerFormatter;
+        // Using Object Manager for BC with Magento <2.3.4.
+        $this->layerFormatter      = $objectManager->get(LayerFormatter::class);
         $this->bucketNameFilter    = \array_merge($this->bucketNameFilter, $bucketNameFilter);
         $this->attributeRepository = $attributeRepository;
     }
