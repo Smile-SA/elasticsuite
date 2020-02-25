@@ -40,6 +40,9 @@
                 <field name="children_ids" type="integer" />
                 <field name="configurable_attributes" type="keyword" />
                 <field name="indexed_attributes" type="keyword" />
+                <field name="url_key" type="keyword">
+                    <isFilterable>1</isFilterable>
+                </field>
 
                 <!-- Static fields handled by the "prices" datasource -->
                 <field name="price.price" type="double" nestedPath="price" />

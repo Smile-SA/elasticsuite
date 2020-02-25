@@ -234,6 +234,10 @@ class RequestMapperPlugin
      */
     private function getCurrentCategoryId(ContainerConfigurationInterface $containerConfiguration, SearchCriteriaInterface $searchCriteria)
     {
+        if ($this->searchContext->getCurrentCategory() && $this->searchContext->getCurrentCategory()->getId()) {
+            return $this->searchContext->getCurrentCategory()->getId();
+        }
+
         $store      = $this->storeManager->getStore($containerConfiguration->getStoreId());
         $categoryId = $this->storeManager->getGroup($store->getStoreGroupId())->getRootCategoryId();
 
