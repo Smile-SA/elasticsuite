@@ -19,32 +19,11 @@ jobs:
   include:
     - php: 7.2
       env:
-        - MAGENTO_VERSION=2.3.2 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.2
-      env:
-        - MAGENTO_VERSION=2.3.2 MAGENTO_EDITION=enterprise
-    - php: 7.2
-      env:
-        - MAGENTO_VERSION=2.3.3 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.2
-      env:
-        - MAGENTO_VERSION=2.3.3 MAGENTO_EDITION=enterprise
-    - php: 7.2
-      env:
         - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.2
       env:
         - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
-    - php: 7.3
-      env:
-          - MAGENTO_VERSION=2.3.3 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.3
-      env:
-          - MAGENTO_VERSION=2.3.3 MAGENTO_EDITION=enterprise
     - php: 7.3
       env:
           - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
