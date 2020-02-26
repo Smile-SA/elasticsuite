@@ -130,7 +130,6 @@ class RequestBuilder
         $requestParams = [
             'name'       => $containerConfig->getName(),
             'indexName'  => $containerConfig->getIndexName(),
-            'type'       => $containerConfig->getTypeName(),
             'from'       => 0,
             'size'       => $size,
             'dimensions' => [],
