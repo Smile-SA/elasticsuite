@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder;
+namespace Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder;
 
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\LayerBuilderInterface;
 use Magento\Framework\Api\Search\AggregationInterface;
@@ -22,17 +22,15 @@ use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\Laye
  * Layered Navigation Builder for Price items.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
-class Price // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
+class Price implements LayerBuilderInterface
 {
     /**
      * @var string
      */
-    private const PRICE_BUCKET = 'price.price';
+    const PRICE_BUCKET = 'price.price';
 
     /**
      * @var LayerFormatter
@@ -50,12 +48,11 @@ class Price // Not implementing the LayerBuilderInterface because it did not exi
     ];
 
     /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager Object Manager
+     * @param LayerFormatter $layerFormatter Layer Formatter
      */
-    public function __construct(\Magento\Framework\ObjectManagerInterface $objectManager)
+    public function __construct(LayerFormatter $layerFormatter)
     {
-        // Using Object Manager for BC with Magento <2.3.4.
-        $this->layerFormatter = $objectManager->get(LayerFormatter::class);
+        $this->layerFormatter = $layerFormatter;
     }
 
     /**

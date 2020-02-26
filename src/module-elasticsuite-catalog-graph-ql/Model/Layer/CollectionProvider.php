@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Model\Layer;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\Layer;
 
 use Magento\Catalog\Model\Category as Category;
 use Magento\Catalog\Model\Layer\ItemCollectionProviderInterface;
@@ -24,10 +24,8 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface;
  * Custom Layer Collection Provider for GraphQL.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class CollectionProvider implements ItemCollectionProviderInterface
 {

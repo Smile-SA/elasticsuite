@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder;
+namespace Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder;
 
 use Magento\CatalogGraphQl\DataProvider\Category\Query\CategoryAttributeQuery;
 use Magento\CatalogGraphQl\DataProvider\CategoryAttributesMapper;
@@ -26,17 +26,16 @@ use Magento\Framework\App\ResourceConnection;
 /**
  * Layered Navigation Builder for Category items.
  *
- * @category   Smile
- * @package    Smile\ElasticsuiteCatalog
- * @author     Romain Ruaud <romain.ruaud@smile.fr>
- * @deprecated Will be moved to a dedicated module.
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalogGraphQl
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Category // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
+class Category implements LayerBuilderInterface
 {
     /**
      * @var string
      */
-    private const CATEGORY_BUCKET = 'categories';
+    const CATEGORY_BUCKET = 'categories';
 
     /**
      * @var array
@@ -74,18 +73,23 @@ class Category // Not implementing the LayerBuilderInterface because it did not 
     private $layerFormatter;
 
     /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager      Object Manager
-     * @param ResourceConnection                        $resourceConnection Resource Connection
+     * @param CategoryAttributeQuery   $categoryAttributeQuery   Category Attribute Query
+     * @param CategoryAttributesMapper $categoryAttributesMapper Category Attributes Mapper
+     * @param RootCategoryProvider     $rootCategoryProvider     Root Category Provider
+     * @param LayerFormatter           $layerFormatter           Layer Formatter
+     * @param ResourceConnection       $resourceConnection       Resource Connection
      */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
+        CategoryAttributeQuery $categoryAttributeQuery,
+        CategoryAttributesMapper $categoryAttributesMapper,
+        RootCategoryProvider $rootCategoryProvider,
+        LayerFormatter $layerFormatter,
         ResourceConnection $resourceConnection
     ) {
-        // Using Object Manager for BC with Magento <2.3.4.
-        $this->categoryAttributeQuery = $objectManager->get(CategoryAttributeQuery::class);
-        $this->attributesMapper       = $objectManager->get(CategoryAttributesMapper::class);
-        $this->rootCategoryProvider   = $objectManager->get(RootCategoryProvider::class);
-        $this->layerFormatter         = $objectManager->get(LayerFormatter::class);
+        $this->categoryAttributeQuery = $categoryAttributeQuery;
+        $this->attributesMapper       = $categoryAttributesMapper;
+        $this->rootCategoryProvider   = $rootCategoryProvider;
+        $this->layerFormatter         = $layerFormatter;
         $this->resourceConnection     = $resourceConnection;
     }
 

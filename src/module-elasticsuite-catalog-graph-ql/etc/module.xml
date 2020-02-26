@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogGraphQl module loading configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogGraphQl
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Smile_ElasticsuiteCatalogGraphQl" setup_version="1.0.0">
+        <sequence>
+            <module name="Smile_ElasticsuiteCatalog" />
+            <module name="Magento_CatalogGraphQl" />
+        </sequence>
+    </module>
+</config>

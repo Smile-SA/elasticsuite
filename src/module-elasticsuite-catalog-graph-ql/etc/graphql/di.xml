@@ -7,7 +7,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -15,8 +15,8 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder"
-        type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\SearchCriteriaBuilder"/>
-    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products" type="Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products" />
+        type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder"/>
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products" type="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products" />
 
     <virtualType name="elasticsuiteSearchResultApplierFactory" type="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection\SearchResultApplierFactory">
         <arguments>
@@ -32,30 +32,30 @@
 
     <!-- 'aggregations' Data Providers -->
     <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Attribute"
-                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Attribute"/>
+                type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Attribute"/>
     <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Category"
-                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Category"/>
+                type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Category"/>
     <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"
-                type="Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"/>
+                type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"/>
 
 
     <!-- Layer filters implementation -->
-    <virtualType name="Smile\ElasticsuiteCatalog\GraphQl\Model\ResourceModel\Product\SearchResultCollectionFactory"
+    <virtualType name="Smile\ElasticsuiteCatalogGraphQl\Model\ResourceModel\Product\SearchResultCollectionFactory"
                  type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
         <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\GraphQl\Model\ResourceModel\Product\SearchResultCollection</argument>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalogGraphQl\Model\ResourceModel\Product\SearchResultCollection</argument>
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticsuiteCatalog\GraphQl\Model\Layer\CollectionProvider">
+    <type name="Smile\ElasticsuiteCatalogGraphQl\Model\Layer\CollectionProvider">
         <arguments>
-            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\GraphQl\Model\ResourceModel\Product\SearchResultCollectionFactory</argument>
+            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\Model\ResourceModel\Product\SearchResultCollectionFactory</argument>
         </arguments>
     </type>
 
     <type name="Magento\CatalogGraphQl\Model\Layer\Context">
         <arguments>
-            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\GraphQl\Model\Layer\CollectionProvider</argument>
+            <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\Model\Layer\CollectionProvider</argument>
         </arguments>
     </type>
 
@@ -109,7 +109,7 @@
         </arguments>
     </virtualType>
 
-    <type name="Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Layer\FiltersProvider">
+    <type name="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Layer\FiltersProvider">
         <arguments>
             <argument name="filtersList" xsi:type="array">
                 <item name="search" xsi:type="object">searchFilterList</item>
@@ -118,9 +118,9 @@
         </arguments>
     </type>
 
-    <preference for="Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider" type="Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Layer\FiltersProvider"/>
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider" type="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Layer\FiltersProvider"/>
 
     <type name="Magento\CatalogGraphQl\Model\Resolver\LayerFilters">
-        <plugin name="search_results_aggregations" type="Smile\ElasticsuiteCatalog\GraphQl\Plugin\Resolver\LayerFilters"/>
+        <plugin name="search_results_aggregations" type="Smile\ElasticsuiteCatalogGraphQl\Plugin\Resolver\LayerFilters"/>
     </type>
 </config>

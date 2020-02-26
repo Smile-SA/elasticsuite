@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogGraphQl mapping update.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogGraphQl
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<indices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_indices.xsd">
+
+    <index identifier="catalog_product" defaultSearchType="product">
+        <type name="product" idFieldName="entity_id">
+            <mapping>
+                <field name="url_key" type="keyword">
+                    <isFilterable>1</isFilterable>
+                </field>
+            </mapping>
+        </type>
+    </index>
+
+</indices>

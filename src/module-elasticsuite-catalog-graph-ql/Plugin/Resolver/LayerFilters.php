@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Plugin\Resolver;
+namespace Smile\ElasticsuiteCatalogGraphQl\Plugin\Resolver;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
@@ -25,10 +25,8 @@ use Magento\CatalogGraphQl\Model\Layer\Context as LayerContext;
  * inject previously built search result aggregations into the layer context, to prevent useless additional fetching.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class LayerFilters
 {
@@ -72,12 +70,10 @@ class LayerFilters
         if (!empty($value['search_result'])) {
             /** @var \Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult $searchResult */
             $searchResult = $value['search_result'];
-            if (method_exists($searchResult, 'getSearchAggregation')) { // BC for Magento < 2.3.4.
-                $this->layerContext->getCollectionProvider()->setSearchResults(
-                    $searchResult->getSearchAggregation(),
-                    $searchResult->getTotalCount()
-                );
-            }
+            $this->layerContext->getCollectionProvider()->setSearchResults(
+                $searchResult->getSearchAggregation(),
+                $searchResult->getTotalCount()
+            );
         }
 
         return [$field, $context, $info, $value, $args];

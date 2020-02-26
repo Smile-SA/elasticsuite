@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Model\ResourceModel\Product;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\ResourceModel\Product;
 
 use Magento\Framework\Api\Search\AggregationInterface;
 
@@ -20,10 +20,8 @@ use Magento\Framework\Api\Search\AggregationInterface;
  * Mostly used to inject dynamically aggregations/search results to prevent layer to reload a dummy collection after.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class SearchResultCollection extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
 {
