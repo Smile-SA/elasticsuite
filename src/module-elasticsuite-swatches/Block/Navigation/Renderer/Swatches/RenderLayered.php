@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteSwatches\Block\Navigation\Renderer\Swatches;
 use Magento\Catalog\Model\Layer\Filter\Item as FilterItem;
 use Magento\Eav\Model\Entity\Attribute;
 use Magento\Eav\Model\Entity\Attribute\Option;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Override Magento standard swatches renderer block.
@@ -28,13 +29,18 @@ use Magento\Eav\Model\Entity\Attribute\Option;
 class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLayered
 {
     /**
-     * Override the native method to sort swatch options in the expected
-     * order (as defined in the admin attribute parameters).
+     * Override the native method to sort swatch options in the expected when the sorting isn't set to manual order
+     * as defined in the admin attribute parameters.
      *
      * @return array
      */
     public function getSwatchData(): array
     {
+        // Fallback to core if sorting is set to manual.
+        if ($this->eavAttribute->getFacetSortOrder() === BucketInterface::SORT_ORDER_MANUAL) {
+            return parent::getSwatchData();
+        }
+
         if (false === $this->eavAttribute instanceof Attribute) {
             throw new \RuntimeException('Magento_Swatches: RenderLayered: Attribute has not been set.');
         }
