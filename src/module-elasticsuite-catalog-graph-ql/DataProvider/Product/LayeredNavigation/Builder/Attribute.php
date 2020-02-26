@@ -30,18 +30,6 @@ use Smile\ElasticsuiteCore\Helper\Mapping;
 class Attribute implements LayerBuilderInterface
 {
     /**
-     * @var string
-     * @see \Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price::PRICE_BUCKET
-     */
-    private const PRICE_BUCKET = 'price.price';
-
-    /**
-     * @var string
-     * @see \Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Category::CATEGORY_BUCKET
-     */
-    private const CATEGORY_BUCKET = 'categories';
-
-    /**
      * @var LayerFormatter
      */
     private $layerFormatter;
@@ -55,8 +43,8 @@ class Attribute implements LayerBuilderInterface
      * @var array
      */
     private $bucketNameFilter = [
-        self::PRICE_BUCKET,
-        self::CATEGORY_BUCKET,
+        Price::PRICE_BUCKET,
+        Category::CATEGORY_BUCKET,
     ];
 
     /**

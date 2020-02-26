@@ -35,7 +35,7 @@ class Category implements LayerBuilderInterface
     /**
      * @var string
      */
-    private const CATEGORY_BUCKET = 'categories';
+    const CATEGORY_BUCKET = 'categories';
 
     /**
      * @var array
