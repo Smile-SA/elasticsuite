@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\DataProvider\Product\LayeredNavigation\Builder;
+namespace Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder;
 
 use Magento\Catalog\Model\Product\Attribute\Repository as AttributeRepository;
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\LayerFormatter;
@@ -23,12 +23,11 @@ use Smile\ElasticsuiteCore\Helper\Mapping;
 /**
  * Layered Navigation Builder for Default Attribute.
  *
- * @category   Smile
- * @package    Smile\ElasticsuiteCatalog
- * @author     Romain Ruaud <romain.ruaud@smile.fr>
- * @deprecated Will be moved to a dedicated module.
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalogGraphQl
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Attribute // Not implementing the LayerBuilderInterface because it did not exist before Magento 2.3.4.
+class Attribute implements LayerBuilderInterface
 {
     /**
      * @var string
@@ -61,17 +60,16 @@ class Attribute // Not implementing the LayerBuilderInterface because it did not
     ];
 
     /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager       Object Manager
-     * @param AttributeRepository                       $attributeRepository Attribute Repository
-     * @param array                                     $bucketNameFilter    Bucket Filter
+     * @param LayerFormatter      $layerFormatter      Layer Formatter
+     * @param AttributeRepository $attributeRepository Attribute Repository
+     * @param array               $bucketNameFilter    Bucket Filter
      */
     public function __construct(
-        \Magento\Framework\ObjectManagerInterface $objectManager,
+        LayerFormatter $layerFormatter,
         AttributeRepository $attributeRepository,
         $bucketNameFilter = []
     ) {
-        // Using Object Manager for BC with Magento <2.3.4.
-        $this->layerFormatter      = $objectManager->get(LayerFormatter::class);
+        $this->layerFormatter      = $layerFormatter;
         $this->bucketNameFilter    = \array_merge($this->bucketNameFilter, $bucketNameFilter);
         $this->attributeRepository = $attributeRepository;
     }

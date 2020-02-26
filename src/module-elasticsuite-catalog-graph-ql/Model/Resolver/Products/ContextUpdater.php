@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products;
 
 use Magento\Catalog\Api\CategoryRepositoryInterfaceFactory;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
@@ -22,10 +22,8 @@ use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
  * Elasticsuite context updater for product related GraphQL queries.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class ContextUpdater
 {

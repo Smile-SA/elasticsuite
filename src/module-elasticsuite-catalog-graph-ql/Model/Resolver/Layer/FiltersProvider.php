@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Layer;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Layer;
 
 use Magento\Catalog\Model\Layer\FilterListFactory;
 use Magento\Catalog\Model\Layer\Resolver;
@@ -23,10 +23,8 @@ use Smile\ElasticsuiteCatalog\Model\Layer\FilterList;
  * Custom Layer filters provider for GraphQL
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class FiltersProvider extends \Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider
 {

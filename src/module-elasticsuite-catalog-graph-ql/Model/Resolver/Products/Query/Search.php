@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalog\GraphQl\Model\Resolver\Products\Query;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query;
 
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
@@ -21,17 +21,13 @@ use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Search\Api\SearchInterface;
-use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Search as LegacyResolver;
-use \Magento\CatalogGraphQl\Model\Layer\Context;
 
 /**
  * Elasticsuite GraphQL Products Query Resolver.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
- *
- * @deprecated Will be moved to a dedicated module.
  */
 class Search
 {
@@ -46,31 +42,31 @@ class Search
     private $searchResultFactory;
 
     /**
-     * @var LegacyResolver
+     * @var ProductSearch
      */
-    private $legacyResolver;
+    private $productProvider;
 
     /**
-     * @var Context
+     * @var FieldSelection
      */
-    private $layerContext;
+    private $fieldSelection;
 
     /**
      * @param SearchInterface     $search              Search Engine
      * @param SearchResultFactory $searchResultFactory Search Results Factory
-     * @param LegacyResolver      $legacyResolver      Legacy Product Search resolver
-     * @param Context             $layerContext        Layer Context
+     * @param FieldSelection      $fieldSelection      Field Selection
+     * @param ProductSearch       $productProvider     Product Provider
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
-        LegacyResolver $legacyResolver,
-        Context $layerContext
+        FieldSelection $fieldSelection,
+        ProductSearch $productProvider
     ) {
         $this->search              = $search;
         $this->searchResultFactory = $searchResultFactory;
-        $this->legacyResolver      = $legacyResolver;
-        $this->layerContext        = $layerContext;
+        $this->fieldSelection      = $fieldSelection;
+        $this->productProvider     = $productProvider;
     }
 
     /**
@@ -84,27 +80,14 @@ class Search
      */
     public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info): SearchResult
     {
-        $productProvider = $this->getProvider();
-        if (null === $productProvider) { // BC comp for Magento < 2.3.4.
-            $searchResults = $this->search->search($searchCriteria);
-            if ($searchResults->getAggregations()) {
-                $this->layerContext->getCollectionProvider()->setSearchResults(
-                    $searchResults->getAggregations(),
-                    $searchResults->getTotalCount()
-                );
-            }
-
-            return $this->legacyResolver->getResult($searchCriteria, $info);
-        }
-
-        $queryFields   = $this->getQueryFields($info);
+        $queryFields   = $this->fieldSelection->getProductsFieldSelection($info);
         $searchResults = $this->search->search($searchCriteria);
 
         // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
         $providerSearchCriteria = clone($searchCriteria);
         $providerSearchCriteria->setFilterGroups([]);
 
-        $productsResults = $productProvider->getList($providerSearchCriteria, $searchResults, $queryFields);
+        $productsResults = $this->productProvider->getList($providerSearchCriteria, $searchResults, $queryFields);
         $productArray    = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
@@ -126,35 +109,5 @@ class Search
             'currentPage'          => $searchCriteria->getCurrentPage(),
             'totalPages'           => $maxPages,
         ]);
-    }
-
-    /**
-     * Get Product Provider in a BC manner.
-     * ProductSearch provider does not exist on Magento <2.3.4
-     *
-     * @return \Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch|null
-     */
-    private function getProvider()
-    {
-        try {
-            return ObjectManager::getInstance()->create(\Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch::class);
-        } catch (\Exception $exception) {
-            return null;
-        }
-    }
-
-    /**
-     * Get Query fields in a BC manner.
-     * FieldSelection not injected in constructor because non existing in Magento <2.3.4
-     *
-     * @param ResolveInfo $info Resolver Info
-     *
-     * @return array
-     */
-    private function getQueryFields(ResolveInfo $info)
-    {
-        $fieldSelection = ObjectManager::getInstance()->create(\Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection::class);
-
-        return $fieldSelection->getProductsFieldSelection($info);
     }
 }
