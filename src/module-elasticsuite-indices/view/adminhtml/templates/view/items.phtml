@@ -1,0 +1,67 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Items $block
+ */
+?>
+<div class="admin__table-wrapper">
+    <table class="data-table admin__table-primary">
+        <?php $items = $block->getItemsCollection();
+        if (!empty($items->getItems())) : ?>
+        <thead>
+            <tr class="headings">
+                <?php
+                $columns = $block->getColumns();
+                foreach ($columns as $columnName => $columnTitle) : ?>
+                    <th class="col-<?= $block->escapeHtmlAttr($columnName) ?>"><span><?= $block->escapeHtml($columnTitle) ?></span></th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($items as $_item) : ?>
+            <?php
+            $prefix = '';
+            printItem($columns, $_item, $prefix);
+            ?>
+        <?php endforeach; ?>
+        </tbody>
+        <?php else:?>
+        <?php echo __('Mapping is empty.')?>
+        <?php endif;?>
+    </table>
+</div>
+
+<?php
+/**
+ * @param array  $columns
+ * @param array  $item
+ * @param string $prefix
+ */
+function printItem($columns, $item, &$prefix = '')
+{
+    echo '<tr>';
+    foreach ($columns as $columnName => $columnTitle) {
+        echo '<td>' . ($columnName === 'name' ? $prefix : '') . $item[$columnName] . '</td>';
+    }
+    echo '</tr>';
+    if (!empty($item['properties'])) {
+        $prefix.= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+        foreach ($item['properties'] as $_sub_item) {
+            printItem($columns, $_sub_item, $prefix);
+        }
+    }
+}

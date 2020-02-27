@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Helper;
 
 use Magento\Store\Model\ScopeInterface;
+use Zend_Date;
 
 /**
  * Indices related configuration helper.
@@ -79,27 +80,37 @@ class IndexSettings extends AbstractConfiguration
      *
      * @return string
      */
-    public function createIndexNameFromIdentifier($indexIdentifier, $store)
+    public function createIndexNameFromIdentifier($indexIdentifier, $store): string
+    {
+        $indexNameSuffix = $this->getIndexNameSuffix(new Zend_Date());
+
+        return sprintf('%s_%s', $this->getIndexAliasFromIdentifier($indexIdentifier, $store), $indexNameSuffix);
+    }
+
+    /**
+     * Get index name suffix.
+     *
+     * @param Zend_Date $date Date
+     * @return string
+     */
+    public function getIndexNameSuffix(Zend_Date $date): string
     {
         /*
-         * Generate the suffix of the index name from the current date.
-         * e.g : Default pattern "{{YYYYMMdd}}_{{HHmmss}}" is converted to "20160221-123421".
-         */
-
-        $indiceNameSuffix = $this->getIndicesSettingsConfigParam('indices_pattern');
-
-        $currentDate      = new \Zend_Date();
+        * Generate the suffix of the index name from the current date.
+        * e.g : Default pattern "{{YYYYMMdd}}_{{HHmmss}}" is converted to "20160221_123421".
+        */
+        $indexNameSuffix = $this->getIndicesSettingsConfigParam('indices_pattern');
 
         // Parse pattern to extract datetime tokens.
         $matches = [];
-        preg_match_all('/{{([\w]*)}}/', $indiceNameSuffix, $matches);
+        preg_match_all('/{{([\w]*)}}/', $indexNameSuffix, $matches);
 
         foreach (array_combine($matches[0], $matches[1]) as $k => $v) {
             // Replace tokens (UTC date used).
-            $indiceNameSuffix = str_replace($k, $currentDate->toString($v), $indiceNameSuffix);
+            $indexNameSuffix = str_replace($k, $date->toString($v), $indexNameSuffix);
         }
 
-        return sprintf('%s_%s', $this->getIndexAliasFromIdentifier($indexIdentifier, $store), $indiceNameSuffix);
+        return $indexNameSuffix;
     }
 
     /**
@@ -148,6 +159,26 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Get the indices pattern from the configuration.
+     *
+     * @return string
+     */
+    public function getIndicesPattern(): string
+    {
+        return $this->getIndicesSettingsConfigParam('indices_pattern');
+    }
+
+    /**
+     * Get the index alias from the configuration.
+     *
+     * @return string
+     */
+    public function getIndexAlias(): string
+    {
+        return $this->getIndicesSettingsConfigParam('alias');
+    }
+
+    /**
      * Max number of results per query.
      *
      * @return integer
@@ -169,16 +200,6 @@ class IndexSettings extends AbstractConfiguration
         $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
 
         return $this->getElasticSuiteConfigParam($path);
-    }
-
-    /**
-     * Get the index alias from the configurarion.
-     *
-     * @return string
-     */
-    private function getIndexAlias()
-    {
-        return $this->getIndicesSettingsConfigParam('alias');
     }
 
     /**

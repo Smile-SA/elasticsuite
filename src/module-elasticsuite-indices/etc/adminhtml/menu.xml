@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteIndices menu configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Smile_ElasticsuiteIndices::tools"
+             title="Tools"
+             translate="title"
+             module="Smile_ElasticsuiteIndices"
+             sortOrder="40"
+             parent="Smile_ElasticsuiteCore::elasticsuite_menu"
+             resource="Smile_ElasticsuiteIndices::tools"
+        />
+        <add
+            id="Smile_ElasticsuiteIndices::manage"
+            title="Indices Status"
+            module="Smile_ElasticsuiteIndices"
+            sortOrder="40"
+            parent="Smile_ElasticsuiteIndices::tools"
+            action="smile_elasticsuite_indices/index/index"
+            resource="Smile_ElasticsuiteIndices::manage"/>
+    </menu>
+</config>
