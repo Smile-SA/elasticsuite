@@ -478,4 +478,12 @@
         <plugin name="indexSettingsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\ClientPlugin"/>
     </type>
 
+    <!-- ElasticSearch >= 7.3.0 plugins -->
+    <type name="Smile\ElasticsuiteCore\Search\Request\Query\Common">
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
+    </type>
+    <type name="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatch">
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
+    </type>
+
 </config>
