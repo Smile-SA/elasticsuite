@@ -187,12 +187,13 @@ class RequestMapperPlugin
         }
 
         if ($containerConfiguration->getName() == "quick_search_container" && empty($sortOrders)) {
-            $searchQuery = $this->searchContext->getCurrentSearchQuery();
-            if ($searchQuery->getId()) {
-                $sortOrders['search_query.position'] = [
-                    'direction'     => SortOrderInterface::SORT_ASC,
-                    'nestedFilter'  => ['search_query.query_id' => $searchQuery->getId()],
-                ];
+            if ($searchQuery = $this->searchContext->getCurrentSearchQuery()) {
+                if ($searchQuery->getId()) {
+                    $sortOrders['search_query.position'] = [
+                        'direction'     => SortOrderInterface::SORT_ASC,
+                        'nestedFilter'  => ['search_query.query_id' => $searchQuery->getId()],
+                    ];
+                }
             }
         }
 
