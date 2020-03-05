@@ -35,6 +35,15 @@
     <type name="Magento\Quote\Model\Quote">
       <plugin name="trackAddedProduct" type="Smile\ElasticsuiteTracker\Plugin\QuotePlugin" sortOrder="1" />
     </type>
-    
+
+    <type name="Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcerCollector">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="integer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\IntegerFactory</item>
+                <item name="double" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\DoubleFactory</item>
+                <item name="boolean" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\BooleanFactory</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>
