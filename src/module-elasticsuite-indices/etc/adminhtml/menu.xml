@@ -19,7 +19,6 @@
     <menu>
         <add id="Smile_ElasticsuiteIndices::tools"
              title="Tools"
-             translate="title"
              module="Smile_ElasticsuiteIndices"
              sortOrder="40"
              parent="Smile_ElasticsuiteCore::elasticsuite_menu"
@@ -29,7 +28,7 @@
             id="Smile_ElasticsuiteIndices::manage"
             title="Indices Status"
             module="Smile_ElasticsuiteIndices"
-            sortOrder="40"
+            sortOrder="10"
             parent="Smile_ElasticsuiteIndices::tools"
             action="smile_elasticsuite_indices/index/index"
             resource="Smile_ElasticsuiteIndices::manage"/>

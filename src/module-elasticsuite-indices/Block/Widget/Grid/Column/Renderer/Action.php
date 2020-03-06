@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer;
 
 use Magento\Backend\Block\Widget\Grid\Column\Renderer\Action as ActionBlock;
 use Magento\Framework\DataObject;
+use Smile\ElasticsuiteIndices\Controller\Adminhtml\Index\Delete;
 
 /**
  * Widget Grid Column Renderer: Action
@@ -35,7 +36,9 @@ class Action extends ActionBlock
     {
         $actions = $this->getColumn()->getActions();
 
-        if (empty($actions) || !is_array($actions) || $row->getData('index_status') !== IndexStatus::GHOST_STATUS) {
+        if (empty($actions) || !is_array($actions)
+            || $row->getData('index_status') !== IndexStatus::GHOST_STATUS
+            || !$this->_authorization->isAllowed(Delete::ADMIN_RESOURCE)) {
             return '&nbsp;';
         }
 

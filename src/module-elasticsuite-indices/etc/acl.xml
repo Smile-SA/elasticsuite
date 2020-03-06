@@ -20,7 +20,10 @@
         <resources>
             <resource id="Magento_Backend::admin">
                 <resource id="Smile_ElasticsuiteCore::menu">
-                    <resource id="Smile_ElasticsuiteIndices::manage" title="Indices Status"/>
+                    <resource id="Smile_ElasticsuiteIndices::tools" title="Tools">
+                        <resource id="Smile_ElasticsuiteIndices::manage" title="Manage Indexes Status" />
+                        <resource id="Smile_ElasticsuiteIndices::remove" title="Deleting index" />
+                    </resource>
                 </resource>
             </resource>
         </resources>

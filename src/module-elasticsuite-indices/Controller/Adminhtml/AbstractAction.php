@@ -25,7 +25,9 @@ use Magento\Backend\App\Action;
 abstract class AbstractAction extends Action
 {
     /**
-     * Authorization level.
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
      */
     public const ADMIN_RESOURCE = 'Smile_ElasticsuiteIndices::manage';
 }

@@ -26,7 +26,8 @@ use Magento\Framework\DataObject;
 class IndexStatus extends AbstractRenderer
 {
     private const SEVERITY_NOTICE = 'notice';
-    private const SEVERITY_IGNORE = 'ignore';
+    private const SEVERITY_EXTERNAL = 'external';
+    private const SEVERITY_UNDEFINED = 'undefined';
     private const SEVERITY_MINOR = 'minor';
     private const SEVERITY_CRITICAL = 'critical';
 
@@ -35,6 +36,17 @@ class IndexStatus extends AbstractRenderer
     public const GHOST_STATUS = 'ghost';
     public const EXTERNAL_STATUS = 'external';
     public const UNDEFINED_STATUS = 'undefined';
+
+    /**
+     * @var array
+     */
+    private $severityMapping = [
+        self::LIVE_STATUS => self::SEVERITY_NOTICE,
+        self::REBUILDING_STATUS => self::SEVERITY_MINOR,
+        self::GHOST_STATUS => self::SEVERITY_CRITICAL,
+        self::EXTERNAL_STATUS => self::SEVERITY_EXTERNAL,
+        self::UNDEFINED_STATUS => self::SEVERITY_UNDEFINED,
+    ];
 
     /**
      * @var string
@@ -81,24 +93,6 @@ class IndexStatus extends AbstractRenderer
      */
     protected function getSeverityFromValue($value): string
     {
-        switch ($value) {
-            case self::GHOST_STATUS:
-                $severity = self::SEVERITY_CRITICAL;
-                break;
-            case self::REBUILDING_STATUS:
-                $severity = self::SEVERITY_MINOR;
-                break;
-            case self::LIVE_STATUS:
-                $severity = self::SEVERITY_NOTICE;
-                break;
-            case self::EXTERNAL_STATUS:
-            case self::UNDEFINED_STATUS:
-                $severity = self::SEVERITY_IGNORE;
-                break;
-            default:
-                $severity = '';
-        }
-
-        return $severity;
+        return $this->severityMapping[$value] ?? '';
     }
 }
