@@ -99,6 +99,8 @@ class DataProviderPlugin
 
         if ($currentCategory->getId() === null || $currentCategory->getLevel() < 2) {
             $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['visible'] = false;
+            $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['componentType'] = 'field';
+            $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['formElement'] = 'input';
         }
 
         return $meta;
