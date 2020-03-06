@@ -12,9 +12,20 @@
 //  * @license   Open Software License ("OSL") v. 3.0
 //  */
 
-.grid-severity-ignore:extend(.grid-severity-notice),
-.grid-severity-ignore {
-    background: #282436 !important;
-    color: #E8F4FA !important;
-    border: 1px solid #2A0E17 !important;
+.grid-severity-external,
+.grid-severity-undefined {
+    border: 1px solid #2A0E17;
+    background: #282436;
+    color: #E8F4FA;
+    display: block;
+    padding: 0 3px;
+    font-weight: bold;
+    line-height: 17px;
+    text-transform: uppercase;
+    text-align: center;
+}
+.grid-severity-undefined {
+    border-color: #e22626;
+    background: #000000;
+    color: #e22626;
 }

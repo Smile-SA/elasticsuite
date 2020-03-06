@@ -30,6 +30,13 @@ use Smile\ElasticsuiteIndices\Helper\Index as IndexHelper;
 class Delete extends AbstractAction
 {
     /**
+     * Authorization level of a basic admin session
+     *
+     * @see _isAllowed()
+     */
+    public const ADMIN_RESOURCE = 'Smile_ElasticsuiteIndices::remove';
+
+    /**
      * @var Client
      */
     private $esClient;
@@ -99,6 +106,6 @@ class Delete extends AbstractAction
      */
     private function indexCanRemoved($indexName, $alias): bool
     {
-        return $this->indexHelper->getIndexStatus($indexName, $alias) === IndexStatus::GHOST_STATUS;
+        return $this->_isAllowed() && $this->indexHelper->getIndexStatus($indexName, $alias) === IndexStatus::GHOST_STATUS;
     }
 }
