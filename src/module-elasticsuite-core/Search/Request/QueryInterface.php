@@ -36,4 +36,5 @@ interface QueryInterface extends \Magento\Framework\Search\Request\QueryInterfac
     const TYPE_MISSING       = 'missingQuery';
     const TYPE_FUNCTIONSCORE = 'functionScore';
     const TYPE_MORELIKETHIS  = 'moreLikeThisQuery';
+    const TYPE_MATCHPHRASEPREFIX = 'matchPhrasePrefixQuery';
 }
