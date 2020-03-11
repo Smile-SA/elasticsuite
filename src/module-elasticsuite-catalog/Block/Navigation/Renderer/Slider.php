@@ -135,8 +135,9 @@ class Slider extends AbstractRenderer
             'intervals'        => $this->getIntervals(),
             'urlTemplate'      => $this->getUrlTemplate(),
             'messageTemplates' => [
-                'displayCount' => __('<%- count %> products'),
-                'displayEmpty' => __('No products in the selected range.'),
+                'displayOne'    => __('1 product'),
+                'displayCount'  => __('<%- count %> products'),
+                'displayEmpty'  => __('No products in the selected range.'),
             ],
         ];
 
