@@ -233,7 +233,7 @@ define([
 
             this.submitBtn.disabled = this._isEmpty(value);
 
-            if (value.length >= parseInt(this.options.minSearchLength, 10)) {
+            if (value.trim().length >= parseInt(this.options.minSearchLength, 10)) {
                 this.searchForm.addClass('processing');
                 this.currentRequest = $.ajax({
                     method: "GET",
