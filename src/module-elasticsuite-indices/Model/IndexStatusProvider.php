@@ -11,27 +11,23 @@
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteIndices\Helper;
+namespace Smile\ElasticsuiteIndices\Model;
 
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
-use Smile\ElasticsuiteCore\Client\Client;
-use Smile\ElasticsuiteCore\Helper\IndexSettings;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
-use Smile\ElasticsuiteIndices\Model\ResourceModel\WorkingIndexer\CollectionFactory as WorkingIndexerCollectionFactory;
 use Zend_Date;
 use Zend_Date_Exception;
 
 /**
- * Smile Index helper
+ * Class IndexStatusProvider
  *
  * @category Smile
  * @package  Smile\ElasticsuiteIndices
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
  */
-class Index extends AbstractHelper
+class IndexStatusProvider
 {
     /**
      * How many days after an index is a ghost.
@@ -39,33 +35,19 @@ class Index extends AbstractHelper
     private const NUMBER_DAYS_AFTER_INDEX_IS_GHOST = 2;
 
     /**
-     * Store number of seconds in a day.
-     */
-    private const SECONDS_IN_DAY = 86400;
-
-    /**
      * Store number of seconds in a year.
      */
     private const SECONDS_IN_YEAR = 31536000;
 
     /**
-     * @var array
+     * Store number of seconds in a day.
      */
-    private $elasticSuiteIndices = [
-        'catalog_category',
-        'catalog_product',
-        'thesaurus',
-    ];
+    private const SECONDS_IN_DAY = 86400;
 
     /**
-     * @var Client
+     * @var IndexSettingsHelper
      */
-    private $esClient;
-
-    /**
-     * @var DataObject
-     */
-    protected $workingIndexers;
+    private $indexSettingsHelper;
 
     /**
      * @var DataObject
@@ -73,68 +55,17 @@ class Index extends AbstractHelper
     protected $storeIndices;
 
     /**
-     * @var IndexSettings
-     */
-    private $indexSettings;
-
-    /**
-     * PHP Constructor
+     * Constructor.
      *
-     * @param Context                         $context                  The current context.
-     * @param Client                          $esClient                 ElasticSearch client.
-     * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
-     * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
-     * @param IndexSettings                   $indexSettings            ElasticSuite index settings.
+     * @param IndexSettingsHelper           $indexSettingsHelper Index settings helper.
+     * @param StoreIndicesCollectionFactory $storeIndicesFactory Store indices collection.
      */
     public function __construct(
-        Context $context,
-        Client $esClient,
-        WorkingIndexerCollectionFactory $indexerCollectionFactory,
-        StoreIndicesCollectionFactory $storeIndicesFactory,
-        IndexSettings $indexSettings
+        IndexSettingsHelper $indexSettingsHelper,
+        StoreIndicesCollectionFactory $storeIndicesFactory
     ) {
-        parent::__construct($context);
-        $this->esClient = $esClient;
-        $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
+        $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
-        $this->indexSettings = $indexSettings;
-    }
-
-    /**
-     * Get ElasticSuite indices.
-     *
-     * @param array $params Parameters array.
-     * @return array
-     * @throws \Exception
-     */
-    public function getElasticSuiteIndices($params = []): array
-    {
-        $elasticSuiteIndices = [];
-
-        foreach ($this->esClient->getIndexAliases($params) as $name => $aliases) {
-            if ($this->isElasticSuiteIndex($name)) {
-                $elasticSuiteIndices[$name] = $aliases ? key($aliases['aliases']) : null;
-            }
-        }
-
-        return $elasticSuiteIndices;
-    }
-
-    /**
-     * Returns if index is elastic suite index.
-     *
-     * @param string $indexName Index name.
-     * @return bool
-     */
-    public function isElasticSuiteIndex($indexName): bool
-    {
-        foreach ($this->elasticSuiteIndices as $elasticSuiteIndex) {
-            if (strpos($indexName, $elasticSuiteIndex) !== false) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -166,27 +97,6 @@ class Index extends AbstractHelper
         }
 
         return IndexStatus::UNDEFINED_STATUS;
-    }
-
-    /**
-     * Size formatted.
-     *
-     * @param string $bytes Bytes.
-     *
-     * @return string
-     */
-    public function sizeFormatted($bytes): string
-    {
-        if ($bytes > 0) {
-            $unit = (int) log($bytes, 1024);
-            $units = [__('B'), __('KB'), __('MB'), __('GB')];
-
-            if (array_key_exists($unit, $units) === true) {
-                return sprintf('%d %s', $bytes / 1024 ** $unit, $units[$unit]);
-            }
-        }
-
-        return $bytes;
     }
 
     /**
@@ -265,7 +175,7 @@ class Index extends AbstractHelper
     private function getIndexUpdatedDateFromIndexName($indexName)
     {
         $matches = [];
-        preg_match_all('/{{([\w]*)}}/', $this->indexSettings->getIndicesPattern(), $matches);
+        preg_match_all('/{{([\w]*)}}/', $this->indexSettingsHelper->getIndicesPattern(), $matches);
 
         if (empty($matches[1])) {
             return false;

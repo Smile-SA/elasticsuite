@@ -18,6 +18,7 @@ use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Framework\View\Result\PageFactory;
 use Smile\ElasticsuiteCore\Client\Client;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 
 /**
  * Indices Adminhtml View controller.
@@ -26,7 +27,7 @@ use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
  * @package  Smile\ElasticsuiteIndices
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
  */
-class View extends AbstractAction
+class View extends AbstractAction implements HttpGetActionInterface
 {
     /**
      * @var Client

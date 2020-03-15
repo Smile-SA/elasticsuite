@@ -13,13 +13,10 @@
  */
 namespace Smile\ElasticsuiteIndices\Model\ResourceModel\Index;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Magento\Framework\Data\Collection as DataCollection;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DataObject;
-use Smile\ElasticsuiteCore\Client\Client;
-use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
-use Smile\ElasticsuiteIndices\Helper\Index as IndexHelper;
+use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 
 /**
  * Class Resource Model: Index Collection
@@ -31,30 +28,22 @@ use Smile\ElasticsuiteIndices\Helper\Index as IndexHelper;
 class Collection extends DataCollection
 {
     /**
-     * @var Client
+     * @var IndexStatsProvider
      */
-    private $esClient;
+    protected $indexStatsProvider;
 
     /**
-     * @var IndexHelper
-     */
-    protected $indexHelper;
-
-    /**
-     * @param EntityFactoryInterface $entityFactory Entity factory.
-     * @param Client                 $esClient      ElasticSearch client.
-     * @param IndexHelper            $indexHelper   Index helper.
+     * @param EntityFactoryInterface $entityFactory      Entity factory.
+     * @param IndexStatsProvider     $indexStatsProvider Index stats provider.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        Client $esClient,
-        IndexHelper $indexHelper
+        IndexStatsProvider $indexStatsProvider
     ) {
         parent::__construct($entityFactory);
 
         $this->setItemObjectClass(DataObject::class);
-        $this->esClient = $esClient;
-        $this->indexHelper = $indexHelper;
+        $this->indexStatsProvider = $indexStatsProvider;
     }
 
     /**
@@ -69,26 +58,10 @@ class Collection extends DataCollection
      */
     public function loadData($printQuery = false, $logQuery = false): Collection
     {
-        foreach ($this->indexHelper->getElasticSuiteIndices() as $indexName => $alias) {
+        foreach ($this->indexStatsProvider->getElasticSuiteIndices() as $indexName => $alias) {
             $item = $this->getNewEmptyItem();
-            $data = [
-                'index_name'  => $indexName,
-                'index_alias' => $alias,
-            ];
 
-            try {
-                $indexStatsResponse = $this->esClient->indexStats($indexName);
-            } catch (Missing404Exception $e) {
-                $data['index_status'] = IndexStatus::REBUILDING_STATUS;
-                $this->addItem($item->setData($data));
-                continue;
-            }
-
-            $indexStats = current($indexStatsResponse['indices']);
-            $data['number_of_documents'] = $indexStats['total']['docs']['count'];
-            $data['size'] = $this->indexHelper->sizeFormatted($indexStats['total']['store']['size_in_bytes']);
-            $data['index_status'] = $this->indexHelper->getIndexStatus($indexName, $alias);
-            $this->addItem($item->setData($data));
+            $this->addItem($item->setData($this->indexStatsProvider->indexStats($indexName, $alias)));
         }
         $this->_setIsLoaded(true);
 
