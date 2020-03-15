@@ -15,10 +15,10 @@ namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Index;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
-use Smile\ElasticsuiteCore\Client\Client;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
-use Smile\ElasticsuiteIndices\Helper\Index as IndexHelper;
+use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
+use Smile\ElasticsuiteIndices\Model\IndexStatusProvider;
 
 /**
  * Indices Adminhtml Delete controller.
@@ -37,26 +37,29 @@ class Delete extends AbstractAction
     public const ADMIN_RESOURCE = 'Smile_ElasticsuiteIndices::remove';
 
     /**
-     * @var Client
+     * @var IndexStatsProvider
      */
-    private $esClient;
+    protected $indexStatsProvider;
 
     /**
-     * @var IndexHelper
+     * @var IndexStatusProvider
      */
-    protected $indexHelper;
+    protected $indexStatusProvider;
 
     /**
      * @inheritDoc
      *
-     * @param Context     $context     The current context.
-     * @param Client      $esClient    ElasticSearch client.
-     * @param IndexHelper $indexHelper Index helper.
+     * @param Context             $context             The current context.
+     * @param IndexStatsProvider  $indexStatsProvider  Index stats provider.
+     * @param IndexStatusProvider $indexStatusProvider Index status provider.
      */
-    public function __construct(Context $context, Client $esClient, IndexHelper $indexHelper)
-    {
-        $this->esClient = $esClient;
-        $this->indexHelper = $indexHelper;
+    public function __construct(
+        Context $context,
+        IndexStatsProvider $indexStatsProvider,
+        IndexStatusProvider $indexStatusProvider
+    ) {
+        $this->indexStatsProvider = $indexStatsProvider;
+        $this->indexStatusProvider = $indexStatusProvider;
         parent::__construct($context);
     }
 
@@ -71,7 +74,7 @@ class Delete extends AbstractAction
         $indexName = $this->getRequest()->getParam('name', false);
         if ($indexName) {
             try {
-                $index = $this->indexHelper->getElasticSuiteIndices(['index' => $indexName]);
+                $index = $this->indexStatsProvider->getElasticSuiteIndices(['index' => $indexName]);
             } catch (\Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
 
@@ -86,7 +89,7 @@ class Delete extends AbstractAction
         }
 
         try {
-            $this->esClient->deleteIndex($indexName);
+            $this->indexStatsProvider->deleteIndex($indexName);
             $this->messageManager->addSuccessMessage(__('You deleted the index %1.', $indexName));
 
             return $resultRedirect->setPath('*/*/index');
@@ -106,6 +109,6 @@ class Delete extends AbstractAction
      */
     private function indexCanRemoved($indexName, $alias): bool
     {
-        return $this->_isAllowed() && $this->indexHelper->getIndexStatus($indexName, $alias) === IndexStatus::GHOST_STATUS;
+        return $this->_isAllowed() && $this->indexStatusProvider->getIndexStatus($indexName, $alias) === IndexStatus::GHOST_STATUS;
     }
 }

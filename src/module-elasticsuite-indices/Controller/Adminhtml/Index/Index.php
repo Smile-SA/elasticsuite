@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Index;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\Result\Page;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 
 /**
  * ElasticSuite Indices Adminhtml Index controller.
@@ -25,7 +26,7 @@ use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
  * @package  Smile\ElasticsuiteIndices
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
  */
-class Index extends AbstractAction
+class Index extends AbstractAction implements HttpGetActionInterface
 {
     /**
      * @inheritdoc

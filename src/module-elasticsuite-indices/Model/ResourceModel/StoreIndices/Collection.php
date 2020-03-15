@@ -18,7 +18,9 @@ use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DataObject;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticsuiteCore\Helper\IndexSettings;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteCore\Index\IndexSettings;
+use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 
 /**
  * Class Resource Model: Store Indices Collection
@@ -30,20 +32,14 @@ use Smile\ElasticsuiteCore\Helper\IndexSettings;
 class Collection extends DataCollection
 {
     /**
-     * ElasticSuite index names.
-     *
-     * @var array
-     */
-    private $indexNames = [
-        'catalog_category',
-        'catalog_product',
-        'thesaurus',
-    ];
-
-    /**
      * @var StoreManagerInterface[]
      */
     protected $storeList;
+
+    /**
+     * @var IndexSettingsHelper
+     */
+    private $indexSettingsHelper;
 
     /**
      * @var IndexSettings
@@ -51,17 +47,25 @@ class Collection extends DataCollection
     private $indexSettings;
 
     /**
-     * @param EntityFactoryInterface $entityFactory EntityFactory.
-     * @param StoreManagerInterface  $storeManager  Store Manager.
-     * @param IndexSettings          $indexSettings ElasticSuite index settings.
+     * @var IndexStatsProvider
+     */
+    protected $indicesConfig;
+
+    /**
+     * @param EntityFactoryInterface $entityFactory       EntityFactory.
+     * @param StoreManagerInterface  $storeManager        Store Manager.
+     * @param IndexSettingsHelper    $indexSettingsHelper ElasticSuite index settings helper.
+     * @param IndexSettings          $indexSettings       Index settings.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         StoreManagerInterface $storeManager,
+        IndexSettingsHelper $indexSettingsHelper,
         IndexSettings $indexSettings
     ) {
         parent::__construct($entityFactory);
         $this->storeList = $storeManager->getStores();
+        $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexSettings = $indexSettings;
     }
 
@@ -76,7 +80,7 @@ class Collection extends DataCollection
     {
         $data = [];
         foreach ($this->storeList as $store) {
-            foreach ($this->indexNames as $indexName) {
+            foreach (array_keys($this->indexSettings->getIndicesConfig()) as $indexName) {
                 $item = $this->prepareItem($store, $indexName);
                 $data[] = $item;
             }
@@ -96,7 +100,7 @@ class Collection extends DataCollection
     protected function prepareItem(StoreInterface $store, $indexName): DataObject
     {
         $item = new DataObject();
-        $item->setData('pattern', $this->indexSettings->getIndexAliasFromIdentifier($indexName, $store));
+        $item->setData('pattern', $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexName, $store));
 
         return $item;
     }

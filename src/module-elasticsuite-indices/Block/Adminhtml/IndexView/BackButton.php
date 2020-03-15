@@ -34,6 +34,10 @@ class BackButton extends Container
         array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->addButton(
+            'back',
+            $this->getButtonData()
+        );
     }
 
     /**
@@ -48,19 +52,5 @@ class BackButton extends Container
             'on_click' => sprintf("location.href = '%s';", $this->getUrl('*/*/index')),
             'class' => 'back',
         ];
-    }
-
-    /**
-     * Block constructor adds buttons
-     *
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     */
-    protected function _construct()
-    {
-        $this->addButton(
-            'back',
-            $this->getButtonData()
-        );
-        parent::_construct();
     }
 }
