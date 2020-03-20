@@ -144,8 +144,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
         }
 
-        if (!in_array($category->getId(), $excludedCategories)) {
+        static $ids = [];
+        if (!in_array($category->getId(), $ids)) {
             $excludedCategories[] = $category->getId();
+            $ids[] = $category->getId();
 
             if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
                 $query = $this->getVirtualCategoryQuery($category, $excludedCategories, $category->getData('virtual_category_root'));
