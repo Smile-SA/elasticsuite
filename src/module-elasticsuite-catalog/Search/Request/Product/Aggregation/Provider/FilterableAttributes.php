@@ -101,8 +101,10 @@ class FilterableAttributes implements \Smile\ElasticsuiteCore\Api\Search\Request
     {
         $aggregations = [];
         foreach ($attributes as $attribute) {
-            $bucketConfig                        = $this->getBucketConfig($attribute);
-            $aggregations[$bucketConfig['name']] = $bucketConfig;
+            $bucketConfig = $this->getBucketConfig($attribute);
+            if (!empty($bucketConfig) && isset($bucketConfig['name'])) {
+                $aggregations[$bucketConfig['name']] = $bucketConfig;
+            }
         }
 
         return $aggregations;
