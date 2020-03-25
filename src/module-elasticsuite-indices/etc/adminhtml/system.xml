@@ -1,0 +1,34 @@
+<!--
+/**
+ * Smile Indices module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="smile_elasticsuite_indices" translate="label" type="text" sortOrder="920" showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Indices Mapping</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_indices</resource>
+            <group id="indices_mapping" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Indices Mapping</label>
+                <field id="mapping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Mapping</label>
+                    <frontend_model>Smile\ElasticsuiteIndices\Block\Adminhtml\Form\Field\Mapping</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <comment><![CDATA[Configuration to associate index names with indexer keys. this is required to determine the working indexes.<br />You can add other indices managed by the ElasticSuite. For example config for module ElasticSuite CMS Pages Search:<br />Indexer key - elasticsuite_cms_page_fulltext<br />Index name - cms_page]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

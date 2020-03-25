@@ -17,6 +17,7 @@ use Magento\Framework\DataObject;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
+use Smile\ElasticsuiteIndices\Model\ResourceModel\WorkingIndexer\CollectionFactory as WorkingIndexerCollectionFactory;
 use Zend_Date;
 use Zend_Date_Exception;
 
@@ -55,17 +56,25 @@ class IndexStatusProvider
     protected $storeIndices;
 
     /**
+     * @var array
+     */
+    protected $workingIndexers;
+
+    /**
      * Constructor.
      *
-     * @param IndexSettingsHelper           $indexSettingsHelper Index settings helper.
-     * @param StoreIndicesCollectionFactory $storeIndicesFactory Store indices collection.
+     * @param IndexSettingsHelper             $indexSettingsHelper      Index settings helper.
+     * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
+     * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
      */
     public function __construct(
         IndexSettingsHelper $indexSettingsHelper,
-        StoreIndicesCollectionFactory $storeIndicesFactory
+        StoreIndicesCollectionFactory $storeIndicesFactory,
+        WorkingIndexerCollectionFactory $indexerCollectionFactory
     ) {
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
+        $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
     }
 
     /**

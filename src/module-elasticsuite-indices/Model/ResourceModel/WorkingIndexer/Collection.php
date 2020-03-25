@@ -21,6 +21,7 @@ use Magento\Framework\Indexer\StateInterface;
 use Magento\Indexer\Model\Indexer\Collection as IndexerCollection;
 use Magento\Indexer\Model\Indexer\CollectionFactory as IndexerCollectionFactory;
 use Smile\ElasticsuiteCore\Helper\IndexSettings;
+use Smile\ElasticsuiteIndices\Helper\Settings;
 use Zend_Date;
 
 /**
@@ -33,59 +34,9 @@ use Zend_Date;
 class Collection extends DataCollection
 {
     /**
-     * Mapping values for indices.
-     *
-     * @var array
+     * @var Settings
      */
-    private $indicesMapping = [
-        'catalog_category_product' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalog_product_attribute' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalog_product_category' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalog_product_price' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'cataloginventory_stock' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalogrule_product' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalogrule_rule' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'catalogsearch_fulltext' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'elasticsuite_categories_fulltext' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'elasticsuite_thesaurus' => [
-            'thesaurus',
-        ],
-        'inventory' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-        'salesrule_rule' => [
-            'catalog_category',
-            'catalog_product',
-        ],
-    ];
+    protected $helper;
 
     /**
      * @var IndexerCollectionFactory
@@ -101,16 +52,19 @@ class Collection extends DataCollection
      * @param EntityFactoryInterface   $entityFactory     Entity factory.
      * @param IndexerCollectionFactory $collectionFactory Indexer collection.
      * @param IndexSettings            $indexSettings     ElasticSuite index settings.
+     * @param Settings                 $helper            Settings helper.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         IndexerCollectionFactory $collectionFactory,
-        IndexSettings $indexSettings
+        IndexSettings $indexSettings,
+        Settings $helper
     ) {
         parent::__construct($entityFactory);
 
         $this->collectionFactory = $collectionFactory;
         $this->indexSettings = $indexSettings;
+        $this->helper = $helper;
     }
 
     /**
@@ -126,15 +80,16 @@ class Collection extends DataCollection
         $collection = $this->collectionFactory->create();
         $indexers = $collection->getItems();
         $data = [];
+        $indicesMapping = $this->helper->getMapping();
         foreach ($indexers as $indexer) {
             /** @var IndexerModel $indexer */
             if ($indexer->getStatus() === StateInterface::STATUS_WORKING) {
                 $item = $this->prepareItem($indexer);
-                if (array_key_exists($item['indexer_id'], $this->indicesMapping)) {
+                if (array_key_exists($item['indexer_id'], $indicesMapping)) {
                     $indexUpdateDate = new Zend_Date($item['indexer_updated'], Zend_Date::ISO_8601);
                     $indexNameSuffix = $this->indexSettings->getIndexNameSuffix($indexUpdateDate);
 
-                    foreach ($this->indicesMapping[$item['indexer_id']] as $index) {
+                    foreach ($indicesMapping[$item['indexer_id']] as $index) {
                         $data[$index . '_' . $indexNameSuffix] = $item;
                     }
                 }
