@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
@@ -135,8 +135,9 @@ class Slider extends AbstractRenderer
             'intervals'        => $this->getIntervals(),
             'urlTemplate'      => $this->getUrlTemplate(),
             'messageTemplates' => [
-                'displayCount' => __('<%- count %> products'),
-                'displayEmpty' => __('No products in the selected range.'),
+                'displayOne'    => __('1 product'),
+                'displayCount'  => __('<%- count %> products'),
+                'displayEmpty'  => __('No products in the selected range.'),
             ],
         ];
 

@@ -3,6 +3,7 @@ Back,Retour
 Reset,Réinitialiser
 "Save and Continue Edit","Sauvegarder et continuer l'édition"
 Save,Sauvegarder
+"1 product","1 produit"
 "<%- count %> products","<%- count %> produits"
 "No products in the selected range.","Aucun produit trouvé pour cet intervalle."
 "Search Configuration","Configuration de la recherche"

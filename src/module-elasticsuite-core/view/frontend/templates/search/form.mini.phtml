@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -70,7 +70,8 @@ $helper = $this->helper('Magento\Search\Helper\Data');
             "url":"<?php /* @escapeNotVerified */ echo $block->getUrl('search/ajax/suggest'); ?>",
             "destinationSelector":"#search_autocomplete",
             "templates": <?php /* @noEscape */ echo $block->getJsonSuggestRenderers();?>,
-            "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>
+            "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>,
+            "minSearchLength" : <?php /* @escapeNotVerified */ echo $helper->getMinQueryLength();?>
         }
     }
 }

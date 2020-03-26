@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -36,4 +36,5 @@ interface QueryInterface extends \Magento\Framework\Search\Request\QueryInterfac
     const TYPE_MISSING       = 'missingQuery';
     const TYPE_FUNCTIONSCORE = 'functionScore';
     const TYPE_MORELIKETHIS  = 'moreLikeThisQuery';
+    const TYPE_MATCHPHRASEPREFIX = 'matchPhrasePrefixQuery';
 }

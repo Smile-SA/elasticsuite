@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalogOptimizer
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<pages xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/PageObject.xsd">
+    <page name="AdminOptimizerPage" url="smile_elasticsuite_catalog_optimizer/optimizer/" area="admin" module="ElasticSuite_Optimizer">
+        <section name="AdminOptimizerSidebarActionSection"/>
+        <section name="AdminCreateOptimizerSection"/>
+    </page>
+</pages>

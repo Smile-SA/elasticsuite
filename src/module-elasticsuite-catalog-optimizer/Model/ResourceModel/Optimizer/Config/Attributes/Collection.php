@@ -8,10 +8,19 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Config\Attributes;
+
+use Magento\Eav\Model\Config;
+use Magento\Eav\Model\EntityFactory as EavEntityFactory;
+use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
+use Magento\Framework\Data\Collection\EntityFactory as CollectionEntityFactory;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\Event\ManagerInterface;
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Psr\Log\LoggerInterface;
 
 /**
  * Collection of attributes that can be used to create linear-based optimizers.
@@ -34,30 +43,41 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     private $availableBackendTypes = [];
 
     /**
+     * @var array
+     */
+    private $nestedFieldAttributes = [];
+
+    /**
      * Collection constructor.
      *
-     * @param \Magento\Framework\Data\Collection\EntityFactory             $entityFactory         Entity Factory
-     * @param \Psr\Log\LoggerInterface                                     $logger                Logger
-     * @param \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy         Fetch Strategy
-     * @param \Magento\Framework\Event\ManagerInterface                    $eventManager          Event Manager
-     * @param \Magento\Eav\Model\Config                                    $eavConfig             EAV Config
-     * @param \Magento\Eav\Model\EntityFactory                             $eavEntityFactory      EAV Entity Factory
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection            Connection
-     * @param \Magento\Framework\Model\ResourceModel\Db\AbstractDb|null    $resource              Resource Connection
-     * @param array                                                        $availableBackendTypes Available Backend Types.
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
+     * @param CollectionEntityFactory $entityFactory         Entity Factory.
+     * @param LoggerInterface         $logger                Logger.
+     * @param FetchStrategyInterface  $fetchStrategy         Fetch Strategy.
+     * @param ManagerInterface        $eventManager          Event Manager.
+     * @param Config                  $eavConfig             EAV Config.
+     * @param EavEntityFactory        $eavEntityFactory      EAV Entity Factory.
+     * @param AdapterInterface|null   $connection            Connection.
+     * @param AbstractDb|null         $resource              Resource Connection.
+     * @param array                   $availableBackendTypes Available Backend Types.
+     * @param array                   $nestedFieldAttributes Attributes represented by a nested field in the index.
      */
     public function __construct(
-        \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\Eav\Model\Config $eavConfig,
-        \Magento\Eav\Model\EntityFactory $eavEntityFactory,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        $availableBackendTypes = []
+        CollectionEntityFactory $entityFactory,
+        LoggerInterface $logger,
+        FetchStrategyInterface $fetchStrategy,
+        ManagerInterface $eventManager,
+        Config $eavConfig,
+        EavEntityFactory $eavEntityFactory,
+        AdapterInterface $connection = null,
+        AbstractDb $resource = null,
+        $availableBackendTypes = [],
+        $nestedFieldAttributes = []
     ) {
+
         $this->availableBackendTypes = array_merge($this->defaultAvailableBackendTypes, $availableBackendTypes);
+        $this->nestedFieldAttributes = $nestedFieldAttributes;
 
         parent::__construct(
             $entityFactory,
@@ -92,6 +112,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         ];
 
         $this->getSelect()->where(implode(' OR ', $conditions));
+
+        if (!empty($this->nestedFieldAttributes)) {
+            $this->addFieldToFilter('attribute_code', ['nin' => $this->nestedFieldAttributes]);
+        }
 
         return $this;
     }

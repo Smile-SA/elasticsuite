@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategories
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 

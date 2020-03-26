@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteVirtualCategory
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminElasticsuiteCategorySection">
+        <element name="virtualCategory" type="checkbox" selector="input[name='is_virtual_category']"/>
+        <element name="virtualCategoryLabel" type="text" selector="input[name='is_virtual_category']+label"/>
+    </section>
+</sections>

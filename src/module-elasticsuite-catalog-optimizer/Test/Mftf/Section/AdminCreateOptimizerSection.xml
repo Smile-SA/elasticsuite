@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalogOptimizer
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminCreateOptimizerSection">
+        <element name="createOptimizerButton" type="button" selector="#save-button" timeout="30"/>
+        <element name="modelDropdown" type="select" selector="select[name='model']"/>
+        <element name="activeSwitch" type="checkbox" selector="checkbox[name='is_active']"/>
+        <element name="storeId" type="select" selector="select[name='store_id']"/>
+        <element name="optimizerNameInput" type="input" selector="input[name='name']"/>
+        <element name="activeFrom" type="input" selector="input[name='from_date']"/>
+        <element name="activeTo" type="input" selector="input[name='to_date']"/>
+        <element name="activeToButton" type="input" selector="//*[@name='to_date']/following-sibling::button"/>
+        <element name="goTodayButton" type="input" selector="//button[contains(text(),'Go Today')]"/>
+        <element name="requestType" type="multiselect" selector="select[name=search_container]"/>
+        <element name="boostValue" type="input" selector="input[name='config[constant_score_value]']"/>
+        <element name="saveButton" type="button" selector="#save" timeout="90"/>
+        <element name="successMessage" type="text" selector=".message-success"/>
+    </section>
+</sections>

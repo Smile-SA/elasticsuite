@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -67,7 +67,7 @@ class Full extends Indexer
         /**
          * @var \Magento\Catalog\Model\ResourceModel\Category\Collection $categoryCollection
          */
-        $categoryCollection = $this->categoryCollectionFactory->create();
+        $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
         $categoryCollection->addIsActiveFilter();
         $select = $categoryCollection->getSelect();
 

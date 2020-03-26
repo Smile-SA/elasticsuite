@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model;
@@ -231,7 +231,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         if ($rootCategory && $rootCategory->getId()
-            && ($rootCategory->getLevel() < 1 || (int) $rootCategory->getId() === (int) $this->getRootCategoryId($storeId))
+            && ($rootCategory->getLevel() < 1 || (int) $rootCategory->getId() === (int) $this->getTreeRootCategoryId($category))
         ) {
             $rootCategory = null;
         }
@@ -369,22 +369,21 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Retrieve store root category id.
+     * Retrieve the root category id of the tree the category belongs to.
      *
-     * @param \Magento\Store\Api\Data\StoreInterface|int|string $store Store id.
+     * @param CategoryInterface $category Category.
      *
      * @return int
      */
-    private function getRootCategoryId($store): int
+    private function getTreeRootCategoryId($category): int
     {
-        if (is_numeric($store) || is_string($store)) {
-            $store = $this->storeManager->getStore($store);
-        } elseif ($store === null) {
-            $store = $this->storeManager->getStore();
+        $rootCategoryId = 0;
+
+        $pathIds = $category->getPathIds();
+        if (count($pathIds) > 1) {
+            $rootCategoryId = (int) current(array_slice($pathIds, 1, 1));
         }
 
-        $storeGroupId = $store->getStoreGroupId();
-
-        return $this->storeManager->getGroup($storeGroupId)->getRootCategoryId();
+        return $rootCategoryId;
     }
 }

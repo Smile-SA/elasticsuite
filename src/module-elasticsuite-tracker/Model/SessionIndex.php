@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -75,7 +75,11 @@ class SessionIndex implements SessionIndexInterface
         $indices           = [];
 
         foreach ($sessionIdsByStore as $storeId => $sessionIds) {
-            $sessionData = $this->resourceModel->getSessionData($storeId, $sessionIds);
+            try {
+                $sessionData = $this->resourceModel->getSessionData($storeId, $sessionIds);
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+                $sessionData = [];
+            }
 
             foreach ($sessionData as $session) {
                 if (isset($session['store_id'])) {

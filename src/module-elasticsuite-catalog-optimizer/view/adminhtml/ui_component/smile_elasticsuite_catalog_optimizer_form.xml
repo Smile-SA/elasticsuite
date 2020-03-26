@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 -->
@@ -595,7 +595,7 @@
                 <dataScope>config.attribute_code</dataScope>
                 <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
                 <tooltip>
-                    <description translate="true">Only numeric attributes are available here.</description>
+                    <description translate="true">Only numeric attributes (with a non-nested index field) are available here.</description>
                 </tooltip>
             </settings>
             <formElements>

@@ -7,7 +7,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -233,7 +233,7 @@ define([
 
             this.submitBtn.disabled = this._isEmpty(value);
 
-            if (value.length >= parseInt(this.options.minSearchLength, 10)) {
+            if (value.trim().length >= parseInt(this.options.minSearchLength, 10)) {
                 this.searchForm.addClass('processing');
                 this.currentRequest = $.ajax({
                     method: "GET",

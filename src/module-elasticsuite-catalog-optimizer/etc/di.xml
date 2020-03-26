@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Fanny DECLERCK <fadec@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -93,6 +93,14 @@
                 <item name="quick_search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Search\OptimizerFilter</item>
                 <item name="catalog_view_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Category\OptimizerFilter</item>
                 <item name="catalog_product_autocomplete" xsi:type="object">autocompleteOptimizerFilter</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Config\Attributes\Collection">
+        <arguments>
+            <argument name="nestedFieldAttributes" xsi:type="array">
+                <item name="price" xsi:type="string">price</item>
             </argument>
         </arguments>
     </type>

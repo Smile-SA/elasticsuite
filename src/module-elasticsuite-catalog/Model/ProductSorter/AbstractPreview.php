@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\ProductSorter;
@@ -60,6 +60,11 @@ abstract class AbstractPreview implements PreviewInterface
     private $queryFactory;
 
     /**
+     * @var string
+     */
+    private $searchRequestName;
+
+    /**
      * Constructor.
      *
      * @param ProductCollectionFactory $collectionFactory Product collection factory.
@@ -68,6 +73,7 @@ abstract class AbstractPreview implements PreviewInterface
      * @param integer                  $storeId           Store id.
      * @param integer                  $size              Preview size.
      * @param string                   $search            Preview search.
+     * @param string                   $searchRequestName Search request name.
      */
     public function __construct(
         ProductCollectionFactory $collectionFactory,
@@ -75,7 +81,8 @@ abstract class AbstractPreview implements PreviewInterface
         QueryFactory $queryFactory,
         $storeId,
         $size = 10,
-        $search = ''
+        $search = '',
+        $searchRequestName = 'catalog_view_container'
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->itemFactory       = $itemFactory;
@@ -83,6 +90,7 @@ abstract class AbstractPreview implements PreviewInterface
         $this->storeId           = $storeId;
         $this->size              = $size;
         $this->search            = $search;
+        $this->searchRequestName = $searchRequestName;
     }
 
     /**
@@ -142,7 +150,7 @@ abstract class AbstractPreview implements PreviewInterface
      */
     protected function getProductCollection() : Collection
     {
-        $productCollection = $this->collectionFactory->create();
+        $productCollection = $this->collectionFactory->create(['searchRequestName' => $this->searchRequestName]);
 
         $productCollection->setStoreId($this->storeId)
             ->addAttributeToSelect(['name', 'small_image']);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteThesaurus
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="CreateThesaurusActionGroup">
+        <annotations>
+            <description>Create Thesaurus</description>
+        </annotations>
+        <arguments>
+            <argument name="thesaurusEntity"/>
+        </arguments>
+        <amOnPage url="{{AdminThesaurusPage.url}}" stepKey="openAdminThesaurusIndexPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad1"/>
+        <click selector="{{AdminThesaurusSidebarActionSection.addThesaurusButton}}" stepKey="clickOnAddNewThesaurus"/>
+        <waitForPageLoad stepKey="waitForPageToLoad2"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.typeDropdown}}" userInput="{{thesaurusEntity.type}}" stepKey="selectType"/>
+        <click selector="{{AdminCreateThesaurusSection.createThesaurusButton}}" stepKey="clickOnCreateNewThesaurus"/>
+        <waitForPageLoad stepKey="waitForPageToLoad3"/>
+        <fillField selector="{{AdminCreateThesaurusSection.thesaurusNameInput}}" userInput="{{thesaurusEntity.name}}" stepKey="enterThesaurusName"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.activeDropdown}}" userInput="{{Thesaurus.is_active}}" stepKey="selectActive"/>
+        <selectOption selector="{{AdminCreateThesaurusSection.storeId}}" userInput="{{Thesaurus.store_id}}" stepKey="selectStoreId"/>
+    </actionGroup>
+</actionGroups>

@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -79,7 +79,12 @@ class EventQueue extends AbstractDb
         $eventData = $this->getConnection()->fetchAll($select);
 
         foreach ($eventData as &$currentEvent) {
-            $currentEvent = array_merge($currentEvent, $this->jsonSerializer->unserialize($currentEvent['data']));
+            try {
+                $currentEventData = $this->jsonSerializer->unserialize($currentEvent['data']);
+            } catch (\InvalidArgumentException $e) {
+                $currentEventData = [];
+            }
+            $currentEvent = array_merge($currentEvent, $currentEventData);
             unset($currentEvent['data']);
         }
 

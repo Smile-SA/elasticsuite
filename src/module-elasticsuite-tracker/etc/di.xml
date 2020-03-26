@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -35,6 +35,15 @@
     <type name="Magento\Quote\Model\Quote">
       <plugin name="trackAddedProduct" type="Smile\ElasticsuiteTracker\Plugin\QuotePlugin" sortOrder="1" />
     </type>
-    
+
+    <type name="Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcerCollector">
+        <arguments>
+            <argument name="factories" xsi:type="array">
+                <item name="integer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\IntegerFactory</item>
+                <item name="double" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\DoubleFactory</item>
+                <item name="boolean" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Mapping\TypeEnforcer\BooleanFactory</item>
+            </argument>
+        </arguments>
+    </type>
 
 </config>

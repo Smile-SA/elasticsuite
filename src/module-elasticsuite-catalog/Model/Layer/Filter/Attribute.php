@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -212,14 +212,13 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
 
             if (!empty($options)) {
                 foreach ($options as $option) {
-                    if (isset($option['label'])) {
-                        // Manage labels that contains single quote.
-                        $optionLabel = trim((string) htmlspecialchars($option['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false));
+                    if (isset($option['label']) && !empty($option['label'])) {
+                        $optionLabel = trim((string) $option['label']);
                         $optionPosition++;
 
-                        if ($optionLabel !== null && isset($items[$optionLabel])) {
+                        if (isset($items[$optionLabel])) {
                             $items[$optionLabel]['adminSortIndex'] = $optionPosition;
-                            $items[$optionLabel]['value']          = $option['label'];
+                            $items[$optionLabel]['value']          = $optionLabel;
                         }
                     }
                 }

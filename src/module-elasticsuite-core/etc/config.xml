@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -38,6 +38,12 @@
                 <max_size>3</max_size>
             </term_autocomplete>
         </smile_elasticsuite_autocomplete_settings>
+
+        <catalog>
+            <search>
+                <min_query_length>2</min_query_length>
+            </search>
+        </catalog>
 
     </default>
 </config>

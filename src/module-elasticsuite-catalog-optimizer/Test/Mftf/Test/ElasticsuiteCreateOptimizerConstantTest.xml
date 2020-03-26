@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteCatalogOptimizer
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteCreateOptimizerConstantTest">
+        <annotations>
+            <features value="ElasticSuiteOptimizer"/>
+            <stories value="Create a Optimizer with constant model via the Admin"/>
+            <title value="We can create Constant Optimizer"/>
+            <description value="We can create Constant Optimizer"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteOptimizer-1"/>
+            <group value="elasticSuiteOptimizer"/>
+        </annotations>
+        <after>
+            <actionGroup ref="logout" stepKey="logout"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <actionGroup ref="CreateOptimizerActionGroup" stepKey="createOptimizer"/>
+
+        <selectOption selector="{{AdminCreateOptimizerSection.modelDropdown}}" userInput="{{ConstantOptimizer.model}}" stepKey="selectModel"/>
+        <selectOption selector="{{AdminCreateOptimizerSection.storeId}}" userInput="{{ConstantOptimizer.store_id}}" stepKey="selectStoreId"/>
+        <fillField selector="{{AdminCreateOptimizerSection.optimizerNameInput}}" userInput="{{ConstantOptimizer.name}}" stepKey="enterOptimizerName"/>
+
+        <!--Select Dates-->
+        <fillField selector="{{AdminCreateOptimizerSection.activeFrom}}" userInput="{{ConstantOptimizer.active_from}}" stepKey="fillDateFrom"/>
+        <click selector="{{AdminCreateOptimizerSection.activeTo}}" stepKey="clickActiveTo"/>
+        <click selector="{{AdminCreateOptimizerSection.activeToButton}}" stepKey="clickActiveToButton"/>
+        <click selector="{{AdminCreateOptimizerSection.goTodayButton}}" stepKey="clickGoTodayDate"/>
+        <selectOption selector="{{AdminCreateOptimizerSection.requestType}}" userInput="{{ConstantOptimizer.request_type}}" stepKey="selectRequestType"/>
+        <fillField selector="{{AdminCreateOptimizerSection.boostValue}}" userInput="{{ConstantOptimizer.boost_value}}" stepKey="fillBoostValue"/>
+        <click selector="{{AdminCreateOptimizerSection.saveButton}}" stepKey="saveOptimizer"/>
+        <seeElement selector="{{AdminCategoryMessagesSection.SuccessMessage}}" stepKey="assertSuccess"/>
+        <see userInput="{{ConstantOptimizer.name}}" stepKey="seeOptimizer"/>
+    </test>
+</tests>

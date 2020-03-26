@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2019 Smile
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form;
@@ -99,6 +99,8 @@ class DataProviderPlugin
 
         if ($currentCategory->getId() === null || $currentCategory->getLevel() < 2) {
             $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['visible'] = false;
+            $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['componentType'] = 'field';
+            $meta['display_settings']['children']['facet_config']['arguments']['data']['config']['formElement'] = 'input';
         }
 
         return $meta;

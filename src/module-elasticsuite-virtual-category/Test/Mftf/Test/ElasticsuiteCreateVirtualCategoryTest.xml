@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ /**
+  * DISCLAIMER
+  *
+  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+  * versions in the future.
+  *
+  * @category  Smile
+  * @package   Smile\ElasticsuiteVirtualCategory
+  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+  * @copyright 2020 Smile
+  * @license   Open Software License ("OSL") v. 3.0
+  */
+-->
+
+<tests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/testSchema.xsd">
+    <test name="ElasticsuiteCreateVirtualCategoryTest">
+        <annotations>
+            <features value="ElasticSuiteVirtualCategory"/>
+            <stories value="Create a virtual category"/>
+            <title value="Section ElasticSuite must be in left menu"/>
+            <description value="Section ElasticSuite must be in left menu"/>
+            <severity value="CRITICAL"/>
+            <testCaseId value="ElasticSuiteVirtualCategory-1"/>
+            <group value="elasticSuiteVirtualCategory"/>
+        </annotations>
+        <before>
+            <createData entity="SimpleSubCategory" stepKey="createVirtualCategory"/>
+        </before>
+        <after>
+            <deleteData createDataKey="createVirtualCategory" stepKey="deleteCategory"/>
+        </after>
+
+        <actionGroup ref="LoginAsAdmin" stepKey="loginAsAdmin"/>
+        <amOnPage url="{{AdminCategoryPage.url}}" stepKey="openAdminCategoryIndexPage"/>
+        <waitForPageLoad stepKey="waitForPageToLoad"/>
+        <click selector="{{AdminCategorySidebarTreeSection.expandAll}}" stepKey="clickOnExpandTree"/>
+        <click selector="{{AdminCategorySidebarTreeSection.categoryInTree(SimpleSubCategory.name)}}" stepKey="selectCreatedCategory"/>
+        <waitForPageLoad stepKey="waitForCategoryPageToLoad"/>
+        <dontSeeCheckboxIsChecked selector="{{AdminElasticsuiteCategorySection.virtualCategory}}" stepKey="dontSeeCheckboxVirtualCategoryIsChecked"/>
+        <click selector="{{AdminElasticsuiteCategorySection.virtualCategoryLabel}}" stepKey="enableVirtualCategory2"/>
+        <waitForAjaxLoad stepKey="waitForAjaxLoad"/>
+        <seeElementInDOM selector="//div[@id='virtual_rule']" stepKey="seeVirtualRule"/>
+        <actionGroup ref="logout" stepKey="logoutFromAdmin"/>
+    </test>
+</tests>
