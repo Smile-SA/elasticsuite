@@ -20,48 +20,32 @@
 ?>
 <div class="admin__table-wrapper">
     <table class="data-table admin__table-primary">
-        <?php $items = $block->getItemsCollection();
-        if (!empty($items->getItems())) : ?>
-        <thead>
-            <tr class="headings">
-                <?php
-                $columns = $block->getColumns();
-                foreach ($columns as $columnName => $columnTitle) : ?>
-                    <th class="col-<?= $block->escapeHtmlAttr($columnName) ?>"><span><?= $block->escapeHtml($columnTitle) ?></span></th>
-                <?php endforeach; ?>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($items as $_item) : ?>
-            <?php
-            $prefix = '';
-            printItem($columns, $_item, $prefix);
-            ?>
-        <?php endforeach; ?>
-        </tbody>
-        <?php else:?>
-        <?php echo __('Mapping is empty.')?>
-        <?php endif;?>
+        <?php $items = $block->getItemsCollection(); ?>
+        <input type="hidden" id="json-input" autocomplete="off" value="<?php echo $block->escapeHtml(json_encode($items->getItems())); ?>"</input>
+        <pre id="json-renderer" class="json-document"></pre>
     </table>
 </div>
 
-<?php
-/**
- * @param array  $columns
- * @param array  $item
- * @param string $prefix
- */
-function printItem($columns, $item, &$prefix = '')
-{
-    echo '<tr>';
-    foreach ($columns as $columnName => $columnTitle) {
-        echo '<td>' . ($columnName === 'name' ? $prefix : '') . $item[$columnName] . '</td>';
-    }
-    echo '</tr>';
-    if (!empty($item['properties'])) {
-        $prefix.= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-        foreach ($item['properties'] as $_sub_item) {
-            printItem($columns, $_sub_item, $prefix);
+<script type="text/javascript">
+    require(['jquery', 'Magento_Ui/js/modal/modal', 'jquery.json-viewer'], function ($, modal, jsonViewer) {
+
+        function renderJson() {
+            try {
+                var input = eval('(' + $('#json-input').val() + ')');
+            }
+            catch (error) {
+                return alert("Cannot eval JSON: " + error);
+            }
+            var options = {
+                        collapsed: 0,
+                        rootCollapsable: 1,
+                        withQuotes: 1,
+                        withLinks: 1
+                    };
+            $('#json-renderer').jsonViewer(input, options);
         }
-    }
-}
+
+        renderJson();
+    });
+</script>
+

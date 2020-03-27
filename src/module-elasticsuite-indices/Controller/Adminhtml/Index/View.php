@@ -16,9 +16,9 @@ namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Index;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticsuiteCore\Client\Client;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Smile\ElasticsuiteIndices\Model\IndexMappingProvider;
 
 /**
  * Indices Adminhtml View controller.
@@ -30,9 +30,9 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 class View extends AbstractAction implements HttpGetActionInterface
 {
     /**
-     * @var Client
+     * @var IndexMappingProvider
      */
-    private $esClient;
+    protected $indexMappingProvider;
 
     /**
      * @var PageFactory
@@ -47,18 +47,18 @@ class View extends AbstractAction implements HttpGetActionInterface
     /**
      * @inheritDoc
      *
-     * @param Context        $context              The current context.
-     * @param Client         $esClient             ElasticSearch client.
-     * @param PageFactory    $resultPageFactory    Page factory.
-     * @param ForwardFactory $resultForwardFactory Forward factory.
+     * @param Context              $context              The current context.
+     * @param IndexMappingProvider $indexMappingProvider Index mapping provider.
+     * @param PageFactory          $resultPageFactory    Page factory.
+     * @param ForwardFactory       $resultForwardFactory Forward factory.
      */
     public function __construct(
         Context $context,
-        Client $esClient,
+        IndexMappingProvider $indexMappingProvider,
         PageFactory $resultPageFactory,
         ForwardFactory $resultForwardFactory
     ) {
-        $this->esClient = $esClient;
+        $this->indexMappingProvider = $indexMappingProvider;
         $this->resultPageFactory = $resultPageFactory;
         $this->resultForwardFactory = $resultForwardFactory;
         parent::__construct($context);
@@ -71,7 +71,7 @@ class View extends AbstractAction implements HttpGetActionInterface
     {
         $indexName = $this->getRequest()->getParam('name');
         try {
-            $index = $this->esClient->getMapping($indexName);
+            $index = $this->indexMappingProvider->getMapping($indexName);
         } catch (\Exception $e) {
             $resultForward = $this->resultForwardFactory->create();
             $resultForward->forward('noroute');
