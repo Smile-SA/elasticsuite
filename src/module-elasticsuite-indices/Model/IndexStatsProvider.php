@@ -82,7 +82,7 @@ class IndexStatsProvider
     /**
      * Delete ElasticSuite index.
      *
-     * @param string $indexName Parameters array.
+     * @param string $indexName Index name.
      * @return void
      */
     public function deleteIndex($indexName): void

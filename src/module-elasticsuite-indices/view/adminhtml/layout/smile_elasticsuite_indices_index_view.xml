@@ -16,20 +16,16 @@
  */
  -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Smile_ElasticsuiteIndices::css/jquery.json-viewer.css"/>
+    </head>
     <body>
         <referenceContainer name="admin.scope.col.wrap" htmlClass="admin" />
         <referenceBlock name="page.actions.toolbar">
             <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\BackButton" as="back_button"/>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Items" name="mapping_items" template="Smile_ElasticsuiteIndices::view/items.phtml">
-                <arguments>
-                    <argument name="columns" xsi:type="array">
-                        <item name="name" xsi:type="string" translate="true">Name</item>
-                        <item name="type" xsi:type="string" translate="true">Type</item>
-                    </argument>
-                </arguments>
-            </block>
+            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Items" name="mapping_items" template="Smile_ElasticsuiteIndices::view/items.phtml" />
         </referenceContainer>
     </body>
 </page>

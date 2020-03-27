@@ -16,7 +16,7 @@ namespace Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping;
 use Magento\Framework\Data\Collection as DataCollection;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DataObject;
-use Smile\ElasticsuiteCore\Client\Client;
+use Smile\ElasticsuiteIndices\Model\IndexMappingProvider;
 
 /**
  * Class Resource Model: Index Mapping Collection
@@ -28,9 +28,9 @@ use Smile\ElasticsuiteCore\Client\Client;
 class Collection extends DataCollection
 {
     /**
-     * @var Client
+     * @var IndexMappingProvider
      */
-    private $esClient;
+    protected $indexMappingProvider;
 
     /**
      * @var string
@@ -38,18 +38,18 @@ class Collection extends DataCollection
     private $name;
 
     /**
-     * @param EntityFactoryInterface $entityFactory Entity factory.
-     * @param Client                 $esClient      ElasticSearch client.
-     * @param string                 $name          Index name.
+     * @param EntityFactoryInterface $entityFactory        Entity factory.
+     * @param IndexMappingProvider   $indexMappingProvider Index mapping provider.
+     * @param string                 $name                 Index name.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
-        Client $esClient,
+        IndexMappingProvider $indexMappingProvider,
         string $name
     ) {
         parent::__construct($entityFactory);
 
-        $this->esClient = $esClient;
+        $this->indexMappingProvider = $indexMappingProvider;
         $this->name = $name;
 
         $this->setItemObjectClass(DataObject::class);
@@ -64,43 +64,9 @@ class Collection extends DataCollection
      */
     public function loadData($printQuery = false, $logQuery = false): Collection
     {
-        $data = [];
-        $mapping = $this->esClient->getMapping($this->name);
-
-        $mappingArray = array_shift($mapping[$this->name]['mappings']);
-
-        if (!empty($mappingArray['properties'])) {
-            foreach ($mappingArray['properties'] as $name => $item) {
-                $data[] = $this->prepareItem($name, $item);
-            }
-        }
-        $this->_items = $data;
+        $mapping = $this->indexMappingProvider->getMapping($this->name);
+        $this->_items = array_shift($mapping[$this->name]['mappings']);
 
         return $this;
-    }
-
-    /**
-     * Prepare a index mapping item.
-     *
-     * @param string $propertyName Index property name.
-     * @param array  $propertyItem Index property item.
-     * @return DataObject
-     */
-    protected function prepareItem($propertyName, $propertyItem): DataObject
-    {
-        $dataItem = new DataObject();
-        $dataItem->setData('name', $propertyName);
-        if (!empty($propertyItem['type'])) {
-            $dataItem->setData('type', $propertyItem['type']);
-        }
-        $data = [];
-        if (!empty($propertyItem['properties'])) {
-            foreach ($propertyItem['properties'] as $name => $item) {
-                $data[] = $this->prepareItem($name, $item);
-            }
-            $dataItem->setData('properties', $data);
-        }
-
-        return $dataItem;
     }
 }

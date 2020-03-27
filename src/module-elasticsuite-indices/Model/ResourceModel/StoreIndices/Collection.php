@@ -20,7 +20,6 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Index\IndexSettings;
-use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 
 /**
  * Class Resource Model: Store Indices Collection
@@ -45,11 +44,6 @@ class Collection extends DataCollection
      * @var IndexSettings
      */
     private $indexSettings;
-
-    /**
-     * @var IndexStatsProvider
-     */
-    protected $indicesConfig;
 
     /**
      * @param EntityFactoryInterface $entityFactory       EntityFactory.
