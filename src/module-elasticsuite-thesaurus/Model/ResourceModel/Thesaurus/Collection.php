@@ -305,7 +305,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                 ]
             );
 
-        $this->addTermData($this->getConnection()->fetchAll($select));
+        $data = $this->getConnection()->fetchAll($select);
+
+        $this->addTermData($data);
+        $this->addTermExportData($data);
     }
 
     /**
@@ -331,6 +334,34 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
         foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
             $this->_items[$thesaurusId]->setData('terms_summary', implode(" <br/> ", $labels));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Process terms of each thesaurus for export.
+     *
+     * @param array $termData Raw terms data loaded from the DB.
+     *
+     * @return $this
+     */
+    private function addTermExportData($termData)
+    {
+        $labelsByThesaurusId = [];
+
+        foreach ($termData as $currentTerm) {
+            $label = $currentTerm['expansions_terms'];
+
+            if (isset($currentTerm['expanded_term']) && $currentTerm['expanded_term']) {
+                $label = sprintf("%s:%s", $currentTerm['expanded_term'], $label);
+            }
+
+            $labelsByThesaurusId[$currentTerm['thesaurus_id']][] = $label;
+        }
+
+        foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
+            $this->_items[$thesaurusId]->setData('terms_export', implode(";", $labels));
         }
 
         return $this;
