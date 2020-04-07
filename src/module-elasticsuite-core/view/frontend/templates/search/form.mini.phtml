@@ -70,7 +70,8 @@ $helper = $this->helper('Magento\Search\Helper\Data');
             "url":"<?php /* @escapeNotVerified */ echo $block->getUrl('search/ajax/suggest'); ?>",
             "destinationSelector":"#search_autocomplete",
             "templates": <?php /* @noEscape */ echo $block->getJsonSuggestRenderers();?>,
-            "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>
+            "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>,
+            "minSearchLength" : <?php /* @escapeNotVerified */ echo $helper->getMinQueryLength();?>
         }
     }
 }

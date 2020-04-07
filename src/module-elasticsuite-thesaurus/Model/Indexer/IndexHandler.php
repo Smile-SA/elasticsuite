@@ -152,7 +152,7 @@ class IndexHandler
 
     /**
      * Prepare the thesaurus data to be saved.
-     * Spaces are replaced with "_" into multiwords expression (ex foo bar => foo_bar).
+     * Spaces and hyphens are replaced with "_" into multiwords expression (ex foo bar => foo_bar).
      *
      * @param string[] $rows Original thesaurus text rows.
      *
@@ -161,7 +161,7 @@ class IndexHandler
     private function prepareSynonymFilterData($rows)
     {
         $rowMaper = function ($row) {
-            return preg_replace('/([\w])[\s-](?=[\w])/u', '\1_', $row);
+            return preg_replace('/([^\s-])[\s-]+(?=[^\s-])/u', '\1_', $row);
         };
 
         return array_map($rowMaper, $rows);

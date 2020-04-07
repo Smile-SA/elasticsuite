@@ -30,6 +30,7 @@ define(['jquery', 'Magento_Catalog/js/price-utils', 'mage/template', 'Magento_Ui
             rate           : 1.0000,
             maxLabelOffset : 0.01,
             messageTemplates : {
+                "displayOne": '<span class="msg">1 item</span>',
                 "displayCount": '<span class="msg"><%- count %> items</span>',
                 "displayEmpty": '<span class="msg-error">No items in the current range.</span>'
             },
@@ -82,7 +83,7 @@ define(['jquery', 'Magento_Catalog/js/price-utils', 'mage/template', 'Magento_Ui
             }
 
             if (this.element.find('[data-role=message-box]')) {
-                var messageTemplate = this.options.messageTemplates[this.count > 0 ? 'displayCount' : 'displayEmpty'];
+                var messageTemplate = this.options.messageTemplates[this.count > 0 ? (this.count > 1 ? 'displayCount' : 'displayOne' ) : 'displayEmpty'];
                 var message = mageTemplate(messageTemplate)(this);
                 this.element.find('[data-role=message-box]').html(message);
 

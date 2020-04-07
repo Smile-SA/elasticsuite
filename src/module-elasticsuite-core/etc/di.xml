@@ -26,7 +26,7 @@
     <!-- Cluster namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
                 type="Smile\ElasticsuiteCore\Cluster\ClusterInfo" />
-                
+
     <!-- Indices namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexInterface"
                 type="Smile\ElasticsuiteCore\Index\Index" />
@@ -98,6 +98,7 @@
                 <item name="commonQuery" xsi:type="object">commonQueryFactory</item>
                 <item name="multiMatchQuery" xsi:type="object">multiMatchQueryFactory</item>
                 <item name="moreLikeThisQuery" xsi:type="object">moreLikeThisQueryFactory</item>
+                <item name="matchPhrasePrefixQuery" xsi:type="object">matchPhrasePrefixFactory</item>
                 <item name="functionScore" xsi:type="object">functionScoreFactory</item>
             </argument>
         </arguments>
@@ -117,6 +118,7 @@
     <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
     <virtualType name="moreLikeThisQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThisFactory" />
     <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
+    <virtualType name="matchPhrasePrefixFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchPhrasePrefixFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -135,6 +137,7 @@
                 <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
                 <item name="moreLikeThisQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MoreLikeThis\Proxy</item>
+                <item name="matchPhrasePrefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MatchPhrasePrefix\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -462,5 +465,10 @@
                 <item name="elasticsuite" xsi:type="number">100000</item>
             </argument>
         </arguments>
+    </type>
+
+    <!-- Deprecation plugin for stemmer_override in ES 5 -->
+    <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
+        <plugin name="stemmer_override_plugin" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\IndexSettings"/>
     </type>
 </config>

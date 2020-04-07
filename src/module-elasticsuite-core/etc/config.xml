@@ -39,5 +39,11 @@
             </term_autocomplete>
         </smile_elasticsuite_autocomplete_settings>
 
+        <catalog>
+            <search>
+                <min_query_length>2</min_query_length>
+            </search>
+        </catalog>
+
     </default>
 </config>

@@ -18,7 +18,7 @@
         type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder"/>
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Products" type="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products" />
 
-    <virtualType name="elasticsuiteSearchResultApplierFactory" type="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection\SearchResultApplierFactory">
+    <virtualType name="elasticsuiteSearchResultApplier" type="Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection\SearchResultApplierFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection\SearchResultApplier</argument>
         </arguments>
@@ -26,7 +26,7 @@
 
     <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch">
         <arguments>
-            <argument name="searchResultsApplierFactory" xsi:type="object">elasticsuiteSearchResultApplierFactory</argument>
+            <argument name="searchResultsApplierFactory" xsi:type="object">elasticsuiteSearchResultApplier</argument>
         </arguments>
     </type>
 

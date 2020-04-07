@@ -97,17 +97,21 @@ class DataProvider implements DataProviderInterface
     public function getItems()
     {
         if ($this->items === null) {
-            $collection = $this->getSuggestCollection();
             $this->items = [];
 
             if ($this->configurationHelper->isEnabled($this->getType())) {
-                foreach ($collection as $item) {
-                    $resultItem = $this->itemFactory->create([
-                        'title' => $item->getQueryText(),
-                        'num_results' => $item->getNumResults(),
-                        'type'        => $this->getType(),
-                    ]);
-                    $this->items[] = $resultItem;
+                if (!$this->queryFactory->get()->isQueryTextShort()) {
+                    $collection = $this->getSuggestCollection();
+                    if ($collection !== null) {
+                        foreach ($collection as $item) {
+                            $resultItem = $this->itemFactory->create([
+                                'title' => $item->getQueryText(),
+                                'num_results' => $item->getNumResults(),
+                                'type' => $this->getType(),
+                            ]);
+                            $this->items[] = $resultItem;
+                        }
+                    }
                 }
             }
         }
