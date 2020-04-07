@@ -466,4 +466,9 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Deprecation plugin for stemmer_override in ES 5 -->
+    <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
+        <plugin name="stemmer_override_plugin" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\IndexSettings"/>
+    </type>
 </config>
