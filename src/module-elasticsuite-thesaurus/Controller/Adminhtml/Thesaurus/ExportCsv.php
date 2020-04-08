@@ -107,7 +107,7 @@ class ExportCsv extends ThesaurusController
             $itemData[] = $item->getData('name');
             $itemData[] = $item->getData('type');
             $itemData[] = $item->getData('terms_export');
-            $itemData[] = $item->getData('store_code');
+            $itemData[] = $item->getData('store_codes');
             $itemData[] = $item->getData('is_active');
             $stream->writeCsv($itemData);
         }
