@@ -10,10 +10,16 @@
  * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticsuiteCore\Plugin\Deprecation\Client;
 
+use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
+use Smile\ElasticsuiteCore\Client\ClientBuilder;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+
 /**
- * Implements backward compatibility of client settings with ES 5.x / 6.x.
+ * Implements backward compatibility of client settings with 6.x.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -27,33 +33,78 @@ class ClientPlugin
     private $serverVersion;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Client\ClientBuilder
+     */
+    private $clientBuilder;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface
+     */
+    private $clientConfiguration;
+
+    /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo Cluster information API.
+     * @param ClusterInfoInterface         $clusterInfo         Cluster information API.
+     * @param ClientConfigurationInterface $clientConfiguration Client Configuration
+     * @param ClientBuilder                $clientBuilder       Client Builder
      */
-    public function __construct(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo)
-    {
-        $this->serverVersion = $clusterInfo->getServerVersion();
+    public function __construct(
+        ClusterInfoInterface $clusterInfo,
+        ClientConfigurationInterface $clientConfiguration,
+        ClientBuilder $clientBuilder
+    ) {
+        $this->serverVersion       = $clusterInfo->getServerVersion();
+        $this->clientBuilder       = $clientBuilder;
+        $this->clientConfiguration = $clientConfiguration;
     }
 
     /**
-     * Remove index.max_shingle_diff and index.max_ngram_diff for indices < ES7.
+     * @param ClientInterface $client    Client.
+     * @param \Closure        $proceed   ClientInterface::putMapping() method
+     * @param string          $indexName Index Name
+     * @param array           $mapping   Mapping as array
      *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return mixed
+     */
+    public function aroundPutMapping(
+        ClientInterface $client,
+        \Closure $proceed,
+        $indexName,
+        $mapping
+    ) {
+        if (strcmp($this->serverVersion, "7") >= 0) {
+            return $proceed($indexName, $mapping);
+        }
+
+        $client   = $this->clientBuilder->build($this->clientConfiguration->getOptions());
+        $settings = ['index' => $indexName, 'body' => $mapping];
+
+        if (strcmp($this->serverVersion, "6.7.0") >= 0) {
+            // For ES 6.7 and 6.8 we can specify include_type_name=false
+            $settings['include_type_name'] = false;
+        } elseif (strcmp($this->serverVersion, "6.7.0") < 0) {
+            // For ES < 6.7 we have to go with the default type '_doc'
+            $settings['type'] = '_doc';
+        }
+
+        $client->indices()->putMapping($settings);
+    }
+
+    /**
+     * Add type parameter into Bulk requests if needed.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client Client.
+     * @param ClientInterface $client     Client
+     * @param array           $bulkParams Bulk Params
      *
      * @return array
      */
-    public function beforeCreateIndex(\Smile\ElasticsuiteCore\Api\Client\ClientInterface $client, $indexName, $indexSettings)
+    public function beforeBulk(ClientInterface $client, $bulkParams)
     {
-        if (strcmp($this->serverVersion, "6") < 0) {
-            if (isset($indexSettings['settings'])) {
-                unset($indexSettings['settings']['max_shingle_diff']);
-                unset($indexSettings['settings']['max_ngram_diff']);
-            }
+        if (strcmp($this->serverVersion, "7") < 0) {
+            $bulkParams['type'] = '_doc';
         }
 
-        return [$indexName, $indexSettings];
+        return [$bulkParams];
     }
 }
