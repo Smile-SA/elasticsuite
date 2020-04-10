@@ -89,7 +89,7 @@ class IndexStatusProvider
     {
         $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName, $alias);
 
-        if ($this->isExternal($indexName, $indexDate)) {
+        if ($this->isExternal($indexName)) {
             return IndexStatus::EXTERNAL_STATUS;
         }
 
@@ -131,17 +131,14 @@ class IndexStatusProvider
     /**
      * Returns if index is external.
      *
-     * @param string          $indexName Index name.
-     * @param Zend_Date|false $indexDate Index updated date.
+     * @param string $indexName Index name.
+     *
      * @return bool
      */
-    private function isExternal(string $indexName, $indexDate): bool
+    private function isExternal(string $indexName): bool
     {
         foreach ($this->storeIndices as $store) {
             if (strpos($indexName, $store['pattern']) !== false) {
-                return false;
-            }
-            if (!$this->isValidDate($indexDate)) {
                 return false;
             }
         }
@@ -207,24 +204,5 @@ class IndexStatusProvider
         } catch (Zend_Date_Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * Returns if date is valid.
-     *
-     * Rules: Year should not be in the future and not older than five year.
-     *
-     * @param Zend_Date|false $date Index updated date.
-     * @return bool
-     */
-    private function isValidDate($date): bool
-    {
-        if ($date === false) {
-            return false;
-        }
-        $currentDate = new Zend_Date();
-
-        return $currentDate->sub($date)->getTimestamp() / self::SECONDS_IN_YEAR > 0
-            && $currentDate->sub($date)->getTimestamp() / self::SECONDS_IN_YEAR < 5;
     }
 }
