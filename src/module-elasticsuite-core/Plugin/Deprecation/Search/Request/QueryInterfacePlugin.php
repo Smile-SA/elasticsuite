@@ -45,6 +45,8 @@ class QueryInterfacePlugin
      * @see https://github.com/elastic/elasticsearch/issues/37096
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html#query-dsl-match-query-cutoff
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param \Smile\ElasticsuiteCore\Search\Request\QueryInterface $subject The Query
      * @param float                                                 $result  Precedent Result
      *

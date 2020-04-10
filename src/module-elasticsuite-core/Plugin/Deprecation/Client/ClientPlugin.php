@@ -81,10 +81,10 @@ class ClientPlugin
         $settings = ['index' => $indexName, 'body' => $mapping];
 
         if (strcmp($this->serverVersion, "6.7.0") >= 0) {
-            // For ES 6.7 and 6.8 we can specify include_type_name=false
+            // For ES 6.7 and 6.8 we can specify include_type_name=false.
             $settings['include_type_name'] = false;
         } elseif (strcmp($this->serverVersion, "6.7.0") < 0) {
-            // For ES < 6.7 we have to go with the default type '_doc'
+            // For ES < 6.7 we have to go with the default type '_doc'.
             $settings['type'] = '_doc';
         }
 
@@ -93,6 +93,8 @@ class ClientPlugin
 
     /**
      * Add type parameter into Bulk requests if needed.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param ClientInterface $client     Client
      * @param array           $bulkParams Bulk Params

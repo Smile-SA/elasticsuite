@@ -189,9 +189,10 @@ class IndexSettings extends AbstractConfiguration
         $maxShingleDiff = false;
         foreach ($analysisSettings['filter'] ?? [] as $filter) {
             if (($filter['type'] ?? null) === 'shingle') {
+                // @codingStandardsIgnoreStart
                 $filterDiff = ($filter['max_shingle_size'] ?? self::MAX_SHINGLE_SIZE_DEFAULT)
                     - ($filter['min_shingle_size'] ?? self::MIN_SHINGLE_SIZE_DEFAULT);
-
+                // codingStandardsIgnoreEnd
                 $maxShingleDiff = max((int) $maxShingleDiff, $filterDiff) + 1;
             }
         }
