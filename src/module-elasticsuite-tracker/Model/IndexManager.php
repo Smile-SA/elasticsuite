@@ -74,9 +74,7 @@ class IndexManager
             $indexSettings['analysis'] = $this->indexSettings->getAnalysisSettings($store);
             $this->client->createIndex($index->getName(), $indexSettings);
             $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $index->getIdentifier()]]]);
-            foreach ($index->getTypes() as $currentType) {
-                $this->client->putMapping($index->getName(), $currentType->getName(), $currentType->getMapping()->asArray());
-            }
+            $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
         }
     }
 
