@@ -41,6 +41,26 @@ class IndexSettings extends AbstractConfiguration
     const PER_SHARD_MAX_RESULT_WINDOW = 100000;
 
     /**
+     * @var integer
+     */
+    const MIN_SHINGLE_SIZE_DEFAULT = 2;
+
+    /**
+     * @var integer
+     */
+    const MAX_SHINGLE_SIZE_DEFAULT = 2;
+
+    /**
+     * @var integer
+     */
+    const MIN_NGRAM_SIZE_DEFAULT = 1;
+
+    /**
+     * @var integer
+     */
+    const MAX_NGRAM_SIZE_DEFAULT = 2;
+
+    /**
      * Return the locale code (eg.: "en_US") for a store.
      *
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
@@ -155,6 +175,51 @@ class IndexSettings extends AbstractConfiguration
     public function getMaxResultWindow()
     {
         return (int) $this->getNumberOfShards() * self::PER_SHARD_MAX_RESULT_WINDOW;
+    }
+
+    /**
+     * Get maximum shingle diff for an index.
+     *
+     * @param array $analysisSettings Analysis Settings
+     *
+     * @return int|false
+     */
+    public function getMaxShingleDiff($analysisSettings)
+    {
+        $maxShingleDiff = false;
+        foreach ($analysisSettings['filter'] ?? [] as $filter) {
+            if (($filter['type'] ?? null) === 'shingle') {
+                // @codingStandardsIgnoreStart
+                $filterDiff = ($filter['max_shingle_size'] ?? self::MAX_SHINGLE_SIZE_DEFAULT)
+                    - ($filter['min_shingle_size'] ?? self::MIN_SHINGLE_SIZE_DEFAULT);
+                // codingStandardsIgnoreEnd
+                $maxShingleDiff = max((int) $maxShingleDiff, $filterDiff) + 1;
+            }
+        }
+
+        return $maxShingleDiff;
+    }
+
+    /**
+     * Get maximum ngram diff for an index.
+     *
+     * @param array $analysisSettings Analysis Settings
+     *
+     * @return int|false
+     */
+    public function getMaxNgramDiff($analysisSettings)
+    {
+        $maxNgramDiff = false;
+        foreach ($analysisSettings['filter'] ?? [] as $filter) {
+            if (in_array(($filter['type'] ?? null), ['ngram', 'edge_ngram'])) {
+                $filterDiff = ($filter['max_gram'] ?? self::MAX_NGRAM_SIZE_DEFAULT)
+                    - ($filter['min_gram'] ?? self::MIN_NGRAM_SIZE_DEFAULT);
+
+                $maxNgramDiff = max((int) $maxNgramDiff, $filterDiff) + 1;
+            }
+        }
+
+        return $maxNgramDiff;
     }
 
     /**

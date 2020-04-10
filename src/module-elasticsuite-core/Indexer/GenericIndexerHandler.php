@@ -110,18 +110,17 @@ class GenericIndexerHandler implements IndexerInterface
                 $index = $this->indexOperation->createIndex($this->indexName, $storeId);
             }
 
-            $type      = $index->getType($this->typeName);
             $batchSize = $this->indexOperation->getBatchIndexingSize();
 
             foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
-                foreach ($this->getDatasources($this->indexName) as $datasource) {
+                foreach ($this->getDatasources() as $datasource) {
                     if (!empty($batchDocuments)) {
                         $batchDocuments = $datasource->addData($storeId, $batchDocuments);
                     }
                 }
 
                 if (!empty($batchDocuments)) {
-                    $bulk = $this->indexOperation->createBulk()->addDocuments($index, $type, $batchDocuments);
+                    $bulk = $this->indexOperation->createBulk()->addDocuments($index, $batchDocuments);
                     $this->indexOperation->executeBulk($bulk);
                 }
             }
@@ -144,11 +143,10 @@ class GenericIndexerHandler implements IndexerInterface
 
             if ($this->indexOperation->indexExists($this->indexName, $storeId)) {
                 $index     = $this->indexOperation->getIndexByName($this->indexName, $storeId);
-                $type      = $index->getType($this->typeName);
                 $batchSize = $this->indexOperation->getBatchIndexingSize();
 
                 foreach ($this->batch->getItems($documents, $batchSize) as $batchDocuments) {
-                    $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $type, $batchDocuments);
+                    $bulk = $this->indexOperation->createBulk()->deleteDocuments($index, $batchDocuments);
                     $this->indexOperation->executeBulk($bulk);
                 }
 
@@ -185,18 +183,11 @@ class GenericIndexerHandler implements IndexerInterface
     /**
      * Retrieve data sources of an index by name.
      *
-     * @deprecated
-     *
-     * @param string $indexName The index name
-     *
      * @return \Smile\ElasticsuiteCore\Api\Index\DatasourceInterface[]
      */
-    private function getDatasources($indexName)
+    private function getDatasources()
     {
-        $config            = $this->indexSettings->getIndexConfig($indexName);
-        $legacyDatasources = $config['datasources'] ?? [];
-
-        $resolver = $this->dataSourceResolverFactory->create(['legacyDataSources' => [$indexName => $legacyDatasources]]);
+        $resolver = $this->dataSourceResolverFactory->create();
         $sources  = $resolver->getDataSources($this->indexName);
 
         return $sources;

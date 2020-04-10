@@ -159,7 +159,6 @@ class Builder
         $requestParams = [
             'name'         => $containerName,
             'indexName'    => $containerConfig->getIndexName(),
-            'type'         => $containerConfig->getTypeName(),
             'from'         => $from,
             'size'         => $size,
             'dimensions'   => $this->buildDimensions($storeId),
@@ -167,6 +166,7 @@ class Builder
             'sortOrders'   => $this->sortOrderBuilder->buildSordOrders($containerConfig, $sortOrders),
             'buckets'      => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
             'spellingType' => $spellingType,
+            'trackTotalHits' => $containerConfig->getTrackTotalHits(),
         ];
 
         if (!empty($facetFilters)) {
@@ -221,7 +221,6 @@ class Builder
 
         $spellcheckRequestParams = [
             'index'           => $containerConfig->getIndexName(),
-            'type'            => $containerConfig->getTypeName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
         ];

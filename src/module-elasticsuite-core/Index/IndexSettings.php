@@ -187,4 +187,21 @@ class IndexSettings implements IndexSettingsInterface
     {
         return $this->helper->getBatchIndexingSize();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDynamicIndexSettings($store)
+    {
+        $settings         = [];
+        $analysisSettings = $this->getAnalysisSettings($store);
+
+        $shingleDiff = $this->helper->getMaxShingleDiff($analysisSettings);
+        $ngramDiff   = $this->helper->getMaxNgramDiff($analysisSettings);
+
+        $settings += $shingleDiff ? ['max_shingle_diff' => (int) $shingleDiff] : [];
+        $settings += $ngramDiff ? ['max_ngram_diff' => (int) $ngramDiff] : [];
+
+        return $settings;
+    }
 }

@@ -49,14 +49,13 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     public function testSuccess()
     {
         $query    = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $request  = new Request('requestName', 'indexName', 'typeName', $query);
+        $request  = new Request('requestName', 'indexName', $query);
 
         $this->client->method('search')->will($this->returnArgument(0));
 
         $response = $this->adapter->query($request);
 
         $this->assertEquals('indexName', $response['searchResponse']['index']);
-        $this->assertEquals('typeName', $response['searchResponse']['type']);
         $this->assertEquals('searchQueryBody', $response['searchResponse']['body']);
     }
 
@@ -68,7 +67,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     public function testError()
     {
         $query    = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $request  = new Request('requestName', 'indexName', 'typeName', $query);
+        $request  = new Request('requestName', 'indexName', $query);
 
         $this->client->method('search')->willThrowException(new \Exception('Search exception'));
 

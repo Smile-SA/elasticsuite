@@ -95,7 +95,7 @@ class Mapping implements MappingInterface
      */
     public function asArray()
     {
-        return ['_all' => ['enabled' => false], 'properties' => $this->getProperties()];
+        return ['properties' => $this->getProperties()];
     }
 
     /**

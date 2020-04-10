@@ -109,7 +109,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(StandardSortOrder::SORT_ASC, $currentSortOrder['parent.child']['order']);
         $this->assertEquals('_last', $currentSortOrder['parent.child']['missing']);
         $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $currentSortOrder['parent.child']['unmapped_type']);
-        $this->assertEquals('parent', $currentSortOrder['parent.child']['nested_path']);
+        $this->assertEquals('parent', $currentSortOrder['parent.child']['nested']['path']);
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
     }
 
@@ -133,9 +133,9 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(StandardSortOrder::SORT_ASC, $currentSortOrder['parent.child']['order']);
         $this->assertEquals('_last', $currentSortOrder['parent.child']['missing']);
         $this->assertEquals(FieldInterface::FIELD_TYPE_KEYWORD, $currentSortOrder['parent.child']['unmapped_type']);
-        $this->assertEquals('parent', $currentSortOrder['parent.child']['nested_path']);
+        $this->assertEquals('parent', $currentSortOrder['parent.child']['nested']['path']);
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
-        $this->assertEquals('query', $currentSortOrder['parent.child']['nested_filter']);
+        $this->assertEquals('query', $currentSortOrder['parent.child']['nested']['filter']);
     }
 
     /**

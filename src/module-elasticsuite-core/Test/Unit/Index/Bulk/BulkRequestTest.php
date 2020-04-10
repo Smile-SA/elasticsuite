@@ -32,11 +32,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     private $index;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\TypeInterface
-     */
-    private $type;
-
-    /**
      * Create required stubs.
      *
      * {@inheritDoc}
@@ -45,9 +40,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     {
         $this->index = $this->getMockBuilder(IndexInterface::class)->getMock();
         $this->index->method('getName')->will($this->returnValue('indexName'));
-
-        $this->type = $this->getMockBuilder(TypeInterface::class)->getMock();
-        $this->type->method('getName')->will($this->returnValue('typeName'));
     }
 
     /**
@@ -68,7 +60,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     public function testAddDocument()
     {
         $bulkRequest = $this->createBulk();
-        $bulkRequest->addDocument($this->index, $this->type, 'docId', ['foo' => 'bar']);
+        $bulkRequest->addDocument($this->index, 'docId', ['foo' => 'bar']);
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
         $this->assertCount(2, $bulkRequest->getOperations());
@@ -78,7 +70,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('index', $head);
         $this->assertEquals('docId', $head['index']['_id']);
         $this->assertEquals($this->index->getName(), $head['index']['_index']);
-        $this->assertEquals($this->type->getName(), $head['index']['_type']);
         $this->assertEquals(['foo' => 'bar'], $data);
     }
 
@@ -96,7 +87,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         for ($i = 1; $i <= $docCount; $i++) {
             $data['docId' . $i] = ['foo' => $i];
         }
-        $bulkRequest->addDocuments($this->index, $this->type, $data);
+        $bulkRequest->addDocuments($this->index, $data);
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
@@ -110,7 +101,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('index', $head);
             $this->assertEquals('docId' . $i, $head['index']['_id']);
             $this->assertEquals($this->index->getName(), $head['index']['_index']);
-            $this->assertEquals($this->type->getName(), $head['index']['_type']);
             $this->assertEquals(['foo' => $i], $data);
         }
     }
@@ -123,7 +113,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     public function testDeleteDocument()
     {
         $bulkRequest = $this->createBulk();
-        $bulkRequest->deleteDocument($this->index, $this->type, 'docId');
+        $bulkRequest->deleteDocument($this->index, 'docId');
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
         $this->assertCount(1, $bulkRequest->getOperations());
@@ -133,7 +123,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('delete', $head);
         $this->assertEquals('docId', $head['delete']['_id']);
         $this->assertEquals($this->index->getName(), $head['delete']['_index']);
-        $this->assertEquals($this->type->getName(), $head['delete']['_type']);
     }
 
     /**
@@ -150,7 +139,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         for ($i = 1; $i <= $docCount; $i++) {
             $docIds[] = 'docId' . $i;
         }
-        $bulkRequest->deleteDocuments($this->index, $this->type, $docIds);
+        $bulkRequest->deleteDocuments($this->index, $docIds);
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
@@ -162,7 +151,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('delete', $head);
             $this->assertEquals($currentId, $head['delete']['_id']);
             $this->assertEquals($this->index->getName(), $head['delete']['_index']);
-            $this->assertEquals($this->type->getName(), $head['delete']['_type']);
         }
     }
 
@@ -174,7 +162,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     public function testUpdateDocument()
     {
         $bulkRequest = $this->createBulk();
-        $bulkRequest->updateDocument($this->index, $this->type, 'docId', ['foo' => 'bar']);
+        $bulkRequest->updateDocument($this->index, 'docId', ['foo' => 'bar']);
 
         $this->assertEquals(false, $bulkRequest->isEmpty());
         $this->assertCount(2, $bulkRequest->getOperations());
@@ -184,7 +172,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('update', $head);
         $this->assertEquals('docId', $head['update']['_id']);
         $this->assertEquals($this->index->getName(), $head['update']['_index']);
-        $this->assertEquals($this->type->getName(), $head['update']['_type']);
         $this->assertEquals(['doc' => ['foo' => 'bar']], $data);
     }
 
@@ -202,7 +189,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
         for ($i = 1; $i <= $docCount; $i++) {
             $data['docId' . $i] = ['foo' => $i];
         }
-        $bulkRequest->updateDocuments($this->index, $this->type, $data);
+        $bulkRequest->updateDocuments($this->index, $data);
 
         $operations = $bulkRequest->getOperations();
         $this->assertEquals(false, $bulkRequest->isEmpty());
@@ -216,7 +203,6 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
             $this->assertArrayHasKey('update', $head);
             $this->assertEquals('docId' . $i, $head['update']['_id']);
             $this->assertEquals($this->index->getName(), $head['update']['_index']);
-            $this->assertEquals($this->type->getName(), $head['update']['_type']);
             $this->assertEquals(['doc' => ['foo' => $i]], $data);
         }
     }

@@ -38,7 +38,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     {
         $mapper  = $this->getMapper();
         $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, null, null, 0, 1);
+        $searchRequest = new Request('requestName', 'indexName', $query, null, null, 0, 1);
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 
@@ -58,7 +58,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $mapper  = $this->getMapper();
         $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
         $filter  = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, $filter);
+        $searchRequest = new Request('requestName', 'indexName', $query, $filter);
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 
@@ -75,7 +75,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $mapper  = $this->getMapper();
         $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
 
-        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, null, null, 0, 1, [], ['agg' => 'agg']);
+        $searchRequest = new Request('requestName', 'indexName', $query, null, null, 0, 1, [], ['agg' => 'agg']);
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 
@@ -92,7 +92,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $mapper  = $this->getMapper();
         $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
 
-        $searchRequest = new Request('requestName', 'indexName', 'typeName', $query, null, ['sort' => 'sort'], 0, 10);
+        $searchRequest = new Request('requestName', 'indexName', $query, null, ['sort' => 'sort'], 0, 10);
 
         $mappedRequest = $mapper->buildSearchRequest($searchRequest);
 

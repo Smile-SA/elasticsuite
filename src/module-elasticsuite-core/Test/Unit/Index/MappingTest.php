@@ -167,7 +167,6 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     public function testMappingGeneration()
     {
         $mapping = $this->mapping->asArray();
-        $this->assertArrayHasKey('_all', $mapping);
         $this->assertArrayHasKey('properties', $mapping);
         $this->assertCount(6, $mapping['properties']);
     }

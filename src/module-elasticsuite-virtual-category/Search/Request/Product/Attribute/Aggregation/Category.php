@@ -70,8 +70,11 @@ class Category implements AggregationInterface
      */
     public function getAggregationData(\Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute)
     {
+        $bucketConfig = [];
         $facetQueries = $this->getFacetQueries();
-        $bucketConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => 'categories', 'queries' => $facetQueries];
+        if (!empty($facetQueries)) {
+            $bucketConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => 'categories', 'queries' => $facetQueries];
+        }
 
         return $bucketConfig;
     }

@@ -37,9 +37,6 @@
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface"
                 type="Smile\ElasticsuiteCore\Index\IndexOperation" />
 
-    <preference for="Smile\ElasticsuiteCore\Api\Index\TypeInterface"
-                type="Smile\ElasticsuiteCore\Index\Type" />
-
     <preference for="Smile\ElasticsuiteCore\Api\Index\MappingInterface"
                 type="Smile\ElasticsuiteCore\Index\Mapping" />
 
@@ -467,8 +464,21 @@
         </arguments>
     </type>
 
-    <!-- Deprecation plugin for stemmer_override in ES 5 -->
-    <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
-        <plugin name="stemmer_override_plugin" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\IndexSettings"/>
+    <!-- ElasticSearch <7 deprecation plugins -->
+    <type name="Smile\ElasticsuiteCore\Index\Mapping">
+        <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\MappingPlugin"/>
     </type>
+
+    <type name="Smile\ElasticsuiteCore\Api\Client\ClientInterface">
+        <plugin name="indexSettingsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\ClientPlugin"/>
+    </type>
+
+    <!-- ElasticSearch >= 7.3.0 plugins -->
+    <type name="Smile\ElasticsuiteCore\Search\Request\Query\Common">
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
+    </type>
+    <type name="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatch">
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
+    </type>
+
 </config>

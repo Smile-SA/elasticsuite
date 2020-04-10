@@ -44,13 +44,12 @@ interface BulkRequestInterface
      * Add a single document to the index.
      *
      * @param IndexInterface $index Index the document has to be added to.
-     * @param TypeInterface  $type  Document type.
      * @param string|integer $docId Document id.
      * @param array          $data  Document data.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
-    public function addDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
+    public function addDocument(IndexInterface $index, $docId, array $data);
 
     /**
      * Add a several documents to the index.
@@ -58,34 +57,31 @@ interface BulkRequestInterface
      * $data format have to be an array of all documents with document id as key.
      *
      * @param IndexInterface $index Index the documents have to be added to.
-     * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
-    public function addDocuments(IndexInterface $index, TypeInterface $type, array $data);
+    public function addDocuments(IndexInterface $index, array $data);
 
     /**
      * Delete a document from the index.
      *
      * @param IndexInterface $index Index the document has to be delete from.
-     * @param TypeInterface  $type  Document type.
      * @param string|integer $docId Document id.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
-    public function deleteDocument(IndexInterface $index, TypeInterface $type, $docId);
+    public function deleteDocument(IndexInterface $index, $docId);
 
     /**
      * Delete multiple documents from the index.
      *
      * @param IndexInterface $index  Index the document has to be delete from.
-     * @param TypeInterface  $type   Type of the documents to be delete.
      * @param array          $docIds Ids of the deleted documents.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface
      */
-    public function deleteDocuments(IndexInterface $index, TypeInterface $type, array $docIds);
+    public function deleteDocuments(IndexInterface $index, array $docIds);
 
     /**
      * Update a single document to the index.
@@ -94,13 +90,12 @@ interface BulkRequestInterface
      *        Others fields are kept untouched by the update operation.
      *
      * @param IndexInterface $index Index the document has to be added to.
-     * @param TypeInterface  $type  Document type.
      * @param string|integer $docId Document id.
      * @param array          $data  Updated data.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
-    public function updateDocument(IndexInterface $index, TypeInterface $type, $docId, array $data);
+    public function updateDocument(IndexInterface $index, $docId, array $data);
 
     /**
      * Update a several documents to the index.
@@ -108,10 +103,9 @@ interface BulkRequestInterface
      * $data format have to be an array of all documents update data with document id as key.
      *
      * @param IndexInterface $index Index the documents have to be added to.
-     * @param TypeInterface  $type  Document type.
      * @param array          $data  Document data.
      *
      * @return \Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface Self reference.
      */
-    public function updateDocuments(IndexInterface $index, TypeInterface $type, array $data);
+    public function updateDocuments(IndexInterface $index, array $data);
 }

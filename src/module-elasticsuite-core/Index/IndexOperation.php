@@ -130,15 +130,14 @@ class IndexOperation implements IndexOperationInterface
     public function createIndex($indexIdentifier, $store)
     {
         $index         = $this->initIndex($indexIdentifier, $store, false);
-        $indexSettings = ['settings' => $this->indexSettings->getCreateIndexSettings()];
+        $indexSettings = [
+            'settings' => $this->indexSettings->getCreateIndexSettings() + $this->indexSettings->getDynamicIndexSettings($store),
+        ];
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
 
         $this->client->createIndex($index->getName(), $indexSettings);
 
-        foreach ($index->getTypes() as $currentType) {
-            $this->client->putMapping($index->getName(), $currentType->getName(), $index->getMapping()->asArray());
-        }
-
+        $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
 
         return $index;
     }

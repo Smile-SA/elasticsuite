@@ -17,28 +17,45 @@ language: php
 
 jobs:
   include:
+# Elasticsearch 6
     - php: 7.2
       env:
-        - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
+        - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.2
       env:
-        - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
+        - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
     - php: 7.3
       env:
-          - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.3
       env:
-          - MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
+# Elasticsearch 7
+    - php: 7.2
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.2
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
+    - php: 7.3
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.3
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
 
 before_install:
   - sudo service elasticsearch stop
   - export ES_HOME=/usr/share/elasticsearch
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.4.0.deb
-  - sudo dpkg -i --force-confnew elasticsearch-6.4.0.deb
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ES_VERSION.deb
+  - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
   - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-icu
   - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-phonetic
+  - sudo chgrp elasticsearch /etc/default/elasticsearch -R
   - sudo service elasticsearch start
   - sleep 5
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then composer config -g http-basic.repo.magento.com $MAGENTO_USERNAME $MAGENTO_PASSWORD ; fi

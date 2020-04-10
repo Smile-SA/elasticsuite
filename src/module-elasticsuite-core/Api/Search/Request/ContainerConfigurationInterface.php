@@ -42,13 +42,6 @@ interface ContainerConfigurationInterface
     public function getIndexName();
 
     /**
-     * Search request container document type name.
-     *
-     * @return string
-     */
-    public function getTypeName();
-
-    /**
      * Search request container label.
      *
      * @return string
@@ -93,4 +86,11 @@ interface ContainerConfigurationInterface
      * @return array
      */
     public function getAggregations($query = null, $filters = [], $queryFilters = []);
+
+    /**
+     * Get the value of the track_total_hits parameter, if any.
+     *
+     * @return int|bool
+     */
+    public function getTrackTotalHits();
 }

@@ -30,11 +30,6 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 class Request extends \Magento\Framework\Search\Request implements RequestInterface
 {
     /**
-     * @var string
-     */
-    private $type;
-
-    /**
      * @var SortOrderInterface
      */
     private $sortOrders;
@@ -50,26 +45,30 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
     /**
+     * @var boolean|integer
+     */
+    private $trackTotalHits = \Smile\ElasticsuiteCore\Helper\IndexSettings::PER_SHARD_MAX_RESULT_WINDOW;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string               $name         Search request name.
-     * @param string               $indexName    Index name.
-     * @param string               $type         Searched document type.
-     * @param QueryInterface       $query        Search query.
-     * @param QueryInterface       $filter       Search filter.
-     * @param SortOrderInterface[] $sortOrders   Sort orders specification.
-     * @param int|null             $from         Pagination from clause.
-     * @param int|null             $size         Pagination page size clause.
-     * @param Dimension[]          $dimensions   Searched store.
-     * @param BucketInterface[]    $buckets      Search request aggregations definition.
-     * @param string               $spellingType For fulltext query : the type of spellchecked applied.
+     * @param string               $name           Search request name.
+     * @param string               $indexName      Index name.
+     * @param QueryInterface       $query          Search query.
+     * @param QueryInterface       $filter         Search filter.
+     * @param SortOrderInterface[] $sortOrders     Sort orders specification.
+     * @param int|null             $from           Pagination from clause.
+     * @param int|null             $size           Pagination page size clause.
+     * @param Dimension[]          $dimensions     Searched store.
+     * @param BucketInterface[]    $buckets        Search request aggregations definition.
+     * @param string               $spellingType   For fulltext query : the type of spellchecked applied.
+     * @param bool|int             $trackTotalHits Value of the 'track_total_hits' ES parameter.
      */
     public function __construct(
         $name,
         $indexName,
-        $type,
         QueryInterface $query,
         QueryInterface $filter = null,
         array $sortOrders = null,
@@ -77,24 +76,20 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $size = null,
         array $dimensions = [],
         array $buckets = [],
-        $spellingType = null
+        $spellingType = null,
+        $trackTotalHits = null
     ) {
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
-        $this->type = $type;
         $this->filter = $filter;
         $this->sortOrders = $sortOrders;
 
         if ($spellingType !== null) {
             $this->spellingType = $spellingType;
         }
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getType()
-    {
-        return $this->type;
+        if ($trackTotalHits !== null) {
+            $this->trackTotalHits = $trackTotalHits;
+        }
     }
 
     /**
@@ -111,6 +106,14 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function getSortOrders()
     {
         return $this->sortOrders;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTrackTotalHits()
+    {
+        return $this->trackTotalHits;
     }
 
     /**

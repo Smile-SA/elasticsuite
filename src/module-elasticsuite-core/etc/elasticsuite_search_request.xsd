@@ -33,7 +33,8 @@
         <xs:attribute type="xs:string" name="name" use="required" />
         <xs:attribute type="xs:string" name="label" use="required" />
         <xs:attribute type="xs:string" name="index" use="required" />
-        <xs:attribute type="xs:string" name="type" use="required" />
+        <xs:attribute type="xs:string" name="type" use="optional" />
+        <xs:attribute type="xs:string" name="track_total_hits" use="optional" />
         <xs:attribute type="xs:boolean" name="fulltext" use="required" />
     </xs:complexType>
 

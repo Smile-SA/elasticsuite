@@ -123,7 +123,11 @@ class QueryResponse implements ResponseInterface
                 $this->documents[] = $documentFactory->create($hit);
             }
 
-            $this->count = $searchResponse['hits']['total'];
+            // @codingStandardsIgnoreStart
+            $this->count = is_array($searchResponse['hits']['total'])
+                ? $searchResponse['hits']['total']['value']
+                : $searchResponse['hits']['total'];
+            // @codingStandardsIgnoreEnd
         }
     }
 }
