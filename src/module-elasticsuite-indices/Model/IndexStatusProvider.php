@@ -87,7 +87,7 @@ class IndexStatusProvider
      */
     public function getIndexStatus($indexName, $alias): string
     {
-        $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName);
+        $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName, $alias);
 
         if ($this->isExternal($indexName, $indexDate)) {
             return IndexStatus::EXTERNAL_STATUS;
@@ -179,9 +179,11 @@ class IndexStatusProvider
      * Get index updated date from index name.
      *
      * @param string $indexName Index name.
+     * @param string $alias     Index alias.
+     *
      * @return Zend_Date|false
      */
-    private function getIndexUpdatedDateFromIndexName($indexName)
+    private function getIndexUpdatedDateFromIndexName($indexName, $alias)
     {
         $matches = [];
         preg_match_all('/{{([\w]*)}}/', $this->indexSettingsHelper->getIndicesPattern(), $matches);
@@ -198,7 +200,10 @@ class IndexStatusProvider
         }
 
         try {
-            return new Zend_Date(substr(preg_replace('/[^0-9]/', '', $indexName), -$count), $format);
+            // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
+            $indexName = str_replace($alias, '', $indexName);
+            $date      = substr(preg_replace('/[^0-9]/', '', $indexName), -$count);
+            return new Zend_Date($date, $format);
         } catch (Zend_Date_Exception $e) {
             return false;
         }
