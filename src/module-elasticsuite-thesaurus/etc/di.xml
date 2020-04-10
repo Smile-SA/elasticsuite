@@ -29,4 +29,13 @@
     <preference for="Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface" type="Smile\ElasticsuiteThesaurus\Model\ThesaurusRepository" />
     <preference for="Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface" type="Smile\ElasticsuiteThesaurus\Model\Thesaurus" />
     <preference for="Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <!-- Inject this special index type into the indices module configuration -->
+    <type name="Smile\ElasticsuiteIndices\Model\IndicesList">
+        <arguments>
+            <argument name="specialIndices" xsi:type="array">
+                <item name="thesaurus" xsi:type="const">Smile\ElasticsuiteThesaurus\Model\Index::INDEX_IDENTIER</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

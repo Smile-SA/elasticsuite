@@ -15,7 +15,6 @@ namespace Smile\ElasticsuiteIndices\Model;
 
 use Exception;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
-use Smile\ElasticsuiteCore\Index\IndexSettings;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 
 /**
@@ -33,9 +32,9 @@ class IndexStatsProvider
     private $client;
 
     /**
-     * @var IndexSettings
+     * @var IndicesList
      */
-    protected $indexSettings;
+    protected $indicesList;
 
     /**
      * @var IndexStatusProvider
@@ -46,16 +45,16 @@ class IndexStatsProvider
      * Constructor.
      *
      * @param ClientInterface     $client              ES client.
-     * @param IndexSettings       $indexSettings       Index settings.
+     * @param IndicesList         $indicesList         Index list.
      * @param IndexStatusProvider $indexStatusProvider Index Status Provider.
      */
     public function __construct(
         ClientInterface $client,
-        IndexSettings $indexSettings,
+        IndicesList $indicesList,
         IndexStatusProvider $indexStatusProvider
     ) {
         $this->client = $client;
-        $this->indexSettings = $indexSettings;
+        $this->indicesList = $indicesList;
         $this->indexStatusProvider = $indexStatusProvider;
     }
 
@@ -122,7 +121,7 @@ class IndexStatsProvider
      */
     private function isElasticSuiteIndex($indexName): bool
     {
-        foreach (array_keys($this->indexSettings->getIndicesConfig()) as $elasticSuiteIndex) {
+        foreach ($this->indicesList->getList() as $elasticSuiteIndex) {
             if (strpos($indexName, $elasticSuiteIndex) !== false) {
                 return true;
             }

@@ -19,7 +19,7 @@ use Magento\Framework\DataObject;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticsuiteCore\Index\IndexSettings;
+use Smile\ElasticsuiteIndices\Model\IndicesList;
 
 /**
  * Class Resource Model: Store Indices Collection
@@ -41,26 +41,26 @@ class Collection extends DataCollection
     private $indexSettingsHelper;
 
     /**
-     * @var IndexSettings
+     * @var IndicesList
      */
-    private $indexSettings;
+    private $indicesList;
 
     /**
      * @param EntityFactoryInterface $entityFactory       EntityFactory.
      * @param StoreManagerInterface  $storeManager        Store Manager.
      * @param IndexSettingsHelper    $indexSettingsHelper ElasticSuite index settings helper.
-     * @param IndexSettings          $indexSettings       Index settings.
+     * @param IndicesList            $indicesList         Index list.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,
         StoreManagerInterface $storeManager,
         IndexSettingsHelper $indexSettingsHelper,
-        IndexSettings $indexSettings
+        IndicesList $indicesList
     ) {
         parent::__construct($entityFactory);
         $this->storeList = $storeManager->getStores();
         $this->indexSettingsHelper = $indexSettingsHelper;
-        $this->indexSettings = $indexSettings;
+        $this->indicesList = $indicesList;
     }
 
     /**
@@ -74,7 +74,7 @@ class Collection extends DataCollection
     {
         $data = [];
         foreach ($this->storeList as $store) {
-            foreach (array_keys($this->indexSettings->getIndicesConfig()) as $indexName) {
+            foreach ($this->indicesList->getList() as $indexName) {
                 $item = $this->prepareItem($store, $indexName);
                 $data[] = $item;
             }
