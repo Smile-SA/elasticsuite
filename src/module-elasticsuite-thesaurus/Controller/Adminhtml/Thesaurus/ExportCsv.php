@@ -21,6 +21,7 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
+use Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus as ThesaurusImport;
 use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 use Smile\ElasticsuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
 use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
@@ -50,6 +51,11 @@ class ExportCsv extends ThesaurusController
     protected $directory;
 
     /**
+     * @var array
+     */
+    private $columns;
+
+    /**
      * Export csv constructor.
      *
      * @param Context                      $context             Application context
@@ -59,6 +65,7 @@ class ExportCsv extends ThesaurusController
      * @param ThesaurusFactory             $thesaurusFactory    Thesaurus Factory
      * @param FileFactory                  $fileFactory         File Factory
      * @param Filesystem                   $filesystem          File System
+     * @param ThesaurusImport              $thesaurusImport     Thesaurus Import Model
      */
     public function __construct(
         Context $context,
@@ -67,11 +74,13 @@ class ExportCsv extends ThesaurusController
         ThesaurusRepositoryInterface $thesaurusRepository,
         ThesaurusFactory $thesaurusFactory,
         FileFactory $fileFactory,
-        Filesystem $filesystem
+        Filesystem $filesystem,
+        ThesaurusImport $thesaurusImport
     ) {
-        $this->resultPageFactory   = $resultPageFactory;
+        $this->resultPageFactory = $resultPageFactory;
         $this->fileFactory       = $fileFactory;
-        $this->directory = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        $this->directory         = $filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        $this->columns           = $thesaurusImport->getValidColumnNames();
         parent::__construct($context, $resultPageFactory, $coreRegistry, $thesaurusRepository, $thesaurusFactory);
     }
 
@@ -89,10 +98,8 @@ class ExportCsv extends ThesaurusController
         $stream = $this->directory->openFile($filepath, 'w+');
         $stream->lock();
 
-        $columns = [__('ID'), __('Name'), __('Type'), __('Terms'), __('Store'), __('Status')];
-
         $header = [];
-        foreach ($columns as $column) {
+        foreach ($this->columns as $column) {
             $header[] = $column;
         }
 

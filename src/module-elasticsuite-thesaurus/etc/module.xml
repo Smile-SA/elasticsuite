@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticsuiteCore module loading configuration.
+ * Smile_ElasticsuiteThesaurus module loading configuration.
  *
  * DISCLAIMER
  *
@@ -19,6 +19,7 @@
     <module name="Smile_ElasticsuiteThesaurus" setup_version="1.0.0">
         <sequence>
             <module name="Smile_ElasticsuiteCore"/>
+            <module name="Magento_ImportExport" />
         </sequence>
     </module>
 </config>
