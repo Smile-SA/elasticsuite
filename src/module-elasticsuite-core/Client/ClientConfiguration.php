@@ -105,6 +105,14 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMaxParallelHandles()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('max_parallel_handles');
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getOptions()
@@ -116,6 +124,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'http_auth_user'        => $this->getHttpAuthUser(),
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
+            'max_parallel_handles'  => $this->getMaxParallelHandles(),
         ];
 
         return $options;
