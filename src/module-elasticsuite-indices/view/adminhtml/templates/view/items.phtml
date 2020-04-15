@@ -1,0 +1,51 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Items $block
+ */
+?>
+<div class="admin__table-wrapper">
+    <table class="data-table admin__table-primary">
+        <?php $items = $block->getItemsCollection(); ?>
+        <input type="hidden" id="json-input" autocomplete="off" value="<?php echo $block->escapeHtml(json_encode($items->getItems())); ?>"</input>
+        <pre id="json-renderer" class="json-document"></pre>
+    </table>
+</div>
+
+<script type="text/javascript">
+    require(['jquery', 'Magento_Ui/js/modal/modal', 'jquery.json-viewer'], function ($, modal, jsonViewer) {
+
+        function renderJson() {
+            try {
+                var input = eval('(' + $('#json-input').val() + ')');
+            }
+            catch (error) {
+                return alert("Cannot eval JSON: " + error);
+            }
+            var options = {
+                        collapsed: 0,
+                        rootCollapsable: 1,
+                        withQuotes: 1,
+                        withLinks: 1
+                    };
+            $('#json-renderer').jsonViewer(input, options);
+        }
+
+        renderJson();
+    });
+</script>
+

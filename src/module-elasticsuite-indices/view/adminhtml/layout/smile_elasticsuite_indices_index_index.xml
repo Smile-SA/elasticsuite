@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteIndices module index layout.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Smile\ElasticsuiteIndices\Block\Widget\Grid\Container" name="smile_elasticsuite_indices.grid.container">
+                <block class="Magento\Backend\Block\Widget\Grid" name="smile_elasticsuite_indices.grid" as="grid">
+                    <arguments>
+                        <argument name="id" xsi:type="string">elasticsuiteIndicesGrid</argument>
+                        <argument name="dataSource" xsi:type="object">Smile\ElasticsuiteIndices\Model\Index\Collection</argument>
+                        <argument name="use_ajax" xsi:type="boolean">0</argument>
+                        <argument name="save_parameters_in_session" xsi:type="boolean">0</argument>
+                        <argument name="pager_visibility" xsi:type="boolean">0</argument>
+                    </arguments>
+
+                    <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="smile_elasticsuite_indices.grid.columnSet" as="grid.columnSet">
+                        <arguments>
+                            <argument name="filter_visibility" xsi:type="string">0</argument>
+                            <argument name="rowUrl" xsi:type="array">
+                                <item name="path" xsi:type="string">*/*/view</item>
+                                <item name="extraParamsTemplate" xsi:type="array">
+                                    <item name="name" xsi:type="string">getIndexName</item>
+                                </item>
+                            </argument>
+                        </arguments>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="index_name">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Index Title</argument>
+                                <argument name="index" xsi:type="string">index_name</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">left</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="index_alias">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Index Alias</argument>
+                                <argument name="index" xsi:type="string">index_alias</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">left</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="number_of_documents">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Number of documents</argument>
+                                <argument name="index" xsi:type="string">number_of_documents</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">left</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="size">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Size</argument>
+                                <argument name="index" xsi:type="string">size</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">left</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="index_status">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Index Status</argument>
+                                <argument name="index" xsi:type="string">index_status</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">left</argument>
+                                <argument name="renderer" xsi:type="string">Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="action">
+                            <arguments>
+                                <argument name="type" xsi:type="string">action</argument>
+                                <argument name="header" xsi:type="string" translate="true">Action</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="sortable" xsi:type="string">0</argument>
+                                <argument name="index" xsi:type="string">index_name</argument>
+                                <argument name="renderer" xsi:type="string">Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\Action</argument>
+                                <argument name="actions" xsi:type="array">
+                                    <item name="delete" xsi:type="array">
+                                        <item name="caption" xsi:type="string" translate="true">Delete</item>
+                                        <item name="url" xsi:type="array">
+                                            <item name="base" xsi:type="string">*/*/delete</item>
+                                        </item>
+                                        <item name="field" xsi:type="string">name</item>
+                                        <item name="confirm" xsi:type="string" translate="true">Are you sure you want to delete the index?</item>
+                                    </item>
+                                </argument>
+                                <argument name="header_css_class" xsi:type="string">col-actions</argument>
+                                <argument name="column_css_class" xsi:type="string">col-actions</argument>
+                            </arguments>
+                        </block>
+                    </block>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

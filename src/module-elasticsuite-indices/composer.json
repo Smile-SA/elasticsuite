@@ -1,0 +1,45 @@
+{
+    "name": "smile/module-elasticsuite-indices",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Romain Ruaud",
+            "email": "romain.ruaud@smile.fr"
+        },
+        {
+            "name": "Richard Bayet",
+            "email": "richard.bayet@smile.fr"
+        },
+        {
+            "name": "Dmytro Androshchuk",
+            "email": "dmand@smile.fr"
+        }
+    ],
+    "description": "ElasticSuite - Manage Indices module.",
+    "homepage": "https://github.com/Smile-SA/module-elasticsuite",
+    "keywords": [
+        "magento",
+        "magento2",
+        "elasticsearch",
+        "search",
+        "merchandising",
+        "core",
+        "setup"
+    ],
+    "require": {
+        "magento/framework": ">=101.0.0",
+        "magento/module-backend": ">=100.2.0",
+        "magento/magento-composer-installer": "*",
+        "smile/module-elasticsuite-core": "self.version"
+    },
+    "version": "2.8.0",
+    "autoload": {
+        "files": [
+          "registration.php"
+        ],
+        "psr-4": {
+            "Smile\\ElasticsuiteIndices\\": ""
+        }
+    }
+}
