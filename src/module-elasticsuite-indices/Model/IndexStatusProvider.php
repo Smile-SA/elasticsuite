@@ -200,6 +200,7 @@ class IndexStatusProvider
             // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
             $indexName = str_replace($alias, '', $indexName);
             $date      = substr(preg_replace('/[^0-9]/', '', $indexName), -$count);
+
             return new Zend_Date($date, $format);
         } catch (Zend_Date_Exception $e) {
             return false;
