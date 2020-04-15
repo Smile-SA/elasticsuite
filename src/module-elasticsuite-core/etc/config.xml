@@ -23,6 +23,7 @@
                 <servers>localhost:9200</servers>
                 <connection_timeout>1</connection_timeout>
                 <timeout>30</timeout>
+                <max_parallel_handles>100</max_parallel_handles>
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>

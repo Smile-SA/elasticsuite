@@ -37,6 +37,9 @@
     <preference for="Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface"
                 type="Smile\ElasticsuiteCore\Index\IndexOperation" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface"
+                type="Smile\ElasticsuiteCore\Index\AsyncIndexOperation" />
+
     <preference for="Smile\ElasticsuiteCore\Api\Index\MappingInterface"
                 type="Smile\ElasticsuiteCore\Index\Mapping" />
 
@@ -481,4 +484,28 @@
         <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
     </type>
 
+    <!-- Async Operations -->
+    <virtualType name="elasticsuiteAsyncClientBuilder" type="Smile\ElasticsuiteCore\Client\ClientBuilder">
+        <arguments>
+            <argument name="selector" xsi:type="string">\Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="elasticsuiteAsyncClient" type="Smile\ElasticsuiteCore\Client\Client">
+        <arguments>
+            <argument name="clientBuilder" xsi:type="object">elasticsuiteAsyncClientBuilder</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface">
+        <arguments>
+            <argument name="client" xsi:type="object">elasticsuiteAsyncClient</argument>
+        </arguments>
+    </type>
+
+    <type name="\Smile\ElasticsuiteCore\Indexer\GenericIndexerHandler">
+        <arguments>
+            <argument name="indexOperation" xsi:type="object">Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface</argument>
+        </arguments>
+    </type>
 </config>

@@ -73,6 +73,13 @@ interface ClientConfigurationInterface
     public function getHttpAuthPassword();
 
     /**
+     * Get the maximum number of HTTP curl requests that the client can parallelize
+     *
+     * @return int
+     */
+    public function getMaxParallelHandles();
+
+    /**
      * Client config options.
      *
      * @return array

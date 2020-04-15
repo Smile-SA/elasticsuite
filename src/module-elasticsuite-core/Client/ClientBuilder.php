@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
+use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+
 /**
  * ElasticSearch client builder.
  *
@@ -42,22 +44,35 @@ class ClientBuilder
         'http_auth_user'        => null,
         'http_auth_pwd'         => null,
         'is_debug_mode_enabled' => false,
+        'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
     ];
+
+    /**
+     * @var string
+     */
+    private $selector;
 
     /**
      * Constructor.
      *
      * @param \Elasticsearch\ClientBuilder $clientBuilder Client builder.
      * @param \Psr\Log\LoggerInterface     $logger        Logger.
+     * @param string                       $selector      Node Selector.
      */
-    public function __construct(\Elasticsearch\ClientBuilder $clientBuilder, \Psr\Log\LoggerInterface $logger)
-    {
+    public function __construct(
+        \Elasticsearch\ClientBuilder $clientBuilder,
+        \Psr\Log\LoggerInterface $logger,
+        $selector = StickyRoundRobinSelector::class
+    ) {
         $this->clientBuilder = $clientBuilder;
         $this->logger        = $logger;
+        $this->selector      = $selector;
     }
 
     /**
      * Build an ES client from options.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @param array $options Client options. See self::defaultOptions for available options.
      *
@@ -80,6 +95,20 @@ class ClientBuilder
             $clientBuilder->setTracer($this->logger);
         }
 
+        if ($options['max_parallel_handles']) {
+            $handlerParams = ['max_handles' => (int) $options['max_parallel_handles']];
+            $handler = \Elasticsearch\ClientBuilder::defaultHandler($handlerParams);
+            $clientBuilder->setHandler($handler);
+        }
+
+        if (null !== $this->selector) {
+            $selector = $this->selector;
+            if (count($hosts) <= 1) {
+                $selector = StickyRoundRobinSelector::class;
+            }
+            $clientBuilder->setSelector($selector);
+        }
+
         return $clientBuilder->build();
     }
 
@@ -100,7 +129,7 @@ class ClientBuilder
 
         foreach ($options['servers'] as $host) {
             if (!empty($host)) {
-                list($hostname, $port) = array_pad(explode(':', trim($host), 2), 2, 9200);
+                [$hostname, $port] = array_pad(explode(':', trim($host), 2), 2, 9200);
                 $currentHostConfig = [
                     'host'   => $hostname,
                     'port'   => $port,
