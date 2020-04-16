@@ -47,10 +47,10 @@ class Settings extends AbstractAction implements HttpGetActionInterface
     /**
      * @inheritDoc
      *
-     * @param Context              $context              The current context.
+     * @param Context               $context               The current context.
      * @param IndexSettingsProvider $indexSettingsProvider Index mapping provider.
-     * @param PageFactory          $resultPageFactory    Page factory.
-     * @param ForwardFactory       $resultForwardFactory Forward factory.
+     * @param PageFactory           $resultPageFactory     Page factory.
+     * @param ForwardFactory        $resultForwardFactory  Forward factory.
      */
     public function __construct(
         Context $context,

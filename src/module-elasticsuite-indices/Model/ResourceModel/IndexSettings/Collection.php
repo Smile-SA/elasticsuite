@@ -38,9 +38,9 @@ class Collection extends DataCollection
     private $name;
 
     /**
-     * @param EntityFactoryInterface $entityFactory        Entity factory.
-     * @param IndexSettingsProvider   $indexSettingsProvider Index mapping provider.
-     * @param string                 $name                 Index name.
+     * @param EntityFactoryInterface $entityFactory         Entity factory.
+     * @param IndexSettingsProvider  $indexSettingsProvider Index mapping provider.
+     * @param string                 $name                  Index name.
      */
     public function __construct(
         EntityFactoryInterface $entityFactory,

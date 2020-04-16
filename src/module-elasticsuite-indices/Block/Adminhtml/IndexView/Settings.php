@@ -34,9 +34,9 @@ class Settings extends Template
     /**
      * Index mapping items constructor.
      *
-     * @param Template\Context    $context             The current context.
+     * @param Template\Context     $context              The current context.
      * @param IndexSettingsFactory $indexSettingsFactory Index mapping factory.
-     * @param array               $data                Data.
+     * @param array                $data                 Data.
      */
     public function __construct(
         Template\Context $context,
