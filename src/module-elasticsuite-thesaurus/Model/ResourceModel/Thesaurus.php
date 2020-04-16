@@ -185,6 +185,10 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             $termId = 0;
             foreach ($termRelations as $termData) {
+                if (empty($termData['values'])) {
+                    continue;
+                }
+
                 $termId++;
 
                 if ($object->getType() === ThesaurusInterface::TYPE_EXPANSION) {

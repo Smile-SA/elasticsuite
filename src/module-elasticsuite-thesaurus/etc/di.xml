@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticsuiteCore dependency injection configuration.
+ * Smile_ElasticsuiteThesaurus dependency injection configuration.
  *
  * DISCLAIMER
  *
@@ -9,7 +9,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
+ * @package   Smile\ElasticsuiteThesaurus
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
@@ -29,4 +29,12 @@
     <preference for="Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface" type="Smile\ElasticsuiteThesaurus\Model\ThesaurusRepository" />
     <preference for="Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface" type="Smile\ElasticsuiteThesaurus\Model\Thesaurus" />
     <preference for="Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
+
+    <type name="Magento\ImportExport\Model\Import\SampleFileProvider">
+        <arguments>
+            <argument name="samples" xsi:type="array">
+                <item name="thesaurus" xsi:type="string">Smile_ElasticsuiteThesaurus</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
