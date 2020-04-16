@@ -17,19 +17,19 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Smile_ElasticsuiteIndices::tools"
-             title="Tools"
+        <add id="Smile_ElasticsuiteIndices::system"
+             title="System"
              module="Smile_ElasticsuiteIndices"
-             sortOrder="40"
+             sortOrder="90"
              parent="Smile_ElasticsuiteCore::elasticsuite_menu"
-             resource="Smile_ElasticsuiteIndices::tools"
+             resource="Smile_ElasticsuiteIndices::system"
         />
         <add
             id="Smile_ElasticsuiteIndices::manage"
-            title="Indices Status"
+            title="Indices"
             module="Smile_ElasticsuiteIndices"
             sortOrder="10"
-            parent="Smile_ElasticsuiteIndices::tools"
+            parent="Smile_ElasticsuiteIndices::system"
             action="smile_elasticsuite_indices/index/index"
             resource="Smile_ElasticsuiteIndices::manage"/>
     </menu>
