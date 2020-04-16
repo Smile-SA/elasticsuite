@@ -1,0 +1,23 @@
+<!--
+/**
+ * ElasticSuite Relevance configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\Smile_ElasticsuiteThesaurus
+ * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_ImportExport:etc/import.xsd">
+    <entity name="thesaurus" label="ElasticSuite Thesaurus" model="Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus"
+            behaviorModel="Magento\ImportExport\Model\Source\Import\Behavior\Basic" />
+
+    <relatedIndexer entity="thesaurus" name="elasticsuite_thesaurus" />
+</config>

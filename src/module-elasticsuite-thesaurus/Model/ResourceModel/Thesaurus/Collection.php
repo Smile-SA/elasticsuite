@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaurus;
 
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
@@ -251,9 +252,13 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $connection = $this->getConnection();
             $select = $connection->select()
                 ->from(['thesaurus_entity_store' => $this->getTable(ThesaurusInterface::STORE_TABLE_NAME)])
-                ->where('thesaurus_entity_store.' . ThesaurusInterface::THESAURUS_ID . ' IN (?)', $itemIds);
+                ->where('thesaurus_entity_store.' . ThesaurusInterface::THESAURUS_ID . ' IN (?)', $itemIds)
+            ;
 
-            $result = $connection->fetchPairs($select);
+            $result = [];
+            foreach ($connection->fetchAll($select) as $item) {
+                $result[$item[ThesaurusInterface::THESAURUS_ID]][] = $item[ThesaurusInterface::STORE_ID];
+            }
 
             if ($result) {
                 foreach ($this as $item) {
@@ -261,18 +266,25 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                     if (!isset($result[$entityId])) {
                         continue;
                     }
-                    $storeId = $result[$item->getData(ThesaurusInterface::THESAURUS_ID)];
-                    $storeCode = $this->storeManager->getStore($storeId)->getCode();
-
-                    if ($result[$entityId] == 0) {
-                        $stores = $this->storeManager->getStores(false, true);
-                        $storeId = current($stores)->getId();
-                        $storeCode = key($stores);
+                    $storeCodes = [];
+                    $storeIds = [];
+                    foreach ($result[$entityId] as $storeId) {
+                        if ($storeId == 0) {
+                            $storeIds = array_map(function (StoreInterface $store) {
+                                return $store->getId();
+                            }, $this->storeManager->getStores(false, true));
+                            $storeCodes = array_map(function (StoreInterface $store) {
+                                return $store->getCode();
+                            }, $this->storeManager->getStores(false, true));
+                        }
+                        if ($storeId != 0) {
+                            $storeCodes[] = $this->storeManager->getStore($storeId)->getCode();
+                            $storeIds[] = $storeId;
+                        }
                     }
 
-                    $item->setData('_first_store_id', $storeId);
-                    $item->setData('store_code', $storeCode);
-                    $item->setData('store_id', [$result[$entityId]]);
+                    $item->setData('store_ids', $storeIds);
+                    $item->setData('store_codes', implode(";", $storeCodes));
                 }
             }
         }
@@ -305,7 +317,10 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
                 ]
             );
 
-        $this->addTermData($this->getConnection()->fetchAll($select));
+        $data = $this->getConnection()->fetchAll($select);
+
+        $this->addTermData($data);
+        $this->addTermExportData($data);
     }
 
     /**
@@ -331,6 +346,34 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
 
         foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
             $this->_items[$thesaurusId]->setData('terms_summary', implode(" <br/> ", $labels));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Process terms of each thesaurus for export.
+     *
+     * @param array $termData Raw terms data loaded from the DB.
+     *
+     * @return $this
+     */
+    private function addTermExportData($termData)
+    {
+        $labelsByThesaurusId = [];
+
+        foreach ($termData as $currentTerm) {
+            $label = $currentTerm['expansions_terms'];
+
+            if (isset($currentTerm['expanded_term']) && $currentTerm['expanded_term']) {
+                $label = sprintf("%s:%s", $currentTerm['expanded_term'], $label);
+            }
+
+            $labelsByThesaurusId[$currentTerm['thesaurus_id']][] = $label;
+        }
+
+        foreach ($labelsByThesaurusId as $thesaurusId => $labels) {
+            $this->_items[$thesaurusId]->setData('terms_export', implode(";", $labels));
         }
 
         return $this;

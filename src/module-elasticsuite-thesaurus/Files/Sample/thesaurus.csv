@@ -1,0 +1,3 @@
+thesaurus_id,name,type,terms_relations,stores,is_active
+1,Synonym,synonym,"woman,women;man,men;",default,1
+2,Expansion,expansion,"sport:fitness,gym,running;bottom:skirt,pant,short",default,1
