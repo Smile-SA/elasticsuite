@@ -42,6 +42,16 @@ class IndexStatsProvider
     protected $indexStatusProvider;
 
     /**
+     * @var null
+     */
+    private $elasticsuiteIndices = null;
+
+    /**
+     * @var null
+     */
+    private $indicesStats = null;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface     $client              ES client.
@@ -56,6 +66,7 @@ class IndexStatsProvider
         $this->client = $client;
         $this->indicesList = $indicesList;
         $this->indexStatusProvider = $indexStatusProvider;
+        $this->initStats();
     }
 
     /**
@@ -67,15 +78,17 @@ class IndexStatsProvider
      */
     public function getElasticSuiteIndices($params = []): array
     {
-        $elasticSuiteIndices = [];
+        if ($this->elasticsuiteIndices === null) {
+            $this->elasticsuiteIndices = [];
 
-        foreach ($this->client->getIndexAliases($params) as $name => $aliases) {
-            if ($this->isElasticSuiteIndex($name)) {
-                $elasticSuiteIndices[$name] = $aliases ? key($aliases['aliases']) : null;
+            foreach ($this->client->getIndexAliases($params) as $name => $aliases) {
+                if ($this->isElasticSuiteIndex($name)) {
+                    $this->elasticsuiteIndices[$name] = $aliases ? key($aliases['aliases']) : null;
+                }
             }
         }
 
-        return $elasticSuiteIndices;
+        return $this->elasticsuiteIndices;
     }
 
     /**
@@ -100,12 +113,18 @@ class IndexStatsProvider
             'index_name'  => $indexName,
             'index_alias' => $alias,
         ];
+
         try {
-            $indexStatsResponse = $this->client->indexStats($indexName);
-            $indexStats = current($indexStatsResponse['indices']);
+            if (!isset($this->indicesStats[$indexName])) {
+                $indexStatsResponse             = $this->client->indexStats($indexName);
+                $this->indicesStats[$indexName] = current($indexStatsResponse['indices']);
+            }
+
+            $indexStats = $this->indicesStats[$indexName];
+
             $data['number_of_documents'] = $indexStats['total']['docs']['count'];
-            $data['size'] = $this->sizeFormatted($indexStats['total']['store']['size_in_bytes']);
-            $data['index_status'] = $this->indexStatusProvider->getIndexStatus($indexName, $alias);
+            $data['size']                = $this->sizeFormatted($indexStats['total']['store']['size_in_bytes']);
+            $data['index_status']        = $this->indexStatusProvider->getIndexStatus($indexName, $alias);
         } catch (Exception $e) {
             $data['index_status'] = IndexStatus::REBUILDING_STATUS;
         }
@@ -149,5 +168,18 @@ class IndexStatsProvider
         }
 
         return $bytes;
+    }
+
+    /**
+     * Init indices stats by calling once and for all.
+     *
+     * @return void
+     */
+    private function initStats()
+    {
+        if ($this->indicesStats === null) {
+            $indexStatsResponse = $this->client->indexStats('_all');
+            $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+        }
     }
 }
