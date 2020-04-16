@@ -16,7 +16,7 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_ImportExport:etc/import.xsd">
-    <entity name="thesaurus" label="Thesaurus" model="Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus"
+    <entity name="thesaurus" label="ElasticSuite Thesaurus" model="Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus"
             behaviorModel="Magento\ImportExport\Model\Source\Import\Behavior\Basic" />
 
     <relatedIndexer entity="thesaurus" name="elasticsuite_thesaurus" />
