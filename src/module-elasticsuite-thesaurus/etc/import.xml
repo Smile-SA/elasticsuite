@@ -20,5 +20,4 @@
             behaviorModel="Magento\ImportExport\Model\Source\Import\Behavior\Basic" />
 
     <relatedIndexer entity="thesaurus" name="elasticsuite_thesaurus" />
-    <relatedIndexer entity="catalog_product" name="elasticsuite_categories_fulltext" />
 </config>
