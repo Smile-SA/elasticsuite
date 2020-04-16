@@ -23,6 +23,7 @@
                 <xs:element name="char_filters" type="charFiltersDefinition"/>
                 <xs:element name="filters" type="filtersDefinition" />
                 <xs:element name="analyzers" type="analyzersDefinition"/>
+                <xs:element name="normalizers" type="normalizersDefinition"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -71,6 +72,28 @@
         <xs:attribute name="language" type="xs:string" use="required" />
     </xs:complexType>
 
+    <xs:complexType name="normalizersDefinition">
+        <xs:annotation>
+            <xs:documentation>Normalizers declaration root node</xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="normalizer" type="normalizerDefinition" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="normalizerDefinition">
+        <xs:annotation>
+            <xs:documentation>Normalizer definition node</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="char_filters" type="analyzerCharFiltersOptional" />
+            <xs:element name="filters" type="analyzerFilters" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
     <xs:complexType name="analyzersDefinition">
         <xs:annotation>
             <xs:documentation>
@@ -93,12 +116,23 @@
             <xs:element name="filters" type="analyzerFilters" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="normalizer" type="xs:string" />
         <xs:attribute name="tokenizer" type="xs:string" use="required" />
         <xs:attribute name="language" type="xs:string" use="required" />
     </xs:complexType>
 
     <xs:complexType name="analyzerCharFilters">
         <xs:choice maxOccurs="unbounded">
+            <xs:element name="char_filter" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="ref" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="analyzerCharFiltersOptional">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="char_filter" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:attribute name="ref" type="xs:string" use="required" />
