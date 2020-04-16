@@ -25,7 +25,7 @@
             <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\BackButton" as="back_button"/>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Items" name="mapping_items" template="Smile_ElasticsuiteIndices::view/items.phtml" />
+            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView\Settings" name="settings_items" template="Smile_ElasticsuiteIndices::view/items.phtml" />
         </referenceContainer>
     </body>
 </page>

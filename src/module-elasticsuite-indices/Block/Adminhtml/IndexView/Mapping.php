@@ -24,7 +24,7 @@ use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping\CollectionFactory
  * @package  Smile\ElasticsuiteIndices
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
  */
-class Items extends Template
+class Mapping extends Template
 {
     /**
      * @var IndexMappingFactory

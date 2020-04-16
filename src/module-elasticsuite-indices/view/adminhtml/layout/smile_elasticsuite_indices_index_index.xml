@@ -32,7 +32,7 @@
                         <arguments>
                             <argument name="filter_visibility" xsi:type="string">0</argument>
                             <argument name="rowUrl" xsi:type="array">
-                                <item name="path" xsi:type="string">*/*/view</item>
+                                <item name="path" xsi:type="string">*/*/mapping</item>
                                 <item name="extraParamsTemplate" xsi:type="array">
                                     <item name="name" xsi:type="string">getIndexName</item>
                                 </item>
@@ -100,6 +100,20 @@
                                 <argument name="index" xsi:type="string">index_name</argument>
                                 <argument name="renderer" xsi:type="string">Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\Action</argument>
                                 <argument name="actions" xsi:type="array">
+                                    <item name="mapping" xsi:type="array">
+                                        <item name="caption" xsi:type="string" translate="true">View Mapping</item>
+                                        <item name="url" xsi:type="array">
+                                            <item name="base" xsi:type="string">*/*/mapping</item>
+                                        </item>
+                                        <item name="field" xsi:type="string">name</item>
+                                    </item>
+                                    <item name="settings" xsi:type="array">
+                                        <item name="caption" xsi:type="string" translate="true">View Settings</item>
+                                        <item name="url" xsi:type="array">
+                                            <item name="base" xsi:type="string">*/*/settings</item>
+                                        </item>
+                                        <item name="field" xsi:type="string">name</item>
+                                    </item>
                                     <item name="delete" xsi:type="array">
                                         <item name="caption" xsi:type="string" translate="true">Delete</item>
                                         <item name="url" xsi:type="array">

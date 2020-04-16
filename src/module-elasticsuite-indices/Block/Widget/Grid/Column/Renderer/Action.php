@@ -34,18 +34,22 @@ class Action extends ActionBlock
      */
     public function render(DataObject $row): string
     {
-        $actions = $this->getColumn()->getActions();
+        $actions        = $this->getColumn()->getActions();
+        $updatedActions = $actions;
 
-        if (empty($actions) || !is_array($actions)
-            || $row->getData('index_status') !== IndexStatus::GHOST_STATUS
+        if ($row->getData('index_status') !== IndexStatus::GHOST_STATUS
             || !$this->_authorization->isAllowed(Delete::ADMIN_RESOURCE)) {
-            return '&nbsp;';
-        }
-
-        foreach ($actions as $action) {
-            if (is_array($action)) {
-                return $this->_toLinkHtml($action, $row);
+            if (isset($updatedActions['delete'])) {
+                unset($updatedActions['delete']);
             }
         }
+
+        // Do the render with the updated actions.
+        $this->getColumn()->setActions($updatedActions);
+        $out = parent::render($row);
+        // Reset to default action for the rendering of next row.
+        $this->getColumn()->setActions($actions);
+
+        return $out;
     }
 }

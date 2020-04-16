@@ -1,38 +1,38 @@
 <?php
 /**
  * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteIndices
- * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Index;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\ForwardFactory;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
-use Magento\Framework\App\Action\HttpGetActionInterface;
-use Smile\ElasticsuiteIndices\Model\IndexMappingProvider;
+use Smile\ElasticsuiteIndices\Model\IndexSettingsProvider;
 
 /**
- * Indices Adminhtml View controller.
+ * Render the settings of an index
  *
  * @category Smile
  * @package  Smile\ElasticsuiteIndices
- * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class View extends AbstractAction implements HttpGetActionInterface
+class Settings extends AbstractAction implements HttpGetActionInterface
 {
     /**
-     * @var IndexMappingProvider
+     * @var IndexSettingsProvider
      */
-    protected $indexMappingProvider;
+    protected $indexSettingsProvider;
 
     /**
      * @var PageFactory
@@ -48,17 +48,17 @@ class View extends AbstractAction implements HttpGetActionInterface
      * @inheritDoc
      *
      * @param Context              $context              The current context.
-     * @param IndexMappingProvider $indexMappingProvider Index mapping provider.
+     * @param IndexSettingsProvider $indexSettingsProvider Index mapping provider.
      * @param PageFactory          $resultPageFactory    Page factory.
      * @param ForwardFactory       $resultForwardFactory Forward factory.
      */
     public function __construct(
         Context $context,
-        IndexMappingProvider $indexMappingProvider,
+        IndexSettingsProvider $indexSettingsProvider,
         PageFactory $resultPageFactory,
         ForwardFactory $resultForwardFactory
     ) {
-        $this->indexMappingProvider = $indexMappingProvider;
+        $this->indexSettingsProvider = $indexSettingsProvider;
         $this->resultPageFactory = $resultPageFactory;
         $this->resultForwardFactory = $resultForwardFactory;
         parent::__construct($context);
@@ -71,7 +71,7 @@ class View extends AbstractAction implements HttpGetActionInterface
     {
         $indexName = $this->getRequest()->getParam('name');
         try {
-            $index = $this->indexMappingProvider->getMapping($indexName);
+            $index = $this->indexSettingsProvider->getSettings($indexName);
         } catch (\Exception $e) {
             $resultForward = $this->resultForwardFactory->create();
             $resultForward->forward('noroute');
@@ -81,9 +81,9 @@ class View extends AbstractAction implements HttpGetActionInterface
 
         if ($index) {
             $resultPage = $this->resultPageFactory->create();
-            $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_view');
+            $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_settings');
 
-            $resultPage->getConfig()->getTitle()->prepend(__('Mapping for index:') . ' ' . $indexName);
+            $resultPage->getConfig()->getTitle()->prepend(__('Settings for index:') . ' ' . $indexName);
 
             return $resultPage;
         }
