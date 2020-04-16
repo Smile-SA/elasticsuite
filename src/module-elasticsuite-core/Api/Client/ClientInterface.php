@@ -88,6 +88,24 @@ interface ClientInterface
     public function putMapping($indexName, $mapping);
 
     /**
+     * Get the Mapping of an Index
+     *
+     * @param string $indexName Index name.
+     *
+     * @return array
+     */
+    public function getMapping($indexName);
+
+    /**
+     * Get the Settings of an Index
+     *
+     * @param string $indexName Index name.
+     *
+     * @return array
+     */
+    public function getSettings($indexName);
+
+    /**
      * Optimize an index (force segment merging).
      *
      * @param string $indexName Index name.
