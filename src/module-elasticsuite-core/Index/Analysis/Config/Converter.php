@@ -32,6 +32,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const FILTER_TYPE_NODE           = 'filter';
     const ANALYZER_TYPE_ROOT_NODE    = 'analyzers';
     const ANALYZER_TYPE_NODE         = 'analyzer';
+    const NORMALIZER_TYPE_ROOT_NODE  = 'normalizers';
+    const NORMALIZER_TYPE_NODE       = 'normalizer';
+    const LANGUAGE_DEFAULT           = 'default';
 
     /**
      * @var Decoder
@@ -80,13 +83,27 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     {
         $charFilters = $this->parseFilters($xpath, self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
         $filters     = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
-        $analyzers   = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters));
+        $charFilterKeys = array_keys($charFilters);
+        $filterKeys = array_keys($filters);
+        $analyzers   = $this->parseAnalyzers($xpath, $charFilterKeys, $filterKeys);
+        $normalizers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            self::LANGUAGE_DEFAULT,
+            self::NORMALIZER_TYPE_ROOT_NODE,
+            self::NORMALIZER_TYPE_NODE
+        );
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
             self::FILTER_TYPE_NODE      => $filters,
             self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
+
+        if (!empty($normalizers)) {
+            $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
+        }
 
         return $defaultConfiguration;
     }
@@ -117,14 +134,32 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $language
         );
         $filters = array_merge($defaultConfig[self::FILTER_TYPE_NODE], $languageFilters);
-
-        $analyzers = $this->parseAnalyzers($xpath, array_keys($charFilters), array_keys($filters), $language);
+        $charFilterKeys = array_keys($charFilters);
+        $filterKeys = array_keys($filters);
+        $analyzers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            $language
+        );
+        $normalizers = $this->parseAnalyzers(
+            $xpath,
+            $charFilterKeys,
+            $filterKeys,
+            $language,
+            self::NORMALIZER_TYPE_ROOT_NODE,
+            self::NORMALIZER_TYPE_NODE
+        );
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
             self::FILTER_TYPE_NODE      => $filters,
             self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
+
+        if (!empty($normalizers)) {
+            $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
+        }
 
         return $defaultConfiguration;
     }
@@ -157,7 +192,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      *
      * @return array
      */
-    private function parseFilters(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = 'default')
+    private function parseFilters(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = self::LANGUAGE_DEFAULT)
     {
         $filters = [];
         $languagePath = sprintf("[@language='%s']", $language);
@@ -188,6 +223,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
      * @param array     $availableCharFilters List of available char filters.
      * @param array     $availableFilters     List of available filters.
      * @param string    $language             Language searched.
+     * @param string    $typeRootNode         Type root node name.
+     * @param string    $typeNode             Type sub-node name.
      *
      * @return array
      */
@@ -195,29 +232,43 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         \DOMXPath $xpath,
         array $availableCharFilters,
         array $availableFilters,
-        $language = 'default'
+        $language = self::LANGUAGE_DEFAULT,
+        $typeRootNode = self::ANALYZER_TYPE_ROOT_NODE,
+        $typeNode = self::ANALYZER_TYPE_NODE
     ) {
         $analyzers = [];
 
         $languagePath = "@language='default'";
 
-        if ($language != 'default') {
+        if ($language != self::LANGUAGE_DEFAULT) {
             $languagePath .= " or @language='{$language}'";
         }
 
         $searchPath = sprintf(
             '/%s/%s/%s[%s]',
             self::ROOT_NODE_NAME,
-            self::ANALYZER_TYPE_ROOT_NODE,
-            self::ANALYZER_TYPE_NODE,
+            $typeRootNode,
+            $typeNode,
             $languagePath
         );
 
         $analyzerNodes = $xpath->query($searchPath);
 
         foreach ($analyzerNodes as $analyzerNode) {
+            $analyzer = [];
             $analyzerName = $analyzerNode->getAttribute('name');
-            $analyzer = ['tokenizer' => $analyzerNode->getAttribute('tokenizer'), 'type' => 'custom'];
+            $analyzerTokenizer = $analyzerNode->getAttribute('tokenizer');
+            $analyzerNormalizer = $analyzerNode->getAttribute('normalizer');
+
+            if ($analyzerTokenizer) {
+                $analyzer['tokenizer'] = $analyzerTokenizer;
+            }
+
+            if ($analyzerNormalizer) {
+                $analyzer['normalizer'] = $analyzerNormalizer;
+            }
+
+            $analyzer['type'] = 'custom';
             $analyzers[$analyzerName] = $analyzer;
 
             $filterPath = sprintf('%s/%s', self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);

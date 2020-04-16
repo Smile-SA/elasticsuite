@@ -60,7 +60,7 @@ class Thesaurus extends \Smile\ElasticsuiteThesaurus\Model\ResourceModel\Thesaur
             []
         );
 
-        $select->columns(['terms' => new \Zend_Db_Expr('CONCAT(expanded_terms.term, " => " ,GROUP_CONCAT(terms.term))')]);
+        $select->columns(['terms' => new \Zend_Db_Expr('CONCAT(expanded_terms.term,"=>",GROUP_CONCAT(terms.term))')]);
 
         return $connection->fetchCol($select);
     }
