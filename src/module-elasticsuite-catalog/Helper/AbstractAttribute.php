@@ -52,6 +52,16 @@ abstract class AbstractAttribute extends Mapping
     /**
      * @var array
      */
+    private $attributeFieldTypeCache = [];
+
+    /**
+     * @var array
+     */
+    private $attributeUsesSourceCache = [];
+
+    /**
+     * @var array
+     */
     private $attributeMappers = [];
 
     /**
@@ -110,6 +120,7 @@ abstract class AbstractAttribute extends Mapping
 
     /**
      * Get mapping field type for an attribute.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param AttributeInterface $attribute Product attribute.
      *
@@ -117,23 +128,29 @@ abstract class AbstractAttribute extends Mapping
      */
     public function getFieldType(AttributeInterface $attribute)
     {
-        $type = FieldInterface::FIELD_TYPE_TEXT;
+        $attributeId = $attribute->getAttributeId();
 
-        if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
-            $type = FieldInterface::FIELD_TYPE_BOOLEAN;
-        } elseif ($attribute->getBackendType() == 'int') {
-            $type = FieldInterface::FIELD_TYPE_INTEGER;
-        } elseif ($attribute->getFrontendClass() == 'validate-digits') {
-            $type = FieldInterface::FIELD_TYPE_LONG;
-        } elseif ($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
-            $type = FieldInterface::FIELD_TYPE_DOUBLE;
-        } elseif ($attribute->getBackendType() == 'datetime') {
-            $type = FieldInterface::FIELD_TYPE_DATE;
-        } elseif ($attribute->usesSource()) {
-            $type = $attribute->getSourceModel() ? FieldInterface::FIELD_TYPE_KEYWORD : FieldInterface::FIELD_TYPE_INTEGER ;
+        if (!isset($this->attributeFieldTypeCache[$attributeId])) {
+            $type = FieldInterface::FIELD_TYPE_TEXT;
+
+            if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
+                $type = FieldInterface::FIELD_TYPE_BOOLEAN;
+            } elseif ($attribute->getBackendType() == 'int') {
+                $type = FieldInterface::FIELD_TYPE_INTEGER;
+            } elseif ($attribute->getFrontendClass() == 'validate-digits') {
+                $type = FieldInterface::FIELD_TYPE_LONG;
+            } elseif ($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
+                $type = FieldInterface::FIELD_TYPE_DOUBLE;
+            } elseif ($attribute->getBackendType() == 'datetime') {
+                $type = FieldInterface::FIELD_TYPE_DATE;
+            } elseif ($this->usesSource($attribute)) {
+                $type = $attribute->getSourceModel() ? FieldInterface::FIELD_TYPE_KEYWORD : FieldInterface::FIELD_TYPE_INTEGER;
+            }
+
+            $this->attributeFieldTypeCache[$attributeId] = $type;
         }
 
-        return $type;
+        return $this->attributeFieldTypeCache[$attributeId];
     }
 
     /**
@@ -164,7 +181,7 @@ abstract class AbstractAttribute extends Mapping
             };
         }
 
-        if ($attribute->usesSource() && !is_array($value)) {
+        if ($this->usesSource($attribute) && !is_array($value)) {
             $value = explode(',', $value);
         }
 
@@ -177,7 +194,7 @@ abstract class AbstractAttribute extends Mapping
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
-        if ($attribute->usesSource()) {
+        if ($this->usesSource($attribute)) {
             $optionTextFieldName = $this->getOptionTextFieldName($attributeCode);
             $optionTextValues    = $this->getIndexOptionsText($attribute, $storeId, $value);
             // Filter empty values. Not using array_filter here because it could remove "0" string from values.
@@ -255,7 +272,7 @@ abstract class AbstractAttribute extends Mapping
     {
         $field = $attribute->getAttributeCode();
 
-        if ($attribute->usesSource()) {
+        if ($this->usesSource($attribute)) {
             $field = $this->getOptionTextFieldName($field);
         }
 
@@ -324,5 +341,24 @@ abstract class AbstractAttribute extends Mapping
         }
 
         return $attributeId;
+    }
+
+    /**
+     * Compute result of $attribute->usesSource() into a local cache.
+     * Mandatory because a lot of costly plugins (like in Swatches module) are plugged on this method.
+     *
+     * @param AttributeInterface $attribute Attribute
+     *
+     * @return bool
+     */
+    private function usesSource($attribute)
+    {
+        $attributeId = $attribute->getId();
+
+        if (!isset($this->attributeUsesSourceCache[$attributeId])) {
+            $this->attributeUsesSourceCache[$attributeId] = $attribute->usesSource();
+        }
+
+        return $this->attributeUsesSourceCache[$attributeId];
     }
 }
