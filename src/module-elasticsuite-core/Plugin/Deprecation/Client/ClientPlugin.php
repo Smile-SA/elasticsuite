@@ -90,23 +90,4 @@ class ClientPlugin
 
         $client->indices()->putMapping($settings);
     }
-
-    /**
-     * Add type parameter into Bulk requests if needed.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     *
-     * @param ClientInterface $client     Client
-     * @param array           $bulkParams Bulk Params
-     *
-     * @return array
-     */
-    public function beforeBulk(ClientInterface $client, $bulkParams)
-    {
-        if (strcmp($this->serverVersion, "7") < 0) {
-            $bulkParams['type'] = '_doc';
-        }
-
-        return [$bulkParams];
-    }
 }
