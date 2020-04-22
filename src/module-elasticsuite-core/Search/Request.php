@@ -88,7 +88,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         }
 
         if ($trackTotalHits !== null) {
-            $this->trackTotalHits = $trackTotalHits;
+            $this->trackTotalHits = $this->parseTrackTotalHits($trackTotalHits);
         }
     }
 
@@ -127,5 +127,26 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         ];
 
         return in_array($this->spellingType, $fuzzySpellingTypes);
+    }
+
+    /**
+     * Parse the track_total_hits directive to appropriate type : either int or bool.
+     * It's actually passed as a string when coming from the configuration file reader.
+     *
+     * @param int|bool|string $trackTotalHits The track_total_hits value
+     *
+     * @return int|bool
+     */
+    private function parseTrackTotalHits($trackTotalHits)
+    {
+        // @codingStandardsIgnoreStart
+        $trackTotalHits = is_numeric($trackTotalHits) ? (int) $trackTotalHits : filter_var($trackTotalHits, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        // @codingStandardsIgnoreEnd
+
+        if ($trackTotalHits === false || $trackTotalHits === null) {
+            $trackTotalHits = 0;
+        }
+
+        return $trackTotalHits;
     }
 }
