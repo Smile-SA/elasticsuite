@@ -476,6 +476,10 @@
         <plugin name="indexSettingsBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Client\ClientPlugin"/>
     </type>
 
+    <type name="\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper">
+        <plugin name="removeTrackTotalHitsPlugin" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Adapter\Elasticsuite\Request\MapperPlugin"/>
+    </type>
+
     <!-- ElasticSearch >= 7.3.0 plugins -->
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Common">
         <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
