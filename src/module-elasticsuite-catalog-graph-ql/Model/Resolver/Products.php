@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -32,14 +33,9 @@ use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
 class Products implements ResolverInterface
 {
     /**
-     * @var Search
+     * @var ProductQueryInterface
      */
     private $searchQuery;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $searchApiCriteriaBuilder;
 
     /**
      * @var \Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater
@@ -47,18 +43,15 @@ class Products implements ResolverInterface
     private $contextUpdater;
 
     /**
-     * @param Search                $searchQuery              Search Query
-     * @param SearchCriteriaBuilder $searchApiCriteriaBuilder Search Api Criteria Builder
-     * @param ContextUpdater        $contextUpdater           Context Updater
+     * @param ProductQueryInterface $searchQuery    Search Query
+     * @param ContextUpdater        $contextUpdater Context Updater
      */
     public function __construct(
-        Search $searchQuery,
-        SearchCriteriaBuilder $searchApiCriteriaBuilder,
+        ProductQueryInterface $searchQuery,
         ContextUpdater $contextUpdater
     ) {
-        $this->searchQuery              = $searchQuery;
-        $this->searchApiCriteriaBuilder = $searchApiCriteriaBuilder;
-        $this->contextUpdater           = $contextUpdater;
+        $this->searchQuery    = $searchQuery;
+        $this->contextUpdater = $contextUpdater;
     }
 
     /**
@@ -69,8 +62,7 @@ class Products implements ResolverInterface
         $this->validateArgs($args);
         $this->contextUpdater->updateSearchContext($args);
 
-        $searchCriteria = $this->searchApiCriteriaBuilder->build($args);
-        $searchResult   = $this->searchQuery->getResult($searchCriteria, $info);
+        $searchResult = $this->searchQuery->getResult($args, $info);
 
         return [
             'total_count'   => $searchResult->getTotalCount(),

@@ -13,12 +13,13 @@
 
 namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query;
 
+use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Search\Api\SearchInterface;
 
@@ -29,7 +30,7 @@ use Magento\Search\Api\SearchInterface;
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Search
+class Search implements ProductQueryInterface
 {
     /**
      * @var SearchInterface
@@ -52,36 +53,39 @@ class Search
     private $fieldSelection;
 
     /**
-     * @param SearchInterface     $search              Search Engine
-     * @param SearchResultFactory $searchResultFactory Search Results Factory
-     * @param FieldSelection      $fieldSelection      Field Selection
-     * @param ProductSearch       $productProvider     Product Provider
+     * @var SearchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+
+    /**
+     * @param SearchInterface       $search                Search Engine
+     * @param SearchResultFactory   $searchResultFactory   Search Results Factory
+     * @param FieldSelection        $fieldSelection        Field Selection
+     * @param ProductSearch         $productProvider       Product Provider
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria Builder
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
         FieldSelection $fieldSelection,
-        ProductSearch $productProvider
+        ProductSearch $productProvider,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
-        $this->search              = $search;
-        $this->searchResultFactory = $searchResultFactory;
-        $this->fieldSelection      = $fieldSelection;
-        $this->productProvider     = $productProvider;
+        $this->search                = $search;
+        $this->searchResultFactory   = $searchResultFactory;
+        $this->fieldSelection        = $fieldSelection;
+        $this->productProvider       = $productProvider;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * Return results of full text catalog search of given term, and will return filtered results if filter is specified
-     *
-     * @param SearchCriteriaInterface $searchCriteria Search Criteria
-     * @param ResolveInfo             $info           Resolve Info
-     *
-     * @return SearchResult
-     * @throws \Exception
+     * {@inheritDoc}
      */
-    public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info): SearchResult
+    public function getResult(array $args, ResolveInfo $info): SearchResult
     {
-        $queryFields   = $this->fieldSelection->getProductsFieldSelection($info);
-        $searchResults = $this->search->search($searchCriteria);
+        $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
+        $searchCriteria = $this->buildSearchCriteria($args, $info);
+        $searchResults  = $this->search->search($searchCriteria);
 
         // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
         $providerSearchCriteria = clone($searchCriteria);
@@ -109,5 +113,21 @@ class Search
             'currentPage'          => $searchCriteria->getCurrentPage(),
             'totalPages'           => $maxPages,
         ]);
+    }
+
+    /**
+     * Build search criteria from query input args
+     *
+     * @param array       $args Query Arguments
+     * @param ResolveInfo $info Resolve Info
+     *
+     * @return SearchCriteriaInterface
+     */
+    private function buildSearchCriteria(array $args, ResolveInfo $info): SearchCriteriaInterface
+    {
+        $productFields       = (array) $info->getFieldSelection(1);
+        $includeAggregations = isset($productFields['filters']) || isset($productFields['aggregations']);
+
+        return $this->searchCriteriaBuilder->build($args, $includeAggregations);
     }
 }

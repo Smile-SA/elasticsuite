@@ -25,7 +25,7 @@ use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class SearchCriteriaBuilder
+class SearchCriteriaBuilder extends \Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder
 {
     /**
      * @var FilterBuilder
@@ -58,13 +58,9 @@ class SearchCriteriaBuilder
     }
 
     /**
-     * Build search criteria
-     *
-     * @param array $args GraphQL query arguments
-     *
-     * @return SearchCriteriaInterface
+     * {@inheritDoc}
      */
-    public function build(array $args): SearchCriteriaInterface
+    public function build(array $args, bool $includeAggregation): SearchCriteriaInterface
     {
         $searchCriteria = $this->builder->build('products', $args);
         $isSearch       = !empty($args['search']);
