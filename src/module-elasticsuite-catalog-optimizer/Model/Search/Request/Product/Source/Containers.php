@@ -25,7 +25,7 @@ class Containers extends \Smile\ElasticsuiteCore\Model\Search\Request\Source\Con
     /**
      * Product document type.
      */
-    const TYPE_PRODUCT = 'product';
+    const PRODUCT_INDEX = 'catalog_product';
 
     /**
      * Return array of options as value-label pairs
@@ -36,7 +36,7 @@ class Containers extends \Smile\ElasticsuiteCore\Model\Search\Request\Source\Con
     {
         $options = [];
         foreach ($this->getContainers() as $container) {
-            if (isset($container['type']) && ($container['type'] === self::TYPE_PRODUCT)) {
+            if (isset($container['index']) && ($container['index'] === self::PRODUCT_INDEX)) {
                 $options[] = [
                     'value'    => $container['name'],
                     'label'    => __($container['label']),
