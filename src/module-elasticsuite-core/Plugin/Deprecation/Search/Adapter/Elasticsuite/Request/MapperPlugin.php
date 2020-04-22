@@ -44,6 +44,8 @@ class MapperPlugin
     /**
      * Remove track_total_hits for ES<7
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper $subject Request Mapper
      * @param array                                                              $result  Request result as array
      * @param \Smile\ElasticsuiteCore\Search\RequestInterface                    $request Request object
