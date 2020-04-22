@@ -20,20 +20,6 @@ jobs:
 # Elasticsearch 6
     - php: 7.2
       env:
-        - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.2
-      env:
-        - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
-    - php: 7.3
-      env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.3
-      env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
-    - php: 7.2
-      env:
           - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.2
@@ -47,20 +33,6 @@ jobs:
       env:
           - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5 MAGENTO_EDITION=enterprise
 # Elasticsearch 7
-    - php: 7.2
-      env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.2
-      env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
-    - php: 7.3
-      env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=community
-    - if: type != pull_request
-      php: 7.3
-      env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.4 MAGENTO_EDITION=enterprise
     - php: 7.2
       env:
           - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5 MAGENTO_EDITION=community
