@@ -1,0 +1,99 @@
+query productDetail($urlKey: String, $onServer: Boolean!) {
+  productDetail: products(filter: {url_key: {eq: $urlKey}}) {
+    items {
+      __typename
+      categories {
+        id
+        breadcrumbs {
+          category_id
+          __typename
+        }
+        __typename
+      }
+      description {
+        html
+        __typename
+      }
+      id
+      media_gallery_entries {
+        label
+        position
+        disabled
+        file
+        __typename
+      }
+      meta_title @include(if: $onServer)
+      meta_keyword @include(if: $onServer)
+      meta_description
+      name
+      price {
+        regularPrice {
+          amount {
+            currency
+            value
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+      sku
+      small_image {
+        url
+        __typename
+      }
+      url_key
+      ... on ConfigurableProduct {
+        configurable_options {
+          attribute_code
+          attribute_id
+          id
+          label
+          values {
+            default_label
+            label
+            store_label
+            use_default_value
+            value_index
+            __typename
+          }
+          __typename
+        }
+        variants {
+          attributes {
+            code
+            value_index
+            __typename
+          }
+          product {
+            id
+            media_gallery_entries {
+              disabled
+              file
+              label
+              position
+              __typename
+            }
+            sku
+            stock_status
+            price {
+              regularPrice {
+                amount {
+                  currency
+                  value
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        __typename
+      }
+    }
+    __typename
+  }
+}
