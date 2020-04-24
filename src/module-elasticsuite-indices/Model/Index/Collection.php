@@ -48,6 +48,22 @@ class Collection extends DataCollection
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function addFieldToFilter($field, $condition = null)
+    {
+        if ($field === 'index_alias') {
+            if (is_array($condition)) {
+                foreach ($condition as $value) {
+                    $this->addFilter($field, preg_replace('/[^A-Za-z0-9\-_]/', '', $value->__toString()));
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @inheritdoc
      *
      * @param bool $printQuery Is print query.
@@ -59,9 +75,18 @@ class Collection extends DataCollection
     public function loadData($printQuery = false, $logQuery = false): DataCollection
     {
         $data = [];
-        /** @var IndexFactory $collection */
+        /** @var Collection $collection */
         $collection = $this->collectionFactory->create();
-        $indexers = $collection->getItems();
+        $filter = $this->getFilter('index_alias');
+        $indexers = [];
+
+        if ($filter) {
+            $indexers = $collection->getItemsByColumnValue('index_alias', $filter->getValue());
+        }
+        if (!$filter) {
+            $indexers = $collection->getItems();
+        }
+
         foreach ($indexers as $index) {
             $data[$index['index_name']] = $index;
         }

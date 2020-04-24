@@ -47,6 +47,27 @@ class Collection extends DataCollection
     }
 
     /**
+     * Search all items by field value
+     *
+     * @param string $column Column.
+     * @param mixed  $value  Value.
+     * @return array
+     */
+    public function getItemsByColumnValue($column, $value)
+    {
+        $this->load();
+
+        $res = [];
+        foreach ($this as $item) {
+            if (strpos($item->getData($column), $value) !== false) {
+                $res[] = $item;
+            }
+        }
+
+        return $res;
+    }
+
+    /**
      * @inheritdoc
      *
      * @param bool $printQuery Is print query.
