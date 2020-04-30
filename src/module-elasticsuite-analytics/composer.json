@@ -29,9 +29,9 @@
         "analytics"
     ],
     "require": {
-        "magento/framework": ">=101.0.0"
+        "magento/framework": ">=102.0.5"
     },
-    "version": "2.8.0",
+    "version": "2.9.0",
     "autoload": {
         "files": [
             "registration.php"

@@ -28,13 +28,13 @@
         "setup"
     ],
     "require": {
-        "magento/framework": ">=101.0.0",
-        "magento/module-store": ">=100.2.0",
-        "magento/module-backend": ">=100.2.0",
-        "magento/module-rule": ">=100.2.0",
+        "magento/framework": ">=102.0.5",
+        "magento/module-store": ">=101.0.5",
+        "magento/module-backend": ">=101.0.5",
+        "magento/module-rule": ">=100.3.5",
         "smile/module-elasticsuite-catalog": "self.version"
     },
-    "version": "2.8.0",
+    "version": "2.9.0",
     "autoload": {
         "files": [
             "registration.php"
