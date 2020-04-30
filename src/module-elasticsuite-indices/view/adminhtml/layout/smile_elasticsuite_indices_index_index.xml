@@ -30,7 +30,7 @@
 
                     <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="smile_elasticsuite_indices.grid.columnSet" as="grid.columnSet">
                         <arguments>
-                            <argument name="filter_visibility" xsi:type="string">0</argument>
+                            <argument name="filter_visibility" xsi:type="string">1</argument>
                             <argument name="rowUrl" xsi:type="array">
                                 <item name="path" xsi:type="string">*/*/mapping</item>
                                 <item name="extraParamsTemplate" xsi:type="array">
@@ -43,6 +43,7 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Index Title</argument>
                                 <argument name="index" xsi:type="string">index_name</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
@@ -63,6 +64,7 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Number of documents</argument>
                                 <argument name="index" xsi:type="string">number_of_documents</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
@@ -74,6 +76,7 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Size</argument>
                                 <argument name="index" xsi:type="string">size</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
@@ -84,6 +87,7 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Index Status</argument>
                                 <argument name="index" xsi:type="string">index_status</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="renderer" xsi:type="string">Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus</argument>
