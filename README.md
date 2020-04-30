@@ -10,11 +10,9 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to the introduction of Multi Source Inventory (MSI) in Magento 2.3.x, we cannot ensure compatibility between ElasticSuite <2.7 and Magento 2.3.x versions.
+Due to the introduction of Elasticsearch 7 support and the recurrent changes they made on GraphQL implementation in Magento 2.3.5, we cannot ensure compatibility between ElasticSuite <2.9 and Magento >=2.3.5 versions.
 
-If your project is based on **Magento 2.2.x**, you can continue working with Elasticsuite using the latest **2.6.x release**.
-
-If your project is based on **Magento 2.3.x**, you can start working with ElasticSuite today using the latest **2.8.x release**.
+If your project is based on **Magento >= 2.3.5**, you can start working with ElasticSuite today using the latest **2.9.x release**.
 
 **Which version should I use ?**
 
@@ -23,7 +21,8 @@ Magento Version                                     | ElasticSuite Latest Versio
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ~2.1.0```
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ~2.3.0```
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ~2.6.0```
-Magento **2.3.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.8.0```
+Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.8.0```
+Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.9.0```
 
 ### Magento2 B2B Compatibility
 
@@ -42,6 +41,7 @@ Module Name                                                                     
 [CMS Search](https://github.com/Smile-SA/module-elasticsuite-cms-search)                              | Allow to search for CMS pages (in autocomplete and search results).
 [Ratings](https://github.com/Smile-SA/magento2-module-elasticsuite-rating)                            | Allow to filter and/or sort on ratings (based on standard Magento rating module).
 [Elasticsuite for Retailers](https://github.com/Smile-SA/elasticsuite-for-retailer)                   | A complete suite of retail oriented modules : Store Locator, Price segmentation per store, etc...
+[TargetRules with Elasticsearch](https://github.com/Smile-SA/magento2-module-elasticsuite-targetrule) | This module allow to compute target rules via Elasticsearch instead of full MySQL (**require Magento Commerce (EE)**).
 
 ### Community Add-ons
 
