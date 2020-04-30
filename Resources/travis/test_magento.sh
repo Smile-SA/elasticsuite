@@ -27,6 +27,7 @@ echo "composer create-project --repository-url=https://repo.magento.com magento/
 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$VERSION $STABILITY magento --quiet
 
 cd "magento"
+pwd
 
 # Require the extension to make it usable (autoloading)
 echo "==> Requiring smile/elasticsuite from the $TRAVIS_BRANCH-dev branch"
@@ -40,7 +41,15 @@ echo "==> Installing Magento 2"
 mysql -uroot -e 'CREATE DATABASE magento2;'
 php bin/magento setup:install -q --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2"
 
-echo "==> Process upgrade and try to compile..."
+echo "==> Process setup:upgrade and reindex"
 php bin/magento setup:upgrade -q
+php bin/magento index:reindex
+
+echo "==> Try to compile..."
 php bin/magento cache:flush
 php bin/magento setup:di:compile
+
+echo "==> Enable Apache configuration"
+sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+sudo service apache2 restart
+sleep 2
