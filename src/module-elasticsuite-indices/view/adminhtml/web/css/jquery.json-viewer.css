@@ -1,6 +1,7 @@
 /* Root element */
 .json-document {
   padding: 1em 2em;
+  font-size: 0.8em;
 }
 
 /* Syntax highlighting for JSON objects */
