@@ -132,7 +132,7 @@ class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
 
         if ($this->getBaseUrl()) {
             $baseUrlParts = explode('?', $this->getBaseUrl());
-            $qsParser     = new \Zend\Stdlib\Parameters();
+            $qsParser     = new \Laminas\Stdlib\Parameters();
 
             $qsParser->fromArray($qsParams);
 
