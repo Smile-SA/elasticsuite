@@ -18,7 +18,7 @@
    * @return boolean
    */
   function isUrl(string) {
-    var urlRegexp = /^(https?:\/\/|ftps?:\/\/)?([a-z0-9%-]+\.){1,}([a-z0-9-]+)?(:(\d{1,5}))?(\/([a-z0-9\-._~:/?#[\]@!$&'()*+,;=%]+)?)?$/i;
+    var urlRegexp = new RegExp("^(https?:\\/\\/|ftps?:\\/\\/)?([a-z0-9%-]+\\.){1,}([a-z0-9-]+)?(:(\\d{1,5}))?(\\/([a-z0-9\\-._~:/?#[\\]@!$&'()*+,;=%]+)?)?$", "i");
     return urlRegexp.test(string);
   }
 
