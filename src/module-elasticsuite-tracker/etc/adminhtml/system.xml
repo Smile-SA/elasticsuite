@@ -29,7 +29,7 @@
                 <field id="retention_delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Retention delay</label>
                     <validate>integer validate-greater-than-zero</validate>
-                    <comment><![CDATA[In days (default is 30 days.).<br /> Tracking data older than this will be removed each day.]]></comment>
+                    <comment><![CDATA[In days. (Default is 365 days.)<br /> Tracking data older than this will be removed each day.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
@@ -43,7 +43,7 @@
                 <field id="visit_cookie_lifetime" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visit Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
-                    <comment><![CDATA[In seconds (default is 3600 sec.).<br /> Without any activity under this delay we start a new visit.]]></comment>
+                    <comment><![CDATA[In seconds. (Default is 3600 sec.)<br /> Without any activity under this delay we start a new visit.]]></comment>
                 </field>
                 <field id="visitor_cookie_name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visitor Cookie Name</label>
@@ -51,7 +51,7 @@
                 <field id="visitor_cookie_lifetime" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Visitor Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
-                    <comment><![CDATA[In day (default is 365 days).<br /> This cookie will be stick to the customer to allow multiple session aggregation.]]></comment>
+                    <comment><![CDATA[In days. (Default is 365 days.)<br /> This cookie will be stick to the customer to allow multiple session aggregation.]]></comment>
                 </field>
             </group>
             <group id="anonymization" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
@@ -63,7 +63,7 @@
                 <field id="delay" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Anonymization Delay</label>
                     <validate>integer validate-greater-than-zero</validate>
-                    <comment><![CDATA[In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay.]]></comment>
+                    <comment><![CDATA[In days. (Default is 365 days.)<br /> Tracked customer related data will be anonymized after this delay.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
