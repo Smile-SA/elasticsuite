@@ -46,4 +46,15 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteTracker\Model\EventIndex">
+        <arguments>
+            <argument name="indexOperation" xsi:type="object">Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\SessionIndex">
+        <arguments>
+            <argument name="indexOperation" xsi:type="object">Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface</argument>
+        </arguments>
+    </type>
 </config>

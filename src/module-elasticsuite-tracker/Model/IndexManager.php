@@ -71,8 +71,9 @@ class IndexManager
     {
         if ($this->client->indexExists($index->getName()) === false) {
             $indexSettings = array_merge($this->indexSettings->getCreateIndexSettings(), $this->indexSettings->getInstallIndexSettings());
+            $indexSettings += $this->indexSettings->getDynamicIndexSettings($store);
             $indexSettings['analysis'] = $this->indexSettings->getAnalysisSettings($store);
-            $this->client->createIndex($index->getName(), $indexSettings);
+            $this->client->createIndex($index->getName(), ['settings' => $indexSettings]);
             $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $index->getIdentifier()]]]);
             $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
         }
