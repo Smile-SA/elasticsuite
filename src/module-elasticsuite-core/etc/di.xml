@@ -431,6 +431,21 @@
 
     <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Structure\Element\Group\Proxy" shared="false"/>
 
+    <type name="Magento\Framework\App\ScopeResolverPool">
+        <arguments>
+            <argument name="scopeResolvers" xsi:type="array">
+                <item name="containers" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Resolver\Containers</item>
+                <item name="containers_stores" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Resolver\Containers</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Resolver\Containers">
+        <arguments>
+            <argument name="baseConfig" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\BaseConfig\Proxy</argument>
+        </arguments>
+    </type>
+
     <!-- Setting ElasticSuite to use the default (which does nothing) data provider for suggestions -->
     <type name="Magento\AdvancedSearch\Model\SuggestedQueries">
         <arguments>
