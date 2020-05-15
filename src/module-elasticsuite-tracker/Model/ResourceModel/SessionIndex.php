@@ -94,7 +94,7 @@ class SessionIndex
      */
     private function getSearchRequest($storeId, $sessionIds): RequestInterface
     {
-        $queryFilters = ['session.uid' => $sessionIds];
+        $queryFilters = ['session.uid' => array_values(array_unique($sessionIds))];
 
         return $this->searchRequestBuilder->create($storeId, self::SEARCH_REQUEST_CONTAINER, 0, 0, null, [], [], $queryFilters);
     }
