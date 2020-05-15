@@ -202,9 +202,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
-        $this->_orders[$attribute] = $dir;
-        // Reset Filter Rendering, because otherwise the new ordering will not be picked up by ::_renderFiltersBefore.
-        $this->_isFiltersRendered = false;
+        if (!isset($this->_orders[$attribute]) || ($this->_orders[$attribute] !== $dir)) {
+            $this->_orders[$attribute] = $dir;
+            // Reset Filter Rendering, because otherwise the new ordering will not be picked up by ::_renderFiltersBefore.
+            $this->_isFiltersRendered = false;
+        }
 
         return $this;
     }
