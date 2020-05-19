@@ -38,6 +38,11 @@ class OptimizerActions extends Column
      **/
     const OPTIMIZER_URL_PATH_DELETE = 'smile_elasticsuite_catalog_optimizer/optimizer/delete';
 
+    /**
+     * Duplicate Url path
+     **/
+    const OPTIMIZER_URL_PATH_DUPLICATE = 'smile_elasticsuite_catalog_optimizer/optimizer/duplicate';
+
     /** @var UrlInterface */
     protected $urlBuilder;
 
@@ -47,12 +52,18 @@ class OptimizerActions extends Column
     private $editUrl;
 
     /**
+     * @var string
+     */
+    private $duplicateUrl;
+
+    /**
      * @param ContextInterface   $context            Application context
      * @param UiComponentFactory $uiComponentFactory Ui Component Factory
      * @param UrlInterface       $urlBuilder         URL Builder
      * @param array              $components         Components
      * @param array              $data               Component Data
      * @param string             $editUrl            Edit Url
+     * @param string             $duplicateUrl       Duplicate Url
      */
     public function __construct(
         ContextInterface $context,
@@ -60,10 +71,12 @@ class OptimizerActions extends Column
         UrlInterface $urlBuilder,
         array $components = [],
         array $data = [],
-        $editUrl = self::OPTIMIZER_URL_PATH_EDIT
+        $editUrl = self::OPTIMIZER_URL_PATH_EDIT,
+        $duplicateUrl = self::OPTIMIZER_URL_PATH_DUPLICATE
     ) {
         $this->urlBuilder = $urlBuilder;
         $this->editUrl = $editUrl;
+        $this->duplicateUrl = $duplicateUrl;
 
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
@@ -85,6 +98,11 @@ class OptimizerActions extends Column
                     $item[$name]['edit'] = [
                         'href'  => $this->urlBuilder->getUrl($this->editUrl, ['id' => $item['optimizer_id']]),
                         'label' => __('Edit'),
+                    ];
+
+                    $item[$name]['duplicate'] = [
+                        'href'  => $this->urlBuilder->getUrl($this->duplicateUrl, ['id' => $item['optimizer_id']]),
+                        'label' => __('Duplicate'),
                     ];
 
                     $item[$name]['delete'] = [

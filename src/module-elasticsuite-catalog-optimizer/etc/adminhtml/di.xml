@@ -41,4 +41,10 @@
             <argument name="modifierPool" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form\Modifier\Pool</argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Copier">
+        <arguments>
+            <argument name="modifierPool" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
 </config>
