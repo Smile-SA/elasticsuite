@@ -75,3 +75,6 @@ Name,Name
 Active,Active
 Inactive,Inactive
 Status,Status
+Duplicate,Duplicate
+"Something went wrong while duplicating the optimizer.","Something went wrong while duplicating the optimizer."
+"You duplicated the optimizer.","You duplicated the optimizer."

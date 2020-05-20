@@ -48,3 +48,7 @@ Name,Name
 Active,Aktiv
 Inactive,Inaktiv
 Status,Status
+Duplicate,Duplikat
+"Something went wrong while duplicating the optimizer.","Beim Duplizieren des Optimierers ist ein Fehler aufgetreten."
+"You duplicated the optimizer.","Sie haben den Optimierer dupliziert."
+
