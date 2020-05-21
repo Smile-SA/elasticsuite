@@ -130,7 +130,10 @@ class AbstractAttributeData extends Indexer
                 ['attribute_id']
             )
             ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
-            ->where('t_default.store_id=?', 0)
+            ->where(
+                $this->connection->quoteInto('t_default.store_id = ?', 0)
+                . ' OR ' . $this->connection->quoteInto('t_default.store_id = ?', $storeId)
+            )
             ->where('t_default.attribute_id IN (?)', $attributeIds)
             ->where("entity.{$entityIdField} IN (?)", $entityIds)
             ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
