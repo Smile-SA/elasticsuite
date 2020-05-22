@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Dat
 
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
@@ -131,7 +132,7 @@ class AbstractAttributeData extends Indexer
             )
             ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
             ->where(
-                $this->connection->quoteInto('t_default.store_id = ?', 0)
+                $this->connection->quoteInto('t_default.store_id = ?', Store::DEFAULT_STORE_ID)
                 . ' OR ' . $this->connection->quoteInto('t_default.store_id = ?', $storeId)
             )
             ->where('t_default.attribute_id IN (?)', $attributeIds)
