@@ -112,28 +112,43 @@ class AbstractAttributeData extends Indexer
         // The legacy entity_id field.
         $entityIdField = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
 
+        $joinDefaultValuesCondition = [
+            "entity.$linkField = t_default.$linkField",
+            $this->connection->quoteInto('t_default.attribute_id IN (?)', $attributeIds),
+            't_default.store_id= ?',
+        ];
+        $joinDefaultValuesCondition = $this->connection->quoteInto(
+            implode(' AND ', $joinDefaultValuesCondition),
+            \Magento\Store\Model\Store::DEFAULT_STORE_ID
+        );
+
         $joinStoreValuesConditionClauses = [
-            "t_default.$linkField = t_store.$linkField",
-            't_default.attribute_id = t_store.attribute_id',
+            "entity.$linkField = t_store.$linkField",
+            $this->connection->quoteInto('t_store.attribute_id IN (?)', $attributeIds),
             't_store.store_id= ?',
         ];
-
         $joinStoreValuesCondition = $this->connection->quoteInto(
             implode(' AND ', $joinStoreValuesConditionClauses),
             $storeId
         );
 
         $select->from(['entity' => $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable()], [$entityIdField])
-            ->joinInner(
+            ->joinLeft(
                 ['t_default' => $tableName],
-                new \Zend_Db_Expr("entity.{$linkField} = t_default.{$linkField}"),
-                ['attribute_id']
+                $joinDefaultValuesCondition,
+                []
             )
-            ->joinLeft(['t_store' => $tableName], $joinStoreValuesCondition, [])
-            ->where('t_default.store_id=?', 0)
-            ->where('t_default.attribute_id IN (?)', $attributeIds)
+            ->joinLeft(
+                ['t_store' => $tableName],
+                $joinStoreValuesCondition,
+                []
+            )
             ->where("entity.{$entityIdField} IN (?)", $entityIds)
-            ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
+            ->having('value IS NOT NULL')
+            ->columns([
+                'attribute_id' => new \Zend_Db_Expr('COALESCE(t_store.attribute_id, t_default.attribute_id)'),
+                'value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)'),
+            ]);
 
         return $this->connection->fetchAll($select);
     }
