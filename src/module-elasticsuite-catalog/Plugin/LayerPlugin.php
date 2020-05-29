@@ -79,6 +79,10 @@ class LayerPlugin
         \Magento\Catalog\Model\Layer $layer,
         \Magento\Catalog\Model\ResourceModel\Collection\AbstractCollection $collection
     ) {
+        if (!method_exists($collection, 'addSortFilterParameters')) {
+            return $this;
+        }
+
         $searchQuery = $this->queryFactory->get();
 
         if (!$searchQuery->getQueryText() && $layer->getCurrentCategory()) {
