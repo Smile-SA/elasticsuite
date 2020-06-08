@@ -435,7 +435,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $orderList = join(',', $docIds);
         $this->getSelect()->reset(\Magento\Framework\DB\Select::ORDER);
-        $this->getSelect()->order("FIELD(e.entity_id,$orderList)");
+        $this->getSelect()->order(new \Zend_Db_Expr("FIELD(e.entity_id,$orderList)"));
 
         $this->originalPageSize = $this->_pageSize;
         $this->_pageSize = false;
