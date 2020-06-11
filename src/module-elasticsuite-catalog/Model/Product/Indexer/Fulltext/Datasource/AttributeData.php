@@ -226,8 +226,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             $productIndexData['indexed_attributes'] = [];
         }
 
-        // Data can be missing for this attribute (Eg : due to null value being escaped).
-        if (isset($productIndexData[$attribute->getAttributeCode()])) {
+        // Data can be missing for this attribute (Eg : due to null value being escaped,
+        // or this attribute is already included in the array).
+        if (isset($productIndexData[$attribute->getAttributeCode()])
+            && !in_array($attribute->getAttributeCode(), $productIndexData['indexed_attributes'])
+        ) {
             $productIndexData['indexed_attributes'][] = $attribute->getAttributeCode();
         }
     }
