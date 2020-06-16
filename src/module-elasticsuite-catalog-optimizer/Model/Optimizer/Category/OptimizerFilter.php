@@ -13,7 +13,11 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Category;
 
+use Magento\Catalog\Api\CategoryRepositoryInterfaceFactory;
+use Magento\Framework\App\RequestInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerFilterInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Return a list of optimizers for a given search context.
@@ -25,7 +29,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerFilterInterface;
 class OptimizerFilter implements OptimizerFilterInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation
+     * @var Limitation
      */
     private $limitationResource;
 
@@ -35,22 +39,38 @@ class OptimizerFilter implements OptimizerFilterInterface
     private $cache = [];
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     * @var ContextInterface
      */
     private $searchContext;
 
     /**
+     * @var CategoryRepositoryInterfaceFactory
+     */
+    private $categoryRepository;
+
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                          $searchContext      Search context.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource Optimizer Limitation.
+     * @param ContextInterface                        $searchContext             Search context.
+     * @param Limitation                              $limitationResource        Optimizer Limitation.
+     * @param CategoryRepositoryInterfaceFactory      $categoryRepositoryFactory Category Repository Factory.
+     * @param \Magento\Framework\App\RequestInterface $request                   Request.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource
+        ContextInterface $searchContext,
+        Limitation $limitationResource,
+        CategoryRepositoryInterfaceFactory $categoryRepositoryFactory,
+        RequestInterface $request
     ) {
         $this->limitationResource = $limitationResource;
         $this->searchContext      = $searchContext;
+        $this->categoryRepository = $categoryRepositoryFactory->create();
+        $this->request            = $request;
     }
 
     /**
@@ -59,6 +79,11 @@ class OptimizerFilter implements OptimizerFilterInterface
     public function getOptimizerIds()
     {
         $optimizerIds = null;
+
+        if (!$this->searchContext->getCurrentCategory() && $this->getPreviewCategory()) {
+            $category = $this->categoryRepository->get($this->getPreviewCategory());
+            $this->searchContext->setCurrentCategory($category);
+        }
 
         if ($this->searchContext->getCurrentCategory()) {
             $storeId    = $this->searchContext->getStoreId();
@@ -71,7 +96,24 @@ class OptimizerFilter implements OptimizerFilterInterface
 
             $optimizerIds = $this->cache[$cacheKey];
         }
+        $optimizerIds[] = $this->getCurrentOptimizerId();
 
         return $optimizerIds;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getPreviewCategory()
+    {
+        return $this->request->getPostValue('category_preview') ?? false;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCurrentOptimizerId()
+    {
+        return $this->request->getPostValue('optimizer_id') ?? '';
     }
 }

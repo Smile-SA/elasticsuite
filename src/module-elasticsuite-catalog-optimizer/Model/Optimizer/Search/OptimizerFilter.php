@@ -13,7 +13,11 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Search;
 
+use Magento\Framework\App\RequestInterface;
+use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerFilterInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation;
 
 /**
  * Return a list of optimizers for a given search context.
@@ -25,7 +29,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerFilterInterface;
 class OptimizerFilter implements OptimizerFilterInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation
+     * @var Limitation
      */
     private $limitationResource;
 
@@ -35,9 +39,19 @@ class OptimizerFilter implements OptimizerFilterInterface
     private $cache = [];
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     * @var ContextInterface
      */
     private $searchContext;
+
+    /**
+     * @var QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
 
     /**
      * @var string
@@ -47,18 +61,24 @@ class OptimizerFilter implements OptimizerFilterInterface
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                          $searchContext      Search context.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource Optimizer Limitation.
-     * @param string                                                                       $containerName      Container Name.
+     * @param ContextInterface $searchContext      Search context.
+     * @param Limitation       $limitationResource Optimizer Limitation.
+     * @param QueryFactory     $queryFactory       Query Factory.
+     * @param RequestInterface $request            Request.
+     * @param string           $containerName      Container Name.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Limitation $limitationResource,
+        ContextInterface $searchContext,
+        Limitation $limitationResource,
+        QueryFactory $queryFactory,
+        RequestInterface $request,
         $containerName = 'quick_search_container'
     ) {
         $this->limitationResource = $limitationResource;
         $this->searchContext      = $searchContext;
         $this->containerName      = $containerName;
+        $this->queryFactory       = $queryFactory;
+        $this->request            = $request;
     }
 
     /**
@@ -67,6 +87,12 @@ class OptimizerFilter implements OptimizerFilterInterface
     public function getOptimizerIds()
     {
         $optimizerIds = null;
+
+        if (!$this->searchContext->getCurrentSearchQuery() && $this->getPreviewSearchQuery()) {
+            $query = $this->queryFactory->create();
+            $query->loadByQueryText($this->getPreviewSearchQuery());
+            $this->searchContext->setCurrentSearchQuery($query);
+        }
 
         if ($this->searchContext->getCurrentSearchQuery()) {
             $storeId  = $this->searchContext->getStoreId();
@@ -79,7 +105,24 @@ class OptimizerFilter implements OptimizerFilterInterface
 
             $optimizerIds = $this->cache[$cacheKey];
         }
+        $optimizerIds[] = $this->getCurrentOptimizerId();
 
         return $optimizerIds;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getPreviewSearchQuery()
+    {
+        return $this->request->getPostValue('query_text_preview') ?? false;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getCurrentOptimizerId()
+    {
+        return $this->request->getPostValue('optimizer_id') ?? '';
     }
 }
