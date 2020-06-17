@@ -76,7 +76,8 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
                     $filterArray[$code] = [$filterArray[$code]];
                 }
 
-                if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
+                if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute) &&
+                    ($optionIds = $this->swatchHelperData->getOptionIds($attribute, $value))) {
                     $filterArray[$code][] = $this->swatchHelperData->getOptionIds($attribute, $value);
                 }
             }
