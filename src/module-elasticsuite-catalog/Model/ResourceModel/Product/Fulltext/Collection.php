@@ -446,6 +446,21 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Set _pageSize false since it is managed by the engine and might have been changed since _renderFiltersBefore.
+     *
+     * @inheritDoc
+     */
+    protected function _beforeLoad()
+    {
+        if ($this->_pageSize !== false) {
+            $this->originalPageSize = $this->_pageSize;
+            $this->_pageSize = false;
+        }
+
+        return parent::_beforeLoad();
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
