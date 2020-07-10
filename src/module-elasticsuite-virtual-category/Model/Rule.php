@@ -214,6 +214,22 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Transform a category ids list in query rule.
+     *
+     * @param array $categoryIds        Categories included in the query.
+     * @param array $excludedCategories Categories ignored in subquery filters.
+     *
+     * @return QueryInterface
+     */
+    public function getStandardCategoriesQuery(array $categoryIds, $excludedCategories): QueryInterface
+    {
+        $conditionsParams  = ['data' => ['attribute' => 'category_ids', 'operator' => '()', 'value' => $categoryIds]];
+        $categoryCondition = $this->productConditionsFactory->create($conditionsParams);
+
+        return $this->queryBuilder->getSearchQuery($categoryCondition, $excludedCategories);
+    }
+
+    /**
      * Load the root category used for a virtual category.
      *
      * @param CategoryInterface $category Virtual category.
@@ -250,22 +266,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private function getStandardCategoryQuery(CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
         return $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
-    }
-
-    /**
-     * Transform a category ids list in query rule.
-     *
-     * @param array $categoryIds        Categories included in the query.
-     * @param array $excludedCategories Categories ignored in subquery filters.
-     *
-     * @return QueryInterface
-     */
-    private function getStandardCategoriesQuery(array $categoryIds, $excludedCategories): QueryInterface
-    {
-        $conditionsParams  = ['data' => ['attribute' => 'category_ids', 'operator' => '()', 'value' => $categoryIds]];
-        $categoryCondition = $this->productConditionsFactory->create($conditionsParams);
-
-        return $this->queryBuilder->getSearchQuery($categoryCondition, $excludedCategories);
     }
 
     /**

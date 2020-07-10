@@ -72,8 +72,16 @@ class RequestMapperPlugin
             $categoryId = current(array_values($result['category.category_id']));
             $storeId    = $containerConfiguration->getStoreId();
 
-            $category = $this->categoryRepository->get($categoryId, $storeId);
-            $result[] = $category->getVirtualRule()->getCategorySearchQuery($category);
+            if (is_array($categoryId)) {
+                $category = $this->categoryRepository->get(current($categoryId), $storeId);
+                $result[] = $category->getVirtualRule()->getStandardCategoriesQuery($categoryId, []);
+            }
+
+            if (!is_array($categoryId)) {
+                $category = $this->categoryRepository->get($categoryId, $storeId);
+                $result[] = $category->getVirtualRule()->getCategorySearchQuery($category);
+            }
+
             unset($result['category.category_id']);
         }
 
