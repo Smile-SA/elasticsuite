@@ -103,10 +103,11 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
 
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * {@inheritDoc}
      */
-    protected function _renderRangeLabel($fromPrice, $toPrice)
+    protected function _renderRangeLabel($fromPrice, $toPrice, $isLast = false)
     {
         $formattedPrice = $this->priceCurrency->format((float) $fromPrice * $this->getCurrencyRate());
 
