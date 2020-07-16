@@ -78,7 +78,7 @@ class ItemDataFactory
 
         if (isset($document['price'])) {
             foreach ($document['price'] as $currentPrice) {
-                if ((int) $price['customer_group_id'] === GroupInterface::NOT_LOGGED_IN_ID) {
+                if ((int) $currentPrice['customer_group_id'] === GroupInterface::NOT_LOGGED_IN_ID) {
                     $price = (float) $currentPrice['price'];
                 }
             }
