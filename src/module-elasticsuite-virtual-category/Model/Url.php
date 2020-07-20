@@ -125,8 +125,9 @@ class Url
         }
         $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
         if ($categoryId) {
+            $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
             $productRewrite = $this->urlFinder->findOneByData([
-                UrlRewrite::REQUEST_PATH => trim($productRequestPath, '/'),
+                UrlRewrite::REQUEST_PATH => trim($productRequestPath, '/') . ($suffix === '/' ? '/' : ''),
                 UrlRewrite::STORE_ID => $storeId,
             ]);
             if (null !== $productRewrite) {
