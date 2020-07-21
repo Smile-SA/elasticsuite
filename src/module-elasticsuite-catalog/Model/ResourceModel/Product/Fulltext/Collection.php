@@ -202,9 +202,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
-        $this->_orders[$attribute] = $dir;
-        // Reset Filter Rendering, because otherwise the new ordering will not be picked up by ::_renderFiltersBefore.
-        $this->_isFiltersRendered = false;
+        if (!isset($this->_orders[$attribute]) || ($this->_orders[$attribute] !== $dir)) {
+            $this->_orders[$attribute] = $dir;
+            // Reset Filter Rendering, because otherwise the new ordering will not be picked up by ::_renderFiltersBefore.
+            $this->_isFiltersRendered = false;
+        }
 
         return $this;
     }
@@ -433,7 +435,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $orderList = join(',', $docIds);
         $this->getSelect()->reset(\Magento\Framework\DB\Select::ORDER);
-        $this->getSelect()->order("FIELD(e.entity_id,$orderList)");
+        $this->getSelect()->order(new \Zend_Db_Expr("FIELD(e.entity_id,$orderList)"));
 
         $this->originalPageSize = $this->_pageSize;
         $this->_pageSize = false;

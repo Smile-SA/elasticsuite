@@ -137,7 +137,7 @@ class IndexHandler
     {
         $settings['analysis']['analyzer'][$type] = [
             'tokenizer' => 'whitespace',
-            'filter' => ['lowercase', 'shingle'],
+            'filter' => ['lowercase'],
         ];
 
         if (!empty($values)) {
@@ -147,6 +147,7 @@ class IndexHandler
         }
 
         $settings['analysis']['analyzer'][$type]['filter'][] = 'type_filter';
+        $settings['analysis']['analyzer'][$type]['filter'][] = 'shingle';
 
         return $settings;
     }

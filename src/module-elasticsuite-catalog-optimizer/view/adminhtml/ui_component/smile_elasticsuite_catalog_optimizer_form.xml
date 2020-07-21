@@ -27,6 +27,7 @@
         <item name="buttons" xsi:type="array">
             <item name="back" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button\Back</item>
             <item name="save" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button\Save</item>
+            <item name="duplicate" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button\Duplicate</item>
             <item name="delete" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button\Delete</item>
             <item name="save_and_continue" xsi:type="string">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\Edit\Button\SaveAndContinue</item>
         </item>

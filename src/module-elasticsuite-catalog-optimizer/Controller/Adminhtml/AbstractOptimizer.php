@@ -14,6 +14,13 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Backend\Model\View\Result\Page;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Result\PageFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Copier;
 
 /**
  * Abstract Optimizer controller
@@ -25,44 +32,51 @@ use Magento\Backend\App\Action;
 abstract class AbstractOptimizer extends Action
 {
     /**
-     * @var \Magento\Framework\View\Result\PageFactory|null
+     * @var PageFactory|null
      */
     protected $resultPageFactory = null;
 
     /**
      * Core registry
      *
-     * @var \Magento\Framework\Registry
+     * @var Registry
      */
     protected $coreRegistry;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface
+     * @var OptimizerRepositoryInterface
      */
     protected $optimizerRepository;
 
     /**
      * Optimizer Factory
      *
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory
+     * @var OptimizerInterfaceFactory
      */
     protected $optimizerFactory;
 
     /**
+     * @var Copier
+     */
+    protected $optimizerCopier;
+
+    /**
      * Abstract constructor.
      *
-     * @param \Magento\Backend\App\Action\Context                                    $context             Application context.
-     * @param \Magento\Framework\View\Result\PageFactory                             $resultPageFactory   Result Page factory.
-     * @param \Magento\Framework\Registry                                            $coreRegistry        Application registry.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface   $optimizerRepository Optimizer Repository.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory $optimizerFactory    Optimizer Factory.
+     * @param Context                      $context             Application context.
+     * @param PageFactory                  $resultPageFactory   Result Page factory.
+     * @param Registry                     $coreRegistry        Application registry.
+     * @param OptimizerRepositoryInterface $optimizerRepository Optimizer Repository.
+     * @param OptimizerInterfaceFactory    $optimizerFactory    Optimizer Factory.
+     * @param Copier                       $optimizerCopier     Optimizer Copier.
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
-        \Magento\Framework\Registry $coreRegistry,
-        \Smile\ElasticsuiteCatalogOptimizer\Api\OptimizerRepositoryInterface $optimizerRepository,
-        \Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory $optimizerFactory
+        Context $context,
+        PageFactory $resultPageFactory,
+        Registry $coreRegistry,
+        OptimizerRepositoryInterface $optimizerRepository,
+        OptimizerInterfaceFactory $optimizerFactory,
+        Copier $optimizerCopier
     ) {
         parent::__construct($context);
 
@@ -70,16 +84,17 @@ abstract class AbstractOptimizer extends Action
         $this->coreRegistry         = $coreRegistry;
         $this->optimizerRepository  = $optimizerRepository;
         $this->optimizerFactory     = $optimizerFactory;
+        $this->optimizerCopier      = $optimizerCopier;
     }
 
     /**
      * Create result page
      *
-     * @return \Magento\Backend\Model\View\Result\Page
+     * @return Page
      */
     protected function createPage()
     {
-        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
+        /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
 
         $resultPage->setActiveMenu('Smile_ElasticsuiteCatalogOptimizer::optimizer')

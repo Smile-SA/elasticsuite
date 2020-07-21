@@ -123,14 +123,12 @@ class SearchQuery
 
         $spellcheckRequestParams = [
             'index'           => $containerConfig->getIndexName(),
-            'type'            => $containerConfig->getTypeName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
-        $spellingType      = $this->spellchecker->getSpellingType($spellcheckRequest);
 
-        return $spellingType;
+        return $this->spellchecker->getSpellingType($spellcheckRequest);
     }
 }
