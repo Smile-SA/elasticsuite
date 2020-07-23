@@ -13,7 +13,6 @@
 
 namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query;
 
-use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
@@ -21,7 +20,9 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Search\Api\SearchInterface;
+use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 
 /**
  * Elasticsuite GraphQL Products Query Resolver.
@@ -81,7 +82,7 @@ class Search implements ProductQueryInterface
     /**
      * {@inheritDoc}
      */
-    public function getResult(array $args, ResolveInfo $info): SearchResult
+    public function getResult(array $args, ResolveInfo $info, ContextInterface $context): SearchResult
     {
         $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
         $searchCriteria = $this->buildSearchCriteria($args, $info);
