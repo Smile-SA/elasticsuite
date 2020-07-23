@@ -109,8 +109,8 @@ class OptimizerActions extends Column
                         'href'    => $this->urlBuilder->getUrl(self::OPTIMIZER_URL_PATH_DELETE, ['id' => $item['optimizer_id']]),
                         'label'   => __('Delete'),
                         'confirm' => [
-                            'title'   => __('Delete ${ $.$data.name }'),
-                            'message' => __('Are you sure you want to delete ${ $.$data.name } ?'),
+                            'title'   => __('Delete %1', $item['name']),
+                            'message' => __('Are you sure you want to delete %1 ?', $item['name']),
                         ],
                     ];
                 }
