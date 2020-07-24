@@ -17,8 +17,8 @@ Optimizer,Optimiseur
 "Could not save the optimizer: %1","Impossible de sauvegarder l'optimiseur: %1"
 label,label
 Edit,Éditer
-"Delete ${ $.$data.name }","Supprimer ${ $.$data.name }"
-"Are you sure you want to delete ${ $.$data.name } ?","Êtes-vous sur de vouloir supprimer ${ $.$data.name } ?"
+"Delete %1","Supprimer %1"
+"Are you sure you want to delete %1 ?","Êtes-vous sur de vouloir supprimer %1 ?"
 Yes,Oui
 No,Non
 "Search Query","Recherche"

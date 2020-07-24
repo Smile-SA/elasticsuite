@@ -17,8 +17,8 @@ Optimizers,Optimizers
 "Could not save the optimizer: %1","Der Optimizer konnte nicht gespeichert werden: %1"
 label,Label
 Edit,Bearbeiten
-"Delete ${ $.$data.name }","Lösche ${ $.$data.name }"
-"Are you sure you want to delete ${ $.$data.name } ?","${ $.$data.name } sicher löschen?"
+"Delete %1","Lösche %1"
+"Are you sure you want to delete %1 ?","%1 sicher löschen?"
 "Search Query","Suchanfrage"
 Preview,Vorschau
 "Base Results","Standardergebnisse"

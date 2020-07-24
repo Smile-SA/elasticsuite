@@ -62,7 +62,7 @@ class Products implements ResolverInterface
         $this->validateArgs($args);
         $this->contextUpdater->updateSearchContext($args);
 
-        $searchResult = $this->searchQuery->getResult($args, $info);
+        $searchResult = $this->searchQuery->getResult($args, $info, $context);
 
         return [
             'total_count'   => $searchResult->getTotalCount(),
