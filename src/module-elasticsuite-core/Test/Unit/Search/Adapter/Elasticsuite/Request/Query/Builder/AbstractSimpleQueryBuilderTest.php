@@ -25,13 +25,12 @@ abstract class AbstractSimpleQueryBuilderTest extends \PHPUnit\Framework\TestCas
     /**
      * Test using the query builder with an invalid query type throws an exception.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Query builder : invalid query type invalid_type
-     *
      * @return void
      */
     public function testInvalidQuery()
     {
+        $this->expectExceptionMessage("Query builder : invalid query type invalid_type");
+        $this->expectException(\InvalidArgumentException::class);
         $builder = $this->getQueryBuilder();
 
         $query = $this->getMockBuilder(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class)->getMock();

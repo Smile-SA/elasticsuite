@@ -32,7 +32,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     private $indexOperation;
 
     /**
-     * @var \Elasticsearch\Client|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Elasticsearch\Client|\\PHPUnit\Framework\MockObject\MockObject
      */
     private $clientMock;
 
@@ -46,7 +46,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
      *
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClientMock();
 
@@ -93,13 +93,12 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test accessing a not existing index throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage invalid_index_identifier index does not exist yet. Make sure everything is reindexed.
-     *
      * @return void
      */
     public function testGetIndexInvalidByName()
     {
+        $this->expectExceptionMessage("invalid_index_identifier index does not exist yet. Make sure everything is reindexed.");
+        $this->expectException(\LogicException::class);
         $index = $this->indexOperation->getIndexByName('invalid_index_identifier', 'store_code');
         $this->assertInstanceOf(\Smile\ElasticsuiteCore\Api\Index\IndexInterface::class, $index);
     }
@@ -178,13 +177,12 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Test empty bulk execution throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Can not execute empty bulk.
-     *
      * @return void
      */
     public function testExecuteEmptyBulk()
     {
+        $this->expectExceptionMessage("Can not execute empty bulk.");
+        $this->expectException(\LogicException::class);
         $bulk = new \Smile\ElasticsuiteCore\Index\Bulk\BulkRequest();
         $this->indexOperation->executeBulk($bulk);
     }
@@ -201,7 +199,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Object manager mocking.
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getObjectManagerMock()
     {
@@ -234,7 +232,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Client factory mocking.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function initClientMock()
     {
@@ -251,7 +249,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Index settings mocking.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getIndexSettingsMock()
     {
@@ -270,7 +268,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Logger mocking.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getLoggerMock()
     {

@@ -39,13 +39,12 @@ class QueryFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * Test submitting an invalid query type throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage No factory found for query of type invalidQueryType
-     *
      * @return void
      */
     public function testInvalidQueryCreate()
     {
+        $this->expectExceptionMessage("No factory found for query of type invalidQueryType");
+        $this->expectException(\LogicException::class);
         $this->getQueryFactory()->create('invalidQueryType', []);
     }
 

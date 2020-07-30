@@ -79,7 +79,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $queryResponseFactory = $this->getQueryResponseFactoryMock();
         $requestMapper        = $this->getRequestMapperMock();
@@ -92,7 +92,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * Init a mocked search request mapper.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getRequestMapperMock()
     {
@@ -106,7 +106,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * Init a mocked search response factory.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getQueryResponseFactoryMock()
     {
@@ -123,7 +123,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     /**
      * Init a mocked ES client factory.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getClientMock()
     {

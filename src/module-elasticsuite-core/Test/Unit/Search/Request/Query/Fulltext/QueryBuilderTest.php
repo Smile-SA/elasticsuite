@@ -183,7 +183,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      *
      * @param \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[] $fields Mapping fields.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getContainerConfigMock($fields)
     {
@@ -202,7 +202,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Mock the relevace configuration object used by the query builder.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getRelevanceConfig()
     {
