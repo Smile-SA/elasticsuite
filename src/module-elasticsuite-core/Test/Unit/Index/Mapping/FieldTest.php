@@ -76,13 +76,12 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     /**
      * Test invalid nested field configuration.
      *
-     * @expectedException        \InvalidArgumentException
-     * @expectedExceptionMessage Invalid nested path or field name
-     *
      * @return void
      */
     public function testInvalidNestedField()
     {
+        $this->expectExceptionMessage("Invalid nested path or field name");
+        $this->expectException(\InvalidArgumentException::class);
         new Field('parent.child', FieldInterface::FIELD_TYPE_TEXT, 'invalidparent');
     }
 

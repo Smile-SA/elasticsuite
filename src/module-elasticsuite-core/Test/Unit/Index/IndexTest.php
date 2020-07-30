@@ -37,7 +37,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
 

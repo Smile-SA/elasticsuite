@@ -118,13 +118,12 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Test an exception is thrown when trying to build a bucket which is not handled by the builder.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage No builder found for aggregation type invalidBucketType.
-     *
      * @return void
      */
     public function testBuildInvalidAggregation()
     {
+        $this->expectExceptionMessage("No builder found for aggregation type invalidBucketType.");
+        $this->expectException(\InvalidArgumentException::class);
         $buckets = [$this->createNestedBucket('aggregation', 'invalidBucketType')];
         $this->getAggregationBuilder()->buildAggregations($buckets);
     }
@@ -181,7 +180,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param array  $metrics   Bucket metrics.
      * @param array  $pipelines Bucket pipeline aggregations.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createBucket($name, $type, $metrics = [], $pipelines = [])
     {
@@ -201,7 +200,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $name Bucket name.
      * @param string $type Bucket type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createNestedBucket($name, $type)
     {
@@ -218,7 +217,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $name Bucket name.
      * @param string $type Bucket type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createFilteredNestedBucket($name, $type)
     {
@@ -237,7 +236,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $name Bucket name.
      * @param string $type Bucket type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createFilteredBucket($name, $type)
     {
@@ -256,7 +255,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $pipelineName Pipeline name.
      * @param string $pipelineType Pipeline type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createPipelinedBucket($name, $type, $pipelineName, $pipelineType)
     {
@@ -272,7 +271,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $name Pipeline name.
      * @param string $type Pipeline type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function createPipeline($name, $type)
     {

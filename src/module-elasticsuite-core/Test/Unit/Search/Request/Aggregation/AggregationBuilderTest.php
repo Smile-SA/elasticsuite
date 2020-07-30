@@ -197,7 +197,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Aggregation factory used during tests.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getAggregationFactory()
     {
@@ -212,7 +212,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Container configuration used during tests.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getContainerConfiguration()
     {
@@ -247,7 +247,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Metrics factory used during tests.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getMetricFactory()
     {

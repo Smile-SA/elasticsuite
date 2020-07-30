@@ -175,13 +175,13 @@ class Preview
         $canApply = in_array($this->containerConfiguration->getName(), $this->optimizer->getSearchContainer(), true);
         if ($canApply && $this->containerConfiguration->getName() === 'quick_search_container') {
             $config = $this->optimizer->getQuickSearchContainer();
-            if ((int) $config['apply_to'] === 1 && !empty($config['query_ids'])) {
+            if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['query_ids'])) {
                 $queries = array_column($config['query_ids'], 'query_text');
                 $canApply = in_array($this->queryText, $queries, true);
             }
         } elseif ($canApply && $this->containerConfiguration->getName() === 'catalog_view_container') {
             $config = $this->optimizer->getCatalogViewContainer();
-            if ((int) $config['apply_to'] === 1 && !empty($config['category_ids'])) {
+            if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['category_ids'])) {
                 $categoryIds = array_filter($config['category_ids']);
                 $canApply = in_array($this->category->getId(), $categoryIds, true);
             }
