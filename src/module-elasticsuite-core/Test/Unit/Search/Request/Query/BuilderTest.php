@@ -63,7 +63,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Mocks the search context.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getSearchContext()
     {
@@ -73,7 +73,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Mocks the container configration.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getContainerConfiguration()
     {
@@ -89,7 +89,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getQueryFactory()
     {
@@ -109,7 +109,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Mocks the fulltext query builder.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getFulltextQueryBuilder()
     {
@@ -119,7 +119,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Mocks the filters query builder.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getFilterQueryBuilder()
     {
@@ -132,7 +132,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * @param string $class Mocked class name.
      * @param string $name  Mock returned query type.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getQueryBuilder($class, $name)
     {

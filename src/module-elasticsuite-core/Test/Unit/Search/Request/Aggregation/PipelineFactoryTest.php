@@ -39,13 +39,12 @@ class PipelineFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * Test trying to create an invalid pipeline aggregation type throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage No factory found for pipeline aggregation of type invalidPipelineType
-     *
      * @return void
      */
     public function testInvalidPipelineCreate()
     {
+        $this->expectExceptionMessage("No factory found for pipeline aggregation of type invalidPipelineType");
+        $this->expectException(\LogicException::class);
         $this->getPipelineFactory()->create('invalidPipelineType', []);
     }
 

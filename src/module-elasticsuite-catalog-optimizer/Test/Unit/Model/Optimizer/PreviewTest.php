@@ -15,7 +15,6 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 use ReflectionClass;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierListFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
@@ -79,7 +78,7 @@ class PreviewTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->optimizer              = $this->getOptimizerMock();
         $this->previewItemFactory     = $this->getPreviewItemFactoryMock();
@@ -435,9 +434,9 @@ class PreviewTest extends TestCase
     /**
      * Generate container config mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getContainerConfigMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getContainerConfigMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this->getMockBuilder(ContainerConfigurationInterface::class)
             ->getMock();
@@ -446,9 +445,9 @@ class PreviewTest extends TestCase
     /**
      * Generate category mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getCategoryMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getCategoryMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
             ->getMockBuilder(CategoryInterface::class)
@@ -459,9 +458,9 @@ class PreviewTest extends TestCase
     /**
      * Generate optimizer mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getOptimizerMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getOptimizerMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
             ->getMockBuilder(Optimizer::class)
@@ -473,9 +472,9 @@ class PreviewTest extends TestCase
     /**
      * Generate item factory mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getPreviewItemFactoryMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getPreviewItemFactoryMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
             ->getMockBuilder('\Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ItemFactory')
@@ -486,9 +485,9 @@ class PreviewTest extends TestCase
     /**
      * Generate applier list factory mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getApplierListFactoryMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getApplierListFactoryMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
             ->getMockBuilder('\Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierListFactory')
@@ -499,9 +498,9 @@ class PreviewTest extends TestCase
     /**
      * Generate provider factory mock.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
-    private function getProviderFactoryMock(): PHPUnit_Framework_MockObject_MockObject
+    private function getProviderFactoryMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
             ->getMockBuilder(ProviderFactory::class)

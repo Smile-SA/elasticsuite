@@ -39,13 +39,12 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * Test submitting an invalid aggregation type throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage No factory found for aggregation of type invalidAggregationType
-     *
      * @return void
      */
     public function testInvalidAggregationCreate()
     {
+        $this->expectExceptionMessage("No factory found for aggregation of type invalidAggregationType");
+        $this->expectException(\LogicException::class);
         $this->getAggregationFactory()->create('invalidAggregationType', []);
     }
 

@@ -40,7 +40,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
      *
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         // Static fields.
         $fields = [
@@ -149,13 +149,12 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     /**
      * Test an exception is raised when trying to access a missing field.
      *
-     * @expectedException        \LogicException
-     * @expectedExceptionMessage Field invalidField does not exists in mapping
-     *
      * @return void
      */
     public function testMissingFieldAccess()
     {
+        $this->expectExceptionMessage("Field invalidField does not exists in mapping");
+        $this->expectException(\LogicException::class);
         $this->mapping->getField('invalidField');
     }
 
@@ -174,13 +173,12 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     /**
      * Test an exception is raised when using an invalid id field as id.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid id field missingField : field is not declared.
-     *
      * @return void
      */
     public function testInvalidIdField()
     {
+        $this->expectExceptionMessage("Invalid id field missingField : field is not declared.");
+        $this->expectException(\InvalidArgumentException::class);
         new Mapping('missingField');
     }
 
@@ -229,26 +227,24 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     /**
      * Test an exception is thrown when using an invalid default field.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to find field invalidDefaultField.
-     *
      * @return void
      */
     public function testInvalidDefaultField()
     {
+        $this->expectExceptionMessage("Unable to find field invalidDefaultField.");
+        $this->expectException(\InvalidArgumentException::class);
         $this->getSearchWeightedMapping()->getWeightedSearchProperties(null, 'invalidDefaultField');
     }
 
     /**
      * Test an exception is thrown when using an invalid analyzer.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to find analyzer invalidAnalyzer for field search.
-     *
      * @return void
      */
     public function testInvalidDefaultFieldAnalyzer()
     {
+        $this->expectExceptionMessage("Unable to find analyzer invalidAnalyzer for field search.");
+        $this->expectException(\InvalidArgumentException::class);
         $this->getSearchWeightedMapping()->getWeightedSearchProperties('invalidAnalyzer', Mapping::DEFAULT_SEARCH_FIELD);
     }
 

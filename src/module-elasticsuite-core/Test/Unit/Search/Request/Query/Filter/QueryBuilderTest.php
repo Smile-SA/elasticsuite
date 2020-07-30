@@ -149,13 +149,12 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Test using an not supported exception throws an exception.
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Condition regexp is not supported.
-     *
      * @return void
      */
     public function testUnsupportedCondition()
     {
+        $this->expectExceptionMessage("Condition regexp is not supported.");
+        $this->expectException(\LogicException::class);
         $this->buildQuery(['simpleTextField' => ['regexp' => 'filterValue']]);
     }
 
@@ -203,7 +202,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      *
      * @param \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface[] $fields Mapping fields.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     private function getContainerConfigMock($fields)
     {

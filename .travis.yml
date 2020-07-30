@@ -1,17 +1,9 @@
 sudo: required
-dist: trusty
+dist: xenial
 
 services:
   - elasticsearch
-
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
-    - postfix
-    - oracle-java9-set-default
+  - mysql
 
 language: php
 
@@ -32,6 +24,20 @@ jobs:
       php: 7.3
       env:
           - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5-p1 MAGENTO_EDITION=enterprise
+    - php: 7.2
+      env:
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.2
+      env:
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=enterprise
+    - php: 7.3
+      env:
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.3
+      env:
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=enterprise
 # Elasticsearch 7
     - php: 7.2
       env:
@@ -47,13 +53,29 @@ jobs:
       php: 7.3
       env:
           - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p1 MAGENTO_EDITION=enterprise
-
+    - php: 7.2
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.2
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=enterprise
+    - php: 7.3
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=community
+    - if: type != pull_request
+      php: 7.3
+      env:
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=enterprise
+          -
 before_install:
   - sudo service elasticsearch stop
   - export ES_HOME=/usr/share/elasticsearch
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ES_VERSION.deb
   - sudo dpkg -i --force-confnew elasticsearch-$ES_VERSION.deb
+  - yes | sudo $ES_HOME/bin/elasticsearch-plugin remove analysis-icu || return 0
   - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-icu
+  - yes | sudo $ES_HOME/bin/elasticsearch-plugin remove analysis-phonetic || return 0
   - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-phonetic
   - sudo chgrp elasticsearch /etc/default/elasticsearch -R
   - sudo service elasticsearch start
