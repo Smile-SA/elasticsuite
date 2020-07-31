@@ -142,6 +142,7 @@ class Spellchecker implements SpellcheckerInterface
     {
         $termVectorsQuery = [
             'index'           => $request->getIndex(),
+            'type'            => '_doc',
             'term_statistics' => true,
             'fields'          => [
                 MappingInterface::DEFAULT_SPELLING_FIELD,
