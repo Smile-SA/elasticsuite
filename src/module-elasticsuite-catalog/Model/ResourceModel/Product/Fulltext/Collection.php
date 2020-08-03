@@ -26,6 +26,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
@@ -443,6 +444,23 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
         return parent::_renderFiltersBefore();
+    }
+
+    /**
+     * Set _pageSize false since it is managed by the engine and might have been changed since _renderFiltersBefore.
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
+     */
+    protected function _beforeLoad()
+    {
+        if ($this->_pageSize !== false) {
+            $this->originalPageSize = $this->_pageSize;
+            $this->_pageSize = false;
+        }
+
+        return parent::_beforeLoad();
     }
 
     /**

@@ -97,7 +97,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
 
         $documentSource = $category->getDocumentSource();
 
-        $title = $documentSource['name'];
+        $title = $documentSource['name'] ?? '';
         if (is_array($title)) {
             $title = current($title);
         }
