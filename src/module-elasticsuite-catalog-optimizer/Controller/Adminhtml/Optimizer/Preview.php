@@ -11,6 +11,7 @@
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
+
 namespace Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\Optimizer;
 
 use Magento\Backend\App\Action;
@@ -18,14 +19,18 @@ use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\PreviewFactory;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
 
 /**
  * Preview Controller for Optimizer
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -59,6 +64,16 @@ class Preview extends Action
     private $containerConfigFactory;
 
     /**
+     * @var \Magento\Search\Model\QueryFactory
+     */
+    private $queryFactory;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param Context                       $context                Controller  context.
@@ -67,6 +82,8 @@ class Preview extends Action
      * @param OptimizerInterfaceFactory     $optimizerFactory       OptimzerFactory
      * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration Factory
      * @param JsonHelper                    $jsonHelper             JSON Helper.
+     * @param QueryFactory                  $queryFactory           Query Factory.
+     * @param ContextInterface              $searchContext          Search context.
      */
     public function __construct(
         Context $context,
@@ -74,7 +91,9 @@ class Preview extends Action
         CategoryRepositoryInterface $categoryRepository,
         OptimizerInterfaceFactory $optimizerFactory,
         ContainerConfigurationFactory $containerConfigFactory,
-        JsonHelper $jsonHelper
+        JsonHelper $jsonHelper,
+        QueryFactory $queryFactory,
+        ContextInterface $searchContext
     ) {
         parent::__construct($context);
 
@@ -83,6 +102,8 @@ class Preview extends Action
         $this->previewModelFactory    = $previewModelFactory;
         $this->containerConfigFactory = $containerConfigFactory;
         $this->jsonHelper             = $jsonHelper;
+        $this->queryFactory           = $queryFactory;
+        $this->searchContext          = $searchContext;
     }
 
     /**
@@ -119,6 +140,8 @@ class Preview extends Action
         $queryText       = $this->getQueryText();
         $category        = $this->getCategory();
         $containerConfig = $this->getContainerConfiguration();
+
+        $this->updateSearchContext($this->getStoreId(), $category, $queryText);
 
         return $this->previewModelFactory->create(
             [
@@ -224,5 +247,35 @@ class Preview extends Action
     private function getStoreId()
     {
         return $this->getRequest()->getParam('store_id');
+    }
+
+    /**
+     * Update the search context using current store id, category or query text.
+     *
+     * @param integer           $storeId   Store id.
+     * @param CategoryInterface $category  Category.
+     * @param string            $queryText Fulltext query text.
+     *
+     * @return void
+     */
+    private function updateSearchContext($storeId, $category, $queryText)
+    {
+        $this->searchContext->setStoreId($storeId);
+
+        if ((string) $queryText !== '') {
+            try {
+                $query = $this->queryFactory->create();
+                $query->setStoreId($storeId);
+                $query->loadByQueryText($queryText);
+
+                if ($query->getId()) {
+                    $this->searchContext->setCurrentSearchQuery($query);
+                }
+            } catch (\Magento\Framework\Exception\LocalizedException $exception) {
+                // Do not break if we fail to retrieve the query.
+            }
+        } elseif ($category && $category->getId()) {
+            $this->searchContext->setCurrentCategory($category);
+        }
     }
 }
