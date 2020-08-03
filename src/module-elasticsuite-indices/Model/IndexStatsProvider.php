@@ -112,6 +112,7 @@ class IndexStatsProvider
         $data = [
             'index_name'  => $indexName,
             'index_alias' => $alias,
+            'size'        => 'undefined',
         ];
 
         try {
@@ -123,8 +124,10 @@ class IndexStatsProvider
             $indexStats = $this->indicesStats[$indexName];
 
             $data['number_of_documents'] = $indexStats['total']['docs']['count'];
-            $data['size']                = $this->sizeFormatted($indexStats['total']['store']['size_in_bytes']);
             $data['index_status']        = $this->indexStatusProvider->getIndexStatus($indexName, $alias);
+            if (isset($indexStats['total']['store']['size_in_bytes'])) {
+                $data['size'] = $this->sizeFormatted((int) $indexStats['total']['store']['size_in_bytes']);
+            }
         } catch (Exception $e) {
             $data['index_status'] = IndexStatus::REBUILDING_STATUS;
         }
@@ -152,11 +155,11 @@ class IndexStatsProvider
     /**
      * Size formatted.
      *
-     * @param string $bytes Bytes.
+     * @param int $bytes Bytes.
      *
      * @return string
      */
-    private function sizeFormatted($bytes): string
+    private function sizeFormatted(int $bytes): string
     {
         if ($bytes > 0) {
             $unit = (int) log($bytes, 1024);
@@ -167,7 +170,7 @@ class IndexStatsProvider
             }
         }
 
-        return $bytes;
+        return 'undefined';
     }
 
     /**
