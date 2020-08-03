@@ -112,6 +112,7 @@ class IndexStatsProvider
         $data = [
             'index_name'  => $indexName,
             'index_alias' => $alias,
+            'size'        => 'undefined',
         ];
 
         try {
