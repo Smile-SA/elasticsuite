@@ -126,7 +126,7 @@ class Url
         $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
         if ($categoryId) {
             $productRewrite = $this->urlFinder->findOneByData([
-                UrlRewrite::REQUEST_PATH => trim($productRequestPath, '/'),
+                UrlRewrite::REQUEST_PATH => trim($productRequestPath, '/') . ($this->getProductUrlSuffix() === '/' ? '/' : ''),
                 UrlRewrite::STORE_ID => $storeId,
             ]);
             if (null !== $productRewrite) {
@@ -155,8 +155,7 @@ class Url
             $categoryUrlPath = $category->getUrlPath();
             $productUrlKey = $product->getUrlKey();
             if ($productUrlKey) {
-                $suffix = $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
-                $requestPath = $categoryUrlPath . '/' . $productUrlKey . $suffix;
+                $requestPath = $categoryUrlPath . '/' . $productUrlKey . $this->getProductUrlSuffix();
             }
         }
 
@@ -221,5 +220,13 @@ class Url
             \Magento\Catalog\Helper\Product::XML_PATH_PRODUCT_URL_USE_CATEGORY,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getProductUrlSuffix()
+    {
+        return $this->scopeConfig->getValue(self::XML_PATH_PRODUCT_URL_SUFFIX, ScopeInterface::SCOPE_STORE);
     }
 }
