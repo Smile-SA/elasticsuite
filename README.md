@@ -16,13 +16,13 @@ If your project is based on **Magento >= 2.3.5**, you can start working with Ela
 
 **Which version should I use ?**
 
-Magento Version                                     | ElasticSuite Latest Version
-----------------------------------------------------|------------------------------------------------------------------------
-Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ~2.1.0```
-Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ~2.3.0```
-Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ~2.6.0```
-Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.8.0```
-Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** latest release : ```composer require smile/elasticsuite ~2.9.0```
+Magento Version                                     | ElasticSuite Latest Version                                            | Supported Elasticsearch Version
+----------------------------------------------------|------------------------------------------------------------------------|------------------------------------
+Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** latest release : ```composer require smile/elasticsuite ~2.1.0``` | 2.x 
+Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** latest release : ```composer require smile/elasticsuite ~2.3.0``` | 2.x & 5.x
+Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** latest release : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x
+Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** latest release : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x
+Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** latest release : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x
 
 ### Magento2 B2B Compatibility
 
