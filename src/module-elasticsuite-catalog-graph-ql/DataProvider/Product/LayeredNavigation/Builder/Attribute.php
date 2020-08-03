@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DISCLAIMER
  * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
@@ -82,9 +83,14 @@ class Attribute implements LayerBuilderInterface
             $label = $attributeCode;
             try {
                 $attribute      = $this->attributeRepository->get($attributeCode);
-                $frontendLabels = $attribute->getFrontendLabels();
+                $frontendLabels = array_filter(
+                    $attribute->getFrontendLabels(),
+                    function ($frontendLabel) use ($storeId) {
+                        return $frontendLabel->getStoreId() == $storeId;
+                    }
+                );
                 if (!empty($frontendLabels)) {
-                    $label = ($frontendLabels[$storeId] ?? reset($frontendLabels))->getLabel();
+                    $label = reset($frontendLabels)->getLabel();
                 }
             } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
                 $label = $attributeCode;
