@@ -42,13 +42,12 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * Test the query builder throws an exception when using an invalid query type.
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Unknow query builder for invalidQueryType.
-     *
      * @return void
      */
     public function testBuildInvalidQuery()
     {
+        $this->expectExceptionMessage("Unknow query builder for invalidQueryType.");
+        $this->expectException(\InvalidArgumentException::class);
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
         $query->method('getType')->will($this->returnValue('invalidQueryType'));
 

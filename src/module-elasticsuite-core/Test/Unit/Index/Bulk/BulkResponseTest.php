@@ -34,7 +34,7 @@ class BulkResponseTest extends \PHPUnit\Framework\TestCase
      *
      * {@inheritDoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $error1 = ['type' => 'reason1', 'reason' => 'Reason 1'];
         $error2 = ['type' => 'reason2', 'reason' => 'Reason 2'];

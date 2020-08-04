@@ -25,7 +25,7 @@ abstract class AbstractComplexQueryBuilderTest extends AbstractSimpleQueryBuilde
     /**
      * Return a mocked parent query builder used to build subqueries.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getParentQueryBuilder()
     {
@@ -47,7 +47,7 @@ abstract class AbstractComplexQueryBuilderTest extends AbstractSimpleQueryBuilde
      *
      * @param string $queryName Query name.
      *
-     * @return PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getSubQueryMock($queryName)
     {
