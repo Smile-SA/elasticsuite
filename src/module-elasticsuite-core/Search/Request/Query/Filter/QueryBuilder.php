@@ -50,6 +50,7 @@ class QueryBuilder
         'lteq'     => 'lte',
         'like'     => 'queryText',
         'fulltext' => 'queryText',
+        'match'    => 'queryText',
         'in_set'   => 'values',
     ];
 
