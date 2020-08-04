@@ -10,19 +10,20 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to the introduction of Elasticsearch 7 support and the recurrent changes they made on GraphQL implementation in Magento 2.3.5, we cannot ensure compatibility between ElasticSuite <2.9 and Magento >=2.3.5 versions.
+Due to several changed in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
 
-If your project is based on **Magento >= 2.3.5**, you can start working with ElasticSuite today using the latest **2.9.x release**.
+If your project is based on **Magento >= 2.4.0**, you can start working with ElasticSuite today using the latest **2.10.x release**.
 
 **Which version should I use ?**
 
-Magento Version                                     | ElasticSuite Latest Version                                            | Supported Elasticsearch Version | Open Source Support
+Magento Version                                     | ElasticSuite Latest Version                                            | Supported Elasticsearch Version | Actively maintained
 ----------------------------------------------------|------------------------------------------------------------------------|---------------------------------|---
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** : ```composer require smile/elasticsuite ~2.1.0``` | 2.x | No
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ```composer require smile/elasticsuite ~2.3.0``` | 2.x & 5.x | No
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
-Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | **Yes**
+Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
 Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | **Yes**
+Magento **>=2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
 
 ### Magento2 B2B Compatibility
 
@@ -92,11 +93,11 @@ To learn about issues, click here. To open an issue, click [here](https://github
 
 ### Current version
 
-The current version **2.8.0** has been focused on the **Search Analytics Dashboard**.
+The current version **2.10.0** has been focused on the **Compatibility with Magento 2.4.0**.
 
-Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.8.0)
+Feel free to read the whole changelog of this version [here](https://github.com/Smile-SA/elasticsuite/releases/tag/2.10.0)
 
-This version is designed to be used on both Magento Open Source and Commerce versions >2.3.
+This version is designed to be used on both Magento Open Source and Commerce versions >2.4.
 
 Actually, there are the features actually included :
 
@@ -295,14 +296,6 @@ Actually, there are the features actually included :
 ### And more to come !
 
 The next versions that will be coming all among this year will include the following features :
-
-* **Search usage dashboard :**
-
-    Next version of ElasticSuite will feature an advanced dashboard where you will be able to see the following items :
-
-     + **Generic KPIs** (number of search, page views, sessions, searches per session, unique visitors ...)
-     + Search queries list (**most popular**, commons mispelling, **low conversion queries**, **zero results queries** ...)
-     + Graphs (pie chart for misspelled queries, **line chart figuring the evolution of the number of queries**...)
 
 * **Behavioral Search optimizations :**
 
