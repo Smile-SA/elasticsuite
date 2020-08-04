@@ -66,14 +66,14 @@ class PriceData implements DatasourceInterface
             $price         = $priceModifier->getPrice($priceDataRow);
 
             $indexData[$productId]['price'][] = [
-                'price'             => $price,
-                'original_price'    => $originalPrice,
+                'price'             => (float) $price,
+                'original_price'    => (float) $originalPrice,
                 'is_discount'       => $price < $originalPrice,
                 'customer_group_id' => (int) $priceDataRow['customer_group_id'],
                 'tax_class_id'      => (int) $priceDataRow['tax_class_id'],
-                'final_price'       => $priceDataRow['final_price'],
-                'min_price'         => $priceDataRow['min_price'],
-                'max_price'         => $priceDataRow['max_price'],
+                'final_price'       => (float) $priceDataRow['final_price'],
+                'min_price'         => (float) $priceDataRow['min_price'],
+                'max_price'         => (float) $priceDataRow['max_price'],
             ];
 
             if (!isset($indexData[$productId]['indexed_attributes'])) {

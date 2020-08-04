@@ -17,6 +17,8 @@ namespace Smile\ElasticsuiteVirtualCategory\Plugin\Search;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Extenstion of the category form UI data provider.
@@ -41,13 +43,30 @@ class RequestMapperPlugin
     private $categoryRepository;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider
+     */
+    private $filterProvider;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     */
+    private $queryFactory;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository Category repository.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface                  $categoryRepository Category repository.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider     Category Filter provider.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory         $queryFactory       Query Factory.
      */
-    public function __construct(\Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository)
-    {
+    public function __construct(
+        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider,
+        QueryFactory $queryFactory
+    ) {
         $this->categoryRepository = $categoryRepository;
+        $this->queryFactory       = $queryFactory;
+        $this->filterProvider     = $filterProvider;
     }
 
     /**
@@ -69,11 +88,9 @@ class RequestMapperPlugin
         SearchCriteriaInterface $searchCriteria
     ) {
         if ($this->isEnabled($containerConfiguration) && isset($result['category.category_id'])) {
-            $categoryId = current(array_values($result['category.category_id']));
-            $storeId    = $containerConfiguration->getStoreId();
+            $storeId  = $containerConfiguration->getStoreId();
+            $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
 
-            $category = $this->categoryRepository->get($categoryId, $storeId);
-            $result[] = $category->getVirtualRule()->getCategorySearchQuery($category);
             unset($result['category.category_id']);
         }
 
@@ -90,5 +107,55 @@ class RequestMapperPlugin
     private function isEnabled(ContainerConfigurationInterface $containerConfiguration)
     {
         return in_array($containerConfiguration->getName(), $this->productSearchContainers);
+    }
+
+    /**
+     * Get search query for a given category Id
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param array $categoriesFilter The category filters
+     * @param int   $storeId          The store Id
+     *
+     * @return QueryInterface|null
+     */
+    private function getCategoriesQuery($categoriesFilter, $storeId)
+    {
+        $result = [];
+
+        foreach ($categoriesFilter as $operator => $categoryIds) {
+            if (!is_array($categoryIds)) {
+                $categoryIds = [$categoryIds];
+            }
+
+            $queries = [];
+            foreach ($categoryIds as $categoryId) {
+                $queries[] = $this->getCategorySubQuery($categoryId, $storeId);
+            }
+
+            if ($operator === 'in') {
+                $result[] = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries]);
+            } else {
+                $result += $queries;
+            }
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $result]);
+    }
+
+    /**
+     * Get search query for a given category Id
+     *
+     * @param int $categoryId The category Id
+     * @param int $storeId    The store Id
+     *
+     * @return QueryInterface|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    private function getCategorySubQuery($categoryId, $storeId)
+    {
+        $category = $this->categoryRepository->get($categoryId, $storeId);
+
+        return $this->filterProvider->getQueryFilter($category);
     }
 }
