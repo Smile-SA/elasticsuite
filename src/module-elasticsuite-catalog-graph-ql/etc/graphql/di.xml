@@ -124,4 +124,19 @@
     <type name="Magento\CatalogGraphQl\Model\Resolver\LayerFilters">
         <plugin name="search_results_aggregations" type="Smile\ElasticsuiteCatalogGraphQl\Plugin\Resolver\LayerFilters"/>
     </type>
+
+    <!-- Layered navigation filtering : Aggregation building and modifying -->
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage">
+        <arguments>
+            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+        </arguments>
+    </type>
+
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
