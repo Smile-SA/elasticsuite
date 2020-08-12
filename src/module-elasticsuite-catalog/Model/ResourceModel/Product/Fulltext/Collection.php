@@ -585,7 +585,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $searchRequestName = $this->searchRequestName;
 
         // Pagination params.
-        $from = $size * (max(1, $this->_curPage) - 1);
+        $from = $this->getPageSize() * (max(1, $this->_curPage) - 1);
 
         // Setup sort orders.
         $sortOrders = $this->prepareSortOrders();
