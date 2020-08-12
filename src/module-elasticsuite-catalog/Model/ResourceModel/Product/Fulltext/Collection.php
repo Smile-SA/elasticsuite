@@ -105,7 +105,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $countByAttributeCode;
 
     /**
-     * @var false|int
+     * @var integer|false
      */
     private $_pageSize;
 
@@ -413,6 +413,24 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Get actual page size if is defined or return all results.
+     *
+     * @return integer|false
+     */
+    public function getPageSize()
+    {
+        if ($this->_pageSize !== false) {
+            return $this->_pageSize;
+        }
+
+        if ($this->originalPageSize !== false) {
+            return $this->originalPageSize;
+        }
+
+        return $this->getSize();
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritdoc}
@@ -563,24 +581,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
                 $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
             }
         }
-    }
-
-    /**
-     * Get actual page size if is defined or return all results.
-     *
-     * @return false|int
-     */
-    public function getPageSize()
-    {
-        if ($this->_pageSize !== false) {
-            return $this->_pageSize;
-        }
-
-        if ($this->originalPageSize !== false) {
-            return $this->originalPageSize;
-        }
-
-        return $this->getSize();
     }
 
     /**
