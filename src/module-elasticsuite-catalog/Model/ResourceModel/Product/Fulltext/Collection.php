@@ -105,11 +105,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $countByAttributeCode;
 
     /**
-     * @var integer|false
-     */
-    private $_pageSize;
-
-    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
