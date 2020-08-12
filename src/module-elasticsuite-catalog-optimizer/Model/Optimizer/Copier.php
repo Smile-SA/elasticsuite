@@ -67,8 +67,12 @@ class Copier
         /** @var Optimizer $duplicate */
         $duplicate = $this->optimizerFactory->create();
         $duplicate->setData($optimizerData);
-        $duplicate->setFromDate(\DateTime::createFromFormat('Y-m-d', $optimizerData['from_date'])->format('m/d/Y'));
-        $duplicate->setToDate(\DateTime::createFromFormat('Y-m-d', $optimizerData['to_date'])->format('m/d/Y'));
+        if ($fromDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['from_date'])) {
+            $duplicate->setFromDate($fromDate->format('m/d/Y'));
+        }
+        if ($toDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['to_date'])) {
+            $duplicate->setToDate($toDate->format('m/d/Y'));
+        }
         $duplicate->setId(null);
 
         return $duplicate;
