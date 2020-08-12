@@ -105,6 +105,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $countByAttributeCode;
 
     /**
+     * @var false|int
+     */
+    private $_pageSize;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -560,9 +565,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
     }
 
+    /**
+     * Get actual page size if is defined or return all results.
+     *
+     * @return false|int
+     */
     public function getPageSize()
     {
-        if($this->_pageSize !== false) {
+        if ($this->_pageSize !== false) {
             return $this->_pageSize;
         }
 
