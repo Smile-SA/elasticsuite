@@ -30,7 +30,7 @@
         </aggregations>
     </request>
 
-    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" track_total_hits="0" fulltext="true">
+    <request name="catalog_product_autocomplete" label="Catalog Product Autocomplete" index="catalog_product" track_total_hits="true" fulltext="true">
         <filters>
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
