@@ -15,7 +15,7 @@
 /*jshint browser:true jquery:true*/
 /*global alert*/
 
-define(['jquery', 'Magento_Catalog/js/price-utils', 'mage/template', 'jquery/ui', 'Magento_Ui/js/modal/modal'],
+define(['jquery', 'Magento_Catalog/js/price-utils', 'mage/template', 'jquery-ui-modules/slider', 'Magento_Ui/js/modal/modal'],
     function ($, priceUtil, mageTemplate) {
 
     "use strict";
