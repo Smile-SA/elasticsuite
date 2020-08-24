@@ -408,6 +408,24 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Get actual page size if is defined or return all results.
+     *
+     * @return integer|false
+     */
+    public function getPageSize()
+    {
+        if ($this->_pageSize !== false) {
+            return $this->_pageSize;
+        }
+
+        if ($this->originalPageSize !== false) {
+            return $this->originalPageSize;
+        }
+
+        return $this->getSize();
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritdoc}
@@ -439,7 +457,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->order(new \Zend_Db_Expr("FIELD(e.entity_id,$orderList)"));
 
         $this->originalPageSize = $this->_pageSize;
-        $this->_pageSize = false;
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
@@ -573,8 +590,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $searchRequestName = $this->searchRequestName;
 
         // Pagination params.
-        $size = ($this->_pageSize !== false) ? $this->_pageSize : $this->getSize();
-        $from = $size * (max(1, $this->getCurPage()) - 1);
+        $size = $this->getPageSize();
+        $from = $size * (max(1, $this->_curPage) - 1);
 
         // Setup sort orders.
         $sortOrders = $this->prepareSortOrders();
