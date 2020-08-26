@@ -50,20 +50,6 @@
         "magento/magento-composer-installer": "*",
         "elasticsearch/elasticsearch": "~6.7|~7.2"
     },
-    "replace": {
-        "smile/module-elasticsuite-core": "self.version",
-        "smile/module-elasticsuite-admin-notification": "self.version",
-        "smile/module-elasticsuite-analytics": "self.version",
-        "smile/module-elasticsuite-catalog": "self.version",
-        "smile/module-elasticsuite-catalog-graph-ql": "self.version",
-        "smile/module-elasticsuite-catalog-optimizer": "self.version",
-        "smile/module-elasticsuite-catalog-rule": "self.version",
-        "smile/module-elasticsuite-indices": "self.version",
-        "smile/module-elasticsuite-swatches": "self.version",
-        "smile/module-elasticsuite-thesaurus": "self.version",
-        "smile/module-elasticsuite-tracker": "self.version",
-        "smile/module-elasticsuite-virtual-category": "self.version"
-    },
     "require-dev": {
         "smile/magento2-smilelab-quality-suite": "~2.2.0"
     },
