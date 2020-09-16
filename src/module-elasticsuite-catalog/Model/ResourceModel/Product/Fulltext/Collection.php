@@ -456,7 +456,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->getSelect()->reset(\Magento\Framework\DB\Select::ORDER);
         $this->getSelect()->order(new \Zend_Db_Expr("FIELD(e.entity_id,$orderList)"));
 
-        $this->originalPageSize = $this->_pageSize;
+        $this->originalPageSize = $this->getPageSize();
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
