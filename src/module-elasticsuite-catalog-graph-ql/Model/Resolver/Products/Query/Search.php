@@ -82,7 +82,7 @@ class Search implements ProductQueryInterface
     /**
      * {@inheritDoc}
      */
-    public function getResult(array $args, ResolveInfo $info/*, ContextInterface $context*/): SearchResult
+    public function getResult(array $args, ResolveInfo $info, ContextInterface $context): SearchResult
     {
         $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
         $searchCriteria = $this->buildSearchCriteria($args, $info);
