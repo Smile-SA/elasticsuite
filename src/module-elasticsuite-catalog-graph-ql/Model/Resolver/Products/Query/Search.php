@@ -67,9 +67,9 @@ class Search implements ProductQueryInterface
     /**
      * @param SearchInterface       $search                Search Engine
      * @param SearchResultFactory   $searchResultFactory   Search Results Factory
-     * @param PageSizeProvider      $pageSize
+     * @param PageSizeProvider      $pageSize              PageSize Provider
      * @param FieldSelection        $fieldSelection        Field Selection
-     * @param ProductSearch         $productsProvider       Product Provider
+     * @param ProductSearch         $productsProvider      Product Provider
      * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria Builder
      */
     public function __construct(
@@ -98,7 +98,7 @@ class Search implements ProductQueryInterface
 
         $realPageSize = $searchCriteria->getPageSize();
         $realCurrentPage = $searchCriteria->getCurrentPage();
-        //Because of limitations of sort and pagination on search API we will query all IDS
+        // Because of limitations of sort and pagination on search API we will query all IDS.
         $pageSize = $this->pageSizeProvider->getMaxPageSize();
         $searchCriteria->setPageSize($pageSize);
         $searchCriteria->setCurrentPage(0);
@@ -107,13 +107,13 @@ class Search implements ProductQueryInterface
         $providerSearchCriteria = clone($searchCriteria);
         // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
         $providerSearchCriteria->setFilterGroups([]);
-        //Address limitations of sort and pagination on search API apply original pagination from GQL query
+        // Address limitations of sort and pagination on search API apply original pagination from GQL query.
         $providerSearchCriteria->setPageSize($realPageSize);
         $providerSearchCriteria->setCurrentPage($realCurrentPage);
 
         $searchResults = $this->productsProvider->getList($providerSearchCriteria, $itemsResults, $queryFields, $context);
 
-        $totalPages = $realPageSize ? ((int)ceil($searchResults->getTotalCount() / $realPageSize)) : 0;
+        $totalPages = $realPageSize ? ((int) ceil($searchResults->getTotalCount() / $realPageSize)) : 0;
         $productArray    = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
