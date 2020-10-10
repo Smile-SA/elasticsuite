@@ -22,6 +22,7 @@ use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Search\Api\SearchInterface;
+use Magento\Search\Model\Search\PageSizeProvider;
 use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 
 /**
@@ -44,9 +45,14 @@ class Search implements ProductQueryInterface
     private $searchResultFactory;
 
     /**
+     * @var PageSizeProvider
+     */
+    private $pageSizeProvider;
+
+    /**
      * @var ProductSearch
      */
-    private $productProvider;
+    private $productsProvider;
 
     /**
      * @var FieldSelection
@@ -61,21 +67,24 @@ class Search implements ProductQueryInterface
     /**
      * @param SearchInterface       $search                Search Engine
      * @param SearchResultFactory   $searchResultFactory   Search Results Factory
+     * @param PageSizeProvider      $pageSize
      * @param FieldSelection        $fieldSelection        Field Selection
-     * @param ProductSearch         $productProvider       Product Provider
+     * @param ProductSearch         $productsProvider       Product Provider
      * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria Builder
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
+        PageSizeProvider $pageSize,
         FieldSelection $fieldSelection,
-        ProductSearch $productProvider,
+        ProductSearch $productsProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->search                = $search;
         $this->searchResultFactory   = $searchResultFactory;
+        $this->pageSizeProvider      = $pageSize;
         $this->fieldSelection        = $fieldSelection;
-        $this->productProvider       = $productProvider;
+        $this->productsProvider      = $productsProvider;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
@@ -86,33 +95,40 @@ class Search implements ProductQueryInterface
     {
         $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
         $searchCriteria = $this->buildSearchCriteria($args, $info);
-        $searchResults  = $this->search->search($searchCriteria);
 
-        // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
+        $realPageSize = $searchCriteria->getPageSize();
+        $realCurrentPage = $searchCriteria->getCurrentPage();
+        //Because of limitations of sort and pagination on search API we will query all IDS
+        $pageSize = $this->pageSizeProvider->getMaxPageSize();
+        $searchCriteria->setPageSize($pageSize);
+        $searchCriteria->setCurrentPage(0);
+        $itemsResults = $this->search->search($searchCriteria);
+
         $providerSearchCriteria = clone($searchCriteria);
+        // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
         $providerSearchCriteria->setFilterGroups([]);
+        //Address limitations of sort and pagination on search API apply original pagination from GQL query
+        $providerSearchCriteria->setPageSize($realPageSize);
+        $providerSearchCriteria->setCurrentPage($realCurrentPage);
 
-        $productsResults = $this->productProvider->getList($providerSearchCriteria, $searchResults, $queryFields, $context);
+        $searchResults = $this->productsProvider->getList($providerSearchCriteria, $itemsResults, $queryFields, $context);
+
+        $totalPages = $realPageSize ? ((int)ceil($searchResults->getTotalCount() / $realPageSize)) : 0;
         $productArray    = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
-        foreach ($productsResults->getItems() as $product) {
+        foreach ($searchResults->getItems() as $product) {
             $productArray[$product->getId()]          = $product->getData();
             $productArray[$product->getId()]['model'] = $product;
-        }
-
-        $maxPages = 0;
-        if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
-            $maxPages = (int) ceil($productsResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
         return $this->searchResultFactory->create([
             'totalCount'           => $searchResults->getTotalCount(),
             'productsSearchResult' => $productArray,
-            'searchAggregation'    => $searchResults->getAggregations(),
-            'pageSize'             => $searchCriteria->getPageSize(),
-            'currentPage'          => $searchCriteria->getCurrentPage(),
-            'totalPages'           => $maxPages,
+            'searchAggregation'    => $itemsResults->getAggregations(),
+            'pageSize'             => $realPageSize,
+            'currentPage'          => $realCurrentPage,
+            'totalPages'           => $totalPages,
         ]);
     }
 
