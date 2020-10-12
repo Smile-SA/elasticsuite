@@ -185,4 +185,13 @@ interface ClientInterface
      * @return array
      */
     public function termvectors($params);
+
+    /**
+     * Run a mtermvectors request.
+     *
+     * @param array $params Multiple Term vectors request params.
+     *
+     * @return array
+     */
+    public function mtermvectors($params);
 }
