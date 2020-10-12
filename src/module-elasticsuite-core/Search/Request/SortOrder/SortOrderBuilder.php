@@ -95,7 +95,7 @@ class SortOrderBuilder
                     );
                     $sortOrderParams['nestedFilter'] = $nestedFilter;
                 }
-            } catch (\LogicException $e) {
+            } catch (\LogicException $exception) {
                 $sortOrderParams['field'] = $fieldName;
             }
 

@@ -75,7 +75,7 @@ class Coverage implements ModifierInterface
                 if (!($isHidden || !($isRelevant || $forceDisplay))) {
                     $relevantAttributes[] = $attribute;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 ;
             }
         }

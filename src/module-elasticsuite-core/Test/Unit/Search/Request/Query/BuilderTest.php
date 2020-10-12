@@ -88,6 +88,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
      * Mocks the query factory used by the tested builder.
      *
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @return \PHPUnit\Framework\MockObject\MockObject
      */

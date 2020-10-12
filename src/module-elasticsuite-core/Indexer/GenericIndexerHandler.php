@@ -106,7 +106,7 @@ class GenericIndexerHandler implements IndexerInterface
 
             try {
                 $index = $this->indexOperation->getIndexByName($this->indexName, $storeId);
-            } catch (\Exception $e) {
+            } catch (\Exception $exception) {
                 $index = $this->indexOperation->createIndex($this->indexName, $storeId);
             }
 
