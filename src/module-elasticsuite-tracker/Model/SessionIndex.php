@@ -77,7 +77,7 @@ class SessionIndex implements SessionIndexInterface
         foreach ($sessionIdsByStore as $storeId => $sessionIds) {
             try {
                 $sessionData = $this->resourceModel->getSessionData($storeId, $sessionIds);
-            } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
                 $sessionData = [];
             }
 

@@ -327,7 +327,7 @@ class Thesaurus extends AbstractEntity
                     if (!isset($row[ThesaurusInterface::THESAURUS_ID])) {
                         $this->countItemsCreated++;
                     }
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     return false;
                 }
             }

@@ -105,9 +105,9 @@ class ChooserPlugin
             $ids = [];
         }
 
-        foreach ($ids as $key => &$id) {
-            $id = (int) $id;
-            if ($id <= 0) {
+        foreach ($ids as $key => &$categoryId) {
+            $categoryId = (int) $categoryId;
+            if ($categoryId <= 0) {
                 unset($ids[$key]);
             }
         }
