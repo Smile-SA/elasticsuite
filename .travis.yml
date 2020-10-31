@@ -12,33 +12,33 @@ jobs:
 # Elasticsearch 6
     - php: 7.3
       env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=community
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.3
       env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=enterprise
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=enterprise
     - php: 7.4
       env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=community
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.4
       env:
-          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=enterprise
+          - ES_VERSION=6.8.8 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=enterprise
 # Elasticsearch 7
     - php: 7.3
       env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=community
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.3
       env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=enterprise
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=enterprise
     - php: 7.4
       env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=community
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=community
     - if: type != pull_request
       php: 7.4
       env:
-          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.0 MAGENTO_EDITION=enterprise
+          - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.4.1 MAGENTO_EDITION=enterprise
 
 before_install:
   - sudo service elasticsearch stop
