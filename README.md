@@ -10,9 +10,11 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to several changed in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
+Due to several changes in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
 
-If your project is based on **Magento >= 2.4.0**, you can start working with ElasticSuite today using the latest **2.10.x release**.
+Moreover, a breaking change was introduced between **2.4.0 and 2.4.1** : 
+- if your project is based on **Magento >= 2.4.1**, you can start working with ElasticSuite today using the latest **2.10.x release**
+- if your project is based on **Magento = 2.4.0**, the latest Elasticsuite release you can use is the **2.10.1** 
 
 **Which version should I use ?**
 
