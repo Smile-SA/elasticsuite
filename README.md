@@ -23,7 +23,8 @@ Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ``
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
 Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
 Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | **Yes**
-Magento **>=2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
+Magento **2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | No
+Magento **>=2.4.1** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
 
 ### Magento2 B2B Compatibility
 
