@@ -217,7 +217,7 @@ class OptimizerSetup
                     OptimizerInterface::OPTIMIZER_ID,
                     \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                     null,
-                    ['nullable' => false],
+                    ['nullable' => false, 'primary' => true],
                     'Optimizer ID'
                 )
                 ->addColumn(
