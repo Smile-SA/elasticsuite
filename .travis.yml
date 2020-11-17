@@ -62,6 +62,7 @@ before_install:
   - yes | sudo $ES_HOME/bin/elasticsearch-plugin install analysis-phonetic
   - sudo service elasticsearch start
   - sleep 5
+  - composer self-update --1
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then composer config -g http-basic.repo.magento.com $MAGENTO_USERNAME $MAGENTO_PASSWORD ; fi
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - composer global require hirak/prestissimo:0.3.4
