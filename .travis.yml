@@ -67,7 +67,7 @@ jobs:
       php: 7.3
       env:
           - ES_VERSION=7.6.2-amd64 MAGENTO_VERSION=2.3.5-p2 MAGENTO_EDITION=enterprise
-          -
+
 before_install:
   - sudo service elasticsearch stop
   - export ES_HOME=/usr/share/elasticsearch
@@ -80,6 +80,7 @@ before_install:
   - sudo chgrp elasticsearch /etc/default/elasticsearch -R
   - sudo service elasticsearch start
   - sleep 5
+  - composer self-update --1
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then composer config -g http-basic.repo.magento.com $MAGENTO_USERNAME $MAGENTO_PASSWORD ; fi
   - echo "{\"http-basic\":{\"repo.magento.com\":{\"username\":\"${MAGENTO_USERNAME}\",\"password\":\"${MAGENTO_PASSWORD}\"}}}" > auth.json
   - if [ -n "$GH_ACCESS_TOKEN" ]; then composer config github-oauth.github.com ${GH_ACCESS_TOKEN}; fi;
