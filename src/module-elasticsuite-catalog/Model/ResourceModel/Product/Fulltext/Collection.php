@@ -426,6 +426,26 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * Retrieve collection last page number.
+     *
+     * @return int
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
+    public function getLastPageNumber()
+    {
+        $collectionSize = (int) $this->getSize();
+        if (0 === $collectionSize) {
+            return 1;
+        } elseif ($this->_pageSize) {
+            return (int) ceil($collectionSize / $this->_pageSize);
+        } elseif ($this->originalPageSize) {
+            return (int) ceil($collectionSize / $this->originalPageSize);
+        } else {
+            return 1;
+        }
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritdoc}
@@ -591,7 +611,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         // Pagination params.
         $size = $this->getPageSize();
-        $from = $size * (max(1, $this->_curPage) - 1);
+        $from = $size * (max(1, $this->getCurPage()) - 1);
 
         // Setup sort orders.
         $sortOrders = $this->prepareSortOrders();
