@@ -107,7 +107,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
             $layerState = $this->getLayer()->getState();
 
             foreach ($this->currentFilterValue as $currentFilter) {
-                $filter = $this->_createItem($this->escaper->escapeHtml($currentFilter), $this->currentFilterValue);
+                $filter = $this->_createItem($this->tagFilter->filter($currentFilter), $this->currentFilterValue);
                 $layerState->addFilter($filter);
             }
         }
