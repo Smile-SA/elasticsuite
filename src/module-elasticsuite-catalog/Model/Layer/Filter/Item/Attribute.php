@@ -47,7 +47,7 @@ class Attribute extends \Magento\Catalog\Model\Layer\Filter\Item
         $query = [$this->getFilter()->getRequestVar() => $this->getFilter()->getResetValue()];
 
         if (is_array($this->getApplyValue())) {
-            $resetValue = array_diff($this->getApplyValue(), [$this->getLabel()]);
+            $resetValue = array_diff($this->getApplyValue(), [$this->getRawValue() ?? $this->getLabel()]);
             if (count($resetValue) < 2) {
                 $resetValue = current($resetValue);
             }
