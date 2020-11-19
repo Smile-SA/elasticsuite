@@ -66,6 +66,9 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
         $attributes = $this->eavConfig->getEntityAttributes(\Magento\Catalog\Model\Product::ENTITY, $product);
 
         foreach ($request as $code => $value) {
+            if(is_array($value)){
+                continue;
+            }    
             if (array_key_exists($code, $attributes)) {
                 $attribute = $attributes[$code];
                 if ($this->canReplaceImageWithSwatch($attribute)) {
