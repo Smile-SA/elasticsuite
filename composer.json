@@ -78,6 +78,7 @@
             "src/module-elasticsuite-thesaurus/registration.php",
             "src/module-elasticsuite-tracker/registration.php",
             "src/module-elasticsuite-virtual-category/registration.php"
+            "src/module-elasticsuite-ghost-cleaner/registration.php"
         ],
         "psr-4": {
             "Smile\\ElasticsuiteCore\\": "src/module-elasticsuite-core",
@@ -92,6 +93,7 @@
             "Smile\\ElasticsuiteThesaurus\\": "src/module-elasticsuite-thesaurus",
             "Smile\\ElasticsuiteTracker\\": "src/module-elasticsuite-tracker",
             "Smile\\ElasticsuiteVirtualCategory\\": "src/module-elasticsuite-virtual-category"
+            "Smile\\ElasticsuiteGhostCleaner\\": "src/module-elasticsuite-ghost-cleaner"
         }
     },
     "extra": {
