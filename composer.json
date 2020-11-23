@@ -77,7 +77,7 @@
             "src/module-elasticsuite-swatches/registration.php",
             "src/module-elasticsuite-thesaurus/registration.php",
             "src/module-elasticsuite-tracker/registration.php",
-            "src/module-elasticsuite-virtual-category/registration.php"
+            "src/module-elasticsuite-virtual-category/registration.php",
             "src/module-elasticsuite-ghost-cleaner/registration.php"
         ],
         "psr-4": {
