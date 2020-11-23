@@ -1,6 +1,6 @@
 <?php
 
-namespace Smile\ElasticsuiteIndices\Cron;
+namespace Smile\ElasticsuiteGhostCleaner\Cron;
 
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 

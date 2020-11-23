@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
-        <job instance="Smile\ElasticsuiteIndices\Cron\DeleteGhosts" method="execute" name="elasticsuite_indices_deleteghosts">
+        <job instance="Smile\ElasticsuiteGhostCleaner\Cron\DeleteGhosts" method="execute" name="elasticsuite_ghostcleaner_deleteghosts">
             <schedule>*/10 * * * *</schedule>
         </job>
     </group>
