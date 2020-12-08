@@ -90,10 +90,8 @@ class FrontPlugin
      *
      * @return Front
      */
-    public function aroundSetForm(Front $subject, \Closure $proceed, Form $form)
+    public function afterSetForm(Front $subject, Front $result, Form $form)
     {
-        $block = $proceed($form);
-
         $fieldset = $this->createFieldset($form, $subject);
 
         $this->moveOrginalFields($form);
@@ -109,7 +107,7 @@ class FrontPlugin
 
         $this->appendFieldsDependency($subject);
 
-        return $block;
+        return $result;
     }
 
     /**
