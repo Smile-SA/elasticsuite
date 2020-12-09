@@ -109,6 +109,14 @@ class ClientBuilder
             $clientBuilder->setSelector($selector);
         }
 
+        $connectionParams = ['client' => []];
+        if (isset($options['timeout'])) {
+            $connectionParams['client']['timeout'] = $options['timeout'];
+        }
+        if (count($connectionParams['client'])) {
+            $clientBuilder->setConnectionParams($connectionParams);
+        }
+
         return $clientBuilder->build();
     }
 

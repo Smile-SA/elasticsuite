@@ -80,6 +80,13 @@ interface ClientConfigurationInterface
     public function getMaxParallelHandles();
 
     /**
+     * Get the maximum number of seconds to wait for a response
+     *
+     * @return int
+     */
+    public function getReadTimeout();
+
+    /**
      * Client config options.
      *
      * @return array
