@@ -134,6 +134,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
             'timeout'               => $this->getReadTimeout(),
+            'connection_timeout'    => $this->getConnectionTimeout(),
         ];
 
         return $options;
