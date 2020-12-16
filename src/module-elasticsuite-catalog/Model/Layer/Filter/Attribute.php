@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
 
 /**
  * Product attribute filter implementation.
@@ -145,8 +146,10 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         }
 
         $minCount = !empty($optionsFacetedData) ? min(array_column($optionsFacetedData, 'count')) : 0;
+        $attribute = $this->getAttributeModel();
+        $forceDisplay = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_DISPLAYED;
 
-        if (!empty($this->currentFilterValue) || $minCount < $productCollection->getSize()) {
+        if (!empty($this->currentFilterValue) || $minCount < $productCollection->getSize() || $forceDisplay) {
             foreach ($optionsFacetedData as $value => $data) {
                 $items[$value] = [
                     'label' => $this->tagFilter->filter($value),
