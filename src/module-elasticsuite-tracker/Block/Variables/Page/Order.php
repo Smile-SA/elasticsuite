@@ -65,7 +65,7 @@ class Order extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBloc
 
         $order = $order = $this->checkoutSession->getLastRealOrder();
 
-        if ($order) {
+        if ($order && $order->getIncrementId()) {
             $variables['order.subtotal']        = $order->getBaseSubtotalInclTax();
             $variables['order.discount_total']  = $order->getDiscountAmount();
             $variables['order.shipping_total']  = $order->getShippingAmount();
