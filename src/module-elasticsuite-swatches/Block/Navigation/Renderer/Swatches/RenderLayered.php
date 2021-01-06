@@ -67,7 +67,9 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
         }
 
         foreach (array_merge(array_flip($sortingArr), $attributeOptions) as $item) {
-            $attributeOptionsSort[$item['id']] = $item;
+            if (is_array($item) && array_key_exists('id', $item)) {
+                $attributeOptionsSort[$item['id']] = $item;
+            }
         }
 
         $attributeOptionIds = array_keys($attributeOptionsSort);
