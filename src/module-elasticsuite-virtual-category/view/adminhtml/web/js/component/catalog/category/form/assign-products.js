@@ -44,8 +44,8 @@ define([
                 if (element.positionElement) {
                     element.positionElement.disabled = false;
                     categoryProducts.set(element.value, element.positionElement.value);
-                } else if (element.value && element.id) {
-                    // Override is here. Add the product to categoryProducts even if it does not have position field
+                } else if (!isNaN(parseInt(element.value, 10))) {
+                    // Override is here. Add the product to categoryProducts even if it does not have position field.
                     categoryProducts.set(element.value, 0);
                 }
             } else {
