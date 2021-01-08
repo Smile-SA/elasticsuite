@@ -278,7 +278,7 @@ define([
                         }
 
                         this.responseList.indexList
-                            .on('click', function (e) {
+                            .on('click vclick', function (e) {
                                 self.responseList.selected = $(this);
                                 if (self.responseList.selected.attr("href")) {
                                     window.location.href = self.responseList.selected.attr("href");
