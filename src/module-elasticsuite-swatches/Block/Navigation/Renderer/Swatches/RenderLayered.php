@@ -32,6 +32,8 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
      * Override the native method to sort swatch options in the expected when the sorting isn't set to manual order
      * as defined in the admin attribute parameters.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array
      */
     public function getSwatchData(): array
