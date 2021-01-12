@@ -9,8 +9,8 @@ add_composer_repository () {
 
 add_venia_sample_data_repository () {
     name=$1
-    git clone https://github.com/PMET-public/${name}.git "$TRAVIS_BUILD_DIR/data/PMET-public/${name}"
-    add_composer_repository ${name} git "$TRAVIS_BUILD_DIR/data/PMET-public/${name}"
+    git clone https://github.com/PMET-public/${name}.git "$GITHUB_WORKSPACE/data/PMET-public/${name}"
+    add_composer_repository ${name} git "$GITHUB_WORKSPACE/data/PMET-public/${name}"
 }
 
 execute_install () {

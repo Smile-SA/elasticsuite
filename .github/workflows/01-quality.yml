@@ -1,0 +1,68 @@
+name: PHP Code Quality
+
+on:
+    push:
+        branches:
+        - 2.9.x
+        - 2.10.x
+    pull_request:
+        branches:
+        - 2.9.x
+        - 2.10.x
+
+jobs:
+    qualit:
+        name: Code Quality
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php-versions: ['7.3']
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Prepare directories
+              run: mkdir -p app/etc var
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: mbstring, intl, bcmath, gd
+                  ini-values: post_max_size=256M, max_execution_time=180
+
+            - name: Validate composer.json and composer.lock
+              run: composer validate
+
+            - name: Cache Composer packages
+              id: composer-cache
+              uses: actions/cache@v2
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-php-
+
+            - name: Prepare credentials
+              env:
+                MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
+                MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
+              run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
+
+            - name: Install dependencies
+              if: steps.composer-cache.outputs.cache-hit != 'true'
+              run: composer install --prefer-dist --no-progress --no-suggest
+
+            - name: PHP Code Sniffer with Magento Extension Quality Program
+              run: |
+                vendor/bin/phpcs --config-set installed_paths vendor/magento/marketplace-eqp/
+                vendor/bin/phpcs --standard=vendor/magento/marketplace-eqp/MEQP2 --severity=9 src/
+
+            - name: PHP Code Sniffer with Smile Rules
+              run: vendor/bin/phpcs --standard=vendor/smile/magento2-smilelab-phpcs/phpcs-standards/SmileLab --extensions=php src/
+
+            - name: PHPMD
+              run: vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
+
+            - name: PHPUnit
+              run: vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
