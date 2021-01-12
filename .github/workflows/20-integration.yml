@@ -1,0 +1,246 @@
+name: Integration
+
+on:
+    push:
+        branches:
+            - 2.9.x
+            - 2.10.x
+    pull_request:
+        branches:
+            - 2.9.x
+            - 2.10.x
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        name: 'Integration'
+        services:
+            mysql:
+                image: docker://mysql:5.7
+                env:
+                    MYSQL_ROOT_PASSWORD: magento2
+                    MYSQL_DATABASE: magento2
+                ports:
+                    - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+            elasticsearch:
+                image: docker://magento/magento-cloud-docker-elasticsearch:7.5-1.2.2
+                ports:
+                    - 9200:9200
+                options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+
+        strategy:
+            matrix:
+                php-versions: ['7.2', '7.3']
+                magento-versions: ['2.3.5-p1', '2.3.5-p2']
+                magento-editions: ['community', 'enterprise']
+
+        env:
+            magento-directory: /var/www/magento
+            MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
+            MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
+
+        steps:
+            - name: "[Init] Checkout"
+              uses: actions/checkout@v2
+
+            - name: "[Init] Setup PHP"
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: mbstring, intl, bcmath, gd
+                  ini-values: post_max_size=256M, max_execution_time=180
+
+            - name: "[Init] Add php-fpm"
+              env:
+                  version: ${{ matrix.php-versions }}
+              run: |
+                sudo apt-get install -y php$version-fpm
+                sudo service php$version-fpm start
+                sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
+                sudo service php$version-fpm start
+                sudo service php$version-fpm status
+
+            - name: "[Init] Setup Apache with PHP-FPM"
+              env:
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+                  version: ${{ matrix.php-versions }}
+              run: |
+                sudo apt-get -qq update
+                sudo apt-get -qq install apache2
+                sudo a2enmod rewrite actions alias proxy proxy_fcgi
+                sudo usermod -a -G www-data $USER
+                sudo cp -f Resources/tests/apache/apache.conf /etc/apache2/sites-available/000-default.conf
+                sudo mkdir -p $MAGENTO_ROOT
+                sudo chown -R runner:www-data $MAGENTO_ROOT
+                sudo sed -e "s?%MAGENTO_ROOT%?$(readlink -f $MAGENTO_ROOT)?g" --in-place /etc/apache2/sites-available/000-default.conf
+                sudo sed -e "s?%PHP_VERSION%?$version?g" --in-place /etc/apache2/sites-available/000-default.conf
+                sudo apachectl configtest
+                sudo systemctl restart apache2
+                sudo service apache2 status
+
+            - name: "[Init] Prepare GraphQL test suite"
+              run: |
+                sudo chown $USER -R /usr/local/lib/node_modules
+                npm install -g graphqurl
+
+            - name: "[Init] Downgrade Composer"
+              run: composer self-update --1
+
+            - name: "[Init] Optimize Composer"
+              run : composer global require hirak/prestissimo:0.3.10
+
+            - name: "[Init] Determine composer cache directory"
+              id: composer-cache-directory
+              run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+
+            - name: "[Init] Cache Composer cache"
+              id: composer-cache
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composer-cache-directory.outputs.directory }}
+                  key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  restore-keys: |
+                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
+                      composer-${{ matrix.php-versions }}-
+                      composer-
+
+            - name: "[Init] Cache Magento install"
+              id: magento-cache
+              uses: actions/cache@v2
+              with:
+                  path: ${{ env.magento-directory }}
+                  key: ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  restore-keys: |
+                      ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+            - name: "[Init] Prepare credentials"
+              if: ${{env.MAGENTO_USERNAME}} != 0
+              run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
+
+            - name: "[Init] Install proper version of Magento through Composer"
+              if: steps.magento-cache.outputs.cache-hit != 'true'
+              env:
+                  MAGENTO_VERSION: ${{ matrix.magento-versions }}
+                  MAGENTO_EDITION: ${{ matrix.magento-editions }}
+                  STABILITY: "--stability=stable"
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+              run: composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
+
+            - name: "[Init] Add current build of Elasticsuite"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev"
+                cp -R $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+
+            - name: "[Init] Prepare Magento install if needed"
+              if: steps.magento-cache.outputs.cache-hit == 'true'
+              working-directory: ${{ env.magento-directory }}
+              run: rm -rf app/etc/env.php app/etc/config.php
+
+            - name: "[Init] Fix Magento directory permissions"
+              env:
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                sudo find . -type f -exec chmod 644 {} \;
+                sudo find . -type d -exec chmod 755 {} \;
+                sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
+                sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
+                sudo chown -R runner:www-data .
+                sudo chmod u+x bin/magento
+
+            - name: "[Test] Install Magento"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" -q
+
+            - name: "[Test] Setup Upgrade"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:upgrade -q
+
+            - name: "[Test] Reindex"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento index:reindex
+
+            - name: "[Test] Cache Flush"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:flush
+
+            - name: "[Test] Compile"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:di:compile
+
+            - name: "[Test] Data"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                composer config --global github-protocols https
+                git config --global url."https://github.com/PMET-public".insteadOf "git@github.com:PMET-public"
+                echo "==> Adding Venia Sample Data"
+                cp "$GITHUB_WORKSPACE/Resources/tests/data/deployVeniaSampleData.sh" .
+                bash deployVeniaSampleData.sh --yes
+                echo "==> Process setup:upgrade and reindex"
+                php bin/magento setup:upgrade --keep-generated --quiet
+                php bin/magento index:reindex
+
+            - name: "[Test] Web : Homepage"
+              run: |
+                echo "==> Testing homepage..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/ -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] Web : Catalogsearch"
+              run: |
+                echo "==> Testing catalogsearch..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/catalogsearch/result/?q=top -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] Web : Autocomplete"
+              run: |
+                echo "==> Testing Autocomplete..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/search/ajax/suggest/?q=top -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] GraphQl : Schema"
+              run: |
+                echo "==> Testing GraphQL Schema..."
+                curl -i -X POST http://localhost/graphql -H "Content-Type: application/json" -d @$GITHUB_WORKSPACE/Resources/tests/graphql/introspection_query.json
+
+            - name: "[Test] GraphQl : Search"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : Category"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : Product Detail"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
