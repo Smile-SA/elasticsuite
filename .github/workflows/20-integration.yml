@@ -131,7 +131,7 @@ jobs:
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-$GITHUB_REF}-dev"
+                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev"
                 cp -R $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
             - name: "[Init] Prepare Magento install if needed"
