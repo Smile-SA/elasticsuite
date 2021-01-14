@@ -34,7 +34,11 @@ jobs:
                 php-versions: ['7.2', '7.3']
                 magento-versions: ['2.3.5-p1', '2.3.5-p2']
                 magento-editions: ['community', 'enterprise']
-
+                hasSecrets:
+                    - ${{env.MAGENTO_USERNAME}} != 0 && ${{env.MAGENTO_PASSWORD}} != 0
+                exclude:
+                    - hasSecrets: false
+                      magento-editions: enterprise
         env:
             magento-directory: /var/www/magento
             MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
