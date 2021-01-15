@@ -4,11 +4,10 @@ on:
     push:
         branches:
             - 2.9.x
-            - 2.10.x
+
     pull_request:
         branches:
             - 2.9.x
-            - 2.10.x
 
 jobs:
     build:
