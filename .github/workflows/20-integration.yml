@@ -153,11 +153,13 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: |
                 rm -rf app/etc/env.php app/etc/config.php
-                composer remove magento/module-catalog-sample-data-venia --no-update
-                composer remove magento/module-configurable-sample-data-venia --no-update
-                composer remove magento/sample-data-media-venia --no-update
-                composer remove smile/elasticsuite --no-update
-                composer update
+                composer config discard-changes true
+                composer remove magento/module-catalog-sample-data-venia --no-update --no-interaction
+                composer remove magento/module-configurable-sample-data-venia --no-update --no-interaction
+                composer remove magento/sample-data-media-venia --no-update --no-interaction
+                composer remove smile/elasticsuite --no-update --no-interaction
+                composer update --no-interaction
+                composer config discard-changes false
 
             - name: "[Init] Install proper version of Magento through Composer"
               if: steps.magento-cache.outputs.cache-hit != 'true'
