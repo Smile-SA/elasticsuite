@@ -213,10 +213,11 @@ jobs:
             - name: "[Test] Data : Require"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update
-                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update
-                composer require magento/sample-data-media-venia:dev-master@dev --no-update
-                composer update
+                composer config discard-changes true
+                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction
+                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction
+                composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction
+                composer update --no-interaction
 
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
