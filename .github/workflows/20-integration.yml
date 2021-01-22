@@ -5,7 +5,7 @@ on:
         branches:
             - 2.10.x
 
-    pull_request:
+    pull_request_target:
         branches:
             - 2.10.x
 
