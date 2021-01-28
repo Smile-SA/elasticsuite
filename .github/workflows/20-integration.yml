@@ -123,10 +123,12 @@ jobs:
               run: |
                 composer config --global github-protocols https
                 git config --global url."https://github.com/PMET-public".insteadOf "git@github.com:PMET-public"
-                rm -rf "$GITHUB_WORKSPACE/data/PMET-public"
-                git clone https://github.com/PMET-public/module-catalog-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
-                git clone https://github.com/PMET-public/module-configurable-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
-                git clone https://github.com/PMET-public/sample-data-media-venia.git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                if [ ! -d "$GITHUB_WORKSPACE/data/PMET-public" ]; then
+                  rm -rf "$GITHUB_WORKSPACE/data/PMET-public"
+                  git clone https://github.com/PMET-public/module-catalog-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
+                  git clone https://github.com/PMET-public/module-configurable-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
+                  git clone https://github.com/PMET-public/sample-data-media-venia.git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                fi
 
             - name: "[Init] Prepare Sample Data local repos"
               working-directory: ${{ env.magento-directory }}
