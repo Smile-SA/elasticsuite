@@ -158,7 +158,7 @@ jobs:
                 composer remove magento/module-configurable-sample-data-venia --no-update --no-interaction
                 composer remove magento/sample-data-media-venia --no-update --no-interaction
                 composer remove smile/elasticsuite --no-update --no-interaction
-                composer update --no-interaction
+                composer update --no-interaction --ignore-platform-reqs
                 composer config discard-changes false
 
             - name: "[Init] Install proper version of Magento through Composer"
