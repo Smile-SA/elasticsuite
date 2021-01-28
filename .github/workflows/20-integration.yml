@@ -177,7 +177,7 @@ jobs:
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev"
+                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
                 cp -R $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
             - name: "[Init] Fix Magento directory permissions"
@@ -216,10 +216,10 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: |
                 composer config discard-changes true
-                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction
-                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction
-                composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction
-                composer update --no-interaction
+                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                composer update --no-interaction --ignore-platform-reqs
 
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
