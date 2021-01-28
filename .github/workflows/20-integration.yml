@@ -47,7 +47,7 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-versions }}
-                  extensions: mbstring, intl, bcmath, gd
+                  extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
                   ini-values: post_max_size=256M, max_execution_time=180
 
             - name: "[Init] Add php-fpm"
@@ -123,9 +123,12 @@ jobs:
               run: |
                 composer config --global github-protocols https
                 git config --global url."https://github.com/PMET-public".insteadOf "git@github.com:PMET-public"
-                git clone https://github.com/PMET-public/module-catalog-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
-                git clone https://github.com/PMET-public/module-configurable-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
-                git clone https://github.com/PMET-public/sample-data-media-venia.git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                if [ ! -d "$GITHUB_WORKSPACE/data/PMET-public" ]; then
+                  rm -rf "$GITHUB_WORKSPACE/data/PMET-public"
+                  git clone https://github.com/PMET-public/module-catalog-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
+                  git clone https://github.com/PMET-public/module-configurable-sample-data-venia.git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
+                  git clone https://github.com/PMET-public/sample-data-media-venia.git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                fi
 
             - name: "[Init] Prepare Sample Data local repos"
               working-directory: ${{ env.magento-directory }}
