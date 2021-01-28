@@ -173,7 +173,7 @@ jobs:
                 sudo rm -rf $MAGENTO_ROOT
                 sudo mkdir -p $MAGENTO_ROOT
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
-                composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT
+                composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
