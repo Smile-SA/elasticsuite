@@ -67,14 +67,17 @@
 
     .product-list {
 
+        display: flex;
+        flex-wrap: wrap;
         margin: 0;
-        display: inline-block;
 
         li {
             box-sizing: content-box;
-            float: left;
             border: 1px solid #d6d6d6;
             background: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             width: 200px;
             min-height: 221px;
             margin: 5px 0 0 5px;
