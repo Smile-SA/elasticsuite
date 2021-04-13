@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_entity_attribute_save_commit_after">
+        <observer name="smile_elasticsuite_product_attribute_save_after" instance="Smile\ElasticsuiteCatalog\Observer\CatalogProductAttributeSaveAfter"/>
+    </event>
+</config>
