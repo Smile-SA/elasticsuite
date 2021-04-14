@@ -20,6 +20,7 @@ use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\LayerBuilderIn
 use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Api\Search\BucketInterface;
 use Smile\ElasticsuiteCore\Helper\Mapping;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface as ElasticBucketInterface;
 
 /**
  * Layered Navigation Builder for Default Attribute.
@@ -110,9 +111,67 @@ class Attribute implements LayerBuilderInterface
                     $metrics['count']
                 );
             }
+
+            $isManualOrder = $attribute->getFacetSortOrder() == ElasticBucketInterface::SORT_ORDER_MANUAL;
+            if ($isManualOrder && $attributeCode !== 'attribute_set_id') {
+                $items = array_column($result[$attributeCode]['options'], null, 'label');
+                $options = $attribute->getFrontend()->getSelectOptions();
+
+                $result[$attributeCode]['options'] = $this->addOptionsData($items, $options);
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * Resort items according option position defined in admin.
+     *
+     * @param array $items   Items to be sorted.
+     * @param array $options Options of attribute.
+     *
+     * @return array
+     */
+    private function addOptionsData(array $items, $options)
+    {
+        $optionPosition = 0;
+        if (!empty($options)) {
+            foreach ($options as $option) {
+                if (isset($option['label']) && !empty($option['label'])) {
+                    $optionLabel = trim((string) $option['label']);
+                    $optionPosition++;
+
+                    if (isset($items[$optionLabel])) {
+                        $items[$optionLabel]['adminSortIndex'] = $optionPosition;
+                        $items[$optionLabel]['value']          = $optionLabel;
+                    }
+                }
+            }
+
+            $items = $this->sortOptionsData($items);
+        }
+
+        return $items;
+    }
+
+    /**
+     * Sort items by adminSortIndex key.
+     *
+     * @param array $items to be sorted.
+     *
+     * @return array
+     */
+    private function sortOptionsData(array $items)
+    {
+        usort($items, function ($item1, $item2) {
+            if (!isset($item1['adminSortIndex']) or !isset($item2['adminSortIndex'])) {
+                return 0;
+            }
+
+            return $item1['adminSortIndex'] <= $item2['adminSortIndex'] ? -1 : 1;
+        });
+
+        return $items;
     }
 
     /**
