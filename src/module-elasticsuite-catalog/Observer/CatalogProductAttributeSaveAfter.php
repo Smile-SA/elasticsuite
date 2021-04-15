@@ -2,7 +2,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Observer;
 
-use Magento\CatalogSearch\Model\Indexer\Fulltext\Processor;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
@@ -10,16 +9,17 @@ use Magento\Framework\Event\ObserverInterface;
 class CatalogProductAttributeSaveAfter implements ObserverInterface
 {
     /**
-     * Attribute field list that will invalidate cache and fulltext index on change
+     * Attribute field list that will invalidate "Configuration" cache on change
      *
      * @var array
      */
     private $attributeFields = [
-        'is_searchable',
         'is_filterable',
         'is_filterable_in_search',
+        'is_searchable',
         'is_used_for_promo_rules',
-        'used_for_sort_by'
+        'search_weight',
+        'used_for_sort_by',
     ];
 
     /**
@@ -28,22 +28,14 @@ class CatalogProductAttributeSaveAfter implements ObserverInterface
     private $cacheTypeList;
 
     /**
-     * @var Processor
-     */
-    private $fulltextIndexerProcessor;
-
-    /**
      * CatalogProductAttributeSaveAfter constructor.
      *
      * @param TypeListInterface $cacheTypeList
-     * @param Processor $fulltextIndexerProcessor
      */
     public function __construct(
-        TypeListInterface $cacheTypeList,
-        Processor $fulltextIndexerProcessor
+        TypeListInterface $cacheTypeList
     ) {
         $this->cacheTypeList = $cacheTypeList;
-        $this->fulltextIndexerProcessor = $fulltextIndexerProcessor;
     }
 
     /**
@@ -53,10 +45,6 @@ class CatalogProductAttributeSaveAfter implements ObserverInterface
     {
         /** @var  \Magento\Catalog\Api\Data\ProductAttributeInterface $attribute */
         $attribute = $observer->getEvent()->getAttribute();
-
-        if ($attribute->isObjectNew()) {
-            return;
-        }
 
         $shouldInvalidate = false;
         foreach ($this->attributeFields as $field) {
@@ -68,7 +56,6 @@ class CatalogProductAttributeSaveAfter implements ObserverInterface
 
         if ($shouldInvalidate) {
             $this->cacheTypeList->invalidate(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER);
-            $this->fulltextIndexerProcessor->markIndexerAsInvalid();
         }
     }
 }
