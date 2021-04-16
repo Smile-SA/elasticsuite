@@ -117,6 +117,8 @@ class QueryBuilder
      * @param string|null    $currentPath Current nested path or null.
      *
      * @return QueryInterface
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function prepareFieldCondition(FieldInterface $field, $condition, $currentPath)
     {
@@ -143,7 +145,13 @@ class QueryBuilder
             }
         }
 
-        $query = $this->queryFactory->create($queryType, $condition);
+        if (($queryType === QueryInterface::TYPE_TERMS)
+            && ($field->getFilterLogicalOperator() === FieldInterface::FILTER_LOGICAL_OPERATOR_AND)
+        ) {
+            $query = $this->getCombinedTermsQuery($condition['field'], $condition['values']);
+        } else {
+            $query = $this->queryFactory->create($queryType, $condition);
+        }
 
         if ($this->isNestedField($field, $currentPath)) {
             $queryParams = ['path' => $field->getNestedPath(), 'query' => $query];
@@ -217,5 +225,38 @@ class QueryBuilder
         }
 
         return $condition;
+    }
+
+    /**
+     * Get a filter query corresponding to combining terms with a logical AND.
+     *
+     * @param string $field  Filter field.
+     * @param array  $values Filter values.
+     *
+     * @return QueryInterface
+     */
+    private function getCombinedTermsQuery($field, $values)
+    {
+        $query = null;
+
+        if (!is_array($values) && is_string($values)) {
+            $values = explode(',', $values);
+        } elseif (!is_array($values)) {
+            $values = [$values];
+        }
+
+        $filters = [];
+        foreach ($values as $value) {
+            $filters[] = $this->queryFactory->create(QueryInterface::TYPE_TERM, ['field' => $field, 'value' => $value]);
+        }
+
+        if (count($filters) === 1) {
+            // Avoids using a boolean clause for a single term.
+            $query = current($filters);
+        } elseif (count($filters) > 0) {
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $filters]);
+        }
+
+        return $query;
     }
 }

@@ -68,6 +68,7 @@ class Field implements FieldInterface
         'is_used_in_spellcheck'   => false,
         'search_weight'           => 1,
         'default_search_analyzer' => self::ANALYZER_STANDARD,
+        'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
     ];
 
     /**
@@ -257,6 +258,14 @@ class Field implements FieldInterface
         }
 
         return $missing;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getFilterLogicalOperator()
+    {
+        return (int) $this->config['filter_logical_operator'];
     }
 
     /**
