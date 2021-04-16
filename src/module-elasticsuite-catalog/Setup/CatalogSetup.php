@@ -551,6 +551,33 @@ class CatalogSetup
     }
 
     /**
+     * Add "facet_boolean_logic" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addFilterBooleanLogicField(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'facet_boolean_logic' into the db.
+        $connection->addColumn(
+            $table,
+            'facet_boolean_logic',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                'nullable' => false,
+                'default'  => \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic::BOOLEAN_LOGIC_OR,
+                'length'   => null,
+                'comment'  => 'Boolean logic to use when combining multiple selected values inside the filter',
+                'after'    => 'facet_sort_order',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *

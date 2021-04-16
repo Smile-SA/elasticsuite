@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab;
@@ -18,6 +18,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
@@ -243,6 +244,26 @@ class FrontPlugin
                 'values' => $this->filterSortOrder->toOptionArray(),
             ],
             'facet_max_size'
+        );
+
+        $booleanLogicOptions = [
+            ['value' => FilterBooleanLogic::BOOLEAN_LOGIC_OR, 'label' => __("Logical OR (default)")],
+            ['value' => FilterBooleanLogic::BOOLEAN_LOGIC_AND,  'label' => __("Logical AND")],
+        ];
+        $booleanLogicNote = __(
+            'When several values are selected in a facet, the default behavior is to combine them with a logical OR ("red" OR "blue").'
+            . ' But a logical AND can be handy for some attributes ("egg free" AND "gluten free", "waterproof AND lightweight AND warm").'
+        );
+        $fieldset->addField(
+            'facet_boolean_logic',
+            'select',
+            [
+                'name'   => 'facet_boolean_logic',
+                'label'  => __('Facet internal logic'),
+                'values' => $booleanLogicOptions,
+                'note'   => $booleanLogicNote,
+            ],
+            'facet_sort_order'
         );
 
         return $this;
