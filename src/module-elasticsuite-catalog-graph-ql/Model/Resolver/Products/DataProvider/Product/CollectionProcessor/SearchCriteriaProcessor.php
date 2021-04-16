@@ -37,8 +37,7 @@ class SearchCriteriaProcessor implements CollectionProcessorInterface
         SearchCriteriaInterface $searchCriteria,
         array $attributeNames,
         ContextInterface $context = null
-    ): Collection
-    {
+    ): Collection {
         return $collection;
     }
 }
