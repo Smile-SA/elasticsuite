@@ -31,6 +31,7 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     const TYPE_QUERY_GROUP      = 'queryGroupBucket';
     const TYPE_SIGNIFICANT_TERM = 'significantTermBucket';
     const TYPE_REVERSE_NESTED   = 'reverseNestedBucket';
+    const TYPE_TOP_HITS         = 'topHitsBucket';
 
     const SORT_ORDER_COUNT     = '_count';
     const SORT_ORDER_TERM      = '_term';
