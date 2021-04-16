@@ -15,4 +15,4 @@ define(['jquery', 'mage/cookies'], function ($) {
     return function(config) {
         return config.cookieRestrictionEnabled == false || $.mage.cookies.get(config.cookieRestrictionName) !== null;
     };
-})
+});
