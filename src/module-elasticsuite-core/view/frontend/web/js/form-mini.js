@@ -17,14 +17,13 @@
 define([
     'ko',
     'jquery',
-    'underscore',
     'mage/template',
     'Magento_Catalog/js/price-utils',
     'Magento_Ui/js/lib/knockout/template/loader',
     'Magento_Ui/js/modal/modal',
     'mage/translate',
     'Magento_Search/js/form-mini'
-], function (ko, $, _, mageTemplate, priceUtil, templateLoader) {
+], function (ko, $, mageTemplate, priceUtil, templateLoader) {
     'use strict';
 
     $.widget('smileEs.quickSearch', $.mage.quickSearch, {
@@ -34,7 +33,8 @@ define([
             responseFieldElements: 'dl dd',
             selectClass: 'selected',
             submitBtn: 'button[type="submit"]',
-            searchLabel: '[data-role=minisearch-label]'
+            searchLabel: '[data-role=minisearch-label]',
+			waitInterval: 250
         },
 
         /**
@@ -220,97 +220,101 @@ define([
          *
          * @private
          */
-        _onPropertyChange: _.debounce(function () {
-            var searchField = this.element,
-                clonePosition = {
-                    position: 'absolute',
-                    // Removed to fix display issues
-                    // left: searchField.offset().left,
-                    // top: searchField.offset().top + searchField.outerHeight(),
-                    width: searchField.outerWidth()
-                },
-                value = this.element.val();
+        _onPropertyChange: function() {
+			clearTimeout(this.requestTimeout);
 
-            this.submitBtn.disabled = this._isEmpty(value);
+			this.requestTimeout = setTimeout(function() {
+				var searchField = this.element,
+					clonePosition = {
+						position: 'absolute',
+						// Removed to fix display issues
+						// left: searchField.offset().left,
+						// top: searchField.offset().top + searchField.outerHeight(),
+						width: searchField.outerWidth()
+					},
+					value = this.element.val();
 
-            if (value.trim().length >= parseInt(this.options.minSearchLength, 10)) {
-                this.searchForm.addClass('processing');
-                this.currentRequest = $.ajax({
-                    method: "GET",
-                    url: this.options.url,
-                    data:{q: value},
-                    // This function will ensure proper killing of the last Ajax call.
-                    // In order to prevent requests of an old request to pop up later and replace results.
-                    beforeSend: function() { if (this.currentRequest !== null) { this.currentRequest.abort(); }}.bind(this),
-                    success: $.proxy(function (data) {
-                        var self = this;
-                        var lastElement = false;
-                        var content = this._getResultWrapper();
-                        var sectionDropdown = this._getSectionHeader();
-                        $.each(data, function(index, element) {
+				this.submitBtn.disabled = this._isEmpty(value);
 
-                            if (!lastElement || (lastElement && lastElement.type !== element.type)) {
-                                sectionDropdown = this._getSectionHeader(element.type, data);
-                            }
+				if (value.trim().length >= parseInt(this.options.minSearchLength, 10)) {
+					this.searchForm.addClass('processing');
+					this.currentRequest = $.ajax({
+						method: "GET",
+						url: this.options.url,
+						data:{q: value},
+						// This function will ensure proper killing of the last Ajax call.
+						// In order to prevent requests of an old request to pop up later and replace results.
+						beforeSend: function() { if (this.currentRequest !== null) { this.currentRequest.abort(); }}.bind(this),
+						success: $.proxy(function (data) {
+							var self = this;
+							var lastElement = false;
+							var content = this._getResultWrapper();
+							var sectionDropdown = this._getSectionHeader();
+							$.each(data, function(index, element) {
 
-                            var elementHtml = this._renderItem(element, index);
+								if (!lastElement || (lastElement && lastElement.type !== element.type)) {
+									sectionDropdown = this._getSectionHeader(element.type, data);
+								}
 
-                            sectionDropdown.append(elementHtml);
+								var elementHtml = this._renderItem(element, index);
 
-                            if (!lastElement || (lastElement && lastElement.type !== element.type)) {
-                                content.append(sectionDropdown);
-                            }
+								sectionDropdown.append(elementHtml);
 
-                            lastElement = element;
-                        }.bind(this));
-                        this.responseList.indexList = this.autoComplete.html(content)
-                            .css(clonePosition)
-                            .show()
-                            .find(this.options.responseFieldElements + ':visible');
+								if (!lastElement || (lastElement && lastElement.type !== element.type)) {
+									content.append(sectionDropdown);
+								}
 
-                        this._resetResponseList(false);
-                        this.element.removeAttr('aria-activedescendant');
+								lastElement = element;
+							}.bind(this));
+							this.responseList.indexList = this.autoComplete.html(content)
+								.css(clonePosition)
+								.show()
+								.find(this.options.responseFieldElements + ':visible');
 
-                        if (this.responseList.indexList.length) {
-                            this._updateAriaHasPopup(true);
-                        } else {
-                            this._updateAriaHasPopup(false);
-                        }
+							this._resetResponseList(false);
+							this.element.removeAttr('aria-activedescendant');
 
-                        this.responseList.indexList
-                            .on('click vclick', function (e) {
-                                self.responseList.selected = $(this);
-                                if (self.responseList.selected.attr("href")) {
-                                    window.location.href = self.responseList.selected.attr("href");
-                                    e.stopPropagation();
-                                    return false;
-                                }
-                                self.searchForm.trigger('submit');
-                            })
-                            .on('mouseenter mouseleave', function (e) {
-                                self.responseList.indexList.removeClass(self.options.selectClass);
-                                $(this).addClass(self.options.selectClass);
-                                self.responseList.selected = $(e.target);
-                                self.element.attr('aria-activedescendant', $(e.target).attr('id'));
-                            })
-                            .on('mouseout', function () {
-                                if (!self._getLastElement() && self._getLastElement().hasClass(self.options.selectClass)) {
-                                    $(this).removeClass(self.options.selectClass);
-                                    self._resetResponseList(false);
-                                }
-                            });
-                    },this),
-                    complete : $.proxy(function () {
-                        this.searchForm.removeClass('processing');
-                    }, this)
-                });
-            } else {
-                this._resetResponseList(true);
-                this.autoComplete.hide();
-                this._updateAriaHasPopup(false);
-                this.element.removeAttr('aria-activedescendant');
-            }
-        }, 250),
+							if (this.responseList.indexList.length) {
+								this._updateAriaHasPopup(true);
+							} else {
+								this._updateAriaHasPopup(false);
+							}
+
+							this.responseList.indexList
+								.on('click vclick', function (e) {
+									self.responseList.selected = $(this);
+									if (self.responseList.selected.attr("href")) {
+										window.location.href = self.responseList.selected.attr("href");
+										e.stopPropagation();
+										return false;
+									}
+									self.searchForm.trigger('submit');
+								})
+								.on('mouseenter mouseleave', function (e) {
+									self.responseList.indexList.removeClass(self.options.selectClass);
+									$(this).addClass(self.options.selectClass);
+									self.responseList.selected = $(e.target);
+									self.element.attr('aria-activedescendant', $(e.target).attr('id'));
+								})
+								.on('mouseout', function () {
+									if (!self._getLastElement() && self._getLastElement().hasClass(self.options.selectClass)) {
+										$(this).removeClass(self.options.selectClass);
+										self._resetResponseList(false);
+									}
+								});
+						},this),
+						complete : $.proxy(function () {
+							this.searchForm.removeClass('processing');
+						}, this)
+					});
+				} else {
+					this._resetResponseList(true);
+					this.autoComplete.hide();
+					this._updateAriaHasPopup(false);
+					this.element.removeAttr('aria-activedescendant');
+				}
+			}.bind(this), this.options.waitInterval);
+		},
 
         /**
          * Executes when keys are pressed in the search input field. Performs specific actions
