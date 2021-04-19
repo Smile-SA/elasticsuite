@@ -16,10 +16,6 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteCore\Search\Request\ContainerConfigurationFactory;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Product attribute filter implementation.
@@ -27,7 +23,6 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
 {
@@ -57,28 +52,16 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
     private $mappingHelper;
 
     /**
-     * @var QueryFactory
-     */
-    protected $queryFactory;
-
-    /**
-     * @var ContainerConfigurationFactory
-     */
-    private $containerConfigFactory;
-
-    /**
      * Constructor.
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory      Factory for item of the facets.
-     * @param \Magento\Store\Model\StoreManagerInterface           $storeManager           Store manager.
-     * @param \Magento\Catalog\Model\Layer                         $layer                  Catalog product layer.
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder        Item data builder.
-     * @param \Magento\Framework\Filter\StripTags                  $tagFilter              String HTML tags filter.
-     * @param \Magento\Framework\Escaper                           $escaper                Html Escaper.
-     * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute   $mappingHelper          Mapping helper.
-     * @param QueryFactory                                         $queryFactory           Query factory.
-     * @param ContainerConfigurationFactory                        $containerConfigFactory Container configuration factory.
-     * @param array                                                $data                   Custom data.
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory      $filterItemFactory Factory for item of the facets.
+     * @param \Magento\Store\Model\StoreManagerInterface           $storeManager      Store manager.
+     * @param \Magento\Catalog\Model\Layer                         $layer             Catalog product layer.
+     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder   Item data builder.
+     * @param \Magento\Framework\Filter\StripTags                  $tagFilter         String HTML tags filter.
+     * @param \Magento\Framework\Escaper                           $escaper           Html Escaper.
+     * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute   $mappingHelper     Mapping helper.
+     * @param array                                                $data              Custom data.
      */
     public function __construct(
         \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
@@ -88,8 +71,6 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         \Magento\Framework\Filter\StripTags $tagFilter,
         \Magento\Framework\Escaper $escaper,
         \Smile\ElasticsuiteCatalog\Helper\ProductAttribute $mappingHelper,
-        QueryFactory $queryFactory,
-        ContainerConfigurationFactory $containerConfigFactory,
         array $data = []
     ) {
         parent::__construct(
@@ -104,13 +85,10 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         $this->tagFilter     = $tagFilter;
         $this->escaper       = $escaper;
         $this->mappingHelper = $mappingHelper;
-        $this->queryFactory  = $queryFactory;
-        $this->containerConfigFactory = $containerConfigFactory;
     }
 
     /**
      * {@inheritDoc}
-     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
@@ -126,13 +104,7 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
             /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
             $productCollection = $this->getLayer()->getProductCollection();
 
-            $filterField = $this->getFilterField();
-            if (!$this->getAttributeModel()->getFacetBooleanLogic()) {
-                $productCollection->addFieldToFilter($filterField, $this->currentFilterValue);
-            } else {
-                $filterQuery = $this->getLogicalAndFilteringQuery($filterField, $this->currentFilterValue);
-                $productCollection->addFieldToFilter("{$filterField}_and", $filterQuery);
-            }
+            $productCollection->addFieldToFilter($this->getFilterField(), $this->currentFilterValue);
             $layerState = $this->getLayer()->getState();
 
             foreach ($this->currentFilterValue as $currentFilter) {
@@ -222,7 +194,6 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      * Retrieve ES filter field.
      *
      * @return string
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     protected function getFilterField()
     {
@@ -235,7 +206,6 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
      * @param array $items Items to be sorted.
      *
      * @return array
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function addOptionsData(array $items)
     {
@@ -282,48 +252,5 @@ class Attribute extends \Magento\CatalogSearch\Model\Layer\Filter\Attribute
         });
 
         return $items;
-    }
-
-    /**
-     * Get a filter query corresponding to combining with a logical AND the current filter values.
-     *
-     * @param string $filterField  Filter field.
-     * @param array  $filterValues Filter values.
-     *
-     * @return QueryInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    private function getLogicalAndFilteringQuery($filterField, $filterValues)
-    {
-        $containerConfig = $this->getContainerConfiguration();
-        $fieldProperty = $containerConfig->getMapping()->getField($filterField)->getMappingProperty();
-
-        $filters = [];
-        foreach ($filterValues as $value) {
-            $filters[] = $this->queryFactory->create(QueryInterface::TYPE_TERM, ['field' => $fieldProperty, 'value' => $value]);
-        }
-
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $filters]);
-    }
-
-    /**
-     * Get container configuration.
-     *
-     * @return ContainerConfigurationInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    private function getContainerConfiguration()
-    {
-        $containerName = 'catalog_view_container';
-
-        $config = $this->containerConfigFactory->create(
-            ['containerName' => $containerName, 'storeId' => $this->_storeManager->getStore()->getId()]
-        );
-
-        if ($config === null) {
-            throw new \LogicException("No configuration exists for request {$containerName}");
-        }
-
-        return $config;
     }
 }

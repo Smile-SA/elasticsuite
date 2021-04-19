@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Attribute\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Source model for multiple values combining logic for filterable attributes.
@@ -26,20 +27,6 @@ use Magento\Framework\Data\OptionSourceInterface;
 class FilterBooleanLogic implements OptionSourceInterface
 {
     /**
-     * Constant for "Logical OR (default)" value.
-     *
-     * The attribute will combine multiple selected values with a logical OR.
-     */
-    const BOOLEAN_LOGIC_OR = 0;
-
-    /**
-     * Constant for "Logical AND" value.
-     *
-     * The attribute will combine multiple selected values with a logical AND.
-     */
-    const BOOLEAN_LOGIC_AND = 1;
-
-    /**
      * Return array of boolean logic operator.
      *
      * @return array
@@ -47,8 +34,8 @@ class FilterBooleanLogic implements OptionSourceInterface
     public function toOptionArray()
     {
         return [
-            ['label' => __('Logical OR (default)'), 'value' => self::BOOLEAN_LOGIC_OR],
-            ['label' => __('Logical AND'), 'value' => self::BOOLEAN_LOGIC_AND],
+            ['label' => __('Logical OR (default)'), 'value' => FieldInterface::FILTER_LOGICAL_OPERATOR_OR],
+            ['label' => __('Logical AND'),          'value' => FieldInterface::FILTER_LOGICAL_OPERATOR_AND],
         ];
     }
 }

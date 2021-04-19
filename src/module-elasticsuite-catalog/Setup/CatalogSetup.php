@@ -569,7 +569,7 @@ class CatalogSetup
             [
                 'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                 'nullable' => false,
-                'default'  => \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic::BOOLEAN_LOGIC_OR,
+                'default'  => \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface::FILTER_LOGICAL_OPERATOR_OR,
                 'length'   => null,
                 'comment'  => 'Boolean logic to use when combining multiple selected values inside the filter',
                 'after'    => 'facet_sort_order',

@@ -102,6 +102,7 @@ class AggregationBuilder
     {
         $bucketType = $bucketParams['type'];
         $fieldName  = $bucketParams['field'] ?? $bucketParams['name'];
+        $logicalOperator = FieldInterface::FILTER_LOGICAL_OPERATOR_OR;
 
         try {
             $field = $containerConfig->getMapping()->getField($fieldName);
@@ -111,6 +112,7 @@ class AggregationBuilder
             } elseif (isset($bucketParams['nestedPath'])) {
                 unset($bucketParams['nestedPath']);
             }
+            $logicalOperator = $field->getFilterLogicalOperator();
         } catch (\Exception $e) {
             $bucketParams['field'] = $fieldName;
         }
@@ -121,6 +123,10 @@ class AggregationBuilder
 
         // Ensure any globally applied (attribute layered navigation) filter is NOT applied on the (most likely) originating agg.
         $bucketFilters = array_diff_key($filters, [$fieldName => true]);
+        if ($logicalOperator === FieldInterface::FILTER_LOGICAL_OPERATOR_AND) {
+            $bucketFilters = $filters;
+        }
+
         if (!empty($bucketFilters)) {
             $bucketParams['filter'] = $this->createFilter($containerConfig, $bucketFilters);
         }

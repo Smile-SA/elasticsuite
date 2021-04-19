@@ -117,6 +117,7 @@ class QueryBuilder
      * @param string|null    $currentPath Current nested path or null.
      *
      * @return QueryInterface
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function prepareFieldCondition(FieldInterface $field, $condition, $currentPath)
     {
@@ -143,7 +144,14 @@ class QueryBuilder
             }
         }
 
-        $query = $this->queryFactory->create($queryType, $condition);
+        if (($queryType === QueryInterface::TYPE_TERMS)
+            && ($field->getFilterLogicalOperator() === FieldInterface::FILTER_LOGICAL_OPERATOR_AND)
+            && (count($condition['values']) > 1)
+        ) {
+            $query = $this->getCombinedTermsQuery($condition['field'], $condition['values']);
+        } else {
+            $query = $this->queryFactory->create($queryType, $condition);
+        }
 
         if ($this->isNestedField($field, $currentPath)) {
             $queryParams = ['path' => $field->getNestedPath(), 'query' => $query];
@@ -217,5 +225,23 @@ class QueryBuilder
         }
 
         return $condition;
+    }
+
+    /**
+     * Get a filter query corresponding to combining terms with a logical AND.
+     *
+     * @param string $filterField  Filter field.
+     * @param array  $filterValues Filter values.
+     *
+     * @return QueryInterface
+     */
+    private function getCombinedTermsQuery($filterField, $filterValues)
+    {
+        $filters = [];
+        foreach ($filterValues as $value) {
+            $filters[] = $this->queryFactory->create(QueryInterface::TYPE_TERM, ['field' => $filterField, 'value' => $value]);
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $filters]);
     }
 }

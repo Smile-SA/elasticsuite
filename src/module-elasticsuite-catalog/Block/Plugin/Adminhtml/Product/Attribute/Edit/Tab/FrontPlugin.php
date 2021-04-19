@@ -63,23 +63,31 @@ class FrontPlugin
     private $filterSortOrder;
 
     /**
+     * @var FilterBooleanLogic
+     */
+    private $filterBooleanLogic;
+
+    /**
      * Class constructor
      *
-     * @param Yesno           $booleanSource   The YesNo source.
-     * @param Weight          $weightSource    Weight source.
-     * @param Registry        $registry        Core registry.
-     * @param FilterSortOrder $filterSortOrder Filter Sort Order.
+     * @param Yesno              $booleanSource      The YesNo source.
+     * @param Weight             $weightSource       Weight source.
+     * @param Registry           $registry           Core registry.
+     * @param FilterSortOrder    $filterSortOrder    Filter Sort Order.
+     * @param FilterBooleanLogic $filterBooleanLogic Filter boolean logic source model.
      */
     public function __construct(
         Yesno $booleanSource,
         Weight $weightSource,
         Registry $registry,
-        FilterSortOrder $filterSortOrder
+        FilterSortOrder $filterSortOrder,
+        FilterBooleanLogic $filterBooleanLogic
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
         $this->coreRegistry    = $registry;
         $this->filterSortOrder = $filterSortOrder;
+        $this->filterBooleanLogic = $filterBooleanLogic;
     }
 
     /**
@@ -246,11 +254,8 @@ class FrontPlugin
             'facet_max_size'
         );
 
-        $booleanLogicOptions = [
-            ['value' => FilterBooleanLogic::BOOLEAN_LOGIC_OR, 'label' => __("Logical OR (default)")],
-            ['value' => FilterBooleanLogic::BOOLEAN_LOGIC_AND,  'label' => __("Logical AND")],
-        ];
-        $booleanLogicNote = __(
+        $booleanLogicOptions    = $this->filterBooleanLogic->toOptionArray();
+        $booleanLogicNote       = __(
             'When several values are selected in a facet, the default behavior is to combine them with a logical OR ("red" OR "blue").'
             . ' But a logical AND can be handy for some attributes ("egg free" AND "gluten free", "waterproof AND lightweight AND warm").'
         );
