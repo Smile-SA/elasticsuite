@@ -23,6 +23,18 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav;
 class AttributePlugin
 {
     /**
+     * @var string[]
+     */
+    private $dataHasChangedForFields = [
+        'is_filterable',
+        'is_filterable_in_search',
+        'is_searchable',
+        'is_used_for_promo_rules',
+        'search_weight',
+        'used_for_sort_by',
+    ];
+
+    /**
      * @var \Smile\ElasticsuiteCore\Index\Indices\Config
      */
     private $indicesConfig;
@@ -51,8 +63,11 @@ class AttributePlugin
     ) {
         $cleanCache = false;
 
-        if ($subject->dataHasChangedFor('search_weight')) {
-            $cleanCache = true;
+        foreach ($this->dataHasChangedForFields as $field) {
+            if ($subject->dataHasChangedFor($field)) {
+                $cleanCache = true;
+                break;
+            }
         }
 
         if ($cleanCache) {
