@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+
 /**
  * Decimal filter model
  *
@@ -37,7 +39,14 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
     private $localeResolver;
 
     /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
+
+    /**
      * Decimal constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                           $filterItemFactory    Filter item
      *                                                                                                        factory
@@ -50,6 +59,8 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      * @param \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory  Decimal DataProvider
      *                                                                                                        Factory
      * @param \Magento\Framework\Locale\ResolverInterface                               $localeResolver       Locale Resolver
+     * @param RequestFieldMapper                                                        $requestFieldMapper   Search request field
+     *                                                                                                        mapper
      * @param array                                                                     $data                 Filter Data
      */
     public function __construct(
@@ -61,6 +72,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
+        RequestFieldMapper $requestFieldMapper,
         array $data
     ) {
         parent::__construct(
@@ -72,8 +84,10 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
             $priceCurrency,
             $data
         );
-        $this->localeResolver = $localeResolver;
-        $this->dataProvider   = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+
+        $this->dataProvider       = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->localeResolver     = $localeResolver;
+        $this->requestFieldMapper = $requestFieldMapper;
     }
 
     /**
@@ -102,9 +116,9 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      */
     private function getFilterField()
     {
-        $field = $this->getAttributeModel()->getAttributeCode();
-
-        return $field;
+        return $this->requestFieldMapper->getMappedFieldName(
+            $this->getAttributeModel()->getAttributeCode()
+        );
     }
 
     /**

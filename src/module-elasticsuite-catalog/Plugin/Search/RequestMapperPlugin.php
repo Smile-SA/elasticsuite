@@ -13,10 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 
-use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
-use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
@@ -34,16 +34,6 @@ class RequestMapperPlugin
     private $productSearchContainers = [
         'quick_search_container',
         'catalog_view_container',
-    ];
-
-    /**
-     * @var array
-     */
-    private $fieldMapper = [
-        'price'        => 'price.price',
-        'position'     => 'category.position',
-        'category_id'  => 'category.category_id',
-        'category_ids' => 'category.category_id',
     ];
 
     /**
@@ -72,6 +62,11 @@ class RequestMapperPlugin
     private $categoryRepository;
 
     /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Customer\Model\Session                     $customerSession    Customer session.
@@ -79,19 +74,22 @@ class RequestMapperPlugin
      * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper      Mapping helper.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext      Search context.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository Category Repository.
+     * @param RequestFieldMapper                                  $requestFieldMapper Search request field mapper.
      */
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository
+        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        RequestFieldMapper $requestFieldMapper
     ) {
         $this->customerSession    = $customerSession;
         $this->storeManager       = $storeManager;
         $this->mappingHelper      = $mappingHelper;
         $this->searchContext      = $searchContext;
         $this->categoryRepository = $categoryRepository;
+        $this->requestFieldMapper = $requestFieldMapper;
     }
 
     /**
@@ -210,9 +208,7 @@ class RequestMapperPlugin
      */
     private function getMappingField(ContainerConfigurationInterface $containerConfiguration, $fieldName)
     {
-        if (isset($this->fieldMapper[$fieldName])) {
-            $fieldName = $this->fieldMapper[$fieldName];
-        }
+        $fieldName = $this->requestFieldMapper->getMappedFieldName($fieldName);
 
         try {
             $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);

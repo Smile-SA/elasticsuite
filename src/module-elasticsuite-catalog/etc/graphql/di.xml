@@ -138,4 +138,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper">
+        <arguments>
+            <argument name="fieldNameMapping" xsi:type="array">
+                <item name="category_id" xsi:type="string">category.category_id</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
