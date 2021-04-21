@@ -330,4 +330,41 @@
     <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
     </type>
+
+    <type name="Smile\ElasticsuiteCore\Model\Search\Request\Field\Mapper">
+        <arguments>
+            <argument name="fieldNameMapping" xsi:type="array">
+                <item name="price" xsi:type="string">price.price</item>
+                <item name="position" xsi:type="string">category.position</item>
+                <item name="category_ids" xsi:type="string">category.category_id</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList">
+        <arguments>
+            <argument name="requestFieldMapper" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Filter\Field\Mapper</argument>
+        </arguments>
+    </type>
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Field\Mapper" type="Smile\ElasticsuiteCore\Model\Search\Request\Field\Mapper">
+        <arguments>
+            <argument name="fieldNameMapping" xsi:type="array">
+                <item name="price" xsi:type="string">price.price</item>
+                <item name="categories" xsi:type="string">category.category_id</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin">
+        <arguments>
+            <argument name="requestFieldMapper" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Field\Mapper</argument>
+        </arguments>
+    </type>
+    <virtualType name="Smile\ElasticsuiteCatalog\Search\Request\Field\Mapper" type="Smile\ElasticsuiteCore\Model\Search\Request\Field\Mapper">
+        <arguments>
+            <argument name="fieldNameMapping" xsi:type="array">
+                <item name="category_id" xsi:type="string">category.category_id</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

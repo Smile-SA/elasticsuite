@@ -54,7 +54,7 @@ trait DecimalFilterTrait
                 $bounds = array_filter(['gte' => $fromValue, 'lt' => $toValue]);
 
                 $this->getLayer()->getProductCollection()->addFieldToFilter(
-                    $this->getAttributeModel()->getAttributeCode(),
+                    $this->getFilterField(),
                     $this->getRangeCondition($bounds)
                 );
 
