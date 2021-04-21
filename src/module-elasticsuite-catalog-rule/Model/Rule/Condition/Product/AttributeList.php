@@ -13,8 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
@@ -70,12 +71,9 @@ class AttributeList
     private $mappingHelper;
 
     /**
-     * @var @array
+     * @var RequestFieldMapper
      */
-    private $fieldNameMapping = [
-        'price'        => 'price.price',
-        'category_ids' => 'category.category_id',
-    ];
+    private $requestFieldMapper;
 
     /**
      * Constructor.
@@ -84,6 +82,7 @@ class AttributeList
      * @param StoreManagerInterface      $storeManager               Store manager.
      * @param IndexOperationInterface    $indexManager               Search engine index manager.
      * @param MappingHelper              $mappingHelper              Mapping helper.
+     * @param RequestFieldMapper         $requestFieldMapper         Search request field mapper.
      * @param string                     $indexName                  Search engine index name.
      * @param string                     $typeName                   Search engine type name.
      */
@@ -92,15 +91,17 @@ class AttributeList
         StoreManagerInterface $storeManager,
         IndexOperationInterface $indexManager,
         MappingHelper $mappingHelper,
+        RequestFieldMapper $requestFieldMapper,
         $indexName = 'catalog_product',
         $typeName = 'product'
     ) {
         $this->attributeCollectionFactory = $attributeCollectionFactory;
         $this->storeManager               = $storeManager;
         $this->indexManager               = $indexManager;
+        $this->mappingHelper              = $mappingHelper;
+        $this->requestFieldMapper         = $requestFieldMapper;
         $this->indexName                  = $indexName;
         $this->typeName                   = $typeName;
-        $this->mappingHelper              = $mappingHelper;
     }
 
     /**
@@ -112,13 +113,13 @@ class AttributeList
     {
         if ($this->attributeCollection === null) {
             $this->attributeCollection = $this->attributeCollectionFactory->create();
-            $attributeNameMapping      = array_flip($this->fieldNameMapping);
+            $attributeNameMapping      = $this->requestFieldMapper->getFieldNameMappings();
 
             $arrayNameCb = function (FieldInterface $field) use ($attributeNameMapping) {
                 $attributeName = $field->getName();
 
-                if (isset($attributeNameMapping[$attributeName])) {
-                    $attributeName = $attributeNameMapping[$attributeName];
+                if ($fieldMapping = array_search($attributeName, $attributeNameMapping)) {
+                    $attributeName = $fieldMapping;
                 }
 
                 return $attributeName;
@@ -142,9 +143,7 @@ class AttributeList
      */
     public function getField($attributeName)
     {
-        if (isset($this->fieldNameMapping[$attributeName])) {
-            $attributeName = $this->fieldNameMapping[$attributeName];
-        }
+        $attributeName = $this->requestFieldMapper->getMappedFieldName($attributeName);
 
         return $this->getMapping()->getField($attributeName);
     }
