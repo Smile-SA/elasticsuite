@@ -552,6 +552,11 @@ class CatalogSetup
 
     /**
      * Add "facet_boolean_logic" field to catalog_eav_attribute table.
+     * Allows to select the logical operator for combining multiple values of an active filterable attribute in the layer navigation
+     * (catalog and search) as well as in API requests.
+     * Does NOT apply to catalog rules' (virtual categories and search optimizers) "is one of"/"is not one of" conditions.
+     * The "OR" logical operator is the legacy Elasticsuite behavior and thus the default: selecting two values will still
+     * mean "value1 OR value2" ~ "values1 or value2 or both".
      *
      * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
      *

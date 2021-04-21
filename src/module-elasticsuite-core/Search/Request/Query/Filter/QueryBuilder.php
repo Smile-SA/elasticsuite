@@ -118,6 +118,7 @@ class QueryBuilder
      *
      * @return QueryInterface
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function prepareFieldCondition(FieldInterface $field, $condition, $currentPath)
     {

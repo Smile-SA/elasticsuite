@@ -18,7 +18,8 @@ use Magento\Framework\Data\OptionSourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Source model for multiple values combining logic for filterable attributes.
+ * Source model for multiple values combining logic/logical operator for filterable attributes in the layer navigation
+ * (catalog and search) as well as in API requests, but NOT in catalog rules (virtual categories and search optimizers).
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
