@@ -23,6 +23,7 @@ use Magento\Framework\Setup\SchemaSetupInterface;
  * Generic Setup for ElasticsuiteCatalog module.
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -546,6 +547,38 @@ class CatalogSetup
                 'default'  => \Smile\ElasticsuiteCore\Search\Request\SortOrderInterface::MISSING_FIRST,
                 'length'   => 10,
                 'comment'  => 'Sort products without value when sorting DESC',
+            ]
+        );
+    }
+
+    /**
+     * Add "facet_boolean_logic" field to catalog_eav_attribute table.
+     * Allows to select the logical operator for combining multiple values of an active filterable attribute in the layer navigation
+     * (catalog and search) as well as in API requests.
+     * Does NOT apply to catalog rules' (virtual categories and search optimizers) "is one of"/"is not one of" conditions.
+     * The "OR" logical operator is the legacy Elasticsuite behavior and thus the default: selecting two values will still
+     * mean "value1 OR value2" ~ "values1 or value2 or both".
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addFilterBooleanLogicField(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'facet_boolean_logic' into the db.
+        $connection->addColumn(
+            $table,
+            'facet_boolean_logic',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                'nullable' => false,
+                'default'  => \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface::FILTER_LOGICAL_OPERATOR_OR,
+                'length'   => null,
+                'comment'  => 'Boolean logic to use when combining multiple selected values inside the filter',
+                'after'    => 'facet_sort_order',
             ]
         );
     }

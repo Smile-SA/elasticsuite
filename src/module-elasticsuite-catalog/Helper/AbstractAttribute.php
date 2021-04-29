@@ -100,6 +100,7 @@ abstract class AbstractAttribute extends Mapping
             'is_filterable'       => $attribute->getIsFilterable() || $attribute->getIsFilterableInSearch(),
             'search_weight'       => $attribute->getSearchWeight(),
             'is_used_for_sort_by' => $attribute->getUsedForSortBy(),
+            'filter_logical_operator'   => $attribute->getFacetBooleanLogic(),
         ];
 
         if ($attribute->getIsUsedInSpellcheck()) {
