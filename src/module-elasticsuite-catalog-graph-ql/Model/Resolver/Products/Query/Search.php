@@ -103,7 +103,7 @@ class Search implements ProductQueryInterface
 
         $maxPages = 0;
         if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
-            $maxPages = (int) ceil($productsResults->getTotalCount() / $searchCriteria->getPageSize());
+            $maxPages = (int) ceil($searchResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
         return $this->searchResultFactory->create([
