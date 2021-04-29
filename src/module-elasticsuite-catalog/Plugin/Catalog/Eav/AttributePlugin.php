@@ -13,6 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav;
 
+use Magento\Catalog\Api\Data\EavAttributeInterface;
+use Magento\CatalogSearch\Model\Indexer\Fulltext;
+use Magento\Framework\Indexer\IndexerRegistry;
+
 /**
  * Catalog EAV Attribute plugin.
  *
@@ -25,13 +29,14 @@ class AttributePlugin
     /**
      * @var string[]
      */
-    private $dataHasChangedForFields = [
-        'is_filterable',
-        'is_filterable_in_search',
-        'is_searchable',
-        'is_used_for_promo_rules',
+    private $cleanCacheFields = [
+        EavAttributeInterface::IS_FILTERABLE,
+        EavAttributeInterface::IS_FILTERABLE_IN_SEARCH,
+        EavAttributeInterface::IS_SEARCHABLE,
+        EavAttributeInterface::IS_USED_FOR_PROMO_RULES,
+        EavAttributeInterface::USED_FOR_SORT_BY,
+        EavAttributeInterface::IS_VISIBLE_IN_ADVANCED_SEARCH,
         'search_weight',
-        'used_for_sort_by',
     ];
 
     /**
@@ -42,11 +47,15 @@ class AttributePlugin
     /**
      * AttributePlugin constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig Indices config.
+     * @param \Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig   Indices config.
+     * @param IndexerRegistry                              $indexerRegistry Indexer registry.
      */
-    public function __construct(\Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig)
-    {
-        $this->indicesConfig = $indicesConfig;
+    public function __construct(
+        \Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig,
+        IndexerRegistry $indexerRegistry
+    ) {
+        $this->indicesConfig   = $indicesConfig;
+        $this->indexerRegistry = $indexerRegistry;
     }
 
     /**
@@ -61,17 +70,26 @@ class AttributePlugin
         \Magento\Catalog\Api\Data\ProductAttributeInterface $subject,
         \Magento\Catalog\Api\Data\ProductAttributeInterface $result
     ) {
-        $cleanCache = false;
+        $cleanCache      = false;
+        $invalidateIndex = false;
 
-        foreach ($this->dataHasChangedForFields as $field) {
+        foreach ($this->cleanCacheFields as $field) {
             if ($subject->dataHasChangedFor($field)) {
                 $cleanCache = true;
                 break;
             }
         }
 
+        if ($subject->dataHasChangedFor(EavAttributeInterface::USED_FOR_SORT_BY)) {
+            $invalidateIndex = true;
+        }
+
         if ($cleanCache) {
             $this->indicesConfig->reset();
+        }
+
+        if ($invalidateIndex) {
+            $this->indexerRegistry->get(Fulltext::INDEXER_ID)->invalidate();
         }
 
         return $result;
