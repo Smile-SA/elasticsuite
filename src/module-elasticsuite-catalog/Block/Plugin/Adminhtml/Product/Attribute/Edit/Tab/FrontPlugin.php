@@ -236,7 +236,7 @@ class FrontPlugin
             [
                 'name'  => 'facet_max_size',
                 'label' => __('Facet max. size'),
-                'class' => 'validate-digits validate-greater-than-zero',
+                'class' => 'validate-digits validate-zero-or-greater',
                 'value' => '10',
                 'note'  => __('Max number of values returned by a facet query.'),
             ],
