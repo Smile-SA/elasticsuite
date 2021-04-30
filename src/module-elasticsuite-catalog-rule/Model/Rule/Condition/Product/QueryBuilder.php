@@ -153,7 +153,7 @@ class QueryBuilder
 
         if (in_array($productCondition->getAttribute(), array_keys($this->specialAttributesProvider->getList()))) {
             $specialAttribute = $this->specialAttributesProvider->getAttribute($productCondition->getAttribute());
-            $query            = $specialAttribute->getSearchQuery();
+            $query            = $specialAttribute->getSearchQuery($productCondition);
         }
 
         return $query;
