@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Smile-SA/elasticsuite.svg?branch=master)](https://travis-ci.org/Smile-SA/elasticsuite)  ![Packagist](https://img.shields.io/packagist/dt/smile/elasticsuite.svg?style=square)
+[![PHP Code Quality](https://github.com/Smile-Sa/elasticsuite/workflows/PHP%20Code%20Quality/badge.svg?branch=2.10.x)](https://github.com/Smile-SA/elasticsuite/actions) [![Integration](https://github.com/Smile-Sa/elasticsuite/workflows/Integration/badge.svg?branch=2.10.x)](https://github.com/Smile-SA/elasticsuite/actions)  ![Packagist](https://img.shields.io/packagist/dt/smile/elasticsuite.svg?style=square)
 [![star this repo](http://githubbadges.com/star.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite)
  [![fork this repo](http://githubbadges.com/fork.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite/fork) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
 
@@ -10,9 +10,11 @@
 
 ### ⚠️ Magento versions compatibility :
 
-Due to several changed in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
+Due to several changes in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
 
-If your project is based on **Magento >= 2.4.0**, you can start working with ElasticSuite today using the latest **2.10.x release**.
+Moreover, a breaking change was introduced between **2.4.0 and 2.4.1** : 
+- if your project is based on **Magento >= 2.4.1**, you can start working with ElasticSuite today using the latest **2.10.x release**
+- if your project is based on **Magento = 2.4.0**, the latest Elasticsuite release you can use is the **2.10.1** 
 
 **Which version should I use ?**
 
@@ -23,7 +25,8 @@ Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ``
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
 Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
 Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | **Yes**
-Magento **>=2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
+Magento **2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | No
+Magento **>=2.4.1** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
 
 ### Magento2 B2B Compatibility
 

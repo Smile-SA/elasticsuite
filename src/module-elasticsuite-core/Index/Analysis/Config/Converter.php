@@ -205,7 +205,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
                 if ($childNode instanceof \DOMElement) {
                     try {
                         $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
-                    } catch (\Exception $e) {
+                    } catch (\Exception $exception) {
                         $filter[$childNode->tagName] = $childNode->nodeValue;
                     }
                 }

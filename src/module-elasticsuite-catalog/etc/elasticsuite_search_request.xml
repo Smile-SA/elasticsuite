@@ -45,6 +45,7 @@
         <filters>
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
+            <filter name="currentCategory">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CurrentCategory</filter>
         </filters>
         <aggregations>
             <provider name="filterableAttributesProvider">categoryFilterableAttributesProvider</provider>

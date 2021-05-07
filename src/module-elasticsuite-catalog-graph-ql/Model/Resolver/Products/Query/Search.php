@@ -82,7 +82,7 @@ class Search implements ProductQueryInterface
     /**
      * {@inheritDoc}
      */
-    public function getResult(array $args, ResolveInfo $info/*, ContextInterface $context*/): SearchResult
+    public function getResult(array $args, ResolveInfo $info, ContextInterface $context): SearchResult
     {
         $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
         $searchCriteria = $this->buildSearchCriteria($args, $info);
@@ -92,7 +92,7 @@ class Search implements ProductQueryInterface
         $providerSearchCriteria = clone($searchCriteria);
         $providerSearchCriteria->setFilterGroups([]);
 
-        $productsResults = $this->productProvider->getList($providerSearchCriteria, $searchResults, $queryFields);
+        $productsResults = $this->productProvider->getList($providerSearchCriteria, $searchResults, $queryFields, $context);
         $productArray    = [];
 
         /** @var \Magento\Catalog\Model\Product $product */
@@ -103,7 +103,7 @@ class Search implements ProductQueryInterface
 
         $maxPages = 0;
         if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
-            $maxPages = (int) ceil($productsResults->getTotalCount() / $searchCriteria->getPageSize());
+            $maxPages = (int) ceil($searchResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
         return $this->searchResultFactory->create([

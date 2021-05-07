@@ -81,7 +81,7 @@ class EventQueue extends AbstractDb
         foreach ($eventData as &$currentEvent) {
             try {
                 $currentEventData = $this->jsonSerializer->unserialize($currentEvent['data']);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException $exception) {
                 $currentEventData = [];
             }
             $currentEvent = array_merge($currentEvent, $currentEventData);

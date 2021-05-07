@@ -115,8 +115,8 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
                     $condition->setRule($this->getRule());
                     $this->addCondition($condition);
                     $condition->loadArray($conditionArr, $key);
-                } catch (\Exception $e) {
-                    $this->_logger->critical($e);
+                } catch (\Exception $exception) {
+                    $this->_logger->critical($exception);
                 }
             }
         }

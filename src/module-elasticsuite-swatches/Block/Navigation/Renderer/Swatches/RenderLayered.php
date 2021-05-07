@@ -32,6 +32,8 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
      * Override the native method to sort swatch options in the expected when the sorting isn't set to manual order
      * as defined in the admin attribute parameters.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array
      */
     public function getSwatchData(): array
@@ -67,7 +69,9 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
         }
 
         foreach (array_merge(array_flip($sortingArr), $attributeOptions) as $item) {
-            $attributeOptionsSort[$item['id']] = $item;
+            if (is_array($item) && array_key_exists('id', $item)) {
+                $attributeOptionsSort[$item['id']] = $item;
+            }
         }
 
         $attributeOptionIds = array_keys($attributeOptionsSort);

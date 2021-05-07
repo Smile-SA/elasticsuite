@@ -209,4 +209,12 @@ class Client implements ClientInterface
     {
         return $this->esClient->termvectors($params);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function mtermvectors($params)
+    {
+        return $this->esClient->mtermvectors($params);
+    }
 }

@@ -141,6 +141,7 @@
                                     <item name="url" xsi:type="array">
                                         <item name="base" xsi:type="string">*/*/delete</item>
                                     </item>
+                                    <item name="confirm" xsi:type="string" translate="true">Are you sure?</item>
                                     <item name="field" xsi:type="string">thesaurus_id</item>
                                 </item>
                             </argument>
