@@ -49,6 +49,12 @@ interface FieldInterface
     const ANALYZER_UNTOUCHED  = 'untouched';
 
     /**
+     * Field filter logical operators.
+     */
+    const FILTER_LOGICAL_OPERATOR_OR   = 0;
+    const FILTER_LOGICAL_OPERATOR_AND  = 1;
+
+    /**
      * Field name.
      *
      * @return string
@@ -158,6 +164,13 @@ interface FieldInterface
      * @return mixed
      */
     public function getSortMissing($direction = SortOrderInterface::SORT_ASC);
+
+    /**
+     * Retrieve the logical operator to use when building a filter combining multiple values: OR (default) or AND.
+     *
+     * @return int
+     */
+    public function getFilterLogicalOperator();
 
     /**
      * @return array

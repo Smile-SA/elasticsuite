@@ -139,4 +139,24 @@
             </argument>
         </arguments>
     </type>
+
+    <virtualType name="elasticsuiteCollectionPreProcessor" type="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CompositeCollectionProcessor">
+        <arguments>
+            <argument name="collectionProcessors" xsi:type="array">
+                <item name="search" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessor\SearchCriteriaProcessor</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="elasticsuiteProductProvider" type="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch">
+        <arguments>
+            <argument name="collectionPreProcessor" xsi:type="object">elasticsuiteCollectionPreProcessor</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search">
+        <arguments>
+            <argument name="productProvider" xsi:type="object">elasticsuiteProductProvider</argument>
+        </arguments>
+    </type>
 </config>

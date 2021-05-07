@@ -151,6 +151,7 @@
                 <item name="queryGroupBucket" xsi:type="object">queryGroupBucketFactory</item>
                 <item name="significantTermBucket" xsi:type="object">significantTermBucketFactory</item>
                 <item name="reverseNestedBucket" xsi:type="object">reverseNestedBucketFactory</item>
+                <item name="topHitsBucket" xsi:type="object">topHitsBucketFactory</item>
             </argument>
         </arguments>
     </type>
@@ -161,6 +162,7 @@
     <virtualType name="queryGroupBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroupFactory" />
     <virtualType name="significantTermBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTermFactory" />
     <virtualType name="reverseNestedBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\ReverseNestedFactory" />
+    <virtualType name="topHitsBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TopHitsFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory">
         <arguments>
@@ -183,6 +185,7 @@
                 <item name="queryGroupBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup\Proxy</item>
                 <item name="significantTermBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm\Proxy</item>
                 <item name="reverseNestedBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\ReverseNested\Proxy</item>
+                <item name="topHitsBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\TopHits\Proxy</item>
             </argument>
             <argument name="pipelineBuilders" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector\Proxy</item>

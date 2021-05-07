@@ -58,8 +58,8 @@
     </request>
 
     <!-- Simple request for tracker events -->
-    <request name="tracking_log_event" label="Tracking Log Events" index="tracking_log_event" fulltext="false" />
+    <request name="tracking_log_event" label="Tracking Log Events" index="tracking_log_event" fulltext="false" track_total_hits="true"/>
 
     <!-- Simple request for tracker sessions -->
-    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" fulltext="false" />
+    <request name="tracking_log_session" label="Tracking Log Sessions" index="tracking_log_session" fulltext="false" track_total_hits="true"/>
 </requests>

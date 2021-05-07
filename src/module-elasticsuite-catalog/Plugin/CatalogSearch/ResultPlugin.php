@@ -20,6 +20,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Plugin which is responsible to redirect to a product page when only one result is found.
@@ -107,7 +108,9 @@ class ResultPlugin
     ) {
         $result = $proceed();
 
-        if (!$subject->getResponse()->isRedirect() && $this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG)) {
+        if (!$subject->getResponse()->isRedirect() &&
+            $this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG, ScopeInterface::SCOPE_STORES)
+        ) {
             $layer      = $this->layerResolver->get();
             $layerState = $layer->getState();
 

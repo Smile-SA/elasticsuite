@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab;
@@ -18,6 +18,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
@@ -62,23 +63,31 @@ class FrontPlugin
     private $filterSortOrder;
 
     /**
+     * @var FilterBooleanLogic
+     */
+    private $filterBooleanLogic;
+
+    /**
      * Class constructor
      *
-     * @param Yesno           $booleanSource   The YesNo source.
-     * @param Weight          $weightSource    Weight source.
-     * @param Registry        $registry        Core registry.
-     * @param FilterSortOrder $filterSortOrder Filter Sort Order.
+     * @param Yesno              $booleanSource      The YesNo source.
+     * @param Weight             $weightSource       Weight source.
+     * @param Registry           $registry           Core registry.
+     * @param FilterSortOrder    $filterSortOrder    Filter Sort Order.
+     * @param FilterBooleanLogic $filterBooleanLogic Filter boolean logic source model.
      */
     public function __construct(
         Yesno $booleanSource,
         Weight $weightSource,
         Registry $registry,
-        FilterSortOrder $filterSortOrder
+        FilterSortOrder $filterSortOrder,
+        FilterBooleanLogic $filterBooleanLogic
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
         $this->coreRegistry    = $registry;
         $this->filterSortOrder = $filterSortOrder;
+        $this->filterBooleanLogic = $filterBooleanLogic;
     }
 
     /**
@@ -227,7 +236,7 @@ class FrontPlugin
             [
                 'name'  => 'facet_max_size',
                 'label' => __('Facet max. size'),
-                'class' => 'validate-digits validate-greater-than-zero',
+                'class' => 'validate-digits validate-zero-or-greater',
                 'value' => '10',
                 'note'  => __('Max number of values returned by a facet query.'),
             ],
@@ -243,6 +252,26 @@ class FrontPlugin
                 'values' => $this->filterSortOrder->toOptionArray(),
             ],
             'facet_max_size'
+        );
+
+        $booleanLogicOptions    = $this->filterBooleanLogic->toOptionArray();
+        $booleanLogicNote       = __(
+            // phpcs:ignore Generic.Files.LineLength
+            'When several values are selected in a facet/filter, the default behavior is to combine them with a logical OR ("red" OR "blue").'
+            . ' But a logical AND can be handy for some attributes ("egg free" AND "gluten free", "waterproof AND lightweight AND warm").'
+        );
+
+        $booleanLogicNote       = __($booleanLogicNote);
+        $fieldset->addField(
+            'facet_boolean_logic',
+            'select',
+            [
+                'name'   => 'facet_boolean_logic',
+                'label'  => __('Facet internal logic'),
+                'values' => $booleanLogicOptions,
+                'note'   => $booleanLogicNote,
+            ],
+            'facet_sort_order'
         );
 
         return $this;

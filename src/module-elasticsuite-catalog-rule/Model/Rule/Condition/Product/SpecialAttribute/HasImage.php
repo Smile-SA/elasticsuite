@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
@@ -58,8 +59,9 @@ class HasImage implements SpecialAttributeInterface
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getSearchQuery()
+    public function getSearchQuery(ProductCondition $condition)
     {
         return $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'image']);
     }
@@ -90,16 +92,18 @@ class HasImage implements SpecialAttributeInterface
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getValueName()
+    public function getValueName($value)
     {
         return ' ';
     }
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getValue()
+    public function getValue($value)
     {
         return true;
     }
