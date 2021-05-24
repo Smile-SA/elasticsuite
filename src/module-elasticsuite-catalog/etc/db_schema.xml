@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogOptimizer database schema configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Kiel Pykett <pykettk@gmail.com>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- edit columns in catalog_eav_attribute table -->
+    <table name="catalog_eav_attribute" resource="default" engine="innodb">
+        <column name="is_displayed_in_autocomplete"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="If attribute is displayed in autocomplete"/>
+        <column name="is_used_in_spellcheck"
+                xsi:type="boolean"
+                default="true"
+                nullable="false"
+                comment="If fuzziness is used on attribute"/>
+        <column name="facet_min_coverage_rate"
+                xsi:type="int"
+                unsigned="true"
+                nullable="false"
+                default="90"
+                comment="Facet min coverage rate"/>
+        <column name="facet_max_size"
+                xsi:type="int"
+                unsigned="true"
+                nullable="false"
+                default="10"
+                comment="Facet max size"/>
+        <column name="facet_sort_order"
+                xsi:type="text"
+                nullable="false"
+                comment="The sort order for facet values"/>
+        <column name="display_pattern"
+                xsi:type="text"
+                nullable="true"
+                comment="The pattern to display facet values"/>
+        <column name="display_precision"
+                xsi:type="int"
+                nullable="true"
+                default="0"
+                comment="Attribute decimal precision for display"/>
+        <column name="sort_order_asc_missing"
+                xsi:type="text"
+                nullable="false"
+                comment="Sort products without value when sorting ASC"/>
+        <column name="sort_order_desc_missing"
+                xsi:type="text"
+                nullable="false"
+                comment="Sort products without value when sorting DESC"/>
+        <column name="is_used_in_autocomplete" disabled="true"/>
+    </table>
+
+    <!-- add column to search_query table -->
+    <table name="search_query" resource="default" engine="innodb">
+        <column name="is_spellchecked"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="Is the query spellchecked"/>
+    </table>
+
+    <!-- create smile_elasticsuitecatalog_category_filterable_attribute table -->
+    <table name="smile_elasticsuitecatalog_category_filterable_attribute">
+        <column name="entity_id"
+                xsi:type="int"
+                unsigned="true"
+                nullable="false"
+                comment="Category ID"/>
+        <column name="attribute_id"
+                xsi:type="smallint"
+                unsigned="true"
+                nullable="false"
+                comment="Attribute Id"/>
+        <column name="position"
+                xsi:type="int"
+                unsigned="true"
+                nullable="true"
+                comment="Position"/>
+        <column name="facet_display_mode"
+                xsi:type="int"
+                default="0"
+                nullable="false"
+                comment="Facet display mode"/>
+        <column name="facet_min_coverage_rate"
+                xsi:type="int"
+                nullable="true"
+                comment="Facet min coverage rate"/>
+        <column name="facet_max_size"
+                xsi:type="int"
+                nullable="true"
+                unsigned="true"
+                comment="Facet max size"/>
+        <column name="facet_sort_order"
+                xsi:type="text"
+                nullable="true"
+                comment="The pattern to display facet values"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+            <column name="attribute_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_8B0BDE1CA9474CFD234FCD0FEBDC0225"
+                    table="smile_elasticsuitecatalog_category_filterable_attribute"
+                    column="entity_id"
+                    referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_691E21396002A6A370AE01801420A14A"
+                    table="smile_elasticsuitecatalog_category_filterable_attribute"
+                    column="attribute_id"
+                    referenceTable="eav_attribute"
+                    referenceColumn="attribute_id"
+                    onDelete="CASCADE"/>
+    </table>
+
+    <!-- create smile_elasticsuitecatalog_search_query_product_position table -->
+    <table name="smile_elasticsuitecatalog_search_query_product_position">
+        <column name="query_id"
+                xsi:type="int"
+                default="0"
+                nullable="false"
+                unsigned="true"
+                comment="Query ID"/>
+        <column name="product_id"
+                xsi:type="int"
+                default="0"
+                nullable="false"
+                unsigned="true"
+                comment="Product ID"/>
+        <column name="position"
+                xsi:type="int"
+                nullable="true"
+                comment="Position"/>
+        <column name="is_blacklisted"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="If the product is blacklisted"/>
+        <column name="facet_boolean_logic"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="Boolean logic to use when combining multiple selected values inside the filter"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="query_id"/>
+            <column name="product_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="SMILE_ELASTICSUITECAT_SRCH_QR_PRD_POSITION_QR_ID_SRCH_QR_QR_ID"
+                    table="smile_elasticsuitecatalog_search_query_product_position"
+                    column="query_id"
+                    referenceTable="search_query"
+                    referenceColumn="query_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_E51230BD209344C6172518E1E4908CDA"
+                    table="smile_elasticsuitecatalog_search_query_product_position"
+                    column="product_id"
+                    referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="SMILE_ELASTICSUITECAT_SRCH_QR_PRD_POSITION_PRD_ID" indexType="btree">
+            <column name="product_id"/>
+        </index>
+    </table>
+</schema>
