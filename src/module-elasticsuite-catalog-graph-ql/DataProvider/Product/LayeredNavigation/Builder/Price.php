@@ -67,7 +67,7 @@ class Price implements LayerBuilderInterface
         }
 
         $result = $this->layerFormatter->buildLayer(
-            self::$bucketMap[self::PRICE_BUCKET]['label'],
+            __(self::$bucketMap[self::PRICE_BUCKET]['label']),
             \count($bucket->getValues()),
             self::$bucketMap[self::PRICE_BUCKET]['request_name']
         );
