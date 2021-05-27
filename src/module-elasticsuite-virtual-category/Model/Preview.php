@@ -87,6 +87,10 @@ class Preview extends AbstractPreview
         if ($queryFilter !== null) {
             $collection->addQueryFilter($queryFilter);
         }
+        
+        if ($this->category->getId()) {
+            $collection->addCategoryFilter($this->category);
+        }
 
         return $collection;
     }
@@ -112,7 +116,7 @@ class Preview extends AbstractPreview
 
         $this->category->setIsActive(true);
 
-        if ($this->category->getIsVirtualCategory() || $this->category->getId()) {
+        if ($this->category->getIsVirtualCategory()) {
             $query = $this->category->getVirtualRule()->getCategorySearchQuery($this->category);
         }
 
