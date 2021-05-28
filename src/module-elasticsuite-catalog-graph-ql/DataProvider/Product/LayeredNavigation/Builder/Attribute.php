@@ -112,8 +112,8 @@ class Attribute implements LayerBuilderInterface
                 );
             }
 
-            $isManualOrder = $attribute->getFacetSortOrder() == ElasticBucketInterface::SORT_ORDER_MANUAL;
-            if ($isManualOrder && $attributeCode !== 'attribute_set_id') {
+            if ($attributeCode !== 'attribute_set_id' &&
+                $attribute->getFacetSortOrder() == ElasticBucketInterface::SORT_ORDER_MANUAL) {
                 $items = array_column($result[$attributeCode]['options'], null, 'label');
                 $options = $attribute->getFrontend()->getSelectOptions();
 
