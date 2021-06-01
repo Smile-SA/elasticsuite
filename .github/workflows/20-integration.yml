@@ -273,6 +273,7 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
+                -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
 
@@ -282,6 +283,7 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
+                -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
 
@@ -291,5 +293,6 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
+                -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
