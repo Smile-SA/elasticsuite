@@ -43,6 +43,7 @@ class ClientBuilder
         'enable_http_auth'      => false,
         'http_auth_user'        => null,
         'http_auth_pwd'         => null,
+        'http_auth_encrypted'   => null,
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
     ];
@@ -99,6 +100,11 @@ class ClientBuilder
             $handlerParams = ['max_handles' => (int) $options['max_parallel_handles']];
             $handler = \Elasticsearch\ClientBuilder::defaultHandler($handlerParams);
             $clientBuilder->setHandler($handler);
+        }
+
+        if (!empty($options['http_auth_user']) && !empty($options['http_auth_pwd']) && $options['http_auth_encoded']) {
+            $authHeader = 'Basic ' . base64_encode($options['http_auth_user'] . ':' . $options['http_auth_pwd']);
+            $clientBuilder->setConnectionParams(['client' => ['headers' => ['Authorization' => [$authHeader]]]]);
         }
 
         if (null !== $this->selector) {
