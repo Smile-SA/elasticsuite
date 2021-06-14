@@ -318,6 +318,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
 
             foreach ($childrenCategories as $childrenCategory) {
+                $excludedCategories[] = $childrenCategory->getId();
+
                 if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
