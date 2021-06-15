@@ -66,7 +66,7 @@ class Rule
             $virtualRule = $category->getVirtualRule();
             $data        = call_user_func_array([$virtualRule, $callback], [$category]);
             $cacheData   = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
+            $this->cache->save($cacheData, $cacheKey, $category->getCacheTags());
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 
