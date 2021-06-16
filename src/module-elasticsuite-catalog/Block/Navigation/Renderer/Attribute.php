@@ -24,6 +24,8 @@ class Attribute extends AbstractRenderer
 {
     const JS_COMPONENT = 'Smile_ElasticsuiteCatalog/js/attribute-filter';
 
+    const REL_NOFOLLOW = 'nofollow';
+
     /**
      * Returns true if checkox have to be enabled.
      *
@@ -46,6 +48,7 @@ class Attribute extends AbstractRenderer
             'maxSize'             => (int) $this->getFilter()->getAttributeModel()->getFacetMaxSize(),
             'displayProductCount' => (bool) $this->displayProductCount(),
             'hasMoreItems'        => (bool) $this->getFilter()->hasMoreItems(),
+            'displayRelNofollow'  => $this->getRelNofollowValue(),
             'ajaxLoadUrl'         => $this->getAjaxLoadUrl(),
         ];
 
@@ -62,6 +65,24 @@ class Attribute extends AbstractRenderer
     protected function canRenderFilter()
     {
         return true;
+    }
+
+    /**
+     * Get value for HTML attribute rel
+     *
+     * @return string
+     *
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function getRelNofollowValue()
+    {
+        $value = '';
+
+        if ($this->getFilter()->getAttributeModel()->getIsDisplayRelNofollow()) {
+            $value = self::REL_NOFOLLOW;
+        }
+
+        return $value;
     }
 
     /**

@@ -110,6 +110,7 @@ class FrontPlugin
         $this->addAutocompleteFields($fieldset);
         $this->addFacetFields($fieldset);
         $this->addSortFields($fieldset);
+        $this->addRelNofollowFields($fieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
@@ -353,6 +354,33 @@ class FrontPlugin
     }
 
     /**
+     * Append rel tag related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addRelNofollowFields(Fieldset $fieldset)
+    {
+        $fieldset->addField(
+            'is_display_rel_nofollow',
+            'select',
+            [
+                'name'   => 'is_display_rel_nofollow',
+                'label'  => __('Add rel="nofollow" to filter links in Layered Navigation'),
+                'values' => $this->booleanSource->toOptionArray(),
+                'note'   => __(
+                    'Adds HTML attribute rel with value "nofollow" to all filter links of current attribute in Layered Navigation.'
+                ),
+            ],
+            'is_filterable'
+        );
+
+        return $this;
+    }
+
+
+    /**
      * Append the "Slider Display Configuration" fieldset to the tab.
      *
      * @param Form  $form    Target form.
@@ -445,16 +473,19 @@ class FrontPlugin
         if ($dependencyBlock) {
             $dependencyBlock
                 ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
+                ->addFieldMap('is_filterable', 'is_filterable')
                 ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
                 ->addFieldMap('is_searchable', 'is_searchable')
                 ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
                 ->addFieldMap('used_for_sort_by', 'used_for_sort_by')
                 ->addFieldMap('sort_order_asc_missing', 'sort_order_asc_missing')
                 ->addFieldMap('sort_order_desc_missing', 'sort_order_desc_missing')
+                ->addFieldMap('is_display_rel_nofollow', 'is_display_rel_nofollow')
                 ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
                 ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1')
                 ->addFieldDependence('sort_order_asc_missing', 'used_for_sort_by', '1')
-                ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1');
+                ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1')
+                ->addFieldDependence('is_display_rel_nofollow', 'is_filterable', '1');
         }
 
         return $this;
