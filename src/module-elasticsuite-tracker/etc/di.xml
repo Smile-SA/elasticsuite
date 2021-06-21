@@ -46,4 +46,10 @@
         </arguments>
     </type>
 
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteTracker\Model\CustomerDataTrackingManager">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

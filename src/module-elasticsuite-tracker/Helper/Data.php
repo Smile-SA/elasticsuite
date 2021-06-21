@@ -53,6 +53,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_RETENTION_DELAY_XPATH = 'smile_elasticsuite_tracker/general/retention_delay';
 
     /**
+     * Anonymization status configuration path
+     * @var string
+     */
+    const CONFIG_IS_TELEMETRY_ENABLED_XPATH = 'smile_elasticsuite_tracker/telemetry/enabled';
+
+    /**
+     * Module retention delay configuration path
+     * @var string
+     */
+    const CONFIG_TELEMETRY_URL_XPATH = 'smile_elasticsuite_tracker/telemetry/url';
+
+    /**
      * Magento Configuration
      *
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -211,5 +223,35 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $visitorId;
+    }
+
+    /**
+     * Return the telemetry url.
+     *
+     * @return string
+     */
+    public function getTelemetryUrl()
+    {
+        return (string) $this->scopeConfig->getValue(self::CONFIG_TELEMETRY_URL_XPATH);
+    }
+
+    /**
+     * Return the image hit telemetry url.
+     *
+     * @return string
+     */
+    public function getImageTelemetryUrl()
+    {
+        return trim($this->urlBuilder->getDirectUrl($this->getTelemetryUrl(), ['image' => 'h.png']), '/');
+    }
+
+    /**
+     * Is telemetry enabled ?
+     *
+     * @return bool
+     */
+    public function isTelemetryEnabled()
+    {
+        return (bool) $this->scopeConfig->getValue(self::CONFIG_IS_TELEMETRY_ENABLED_XPATH);
     }
 }

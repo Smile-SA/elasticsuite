@@ -32,6 +32,10 @@
                 <enabled>0</enabled>
                 <delay>365</delay>
             </anonymization>
+            <telemetry>
+                <enabled>0</enabled>
+                <url>https://t.elasticsuite.io/</url>
+            </telemetry>
         </smile_elasticsuite_tracker>
     </default>
 </config>

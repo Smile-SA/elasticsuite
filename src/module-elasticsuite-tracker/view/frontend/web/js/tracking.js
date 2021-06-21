@@ -107,6 +107,15 @@ var smileTracker = (function () {
         return this;
     }
 
+    function addCustomerVars(customerData) {
+        var customerDataToTrackCodes = ['dob', 'gender', 'zipcode'];
+        customerDataToTrackCodes.forEach(function (customerDataCode) {
+            if (customerData.hasOwnProperty(customerDataCode)) {
+                this.addPageVar('customer.' + customerDataCode, customerData[customerDataCode]);
+            }
+        }.bind(this));
+    }
+
     function addMetaPageVars() {
         var metaTags = document.getElementsByTagName('meta');
         for (var tagIndex = 0; tagIndex < metaTags.length; tagIndex++) {
@@ -120,16 +129,15 @@ var smileTracker = (function () {
         }
     }
 
-    function getTrackerUrl() {
-
-        initSession.bind(this)();
-
-        if (this.trackerSent === false) {
+    function getTrackerVars(customerData) {
+        if (this.trackerVarsAdded === false) {
             addStandardPageVars.bind(this)();
             addReferrerVars.bind(this)();
             addCampaignVars.bind(this)();
             addMetaPageVars.bind(this)();
             addResolutionVars.bind(this)();
+            addCustomerVars.bind(this)(customerData);
+            this.trackerVarsAdded = true;
         }
 
         var urlParams = [];
@@ -140,30 +148,58 @@ var smileTracker = (function () {
             }
         }
 
+        return urlParams;
+    }
+
+    function getTrackerUrl(customerData) {
+        var urlParams = getTrackerVars.bind(this)(customerData);
         return this.baseUrl + "?" + urlParams.join('&');
     }
-    
+
+    function getTelemetryUrl(customerData) {
+        var urlParams = getTrackerVars.bind(this)(customerData);
+
+        getCustomerDataCodeToTrack().forEach(function (element) {
+            console.log(customerData);
+            if (customerData.hasOwnProperty(element)) {
+                urlParams.push('customer[' + element + ']=' + customerData[element]);
+            }
+        });
+
+        return this.telemetryUrl + "?" + urlParams.join('&');
+    }
+
+    function getCustomerDataCodeToTrack() {
+        return ['dob', 'gender', 'zipcode'];
+    }
+
     function setTrackerStyle(imgNode) {
         imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0; visibility: hidden;');
     }
 
     // Send the tag to the remote server
     // Append a transparent pixel to the body
-    function sendTag(forceCollect) {
-        if (this.trackerSent === false || forceCollect === true) {
+    function sendTag(customerData) {
+        if (this.trackerSent === false) {
             var bodyNode = document.getElementsByTagName('body')[0];
 
             if (this.config && this.config.hasOwnProperty('sessionConfig')) {
-                var trackingUrl = getTrackerUrl.bind(this)();
-                var imgNode = document.createElement('img');
-                imgNode.setAttribute('src', trackingUrl);
-                imgNode.setAttribute('alt', '');
-                setTrackerStyle(imgNode);
-                bodyNode.appendChild(imgNode);
+                initSession.bind(this)();
+                buildTrackingImg.bind(this)(bodyNode, getTrackerUrl.bind(this)(customerData));
+                if (this.telemetryEnabled) {
+                    buildTrackingImg.bind(this)(bodyNode, getTelemetryUrl.bind(this)(customerData));
+                }
                 this.trackerSent = true;
-                this.vars = {};
             }
         }
+    }
+
+    function buildTrackingImg(bodyNode, trackingUrl) {
+        var imgNode = document.createElement('img');
+        imgNode.setAttribute('src', trackingUrl);
+        imgNode.setAttribute('alt', '');
+        setTrackerStyle(imgNode);
+        bodyNode.appendChild(imgNode);
     }
 
     // Append a variable to the page
@@ -185,7 +221,7 @@ var smileTracker = (function () {
     }
 
     function initSession() {
-        if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+        if (this.config && this.config.hasOwnProperty('sessionConfig') && !this.sessionInitialized) {
             var config   = this.config.sessionConfig;
             var expireAt = new Date();
             var path     = config['path'] || '/';
@@ -205,6 +241,7 @@ var smileTracker = (function () {
 
             addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
             addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
+            this.sessionInitialized = true;
         }
     }
 
@@ -212,15 +249,36 @@ var smileTracker = (function () {
     var SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
+        this.telemetriTrackerSent = false;
+        this.trackerVarsAdded = false;
+        this.sessionInitialized = false;
     };
 
     SmileTrackerImpl.prototype.sendTag = function () {
-        require(['domReady'], function(domReady) { domReady(sendTag.bind(this)); }.bind(this));
+        require(
+            [
+                'domReady',
+                'Magento_Customer/js/customer-data'
+            ],
+            function(domReady, customerData) {
+                domReady(function () {
+                    var customer = customerData.get('customer');
+                    customer.subscribe(function () {
+                        sendTag.bind(this)(customer());
+                    }.bind(this));
+                    if (customer()) {
+                        sendTag.bind(this)(customer());
+                    }
+                }.bind(this));
+            }.bind(this)
+        );
     }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
-        this.config  = config;
-        this.baseUrl = config.beaconUrl;
+        this.config           = config;
+        this.baseUrl          = config.beaconUrl;
+        this.telemetryEnabled = config.telemetryEnabled;
+        this.telemetryUrl     = config.telemetryUrl;
     }
 
     SmileTrackerImpl.prototype.addPageVar = function (varName, value) {

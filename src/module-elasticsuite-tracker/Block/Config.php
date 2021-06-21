@@ -121,6 +121,26 @@ class Config extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Retrieve telemetry Url
+     *
+     * @return string
+     */
+    public function getTelemetryUrl()
+    {
+        return $this->trackerHelper->getImageTelemetryUrl();
+    }
+
+    /**
+     * Is telemetry enabled ?
+     *
+     * @return bool
+     */
+    public function isTelemetryEnabled()
+    {
+        return $this->trackerHelper->isTelemetryEnabled();
+    }
+
+    /**
      * Return the tracked store id.
      *
      * @return int
