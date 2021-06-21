@@ -61,9 +61,9 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->jsonHelper    = $jsonHelper;
-        $this->trackerHelper = $trackerHelper;
-        $this->registry      = $registry;
+        $this->jsonHelper     = $jsonHelper;
+        $this->trackerHelper  = $trackerHelper;
+        $this->registry       = $registry;
     }
 
     /**
@@ -76,6 +76,18 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
         return $this->trackerHelper->isEnabled();
     }
 
+    /**
+     * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _toHtml()
+    {
+        if (!$this->isEnabled()) {
+            return '';
+        }
+
+        return parent::_toHtml();
+    }
 
     /**
      * Retrieve the Json Helper
