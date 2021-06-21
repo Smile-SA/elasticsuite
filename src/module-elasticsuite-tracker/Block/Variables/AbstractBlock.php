@@ -46,11 +46,11 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\View\Element\Template\Context $context       App context
-     * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
-     * @param \Magento\Framework\Registry                      $registry      The Magento registry
-     * @param array                                            $data          additional datas
+     * @param \Magento\Framework\View\Element\Template\Context $context        App context
+     * @param \Magento\Framework\Json\Helper\Data              $jsonHelper     The Magento's JSON Helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper  The Smile Tracker helper
+     * @param \Magento\Framework\Registry                      $registry       The Magento registry
+     * @param array                                            $data           additional datas
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -61,9 +61,18 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     ) {
         parent::__construct($context, $data);
 
-        $this->jsonHelper    = $jsonHelper;
-        $this->trackerHelper = $trackerHelper;
-        $this->registry      = $registry;
+        $this->jsonHelper     = $jsonHelper;
+        $this->trackerHelper  = $trackerHelper;
+        $this->registry       = $registry;
+    }
+
+    protected function _toHtml()
+    {
+        if (!$this->isEnabled()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 
     /**
@@ -75,7 +84,6 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     {
         return $this->trackerHelper->isEnabled();
     }
-
 
     /**
      * Retrieve the Json Helper
