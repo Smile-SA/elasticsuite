@@ -113,6 +113,14 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getReadTimeout()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('timeout');
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getOptions()
@@ -125,6 +133,8 @@ class ClientConfiguration implements ClientConfigurationInterface
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
+            'timeout'               => $this->getReadTimeout(),
+            'connection_timeout'    => $this->getConnectionTimeout(),
         ];
 
         return $options;
