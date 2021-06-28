@@ -43,7 +43,7 @@ class ClientBuilder
         'enable_http_auth'      => false,
         'http_auth_user'        => null,
         'http_auth_pwd'         => null,
-        'http_auth_encrypted'   => null,
+        'http_auth_encoded'     => false,
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
     ];

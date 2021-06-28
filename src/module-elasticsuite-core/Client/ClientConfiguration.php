@@ -91,6 +91,16 @@ class ClientConfiguration implements ClientConfigurationInterface
     /**
      * {@inheritdoc}
      */
+    public function isHttpAuthEncodingEnabled()
+    {
+        $authEncodingEnabled = (bool) $this->getElasticsearchClientConfigParam('enable_http_auth_encoding');
+
+        return $authEncodingEnabled && $this->isHttpAuthEnabled() !== false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHttpAuthUser()
     {
         return (string) $this->getElasticsearchClientConfigParam('http_auth_user');
