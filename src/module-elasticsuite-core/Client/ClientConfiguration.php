@@ -131,6 +131,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'servers'               => $this->getServerList(),
             'scheme'                => $this->getScheme(),
             'enable_http_auth'      => $this->isHttpAuthEnabled(),
+            'http_auth_encoded'     => $this->isHttpAuthEncodingEnabled(),
             'http_auth_user'        => $this->getHttpAuthUser(),
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
