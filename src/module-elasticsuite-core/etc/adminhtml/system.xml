@@ -44,6 +44,11 @@
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Encode HTTP authorization headers</label>
+                    <comment>Enable this option when you want to base64 encode the Authorization headers. (Open Distro requires this)</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Basic HTTP authentication user</label>
                     <depends>
