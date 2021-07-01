@@ -65,15 +65,11 @@ class Boolean extends Attribute
     }
 
     /**
-     * Retrieve ES filter field.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     protected function getFilterField()
     {
-        $field = $this->getAttributeModel()->getAttributeCode();
-
-        return $field;
+        return $this->getAttributeModel()->getAttributeCode();
     }
 
     /**
