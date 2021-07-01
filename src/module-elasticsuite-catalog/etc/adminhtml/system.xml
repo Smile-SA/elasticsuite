@@ -50,6 +50,11 @@
 
             <group id="catalogsearch" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Catalog Search Configuration</label>
+                <field id="category_name_weight" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Category Name Weight</label>
+                    <source_model>Magento\CatalogSearch\Model\Source\Weight</source_model>
+                    <comment><![CDATA[The search weight of category names when used in fulltext search.]]></comment>
+                </field>
                 <field id="redirect_if_one_result" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Redirect to product page if only one result</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
