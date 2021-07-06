@@ -45,6 +45,7 @@ class ViewMore implements ModifierInterface
      *
      * @param \Smile\ElasticsuiteCatalog\Helper\ProductAttribute       $mappingHelper       Mapping Helper
      * @param \Magento\Catalog\Api\ProductAttributeRepositoryInterface $attributeRepository Attribute Repository
+     * @param ViewMoreContext                                          $viewMoreContext     View More Context
      */
     public function __construct(
         \Smile\ElasticsuiteCatalog\Helper\ProductAttribute $mappingHelper,
