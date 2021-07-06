@@ -1,0 +1,9 @@
+{
+  "filters": {
+    "category_id": {
+      "eq": 11
+    }
+  },
+  "search": "dress",
+  "filterName": "fashion_material"
+}
