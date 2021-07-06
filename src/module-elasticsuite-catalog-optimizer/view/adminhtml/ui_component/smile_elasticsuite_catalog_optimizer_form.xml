@@ -740,7 +740,7 @@
 
         <field name="category_preview">
             <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
+                <item name="options" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Product\Form\Categories\Options</item>
                 <item name="config" xsi:type="array">
                     <item name="label" xsi:type="string" translate="true">Category Preview</item>
                     <item name="componentType" xsi:type="string">field</item>
