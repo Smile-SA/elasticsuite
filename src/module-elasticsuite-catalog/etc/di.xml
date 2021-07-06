@@ -23,7 +23,7 @@
             <argument name="typeName" xsi:type="string">product</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Magento\CatalogSearch\Model\Indexer\IndexerHandlerFactory">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -105,7 +105,7 @@
     <type name="Magento\Catalog\Model\Layer">
         <plugin name="createSortOrdersOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
     </type>
-    
+
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider</argument>
@@ -152,7 +152,7 @@
     <!-- End of proper collection for Advanced Search -->
 
     <!-- End since Magento 2.3.2 -->
-    
+
     <!-- End Layer related configuration -->
 
     <type name="Magento\CatalogSearch\Block\Result">
@@ -205,7 +205,7 @@
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData">
         <arguments>
             <argument name="priceReaderPool" xsi:type="array">
@@ -215,7 +215,7 @@
                 <item name="bundle" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
             </argument>
         </arguments>
-    </type> 
+    </type>
 
     <!-- Advanced Search Compatibility -->
     <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
@@ -250,7 +250,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
@@ -329,5 +329,13 @@
 
     <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
+    </type>
+
+    <!-- Inject Category Name Weight just after reading XML files-->
+    <type name="Smile\ElasticsuiteCore\Index\Indices\Config\Reader">
+        <plugin name="injectCategoryWeight" type="\Smile\ElasticsuiteCatalog\Plugin\Index\Indices\Config\ReaderPlugin"/>
+    </type>
+    <type name="Smile\ElasticsuiteCore\Api\Index\MappingInterface">
+        <plugin name="copyCategoryName" type="\Smile\ElasticsuiteCatalog\Plugin\Index\MappingPlugin"/>
     </type>
 </config>

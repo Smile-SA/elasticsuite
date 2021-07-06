@@ -90,16 +90,15 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
             $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
             foreach ($attributesData as $row) {
-                $productId    = (int) $row['entity_id'];
-                $attribute    = $this->attributesById[$row['attribute_id']];
-                $indexValues  = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                $productId   = (int) $row['entity_id'];
+                $indexValues = $this->attributeHelper->prepareIndexValue($row['attribute_id'], $storeId, $row['value']);
                 if (!isset($indexData[$productId])) {
                     $indexData[$productId] = [];
                 }
 
                 $indexData[$productId] += $indexValues;
 
-                $this->addIndexedAttribute($indexData[$productId], $attribute);
+                $this->addIndexedAttribute($indexData[$productId], $row['attribute_code']);
             }
         }
 
@@ -217,10 +216,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Append an indexed attributes to indexed data of a given product.
      *
-     * @param array                                                  $productIndexData Product Index data
-     * @param \Magento\Eav\Model\Entity\Attribute\AttributeInterface $attribute        The attribute
+     * @param array  $productIndexData Product Index data
+     * @param string $attributeCode    The attribute code
      */
-    private function addIndexedAttribute(&$productIndexData, $attribute)
+    private function addIndexedAttribute(&$productIndexData, $attributeCode)
     {
         if (!isset($productIndexData['indexed_attributes'])) {
             $productIndexData['indexed_attributes'] = [];
@@ -228,10 +227,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
         // Data can be missing for this attribute (Eg : due to null value being escaped,
         // or this attribute is already included in the array).
-        if (isset($productIndexData[$attribute->getAttributeCode()])
-            && !in_array($attribute->getAttributeCode(), $productIndexData['indexed_attributes'])
+        if (isset($productIndexData[$attributeCode])
+            && !in_array($attributeCode, $productIndexData['indexed_attributes'])
         ) {
-            $productIndexData['indexed_attributes'][] = $attribute->getAttributeCode();
+            $productIndexData['indexed_attributes'][] = $attributeCode;
         }
     }
 }

@@ -59,6 +59,13 @@ interface ClientConfigurationInterface
     public function isHttpAuthEnabled();
 
     /**
+     * Indicates whether the HTTP Authorization header should be base64 encoded or not.
+     *
+     * @return boolean
+     */
+    public function isHttpAuthEncodingEnabled();
+
+    /**
      * Return the basic HTTP authentication user.
      *
      * @return string

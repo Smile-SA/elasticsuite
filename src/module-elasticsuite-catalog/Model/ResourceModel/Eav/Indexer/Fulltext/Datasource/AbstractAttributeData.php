@@ -130,7 +130,7 @@ class AbstractAttributeData extends Indexer
             ->joinInner(
                 ['attr' => $this->getTable('eav_attribute')],
                 $this->connection->quoteInto('attr.attribute_id IN (?)', $attributeIds),
-                ['attribute_id']
+                ['attribute_id', 'attribute_code']
             )
             ->joinLeft(
                 ['t_default' => $tableName],
