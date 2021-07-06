@@ -162,4 +162,11 @@
 
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Aggregations" type="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Aggregations"/>
 
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="viewMoreFilterModifier" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\ViewMore</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

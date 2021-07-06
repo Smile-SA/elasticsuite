@@ -81,6 +81,8 @@ class Price implements LayerBuilderInterface
             );
         }
 
+        $result['has_more'] = false;
+
         return ['price' => $result];
     }
 
