@@ -23,6 +23,8 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 /**
  * Abstract ElasticSuite catalog attributes helper.
  *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -144,6 +146,11 @@ abstract class AbstractAttribute extends Mapping
      */
     public function getFieldType($attributeId)
     {
+        // Backward compatibility.
+        if (!is_numeric($attributeId)) {
+            $attributeId = $this->getAttributeId($attributeId);
+        }
+
         if (!isset($this->attributeFieldTypeCache[$attributeId])) {
             $attribute = $this->getAttributeById($attributeId);
             $type = FieldInterface::FIELD_TYPE_TEXT;
@@ -185,6 +192,11 @@ abstract class AbstractAttribute extends Mapping
      */
     public function prepareIndexValue($attributeId, $storeId, $value)
     {
+        // Backward compatibility.
+        if (!is_numeric($attributeId)) {
+            $attributeId = $this->getAttributeId($attributeId);
+        }
+
         $attributeCode = $this->getAttributeCodeById($attributeId);
         $values = [];
 
