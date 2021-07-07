@@ -31,7 +31,12 @@ class Category extends \Magento\Catalog\Model\Layer\Filter\Item
         $url = parent::getUrl();
 
         if ($this->getUrlRewrite()) {
+            $catRequestVar  = $this->getFilter()->getRequestVar();
+            parse_str(parse_url($url, PHP_URL_QUERY), $queryParams);
+            unset($queryParams[$currentRequestVar]);
+
             $url = $this->getUrlRewrite();
+            $url .= '?' . http_build_query($queryParams);
         }
 
         return $url;
