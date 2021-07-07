@@ -277,6 +277,16 @@ jobs:
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
 
+            - name: "[Test] GraphQl : Search (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/query.gql"
+
             - name: "[Test] GraphQl : Category"
               run: |
                 echo "==> Testing Search"
@@ -284,8 +294,18 @@ jobs:
                 http://localhost/graphql \
                 -l \
                 -H "Content-Type: application/json" \
-                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
-                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/query.gql"
+
+            - name: "[Test] GraphQl : Category (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/query.gql"
 
             - name: "[Test] GraphQl : Product Detail"
               run: |
