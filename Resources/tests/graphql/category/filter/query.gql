@@ -9,7 +9,7 @@ query category($id: Int!, $pageSize: Int!, $currentPage: Int!, $onServer: Boolea
     meta_description
     __typename
   }
-  products(pageSize: $pageSize, currentPage: $currentPage, filter: {category_id: {eq: $idString}, fashion_material: {eq: "Cotton"}}) {
+  products(pageSize: $pageSize, currentPage: $currentPage, filter: {category_id: {eq: $idString}, fashion_material: {eq: "Polyester"}}) {
     filters {
       name
       filter_items_count
