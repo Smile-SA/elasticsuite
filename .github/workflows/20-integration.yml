@@ -296,3 +296,23 @@ jobs:
                 -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : View More (Category)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/query.gql"
+
+            - name: "[Test] GraphQl : View More (Search)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/query.gql"
