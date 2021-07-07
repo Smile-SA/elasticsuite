@@ -47,6 +47,7 @@ class Attribute implements LayerBuilderInterface
     private $bucketNameFilter = [
         Price::PRICE_BUCKET,
         Category::CATEGORY_BUCKET,
+        'attribute_set_id',
     ];
 
     /**
