@@ -69,15 +69,13 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
             if (array_key_exists($code, $attributes)) {
                 $attribute = $attributes[$code];
                 if ($this->canReplaceImageWithSwatch($attribute)) {
-                    $filterArray[$code] = $value;
-                }
-
-                if (isset($filterArray[$code]) && !is_array($filterArray[$code])) {
-                    $filterArray[$code] = [$filterArray[$code]];
+                    $filterArray[] = [$code => $value];
                 }
 
                 if ($attribute->getId() && $this->canReplaceImageWithSwatch($attribute)) {
-                    $filterArray[$code][] = $this->swatchHelperData->getOptionIds($attribute, $value);
+                    foreach ($this->swatchHelperData->getOptionIds($attribute, $value) as $optionId) {
+                        $filterArray[] = [$code => $optionId];
+                    }
                 }
             }
         }
@@ -96,10 +94,19 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
      */
     private function loadSimpleVariation(Product $parentProduct, array $filterArray)
     {
-        $childProduct = $this->swatchHelperData->loadVariationByFallback($parentProduct, $filterArray);
-        if ($childProduct && !$childProduct->getImage()) {
-            $childProduct = $this->swatchHelperData->loadFirstVariationWithImage($parentProduct, $filterArray);
+        $childProduct = false;
+
+        foreach ($filterArray as $filter) {
+            $childProduct = $this->swatchHelperData->loadVariationByFallback($parentProduct, $filter);
+            if ($childProduct && !$childProduct->getImage()) {
+                $childProduct = $this->swatchHelperData->loadFirstVariationWithImage($parentProduct, $filter);
+            }
+
+            if ($childProduct) {
+                break;
+            }
         }
+
         if (!$childProduct) {
             $childProduct = $parentProduct;
         }
