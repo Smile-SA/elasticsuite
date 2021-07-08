@@ -1,0 +1,79 @@
+Merchandiser,Merchandiser
+Back,Terug
+Reset,Reset
+"Save and Continue Edit","Opslaan en doorgaan met bewerken"
+Save,Opslaan
+"<%- count %> products","<%- count %> producten"
+"No products in the selected range.","Geen producten in de geselecteerde range."
+"Search Configuration","Zoek configuratie"
+"Display in autocomplete","Toon in autocomplete"
+"Facet coverage rate","Facet dekkingsgraad"
+"Ex: Brand facet will be displayed only if 90% of the product have a brand.","Voorbeeld: Merkfacet wordt alleen weergegeven als 90% van het product een merk heeft."
+"Facet max. size","Facet max. grootte"
+"Max number of values returned by a facet query.","Max aantal waarden geretourneerd door een facet query"
+"Facet sort order","Facet sorteervolgorde"
+"Search Weight","Zoekgewicht"
+"Used in spellcheck","Gebruikt in spellingscheck"
+"Slider Display Configuration","Slider Display Configuratie"
+"Display pattern","Patroon weergeven"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","Een patroon zoals %s UNIT waar %s de waarde is. Bijvoorbeeld : $%s => $20 or %s € => 20 €"
+"Display Precision","Precisie weergeven"
+"The number of digits to use for precision when displaying.","Het aantal cijfers dat moet worden gebruikt voor precisie bij weergave."
+"No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","Geen exacte resultaten gevonden voor: <b>'%1'</b>. De weergegeven items komen het dichtst in de buurt."
+"No search specified.","Geen zoekopdracht opgegeven."
+"This search no longer exists.","Deze zoekopdracht bestaat niet meer."
+"Search results for ""%1""","Zoekresultaten voor ""%1"""
+"Unable to save positions.","Het is niet mogelijk om posities op te slaan."
+Auto,Automatisch
+"Always hidden","Altijd verborgen"
+"Always displayed","Altijd weergeven"
+"Result count","Result count"
+"Admin sort","Admin sortering"
+Name,Naam
+Relevance,Relevantie
+"%1 and above","%1 en hoger"
+"%1 - %2","%1 - %2"
+"%1 is the only product matching your '%2' search.","%1 is het enige product dat overeenkomst met uw zoekopdracht '%2'."
+item,item
+items,items
+OK,OK
+"Shop By","Winkelen voor"
+"Clear All","Wis alles"
+"Shopping Options","Winkel opties"
+"Your product selection is empty.","Uw productselectie is leeg."
+"Automatic Sort","Automatisch sorteren"
+"Manual Sort","Handmatig sorteren"
+"Show more","Toon meer"
+"In Stock","Op voorraad"
+"Out Of Stock","Niet op voorraad"
+"Show less","Toon minder"
+"No value matching the search <b>%s</b>.","Geen waarde die overeenkomt met de zoekopdracht <b>%s</b>."
+"Search (%s)","Zoek (%s)"
+"Product Autocomplete","Product Autocomplete"
+"Max Size","Maximale grootte"
+"Maximum number of products to display in autocomplete results.","Maximumaantal producten dat wordt weergegeven in resultaten voor automatisch aanvullen"
+"Product Attributes Autocomplete","Product Attributes Autocomplete"
+"Maximum number of product attributes to display in autocomplete results.","Maximumaantal productkenmerken dat moet worden weergegeven in resultaten voor automatisch aanvullen."
+"Category Autocomplete","Categorie Autocomplete"
+"Maximum number of categories to display in autocomplete results.","Maximumaantal categorieën dat moet worden weergegeven in resultaten voor automatisch aanvullen."
+"Catalog Search","Catalogus Zoeken"
+"Catalog Search Configuration","Catalogus zoeken configuratie"
+"Redirect to product page if only one result","Redirect naar product pagina bij een resultaat"
+"If there is only one product matching a given search query, the user will be redirect to this product page.","Als er slechts één product is dat overeenkomt met een bepaalde zoekopdracht, wordt de gebruiker geredirect naar deze productpagina."
+"Expanded facets","Uitgebreide facetten"
+"Number of facets to display expanded by default.","Aantal te weergeven facetten, standaard uitgeklapt."
+"ElasticSuite Category Indexing","ElasticSuite categorie indexering"
+"Reindex ElasticSuite catalog categories.","Reindex ElasticSuite catalog categories."
+"Is Spellchecked","Is gecontroleerd op spelling"
+Yes,Ja
+No,Nee
+"Layered Navigation Filters","Layered Navigation Filters"
+Attribute,Attribuut
+"Display Mode","Weergave mode"
+"Sort Order","Sorteer volgorde"
+Pinned,Pinned
+"Use Category Name in product search","Gebruik categorie naam in de zoekresultaten"
+"No search result for the current search.","Geen zoekresultaten gevonden voor de huidige zoekopdracht."
+Products,Producten
+Categories,Categories
+Attributes,Attributen
