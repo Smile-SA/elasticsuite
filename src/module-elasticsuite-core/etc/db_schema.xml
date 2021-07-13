@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCore database schema configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Kiel Pykett <pykettk@gmail.com>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- create smile_elasticsuite_relevance_config_data table -->
+    <table name="smile_elasticsuite_relevance_config_data">
+        <column name="config_id"
+                xsi:type="int"
+                identity="true"
+                unsigned="true"
+                nullable="false"
+                comment="Config Id"/>
+        <column name="scope"
+                xsi:type="varchar"
+                length="30"
+                nullable="false"
+                comment="Config Scope"/>
+        <column name="scope_code"
+                xsi:type="varchar"
+                length="30"
+                nullable="false"
+                comment="Config Scope Code"/>
+        <column name="path"
+                xsi:type="varchar"
+                length="255"
+                nullable="false"
+                comment="Config path"/>
+        <column name="value"
+                xsi:type="text"
+                comment="Config value"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="config_id"/>
+        </constraint>
+        <index referenceId="SMILE_ELASTICSUITE_RELEVANCE_CONFIG_DATA_SCOPE_SCOPE_ID_PATH" indexType="btree">
+            <column name="scope"/>
+            <column name="scope_code"/>
+            <column name="path"/>
+        </index>
+    </table>
+</schema>

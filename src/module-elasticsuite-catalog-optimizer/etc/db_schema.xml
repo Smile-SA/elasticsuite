@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogOptimizer database schema configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Kiel Pykett <pykettk@gmail.com>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- create smile_elasticsuite_optimizer table -->
+    <table name="smile_elasticsuite_optimizer">
+        <column name="optimizer_id"
+                xsi:type="smallint"
+                identity="true"
+                nullable="false"
+                comment="Optimizer ID"/>
+        <column name="store_id"
+                xsi:type="smallint"
+                nullable="false"
+                comment="Store id"/>
+        <column name="is_active"
+                xsi:type="boolean"
+                default="true"
+                nullable="false"
+                comment="Is Optimizer Active"/>
+        <column name="from_date" xsi:type="date" nullable="true" comment="Enable rule from date"/>
+        <column name="to_date" xsi:type="date" nullable="true" comment="Enable rule to date"/>
+        <column name="name"
+                xsi:type="text"
+                nullable="false"
+                comment="Optimizer Name"/>
+        <column name="model"
+                xsi:type="text"
+                comment="Optimizer model"/>
+        <column name="config"
+                xsi:type="text"
+                comment="Optimizer serialized configuration"/>
+        <column name="rule_condition"
+                xsi:type="text"
+                comment="Optimizer rule condition configuration"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="optimizer_id"/>
+        </constraint>
+    </table>
+
+    <!-- create smile_elasticsuite_optimizer_search_container table -->
+    <table name="smile_elasticsuite_optimizer_search_container">
+        <column name="optimizer_id"
+                xsi:type="smallint"
+                nullable="false"
+                comment="Optimizer ID"/>
+        <column name="search_container"
+                xsi:type="varchar"
+                length="255"
+                nullable="false"
+                comment="Search Container"/>
+        <column name="apply_to"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="If this optimizer applies to specific entities or not."/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="optimizer_id"/>
+            <column name="search_container"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_19A755216ED198194BA7339E2AB30596"
+                    table="smile_elasticsuite_optimizer_search_container"
+                    column="optimizer_id"
+                    referenceTable="smile_elasticsuite_optimizer"
+                    referenceColumn="optimizer_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="SMILE_ELASTICSUITE_OPTIMIZER_SEARCH_CONTAINER" indexType="btree">
+            <column name="search_container"/>
+        </index>
+    </table>
+
+    <!-- create smile_elasticsuite_optimizer_limitation table -->
+    <table name="smile_elasticsuite_optimizer_limitation">
+        <column name="optimizer_id"
+                xsi:type="smallint"
+                nullable="false"
+                comment="Optimizer ID"/>
+        <column name="category_id"
+                xsi:type="int"
+                default="null"
+                nullable="true"
+                unsigned="true"
+                comment="Category ID"/>
+        <column name="query_id"
+                xsi:type="int"
+                default="null"
+                nullable="true"
+                unsigned="true"
+                comment="Query ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="optimizer_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_29EE1ECD41B422FDFF017973D0039789"
+                    table="smile_elasticsuite_optimizer_limitation"
+                    column="optimizer_id"
+                    referenceTable="smile_elasticsuite_optimizer"
+                    referenceColumn="optimizer_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_DECB3B36711079998CA4D3DB38F2E0EB"
+                    table="smile_elasticsuite_optimizer_limitation"
+                    column="category_id"
+                    referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_QR_ID_SRCH_QR_QR_ID"
+                    table="smile_elasticsuite_optimizer_limitation"
+                    column="query_id"
+                    referenceTable="search_query"
+                    referenceColumn="query_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_QR_ID_SRCH_QR_QR_ID" indexType="btree">
+            <column name="query_id"/>
+        </index>
+    </table>
+</schema>

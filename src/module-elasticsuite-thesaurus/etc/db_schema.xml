@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteThesaurus database schema configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteThesaurus
+ * @author    Kiel Pykett <pykettk@gmail.com>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- create smile_elasticsuite_thesaurus table -->
+    <table name="smile_elasticsuite_thesaurus">
+        <column name="thesaurus_id"
+                xsi:type="int"
+                identity="true"
+                nullable="false"
+                unsigned="true"
+                comment="Thesaurus ID"/>
+        <column name="name"
+                xsi:type="text"
+                nullable="false"
+                comment="Thesaurus name"/>
+        <column name="type"
+                xsi:type="text"
+                nullable="false"
+                comment="Thesaurus type"/>
+        <column name="is_active"
+                xsi:type="smallint"
+                default="1"
+                nullable="false"
+                comment="If the Thesaurus is active"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="thesaurus_id"/>
+        </constraint>
+    </table>
+
+    <!-- create smile_elasticsuite_thesaurus_store table -->
+    <table name="smile_elasticsuite_thesaurus_store">
+        <column name="thesaurus_id"
+                xsi:type="int"
+                identity="true"
+                nullable="false"
+                unsigned="true"
+                comment="Thesaurus ID"/>
+        <column name="store_id"
+                xsi:type="smallint"
+                unsigned="true"
+                nullable="false"
+                comment="Store Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="thesaurus_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_63B974533C5D31F477D220BDD0870DBE"
+                    table="smile_elasticsuite_thesaurus_store"
+                    column="thesaurus_id"
+                    referenceTable="smile_elasticsuite_thesaurus"
+                    referenceColumn="thesaurus_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="SMILE_ELASTICSUITE_THESAURUS_STORE_STORE_ID_STORE_STORE_ID"
+                    table="smile_elasticsuite_thesaurus_store"
+                    column="store_id"
+                    referenceTable="store"
+                    referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+    </table>
+
+    <!-- create smile_elasticsuite_thesaurus_expanded_terms table -->
+    <table name="smile_elasticsuite_thesaurus_expanded_terms">
+        <column name="thesaurus_id"
+                xsi:type="int"
+                nullable="false"
+                unsigned="true"
+                comment="Thesaurus ID"/>
+        <column name="term_id"
+                xsi:type="int"
+                nullable="false"
+                unsigned="true"
+                comment="Reference Term Id"/>
+        <column name="term"
+                xsi:type="varchar"
+                length="255"
+                nullable="false"
+                comment="Reference Term"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="thesaurus_id"/>
+            <column name="term_id"/>
+            <column name="term"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_9209E40A220DC2E4BE81B9A68B9B966D"
+                    table="smile_elasticsuite_thesaurus_expanded_terms"
+                    column="thesaurus_id"
+                    referenceTable="smile_elasticsuite_thesaurus"
+                    referenceColumn="thesaurus_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="SMILE_ELASTICSUITE_THESAURUS_EXPANDED_TERMS_TERM_ID" indexType="btree">
+            <column name="term_id"/>
+        </index>
+    </table>
+
+    <!-- create smile_elasticsuite_thesaurus_reference_terms table -->
+    <table name="smile_elasticsuite_thesaurus_reference_terms">
+        <column name="thesaurus_id"
+                xsi:type="int"
+                nullable="false"
+                unsigned="true"
+                comment="Thesaurus ID"/>
+        <column name="term_id"
+                xsi:type="int"
+                nullable="false"
+                unsigned="true"
+                comment="Reference Term Id"/>
+        <column name="term"
+                xsi:type="text"
+                nullable="false"
+                comment="Reference Term"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="thesaurus_id"/>
+            <column name="term_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_F32473FFBA5C398A18CD364D37976CB5"
+                    table="smile_elasticsuite_thesaurus_reference_terms"
+                    column="thesaurus_id"
+                    referenceTable="smile_elasticsuite_thesaurus"
+                    referenceColumn="thesaurus_id"
+                    onDelete="CASCADE"/>
+    </table>
+</schema>

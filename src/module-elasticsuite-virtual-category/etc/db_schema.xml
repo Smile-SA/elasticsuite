@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteVirtualCategory database schema configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteVirtualCategory
+ * @author    Kiel Pykett <pykettk@gmail.com>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- create smile_virtualcategory_catalog_category_product_position table -->
+    <table name="smile_virtualcategory_catalog_category_product_position">
+        <column name="category_id"
+                xsi:type="int"
+                default="0"
+                nullable="false"
+                unsigned="true"
+                comment="Category ID"/>
+        <column name="product_id"
+                xsi:type="int"
+                default="0"
+                nullable="false"
+                unsigned="true"
+                comment="Product ID"/>
+        <column name="store_id"
+                xsi:type="smallint"
+                default="0"
+                nullable="false"
+                unsigned="true"
+                comment="Store ID"/>
+        <column name="position"
+                xsi:type="int"
+                nullable="true"
+                comment="Position"/>
+        <column name="is_blacklisted"
+                xsi:type="boolean"
+                default="false"
+                nullable="false"
+                comment="If the product is blacklisted"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="category_id"/>
+            <column name="product_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_9A80162E8ADF9FB814AC79D709D977F3"
+                    table="smile_virtualcategory_catalog_category_product_position"
+                    column="category_id"
+                    referenceTable="catalog_category_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="FK_D8ED66CF4B5DA2EE349B79458FFC6587"
+                    table="smile_virtualcategory_catalog_category_product_position"
+                    column="product_id"
+                    referenceTable="catalog_product_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign"
+                    referenceId="SMILE_VIRTUALCTGR_CAT_CTGR_PRD_POSITION_STORE_ID_STORE_STORE_ID"
+                    table="smile_virtualcategory_catalog_category_product_position"
+                    column="store_id"
+                    referenceTable="store"
+                    referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="SMILE_VIRTUALCTGR_CAT_CTGR_PRD_POSITION_PRD_ID" indexType="btree">
+            <column name="product_id"/>
+        </index>
+    </table>
+</schema>
