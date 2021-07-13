@@ -1,0 +1,15 @@
+query getAllFilterValues($filters: ProductAttributeFilterInput, $search: String, $filterName: String!) {
+    viewMoreFilter(filter: $filters, search: $search, filterName: $filterName) {
+        aggregations {
+            label
+            count
+            attribute_code
+            has_more
+            options {
+                label
+                value
+                count
+            }
+        }
+    }
+}

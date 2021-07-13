@@ -1,17 +1,18 @@
 <?php
 /**
  * DISCLAIMER
- * Do not edit or add to this file if you wish to upgrade Smile Elastic Suite to newer
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
  * versions in the future.
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogGraphQl
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver;
+namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Layer\Filter;
 
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
@@ -19,18 +20,17 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater;
-use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
+use \Smile\ElasticsuiteCatalogGraphQl\Model\Layer\Filter\ViewMore\Context as ViewMoreContext;
 
 /**
- * Elasticsuite custom implementation of GraphQL Products Resolver
+ * ViewMore resolver. Used when fetching all values of a specific filter.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Products implements ResolverInterface
+class ViewMore implements ResolverInterface
 {
     /**
      * @var ProductQueryInterface
@@ -43,15 +43,23 @@ class Products implements ResolverInterface
     private $contextUpdater;
 
     /**
-     * @param ProductQueryInterface $searchQuery    Search Query
-     * @param ContextUpdater        $contextUpdater Context Updater
+     * @var \Smile\ElasticsuiteCatalogGraphQl\Model\Layer\Filter\ViewMore\Context
+     */
+    private $viewMoreContext;
+
+    /**
+     * @param ProductQueryInterface $searchQuery     Search Query
+     * @param ContextUpdater        $contextUpdater  Context Updater
+     * @param ViewMoreContext       $viewMoreContext View More Context
      */
     public function __construct(
         ProductQueryInterface $searchQuery,
-        ContextUpdater $contextUpdater
+        ContextUpdater $contextUpdater,
+        ViewMoreContext $viewMoreContext
     ) {
-        $this->searchQuery    = $searchQuery;
-        $this->contextUpdater = $contextUpdater;
+        $this->searchQuery     = $searchQuery;
+        $this->contextUpdater  = $contextUpdater;
+        $this->viewMoreContext = $viewMoreContext;
     }
 
     /**
@@ -60,7 +68,12 @@ class Products implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $this->validateArgs($args);
+        $this->viewMoreContext->setFilterName($args['filterName']);
+
         $this->contextUpdater->updateSearchContext($args);
+
+        $args['currentPage'] = 0;
+        $args['pageSize']    = 0;
 
         $searchResult = $this->searchQuery->getResult($args, $info, $context);
         $layerType    = Resolver::CATALOG_LAYER_CATEGORY;
@@ -91,9 +104,9 @@ class Products implements ResolverInterface
      */
     private function validateArgs(array $args)
     {
-        if (!isset($args['search']) && !isset($args['filter'])) {
+        if (!isset($args['filterName'])) {
             throw new GraphQlInputException(
-                __("'search' or 'filter' input argument is required.")
+                __("'filterName' input argument is required.")
             );
         }
     }

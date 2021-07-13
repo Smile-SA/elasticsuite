@@ -47,6 +47,7 @@ class Attribute implements LayerBuilderInterface
     private $bucketNameFilter = [
         Price::PRICE_BUCKET,
         Category::CATEGORY_BUCKET,
+        'attribute_set_id',
     ];
 
     /**
@@ -97,20 +98,23 @@ class Attribute implements LayerBuilderInterface
                 $label = $attributeCode;
             }
 
-            $result[$attributeCode] = $this->layerFormatter->buildLayer(
-                $label,
-                \count($bucket->getValues()),
-                $attributeCode
-            );
-
+            $hasMore = false;
+            $count   = \count($bucket->getValues());
+            $options = [];
             foreach ($bucket->getValues() as $value) {
-                $metrics                             = $value->getMetrics();
-                $result[$attributeCode]['options'][] = $this->layerFormatter->buildItem(
-                    $attribute['options'][$value->getValue()] ?? $value->getValue(),
-                    $value->getValue(),
-                    $metrics['count']
-                );
+                $metrics = $value->getMetrics();
+                if ($value->getValue() === '__other_docs') {
+                    $count += ((int) $metrics['count'] ?? 0) - 1; // -1 because '__other_docs' is counted in.
+                    $hasMore = true;
+                    continue;
+                }
+
+                $options[] = $this->layerFormatter->buildItem($value->getValue(), $value->getValue(), $metrics['count']);
             }
+
+            $result[$attributeCode] = $this->layerFormatter->buildLayer($label, $count, $attributeCode);
+            $result[$attributeCode]['options']  = $options;
+            $result[$attributeCode]['has_more'] = $hasMore;
 
             if ($attributeCode !== 'attribute_set_id' &&
                 $attribute->getFacetSortOrder() == ElasticBucketInterface::SORT_ORDER_MANUAL) {

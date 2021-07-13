@@ -146,7 +146,9 @@ class Category implements LayerBuilderInterface
             );
         }
 
-        return [$result];
+        $result['has_more'] = false;
+
+        return ['category_id' => $result];
     }
 
     /**
