@@ -304,7 +304,7 @@ class Mapping implements MappingInterface
 
         if ($field->normsDisabled()) {
             $property['norms'] = false;
-            
+
             if (isset($property['fields'])) {
                 foreach (array_keys($property['fields']) as $fieldName) {
                     $property['fields'][$fieldName]['norms'] = false;
