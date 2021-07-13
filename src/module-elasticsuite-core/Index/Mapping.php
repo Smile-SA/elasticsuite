@@ -302,6 +302,16 @@ class Mapping implements MappingInterface
             $copyToRoot['copy_to'] = $copyToProperties;
         }
 
+        if ($field->normsDisabled()) {
+            $property['norms'] = false;
+
+            if (isset($property['fields'])) {
+                foreach (array_keys($property['fields']) as $fieldName) {
+                    $property['fields'][$fieldName]['norms'] = false;
+                }
+            }
+        }
+
         $fieldRoot[end($fieldPathArray)] = $property;
 
         return $properties;
