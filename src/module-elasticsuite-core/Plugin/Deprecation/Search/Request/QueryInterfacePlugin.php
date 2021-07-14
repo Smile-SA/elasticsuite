@@ -54,7 +54,7 @@ class QueryInterfacePlugin
      */
     public function afterGetCutoffFrequency(\Smile\ElasticsuiteCore\Search\Request\QueryInterface $subject, $result)
     {
-        if (strcmp($this->clusterInfo->getServerVersion(), "7.3.0") >= 0) {
+        if (version_compare($this->clusterInfo->getServerVersion(), "7.3.0") >= 0) {
             $result = 0; // Will be evaluated as false and discarded by the Query Builder.
         }
 
