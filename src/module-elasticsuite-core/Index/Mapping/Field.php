@@ -69,6 +69,7 @@ class Field implements FieldInterface
         'search_weight'           => 1,
         'default_search_analyzer' => self::ANALYZER_STANDARD,
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
+        'norms_disabled'          => false,
     ];
 
     /**
@@ -138,6 +139,14 @@ class Field implements FieldInterface
     public function isUsedInSpellcheck(): bool
     {
         return (bool) $this->config['is_used_in_spellcheck'] && (bool) $this->config['is_searchable'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normsDisabled(): bool
+    {
+        return (bool) $this->config['norms_disabled'];
     }
 
     /**
@@ -379,6 +388,11 @@ class Field implements FieldInterface
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+
+                    if ($this->normsDisabled()) {
+                        $fieldMapping['norms'] = false;
+                    }
+
                     if ($analyzer === self::ANALYZER_SORTABLE) {
                         $fieldMapping['fielddata'] = true;
                     }
