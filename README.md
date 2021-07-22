@@ -23,6 +23,7 @@ Magento Version                                     | ElasticSuite Latest Versio
 Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** : ```composer require smile/elasticsuite ~2.1.0``` | 2.x | No
 Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ```composer require smile/elasticsuite ~2.3.0``` | 2.x & 5.x | No
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
+Magento **<2.3.2** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.4** : ```composer require smile/elasticsuite ~2.8.4``` | 5.x & 6.x | No
 Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
 Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | **Yes**
 Magento **2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | No
