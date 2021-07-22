@@ -106,3 +106,6 @@ Attributes,Attributes
 "Facet internal logic","Facet internal logic"
 "Category Name Weight","Category Name Weight"
 "The search weight of category names when used in fulltext search.","The search weight of category names when used in fulltext search."
+"Elasticsuite mapping has been updated real-time. However, your modifications might not be visible until the Catalogsearch Fulltext index is completely rebuilt.","Elasticsuite mapping has been updated real-time. However, your modifications might not be visible until the Catalogsearch Fulltext index is completely rebuilt."
+"Elasticsuite mapping could not be updated real-time. Please wait for the complete reindexing of Catalogsearch Fulltext index.","Elasticsuite mapping could not be updated real-time. Please wait for the complete reindexing of Catalogsearch Fulltext index."
+"Catalogsearch fulltext index has been invalidated.","Catalogsearch fulltext index has been invalidated."

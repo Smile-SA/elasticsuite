@@ -327,6 +327,13 @@
         </arguments>
     </type>
 
+    <type name="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin">
+        <arguments>
+            <!-- Index Operation is injected as a proxy so that it's instantiated just-in-time (after cleaning indices config cache) to fetch latest config version -->
+            <argument name="indexOperation" xsi:type="object">\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface\Proxy</argument>
+        </arguments>
+    </type>
+
     <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
     </type>

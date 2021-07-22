@@ -146,6 +146,20 @@ class IndexOperation implements IndexOperationInterface
     /**
      * {@inheritDoc}
      */
+    public function refreshMapping($indexIdentifier, $store)
+    {
+        try {
+            $index = $this->getIndexByName($indexIdentifier, $store);
+            // Mapping is injected in initIndex();.
+            $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
+        } catch (\LogicException $exception) {
+            ; // Do nothing, we cannot update mapping of a non existing index.
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function installIndex(\Smile\ElasticsuiteCore\Api\Index\IndexInterface $index, $store)
     {
         if ($index->needInstall()) {

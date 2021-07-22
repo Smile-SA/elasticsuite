@@ -47,6 +47,7 @@ interface FieldInterface
     const ANALYZER_SORTABLE   = 'sortable';
     const ANALYZER_PHONETIC   = 'phonetic';
     const ANALYZER_UNTOUCHED  = 'untouched';
+    const ANALYZER_KEYWORD    = 'keyword';
 
     /**
      * Field filter logical operators.
