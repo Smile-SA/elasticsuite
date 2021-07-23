@@ -215,14 +215,13 @@ class Field implements FieldInterface
         $fieldName    = $this->getName();
         $propertyName = $fieldName;
         $property     = $this->getMappingPropertyConfig();
-        $isDefaultAnalyzer = $analyzer === $this->getDefaultSearchAnalyzer();
 
-        if (!$isDefaultAnalyzer && isset($property['fields'])) {
+        if (isset($property['fields'])) {
             $propertyName = null;
 
             if (isset($property['fields'][$analyzer])) {
                 $property     = $property['fields'][$analyzer];
-                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf('%s.%s', $fieldName, $analyzer);
+                $propertyName = sprintf('%s.%s', $fieldName, $analyzer);
             }
         }
 
