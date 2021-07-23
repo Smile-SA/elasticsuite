@@ -393,7 +393,7 @@ class Field implements FieldInterface
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
 
-                    if ($this->normsDisabled()) {
+                    if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;
                     }
 
