@@ -327,6 +327,7 @@
         </arguments>
     </type>
 
+    <!-- Dealing with index invalidation and mapping changes -->
     <type name="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin">
         <arguments>
             <!-- Index Operation is injected as a proxy so that it's instantiated just-in-time (after cleaning indices config cache) to fetch latest config version -->
@@ -334,6 +335,12 @@
         </arguments>
     </type>
 
+    <type name="Magento\Catalog\Model\ResourceModel\Attribute">
+        <!-- Disable the legacy plugin, we'll do nearly the same thing in our own plugin -->
+        <plugin name="catalogsearchFulltextIndexerAttribute" disabled="true"/>
+    </type>
+
+    <!-- Plugin to deal with index invalidation, mapping update and config flush when editing an attribute -->
     <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
     </type>
