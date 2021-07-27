@@ -233,6 +233,10 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated --quiet
 
+            - name: "[Test] Cache Clean before re-indexing"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:clean
+
             - name: "[Test] Data : Index"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento index:reindex
