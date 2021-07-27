@@ -180,7 +180,7 @@ jobs:
             - name: "[Init] Fix symfony/console version"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require symfony/console:4.4.26
+                composer require symfony/console:4.4.26 --ignore-platform-reqs
 
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
