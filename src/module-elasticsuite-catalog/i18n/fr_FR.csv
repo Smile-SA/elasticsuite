@@ -106,3 +106,6 @@ Attributes,Attributs
 "Facet internal logic","Logique interne de la facette"
 "Category Name Weight","Poids des noms de catégorie"
 "The search weight of category names when used in fulltext search.","Le poids des noms de catégorie lorsqu'ils sont utilisés dans la recherche textuelle"
+"Elasticsuite mapping has been updated real-time. However, your modifications might not be visible until the Catalogsearch Fulltext index is completely rebuilt.","Le mapping de l'index Elasticsuite a été mis à jour. Cependant, vos modifications pourraient ne pas être visibles tant que l'index n'aura pas été totalement reconstruit."
+"Elasticsuite mapping could not be updated real-time. Please wait for the complete reindexing of Catalogsearch Fulltext index.","Le mapping de l'index Elasticsuite n'a pas pu être mis à jour. Merci d'attendre la reconstruction complète de l'index de recherche catalogue."
+"Catalogsearch fulltext index has been invalidated.","L'index de recherche catalogue a été invalidé."
