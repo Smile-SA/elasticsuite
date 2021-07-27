@@ -341,3 +341,11 @@ jobs:
                 -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/query.gql"
+
+            - name: "[End] Job failed, gathering logs"
+              env:
+                MAGENTO_ROOT: ${{ env.magento-directory }}
+              if: ${{ failure() }}
+              run: |
+                tail -n 100 /var/log/apache2/apache-error.log
+                tail -n 100 $MAGENTO_ROOT/var/log/*.log
