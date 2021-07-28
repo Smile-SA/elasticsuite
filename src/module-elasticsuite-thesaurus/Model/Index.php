@@ -97,6 +97,7 @@ class Index
      */
     public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
     {
+        $queryText = str_replace(' ', '_', $queryText);
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
 
