@@ -177,6 +177,11 @@ jobs:
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
                 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
+            - name: "[Init] Fix symfony/console version"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                composer require symfony/console:4.4.26 --ignore-platform-reqs
+
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
               run: |
@@ -227,6 +232,10 @@ jobs:
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated --quiet
+
+            - name: "[Test] Cache Clean before re-indexing"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:clean
 
             - name: "[Test] Data : Index"
               working-directory: ${{ env.magento-directory }}
@@ -336,3 +345,11 @@ jobs:
                 -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/query.gql"
+
+            - name: "[End] Job failed, gathering logs"
+              env:
+                MAGENTO_ROOT: ${{ env.magento-directory }}
+              if: ${{ failure() }}
+              run: |
+                tail -n 100 /var/log/apache2/apache-error.log
+                tail -n 100 $MAGENTO_ROOT/var/log/*.log

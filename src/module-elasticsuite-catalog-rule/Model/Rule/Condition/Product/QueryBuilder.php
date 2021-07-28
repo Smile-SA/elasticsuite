@@ -287,7 +287,9 @@ class QueryBuilder
             $analyzer = $field->getDefaultSearchAnalyzer();
         }
 
-        return $field->getMappingProperty($analyzer);
+        // If the field is "used_for_promo_rules" but not "searchable", $field->getMappingProperty() might return null.
+        // In this case, we fallback to raw field name, that should exist in mapping.
+        return $field->getMappingProperty($analyzer) ?? $field->getName();
     }
 
     /**

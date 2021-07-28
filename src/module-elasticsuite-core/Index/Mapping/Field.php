@@ -69,6 +69,7 @@ class Field implements FieldInterface
         'search_weight'           => 1,
         'default_search_analyzer' => self::ANALYZER_STANDARD,
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
+        'norms_disabled'          => false,
     ];
 
     /**
@@ -143,6 +144,14 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
+    public function normsDisabled(): bool
+    {
+        return (bool) $this->config['norms_disabled'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSearchWeight(): int
     {
         return (int) $this->config['search_weight'];
@@ -206,14 +215,13 @@ class Field implements FieldInterface
         $fieldName    = $this->getName();
         $propertyName = $fieldName;
         $property     = $this->getMappingPropertyConfig();
-        $isDefaultAnalyzer = $analyzer === $this->getDefaultSearchAnalyzer();
 
-        if (!$isDefaultAnalyzer && isset($property['fields'])) {
+        if (isset($property['fields'])) {
             $propertyName = null;
 
             if (isset($property['fields'][$analyzer])) {
                 $property     = $property['fields'][$analyzer];
-                $propertyName = $isDefaultAnalyzer ? $fieldName : sprintf('%s.%s', $fieldName, $analyzer);
+                $propertyName = sprintf('%s.%s', $fieldName, $analyzer);
             }
         }
 
@@ -303,7 +311,8 @@ class Field implements FieldInterface
 
     /**
      * Build a multi_field configuration from an analyzers list.
-     * Standard analyzer is used as default subfield and should always be present.
+     * First analyzer is used as default subfield and should always be present.
+     * This guarantee that, in case of mapping update, the default analyzer of the field will not be modified.
      *
      * If the standard analyzer is not present, no default subfield is defined.
      *
@@ -318,12 +327,9 @@ class Field implements FieldInterface
         // Setting the field type to "multi_field".
         $property = [];
 
+        $property = array_merge($property, $this->getPropertyConfig(array_shift($analyzers)));
         foreach ($analyzers as $analyzer) {
-            if ($analyzer === $this->getDefaultSearchAnalyzer()) {
-                $property = array_merge($property, $this->getPropertyConfig($analyzer));
-            } else {
-                $property['fields'][$analyzer] = $this->getPropertyConfig($analyzer);
-            }
+            $property['fields'][$analyzer] = $this->getPropertyConfig($analyzer);
         }
 
         return $property;
@@ -338,10 +344,17 @@ class Field implements FieldInterface
     {
         $analyzers = [];
 
+        // By default, texts are indexed with "keyword" analyzer which is a 'noop' analyzer.
+        // They will get the defaultSearchAnalyzer just after, if that's needed.
+        if ($this->getType() === self::FIELD_TYPE_TEXT) {
+            $analyzers = [self::ANALYZER_KEYWORD];
+        }
+
         if ($this->isSearchable() || $this->isUsedForSortBy()) {
             // Default search analyzer.
-            $analyzers = [$this->getDefaultSearchAnalyzer()];
+            $analyzers[] = $this->getDefaultSearchAnalyzer();
         }
+
         if ($this->isSearchable() && $this->getSearchWeight() > 1) {
             $analyzers[] = self::ANALYZER_WHITESPACE;
             $analyzers[] = self::ANALYZER_SHINGLE;
@@ -379,6 +392,11 @@ class Field implements FieldInterface
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+
+                    if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
+                        $fieldMapping['norms'] = false;
+                    }
+
                     if ($analyzer === self::ANALYZER_SORTABLE) {
                         $fieldMapping['fielddata'] = true;
                     }

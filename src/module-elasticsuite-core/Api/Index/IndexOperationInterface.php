@@ -65,6 +65,18 @@ interface IndexOperationInterface
     public function createIndex($indexIdentifier, $store);
 
     /**
+     * Updated the mapping of an index according to current computed mapping
+     * This is use as a real-time update when changing field configurations.
+     *
+     * @param string                                                $indexIdentifier Index identifier.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           Store (id, identifier or object).
+     * @param array                                                 $fields          The fields to update. Default to all.
+     *
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
+     */
+    public function updateMapping($indexIdentifier, $store, $fields = []);
+
+    /**
      * Switch the alias to the installed index and delete the old index.
      *
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexInterface      $index Installed index.
