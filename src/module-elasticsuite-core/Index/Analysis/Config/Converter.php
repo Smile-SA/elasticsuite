@@ -257,7 +257,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             foreach ($tokenizerNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMElement) {
                     try {
-                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                        $tokenizer[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
                     } catch (\Exception $exception) {
                         $tokenizer[$childNode->tagName] = $childNode->nodeValue;
                     }
