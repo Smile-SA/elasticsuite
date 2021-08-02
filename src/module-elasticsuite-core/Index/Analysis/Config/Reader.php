@@ -44,6 +44,7 @@ class Reader extends Filesystem
     protected $_idAttributes = [
         '/analysis/char_filters/char_filter' => ['name', 'language'],
         '/analysis/filters/filter'           => ['name', 'language'],
+        '/analysis/tokenizers/tokenizer'     => ['name', 'language'],
         '/analysis/analyzers/analyzer'       => ['name', 'language'],
     ];
 

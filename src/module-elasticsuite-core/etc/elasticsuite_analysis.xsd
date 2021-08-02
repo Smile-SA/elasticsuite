@@ -24,6 +24,7 @@
                 <xs:element name="filters" type="filtersDefinition" />
                 <xs:element name="analyzers" type="analyzersDefinition"/>
                 <xs:element name="normalizers" type="normalizersDefinition"/>
+                <xs:element name="tokenizers" type="tokenizersDefinition"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -92,6 +93,26 @@
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="xs:string" use="required" />
         <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="tokenizersDefinition">
+        <xs:annotation>
+            <xs:documentation>Tokenizers declaration root node</xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="tokenizer" type="tokenizerDefinition" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="tokenizerDefinition">
+        <xs:annotation>
+            <xs:documentation>Tokenizer definition node</xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+        <xs:attribute name="min_gram" type="xs:integer" />
+        <xs:attribute name="max_gram" type="xs:integer" />
     </xs:complexType>
 
     <xs:complexType name="analyzersDefinition">

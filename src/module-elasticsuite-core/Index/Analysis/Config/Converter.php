@@ -34,6 +34,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const ANALYZER_TYPE_NODE         = 'analyzer';
     const NORMALIZER_TYPE_ROOT_NODE  = 'normalizers';
     const NORMALIZER_TYPE_NODE       = 'normalizer';
+    const TOKENIZER_TYPE_ROOT_NODE   = 'tokenizers';
+    const TOKENIZER_TYPE_NODE        = 'tokenizer';
     const LANGUAGE_DEFAULT           = 'default';
 
     /**
@@ -94,6 +96,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::NORMALIZER_TYPE_ROOT_NODE,
             self::NORMALIZER_TYPE_NODE
         );
+        $tokenizers  = $this->parseTokenizers($xpath, self::TOKENIZER_TYPE_ROOT_NODE, self::TOKENIZER_TYPE_NODE);
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
@@ -103,6 +106,10 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         if (!empty($normalizers)) {
             $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
+        }
+
+        if (!empty($tokenizers)) {
+            $defaultConfiguration[self::TOKENIZER_TYPE_NODE] = $tokenizers;
         }
 
         return $defaultConfiguration;
@@ -150,6 +157,13 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::NORMALIZER_TYPE_ROOT_NODE,
             self::NORMALIZER_TYPE_NODE
         );
+        $languageTokenizers = $this->parseTokenizers(
+            $xpath,
+            self::TOKENIZER_TYPE_ROOT_NODE,
+            self::TOKENIZER_TYPE_NODE,
+            $language
+        );
+        $tokenizers = array_merge($defaultConfig[self::TOKENIZER_TYPE_NODE], $languageTokenizers);
 
         $defaultConfiguration = [
             self::CHAR_FILTER_TYPE_NODE => $charFilters,
@@ -159,6 +173,10 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         if (!empty($normalizers)) {
             $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
+        }
+
+        if (!empty($tokenizers)) {
+            $defaultConfiguration[self::TOKENIZER_TYPE_NODE] = $tokenizers;
         }
 
         return $defaultConfiguration;
@@ -292,6 +310,31 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
 
         return $analyzers;
     }
+
+    private function parseTokenizers(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = self::LANGUAGE_DEFAULT)
+    {
+        $tokenizers = [];
+        $languagePath = sprintf("[@language='%s']", $language);
+        $searchPath   = sprintf("/%s/%s/%s%s", self::ROOT_NODE_NAME, $rootNodeName, $nodeName, $languagePath);
+        $tokenizerNodes = $xpath->query($searchPath);
+        foreach ($tokenizerNodes as $tokenizerNode) {
+            $tokenizerName = $tokenizerNode->getAttribute('name');
+            $tokenizer     = ['type' => $tokenizerNode->getAttribute('type')];
+            foreach ($tokenizerNode->childNodes as $childNode) {
+                if ($childNode instanceof \DOMElement) {
+                    try {
+                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                    } catch (\Exception $exception) {
+                        $tokenizer[$childNode->tagName] = $childNode->nodeValue;
+                    }
+                }
+            }
+            $tokenizers[$tokenizerName] = $tokenizer;
+        }
+
+        return $tokenizers;
+    }
+
     /**
      * Return all filters under a root node filtered by an array of available filters.
      *
