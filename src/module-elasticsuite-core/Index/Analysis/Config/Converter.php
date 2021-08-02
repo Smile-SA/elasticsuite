@@ -234,6 +234,41 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         return $filters;
     }
 
+
+    /**
+     * Tokenizer parser by language.
+     *
+     * @param \DOMXPath $xpath        XPath access to the document parsed.
+     * @param string    $rootNodeName Parsing root node.
+     * @param string    $nodeName     Name of the nodes look up.
+     * @param string    $language     Language searched.
+     *
+     * @return array
+     */
+    private function parseTokenizers(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = self::LANGUAGE_DEFAULT)
+    {
+        $tokenizers = [];
+        $languagePath = sprintf("[@language='%s']", $language);
+        $searchPath   = sprintf("/%s/%s/%s%s", self::ROOT_NODE_NAME, $rootNodeName, $nodeName, $languagePath);
+        $tokenizerNodes = $xpath->query($searchPath);
+        foreach ($tokenizerNodes as $tokenizerNode) {
+            $tokenizerName = $tokenizerNode->getAttribute('name');
+            $tokenizer     = ['type' => $tokenizerNode->getAttribute('type')];
+            foreach ($tokenizerNode->childNodes as $childNode) {
+                if ($childNode instanceof \DOMElement) {
+                    try {
+                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                    } catch (\Exception $exception) {
+                        $tokenizer[$childNode->tagName] = $childNode->nodeValue;
+                    }
+                }
+            }
+            $tokenizers[$tokenizerName] = $tokenizer;
+        }
+
+        return $tokenizers;
+    }
+
     /**
      * Analyzers parser by language.
      *
@@ -309,30 +344,6 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         }
 
         return $analyzers;
-    }
-
-    private function parseTokenizers(\DOMXPath $xpath, $rootNodeName, $nodeName, $language = self::LANGUAGE_DEFAULT)
-    {
-        $tokenizers = [];
-        $languagePath = sprintf("[@language='%s']", $language);
-        $searchPath   = sprintf("/%s/%s/%s%s", self::ROOT_NODE_NAME, $rootNodeName, $nodeName, $languagePath);
-        $tokenizerNodes = $xpath->query($searchPath);
-        foreach ($tokenizerNodes as $tokenizerNode) {
-            $tokenizerName = $tokenizerNode->getAttribute('name');
-            $tokenizer     = ['type' => $tokenizerNode->getAttribute('type')];
-            foreach ($tokenizerNode->childNodes as $childNode) {
-                if ($childNode instanceof \DOMElement) {
-                    try {
-                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
-                    } catch (\Exception $exception) {
-                        $tokenizer[$childNode->tagName] = $childNode->nodeValue;
-                    }
-                }
-            }
-            $tokenizers[$tokenizerName] = $tokenizer;
-        }
-
-        return $tokenizers;
     }
 
     /**
