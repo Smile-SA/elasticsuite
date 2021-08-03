@@ -148,7 +148,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::TOKENIZER_TYPE_NODE,
             $language
         );
-        $tokenizers = array_merge($defaultConfig[self::TOKENIZER_TYPE_NODE], $languageTokenizers);
+        $tokenizers = (!empty($defaultConfig[self::TOKENIZER_TYPE_NODE]))
+            ? array_merge($defaultConfig[self::TOKENIZER_TYPE_NODE], $languageTokenizers)
+            : $languageTokenizers;
 
         $charFilterKeys = array_keys($charFilters);
         $filterKeys = array_keys($filters);
