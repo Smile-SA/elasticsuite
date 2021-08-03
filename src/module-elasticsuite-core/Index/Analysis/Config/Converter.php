@@ -30,6 +30,8 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const CHAR_FILTER_TYPE_NODE      = 'char_filter';
     const FILTER_TYPE_ROOT_NODE      = 'filters';
     const FILTER_TYPE_NODE           = 'filter';
+    const TOKENIZER_TYPE_ROOT_NODE   = 'tokenizers';
+    const TOKENIZER_TYPE_NODE        = 'tokenizer';
     const ANALYZER_TYPE_ROOT_NODE    = 'analyzers';
     const ANALYZER_TYPE_NODE         = 'analyzer';
     const NORMALIZER_TYPE_ROOT_NODE  = 'normalizers';
@@ -83,6 +85,7 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     {
         $charFilters = $this->parseFilters($xpath, self::CHAR_FILTER_TYPE_ROOT_NODE, self::CHAR_FILTER_TYPE_NODE);
         $filters     = $this->parseFilters($xpath, self::FILTER_TYPE_ROOT_NODE, self::FILTER_TYPE_NODE);
+        $tokenizers  = $this->parseFilters($xpath, self::TOKENIZER_TYPE_ROOT_NODE, self::TOKENIZER_TYPE_NODE);
         $charFilterKeys = array_keys($charFilters);
         $filterKeys = array_keys($filters);
         $analyzers   = $this->parseAnalyzers($xpath, $charFilterKeys, $filterKeys);
@@ -100,6 +103,10 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::FILTER_TYPE_NODE      => $filters,
             self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
+
+        if (!empty($tokenizers)) {
+            $defaultConfiguration[self::TOKENIZER_TYPE_NODE] = $tokenizers;
+        }
 
         if (!empty($normalizers)) {
             $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
@@ -134,6 +141,18 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             $language
         );
         $filters = array_merge($defaultConfig[self::FILTER_TYPE_NODE], $languageFilters);
+
+        $tokenizers = $this->parseFilters(
+            $xpath,
+            self::TOKENIZER_TYPE_ROOT_NODE,
+            self::TOKENIZER_TYPE_NODE,
+            $language
+        );
+
+        if (!empty($defaultConfig[self::TOKENIZER_TYPE_NODE])) {
+            $tokenizers = array_merge($defaultConfig[self::TOKENIZER_TYPE_NODE], $tokenizers);
+        }
+
         $charFilterKeys = array_keys($charFilters);
         $filterKeys = array_keys($filters);
         $analyzers = $this->parseAnalyzers(
@@ -156,6 +175,10 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             self::FILTER_TYPE_NODE      => $filters,
             self::ANALYZER_TYPE_NODE    => $analyzers,
         ];
+
+        if (!empty($tokenizers)) {
+            $defaultConfiguration[self::TOKENIZER_TYPE_NODE] = $tokenizers;
+        }
 
         if (!empty($normalizers)) {
             $defaultConfiguration[self::NORMALIZER_TYPE_NODE] = $normalizers;
