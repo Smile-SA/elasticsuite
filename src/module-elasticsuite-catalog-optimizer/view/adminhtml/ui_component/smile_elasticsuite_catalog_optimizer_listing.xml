@@ -156,6 +156,16 @@
                 </item>
             </argument>
         </column>
+        <column name="boost_weight" class="Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Listing\Column\BoostWeight">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="add_field" xsi:type="boolean">true</item>
+                    <item name="label" xsi:type="string" translate="true">Boost value (%)</item>
+                    <item name="sortOrder" xsi:type="number">40</item>
+                    <item name="fieldClass" xsi:type="string">a-right</item>
+                </item>
+            </argument>
+        </column>
         <column name="is_active">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="array">
@@ -174,7 +184,7 @@
                     <item name="dataType" xsi:type="string">select</item>
                     <item name="label" xsi:type="string" translate="true">Status</item>
                     <item name="add_field" xsi:type="boolean">true</item>
-                    <item name="sortOrder" xsi:type="number">40</item>
+                    <item name="sortOrder" xsi:type="number">50</item>
                 </item>
             </argument>
         </column>
@@ -185,7 +195,7 @@
                     <item name="sortable" xsi:type="boolean">false</item>
                     <item name="label" xsi:type="string" translate="true">Store View</item>
                     <item name="add_field" xsi:type="boolean">true</item>
-                    <item name="sortOrder" xsi:type="number">50</item>
+                    <item name="sortOrder" xsi:type="number">60</item>
                 </item>
             </argument>
         </column>
@@ -195,7 +205,7 @@
                     <item name="resizeEnabled" xsi:type="boolean">false</item>
                     <item name="resizeDefaultWidth" xsi:type="string">107</item>
                     <item name="indexField" xsi:type="string">optimizer_id</item>
-                    <item name="sortOrder" xsi:type="number">60</item>
+                    <item name="sortOrder" xsi:type="number">70</item>
                 </item>
             </argument>
         </actionsColumn>
