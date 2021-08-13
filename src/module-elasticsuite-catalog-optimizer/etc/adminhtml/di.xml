@@ -51,4 +51,16 @@
             <argument name="modifierPool" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form\Modifier\Pool</argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Listing\DataProvider">
+        <arguments>
+            <argument name="addFieldStrategies" xsi:type="array">
+                <item name="boost_weight" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\AddConfigField</item>
+                <item name="search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\SearchContainerFieldManager</item>
+            </argument>
+            <argument name="addFilterStrategies" xsi:type="array">
+                <item name="search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\SearchContainerFieldManager</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
