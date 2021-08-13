@@ -45,4 +45,16 @@
     <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\OptimizerFilterInterface">
         <plugin name="optimizer_limitation_preview" type="Smile\ElasticsuiteCatalogOptimizer\Plugin\Adminhtml\OptimizerFilter"/>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Listing\DataProvider">
+        <arguments>
+            <argument name="addFieldStrategies" xsi:type="array">
+                <item name="boost_weight" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\AddConfigField</item>
+                <item name="search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\SearchContainerFieldManager</item>
+            </argument>
+            <argument name="addFilterStrategies" xsi:type="array">
+                <item name="search_container" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Ui\DataProvider\SearchContainerFieldManager</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
