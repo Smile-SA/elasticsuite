@@ -35,11 +35,11 @@ class BoostWeight extends Column
     protected $serializer;
 
     /**
-     * @param ContextInterface $context
-     * @param UiComponentFactory $uiComponentFactory
-     * @param SerializerInterface $serializer
-     * @param array $components
-     * @param array $data
+     * @param ContextInterface    $context            Context.
+     * @param UiComponentFactory  $uiComponentFactory UI Component factory.
+     * @param SerializerInterface $serializer         Serializer.
+     * @param array               $components         Components.
+     * @param array               $data               Data.
      */
     public function __construct(
         ContextInterface $context,
@@ -55,16 +55,16 @@ class BoostWeight extends Column
     /**
      * Prepare Data Source
      *
-     * @param array $dataSource
+     * @param array $dataSource Data source.
      * @return array
      */
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {
-            foreach ($dataSource['data']['items'] as & $item) {
+            foreach ($dataSource['data']['items'] as &$item) {
                 $config = $this->serializer->unserialize($item['config']);
-                $item[$this->getData('name')] = $config['constant_score_value'] ?
-                    ($config['constant_score_value'] . '%') : '';
+                $value  = $config['constant_score_value'] ? ($config['constant_score_value'] . '%') : '';
+                $item[$this->getData('name')] = $value;
             }
         }
 

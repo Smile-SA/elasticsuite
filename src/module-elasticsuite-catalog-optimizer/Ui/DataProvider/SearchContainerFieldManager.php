@@ -33,7 +33,7 @@ class SearchContainerFieldManager implements AddFieldToCollectionInterface, AddF
 
     /**
      * AddSearchContainerFieldToCollection constructor.
-     * @param ResourceConnection $resource
+     * @param ResourceConnection $resource Resource connection.
      */
     public function __construct(ResourceConnection $resource)
     {
