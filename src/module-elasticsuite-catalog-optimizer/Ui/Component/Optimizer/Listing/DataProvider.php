@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Listing;
 
 use Magento\Ui\DataProvider\AbstractDataProvider;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory;
 
 /**
  * Data Provider for UI components based on Sellers
