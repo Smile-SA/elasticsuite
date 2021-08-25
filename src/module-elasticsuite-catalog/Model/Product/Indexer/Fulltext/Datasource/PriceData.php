@@ -49,18 +49,18 @@ class PriceData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ProductRepository $productRepository Product Repository
-     * @param ResourceModel $resourceModel Resource model
-     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
+     * @param ProductRepository                    $productRepository   Product Repository
+     * @param ResourceModel                        $resourceModel       Resource model
+     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool     Price modifiers pool.
      */
     public function __construct(
         ProductRepository $productRepository,
         ResourceModel $resourceModel,
         $priceReaderPool = []
     ) {
-        $this->productRepository = $productRepository;
-        $this->resourceModel = $resourceModel;
-        $this->priceReaderPool = $priceReaderPool;
+        $this->productRepository    = $productRepository;
+        $this->resourceModel        = $resourceModel;
+        $this->priceReaderPool      = $priceReaderPool;
     }
 
     /**
@@ -96,8 +96,7 @@ class PriceData implements DatasourceInterface
 
                 if (isset($children)) {
                     foreach ($children as $child) {
-                        if ($child->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getAmount()->getValue()
-                            < $child->getPriceInfo()->getPrice(RegularPrice::PRICE_CODE)->getAmount()->getValue()) {
+                        if ($child->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getAmount()->getValue() < $child->getPriceInfo()->getPrice(RegularPrice::PRICE_CODE)->getAmount()->getValue()) {
                             $isDiscount = true;
                             break;
                         }
