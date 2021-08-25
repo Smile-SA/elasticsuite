@@ -68,6 +68,7 @@ class PriceData implements DatasourceInterface
      *
      * {@inheritdoc}
      * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function addData($storeId, array $indexData)
     {
