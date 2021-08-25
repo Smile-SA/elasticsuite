@@ -49,7 +49,7 @@ class PriceData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ProductRepository $productRepository
+     * @param ProductRepository $productRepository Product Repository
      * @param ResourceModel $resourceModel Resource model
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
      */
