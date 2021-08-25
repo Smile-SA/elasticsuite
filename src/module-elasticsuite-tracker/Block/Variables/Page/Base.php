@@ -77,19 +77,6 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
     }
 
     /**
-     * Get telemetry variables.
-     *
-     * @return array
-     */
-    private function getPageInformation()
-    {
-        return [
-            'locale' => $this->localeResolver->getLocale(),
-            'domain' => $_SERVER['SERVER_NAME'],
-        ];
-    }
-
-    /**
      * List of the page type data
      *
      * @return array
@@ -134,6 +121,21 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
         }
 
         return $this->getData('page_type_label');
+    }
+
+    /**
+     * Get telemetry variables.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
+     * @return array
+     */
+    private function getPageInformation()
+    {
+        return [
+            'locale' => $this->localeResolver->getLocale(),
+            'domain' => $_SERVER['SERVER_NAME'],
+        ];
     }
 
     /**

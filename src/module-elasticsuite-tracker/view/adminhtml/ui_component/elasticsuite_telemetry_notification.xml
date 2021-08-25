@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Pierre Gauthier <pierre.gauthier@smile.fr>
+ * @copyright 2021 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">elasticsuite_telemetry_notification.elasticsuite_telemetry_notification_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Elasticsuite Telemetry Notification</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <namespace>elasticsuite_telemetry_notification</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>elasticsuite_telemetry_notification.elasticsuite_telemetry_notification_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="elasticsuite_telemetry_notification_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="data" xsi:type="array">
+                        <item name="validateNotificationAction" xsi:type="url" path="elasticsuite/config/validateNotification/notification_code/elasticsuite_telemetry"/>
+                    </item>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <dataProvider class="Smile\ElasticsuiteTracker\Ui\DataProvider\TelemetryUsageNotificationDataProvider" name="elasticsuite_telemetry_notification_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <modal name="elasticsuite_telemetry_modal" component="Smile_ElasticsuiteTracker/js/modal/component">
+        <settings>
+            <state>true</state>
+            <options>
+                <option name="modalClass" xsi:type="string">elasticsuite-telemetry-notification</option>
+                <option name="title" xsi:type="string" translate="true">Help Us Improve Elasticsuite</option>
+                <option name="autoOpen" xsi:type="boolean">true</option>
+                <option name="type" xsi:type="string">popup</option>
+                <option name="clickableOverlay" xsi:type="boolean">false</option>
+                <option name="responsive" xsi:type="boolean">true</option>
+                <option name="innerScroll" xsi:type="boolean">false</option>
+                <option name="buttons" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="text" xsi:type="string" translate="true">Ok</item>
+                        <item name="class" xsi:type="string">action-primary</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="string">validateNotification</item>
+                        </item>
+                    </item>
+                </option>
+            </options>
+        </settings>
+        <fieldset name="notification_fieldset">
+            <settings>
+                <label/>
+            </settings>
+            <container name="notification_text" template="ui/form/components/complex">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string"/>
+                        <item name="additionalClasses" xsi:type="string">release-notification-text</item>
+                        <item name="text" xsi:type="string" translate="true"><![CDATA[
+                        <p>We would like to collect anonymous usage data to help us prioritize improvements and make Elasticsuite better in the future.</p>
+                        <p>You can change this at any time through <a href="../system_config/edit/section/smile_elasticsuite_tracker/#smile_elasticsuite_tracker_telemetry-link" target="_blank" tabindex="0" style="color: inherit">Stores > Configuration > Elasticsuite > Tracking</a></p>
+]]></item>
+                    </item>
+                </argument>
+            </container>
+        </fieldset>
+    </modal>
+</form>

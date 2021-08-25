@@ -46,11 +46,11 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     /**
      * PHP Constructor
      *
-     * @param \Magento\Framework\View\Element\Template\Context $context        App context
-     * @param \Magento\Framework\Json\Helper\Data              $jsonHelper     The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper  The Smile Tracker helper
-     * @param \Magento\Framework\Registry                      $registry       The Magento registry
-     * @param array                                            $data           additional datas
+     * @param \Magento\Framework\View\Element\Template\Context $context       App context
+     * @param \Magento\Framework\Json\Helper\Data              $jsonHelper    The Magento's JSON Helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data           $trackerHelper The Smile Tracker helper
+     * @param \Magento\Framework\Registry                      $registry      The Magento registry
+     * @param array                                            $data          additional datas
      */
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -66,15 +66,6 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
         $this->registry       = $registry;
     }
 
-    protected function _toHtml()
-    {
-        if (!$this->isEnabled()) {
-            return '';
-        }
-
-        return parent::_toHtml();
-    }
-
     /**
      * Check that the module is currently enabled
      *
@@ -83,6 +74,19 @@ class AbstractBlock extends \Magento\Framework\View\Element\Template
     public function isEnabled()
     {
         return $this->trackerHelper->isEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     */
+    protected function _toHtml()
+    {
+        if (!$this->isEnabled()) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 
     /**

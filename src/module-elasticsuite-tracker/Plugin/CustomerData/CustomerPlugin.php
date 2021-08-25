@@ -29,6 +29,11 @@ class CustomerPlugin
     /** @var CustomerDataTrackingManager */
     protected $customerDataTrackingManager;
 
+    /**
+     * CustomerPlugin constructor.
+     *
+     * @param CustomerDataTrackingManager $customerDataTrackingManager Customer Data Tracking Manager.
+     */
     public function __construct(
         CustomerDataTrackingManager $customerDataTrackingManager
     ) {

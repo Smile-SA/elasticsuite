@@ -49,13 +49,12 @@ class CustomerDataTrackingManager
         }
 
         $customer = $this->customerSession->getCustomer();
+        $shippingAddress = $customer->getDefaultShippingAddress();
 
         return [
             'dob' => $customer->getDob(),
             'gender' => $customer->getGender(),
-            'zipcode' => $customer->getDefaultShippingAddress()
-                ? $customer->getDefaultShippingAddress()->getPostcode()
-                : '',
+            'zipcode' => $shippingAddress ? $shippingAddress->getPostcode() : '',
         ];
     }
 }

@@ -178,7 +178,15 @@ var smileTracker = (function () {
 
             if (this.telemetryEnabled && this.telemetryTrackerSent === false) {
                 getTrackerVars.bind(this)(customerData)
-                $.post(this.telemetryUrl, this.vars);
+                console.log('send', this.vars);
+                $.ajax({
+                    url: this.telemetryUrl,
+                    data: JSON.stringify(this.vars),
+                    type: "POST",
+                    dataType: "json",
+                    crossDomain: true,
+                    contentType: 'application/json',
+                });
                 this.telemetryTrackerSent = true;
             }
         }
