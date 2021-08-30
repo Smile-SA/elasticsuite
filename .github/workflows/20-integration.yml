@@ -31,7 +31,7 @@ jobs:
         strategy:
             matrix:
                 php-versions: ['7.2', '7.3', '7.4']
-                magento-versions: ['2.3.5-p1', '2.3.5-p2', '2.3.6', '2.3.6-p1', '2.3.7']
+                magento-versions: ['2.3.5-p1', '2.3.5-p2', '2.3.6', '2.3.6-p1', '2.3.7', '2.3.7-p1']
                 magento-editions: ['community', 'enterprise']
                 exclude:
                     - php-versions: '7.2'
@@ -40,6 +40,8 @@ jobs:
                       magento-versions: '2.3.6-p1'
                     - php-versions: '7.2'
                       magento-versions: '2.3.7'
+                    - php-versions: '7.2'
+                      magento-versions: '2.3.7-p1'
                     - php-versions: '7.4'
                       magento-versions: '2.3.5-p1'
                     - php-versions: '7.4'
