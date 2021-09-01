@@ -85,7 +85,7 @@ class QueryRewrite
         $rewriteCacheKey = $requestName . '|' . $storeId . '|' . md5(json_encode($queryText));
 
         if (!isset($this->rewritesCache[$rewriteCacheKey])) {
-            $rewrites     = $this->getWeightedRewrites($queryText, $containerConfig);
+            $rewrites     = $this->getWeightedRewrites($queryText, $containerConfig, $boost);
             // Set base query as SPELLING_TYPE_EXACT if synonyms/expansions are found.
             $spellingType = empty($rewrites) ? $spellingType : SpellcheckerInterface::SPELLING_TYPE_EXACT;
             $query        = $proceed($containerConfig, $queryText, $spellingType, $boost);
@@ -113,10 +113,11 @@ class QueryRewrite
      *
      * @param string|array                    $queryText       The query text
      * @param ContainerConfigurationInterface $containerConfig Container Configuration
+     * @param float                           $originalBoost   Original boost of the query
      *
      * @return array
      */
-    private function getWeightedRewrites($queryText, $containerConfig)
+    private function getWeightedRewrites($queryText, $containerConfig, $originalBoost)
     {
         $rewrites = [];
 
@@ -125,7 +126,10 @@ class QueryRewrite
         }
 
         foreach ($queryText as $currentQueryText) {
-            $rewrites = array_merge($rewrites, $this->index->getQueryRewrites($containerConfig, $currentQueryText));
+            $rewrites = array_merge(
+                $rewrites,
+                $this->index->getQueryRewrites($containerConfig, $currentQueryText, $originalBoost)
+            );
         }
 
         return $rewrites;
