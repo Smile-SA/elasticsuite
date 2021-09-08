@@ -24,4 +24,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Version\Controller\Index\Index">
+        <plugin name="elasticsuiteVersionPlugin" type="Smile\ElasticsuiteCore\Plugin\Controller\Version\IndexPlugin"/>
+    </type>
 </config>
