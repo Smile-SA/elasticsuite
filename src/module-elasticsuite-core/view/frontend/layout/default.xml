@@ -27,5 +27,8 @@
                 </arguments>
             </block>
         </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="elasticsuite_footer" template="Smile_ElasticsuiteCore::footer.phtml" />
+        </referenceContainer>
     </body>
 </page>
