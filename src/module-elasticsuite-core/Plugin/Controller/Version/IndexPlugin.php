@@ -31,12 +31,20 @@ class IndexPlugin
     private $productMetadata;
 
     /**
+     * @var \Magento\Framework\App\Response\HttpFactory
+     */
+    private $httpFactory;
+
+    /**
      * @param \Smile\ElasticsuiteCore\Model\ProductMetadata $productMetadata Product Metadata
+     * @param \Magento\Framework\App\Response\HttpFactory   $httpFactory     HTTP Factory
      */
     public function __construct(
-        ProductMetadata $productMetadata
+        ProductMetadata $productMetadata,
+        \Magento\Framework\App\Response\HttpFactory $httpFactory
     ) {
         $this->productMetadata = $productMetadata;
+        $this->httpFactory     = $httpFactory;
     }
 
     /**
@@ -45,21 +53,27 @@ class IndexPlugin
      * @param \Magento\Version\Controller\Index\Index                         $subject The legacy controller
      * @param \Magento\Framework\Controller\ResultInterface|ResponseInterface $result  The legacy result
      *
-     * @return void
+     * @return \Magento\Framework\Controller\ResultInterface|ResponseInterface
      */
     public function afterExecute(\Magento\Version\Controller\Index\Index $subject, $result)
     {
-        try {
-            $response = $subject->getResponse();
-            $content  = $response->getBody() .
-                " with " .
-                $this->productMetadata->getName() . '/' .
-                $this->productMetadata->getVersion() .
-                ' (' . $this->productMetadata->getEdition() . ')';
+        if ((method_exists($result, 'setContents')) && (method_exists($result, 'renderResult'))) {
+            try {
+                $dummyResponse = $this->httpFactory->create();
+                $result->renderResult($dummyResponse);
 
-            $response->setBody($content);
-        } catch (\Exception $exception) {
-            ; // Do nothing, we don't want to break legacy Magento here.
+                $content = $dummyResponse->getBody() .
+                    " with " .
+                    $this->productMetadata->getName() . '/' .
+                    $this->productMetadata->getVersion() .
+                    ' (' . $this->productMetadata->getEdition() . ')';
+
+                $result->setContents($content);
+            } catch (\Exception $exception) {
+                ; // Do nothing, we don't want to break legacy Magento here.
+            }
         }
+
+        return $result;
     }
 }
