@@ -20,7 +20,7 @@
         <smile_elasticsuite_tracker>
             <general>
                 <enabled>1</enabled>
-                <retention_delay>365</retention_delay>
+                <retention_delay>12</retention_delay>
             </general>
             <session>
                 <visit_cookie_name>STUID</visit_cookie_name>

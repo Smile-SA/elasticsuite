@@ -76,7 +76,8 @@ class EventIndex implements EventIndexInterface
 
         foreach ($events as $event) {
             if (isset($event['page']['store_id'])) {
-                $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $event['date']);
+                $date = substr($event['date'], 0, 7);
+                $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $date);
                 if ($index !== null) {
                     $event = $this->mappingEnforcer->enforce($index, $event);
                     $indices[$index->getName()] = $index;

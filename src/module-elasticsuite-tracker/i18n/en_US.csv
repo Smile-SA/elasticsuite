@@ -12,3 +12,4 @@ Enabled,Enabled
 "Anonymize customer data after a delay.","Anonymize customer data after a delay."
 "Anonymization Delay","Anonymization Delay"
 "In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay.","In day (default is 365 days).<br /> Tracked customer related data will be anonymized after this delay."
+"In months (default is 12 months.).<br /> Tracking data older than this will be removed each day.","In months (default is 12 months.).<br /> Tracking data older than this will be removed each day."

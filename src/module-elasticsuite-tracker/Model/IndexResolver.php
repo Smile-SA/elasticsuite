@@ -63,21 +63,24 @@ class IndexResolver
      * @param int    $storeId         Store id.
      * @param string $date            Date.
      *
-     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
+     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface|null
      */
     public function getIndex($indexIdentifier, $storeId, $date)
     {
         $indexName = $indexIdentifier;
 
         try {
-            $indexAlias = $this->indexManager->getIndexAlias($indexIdentifier, $storeId);
             $indexName  = $this->indexManager->getIndexName($indexIdentifier, $storeId, $date);
 
             if (!isset($this->indices[$indexName])) {
-                $indexSettings = $this->indexSettings->getIndicesConfig();
-                $indexConfig = array_merge(['identifier' => $indexAlias, 'name' => $indexName], $indexSettings[$indexIdentifier]);
-                $this->indices[$indexName] = $this->indexFactory->create($indexConfig);
-                $this->indexManager->createIndexIfNotExists($this->indices[$indexName], $storeId);
+                $index = $this->indexManager->getIndex($indexIdentifier, $storeId, $date);
+                if ($index instanceof \Smile\ElasticsuiteCore\Api\Index\IndexInterface) {
+                    $this->indices[$index->getName()] = $index;
+                }
+
+                if ($index === null) {
+                    $this->indices[$indexName] = null;
+                }
             }
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             $this->indices[$indexName] = null;
