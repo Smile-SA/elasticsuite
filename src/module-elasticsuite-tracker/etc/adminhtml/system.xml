@@ -29,7 +29,7 @@
                 <field id="retention_delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Retention delay</label>
                     <validate>integer validate-greater-than-zero</validate>
-                    <comment><![CDATA[In days (default is 30 days.).<br /> Tracking data older than this will be removed each day.]]></comment>
+                    <comment><![CDATA[In months (default is 12 months.).<br /> Tracking data older than this will be removed each day.]]></comment>
                     <depends>
                         <field id="enabled">1</field>
                     </depends>

@@ -266,6 +266,25 @@ class IndexOperation implements IndexOperationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function reindex(
+        array $sourceIndices,
+        string $destIndex,
+        array $bodyParams = [],
+        array $sourceParams = [],
+        array $destParams = []
+    ): array {
+        $params = [
+            'source' => array_merge(['index' => $sourceIndices], $sourceParams),
+            'dest'   => array_merge(['index' => $destIndex], $destParams),
+        ];
+        $params = array_merge($params, $bodyParams);
+
+        return $this->client->reindex(['body' => $params]);
+    }
+
+    /**
      * Init the index object.
      *
      * @param string                                                $indexIdentifier An index indentifier.
