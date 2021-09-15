@@ -209,4 +209,12 @@ class Client implements ClientInterface
     {
         return $this->esClient->termvectors($params);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reindex(array $params): array
+    {
+        return $this->esClient->reindex($params);
+    }
 }

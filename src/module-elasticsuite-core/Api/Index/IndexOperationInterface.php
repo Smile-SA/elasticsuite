@@ -118,4 +118,23 @@ interface IndexOperationInterface
      * @return void
      */
     public function proceedIndexInstall($indexName, $indexAlias);
+
+    /**
+     * Copies documents from a source to a destination, the source can be any existing index, alias, or data stream.
+     *
+     * @param array  $sourceIndices Source indices
+     * @param string $destIndex     Dest index.
+     * @param array  $bodyParams    Body params.
+     * @param array  $sourceParams  Extra source params.
+     * @param array  $destParams    Extra dest params.
+     *
+     * @return array
+     */
+    public function reindex(
+        array $sourceIndices,
+        string $destIndex,
+        array $bodyParams = [],
+        array $sourceParams = [],
+        array $destParams = []
+    ): array;
 }
