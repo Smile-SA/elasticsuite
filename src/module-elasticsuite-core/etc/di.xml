@@ -167,12 +167,14 @@
             <argument name="factories" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">bucketSelectorPipelineFactory</item>
                 <item name="movingFunctionPipeline" xsi:type="object">movingFunctionPipelineFactory</item>
+                <item name="maxBucketPipeline" xsi:type="object">maxBucketPipelineFactory</item>
             </argument>
         </arguments>
     </type>
 
     <virtualType name="bucketSelectorPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\BucketSelectorFactory" />
     <virtualType name="movingFunctionPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MovingFunctionFactory" />
+    <virtualType name="maxBucketPipelineFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MaxBucketFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder">
         <arguments>
@@ -187,6 +189,7 @@
             <argument name="pipelineBuilders" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector\Proxy</item>
                 <item name="movingFunctionPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\MovingFunction\Proxy</item>
+                <item name="maxBucketPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\MaxBucket\Proxy</item>
             </argument>
         </arguments>
     </type>
