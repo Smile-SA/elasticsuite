@@ -136,6 +136,8 @@ class AggregationFactory
     /**
      * Parse a bucket and returns metrics.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param array $rawValue Bucket data.
      *
      * @return mixed
@@ -147,6 +149,9 @@ class AggregationFactory
         foreach ($rawValue as $metricName => $value) {
             if (!is_array($value) || !isset($value['buckets'])) {
                 $metricName = $metricName == 'doc_count' ? 'count' : $metricName;
+                if (is_array($value) && isset($value['keys'])) {
+                    $metrics[$metricName . '_keys'] = $value['keys'];
+                }
                 if (is_array($value) && isset($value['value_as_string'])) {
                     $value = $value['value_as_string'];
                 } elseif (is_array($value) && isset($value['value'])) {
