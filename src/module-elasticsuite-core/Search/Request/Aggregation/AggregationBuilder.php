@@ -92,6 +92,8 @@ class AggregationBuilder
     /**
      * Build a single aggregation.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param ContainerConfigurationInterface $containerConfig Search request configuration
      * @param array                           $filters         Facet filters to be added to buckets.
      * @param array                           $bucketParams    Current bucket params.
@@ -107,7 +109,11 @@ class AggregationBuilder
         try {
             $field = $containerConfig->getMapping()->getField($fieldName);
             $bucketParams['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);
-            if ($field->isNested()) {
+            if ($field->isNested()
+                && (!isset($bucketParams['unsetNestedPath'])
+                    || filter_var($bucketParams['unsetNestedPath'], FILTER_VALIDATE_BOOLEAN) === false
+                )
+            ) {
                 $bucketParams['nestedPath'] = $field->getNestedPath();
             } elseif (isset($bucketParams['nestedPath'])) {
                 unset($bucketParams['nestedPath']);
