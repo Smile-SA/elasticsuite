@@ -584,6 +584,32 @@ class CatalogSetup
     }
 
     /**
+     * Add "is_display_rel_nofollow" column to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addIsDisplayRelNofollowColumn(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_display_rel_nofollow' into the db.
+        $connection->addColumn(
+            $table,
+            'is_display_rel_nofollow',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => '0',
+                'comment'  => 'Boolean logic to use for displaying rel="nofollow" attribute for all filter links of current attribute',
+                'after'    => 'facet_boolean_logic',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *
