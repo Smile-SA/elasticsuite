@@ -30,7 +30,7 @@ jobs:
 
         strategy:
             matrix:
-                php-versions: ['7.3', '7.4']
+                php-versions: ['7.4']
                 magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3']
                 magento-editions: ['community', 'enterprise']
 
