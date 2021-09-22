@@ -16,5 +16,10 @@ var config = {
         '*': {
             rangeSlider: 'Smile_ElasticsuiteCatalog/js/range-slider-widget'
         }
+    },
+    shim: {
+        'Smile_ElasticsuiteCatalog/js/jquery.ui.touch-punch.min': {
+            deps: ['jquery/ui']
+        }
     }
 };
