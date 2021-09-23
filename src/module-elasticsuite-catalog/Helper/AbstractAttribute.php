@@ -298,7 +298,12 @@ abstract class AbstractAttribute extends Mapping
     {
         $field = $attribute->getAttributeCode();
 
-        if ($this->usesSource($attribute->getId())) {
+        // Do not use self::usesSource($attributeId) here.
+        // This method is called in layered navigation with an already loaded attribute.
+        // Going through $this->usesSource() would cause a reload of this unique attribute.
+        // In layered navigation context, all filterable attributes goes through this, it would cause a huge overload.
+        // Let's stick with the legacy usesSource() of attribute object.
+        if ($attribute->usesSource()) {
             $field = $this->getOptionTextFieldName($field);
         }
 
