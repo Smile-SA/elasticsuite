@@ -34,8 +34,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
 
     /**
      * Object Cache of getMaxPosition results
-     * @see self::getMaxPosition()
      * @var int[]
+     * @see self::getMaxPosition()
      */
     private $maxPosition = [];
 
@@ -167,7 +167,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
      */
     private function getMaxPosition()
     {
-        $categoryId = (int)$this->category->getId();
+        $categoryId = (int) $this->category->getId();
 
         if (!isset($this->maxPosition[$categoryId])) {
             $fullTableName = $this->getResource()->getTable(self::CATEGORY_FILTER_CONFIG_TABLE);
@@ -176,7 +176,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
                 ->columns(['category_max_position' => new \Zend_Db_Expr('MAX(position)')])
                 ->where($this->getConnection()->quoteInto('entity_id = ?', $categoryId));
 
-            $this->maxPosition[$categoryId] = (int)$this->getConnection()->fetchOne($categoryPositionSelect);
+            $this->maxPosition[$categoryId] = (int) $this->getConnection()->fetchOne($categoryPositionSelect);
         }
 
         return $this->maxPosition[$categoryId];
