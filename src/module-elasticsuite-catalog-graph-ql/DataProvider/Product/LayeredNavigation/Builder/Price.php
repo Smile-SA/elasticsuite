@@ -82,6 +82,7 @@ class Price implements LayerBuilderInterface
         }
 
         $result['has_more'] = false;
+        $result['rel_nofollow'] = false;
 
         return ['price' => $result];
     }

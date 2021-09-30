@@ -115,6 +115,7 @@ class Attribute implements LayerBuilderInterface
             $result[$attributeCode] = $this->layerFormatter->buildLayer($label, $count, $attributeCode);
             $result[$attributeCode]['options']  = $options;
             $result[$attributeCode]['has_more'] = $hasMore;
+            $result[$attributeCode]['rel_nofollow'] = (bool) $attribute->getIsDisplayRelNofollow();
 
             if ($attributeCode !== 'attribute_set_id' &&
                 $attribute->getFacetSortOrder() == ElasticBucketInterface::SORT_ORDER_MANUAL) {
