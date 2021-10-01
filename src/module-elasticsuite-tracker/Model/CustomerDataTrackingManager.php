@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteTracker\Model;
 
+use DateTime;
 use Magento\Customer\Model\Session as CustomerSession;
 
 /**
@@ -51,8 +52,11 @@ class CustomerDataTrackingManager
         $customer = $this->customerSession->getCustomer();
         $shippingAddress = $customer->getDefaultShippingAddress();
 
+        $dob = new DateTime($customer->getDob());
+        $now = new DateTime();
+
         return [
-            'dob' => $customer->getDob(),
+            'age' => (int) $now->format('Y') - (int) $dob->format('Y'),
             'gender' => $customer->getGender(),
             'zipcode' => $shippingAddress ? $shippingAddress->getPostcode() : '',
         ];
