@@ -178,7 +178,6 @@ var smileTracker = (function () {
 
             if (this.telemetryEnabled && this.telemetryTrackerSent === false) {
                 getTrackerVars.bind(this)(customerData)
-                console.log('send', this.vars);
                 $.ajax({
                     url: this.telemetryUrl,
                     data: JSON.stringify(this.vars),
@@ -270,6 +269,13 @@ var smileTracker = (function () {
                         sendTag.bind(this)(data, $);
                     }.bind(this));
                     sendTag.bind(this)(customer(), $);
+
+                    // In order to discriminate logged customer to unlogged customer, we need to force reload
+                    // the customer section once to always have a least the data_id
+                    if (!window.localStorage.getItem('smile_elasticsuite_reset_customer')) {
+                        window.localStorage.setItem('smile_elasticsuite_reset_customer', true);
+                        customerData.reload(['customer']);
+                    }
                 }.bind(this));
             }.bind(this)
         );
