@@ -101,14 +101,14 @@
             <argument name="filterList" xsi:type="object">searchFilterList</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Controller\Navigation\Filter\Ajax">
         <arguments>
             <argument name="filterListPool" xsi:type="array">
                 <item name="category" xsi:type="object">categoryFilterList</item>
                 <item name="search" xsi:type="object">searchFilterList</item>
-            </argument> 
-        </arguments> 
+            </argument>
+        </arguments>
     </type>
 
     <type name="Magento\Search\Model\Autocomplete">
@@ -120,13 +120,13 @@
             </argument>
         </arguments>
     </type>
- 
+
     <virtualType name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
             <argument name="searchRequestName" xsi:type="string">catalog_product_autocomplete</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection\Provider" shared="true">
         <arguments>
             <argument name="collection" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection</argument>
@@ -183,7 +183,7 @@
     <type name="Magento\CatalogSearch\Controller\Result\Index">
         <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Helper\Autocomplete">
         <arguments>
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
@@ -231,4 +231,9 @@
             </argument>
         </arguments>
     </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface">
+        <plugin name="layered_nav_attributes_replace_filter_field"
+                type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
+    </type>
 </config>

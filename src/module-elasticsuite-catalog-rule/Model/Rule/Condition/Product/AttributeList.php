@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 
 /**
  * List of attributes used in query building.
@@ -76,15 +77,21 @@ class AttributeList
     private $requestFieldMapper;
 
     /**
+     * @var LayeredNavAttributesProvider
+     */
+    private $layeredNavAttributesProvider;
+
+    /**
      * Constructor.
      *
-     * @param AttributeCollectionFactory $attributeCollectionFactory Product attribute collection factory.
-     * @param StoreManagerInterface      $storeManager               Store manager.
-     * @param IndexOperationInterface    $indexManager               Search engine index manager.
-     * @param MappingHelper              $mappingHelper              Mapping helper.
-     * @param RequestFieldMapper         $requestFieldMapper         Search request field mapper.
-     * @param string                     $indexName                  Search engine index name.
-     * @param string                     $typeName                   Search engine type name.
+     * @param AttributeCollectionFactory   $attributeCollectionFactory   Product attribute collection factory.
+     * @param StoreManagerInterface        $storeManager                 Store manager.
+     * @param IndexOperationInterface      $indexManager                 Search engine index manager.
+     * @param MappingHelper                $mappingHelper                Mapping helper.
+     * @param RequestFieldMapper           $requestFieldMapper           Search request field mapper.
+     * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered navigation attributes provider.
+     * @param string                       $indexName                    Search engine index name.
+     * @param string                       $typeName                     Search engine type name.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
@@ -92,16 +99,18 @@ class AttributeList
         IndexOperationInterface $indexManager,
         MappingHelper $mappingHelper,
         RequestFieldMapper $requestFieldMapper,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $indexName = 'catalog_product',
         $typeName = 'product'
     ) {
-        $this->attributeCollectionFactory = $attributeCollectionFactory;
-        $this->storeManager               = $storeManager;
-        $this->indexManager               = $indexManager;
-        $this->mappingHelper              = $mappingHelper;
-        $this->requestFieldMapper         = $requestFieldMapper;
-        $this->indexName                  = $indexName;
-        $this->typeName                   = $typeName;
+        $this->attributeCollectionFactory   = $attributeCollectionFactory;
+        $this->storeManager                 = $storeManager;
+        $this->indexManager                 = $indexManager;
+        $this->mappingHelper                = $mappingHelper;
+        $this->requestFieldMapper           = $requestFieldMapper;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
+        $this->indexName                    = $indexName;
+        $this->typeName                     = $typeName;
     }
 
     /**
@@ -129,6 +138,13 @@ class AttributeList
 
             $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames)
                  ->addFieldToFilter('backend_type', ['neq' => 'datetime']);
+
+            if (!empty($this->layeredNavAttributesProvider->getList())) {
+                $this->attributeCollection->addFieldToFilter(
+                    'attribute_code',
+                    ['nin' => array_keys($this->layeredNavAttributesProvider->getList())]
+                );
+            }
         }
 
         return $this->attributeCollection;

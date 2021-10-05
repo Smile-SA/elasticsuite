@@ -13,6 +13,16 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
+use Magento\Catalog\Model\Layer\Filter\ItemFactory;
+use Magento\Framework\Escaper;
+use Magento\Framework\Filter\StripTags;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalog\Api\LayeredNavAttributeInterface;
+use Smile\ElasticsuiteCatalog\Helper\ProductAttribute;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
+
 /**
  * Product boolean filter implementation.
  *
@@ -23,18 +33,64 @@ namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 class Boolean extends Attribute
 {
     /**
+     * @var LayeredNavAttributesProvider
+     */
+    protected $layeredNavAttributesProvider;
+
+    /**
+     * Boolean Constructor.
+     *
+     * @param ItemFactory                  $filterItemFactory            Factory for item of the facets.
+     * @param StoreManagerInterface        $storeManager                 Store manager.
+     * @param Layer                        $layer                        Catalog product layer.
+     * @param DataBuilder                  $itemDataBuilder              Item data builder.
+     * @param StripTags                    $tagFilter                    String HTML tags filter.
+     * @param Escaper                      $escaper                      Html Escaper.
+     * @param ProductAttribute             $mappingHelper                Mapping helper.
+     * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered navigation attributes Provider.
+     * @param array                        $data                         Custom data.
+     */
+    public function __construct(
+        ItemFactory $filterItemFactory,
+        StoreManagerInterface $storeManager,
+        Layer $layer,
+        DataBuilder $itemDataBuilder,
+        StripTags $tagFilter,
+        Escaper $escaper,
+        ProductAttribute $mappingHelper,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
+        array $data = []
+    ) {
+        parent::__construct(
+            $filterItemFactory,
+            $storeManager,
+            $layer,
+            $itemDataBuilder,
+            $tagFilter,
+            $escaper,
+            $mappingHelper,
+            $data
+        );
+
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function apply(\Magento\Framework\App\RequestInterface $request)
     {
-        $attributeValue = (bool) $request->getParam($this->_requestVar);
+        $attributeValue = $request->getParam($this->_requestVar);
 
-        if (!empty($attributeValue)) {
+        if ($attributeValue !== null) {
             if (!is_array($attributeValue)) {
                 $attributeValue = [$attributeValue];
             }
-
             $this->currentFilterValue = $attributeValue;
+
+            $attributeValue = array_map(function ($value) {
+                return (bool) $value;
+            }, $attributeValue);
 
             /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
             $productCollection = $this->getLayer()->getProductCollection();
@@ -42,15 +98,14 @@ class Boolean extends Attribute
             $productCollection->addFieldToFilter($this->getFilterField(), $attributeValue);
             $layerState = $this->getLayer()->getState();
 
-            $booleanFilterLabels = [];
             foreach ($this->currentFilterValue as $currentFilter) {
-                $booleanFilterLabels[] = (string) $this->getAttributeModel()->getSource()->getOptionText((int) $currentFilter);
+                $filter = $this->_createItem(
+                    $this->getAttributeModel()->getSource()->getOptionText((int) $currentFilter),
+                    $this->currentFilterValue
+                );
+                $filter->setRawValue($currentFilter);
+                $layerState->addFilter($filter);
             }
-            $filterLabel = implode(', ', $booleanFilterLabels);
-
-            $filter = $this->_createItem($filterLabel, $this->currentFilterValue);
-
-            $layerState->addFilter($filter);
         }
 
         return $this;
@@ -69,7 +124,14 @@ class Boolean extends Attribute
      */
     protected function getFilterField()
     {
-        return $this->getAttributeModel()->getAttributeCode();
+        $field = $this->getAttributeModel()->getAttributeCode();
+
+        $layeredNavAttribute = $this->layeredNavAttributesProvider->getLayeredNavAttribute($field);
+        if ($layeredNavAttribute instanceof LayeredNavAttributeInterface) {
+            $field = $layeredNavAttribute->getFilterField();
+        }
+
+        return $field;
     }
 
     /**
@@ -85,7 +147,9 @@ class Boolean extends Attribute
         foreach ($this->_items as $item) {
             $applyValue = $item->getLabel();
 
-            if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
+            if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES
+                || $item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_NO
+            ) {
                 if (is_numeric($item->getLabel())) {
                     $label = $this->getAttributeModel()->getSource()->getOptionText((int) $item->getLabel());
                     $item->setLabel((string) $label);

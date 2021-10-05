@@ -14,8 +14,10 @@
 namespace Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier;
 
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterDisplayMode;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\ModifierInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory as CoverageProviderFactory;
+use Smile\ElasticsuiteCore\Search\Request\Builder as SearchRequestBuilder;
 
 /**
  * Coverage Modifier for filterable attributes provider.
@@ -37,17 +39,25 @@ class Coverage implements ModifierInterface
     private $coverageProviderFactory;
 
     /**
+     * @var LayeredNavAttributesProvider
+     */
+    protected $layeredNavAttributesProvider;
+
+    /**
      * Coverage constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Builder                             $coverageRequestBuilder  Coverage Request builder.
-     * @param \Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\ProviderFactory $coverageProviderFactory Coverage provider factory.
+     * @param SearchRequestBuilder         $coverageRequestBuilder       Coverage Request builder.
+     * @param CoverageProviderFactory      $coverageProviderFactory      Coverage provider factory.
+     * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered navigation attributes provider.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Builder $coverageRequestBuilder,
-        CoverageProviderFactory $coverageProviderFactory
+        SearchRequestBuilder $coverageRequestBuilder,
+        CoverageProviderFactory $coverageProviderFactory,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider
     ) {
-        $this->coverageRequestBuilder  = $coverageRequestBuilder;
-        $this->coverageProviderFactory = $coverageProviderFactory;
+        $this->coverageRequestBuilder    = $coverageRequestBuilder;
+        $this->coverageProviderFactory   = $coverageProviderFactory;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
     }
 
     /**
@@ -68,7 +78,11 @@ class Coverage implements ModifierInterface
                 $attributeCode   = $attribute->getAttributeCode();
                 $minCoverageRate = $attribute->getFacetMinCoverageRate();
 
-                $isRelevant   = isset($coverageRates[$attributeCode]) && ($coverageRates[$attributeCode] >= $minCoverageRate);
+                $isRelevant = true;
+                if (!$this->layeredNavAttributesProvider->isLayeredNavAttribute($attributeCode)) {
+                    $isRelevant   = isset($coverageRates[$attributeCode]) && ($coverageRates[$attributeCode] >= $minCoverageRate);
+                }
+
                 $forceDisplay = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_DISPLAYED;
                 $isHidden     = $attribute->getFacetDisplayMode() == FilterDisplayMode::ALWAYS_HIDDEN;
 
