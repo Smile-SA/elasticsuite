@@ -156,7 +156,7 @@ var smileTracker = (function () {
     }
 
     function getCustomerDataCodeToTrack() {
-        return ['age', 'gender', 'zipcode'];
+        return ['age', 'gender', 'zipcode', 'state', 'country'];
     }
 
     function setTrackerStyle(imgNode) {

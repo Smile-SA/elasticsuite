@@ -59,6 +59,8 @@ class CustomerDataTrackingManager
             'age' => (int) $now->format('Y') - (int) $dob->format('Y'),
             'gender' => $customer->getGender(),
             'zipcode' => $shippingAddress ? $shippingAddress->getPostcode() : '',
+            'state' => $shippingAddress ? $shippingAddress->getRegion() : '',
+            'country' => $shippingAddress ? $shippingAddress->getCountry() : '',
         ];
     }
 }
