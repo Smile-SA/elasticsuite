@@ -28,6 +28,7 @@ class Mapper
      */
     private $fieldNameMapping = [
         'category_ids' => 'category.category_id',
+        'category_id' => 'category.category_id',
         'position' => 'category.position',
         'price' => 'price.price',
     ];
