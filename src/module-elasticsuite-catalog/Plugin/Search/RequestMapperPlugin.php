@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCatalog\Api\SpecialAttributeInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\SpecialAttributesProvider;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
@@ -21,6 +23,8 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Apply catalog product settings to the search API request mapper.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
@@ -67,6 +71,11 @@ class RequestMapperPlugin
     private $requestFieldMapper;
 
     /**
+     * @var SpecialAttributesProvider
+     */
+    protected $specialAttributesProvider;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Customer\Model\Session                     $customerSession         Customer session.
@@ -80,6 +89,7 @@ class RequestMapperPlugin
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext      Search context.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository Category Repository.
      * @param RequestFieldMapper                                  $requestFieldMapper Search request field mapper.
+     * @param SpecialAttributesProvider                           $specialAttributesProvider Special Attributes Provider.
      * @param array                                               $productSearchContainers Product Search containers.
      */
     public function __construct(
@@ -89,17 +99,19 @@ class RequestMapperPlugin
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
         RequestFieldMapper $requestFieldMapper,
+        SpecialAttributesProvider $specialAttributesProvider,
         $productSearchContainers = []
     ) {
-        $this->customerSession    = $customerSession;
-        $this->storeManager       = $storeManager;
-        $this->mappingHelper      = $mappingHelper;
-        $this->searchContext      = $searchContext;
-        $this->categoryRepository = $categoryRepository;
+        $this->customerSession      = $customerSession;
+        $this->storeManager         = $storeManager;
+        $this->mappingHelper        = $mappingHelper;
+        $this->searchContext        = $searchContext;
+        $this->categoryRepository   = $categoryRepository;
         if (is_array($productSearchContainers) && !empty($productSearchContainers)) {
             $this->productSearchContainers = array_merge($productSearchContainers, $this->productSearchContainers);
         }
-        $this->requestFieldMapper = $requestFieldMapper;
+        $this->requestFieldMapper   = $requestFieldMapper;
+        $this->specialAttributesProvider = $specialAttributesProvider;
     }
 
     /**
@@ -164,7 +176,7 @@ class RequestMapperPlugin
 
             foreach ($result as $fieldName => $filterValue) {
                 $fieldName = $this->getMappingField($containerConfiguration, $fieldName);
-                $filters[$fieldName] = $filterValue;
+                $filters[$fieldName] = $this->getFieldValue($containerConfiguration, $fieldName, $filterValue);
             }
 
             $result = $filters;
@@ -220,15 +232,53 @@ class RequestMapperPlugin
     {
         $fieldName = $this->requestFieldMapper->getMappedFieldName($fieldName);
 
+        $specialAttribute = $this->specialAttributesProvider->getSpecialAttribute($fieldName);
+        if ($specialAttribute instanceof SpecialAttributeInterface) {
+            return $specialAttribute->getFilterField();
+        }
+
         try {
-            $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
-            $containerConfiguration->getMapping()->getField($optionTextFieldName);
-            $fieldName = $optionTextFieldName;
+            $field = $containerConfiguration->getMapping()->getField($fieldName);
+        } catch (\Exception $e) {
+            $field = null;
+        }
+
+        try {
+            if ($field === null || $field->getType() != 'boolean') {
+                $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
+                $containerConfiguration->getMapping()->getField($optionTextFieldName);
+                $fieldName = $optionTextFieldName;
+            }
         } catch (\Exception $e) {
             ;
         }
 
         return $fieldName;
+    }
+
+    /**
+     * Get field value in the proper type.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     * @param string                          $fieldName              Field name.
+     * @param mixed                           $fieldValue             Field value.
+     *
+     * @return mixed
+     */
+    private function getFieldValue(ContainerConfigurationInterface $containerConfiguration, string $fieldName, $fieldValue)
+    {
+        try {
+            $field = $containerConfiguration->getMapping()->getField($fieldName);
+            if ($field->getType() === 'boolean' && is_array($fieldValue)) {
+                foreach ($fieldValue as &$value) {
+                    $value = (bool) $value;
+                }
+            }
+        } catch (\Exception $e) {
+            ;
+        }
+
+        return $fieldValue;
     }
 
     /**
