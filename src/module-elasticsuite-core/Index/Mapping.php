@@ -166,18 +166,24 @@ class Mapping implements MappingInterface
         }
 
         foreach ($fields as $field) {
-            $currentAnalyzer = $analyzer;
-            $canAddField     = $defaultField === null || $field->getSearchWeight() !== 1;
-
+            $canAddField = $defaultField === null || $field->getSearchWeight() !== 1;
+            $analyzers   = [];
+            
             if ($analyzer === null) {
-                $currentAnalyzer = $field->getDefaultSearchAnalyzer();
-                $canAddField     = $canAddField || ($currentAnalyzer !== FieldInterface::ANALYZER_STANDARD);
+                $analyzers   = $field->getCustomSearchAnalyzers();
+                $analyzers[] = $field->getDefaultSearchAnalyzer();
+            }
+            else {
+                $analyzers[] = $analyzer;
             }
 
-            $property = $field->getMappingProperty($currentAnalyzer);
+            foreach ($analyzers as $currentAnalyzer) {
+                $canAddField = $canAddField || ($currentAnalyzer !== FieldInterface::ANALYZER_STANDARD);               
+                $property    = $field->getMappingProperty($currentAnalyzer);
 
-            if ($property && $canAddField) {
-                $weightedFields[$property] = $boost * $field->getSearchWeight();
+                if ($property && $canAddField) {
+                    $weightedFields[$property] = $boost * $field->getSearchWeight();
+                }
             }
         }
 
