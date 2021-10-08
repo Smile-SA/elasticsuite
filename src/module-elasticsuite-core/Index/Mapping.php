@@ -187,10 +187,11 @@ class Mapping implements MappingInterface
     /**
      * Add weighted fields for each analyzer
      *
-     * @param array $analyzers
-     * @param bool $canAddField
+     * @param array          $analyzers
+     * @param bool           $canAddField
      * @param FieldInterface $field
-     * @param int $boost
+     * @param int            $boost
+     * 
      * @return array
      */
     private function addWeightedFields($analyzers, $canAddField, $field, $boost)
