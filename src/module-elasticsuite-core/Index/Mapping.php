@@ -172,7 +172,9 @@ class Mapping implements MappingInterface
             if ($analyzer === null) {
                 $analyzers   = $field->getCustomSearchAnalyzers();
                 $analyzers[] = $field->getDefaultSearchAnalyzer();
-            } else {
+            }
+
+            if ($analyzer !== null) {
                 $analyzers[] = $analyzer;
             }
 

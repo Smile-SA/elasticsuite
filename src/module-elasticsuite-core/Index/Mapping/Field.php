@@ -372,13 +372,7 @@ class Field implements FieldInterface
         if ($this->isSearchable() && $this->getSearchWeight() > 1) {
             $analyzers[] = self::ANALYZER_WHITESPACE;
             $analyzers[] = self::ANALYZER_SHINGLE;
-            $customSearchAnalyzers = $this->getCustomSearchAnalyzers();
-
-            if ($customSearchAnalyzers) {
-                foreach ($customSearchAnalyzers as $customSearchAnalyzer) {
-                    $analyzers[] = $customSearchAnalyzer;
-                }
-            }
+            $analyzers = array_merge($analyzers, $this->getCustomSearchAnalyzers());
         }
 
         if (empty($analyzers) || $this->isFilterable()) {
