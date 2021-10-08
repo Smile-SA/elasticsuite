@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCore\Index\Mapping;
 
-use Magento\Framework\Code\Generator\Io;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
