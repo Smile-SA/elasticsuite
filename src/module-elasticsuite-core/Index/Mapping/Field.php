@@ -13,7 +13,7 @@
  */
 
 namespace Smile\ElasticsuiteCore\Index\Mapping;
-xit
+
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
