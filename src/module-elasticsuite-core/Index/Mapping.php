@@ -181,10 +181,7 @@ class Mapping implements MappingInterface
             foreach ($analyzers as $currentAnalyzer) {
                 $canAddField = $canAddField || ($currentAnalyzer !== FieldInterface::ANALYZER_STANDARD);
                 $property    = $field->getMappingProperty($currentAnalyzer);
-
-                if ($property && $canAddField) {
-                    $weightedFields[$property] = $boost * $field->getSearchWeight();
-                }
+                $weightedFields[$property] = ($property && $canAddField) ? $boost * $field->getSearchWeight() : null;
             }
         }
 
