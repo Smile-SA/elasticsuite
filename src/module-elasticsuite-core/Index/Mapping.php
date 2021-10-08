@@ -178,7 +178,7 @@ class Mapping implements MappingInterface
                 $analyzers[] = $analyzer;
             }
 
-            $weightedFields = $this->addWeightedFields($analyzers, $canAddField, $field, $boost);
+            $weightedFields = array_merge($weightedFields, $this->addWeightedFields($analyzers, $canAddField, $field, $boost));
         }
 
         return $weightedFields;
