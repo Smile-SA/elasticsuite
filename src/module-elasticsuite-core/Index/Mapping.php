@@ -187,10 +187,10 @@ class Mapping implements MappingInterface
     /**
      * Add weighted fields for each analyzer
      *
-     * @param array          $analyzers
-     * @param bool           $canAddField
-     * @param FieldInterface $field
-     * @param int            $boost
+     * @param array          $analyzers   Analyzers
+     * @param bool           $canAddField Field can be added
+     * @param FieldInterface $field       Fild
+     * @param int            $boost       Boost applieds
      * 
      * @return array
      */
