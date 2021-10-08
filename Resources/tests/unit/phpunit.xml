@@ -13,22 +13,31 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" colors="true" bootstrap="./framework/bootstrap.php" backupGlobals="false">
-  <coverage includeUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">../../../src/*</directory>
-    </include>
-    <exclude>
-      <directory>../../../src/*/Test</directory>
-      <directory>../../../src/*/Setup</directory>
-      <file>../../../src/*/registration.php</file>
-    </exclude>
-  </coverage>
-  <testsuite name="ElasticSuite Unit Tests">
-    <directory suffix="Test.php">../../../src/*/Test/Unit</directory>
-  </testsuite>
-  <php>
-    <ini name="date.timezone" value="America/Los_Angeles"/>
-    <ini name="xdebug.max_nesting_level" value="200"/>
-  </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.3/phpunit.xsd"
+         colors="true"
+         bootstrap="./framework/bootstrap.php"
+         backupGlobals="false"
+        >
+
+    <testsuite name="ElasticSuite Unit Tests">
+        <directory suffix="Test.php">../../../src/*/Test/Unit</directory>
+    </testsuite>
+
+    <php>
+        <ini name="date.timezone" value="America/Los_Angeles"/>
+        <ini name="xdebug.max_nesting_level" value="200"/>
+    </php>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">../../../src/*</directory>
+            <exclude>
+                <directory>../../../src/*/Test</directory>
+                <directory>../../../src/*/Setup</directory>
+                <file>../../../src/*/registration.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
 </phpunit>
