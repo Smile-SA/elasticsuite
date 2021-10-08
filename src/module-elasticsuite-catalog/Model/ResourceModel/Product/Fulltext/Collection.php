@@ -334,14 +334,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addCategoryFilter(\Magento\Catalog\Model\Category $category)
     {
-        $categoryId = $category;
-
-        if (is_object($category)) {
-            $categoryId = $category->getId();
+        $categoryId = $category->getId();
+        if ($categoryId) {
+            $this->addFieldToFilter('category_ids', $categoryId);
+            $this->_productLimitationFilters['category_ids'] = $categoryId;
         }
-
-        $this->addFieldToFilter('category_ids', $categoryId);
-        $this->_productLimitationFilters['category_ids'] = $categoryId;
 
         return $this;
     }
