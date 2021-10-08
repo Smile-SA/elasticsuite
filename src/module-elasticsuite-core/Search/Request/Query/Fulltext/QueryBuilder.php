@@ -139,7 +139,6 @@ class QueryBuilder
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, null, $searchableFieldFilter, $defaultSearchField),
-            $this->getWeightedFields($containerConfig, 'custom', $searchableFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost),
             $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, 2 * $phraseMatchBoost)
         );

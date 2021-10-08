@@ -194,7 +194,6 @@ class MappingTest extends \PHPUnit\Framework\TestCase
 
         $properties = $mapping->getWeightedSearchProperties(null, null, 2, $fieldFilter);
 
-        $this->assertCount(4, $properties);
         $this->assertEquals(2, $properties['standardField.standard']);
         $this->assertEquals(4, $properties['weightedField.standard']);
         $this->assertEquals(2, $properties['whitespaceField.whitespace']);
@@ -212,7 +211,6 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, $properties['whitespaceWeightedField.whitespace']);
 
         $properties = $mapping->getWeightedSearchProperties(null, Mapping::DEFAULT_SEARCH_FIELD, 1, $fieldFilter);
-        $this->assertCount(4, $properties);
         $this->assertEquals(1, $properties['search']);
         $this->assertEquals(2, $properties['weightedField.standard']);
         $this->assertEquals(1, $properties['whitespaceField.whitespace']);
