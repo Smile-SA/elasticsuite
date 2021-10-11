@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteTracker web API configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Botis <botis@smile.fr>
+ * @copyright 2021 Smile
+ * @license   Licensed to Smile-SA. All rights reserved. No warranty, explicit or implicit, provided.
+ *            Unauthorized copying of this file, via any medium, is strictly prohibited.
+ */
+ -->
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+
+    <!-- Add a tracked event -->
+    <route url="/V1/elasticsuite-tracker/hit" method="POST">
+        <service class="Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface" method="hit" />
+        <resources>
+            <resource ref="anonymous" />
+        </resources>
+    </route>
+</routes>
