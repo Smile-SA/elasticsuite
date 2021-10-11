@@ -143,9 +143,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ${{ env.magento-directory }}
-                  key: ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
-                      ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                    magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
             - name: "[Init] Prepare credentials"
               if: ${{env.MAGENTO_USERNAME}} != 0
