@@ -20,6 +20,7 @@ use Magento\Framework\Config\Data\ConfigData;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Setup\Option\SelectConfigOption;
 use Magento\Setup\Model\SearchConfigOptionsList;
+use Smile\ElasticsuiteCore\Client\ClientBuilder;
 
 /**
  * Handle ES parameters during setup.
@@ -34,6 +35,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      * Global prefix of config in the env file.
      */
     const CONF_PREFIX = 'system/default/smile_elasticsuite_core_base_settings/es_client';
+
+    /**
+     * Elasticsearch indices parameters
+     */
+    private const INDICES_PREFIX = 'system/default/smile_elasticsuite_core_base_settings/indices_settings';
 
     /**
      * Input key for the options
@@ -52,7 +58,24 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/http_auth_pwd';
 
     /**
-     * @var \Smile\ElasticsuiteCore\Client\ClientBuilder
+     * The list indices parameters configurable in deployment tool
+     */
+    const INDICES_PARAMS_LIST = [
+        'alias'
+    ];
+
+    /**
+     * The list config parameters configurable in deployment tool
+     */
+    const CONFIG_PARAMS_LIST = [
+        'servers',
+        'enable_https_mode',
+        'http_auth_user',
+        'http_auth_pwd'
+    ];
+
+    /**
+     * @var ClientBuilder
      */
     private $clientBuilder;
 
@@ -63,22 +86,30 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         self::INPUT_KEY_ES_USER => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_USERNAME,
         self::INPUT_KEY_ES_PASS => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PASSWORD,
     ];
+    /**
+     * @var SearchConfigOptionsList
+     */
+    private $searchConfigOptionsList;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder           ES client builder.
+     * @param ClientBuilder $clientBuilder           ES client builder.
      * @param SearchConfigOptionsList                      $searchConfigOptionsList Legacy Magento options for search.
-     * @param array                                        $fallbackMapping         Fallback Mapping for configuration.
+     * @param array $fallbackMapping         Fallback Mapping for configuration.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder,
+        ClientBuilder $clientBuilder,
         SearchConfigOptionsList $searchConfigOptionsList,
-        $fallbackMapping = []
+        array $fallbackMapping = []
     ) {
         $this->clientBuilder           = $clientBuilder;
-        $this->fallbackMapping         = $fallbackMapping;
         $this->searchConfigOptionsList = $searchConfigOptionsList;
+
+        // Override the list only if a new one is passed else use the default
+        if(count($fallbackMapping) > 0) {
+            $this->fallbackMapping = $fallbackMapping ;
+        }
     }
 
     /**
@@ -113,9 +144,9 @@ class ConfigOptionsList implements ConfigOptionsListInterface
                     TextConfigOption::FRONTEND_WIZARD_TEXT,
                     self::CONFIG_PATH_ES_PASS,
                     'ElasticSearch password.'
-                ),
+                )
             ],
-            $this->searchConfigOptionsList->getOptionsList() // Legacy options are injected here to be available in validate().
+            $this->searchConfigOptionsList->getOptionsList(), // Legacy options are injected here to be available in validate().
         );
     }
 
@@ -128,7 +159,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
         $clientOptions = $this->getClientOptions($options, $deploymentConfig);
         foreach ($clientOptions as $optionName => $value) {
-            $configData->set(self::CONF_PREFIX . '/' . $optionName, $value);
+            if(in_array($optionName, self::INDICES_PARAMS_LIST)) {
+                $configData->set(self::INDICES_PREFIX . '/' . $optionName, $value);
+            } elseif (in_array($optionName, self::CONFIG_PARAMS_LIST)) {
+                $configData->set(self::CONF_PREFIX . '/' . $optionName, $value);
+            }
         }
 
         return [$configData];
@@ -167,6 +202,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
             'http_auth_user'    => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER),
             'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
+            'alias'             => (string) $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_INDEX_PREFIX),
         ];
 
         $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
@@ -204,11 +240,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      *
      * @param array            $options          Input options.
      * @param DeploymentConfig $deploymentConfig Deployment config.
-     * @param string           $inputKey         Name of the variable in the input options.
+     * @param string $inputKey         Name of the variable in the input options.
      *
      * @return mixed
      */
-    private function readConfiguration(array $options, DeploymentConfig $deploymentConfig, $inputKey)
+    private function readConfiguration(array $options, DeploymentConfig $deploymentConfig, string $inputKey)
     {
         $config = null;
         $option = $this->getOption($inputKey);
@@ -217,7 +253,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             $configPath = $option->getConfigPath($inputKey);
             $config = $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : $option->getDefault());
 
-            if (!$config && (in_array($inputKey, $this->fallbackMapping))) {
+            if (!$config && (array_key_exists($inputKey, $this->fallbackMapping))) {
                 $config = $this->readConfiguration($options, $deploymentConfig, $this->fallbackMapping[$inputKey]);
             }
         }
