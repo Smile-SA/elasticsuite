@@ -77,7 +77,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         $fallbackMapping = []
     ) {
         $this->clientBuilder           = $clientBuilder;
-        $this->fallbackMapping         = $fallbackMapping;
+        $this->fallbackMapping         = array_merge($this->fallbackMapping, $fallbackMapping);
         $this->searchConfigOptionsList = $searchConfigOptionsList;
     }
 
