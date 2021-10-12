@@ -71,7 +71,8 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         'servers',
         'enable_https_mode',
         'http_auth_user',
-        'http_auth_pwd'
+        'http_auth_pwd',
+        'enable_http_auth'
     ];
 
     /**
@@ -105,11 +106,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     ) {
         $this->clientBuilder           = $clientBuilder;
         $this->searchConfigOptionsList = $searchConfigOptionsList;
-
-        // Override the list only if a new one is passed else use the default
-        if(count($fallbackMapping) > 0) {
-            $this->fallbackMapping = $fallbackMapping ;
-        }
+        $this->fallbackMapping         = array_merge($this->fallbackMapping, $fallbackMapping);
     }
 
     /**
@@ -204,7 +201,6 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
             'alias'             => (string) $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_INDEX_PREFIX),
         ];
-
         $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
 
         return $clientOptions;
