@@ -12,7 +12,7 @@ on:
 
 jobs:
     build:
-        if: contains(github.event.pull_request.labels.*.name, 'safe to test')
+        if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
         runs-on: ubuntu-18.04
         name: 'Integration'
         services:
