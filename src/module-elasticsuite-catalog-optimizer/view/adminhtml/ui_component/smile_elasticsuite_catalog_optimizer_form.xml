@@ -372,6 +372,85 @@
             </dynamicRows>
         </fieldset>
 
+        <fieldset name="optimizer_preview_fieldset">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Preview</item>
+                    <item name="sortOrder" xsi:type="number">50</item>
+                    <item name="additionalClasses" xsi:type="string">optimizer-preview-fieldset</item>
+                </item>
+            </argument>
+
+            <field name="search_container_preview_query_text">
+                <argument name="data" xsi:type="array">
+                    <item name="options" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Containers</item>
+                    <item name="config" xsi:type="array">
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview-type</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="label" xsi:type="string" translate="true">Request type</item>
+                        <item name="formElement" xsi:type="string">select</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="dataScope" xsi:type="string">search_container_preview_query_text</item>
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">true</item>
+                        </item>
+                        <item name="imports" xsi:type="array">
+                            <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_container</item>
+                        </item>
+                        <item name="listens" xsi:type="array">
+                            <item name="${ $.provider }:data.search_container" xsi:type="string">onContainersUpdate</item>
+                        </item>
+                        <item name="displayedForValues" xsi:type="array">
+                            <item name="quick_search_container" xsi:type="string">quick_search_container</item>
+                            <item name="catalog_product_autocomplete" xsi:type="string">catalog_product_autocomplete</item>
+                        </item>
+                        <item name="additionalClasses" xsi:type="string">search-container</item>
+                    </item>
+                </argument>
+            </field>
+
+            <field name="query_text_preview">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">20</item>
+                        <item name="dataType" xsi:type="string">string</item>
+                        <item name="formElement" xsi:type="string">input</item>
+                        <item name="label" xsi:type="string" translate="true">Query Text</item>
+                        <item name="dataScope" xsi:type="string">query_text_preview</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="visible" xsi:type="boolean">true</item>
+                        <item name="additionalClasses" xsi:type="string">query-text</item>
+                    </item>
+                </argument>
+            </field>
+
+            <field name="optimizer_preview">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">100</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="formElement" xsi:type="string">text</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview</item>
+                        <item name="pageSize" xsi:type="string">20</item>
+                        <item name="searchContainerPreviewField" xsi:type="string">search_container_preview_query_text</item>
+                        <item name="isFulltext" xsi:type="boolean">true</item>
+                        <item name="refreshFields" xsi:type="array">
+                            <item name="search_container_preview_query_text" xsi:type="string">search_container_preview_query_text</item>
+                        </item>
+                        <item name="imports" xsi:type="array">
+                            <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
+                        </item>
+                        <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
+                    </item>
+                </argument>
+            </field>
+        </fieldset>
+
         <modal name="search_terms_modal">
             <settings>
                 <options>
@@ -530,6 +609,97 @@
                 </item>
             </argument>
         </field>
+
+        <fieldset name="optimizer_preview_fieldset">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Preview</item>
+                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="additionalClasses" xsi:type="string">optimizer-preview-fieldset</item>
+                </item>
+            </argument>
+
+            <field name="search_container_preview_category">
+                <argument name="data" xsi:type="array">
+                    <item name="options" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Containers</item>
+                    <item name="config" xsi:type="array">
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview-type</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="label" xsi:type="string" translate="true">Request type</item>
+                        <item name="formElement" xsi:type="string">select</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="dataScope" xsi:type="string">search_container_preview_category</item>
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">true</item>
+                        </item>
+                        <item name="imports" xsi:type="array">
+                            <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_container</item>
+                        </item>
+                        <item name="listens" xsi:type="array">
+                            <item name="${ $.provider }:data.search_container" xsi:type="string">onContainersUpdate</item>
+                        </item>
+                        <item name="displayedForValues" xsi:type="array">
+                            <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+                        </item>
+                        <item name="visible" xsi:type="boolean">false</item>
+                        <item name="additionalClasses" xsi:type="string">search-container</item>
+                    </item>
+                </argument>
+            </field>
+
+            <field name="category_preview">
+                <argument name="data" xsi:type="array">
+                    <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string" translate="true">Category Preview</item>
+                        <item name="componentType" xsi:type="string">field</item>
+                        <item name="formElement" xsi:type="string">select</item>
+                        <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                        <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                        <item name="dataScope" xsi:type="string">category_preview</item>
+                        <item name="filterOptions" xsi:type="boolean">true</item>
+                        <item name="showCheckbox" xsi:type="boolean">false</item>
+                        <item name="disableLabel" xsi:type="boolean">true</item>
+                        <item name="multiple" xsi:type="boolean">false</item>
+                        <item name="levelsVisibility" xsi:type="number">1</item>
+                        <item name="sortOrder" xsi:type="number">20</item>
+                        <item name="required" xsi:type="boolean">false</item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="listens" xsi:type="array">
+                            <item name="${ $.namespace }.${ $.namespace }:responseData" xsi:type="string">setParsed</item>
+                        </item>
+                        <item name="visible" xsi:type="boolean">true</item>
+                        <item name="additionalClasses" xsi:type="string">category</item>
+                    </item>
+                </argument>
+            </field>
+
+            <field name="optimizer_preview">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">100</item>
+                        <item name="dataType" xsi:type="string">text</item>
+                        <item name="formElement" xsi:type="string">text</item>
+                        <item name="source" xsi:type="string">optimizer</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview</item>
+                        <item name="pageSize" xsi:type="string">100</item>
+                        <item name="searchContainerPreviewField" xsi:type="string">search_container_preview_category</item>
+                        <item name="isFulltext" xsi:type="boolean">false</item>
+                        <item name="refreshFields" xsi:type="array">
+                            <item name="search_container_preview_category" xsi:type="string">search_container_preview_category</item>
+                        </item>
+                        <item name="imports" xsi:type="array">
+                            <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
+                        </item>
+                        <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
+                    </item>
+                </argument>
+            </field>
+
+        </fieldset>
     </fieldset>
 
     <fieldset name="constant_score">
@@ -684,109 +854,5 @@
                 </argument>
             </htmlContent>
         </container>
-    </fieldset>
-
-    <fieldset name="optimizer_preview_fieldset">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Preview</item>
-                <item name="sortOrder" xsi:type="number">140</item>
-                <item name="additionalClasses" xsi:type="string">optimizer-preview-fieldset</item>
-            </item>
-        </argument>
-
-        <field name="search_container_preview">
-            <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Search\Request\Product\Source\Containers</item>
-                <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview-type</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="label" xsi:type="string" translate="true">Request type</item>
-                    <item name="formElement" xsi:type="string">select</item>
-                    <item name="source" xsi:type="string">optimizer</item>
-                    <item name="dataScope" xsi:type="string">search_container_preview</item>
-                    <item name="sortOrder" xsi:type="number">10</item>
-                    <item name="validation" xsi:type="array">
-                        <item name="required-entry" xsi:type="boolean">true</item>
-                    </item>
-                    <item name="listens" xsi:type="array">
-                        <item name="${ $.provider }:data.search_container" xsi:type="string">onContainersUpdate</item>
-                    </item>
-                    <item name="additionalClasses" xsi:type="string">search-container</item>
-                </item>
-            </argument>
-        </field>
-
-        <field name="query_text_preview">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">20</item>
-                    <item name="dataType" xsi:type="string">string</item>
-                    <item name="formElement" xsi:type="string">input</item>
-                    <item name="label" xsi:type="string" translate="true">Query Text</item>
-                    <item name="dataScope" xsi:type="string">query_text_preview</item>
-                    <item name="source" xsi:type="string">optimizer</item>
-                    <item name="validation" xsi:type="array">
-                        <item name="required-entry" xsi:type="boolean">false</item>
-                    </item>
-                    <item name="visible" xsi:type="boolean">false</item>
-                    <item name="fulltext" xsi:type="boolean">true</item>
-                    <item name="depends" xsi:type="string">search_container_preview</item>
-                    <item name="additionalClasses" xsi:type="string">query-text</item>
-                </item>
-            </argument>
-        </field>
-
-        <field name="category_preview">
-            <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string" translate="true">Category Preview</item>
-                    <item name="componentType" xsi:type="string">field</item>
-                    <item name="formElement" xsi:type="string">select</item>
-                    <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
-                    <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
-                    <item name="dataScope" xsi:type="string">category_preview</item>
-                    <item name="filterOptions" xsi:type="boolean">true</item>
-                    <item name="showCheckbox" xsi:type="boolean">false</item>
-                    <item name="disableLabel" xsi:type="boolean">true</item>
-                    <item name="multiple" xsi:type="boolean">false</item>
-                    <item name="levelsVisibility" xsi:type="number">1</item>
-                    <item name="sortOrder" xsi:type="number">30</item>
-                    <item name="required" xsi:type="boolean">false</item>
-                    <item name="validation" xsi:type="array">
-                        <item name="required-entry" xsi:type="boolean">false</item>
-                    </item>
-                    <item name="listens" xsi:type="array">
-                        <item name="${ $.namespace }.${ $.namespace }:responseData" xsi:type="string">setParsed</item>
-                    </item>
-                    <item name="visible" xsi:type="boolean">false</item>
-                    <item name="fulltext" xsi:type="boolean">false</item>
-                    <item name="depends" xsi:type="string">search_container_preview</item>
-                    <item name="additionalClasses" xsi:type="string">category</item>
-                </item>
-            </argument>
-        </field>
-
-        <field name="optimizer_preview">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">100</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">text</item>
-                    <item name="source" xsi:type="string">optimizer</item>
-                    <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/optimizer-preview</item>
-                    <item name="pageSize" xsi:type="string">20</item>
-                    <item name="refreshFields" xsi:type="array">
-                        <item name="search_container_preview" xsi:type="string">search_container_preview</item>
-                    </item>
-                    <item name="imports" xsi:type="array">
-                        <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
-                    </item>
-                    <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
-                </item>
-            </argument>
-        </field>
-
     </fieldset>
 </form>
