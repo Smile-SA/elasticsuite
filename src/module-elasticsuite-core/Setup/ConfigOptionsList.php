@@ -19,7 +19,6 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Config\Data\ConfigData;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Setup\Option\SelectConfigOption;
-use Magento\Setup\Model\SearchConfigOptionsList;
 
 /**
  * Handle ES parameters during setup.
@@ -63,6 +62,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         self::INPUT_KEY_ES_USER => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_USERNAME,
         self::INPUT_KEY_ES_PASS => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PASSWORD,
     ];
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Setup\SearchConfigOptionsList
+     */
+    private $searchConfigOptionsList;
 
     /**
      * Constructor.
@@ -217,7 +221,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             $configPath = $option->getConfigPath($inputKey);
             $config = $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : $option->getDefault());
 
-            if (!$config && (in_array($inputKey, $this->fallbackMapping))) {
+            if (!$config && (array_key_exists($inputKey, $this->fallbackMapping))) {
                 $config = $this->readConfiguration($options, $deploymentConfig, $this->fallbackMapping[$inputKey]);
             }
         }
