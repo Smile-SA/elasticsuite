@@ -16,12 +16,5 @@ var config = {
         '*': {
             'Magento_Catalog/catalog/category/assign-products': 'Smile_ElasticsuiteVirtualCategory/js/component/catalog/category/form/assign-products'
         }
-    },
-    config: {
-        mixins: {
-            'Magento_PageBuilder/js/form/provider/conditions-data-processor': {
-                'Smile_ElasticsuiteVirtualCategory/js/form/provider/conditions-data-processor-mixin': true
-            }
-        }
     }
 };
