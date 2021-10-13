@@ -18,6 +18,7 @@ use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\Laye
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\LayerBuilderInterface;
 use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Api\Search\BucketInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCore\Helper\Mapping;
 
 /**
@@ -53,6 +54,11 @@ class Attribute // Not implementing the LayerBuilderInterface because it did not
     private $attributeRepository;
 
     /**
+     * @var LayeredNavAttributesProvider
+     */
+    protected $layeredNavAttributesProvider;
+
+    /**
      * @var array
      */
     private $bucketNameFilter = [
@@ -61,19 +67,22 @@ class Attribute // Not implementing the LayerBuilderInterface because it did not
     ];
 
     /**
-     * @param \Magento\Framework\ObjectManagerInterface $objectManager       Object Manager
-     * @param AttributeRepository                       $attributeRepository Attribute Repository
-     * @param array                                     $bucketNameFilter    Bucket Filter
+     * @param \Magento\Framework\ObjectManagerInterface $objectManager                Object Manager.
+     * @param AttributeRepository                       $attributeRepository          Attribute Repository.
+     * @param LayeredNavAttributesProvider              $layeredNavAttributesProvider Layered navigation attributes provider.
+     * @param array                                     $bucketNameFilter             Bucket Filter.
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         AttributeRepository $attributeRepository,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $bucketNameFilter = []
     ) {
         // Using Object Manager for BC with Magento <2.3.4.
         $this->layerFormatter      = $objectManager->get(LayerFormatter::class);
         $this->bucketNameFilter    = \array_merge($this->bucketNameFilter, $bucketNameFilter);
         $this->attributeRepository = $attributeRepository;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
     }
 
     /**
@@ -92,6 +101,7 @@ class Attribute // Not implementing the LayerBuilderInterface because it did not
             if (substr($bucketName, 0, strlen($prefix)) === $prefix) {
                 $attributeCode = substr($bucketName, strlen($prefix));
             }
+            $attributeCode = $this->layeredNavAttributesProvider->getLayeredNavAttributeByFilterField($bucketName) ?? $attributeCode;
 
             $label = $attributeCode;
             try {
