@@ -122,37 +122,6 @@
         </arguments>
     </type>
 
-    <!-- Page builder compatibility   -->
-    <type name="Magento\CatalogWidget\Block\Product\ProductsList">
-        <arguments>
-            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
-            <argument name="sqlBuilder" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Condition\ElasticsearchBuilder</argument>
-        </arguments>
-        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" />
-        <plugin name="pagebuilder_product_list" disabled="true" />
-    </type>
-
-    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory" type="Magento\CatalogWidget\Model\Rule\Condition\CombineFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Combine</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\ProductFactory" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory">
-        <arguments>
-            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Product</argument>
-        </arguments>
-    </virtualType>
-    <type name="Magento\CatalogWidget\Model\Rule">
-        <arguments>
-            <argument name="conditionsFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory</argument>
-        </arguments>
-    </type>
-    <type name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Combine">
-        <arguments>
-            <argument name="conditionFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\ProductFactory</argument>
-        </arguments>
-    </type>
-
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
