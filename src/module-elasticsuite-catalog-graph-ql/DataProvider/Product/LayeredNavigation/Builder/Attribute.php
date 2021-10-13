@@ -21,6 +21,7 @@ use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Api\Search\BucketInterface;
 use Smile\ElasticsuiteCore\Helper\Mapping;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface as ElasticBucketInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 
 /**
  * Layered Navigation Builder for Default Attribute.
@@ -42,6 +43,11 @@ class Attribute implements LayerBuilderInterface
     private $attributeRepository;
 
     /**
+     * @var LayeredNavAttributesProvider
+     */
+    protected $layeredNavAttributesProvider;
+
+    /**
      * @var array
      */
     private $bucketNameFilter = [
@@ -51,18 +57,21 @@ class Attribute implements LayerBuilderInterface
     ];
 
     /**
-     * @param LayerFormatter      $layerFormatter      Layer Formatter
-     * @param AttributeRepository $attributeRepository Attribute Repository
-     * @param array               $bucketNameFilter    Bucket Filter
+     * @param LayerFormatter               $layerFormatter               Layer Formatter.
+     * @param AttributeRepository          $attributeRepository          Attribute Repository.
+     * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered nav attributes provider.
+     * @param array                        $bucketNameFilter             Bucket Filter.
      */
     public function __construct(
         LayerFormatter $layerFormatter,
         AttributeRepository $attributeRepository,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $bucketNameFilter = []
     ) {
-        $this->layerFormatter      = $layerFormatter;
-        $this->bucketNameFilter    = \array_merge($this->bucketNameFilter, $bucketNameFilter);
-        $this->attributeRepository = $attributeRepository;
+        $this->layerFormatter               = $layerFormatter;
+        $this->bucketNameFilter             = \array_merge($this->bucketNameFilter, $bucketNameFilter);
+        $this->attributeRepository          = $attributeRepository;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
     }
 
     /**
@@ -81,6 +90,7 @@ class Attribute implements LayerBuilderInterface
             if (substr($bucketName, 0, strlen($prefix)) === $prefix) {
                 $attributeCode = substr($bucketName, strlen($prefix));
             }
+            $attributeCode = $this->layeredNavAttributesProvider->getLayeredNavAttributeByFilterField($bucketName) ?? $attributeCode;
 
             $label = $attributeCode;
             try {
