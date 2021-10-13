@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+
 /**
  * Product category filter implementation using virtual categories.
  *
@@ -43,6 +45,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                $scopeConfig         Scope config.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface               $context             Search context.
      * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider      Category Filter provider.
+     * @param RequestFieldMapper                                                $requestFieldMapper  Search request field mapper.
      * @param boolean                                                           $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                             $data                Custom data.
      */
@@ -56,6 +59,7 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
         \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider,
+        RequestFieldMapper $requestFieldMapper,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -68,19 +72,12 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $dataProviderFactory,
             $scopeConfig,
             $context,
+            $requestFieldMapper,
             $useUrlRewrites,
             $data
         );
 
         $this->filterProvider = $filterProvider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFilterField()
-    {
-        return 'categories';
     }
 
     /**
