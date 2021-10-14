@@ -12,5 +12,11 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 ?>
-<?php $esLink = '<a href="https://elasticsuite.io" rel="external" style="color:inherit">ElasticSuite</a>' ;?>
-<small class="copyright"><span><?php echo __("Search engine powered by %1", $esLink) ;?></span></small>
+<?php
+    /** @var $footerHelper \Smile\ElasticsuiteCore\Helper\FooterSettings */
+    $footerHelper = $this->helper('Smile\ElasticsuiteCore\Helper\FooterSettings');
+    $esLink = '<a href="https://elasticsuite.io" rel="nofollow" style="color:inherit">ElasticSuite</a>';
+?>
+<?php if ($footerHelper->isEsLinkEnabled()) : ?>
+    <small class="copyright"><span><?php echo __("Search engine powered by %1", $esLink); ?></span></small>
+<?php endif; ?>

@@ -66,4 +66,7 @@ Autocomplete,Autocomplete
 "Maximum number of popular search terms to display in autocomplete results.","Maximum number of popular search terms to display in autocomplete results."
 "Default Config","Default Config"
 "Search terms","Search terms"
+"Footer Settings","Footer Settings"
+"Display ElasticSuite link","Display ElasticSuite link"
+"Select Yes if you want to display an ElasticSuite copyright link in the footer.","Select Yes if you want to display an ElasticSuite copyright link in the footer."
 "Search engine powered by %1","Search engine powered by %1"
