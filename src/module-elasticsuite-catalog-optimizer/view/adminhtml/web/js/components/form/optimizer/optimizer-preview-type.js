@@ -19,6 +19,9 @@ define([
     'use strict';
 
     return Select.extend({
+        defaults: {
+            displayedForValues : {}
+        },
 
         /**
          * Component initializing
@@ -27,7 +30,7 @@ define([
          */
         initialize: function () {
             this._super();
-
+            this.onContainersUpdate(this.searchContainers);
             this.onUpdate(this.value());
             return this;
         },
@@ -61,11 +64,11 @@ define([
          * @param currentContainer A search request container
          * @returns {boolean}
          */
-        isFulltextContainer: function(currentContainer) {
+        isFulltextContainer: function (currentContainer) {
 
             var result = false;
 
-            this.options().forEach(function(container) {
+            this.options().forEach(function (container) {
                 if (currentContainer === container.value) {
                     result = (container.fulltext !== undefined) && (container.fulltext === true);
                 }
@@ -80,22 +83,25 @@ define([
          * @param searchContainers Current value of search_container field
          * @returns {void}
          */
-        onContainersUpdate: function(searchContainers) {
+        onContainersUpdate: function (searchContainers) {
             var options = [];
-
-            if (searchContainers.length === 0) {
-                this.disabled(true);
-            }
+            this.disabled(true);
 
             if (searchContainers.length > 0) {
-                this.disabled(false);
                 this.initialOptions.forEach(function (option) {
-                    if (searchContainers.indexOf(option.value) !== -1) {
-                        options.push(option);
+                    if (! _.isEmpty(this.displayedForValues)) {
+                        if (searchContainers.indexOf(option.value) !== -1
+                            && Object.values(this.displayedForValues).indexOf(option.value) !== -1
+                        ) {
+                            options.push(option);
+                        }
                     }
                 }, this);
 
                 this.options(options);
+                if (options.length > 0) {
+                    this.disabled(false);
+                }
             }
         }
     });

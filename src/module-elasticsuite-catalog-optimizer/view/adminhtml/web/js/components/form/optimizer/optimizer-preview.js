@@ -65,6 +65,11 @@ define([
 
                 var formData = this.formData;
                 formData['page_size'] = this.currentSize();
+                formData['search_container_preview'] = formData[this.searchContainerPreviewField];
+
+                if (!this.isFulltext) {
+                    formData['query_text_preview'] = null;
+                }
 
                 $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
             }.bind(this), this.maxRefreshInterval);
