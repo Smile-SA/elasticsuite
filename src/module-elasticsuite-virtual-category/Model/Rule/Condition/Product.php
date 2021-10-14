@@ -143,10 +143,20 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         $valueArray = explode(',', str_replace(' ', '', $this->getValue()));
 
         if ($this->getOperator() === '!()') {
-            $categoryIds = array_diff(
-                $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories()->getAllIds(),
-                $valueArray
-            );
+            $childrenCategories = $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories();
+
+            if (is_object($childrenCategories)) {
+                $categoryIds = array_diff(
+                    $childrenCategories->getAllIds(),
+                    $valueArray
+                );
+            } elseif (is_array($childrenCategories)) {
+                ksort($childrenCategories);
+                $categoryIds = array_diff(
+                    array_keys($childrenCategories),
+                    $valueArray
+                );
+            }
         }
         if ($this->getOperator() !== '!()') {
             $categoryIds = array_diff($valueArray, $excludedCategories);
