@@ -85,12 +85,7 @@ class RequestMapperPlugin
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository           Category Repository.
      * @param RequestFieldMapper                                  $requestFieldMapper           Search request field mapper.
      * @param LayeredNavAttributesProvider                        $layeredNavAttributesProvider Layered navigation Attributes Provider.
-     * @param \Magento\Customer\Model\Session                     $customerSession         Customer session.
-     * @param \Magento\Store\Model\StoreManagerInterface          $storeManager            Store manager.
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper           Mapping helper.
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext           Search context.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository      Category Repository.
-     * @param array                                               $productSearchContainers Product Search containers.
+     * @param array                                               $productSearchContainers      Product Search containers.
      */
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
@@ -108,7 +103,7 @@ class RequestMapperPlugin
         $this->searchContext             = $searchContext;
         $this->categoryRepository        = $categoryRepository;
         $this->requestFieldMapper        = $requestFieldMapper;
-        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
         if (is_array($productSearchContainers) && !empty($productSearchContainers)) {
             $this->productSearchContainers = array_merge($productSearchContainers, $this->productSearchContainers);
         }
