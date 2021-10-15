@@ -78,3 +78,4 @@ Status,Status
 Duplicate,Duplicate
 "Something went wrong while duplicating the optimizer.","Something went wrong while duplicating the optimizer."
 "You duplicated the optimizer.","You duplicated the optimizer."
+"Using extreme boost values complicates achieving a balance between optimizers.","Using extreme boost values complicates achieving a balance between optimizers."

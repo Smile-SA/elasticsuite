@@ -717,6 +717,7 @@
                     <item name="sortOrder" xsi:type="number">10</item>
                     <item name="dataType" xsi:type="string">string</item>
                     <item name="formElement" xsi:type="string">input</item>
+                    <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/constant_score/slider</item>
                     <item name="label" xsi:type="string" translate="true">Boost value (%)</item>
                     <item name="dataScope" xsi:type="string">config.constant_score_value</item>
                     <item name="source" xsi:type="string">optimizer</item>
@@ -729,6 +730,11 @@
                     <item name="imports" xsi:type="array">
                         <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
                     </item>
+                    <item name="sliderConfig" xsi:type="array">
+                        <item name="minValue" xsi:type="number">-99</item>
+                        <item name="maxValue" xsi:type="number">100</item>
+                    </item>
+                    <item name="additionalClasses" xsi:type="string">slider-field</item>
                 </item>
             </argument>
         </field>
