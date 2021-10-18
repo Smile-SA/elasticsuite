@@ -28,4 +28,8 @@
     <type name="\Magento\CatalogRule\Controller\Adminhtml\Promo\Widget\Chooser">
         <plugin name="category_chooser_plugin" type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ChooserPlugin"/>
     </type>
+
+    <type name="\Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid">
+        <plugin name="remove_position_column" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\RemovePosition"/>
+    </type>
 </config>
