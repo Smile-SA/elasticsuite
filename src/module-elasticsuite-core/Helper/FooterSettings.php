@@ -23,6 +23,13 @@ namespace Smile\ElasticsuiteCore\Helper;
 class FooterSettings extends AbstractConfiguration
 {
     /**
+     * Location of ElasticSuite misc settings configuration.
+     *
+     * @var string
+     */
+    const MISC_SETTINGS_XML_PREFIX = 'smile_elasticsuite_misc_settings';
+
+    /**
      * Prefix of ElasticSuite footer configuration.
      *
      * @var string
@@ -36,20 +43,20 @@ class FooterSettings extends AbstractConfiguration
      */
     public function isEsLinkEnabled(): bool
     {
-        return (bool) $this->getFooterSettingsConfigParam('enable_es_link');
+        return (bool) $this->getMiscSettingsConfigParam(self::FOOTER_SETTINGS_CONFIG_XML_PREFIX . '/' . 'enable_es_link');
     }
 
     /**
-     * Read config under the path smile_elasticsuite_core_base_settings/footer_settings.
+     * Read config under the path smile_elasticsuite_misc_settings/*.
      *
      * @param string $configField Configuration field name.
      *
      * @return mixed
      */
-    private function getFooterSettingsConfigParam(string $configField)
+    private function getMiscSettingsConfigParam(string $configField)
     {
-        $path = self::FOOTER_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
+        $path = self::MISC_SETTINGS_XML_PREFIX . '/' . $configField;
 
-        return $this->getElasticSuiteConfigParam($path);
+        return $this->scopeConfig->getValue($path);
     }
 }
