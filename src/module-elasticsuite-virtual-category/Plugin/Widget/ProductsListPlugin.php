@@ -74,6 +74,7 @@ class ProductsListPlugin
     {
         $storeId = $this->storeManager->getStore()->getId();
         $subject->setData('store_id', $storeId);
+
         return [];
     }
 
