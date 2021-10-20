@@ -1,0 +1,10 @@
+<div class="smile-es-slider">
+    <div data-bind="text: sliderMinValue" data-role="from-label" ></div>
+    <div data-bind="text: sliderMaxValue" data-role="to-label"></div>
+    <div data-bind="attr: {id: sliderUid}, afterRender: createSlider" data-role="slider-bar"></div>
+    <div data-role="warning-slider" if="sliderNotice">
+        <span data-bind="text: messages.sliderNotice"/>
+    </div>
+</div>
+
+
