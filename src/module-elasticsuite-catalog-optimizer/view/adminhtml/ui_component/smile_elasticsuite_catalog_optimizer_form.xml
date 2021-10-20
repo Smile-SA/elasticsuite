@@ -192,6 +192,23 @@
                 </item>
             </argument>
         </field>
+        <container name="optimizer_rule_container">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">80</item>
+                </item>
+            </argument>
+            <htmlContent name="rule_condition">
+                <argument name="block" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\RuleCondition</argument>
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="sortOrder" xsi:type="number">10</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogRule/js/component/catalog/product/form/rule</item>
+                        <item name="dataScope" xsi:type="string">rule_condition</item>
+                    </item>
+                </argument>
+            </htmlContent>
+        </container>
     </fieldset>
 
     <fieldset name="quick_search_container">
@@ -445,6 +462,7 @@
                         <item name="imports" xsi:type="array">
                             <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
                         </item>
+                        <item name="searchInput" xsi:type="string">query_text_preview</item>
                         <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
                     </item>
                 </argument>
@@ -694,6 +712,7 @@
                         <item name="imports" xsi:type="array">
                             <item name="searchContainers" xsi:type="string">${ $.provider }:data.search_containers</item>
                         </item>
+                        <item name="searchInput" xsi:type="string">category_preview</item>
                         <item name="additionalClasses" xsi:type="string">optimizer-preview</item>
                     </item>
                 </argument>
@@ -705,9 +724,15 @@
     <fieldset name="constant_score">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Configuration</item>
+                <item name="label" xsi:type="string" translate="true"><![CDATA[Boost & Bury]]></item>
                 <item name="sortOrder" xsi:type="number">80</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
+                <item name="imports" xsi:type="array">
+                    <item name="initValue" xsi:type="string">${ $.provider }:data.model</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="${ $.provider }:data.model" xsi:type="string">onChange</item>
+                </item>
             </item>
         </argument>
         <field name="config">
@@ -742,9 +767,15 @@
     <fieldset name="attribute_value">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Configuration</item>
+                <item name="label" xsi:type="string" translate="true"><![CDATA[Boost & Bury]]></item>
                 <item name="sortOrder" xsi:type="number">100</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
+                <item name="imports" xsi:type="array">
+                    <item name="initValue" xsi:type="string">${ $.provider }:data.model</item>
+                </item>
+                <item name="listens" xsi:type="array">
+                    <item name="${ $.provider }:data.model" xsi:type="string">onChange</item>
+                </item>
             </item>
         </argument>
 
@@ -835,30 +866,5 @@
         </field>
     </fieldset>
 
-    <fieldset name="optimizer_rule_fieldset">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Apply to products</item>
-                <item name="sortOrder" xsi:type="number">120</item>
-            </item>
-        </argument>
 
-        <container name="optimizer_rule_container">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="sortOrder" xsi:type="number">20</item>
-                </item>
-            </argument>
-            <htmlContent name="rule_condition">
-                <argument name="block" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Block\Adminhtml\Optimizer\RuleCondition</argument>
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="sortOrder" xsi:type="number">10</item>
-                        <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogRule/js/component/catalog/product/form/rule</item>
-                        <item name="dataScope" xsi:type="string">rule_condition</item>
-                    </item>
-                </argument>
-            </htmlContent>
-        </container>
-    </fieldset>
 </form>

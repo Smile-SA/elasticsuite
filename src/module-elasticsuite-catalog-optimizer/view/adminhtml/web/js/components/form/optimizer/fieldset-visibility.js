@@ -14,12 +14,6 @@
 define(['Magento_Ui/js/form/components/fieldset', 'underscore'], function(Fieldset, _) {
     return Fieldset.extend({
         defaults: {
-            imports: {
-                "initValue": "${ $.provider }:data.model"
-            },
-            listens: {
-                "${ $.provider }:data.model" : "onChange"
-            },
             displayedForValues : {}
         },
         initialize: function() {
@@ -27,7 +21,7 @@ define(['Magento_Ui/js/form/components/fieldset', 'underscore'], function(Fields
             this.observe(['disableChildren']);
             this.onChange(this.initValue);
         },
-        onChange: function(value)  {
+        onChange: function(value) {
 
             var isVisible = this.index == value;
 

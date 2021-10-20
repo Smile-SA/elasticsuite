@@ -103,7 +103,7 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
         $ruleConditionField = $form->addField(
             'rule_condition',
             'text',
-            ['name' => 'rule_condition', 'label' => __('Rule conditions'), 'container_id' => 'rule_condition']
+            ['name' => 'rule_condition', 'label' => __('Apply to products'), 'container_id' => 'rule_condition']
         );
 
         $ruleConditionField->setValue($rule);
