@@ -16,13 +16,13 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <section id="smile_elasticsuite_tracker" translate="label" type="text" sortOrder="910" showInDefault="1" showInWebsite="0" showInStore="0">
+        <section id="smile_elasticsuite_tracker" translate="label" type="text" sortOrder="910" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Tracking</label>
             <tab>smile_elasticsuite</tab>
             <resource>Magento_Backend::smile_elasticsuite_tracker</resource>
-            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Global Configuration</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>

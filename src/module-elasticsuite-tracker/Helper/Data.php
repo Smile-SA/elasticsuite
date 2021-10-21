@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteTracker\Helper;
 
+use Magento\Store\Model\ScopeInterface;
+
 /**
  * Smile Tracker helper
  *
@@ -109,7 +111,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function isEnabled()
     {
-        return (bool) $this->scopeConfig->getValue(self::CONFIG_IS_ENABLED_XPATH);
+        return (bool) $this->scopeConfig->getValue(self::CONFIG_IS_ENABLED_XPATH, ScopeInterface::SCOPE_WEBSITE);
     }
 
     /**
