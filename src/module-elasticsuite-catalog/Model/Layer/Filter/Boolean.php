@@ -38,7 +38,14 @@ class Boolean extends Attribute
     protected $layeredNavAttributesProvider;
 
     /**
+     * @var array
+     */
+    protected $hideNoValueAttributes;
+
+    /**
      * Boolean Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param ItemFactory                  $filterItemFactory            Factory for item of the facets.
      * @param StoreManagerInterface        $storeManager                 Store manager.
@@ -48,6 +55,7 @@ class Boolean extends Attribute
      * @param Escaper                      $escaper                      Html Escaper.
      * @param ProductAttribute             $mappingHelper                Mapping helper.
      * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered navigation attributes Provider.
+     * @param array                        $hideNoValueAttributes        Attributes for which we must hide the value no.
      * @param array                        $data                         Custom data.
      */
     public function __construct(
@@ -59,6 +67,7 @@ class Boolean extends Attribute
         Escaper $escaper,
         ProductAttribute $mappingHelper,
         LayeredNavAttributesProvider $layeredNavAttributesProvider,
+        array $hideNoValueAttributes = [],
         array $data = []
     ) {
         parent::__construct(
@@ -73,6 +82,7 @@ class Boolean extends Attribute
         );
 
         $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
+        $this->hideNoValueAttributes = $hideNoValueAttributes;
     }
 
     /**
@@ -144,7 +154,14 @@ class Boolean extends Attribute
     {
         parent::_initItems();
 
-        foreach ($this->_items as $item) {
+        foreach ($this->_items as $key => $item) {
+            if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_NO
+                && in_array($this->getAttributeModel()->getAttributeCode(), $this->hideNoValueAttributes)
+            ) {
+                unset($this->_items[$key]);
+                continue;
+            }
+
             $applyValue = $item->getLabel();
 
             if ($item->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES
