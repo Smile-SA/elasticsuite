@@ -62,7 +62,7 @@ class Autocomplete extends AbstractConfiguration
     {
         return $this->scopeConfig->getValue(
             self::AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX . "/" . $key, 
-            Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
 }
