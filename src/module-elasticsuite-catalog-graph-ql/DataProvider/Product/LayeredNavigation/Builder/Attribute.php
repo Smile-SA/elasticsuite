@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigatio
 use Magento\Catalog\Model\Product\Attribute\Repository as AttributeRepository;
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\LayerFormatter;
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\LayerBuilderInterface;
+use Magento\Eav\Api\Data\AttributeInterface;
 use Magento\Framework\Api\Search\AggregationInterface;
 use Magento\Framework\Api\Search\BucketInterface;
 use Smile\ElasticsuiteCore\Helper\Mapping;
@@ -50,6 +51,11 @@ class Attribute implements LayerBuilderInterface
     /**
      * @var array
      */
+    protected $hideNoValueAttributes;
+
+    /**
+     * @var array
+     */
     private $bucketNameFilter = [
         Price::PRICE_BUCKET,
         Category::CATEGORY_BUCKET,
@@ -59,23 +65,27 @@ class Attribute implements LayerBuilderInterface
      * @param LayerFormatter               $layerFormatter               Layer Formatter.
      * @param AttributeRepository          $attributeRepository          Attribute Repository.
      * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered nav attributes provider.
+     * @param array                        $hideNoValueAttributes        Attributes for which we must hide the value no.
      * @param array                        $bucketNameFilter             Bucket Filter.
      */
     public function __construct(
         LayerFormatter $layerFormatter,
         AttributeRepository $attributeRepository,
         LayeredNavAttributesProvider $layeredNavAttributesProvider,
+        $hideNoValueAttributes = [],
         $bucketNameFilter = []
     ) {
         $this->layerFormatter               = $layerFormatter;
         $this->bucketNameFilter             = \array_merge($this->bucketNameFilter, $bucketNameFilter);
         $this->attributeRepository          = $attributeRepository;
         $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
+        $this->hideNoValueAttributes        = $hideNoValueAttributes;
     }
 
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @throws \Zend_Db_Statement_Exception
      */
     public function build(AggregationInterface $aggregation, ?int $storeId): array
@@ -105,6 +115,7 @@ class Attribute implements LayerBuilderInterface
                 }
             } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
                 $label = $attributeCode;
+                $attribute = null;
             }
 
             $result[$attributeCode] = $this->layerFormatter->buildLayer(
@@ -114,12 +125,21 @@ class Attribute implements LayerBuilderInterface
             );
 
             foreach ($bucket->getValues() as $value) {
+                if ($this->hideBooleanNoValue($attribute, $value)) {
+                    continue;
+                }
+
                 $metrics                             = $value->getMetrics();
                 $result[$attributeCode]['options'][] = $this->layerFormatter->buildItem(
                     $attribute['options'][$value->getValue()] ?? $value->getValue(),
                     $value->getValue(),
                     $metrics['count']
                 );
+            }
+
+            if (empty($result[$attributeCode]['options'])) {
+                unset($result[$attributeCode]);
+                continue;
             }
 
             if ($attributeCode !== 'attribute_set_id' &&
@@ -132,6 +152,22 @@ class Attribute implements LayerBuilderInterface
         }
 
         return $result;
+    }
+
+    /**
+     * Check if the value "No" should be hide for boolean attributes.
+     *
+     * @param AttributeInterface|null $attribute Attribute.
+     * @param mixed                   $value     Value.
+     *
+     * @return bool
+     */
+    private function hideBooleanNoValue(?AttributeInterface $attribute, $value): bool
+    {
+        return $attribute != null
+        && $attribute->getFrontendInput() == 'boolean'
+        && $value->getValue() == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_NO
+        && in_array($attribute->getAttributeCode(), $this->hideNoValueAttributes);
     }
 
     /**
