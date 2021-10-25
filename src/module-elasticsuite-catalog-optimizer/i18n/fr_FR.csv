@@ -82,3 +82,6 @@ Duplicate,Dupliquer
 "You duplicated the optimizer.","Vous avez dupliqué l'optimiseur."
 "Using extreme boost values complicates achieving a balance between optimizers.","L'utilisation de valeurs extrêmes complique l'equilibrage des optimiseurs."
 "Boost & Bury","Booster & Déclasser"
+"Low","Bas"
+"Medium","Moyen"
+"High","Haut"
