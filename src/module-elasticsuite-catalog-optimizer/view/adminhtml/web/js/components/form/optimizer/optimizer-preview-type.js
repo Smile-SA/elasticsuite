@@ -87,7 +87,7 @@ define([
             var options = [];
             this.disabled(true);
 
-            if (searchContainers.length > 0) {
+            if (searchContainers !== undefined && searchContainers.length > 0) {
                 this.initialOptions.forEach(function (option) {
                     if (! _.isEmpty(this.displayedForValues)) {
                         if (searchContainers.indexOf(option.value) !== -1
