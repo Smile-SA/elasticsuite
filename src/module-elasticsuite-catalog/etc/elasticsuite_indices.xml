@@ -57,6 +57,7 @@
 
                 <!-- Static fields handled by the "categories" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
+                <field name="category.category_uid" type="integer" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
                 <field name="category.name" type="text" nestedPath="category">
