@@ -140,7 +140,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     {
         $categoryIds = [];
         $subQueries  = [];
-        $valueArray = explode(',', str_replace(' ', '', $this->getValue()));
+        $valueArray  = $this->getValue();
+
+        if (is_string($valueArray)) {
+            $valueArray = explode(',', str_replace(' ', '', $valueArray));
+        }
 
         if ($this->getOperator() === '!()') {
             $childrenCategories = $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories();
