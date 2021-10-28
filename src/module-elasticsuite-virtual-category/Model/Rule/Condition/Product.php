@@ -129,6 +129,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
 
     /**
      * Retrieve a query used to apply category filter rule.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param array    $excludedCategories  Category excluded from the loading (avoid infinite loop in query
      *                                      building when circular references are present).
