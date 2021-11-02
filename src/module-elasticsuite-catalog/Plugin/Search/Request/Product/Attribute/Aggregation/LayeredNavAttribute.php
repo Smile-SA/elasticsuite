@@ -10,7 +10,7 @@
  * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCAtalog\Plugin\Search\Request\Product\Attribute\Aggregation;
+namespace Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation;
 
 use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Smile\ElasticsuiteCatalog\Api\LayeredNavAttributeInterface;
