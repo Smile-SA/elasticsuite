@@ -1,0 +1,13 @@
+<div class="admin__field">
+    <div class="admin__field-label"></div>
+    <div class="admin__field-control optimizer-chart">
+        <div data-bind="attr: {id: chartRangesId}" class="chart-range">
+            <span data-role="range" target="_blank" data-range-min="0" data-range-max="10" data-range-interval="1" class="scalable action-secondary">0 &rarr; 10</span>
+            <span data-role="range" target="_blank" data-range-min="0" data-range-max="100" data-range-interval="10" class="scalable action-secondary">0 &rarr; 100</span>
+            <span data-role="range" target="_blank" data-range-min="0" data-range-max="1000" data-range-interval="100" class="scalable action-secondary">0 &rarr; 1000</span>
+        </div>
+        <div class="chart-canvas">
+            <canvas data-bind="attr: {id: chartId}, afterRender: createChart"></canvas>
+        </div>
+    </div>
+</div>

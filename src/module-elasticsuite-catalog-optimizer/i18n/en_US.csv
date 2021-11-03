@@ -77,3 +77,6 @@ Inactive,Inactive
 Status,Status
 "Using extreme boost values complicates achieving a balance between optimizers.","Using extreme boost values complicates achieving a balance between optimizers."
 "Boost & Bury","Boost & Bury"
+"Low","Low"
+"Medium","Medium"
+"High","High"

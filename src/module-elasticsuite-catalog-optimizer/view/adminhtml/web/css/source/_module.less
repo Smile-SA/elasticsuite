@@ -243,3 +243,33 @@ div.fieldset-wrapper[data-index="attribute_value"] {
         height: 15px;
     }
 }
+
+
+.admin__fieldset {
+    fieldset.optimizer-radioset-tooltip {
+        margin-bottom: 0;
+    }
+
+    > .admin__field {
+        > .admin__field-control.optimizer-chart {
+            .chart-range {
+                width: 25%;
+                display: inline-block;
+                vertical-align: top;
+                padding: 2rem 3rem;
+                [data-role=range] {
+                    display: block;
+                    cursor: pointer;
+                    color: #ffffff;
+                    margin-top: 1rem;
+                    width: 7em;
+                }
+            }
+            .chart-canvas {
+                width: 70%;
+                display: inline-block;
+                float: left;
+            }
+        }
+    }
+}
