@@ -815,34 +815,66 @@
             </formElements>
         </field>
 
-        <field name="scale_function" formElement="select" sortOrder="20">
+        <radioset name="scale_function">
             <argument name="data" xsi:type="array">
-                <item name="options" xsi:type="array">
-                    <item name="0" xsi:type="array">
-                        <item name="value" xsi:type="string">log1p</item>
-                        <item name="label" xsi:type="string" translate="true">Logarithmic</item>
-                    </item>
-                    <item name="1" xsi:type="array">
-                        <item name="value" xsi:type="string">sqrt</item>
-                        <item name="label" xsi:type="string" translate="true">Square Root</item>
-                    </item>
-                    <item name="2" xsi:type="array">
-                        <item name="value" xsi:type="string">none</item>
-                        <item name="label" xsi:type="string" translate="true">Linear</item>
-                    </item>
-                </item>
                 <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">20</item>
+                    <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/form/element/checkbox-set</item>
                     <item name="source" xsi:type="string">optimizer</item>
+                    <item name="additionalClasses" xsi:type="string">radioset-tooltip optimizer-radioset-tooltip</item>
+                    <item name="tooltips" xsi:type="array">
+                        <item name="log1p" xsi:type="string">log1p desc</item>
+                        <item name="sqrt" xsi:type="string">sqrt desc</item>
+                        <item name="none" xsi:type="string">none desc</item>
+                    </item>
                 </item>
             </argument>
             <settings>
                 <label translate="true">Scale function</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_function</dataScope>
+                <options>
+                    <option name="0" xsi:type="array">
+                        <item name="value" xsi:type="string">log1p</item>
+                        <item name="label" xsi:type="string" translate="true">Low</item>
+                    </option>
+                    <option name="1" xsi:type="array">
+                        <item name="value" xsi:type="string">sqrt</item>
+                        <item name="label" xsi:type="string" translate="true">Medium</item>
+                    </option>
+                    <option name="2" xsi:type="array">
+                        <item name="value" xsi:type="string">none</item>
+                        <item name="label" xsi:type="string" translate="true">High</item>
+                    </option>
+                </options>
             </settings>
+        </radioset>
+
+        <field name="scale_function_chart">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">30</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">text</item>
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/scale-function-chart</item>
+                    <item name="chartId" xsi:type="string">attribute_value_scale_function</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="initOptionValue" xsi:type="string">${ $.provider }:data.config.scale_function</item>
+                    </item>
+                    <item name="listens" xsi:type="array">
+                        <item name="${ $.provider }:data.config.scale_function" xsi:type="string">onScaleFunctionChange</item>
+                    </item>
+                    <item name="functions" xsi:type="array">
+                        <item name="log1p" xsi:type="string">log1p</item>
+                        <item name="sqrt" xsi:type="string">sqrt</item>
+                        <item name="none" xsi:type="string">none</item>
+                    </item>
+                </item>
+            </argument>
         </field>
 
-        <field name="scale_factor" sortOrder="30" formElement="input">
+        <field name="scale_factor" sortOrder="40" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">optimizer</item>
@@ -866,6 +898,5 @@
             </settings>
         </field>
     </fieldset>
-
 
 </form>

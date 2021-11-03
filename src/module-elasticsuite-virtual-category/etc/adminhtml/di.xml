@@ -34,4 +34,8 @@
         <plugin name="smile_elasticsuite_virtual_categories_category_staging_form_dataprovider"
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Staging\Catalog\Category\DataProviderPlugin" />
     </type>
+
+    <type name="\Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid">
+        <plugin name="remove_position_column" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\RemovePosition"/>
+    </type>
 </config>
