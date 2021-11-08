@@ -60,7 +60,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string"/>
-                <item name="sortOrder" xsi:type="number">20</item>
+                <item name="sortOrder" xsi:type="number">10</item>
             </item>
         </argument>
         <field name="optimizer_id">
@@ -726,7 +726,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true"><![CDATA[Boost & Bury]]></item>
-                <item name="sortOrder" xsi:type="number">80</item>
+                <item name="sortOrder" xsi:type="number">20</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
                 <item name="imports" xsi:type="array">
                     <item name="initValue" xsi:type="string">${ $.provider }:data.model</item>
@@ -769,7 +769,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true"><![CDATA[Boost & Bury]]></item>
-                <item name="sortOrder" xsi:type="number">100</item>
+                <item name="sortOrder" xsi:type="number">20</item>
                 <item name="component" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/fieldset-visibility</item>
                 <item name="imports" xsi:type="array">
                     <item name="initValue" xsi:type="string">${ $.provider }:data.model</item>
