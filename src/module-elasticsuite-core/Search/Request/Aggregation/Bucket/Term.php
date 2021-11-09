@@ -39,6 +39,16 @@ class Term extends AbstractBucket
     private $sortOrder;
 
     /**
+     * @var array
+     */
+    private $include;
+
+    /**
+     * @var array
+     */
+    private $exclude;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -53,6 +63,8 @@ class Term extends AbstractBucket
      * @param QueryInterface      $nestedFilter Nested filter for the bucket.
      * @param integer             $size         Bucket size.
      * @param string              $sortOrder    Bucket sort order.
+     * @param array               $include      Include bucket filter.
+     * @param array               $exclude      Exclude bucket filter.
      */
     public function __construct(
         $name,
@@ -64,12 +76,16 @@ class Term extends AbstractBucket
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
         $size = 0,
-        $sortOrder = BucketInterface::SORT_ORDER_COUNT
+        $sortOrder = BucketInterface::SORT_ORDER_COUNT,
+        $include = [],
+        $exclude = []
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 
         $this->size      = $size > 0 && $size < self::MAX_BUCKET_SIZE ? $size : self::MAX_BUCKET_SIZE;
         $this->sortOrder = $sortOrder;
+        $this->include   = $include;
+        $this->exclude   = $exclude;
     }
 
     /**
@@ -98,5 +114,25 @@ class Term extends AbstractBucket
     public function getSortOrder()
     {
         return $this->sortOrder;
+    }
+
+    /**
+     * Bucket include filter.
+     *
+     * @return array
+     */
+    public function getInclude()
+    {
+        return $this->include;
+    }
+
+    /**
+     * Bucket exclude filter.
+     *
+     * @return array
+     */
+    public function getExclude()
+    {
+        return $this->exclude;
     }
 }

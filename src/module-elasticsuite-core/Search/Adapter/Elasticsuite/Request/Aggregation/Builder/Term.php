@@ -53,6 +53,13 @@ class Term implements BuilderInterface
             $aggregation['terms']['order'] = ['termRelevance' => SortOrderInterface::SORT_DESC];
         }
 
+        if (!empty($bucket->getInclude())) {
+            $aggregation['terms']['include'] = $bucket->getInclude();
+        }
+        if (!empty($bucket->getExclude())) {
+            $aggregation['terms']['exclude'] = $bucket->getExclude();
+        }
+
         return $aggregation;
     }
 }
