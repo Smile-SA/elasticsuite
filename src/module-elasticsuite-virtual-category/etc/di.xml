@@ -147,6 +147,9 @@
             <argument name="conditionFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\ProductFactory</argument>
         </arguments>
     </type>
+    <type name="Magento\Rule\Model\ConditionFactory">
+        <plugin name="change_rule_condition_models" type="Smile\ElasticsuiteVirtualCategory\Plugin\Rule\ConditionFactoryPlugin"/>
+    </type>
 
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
