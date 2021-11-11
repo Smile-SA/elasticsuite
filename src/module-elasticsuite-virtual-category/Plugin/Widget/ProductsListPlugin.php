@@ -95,19 +95,20 @@ class ProductsListPlugin
 
         if ($subject->getData('condition_option') == 'condition' || !$subject->getData('condition_option')) {
             $conditions = $subject->getData('conditions_encoded') ?: $subject->getData('conditions');
+
             if ($conditions) {
                 $conditions = $this->conditionsHelper->decode($conditions);
-            }
-            foreach ($conditions as $condition) {
-                if (!empty($condition['attribute'])) {
-                    if ($condition['attribute'] == 'category_ids') {
-                        if (array_key_exists('value', $condition)) {
-                            $categoryId = $condition['value'];
-                            try {
-                                $category = $this->categoryRepository->get($categoryId, $storeId);
-                                $collection->addCategoryFilter($category);
-                            } catch (NoSuchEntityException $exception) {
-                                $category = null;
+                foreach ($conditions as $condition) {
+                    if (!empty($condition['attribute'])) {
+                        if ($condition['attribute'] == 'category_ids') {
+                            if (array_key_exists('value', $condition)) {
+                                $categoryId = $condition['value'];
+                                try {
+                                    $category = $this->categoryRepository->get($categoryId, $storeId);
+                                    $collection->addCategoryFilter($category);
+                                } catch (NoSuchEntityException $exception) {
+                                    $category = null;
+                                }
                             }
                         }
                     }
