@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Magento\Framework\GraphQl\Query\Uid;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData as ResourceModel;
 
@@ -28,28 +27,18 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class CategoryData implements DatasourceInterface
 {
     /**
-     * @var array
-     */
-    private $categoriesUid = [];
-
-    /**
-     * @var ResourceModel
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData
      */
     private $resourceModel;
 
     /**
-     * @var Uid
+     * Constructor.
+     *
+     * @param ResourceModel $resourceModel Resource model.
      */
-    private $uidEncoder;
-
-    /**
-     * @param ResourceModel $resourceModel Resource model
-     * @param Uid           $uidEncoder    Encodes and decodes id and uid values
-     */
-    public function __construct(ResourceModel $resourceModel, Uid $uidEncoder)
+    public function __construct(ResourceModel $resourceModel)
     {
         $this->resourceModel = $resourceModel;
-        $this->uidEncoder = $uidEncoder;
     }
 
     /**
@@ -68,10 +57,9 @@ class CategoryData implements DatasourceInterface
             $categoryDataRow = array_merge(
                 $categoryDataRow,
                 [
-                    'category_id'   => (int) $categoryDataRow['category_id'],
-                    'category_uid'  => $this->getUidFromLocalCache((int) $categoryDataRow['category_id']),
-                    'is_parent'     => (bool) $categoryDataRow['is_parent'],
-                    'name'          => (string) $categoryDataRow['name'],
+                    'category_id' => (int) $categoryDataRow['category_id'],
+                    'is_parent'   => (bool) $categoryDataRow['is_parent'],
+                    'name'        => (string) $categoryDataRow['name'],
                 ]
             );
 
@@ -87,20 +75,5 @@ class CategoryData implements DatasourceInterface
         }
 
         return $indexData;
-    }
-
-    /**
-     * Gets category uid from local cache by category id.
-     *
-     * @param int $categoryId Category id
-     * @return string
-     */
-    private function getUidFromLocalCache(int $categoryId): string
-    {
-        if (!isset($this->categoriesUid[$categoryId])) {
-            $this->categoriesUid[$categoryId] = $this->uidEncoder->encode((string) $categoryId);
-        }
-
-        return $this->categoriesUid[$categoryId];
     }
 }
