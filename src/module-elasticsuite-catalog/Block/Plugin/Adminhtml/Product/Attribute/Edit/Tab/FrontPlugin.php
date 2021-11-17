@@ -84,9 +84,9 @@ class FrontPlugin
     /**
      * Append ES specifics fields into the attribute edit store front tab.
      *
-     * @param Front    $subject The StoreFront tab
-     * @param \Closure $proceed The parent function
-     * @param Form     $form    The form
+     * @param Front $subject The StoreFront tab
+     * @param Front $result  Result
+     * @param Form  $form    The form
      *
      * @return Front
      */
