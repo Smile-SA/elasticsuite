@@ -38,5 +38,10 @@
                 <expanded_facets>3</expanded_facets>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
+        <smile_elasticsuite_attribute>
+            <slider>
+                <adaptive_slider_enabled>1</adaptive_slider_enabled>
+            </slider>
+        </smile_elasticsuite_attribute>
     </default>
 </config>

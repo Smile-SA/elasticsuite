@@ -23,6 +23,7 @@
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
                             <resource id="Magento_Backend::smile_elasticsuite_catalogsearch" title="ElasticSuite Catalog Search" />
+                            <resource id="Magento_Backend::smile_elasticsuite_attribute" title="ElasticSuite Attribute" />
                         </resource>
                     </resource>
                 </resource>
