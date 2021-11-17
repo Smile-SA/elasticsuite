@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Magento\Framework\GraphQl\Query\Uid;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData as ResourceModel;
 
@@ -38,18 +37,11 @@ class CategoryData implements DatasourceInterface
     private $resourceModel;
 
     /**
-     * @var Uid
-     */
-    private $uidEncoder;
-
-    /**
      * @param ResourceModel $resourceModel Resource model
-     * @param Uid           $uidEncoder    Encodes and decodes id and uid values
      */
-    public function __construct(ResourceModel $resourceModel, Uid $uidEncoder)
+    public function __construct(ResourceModel $resourceModel)
     {
         $this->resourceModel = $resourceModel;
-        $this->uidEncoder = $uidEncoder;
     }
 
     /**
@@ -98,7 +90,8 @@ class CategoryData implements DatasourceInterface
     private function getUidFromLocalCache(int $categoryId): string
     {
         if (!isset($this->categoriesUid[$categoryId])) {
-            $this->categoriesUid[$categoryId] = $this->uidEncoder->encode((string) $categoryId);
+            // BC : Use Magento\Framework\GraphQl\Query\Uid once we drop support for Magento 2.4.1.
+            $this->categoriesUid[$categoryId] = base64_encode((string) $categoryId);
         }
 
         return $this->categoriesUid[$categoryId];
