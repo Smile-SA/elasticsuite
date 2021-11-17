@@ -13,13 +13,12 @@
  */
 namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 
-use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal;
-
-use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\Locale\FormatInterface;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Framework\Json\EncoderInterface;
-use \Magento\Catalog\Helper\Data as CatalogHelper;
+use Magento\Framework\Locale\FormatInterface;
+use Magento\Framework\View\Element\Template\Context;
+use Smile\ElasticsuiteCatalog\Helper\Slider as CatalogSliderHelper;
+use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal;
 
 /**
  * This block handle standard decimal slider rendering.
@@ -49,24 +48,32 @@ class Slider extends AbstractRenderer
     protected $localeFormat;
 
     /**
+     * @var CatalogSliderHelper
+     */
+    protected $catalogSliderHelper;
+
+    /**
      *
-     * @param Context          $context       Template context.
-     * @param CatalogHelper    $catalogHelper Catalog helper.
-     * @param EncoderInterface $jsonEncoder   JSON Encoder.
-     * @param FormatInterface  $localeFormat  Price format config.
-     * @param array            $data          Custom data.
+     * @param Context             $context             Template context.
+     * @param CatalogHelper       $catalogHelper       Catalog helper.
+     * @param EncoderInterface    $jsonEncoder         JSON Encoder.
+     * @param FormatInterface     $localeFormat        Price format config.
+     * @param CatalogSliderHelper $catalogSliderHelper Catalog slider helper.
+     * @param array               $data                Custom data.
      */
     public function __construct(
         Context $context,
         CatalogHelper $catalogHelper,
         EncoderInterface $jsonEncoder,
         FormatInterface $localeFormat,
+        CatalogSliderHelper $catalogSliderHelper,
         array $data = []
     ) {
         parent::__construct($context, $catalogHelper, $data);
 
-        $this->jsonEncoder  = $jsonEncoder;
-        $this->localeFormat = $localeFormat;
+        $this->jsonEncoder         = $jsonEncoder;
+        $this->localeFormat        = $localeFormat;
+        $this->catalogSliderHelper = $catalogSliderHelper;
     }
 
     /**
@@ -91,6 +98,16 @@ class Slider extends AbstractRenderer
         $filter = $this->getFilter();
 
         return $this->dataRole . "-" . $filter->getRequestVar();
+    }
+
+    /**
+     * Show adaptive slider ?
+     *
+     * @return bool
+     */
+    public function showAdaptiveSlider(): bool
+    {
+        return $this->catalogSliderHelper->isAdaptiveSliderEnabled();
     }
 
     /**
@@ -128,16 +145,18 @@ class Slider extends AbstractRenderer
     protected function getConfig()
     {
         $config = [
-            'minValue'         => $this->getMinValue(),
-            'maxValue'         => $this->getMaxValue(),
-            'currentValue'     => $this->getCurrentValue(),
-            'fieldFormat'      => $this->getFieldFormat(),
-            'intervals'        => $this->getIntervals(),
-            'urlTemplate'      => $this->getUrlTemplate(),
-            'messageTemplates' => [
-                'displayOne'    => __('1 product'),
-                'displayCount'  => __('<%- count %> products'),
-                'displayEmpty'  => __('No products in the selected range.'),
+            'minValue'           => $this->getMinValue(),
+            'maxValue'           => $this->getMaxValue(),
+            'currentValue'       => $this->getCurrentValue(),
+            'fieldFormat'        => $this->getFieldFormat(),
+            'intervals'          => $this->getIntervals(),
+            'adaptiveIntervals'  => $this->getAdaptiveIntervals(),
+            'showAdaptiveSlider' => $this->showAdaptiveSlider(),
+            'urlTemplate'        => $this->getUrlTemplate(),
+            'messageTemplates'   => [
+                'displayOne'   => __('1 product'),
+                'displayCount' => __('<%- count %> products'),
+                'displayEmpty' => __('No products in the selected range.'),
             ],
         ];
 
@@ -202,6 +221,42 @@ class Slider extends AbstractRenderer
         }
 
         return $intervals;
+    }
+
+    /**
+     * Return available adaptive intervals.
+     *
+     * @return array
+     */
+    private function getAdaptiveIntervals(): array
+    {
+        $adaptiveInterval = [];
+        if (!$this->showAdaptiveSlider()) {
+            return $adaptiveInterval;
+        }
+
+        $intervals = $this->getIntervals();
+
+        $totalCount = array_sum(array_column($intervals, 'count'));
+        // Cumulative Distribution Function Value.
+        $cdfValue = 0;
+        foreach ($intervals as $interval) {
+            // We use cumulative distribution function to create the adaptive intervals.
+            $value = ($interval['count'] / $totalCount) * 100;
+            $cdfValue += $value;
+            $adaptiveInterval[] = [
+                'originalValue' => $interval['value'],
+                'value'   => $cdfValue,
+                'count' => $interval['count'],
+            ];
+        }
+
+        if (!empty($adaptiveInterval)) {
+            $maxIntervalKey = max(array_keys($adaptiveInterval));
+            $adaptiveInterval[$maxIntervalKey]['originalValue'] = $adaptiveInterval[$maxIntervalKey]['originalValue'] + 1;
+        }
+
+        return $adaptiveInterval;
     }
 
     /**
