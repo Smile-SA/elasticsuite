@@ -124,11 +124,12 @@ define([
             var datasets = [];
             var DataSetsConfig =  {
                 'ln1p': {
-                    label: $.mage.__('Low'),
+                    label: $.mage.__('Low (deprecated)'),
                     function: function (x) {
                         return Math.log(x + 1);
                     },
-                    borderColor: "rgba(43, 172, 118, 1)",
+                    borderColor: "rgba(0, 0, 0, 1)",
+                    borderDash: [1, 1],
                     data: [],
                     fill: false,
                     borderWidth: optionValue === 'ln1p' ? this.selectedBorderWidth : this.defaultBorderWidth,
