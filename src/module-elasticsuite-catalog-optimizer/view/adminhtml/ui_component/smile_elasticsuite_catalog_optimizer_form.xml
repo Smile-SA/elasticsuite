@@ -820,17 +820,19 @@
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">20</item>
                     <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/form/element/checkbox-set</item>
+                    <item name="template" xsi:type="string">Smile_ElasticsuiteCore/form/element/checkbox-set</item>
                     <item name="source" xsi:type="string">optimizer</item>
+                    <item name="description" translate="true" xsi:type="string">scale function desc</item>
                     <item name="additionalClasses" xsi:type="string">radioset-tooltip optimizer-radioset-tooltip</item>
-                    <item name="tooltips" xsi:type="array">
-                        <item name="log1p" xsi:type="string">log1p desc</item>
-                        <item name="sqrt" xsi:type="string">sqrt desc</item>
-                        <item name="none" xsi:type="string">none desc</item>
+                    <item name="optionsTooltips" xsi:type="array">
+                        <item name="log1p" translate="true" xsi:type="string">log1p desc</item>
+                        <item name="sqrt" translate="true" xsi:type="string">sqrt desc</item>
+                        <item name="none" translate="true" xsi:type="string">none desc</item>
                     </item>
                 </item>
             </argument>
             <settings>
-                <label translate="true">Scale function</label>
+                <label translate="true">Boost impact</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_function</dataScope>
                 <options>
@@ -893,7 +895,7 @@
                     <rule name="validate-number" xsi:type="boolean">true</rule>
                 </validation>
                 <tooltip>
-                    <description translate="true">Value the field will be multiplied by before applying the scale function</description>
+                    <description translate="true">Value the field will be multiplied by before potentially limiting the boost impact</description>
                 </tooltip>
             </settings>
         </field>
