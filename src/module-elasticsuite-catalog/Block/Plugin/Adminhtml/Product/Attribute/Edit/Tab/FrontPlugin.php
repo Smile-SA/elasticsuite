@@ -93,16 +93,14 @@ class FrontPlugin
     /**
      * Append ES specifics fields into the attribute edit store front tab.
      *
-     * @param Front    $subject The StoreFront tab
-     * @param \Closure $proceed The parent function
-     * @param Form     $form    The form
+     * @param Front $subject The StoreFront tab
+     * @param Front $result  Result
+     * @param Form  $form    The form
      *
      * @return Front
      */
-    public function aroundSetForm(Front $subject, \Closure $proceed, Form $form)
+    public function afterSetForm(Front $subject, Front $result, Form $form)
     {
-        $block = $proceed($form);
-
         $fieldset = $this->createFieldset($form, $subject);
 
         $this->moveOrginalFields($form);
@@ -119,7 +117,7 @@ class FrontPlugin
 
         $this->appendFieldsDependency($subject);
 
-        return $block;
+        return $result;
     }
 
     /**
