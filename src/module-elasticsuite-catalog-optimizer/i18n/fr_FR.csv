@@ -82,6 +82,7 @@ Status,Statut
 "Boost & Bury","Booster & Déclasser"
 "Boost impact","Impact du boost"
 "Low","Bas"
+"Low (deprecated)","Bas (obsolète)"
 "Medium","Moyen"
 "High","Haut"
 "scale function desc","Les optimiseurs basés sur une valeur d'attribut peuvent aisément éclipser ceux à score constant. Vous pouvez limiter l'impact du boost en réduisant la plage de valeurs initiale pour restreindre les valeurs de boost appliquées à quelque chose de raisonnable, à la fois entre les produits impactés par cet optimiseur et aussi vis-à-vis des produits uniquement boostés par d'autres optimiseurs."
