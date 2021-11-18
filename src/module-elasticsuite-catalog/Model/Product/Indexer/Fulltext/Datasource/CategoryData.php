@@ -14,7 +14,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Magento\Framework\GraphQl\Query\Uid;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\Deprecation\Uid as Deprecation;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData as ResourceModel;
 
@@ -38,18 +39,17 @@ class CategoryData implements DatasourceInterface
     private $resourceModel;
 
     /**
-     * @var Uid
+     * @var \Magento\Framework\GraphQl\Query\Uid|Deprecation
      */
     private $uidEncoder;
 
     /**
      * @param ResourceModel $resourceModel Resource model
-     * @param Uid           $uidEncoder    Encodes and decodes id and uid values
      */
-    public function __construct(ResourceModel $resourceModel, Uid $uidEncoder)
+    public function __construct(ResourceModel $resourceModel)
     {
         $this->resourceModel = $resourceModel;
-        $this->uidEncoder = $uidEncoder;
+        $this->uidEncoder = $this->getUidEncoder();
     }
 
     /**
@@ -102,5 +102,20 @@ class CategoryData implements DatasourceInterface
         }
 
         return $this->categoriesUid[$categoryId];
+    }
+
+    /**
+     * @deprecated To be removed when Magento v2.4.1 is no longer supported.
+     * @see \Magento\Framework\GraphQl\Query\Uid
+     *
+     * @return \Magento\Framework\GraphQl\Query\Uid|Deprecation
+     */
+    private function getUidEncoder()
+    {
+        return class_exists(\Magento\Framework\GraphQl\Query\Uid::class)
+            ? ObjectManager::getInstance()
+                ->get(\Magento\Framework\GraphQl\Query\Uid::class)
+            : ObjectManager::getInstance()
+                ->get(Deprecation::class);
     }
 }
