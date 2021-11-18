@@ -83,6 +83,7 @@ Duplicate,Duplicate
 "Boost & Bury","Boost & Bury"
 "Boost impact","Boost impact"
 "Low","Low"
+"Low (deprecated)","Low (deprecated)"
 "Medium","Medium"
 "High","High"
 "scale function desc","Attribute value based optimizers can easily overshadow constant score ones. You can limit the boost impact by reducing the initial range of raw source values to keep the spread of applied boosts to something reasonable, both between products impacted by this optimizer and with regard to products only boosted by other optimizers."
