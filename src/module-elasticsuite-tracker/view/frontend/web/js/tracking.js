@@ -142,7 +142,7 @@ var smileTracker = (function () {
 
         return this.baseUrl + "?" + urlParams.join('&');
     }
-    
+
     function setTrackerStyle(imgNode) {
         imgNode.setAttribute('style', 'position: absolute; top: 0; left: 0; visibility: hidden;');
     }
@@ -215,7 +215,13 @@ var smileTracker = (function () {
     };
 
     SmileTrackerImpl.prototype.sendTag = function () {
-        require(['domReady'], function(domReady) { domReady(sendTag.bind(this)); }.bind(this));
+        if (document.readyState != 'loading') {
+            sendTag.bind(this)();
+        } else {
+            document.addEventListener('DOMContentLoaded', function () {
+                sendTag.bind(this)();
+            }.bind(this));
+        }
     }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
