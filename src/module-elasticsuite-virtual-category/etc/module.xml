@@ -21,6 +21,7 @@
             <module name="Smile_ElasticsuiteCatalogRule" />
             <module name="Magento_Rule" />
             <module name="Magento_CatalogWidget" />
+            <module name="Magento_PageBuilder" />
         </sequence>
     </module>
 </config>
