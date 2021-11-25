@@ -27,6 +27,8 @@ class OptionPlugin
     /**
      * Reset the existing sort orders when applying the sort.
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param \Magento\PageBuilder\Model\Catalog\Sorting\OptionInterface $subject    Legacy sorter
      * @param \Magento\Catalog\Model\ResourceModel\Product\Collection    $collection Collection being sorted
      *
