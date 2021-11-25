@@ -159,6 +159,39 @@
         <plugin name="change_rule_condition_models" type="Smile\ElasticsuiteVirtualCategory\Plugin\Rule\ConditionFactoryPlugin"/>
     </type>
 
+    <type name="Magento\PageBuilder\Model\Catalog\Sorting\OptionInterface">
+        <plugin name="fix_page_builder_sorting" type="Smile\ElasticsuiteVirtualCategory\Plugin\PageBuilder\Catalog\Sorting\OptionPlugin"/>
+    </type>
+
+    <!-- PageBuilder Sorting -->
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\HighToLow" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Price: high to low</argument>
+            <argument name="sortDirection" xsi:type="string">desc</argument>
+            <argument name="attributeField" xsi:type="string">price</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\LowToHigh" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Price: low to high</argument>
+            <argument name="sortDirection" xsi:type="string">asc</argument>
+            <argument name="attributeField" xsi:type="string">price</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\PageBuilder\Model\Catalog\Sorting">
+        <arguments>
+            <argument name="sortClasses" xsi:type="array">
+                <item name="price_high_to_low" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\HighToLow</item>
+                <item name="price_low_to_high" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\LowToHigh</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- End PageBuilder Sorting -->
+    <!-- End PageBuilder Compatibility -->
+
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
