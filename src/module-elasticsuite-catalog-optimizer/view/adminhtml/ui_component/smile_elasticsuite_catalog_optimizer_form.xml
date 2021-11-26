@@ -834,6 +834,12 @@
                 <label translate="true">Boost impact</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_function</dataScope>
+                <imports>
+                    <link name="disabled">${ $.parentName}:disableChildren</link>
+                </imports>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
                 <options>
                     <option name="0" xsi:type="array">
                         <item name="value" xsi:type="string">log1p</item>
