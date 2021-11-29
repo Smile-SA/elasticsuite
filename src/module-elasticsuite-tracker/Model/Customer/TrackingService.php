@@ -65,7 +65,7 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
     /**
      * {@inheritDoc}
      */
-    public function hit(array $eventData): void
+    public function hit($eventData): void
     {
         $this->addEvent($eventData);
     }
