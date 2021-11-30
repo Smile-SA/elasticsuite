@@ -59,6 +59,9 @@ class Term implements BuilderInterface
         if (!empty($bucket->getExclude())) {
             $aggregation['terms']['exclude'] = $bucket->getExclude();
         }
+        if ($bucket->getMinDocCount() !== null) {
+            $aggregation['terms']['min_doc_count'] = $bucket->getMinDocCount();
+        }
 
         return $aggregation;
     }
