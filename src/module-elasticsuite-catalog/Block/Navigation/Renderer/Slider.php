@@ -107,7 +107,41 @@ class Slider extends AbstractRenderer
      */
     public function showAdaptiveSlider(): bool
     {
-        return $this->catalogSliderHelper->isAdaptiveSliderEnabled();
+        if (!$this->catalogSliderHelper->isAdaptiveSliderEnabled()) {
+            return false;
+        }
+
+        if ($this->getFilter()->getItemsCount() < CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS) {
+            return false;
+        }
+
+        $hasDispersedData = false;
+        try {
+            $layer = $this->getFilter()->getLayer();
+            $attributeModel = $this->getFilter()->getAttributeModel();
+            if ($layer && $attributeModel) {
+                $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
+                $stats = $layer->getProductCollection()->getFacetedData($facetName);
+                $stats = current($stats);
+                /* Coefficient of Variation */
+                $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
+                $hasDispersedData = ($cv > 1.0);
+                $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
+                $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
+                if ($lowerStdDevBound && $upperStdDevBound) {
+                    $hasDispersedData = (
+                        $hasDispersedData || (
+                            ($this->getMinValue() < $lowerStdDevBound)
+                            || ($this->getMaxValue() > $upperStdDevBound)
+                        )
+                    );
+                }
+            }
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            ;
+        }
+
+        return $hasDispersedData;
     }
 
     /**
