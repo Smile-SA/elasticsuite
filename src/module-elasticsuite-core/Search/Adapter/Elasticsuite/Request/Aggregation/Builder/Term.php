@@ -30,6 +30,8 @@ class Term implements BuilderInterface
     /**
      * Build the aggregation.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param BucketInterface $bucket Term bucket.
      *
      * @return array
