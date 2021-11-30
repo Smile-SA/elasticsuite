@@ -49,6 +49,11 @@ class Term extends AbstractBucket
     private $exclude;
 
     /**
+     * @var int
+     */
+    private $minDocCount;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -65,6 +70,7 @@ class Term extends AbstractBucket
      * @param string              $sortOrder    Bucket sort order.
      * @param array               $include      Include bucket filter.
      * @param array               $exclude      Exclude bucket filter.
+     * @param int                 $minDocCount  Min doc count bucket filter.
      */
     public function __construct(
         $name,
@@ -78,7 +84,8 @@ class Term extends AbstractBucket
         $size = 0,
         $sortOrder = BucketInterface::SORT_ORDER_COUNT,
         $include = [],
-        $exclude = []
+        $exclude = [],
+        $minDocCount = null
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 
@@ -86,6 +93,7 @@ class Term extends AbstractBucket
         $this->sortOrder = $sortOrder;
         $this->include   = $include;
         $this->exclude   = $exclude;
+        $this->minDocCount   = $minDocCount;
     }
 
     /**
@@ -134,5 +142,15 @@ class Term extends AbstractBucket
     public function getExclude()
     {
         return $this->exclude;
+    }
+
+    /**
+     * Bucket min doc count filter.
+     *
+     * @return int
+     */
+    public function getMinDocCount()
+    {
+        return $this->minDocCount;
     }
 }

@@ -23,6 +23,7 @@ define([
             showFallbackReset: true,
             isDifferedFromDefault: true,
             sliderNotice: false,
+            sliderInitialized: false,
             messages : {
                 sliderNotice : $.mage.__('Using extreme boost values complicates achieving a balance between optimizers.'),
             },
@@ -54,10 +55,11 @@ define([
                 max: this.sliderMaxValue(),
                 step: this.sliderStep(),
                 slide: $.proxy(function (event, ui) {
-                    this.input.val(ui.value);
+                    this.value(ui.value);
                     this.sliderNotice(false);
                 }, this),
             });
+            this.sliderInitialized = true;
         },
         initSliderValue: function () {
             this.sliderInitialValue(Number(this.sliderConfig.initialValue));
@@ -65,18 +67,17 @@ define([
             this.sliderMaxValue(Number(this.sliderConfig.maxValue));
             this.sliderStep(Number(this.sliderConfig.step));
 
-            this.input = $('#' + this.uid);
             this.slider = $('#' + this.sliderUid);
 
-            if (this.input.val() === '' || this.input.val() === undefined) {
-                this.input.val(this.sliderInitialValue());
+            if (this.value() === '' || this.value() === undefined) {
+                this.value(this.sliderInitialValue());
             } else {
-                if (this.input.val() >= this.sliderMinValue() && this.input.val() <= this.sliderMaxValue()) {
-                    this.sliderInitialValue(Number(this.input.val()));
-                } else if (this.input.val() < this.sliderMinValue()) {
+                if (this.value() >= this.sliderMinValue() && this.value() <= this.sliderMaxValue()) {
+                    this.sliderInitialValue(Number(this.value()));
+                } else if (this.value() < this.sliderMinValue()) {
                     this.sliderNotice(true);
                     this.sliderInitialValue(Number(this.sliderMinValue()));
-                } else if (this.input.val() > this.sliderMaxValue()) {
+                } else if (this.value() > this.sliderMaxValue()) {
                     this.sliderNotice(true);
                     this.sliderInitialValue(Number(this.sliderMaxValue()));
                 }
@@ -84,7 +85,7 @@ define([
         },
         onUpdate: function (value) {
             this.sliderNotice(false);
-            if (this.slider === undefined) {
+            if (this.slider === undefined || !this.sliderInitialized) {
                 return this._super();
             }
 
