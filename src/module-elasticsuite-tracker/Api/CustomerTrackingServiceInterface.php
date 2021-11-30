@@ -25,11 +25,11 @@ interface CustomerTrackingServiceInterface
     /**
      * Add a tracked event.
      *
-     * @param string[] $eventData Event data.
+     * @param mixed $eventData Event data.
      *
      * @return void
      */
-    public function hit(array $eventData): void;
+    public function hit($eventData): void;
 
     /**
      * Add a tracked event.
