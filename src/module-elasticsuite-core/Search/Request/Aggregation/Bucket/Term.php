@@ -49,7 +49,7 @@ class Term extends AbstractBucket
     private $exclude;
 
     /**
-     * @var int
+     * @var integer
      */
     private $minDocCount;
 
