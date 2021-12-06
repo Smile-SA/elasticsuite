@@ -53,6 +53,21 @@ class Slider extends AbstractRenderer
     protected $catalogSliderHelper;
 
     /**
+     * @var array
+     */
+    protected $intervals;
+
+    /**
+     * @var bool
+     */
+    protected $showAdaptiveSlider;
+
+    /**
+     * @var array
+     */
+    protected $adaptiveIntervals;
+
+    /**
      *
      * @param Context             $context             Template context.
      * @param CatalogHelper       $catalogHelper       Catalog helper.
@@ -107,41 +122,43 @@ class Slider extends AbstractRenderer
      */
     public function showAdaptiveSlider(): bool
     {
-        if (!$this->catalogSliderHelper->isAdaptiveSliderEnabled()) {
-            return false;
-        }
-
-        if ($this->getFilter()->getItemsCount() < CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS) {
-            return false;
-        }
-
-        $hasDispersedData = false;
-        try {
-            $layer = $this->getFilter()->getLayer();
-            $attributeModel = $this->getFilter()->getAttributeModel();
-            if ($layer && $attributeModel) {
-                $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
-                $stats = $layer->getProductCollection()->getFacetedData($facetName);
-                $stats = current($stats);
-                /* Coefficient of Variation */
-                $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
-                $hasDispersedData = ($cv > 1.0);
-                $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
-                $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
-                if ($lowerStdDevBound && $upperStdDevBound) {
-                    $hasDispersedData = (
-                        $hasDispersedData || (
-                            ($this->getMinValue() < $lowerStdDevBound)
-                            || ($this->getMaxValue() > $upperStdDevBound)
-                        )
-                    );
+        if (null === $this->showAdaptiveSlider) {
+            $this->showAdaptiveSlider = false;
+            if (
+                $this->catalogSliderHelper->isAdaptiveSliderEnabled()
+                && ($this->getFilter()->getItemsCount() >= CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS)
+            ) {
+                $hasDispersedData = false;
+                try {
+                    $layer = $this->getFilter()->getLayer();
+                    $attributeModel = $this->getFilter()->getAttributeModel();
+                    if ($layer && $attributeModel) {
+                        $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
+                        $stats = $layer->getProductCollection()->getFacetedData($facetName);
+                        $stats = current($stats);
+                        /* Coefficient of Variation */
+                        $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
+                        $hasDispersedData = ($cv > 1.0);
+                        $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
+                        $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
+                        if ($lowerStdDevBound && $upperStdDevBound) {
+                            $hasDispersedData = (
+                                $hasDispersedData || (
+                                    ($this->getMinValue() < $lowerStdDevBound)
+                                    || ($this->getMaxValue() > $upperStdDevBound)
+                                )
+                            );
+                        }
+                    }
+                } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    ;
                 }
+
+                $this->showAdaptiveSlider = $hasDispersedData;
             }
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            ;
         }
 
-        return $hasDispersedData;
+        return $this->showAdaptiveSlider;
     }
 
     /**
@@ -248,13 +265,15 @@ class Slider extends AbstractRenderer
      */
     private function getIntervals()
     {
-        $intervals = [];
-
-        foreach ($this->getFilter()->getItems() as $item) {
-            $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
+        if (null === $this->intervals) {
+            $intervals = [];
+            foreach ($this->getFilter()->getItems() as $item) {
+                $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
+            }
+            $this->intervals = $intervals;
         }
 
-        return $intervals;
+        return $this->intervals;
     }
 
     /**
@@ -264,37 +283,80 @@ class Slider extends AbstractRenderer
      */
     private function getAdaptiveIntervals(): array
     {
-        $adaptiveInterval = [];
-        if (!$this->showAdaptiveSlider()) {
-            return $adaptiveInterval;
+        if (null === $this->adaptiveIntervals) {
+            $this->adaptiveIntervals = [];
+            if ($this->showAdaptiveSlider()) {
+                $this->adaptiveIntervals = $this->prepareAdaptiveIntervals();
+            }
         }
 
+        return $this->adaptiveIntervals;
+    }
+
+    /**
+     * Prepare adaptive intervals.
+     *
+     * @return array
+     */
+    private function prepareAdaptiveIntervals(): array
+    {
+        $adaptiveIntervals = [];
         $intervals = $this->getIntervals();
 
         $totalCount = array_sum(array_column($intervals, 'count'));
         // Cumulative Distribution Function Value.
         $cdfValue = 0;
+        $keys = [];
+        $keyValues = [];
         foreach ($intervals as $interval) {
             // We use cumulative distribution function to create the adaptive intervals.
             $value = ($interval['count'] / $totalCount) * 100;
             $cdfValue += $value;
-            $adaptiveInterval[] = [
+            $key = (int) floor($cdfValue);
+            $keys[$key] = $key;
+            $keyValues[$key] = ['key' => $key, 'value' => $interval['value']];
+            $adaptiveIntervals[(string) $cdfValue] = [
                 'originalValue' => $interval['value'],
-                'value'   => $cdfValue,
-                'count' => $interval['count'],
+                'value'         => $cdfValue,
+                'count'         => $interval['count'],
             ];
         }
 
-        if (!empty($adaptiveInterval)) {
-            $maxIntervalKey = max(array_keys($adaptiveInterval));
-            $adaptiveInterval[] = [
-                'originalValue' => $adaptiveInterval[$maxIntervalKey]['originalValue'] + 1,
+        if (!empty($adaptiveIntervals)) {
+            $keys = array_values($keys);
+            $length = count($keyValues);
+            $missingSlots = [];
+            for ($i = 0; $i < ($length - 1); $i++) {
+                $left  = $keys[$i];
+                $right = $keys[$i+1];
+                $cdfRange   = $keyValues[$right]['key'] - $keyValues[$left]['key'];
+                $priceRange = $keyValues[$right]['value'] - $keyValues[$left]['value'];
+                $priceStep  = $priceRange / $cdfRange;
+                for ($j = 1; $j < $cdfRange; $j++) {
+                    $cdfKey = $keyValues[$left]['key'] + $j;
+                    $price  = $keyValues[$left]['value'] + ($priceStep * $j);
+                    $missingSlots[(string) $cdfKey] = [
+                        'originalValue' => $price,
+                        'value'         => $cdfKey,
+                        'count'         => 0,
+                    ];
+                }
+            }
+
+            $maxIntervalKey = (string) $cdfValue;
+            $adaptiveIntervals[(string) 101] = [
+                'originalValue' => $adaptiveIntervals[$maxIntervalKey]['originalValue'] + 1,
                 'value' => 101,
                 'count' => 0,
             ];
+            // Fill up the intermediate step.
+            $adaptiveIntervals = $adaptiveIntervals + $missingSlots;
+            ksort($adaptiveIntervals);
+
+            $adaptiveIntervals = array_values($adaptiveIntervals);
         }
 
-        return $adaptiveInterval;
+        return $adaptiveIntervals;
     }
 
     /**
