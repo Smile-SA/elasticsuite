@@ -68,7 +68,7 @@
                 <field id="adaptive_slider_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable adaptive slider</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the decimal attribute or price slider behavior changes so that the middle of the slider range corresponds to the median attribute value/price instead of the attribute value/price at the middle of the range.]]></comment>
+                    <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the price slider behavior changes so that the middle of the slider range corresponds to the median price instead of the price at the middle of the range.]]></comment>
                 </field>
             </group>
         </section>
