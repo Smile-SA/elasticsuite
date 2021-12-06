@@ -52,6 +52,9 @@ trait DecimalFilterTrait
                 $this->setCurrentValue(['from' => $fromValue, 'to' => $toValue]);
 
                 $bounds = array_filter(['gte' => $fromValue, 'lt' => $toValue]);
+                if ($fromValue === $toValue) {
+                    $bounds = array_filter(['gte' => $fromValue, 'lte' => $toValue]);
+                }
 
                 $this->getLayer()->getProductCollection()->addFieldToFilter(
                     $this->getFilterField(),
