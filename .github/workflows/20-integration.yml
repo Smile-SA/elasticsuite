@@ -31,10 +31,23 @@ jobs:
                 options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
         strategy:
+            fail-fast: false
             matrix:
                 php-versions: ['7.4']
                 magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3']
                 magento-editions: ['community', 'enterprise']
+                experimental: [false]
+                include:
+                  - php-versions: '8.0'
+                    magento-versions: '2.4.4-beta2'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.0'
+                    magento-versions: '2.4.4-beta2'
+                    magento-editions: 'enterprise'
+                    experimental: true
+
+        continue-on-error: ${{ matrix.experimental }}
 
         env:
             magento-directory: /var/www/magento
