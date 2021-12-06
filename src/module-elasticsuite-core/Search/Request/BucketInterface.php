@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -21,7 +21,7 @@ namespace Smile\ElasticsuiteCore\Search\Request;
  * - Additional methods to handle nested and filtered aggregations
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
 interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterface
@@ -31,6 +31,7 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     const TYPE_QUERY_GROUP      = 'queryGroupBucket';
     const TYPE_SIGNIFICANT_TERM = 'significantTermBucket';
     const TYPE_REVERSE_NESTED   = 'reverseNestedBucket';
+    const TYPE_METRIC           = 'metricBucket';
 
     const SORT_ORDER_COUNT     = '_count';
     const SORT_ORDER_TERM      = '_term';

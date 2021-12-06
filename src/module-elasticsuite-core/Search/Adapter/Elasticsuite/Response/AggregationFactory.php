@@ -107,26 +107,36 @@ class AggregationFactory
             $rawBucket['buckets']['__other_docs']['doc_count'] = $rawBucket['sum_other_doc_count'];
         }
 
-        foreach ($rawBucket['buckets'] as $key => $value) {
-            if (isset($value['key'])) {
-                $key = $value['key'];
-                unset($value['key']);
-            }
-
-            $valueParams = [
-                'value'        => $key,
-                'metrics'      => $this->getMetrics($value),
-                'aggregations' => $this->getSubAggregations($value),
-            ];
-
-            $subAggregationsNames = $valueParams['aggregations']->getBucketNames();
-
-            foreach (array_keys($valueParams['metrics']) as $metricName) {
-                if (in_array($metricName, $subAggregationsNames)) {
-                    unset($valueParams['metrics'][$metricName]);
+        if (array_key_exists('buckets', $rawBucket)) {
+            foreach ($rawBucket['buckets'] as $key => $value) {
+                if (isset($value['key'])) {
+                    $key = $value['key'];
+                    unset($value['key']);
                 }
-            }
 
+                $valueParams = [
+                    'value' => $key,
+                    'metrics' => $this->getMetrics($value),
+                    'aggregations' => $this->getSubAggregations($value),
+                ];
+
+                $subAggregationsNames = $valueParams['aggregations']->getBucketNames();
+
+                foreach (array_keys($valueParams['metrics']) as $metricName) {
+                    if (in_array($metricName, $subAggregationsNames)) {
+                        unset($valueParams['metrics'][$metricName]);
+                    }
+                }
+
+                $values[] = $this->valueFactory->create($valueParams);
+            }
+        } else {
+            /* Top-level metrics */
+            $valueParams = [
+                'value' => true,
+                'metrics' => $this->getMetrics($rawBucket),
+                'aggregations' => [],
+            ];
             $values[] = $this->valueFactory->create($valueParams);
         }
 
