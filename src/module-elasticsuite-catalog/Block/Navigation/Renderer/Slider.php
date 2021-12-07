@@ -13,13 +13,12 @@
  */
 namespace Smile\ElasticsuiteCatalog\Block\Navigation\Renderer;
 
-use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal;
-
-use Magento\Framework\View\Element\Template;
-use Magento\Framework\View\Element\Template\Context;
-use Magento\Framework\Locale\FormatInterface;
+use Magento\Catalog\Helper\Data as CatalogHelper;
 use Magento\Framework\Json\EncoderInterface;
-use \Magento\Catalog\Helper\Data as CatalogHelper;
+use Magento\Framework\Locale\FormatInterface;
+use Magento\Framework\View\Element\Template\Context;
+use Smile\ElasticsuiteCatalog\Helper\Slider as CatalogSliderHelper;
+use Smile\ElasticsuiteCatalog\Model\Layer\Filter\Decimal;
 
 /**
  * This block handle standard decimal slider rendering.
@@ -49,24 +48,47 @@ class Slider extends AbstractRenderer
     protected $localeFormat;
 
     /**
+     * @var CatalogSliderHelper
+     */
+    protected $catalogSliderHelper;
+
+    /**
+     * @var array
+     */
+    protected $intervals;
+
+    /**
+     * @var boolean
+     */
+    protected $showAdaptiveSlider;
+
+    /**
+     * @var array
+     */
+    protected $adaptiveIntervals;
+
+    /**
      *
-     * @param Context          $context       Template context.
-     * @param CatalogHelper    $catalogHelper Catalog helper.
-     * @param EncoderInterface $jsonEncoder   JSON Encoder.
-     * @param FormatInterface  $localeFormat  Price format config.
-     * @param array            $data          Custom data.
+     * @param Context             $context             Template context.
+     * @param CatalogHelper       $catalogHelper       Catalog helper.
+     * @param EncoderInterface    $jsonEncoder         JSON Encoder.
+     * @param FormatInterface     $localeFormat        Price format config.
+     * @param CatalogSliderHelper $catalogSliderHelper Catalog slider helper.
+     * @param array               $data                Custom data.
      */
     public function __construct(
         Context $context,
         CatalogHelper $catalogHelper,
         EncoderInterface $jsonEncoder,
         FormatInterface $localeFormat,
+        CatalogSliderHelper $catalogSliderHelper,
         array $data = []
     ) {
         parent::__construct($context, $catalogHelper, $data);
 
-        $this->jsonEncoder  = $jsonEncoder;
-        $this->localeFormat = $localeFormat;
+        $this->jsonEncoder         = $jsonEncoder;
+        $this->localeFormat        = $localeFormat;
+        $this->catalogSliderHelper = $catalogSliderHelper;
     }
 
     /**
@@ -91,6 +113,53 @@ class Slider extends AbstractRenderer
         $filter = $this->getFilter();
 
         return $this->dataRole . "-" . $filter->getRequestVar();
+    }
+
+    /**
+     * Show adaptive slider ?
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public function showAdaptiveSlider(): bool
+    {
+        if (null === $this->showAdaptiveSlider) {
+            $this->showAdaptiveSlider = false;
+            if ($this->catalogSliderHelper->isAdaptiveSliderEnabled()
+                && ($this->getFilter()->getItemsCount() >= CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS)
+            ) {
+                $hasDispersedData = false;
+                try {
+                    $layer = $this->getFilter()->getLayer();
+                    $attributeModel = $this->getFilter()->getAttributeModel();
+                    if ($layer && $attributeModel) {
+                        $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
+                        $stats = $layer->getProductCollection()->getFacetedData($facetName);
+                        $stats = current($stats);
+                        /* Coefficient of Variation */
+                        $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
+                        $hasDispersedData = ($cv > 1.0);
+                        $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
+                        $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
+                        if ($lowerStdDevBound && $upperStdDevBound) {
+                            $hasDispersedData = (
+                                $hasDispersedData || (
+                                    ($this->getMinValue() < $lowerStdDevBound)
+                                    || ($this->getMaxValue() > $upperStdDevBound)
+                                )
+                            );
+                        }
+                    }
+                } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                    ;
+                }
+
+                $this->showAdaptiveSlider = $hasDispersedData;
+            }
+        }
+
+        return $this->showAdaptiveSlider;
     }
 
     /**
@@ -128,16 +197,18 @@ class Slider extends AbstractRenderer
     protected function getConfig()
     {
         $config = [
-            'minValue'         => $this->getMinValue(),
-            'maxValue'         => $this->getMaxValue(),
-            'currentValue'     => $this->getCurrentValue(),
-            'fieldFormat'      => $this->getFieldFormat(),
-            'intervals'        => $this->getIntervals(),
-            'urlTemplate'      => $this->getUrlTemplate(),
-            'messageTemplates' => [
-                'displayOne'    => __('1 product'),
-                'displayCount'  => __('<%- count %> products'),
-                'displayEmpty'  => __('No products in the selected range.'),
+            'minValue'           => $this->getMinValue(),
+            'maxValue'           => $this->getMaxValue(),
+            'currentValue'       => $this->getCurrentValue(),
+            'fieldFormat'        => $this->getFieldFormat(),
+            'intervals'          => $this->getIntervals(),
+            'adaptiveIntervals'  => $this->getAdaptiveIntervals(),
+            'showAdaptiveSlider' => $this->showAdaptiveSlider(),
+            'urlTemplate'        => $this->getUrlTemplate(),
+            'messageTemplates'   => [
+                'displayOne'   => __('1 product'),
+                'displayCount' => __('<%- count %> products'),
+                'displayEmpty' => __('No products in the selected range.'),
             ],
         ];
 
@@ -195,13 +266,98 @@ class Slider extends AbstractRenderer
      */
     private function getIntervals()
     {
-        $intervals = [];
-
-        foreach ($this->getFilter()->getItems() as $item) {
-            $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
+        if (null === $this->intervals) {
+            $intervals = [];
+            foreach ($this->getFilter()->getItems() as $item) {
+                $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
+            }
+            $this->intervals = $intervals;
         }
 
-        return $intervals;
+        return $this->intervals;
+    }
+
+    /**
+     * Return available adaptive intervals.
+     *
+     * @return array
+     */
+    private function getAdaptiveIntervals(): array
+    {
+        if (null === $this->adaptiveIntervals) {
+            $this->adaptiveIntervals = [];
+            if ($this->showAdaptiveSlider()) {
+                $this->adaptiveIntervals = $this->prepareAdaptiveIntervals();
+            }
+        }
+
+        return $this->adaptiveIntervals;
+    }
+
+    /**
+     * Prepare adaptive intervals.
+     *
+     * @return array
+     */
+    private function prepareAdaptiveIntervals(): array
+    {
+        $adaptiveIntervals = [];
+        $intervals = $this->getIntervals();
+
+        $totalCount = array_sum(array_column($intervals, 'count'));
+        // Cumulative Distribution Function Value.
+        $cdfValue = 0;
+        $keys = [];
+        $keyValues = [];
+        foreach ($intervals as $interval) {
+            // We use cumulative distribution function to create the adaptive intervals.
+            $value = ($interval['count'] / $totalCount) * 100;
+            $cdfValue += $value;
+            $key = (int) floor($cdfValue);
+            $keys[$key] = $key;
+            $keyValues[$key] = ['key' => $key, 'value' => $interval['value']];
+            $adaptiveIntervals[(string) $cdfValue] = [
+                'originalValue' => $interval['value'],
+                'value'         => $cdfValue,
+                'count'         => $interval['count'],
+            ];
+        }
+
+        if (!empty($adaptiveIntervals)) {
+            $keys = array_values($keys);
+            $length = count($keyValues);
+            $missingSlots = [];
+            for ($i = 0; $i < ($length - 1); $i++) {
+                $left  = $keys[$i];
+                $right = $keys[$i + 1];
+                $cdfRange   = $keyValues[$right]['key'] - $keyValues[$left]['key'];
+                $priceRange = $keyValues[$right]['value'] - $keyValues[$left]['value'];
+                $priceStep  = $priceRange / $cdfRange;
+                for ($j = 1; $j < $cdfRange; $j++) {
+                    $cdfKey = $keyValues[$left]['key'] + $j;
+                    $price  = $keyValues[$left]['value'] + ($priceStep * $j);
+                    $missingSlots[(string) $cdfKey] = [
+                        'originalValue' => $price,
+                        'value'         => $cdfKey,
+                        'count'         => 0,
+                    ];
+                }
+            }
+
+            $maxIntervalKey = (string) $cdfValue;
+            $adaptiveIntervals[(string) 101] = [
+                'originalValue' => $adaptiveIntervals[$maxIntervalKey]['originalValue'] + 1,
+                'value' => 101,
+                'count' => 0,
+            ];
+            // Fill up the intermediate step.
+            $adaptiveIntervals = $adaptiveIntervals + $missingSlots;
+            ksort($adaptiveIntervals);
+
+            $adaptiveIntervals = array_values($adaptiveIntervals);
+        }
+
+        return $adaptiveIntervals;
     }
 
     /**
