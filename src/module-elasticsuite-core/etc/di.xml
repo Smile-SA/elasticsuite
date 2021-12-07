@@ -152,6 +152,7 @@
                 <item name="significantTermBucket" xsi:type="object">significantTermBucketFactory</item>
                 <item name="reverseNestedBucket" xsi:type="object">reverseNestedBucketFactory</item>
                 <item name="topHitsBucket" xsi:type="object">topHitsBucketFactory</item>
+                <item name="metricBucket" xsi:type="object">metricBucketFactory</item>
             </argument>
         </arguments>
     </type>
@@ -163,6 +164,7 @@
     <virtualType name="significantTermBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTermFactory" />
     <virtualType name="reverseNestedBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\ReverseNestedFactory" />
     <virtualType name="topHitsBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TopHitsFactory" />
+    <virtualType name="metricBucketFactory" type="Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\MetricFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory">
         <arguments>
@@ -188,6 +190,7 @@
                 <item name="significantTermBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm\Proxy</item>
                 <item name="reverseNestedBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\ReverseNested\Proxy</item>
                 <item name="topHitsBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\TopHits\Proxy</item>
+                <item name="metricBucket" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Metric\Proxy</item>
             </argument>
             <argument name="pipelineBuilders" xsi:type="array">
                 <item name="bucketSelectorPipeline" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector\Proxy</item>

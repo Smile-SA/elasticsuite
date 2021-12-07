@@ -219,6 +219,7 @@
             <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Search\AttributeList</argument>
             <argument name="modifiersPool" xsi:type="array">
                 <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+                <item name="statisticsModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Statistics</item>
             </argument>
         </arguments>
     </virtualType>
@@ -228,12 +229,17 @@
             <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category\AttributeList</argument>
             <argument name="modifiersPool" xsi:type="array">
                 <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+                <item name="statisticsModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Statistics</item>
             </argument>
         </arguments>
     </virtualType>
+
+    <preference for="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Statistics\AttributeFilterInterface"
+                type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Statistics\PriceAttributeFilter" />
 
     <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface">
         <plugin name="layered_nav_attributes_replace_filter_field"
                 type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
     </type>
+
 </config>
