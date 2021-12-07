@@ -202,9 +202,9 @@ jobs:
                   MAGENTO_ROOT: ${{ env.magento-directory }}
                   EXPERIMENTAL: ${{ matrix.experimental }}
               run: |
-                STABILITY = "--stability=stable"
+                STABILITY="--stability=stable"
                 if [ $EXPERIMENTAL = true ]; then
-                  STABILITY = ""
+                  STABILITY=""
                 fi
                 sudo rm -rf $MAGENTO_ROOT
                 sudo mkdir -p $MAGENTO_ROOT
