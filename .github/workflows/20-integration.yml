@@ -199,9 +199,13 @@ jobs:
               env:
                   MAGENTO_VERSION: ${{ matrix.magento-versions }}
                   MAGENTO_EDITION: ${{ matrix.magento-editions }}
-                  STABILITY: "--stability=stable"
                   MAGENTO_ROOT: ${{ env.magento-directory }}
+                  EXPERIMENTAL: ${{ matrix.experimental }}
               run: |
+                STABILITY = "--stability=stable"
+                if [ $EXPERIMENTAL = true ]; then
+                  STABILITY = ""
+                fi
                 sudo rm -rf $MAGENTO_ROOT
                 sudo mkdir -p $MAGENTO_ROOT
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
