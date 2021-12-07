@@ -34,7 +34,7 @@ jobs:
             fail-fast: false
             matrix:
                 php-versions: ['7.4']
-                magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3']
+                magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3', '2.4.3-p1']
                 magento-editions: ['community', 'enterprise']
                 experimental: [false]
                 include:
