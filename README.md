@@ -67,10 +67,10 @@ The project was originally created by Smile and released to the Open Source comm
 ## Who is developing ElasticSuite ?
 
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
+    <a href="http://www.smile.eu"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
 </p>
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
+    <a href="http://www.smile.eu"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
 </p>
 
 ElasticSuite is built by the Innovation board of Smile. 
