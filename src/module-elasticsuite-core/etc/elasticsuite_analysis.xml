@@ -24,6 +24,10 @@
 
     <filters>
         <filter name="trim" type="trim" language="default"/>
+        <filter name="truncate_to_max" type="truncate" language="default">
+            <!-- Absolute max supported by Lucene for a token length is 32766 bytes, so using 1/4 of that to accomodate multibyte UTF-8 characters -->
+            <length>8192</length>
+        </filter>
         <filter name="lowercase" type="lowercase" language="default"/>
         <filter name="word_delimiter" type="word_delimiter" language="default">
             <generate_word_parts>true</generate_word_parts>
@@ -170,6 +174,11 @@
     </filters>
 
     <analyzers>
+        <analyzer name="keyword" tokenizer="keyword" language="default">
+            <filters>
+                <filter ref="truncate_to_max" />
+            </filters>
+        </analyzer>
         <analyzer name="standard" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
