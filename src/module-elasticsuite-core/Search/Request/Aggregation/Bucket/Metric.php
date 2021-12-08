@@ -41,6 +41,8 @@ class Metric extends AbstractBucket
     /**
      * Metric constructor.
      *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param string              $name         Bucket name.
      * @param string              $field        Bucket field.
      * @param MetricInterface[]   $metrics      Bucket metrics.

@@ -90,6 +90,7 @@ class Slider extends AbstractHelper
     public function getStatsAggregation($filterField)
     {
         $filterField = $this->requestFieldMapper->getMappedFieldName($filterField);
+
         return sprintf("%s.stats", $filterField);
     }
 }

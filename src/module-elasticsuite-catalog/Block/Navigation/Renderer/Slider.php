@@ -58,7 +58,7 @@ class Slider extends AbstractRenderer
     protected $intervals;
 
     /**
-     * @var bool
+     * @var boolean
      */
     protected $showAdaptiveSlider;
 
@@ -119,13 +119,14 @@ class Slider extends AbstractRenderer
      * Show adaptive slider ?
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function showAdaptiveSlider(): bool
     {
         if (null === $this->showAdaptiveSlider) {
             $this->showAdaptiveSlider = false;
-            if (
-                $this->catalogSliderHelper->isAdaptiveSliderEnabled()
+            if ($this->catalogSliderHelper->isAdaptiveSliderEnabled()
                 && ($this->getFilter()->getItemsCount() >= CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS)
             ) {
                 $hasDispersedData = false;
@@ -328,7 +329,7 @@ class Slider extends AbstractRenderer
             $missingSlots = [];
             for ($i = 0; $i < ($length - 1); $i++) {
                 $left  = $keys[$i];
-                $right = $keys[$i+1];
+                $right = $keys[$i + 1];
                 $cdfRange   = $keyValues[$right]['key'] - $keyValues[$left]['key'];
                 $priceRange = $keyValues[$right]['value'] - $keyValues[$left]['value'];
                 $priceStep  = $priceRange / $cdfRange;
