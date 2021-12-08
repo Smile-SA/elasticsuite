@@ -98,6 +98,7 @@ class AggregationFactory
      * @param array $rawBucket ES bucket.
      *
      * @return \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\Aggregation\Value[]
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function getBucketValues($rawBucket)
     {

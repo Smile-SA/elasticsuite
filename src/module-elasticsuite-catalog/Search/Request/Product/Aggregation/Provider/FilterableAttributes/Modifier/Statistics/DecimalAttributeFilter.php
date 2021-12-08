@@ -30,8 +30,7 @@ class DecimalAttributeFilter implements AttributeFilterInterface
      */
     public function filterAttribute(Attribute $attribute): bool
     {
-        if (
-            ($attribute->getBackendType() == 'decimal')
+        if (($attribute->getBackendType() == 'decimal')
             || ($attribute->getBackendType() == 'varchar' && $attribute->getFrontendClass() == 'validate-number')
             || ($attribute->getAttributeCode() == 'price')
         ) {
