@@ -178,12 +178,14 @@ var smileTracker = (function () {
         initSession.bind(this)();
         getTrackerVars.bind(this);
 
+        let vars = bracketVarsToJson(this.vars);
+
         if (this.telemetryEnabled && this.telemetryTrackerSent === false) {
             // Wait for the customerData to be loaded
             if (customerData.data_id) {
                 $.ajax({
                     url: this.telemetryUrl,
-                    data: JSON.stringify(this.vars),
+                    data: JSON.stringify(vars),
                     type: "POST",
                     dataType: "json",
                     crossDomain: true,
@@ -193,6 +195,34 @@ var smileTracker = (function () {
                 this.telemetryTrackerSent = true;
             }
         }
+    }
+
+    function bracketVarsToJson(vars) {
+        let result = {};
+
+        for (const i in vars) {
+            let a = i.match(/([^\[\]]+)(\[[^\[\]]+[^\]])*?/g),
+                p = vars[i];
+            let j = a.length;
+            while (j--) {
+                let q = {};
+                q[a[j]] = p;
+                p = q;
+            }
+
+            let k = Object.keys(p)[0],
+                o = result;
+
+            while (k in o) {
+                p = p[k];
+                o = o[k];
+                k = Object.keys(p)[0];
+            }
+
+            o[k] = p[k];
+        }
+
+        return result;
     }
 
     function buildTrackingImg(bodyNode, trackingUrl) {
