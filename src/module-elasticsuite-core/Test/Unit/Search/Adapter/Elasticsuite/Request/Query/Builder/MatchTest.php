@@ -13,8 +13,8 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
-use Smile\ElasticsuiteCore\Search\Request\Query\Match as MatchQuery;
-use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match as MatchQueryBuilder;
+use Smile\ElasticsuiteCore\Search\Request\Query\MatchQuery as MatchQuery;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MatchQuery as MatchQueryBuilder;
 
 /**
  * Match search request query test case.
