@@ -113,7 +113,7 @@
     <virtualType name="termQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermFactory" />
     <virtualType name="termsQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\TermsFactory" />
     <virtualType name="rangeQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\RangeFactory" />
-    <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchFactory" />
+    <virtualType name="matchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchQueryFactory" />
     <virtualType name="commonQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\CommonFactory" />
     <virtualType name="multiMatchQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatchFactory" />
     <virtualType name="moreLikeThisQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThisFactory" />
@@ -132,7 +132,7 @@
                 <item name="termQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Term\Proxy</item>
                 <item name="termsQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms\Proxy</item>
                 <item name="rangeQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Range\Proxy</item>
-                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Match\Proxy</item>
+                <item name="matchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MatchQuery\Proxy</item>
                 <item name="commonQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Common\Proxy</item>
                 <item name="multiMatchQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch\Proxy</item>
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
