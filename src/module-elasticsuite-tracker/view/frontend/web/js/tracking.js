@@ -107,6 +107,14 @@ var smileTracker = (function () {
         return this;
     }
 
+    function addCustomerVars(customerData) {
+        getCustomerDataCodeToTrack().forEach(function (customerDataCode) {
+            if (customerData.hasOwnProperty('tracking') && customerData.tracking.hasOwnProperty(customerDataCode)) {
+                this.addCustomerVar(customerDataCode, customerData.tracking[customerDataCode]);
+            }
+        }.bind(this));
+    }
+
     function addMetaPageVars() {
         var metaTags = document.getElementsByTagName('meta');
         for (var tagIndex = 0; tagIndex < metaTags.length; tagIndex++) {
@@ -120,16 +128,14 @@ var smileTracker = (function () {
         }
     }
 
-    function getTrackerUrl() {
-
-        initSession.bind(this)();
-
-        if (this.trackerSent === false) {
+    function getTrackerVars() {
+        if (this.trackerVarsAdded === false) {
             addStandardPageVars.bind(this)();
             addReferrerVars.bind(this)();
             addCampaignVars.bind(this)();
             addMetaPageVars.bind(this)();
             addResolutionVars.bind(this)();
+            this.trackerVarsAdded = true;
         }
 
         var urlParams = [];
@@ -140,7 +146,16 @@ var smileTracker = (function () {
             }
         }
 
+        return urlParams;
+    }
+
+    function getTrackerUrl() {
+        let urlParams = getTrackerVars.bind(this)();
         return this.baseUrl + "?" + urlParams.join('&');
+    }
+
+    function getCustomerDataCodeToTrack() {
+        return ['age', 'gender', 'zipcode', 'state', 'country'];
     }
 
     function setTrackerStyle(imgNode) {
@@ -149,21 +164,67 @@ var smileTracker = (function () {
 
     // Send the tag to the remote server
     // Append a transparent pixel to the body
-    function sendTag(forceCollect) {
-        if (this.trackerSent === false || forceCollect === true) {
-            var bodyNode = document.getElementsByTagName('body')[0];
+    function sendTag() {
+        initSession.bind(this)();
 
-            if (this.config && this.config.hasOwnProperty('sessionConfig')) {
-                var trackingUrl = getTrackerUrl.bind(this)();
-                var imgNode = document.createElement('img');
-                imgNode.setAttribute('src', trackingUrl);
-                imgNode.setAttribute('alt', '');
-                setTrackerStyle(imgNode);
-                bodyNode.appendChild(imgNode);
-                this.trackerSent = true;
-                this.vars = {};
-            }
+        if (this.trackerSent === false) {
+            let bodyNode = document.getElementsByTagName('body')[0];
+            buildTrackingImg.bind(this)(bodyNode, getTrackerUrl.bind(this)());
+            this.trackerSent = true;
         }
+    }
+
+    function sendTelemetry() {
+        initSession.bind(this)();
+        initCustomerData.bind(this)();
+        getTrackerVars.bind(this);
+
+        let vars = bracketVarsToJson(this.vars);
+
+        if (this.telemetryEnabled && this.telemetryTrackerSent === false) {
+            var request = new XMLHttpRequest();
+            request.open('POST', this.telemetryUrl, true);
+            request.setRequestHeader('Content-Type', 'application/json');
+            request.send(JSON.stringify(vars));
+
+            this.telemetryTrackerSent = true;
+        }
+    }
+
+    function bracketVarsToJson(vars) {
+        let result = {};
+
+        for (const i in vars) {
+            let a = i.match(/([^\[\]]+)(\[[^\[\]]+[^\]])*?/g),
+                p = vars[i];
+            let j = a.length;
+            while (j--) {
+                let q = {};
+                q[a[j]] = p;
+                p = q;
+            }
+
+            let k = Object.keys(p)[0],
+                o = result;
+
+            while (k in o) {
+                p = p[k];
+                o = o[k];
+                k = Object.keys(p)[0];
+            }
+
+            o[k] = p[k];
+        }
+
+        return result;
+    }
+
+    function buildTrackingImg(bodyNode, trackingUrl) {
+        let imgNode = document.createElement('img');
+        imgNode.setAttribute('src', trackingUrl);
+        imgNode.setAttribute('alt', '');
+        setTrackerStyle(imgNode);
+        bodyNode.appendChild(imgNode);
     }
 
     // Append a variable to the page
@@ -180,12 +241,16 @@ var smileTracker = (function () {
         addVariable.bind(this)(transformVarName.bind(this)(varName , 'page'), value);
     }
 
+    function addCustomerVar(varName, value) {
+        addVariable.bind(this)(transformVarName.bind(this)(varName , 'customer'), value);
+    }
+
     function transformVarName(varName, prefix) {
         return prefix + "[" + varName.replace(/[.]/g, "][") + "]";
     }
 
     function initSession() {
-        if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+        if (this.config && this.config.hasOwnProperty('sessionConfig') && !this.sessionInitialized) {
             var config   = this.config.sessionConfig;
             var expireAt = new Date();
             var path     = config['path'] || '/';
@@ -205,6 +270,21 @@ var smileTracker = (function () {
 
             addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
             addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
+            this.sessionInitialized = true;
+        }
+    }
+
+    function initCustomerData() {
+        try {
+            let mageStorage = localStorage.getItem('mage-cache-storage');
+            if (mageStorage !== null) {
+                mageStorage = JSON.parse(mageStorage);
+                if ((mageStorage.customer !== undefined)) {
+                    addCustomerVars.bind(this)(mageStorage.customer);
+                }
+            }
+        } catch (e) {
+            // Nothing.
         }
     }
 
@@ -212,25 +292,37 @@ var smileTracker = (function () {
     var SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
+        this.telemetryTrackerSent = false;
+        this.trackerVarsAdded = false;
+        this.sessionInitialized = false;
+        this.customerData = {};
     };
 
     SmileTrackerImpl.prototype.sendTag = function () {
         if (document.readyState != 'loading') {
             sendTag.bind(this)();
+            sendTelemetry.bind(this)();
         } else {
             document.addEventListener('DOMContentLoaded', function () {
                 sendTag.bind(this)();
+                sendTelemetry.bind(this)();
             }.bind(this));
         }
     }
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
-        this.config  = config;
-        this.baseUrl = config.beaconUrl;
+        this.config           = config;
+        this.baseUrl          = config.beaconUrl;
+        this.telemetryEnabled = config.telemetryEnabled;
+        this.telemetryUrl     = config.telemetryUrl;
     }
 
     SmileTrackerImpl.prototype.addPageVar = function (varName, value) {
         addPageVar.bind(this)(varName, value);
+    }
+
+    SmileTrackerImpl.prototype.addCustomerVar = function (varName, value) {
+        addCustomerVar.bind(this)(varName, value);
     }
 
     SmileTrackerImpl.prototype.addSessionVar = function (varName, value) {

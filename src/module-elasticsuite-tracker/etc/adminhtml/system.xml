@@ -70,5 +70,17 @@
                 </field>
             </group>
         </section>
+        <section id="smile_elasticsuite_telemetry" translate="label" type="text" sortOrder="911" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Telemetry</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_telemetry</resource>
+            <group id="telemetry" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Telemetry</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable telemetry</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

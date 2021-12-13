@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Pierre Gauthier <pierre.gauthier@smile.fr>
+ * @copyright 2021 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="smile_elasticsuite_notification_log" resource="default" engine="innodb" comment="Elasticsuite Notification Viewer Log Table">
+        <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Log ID"/>
+        <column xsi:type="varchar" name="notification_code" nullable="false" length="50"
+                comment="Viewer last view notification id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="SMILE_ELASTICSUITE_NOTIFICATION_LOG">
+            <column name="notification_code"/>
+        </constraint>
+    </table>
+</schema>

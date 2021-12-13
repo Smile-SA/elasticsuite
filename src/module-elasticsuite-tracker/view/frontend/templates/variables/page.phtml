@@ -16,8 +16,7 @@
 ?>
 <?php /** @var $block Smile\ElasticsuiteTracker\Block\Variables\AbstractBlock **/ ?>
 <?php $variables = $block->getVariables(); ?>
-
-<?php if ($block->isEnabled() && !empty($variables)) : ?>
+<?php if (!empty($variables)) : ?>
     <script>
     <!--
     try {
