@@ -16,7 +16,7 @@
 <csp_whitelist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Csp:etc/csp_whitelist.xsd">
         <policies>
-            <policy id="media-src">
+            <policy id="connect-src">
                 <values>
                     <value id="elasticsuite" type="host">t.elasticsuite.io</value>
                 </values>
