@@ -220,7 +220,7 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: |
                 composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
-                rm -rf vendor/smile/elasticsuite
+                rm -rf vendor/smile/elasticsuite/**
                 cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
             - name: "[Init] Fix Magento directory permissions"
