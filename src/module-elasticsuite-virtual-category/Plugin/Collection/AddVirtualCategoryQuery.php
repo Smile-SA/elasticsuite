@@ -52,11 +52,14 @@ class AddVirtualCategoryQuery
      */
     public function beforeAddCategoryFilter(Collection $subject, Category $category)
     {
+        $category = clone $category; // Do not apply side-effect on the category itself.
+
         if ($category && $category->getData('is_virtual_category')) {
             $query = $this->filterProvider->getQueryFilter($category);
             if ($query !== null) {
                 $subject->addQueryFilter($query);
             }
+            // This is where cloning is useful. Otherwise, we could have a category without id later in the call stack.
             $category->setId(null);
         }
 
