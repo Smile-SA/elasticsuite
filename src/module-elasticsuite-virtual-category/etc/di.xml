@@ -180,11 +180,29 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Ascending" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Stock: low stock first</argument>
+            <argument name="sortDirection" xsi:type="string">asc</argument>
+            <argument name="attributeField" xsi:type="string">stock.qty</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Descending" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Stock: high stock first</argument>
+            <argument name="sortDirection" xsi:type="string">desc</argument>
+            <argument name="attributeField" xsi:type="string">stock.qty</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Magento\PageBuilder\Model\Catalog\Sorting">
         <arguments>
             <argument name="sortClasses" xsi:type="array">
                 <item name="price_high_to_low" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\HighToLow</item>
                 <item name="price_low_to_high" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\LowToHigh</item>
+                <item name="low_stock_first" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Ascending</item>
+                <item name="high_stock_first" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Descending</item>
             </argument>
         </arguments>
     </type>
