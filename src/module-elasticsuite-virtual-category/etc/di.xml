@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -217,5 +217,12 @@
     <!-- In GraphQL, discard the "virtual_rule" field of categories -->
     <type name="Magento\CatalogGraphQl\Model\Config\CategoryAttributeReader">
         <plugin name="remove_virtual_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\CatalogGraphQl\Model\Config\CategoryAttributeReaderPlugin"/>
+    </type>
+
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteVirtualCategory\Helper\Rule">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
     </type>
 </config>
