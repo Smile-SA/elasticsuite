@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -187,4 +187,11 @@
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
+
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteVirtualCategory\Helper\Rule">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>
