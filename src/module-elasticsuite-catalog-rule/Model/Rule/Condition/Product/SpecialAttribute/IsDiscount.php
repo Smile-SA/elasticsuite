@@ -92,7 +92,7 @@ class IsDiscount implements SpecialAttributeInterface
                             ),
                         ],
                     ]
-                )
+                ),
             ]
         );
     }
