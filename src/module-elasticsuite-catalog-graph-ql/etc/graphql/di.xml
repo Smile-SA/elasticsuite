@@ -169,4 +169,9 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface">
+        <plugin name="layered_nav_attributes_replace_filter_field"
+                type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
+    </type>
 </config>

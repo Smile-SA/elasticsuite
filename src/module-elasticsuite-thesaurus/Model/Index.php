@@ -91,18 +91,20 @@ class Index
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
      *
      * @return array
      */
-    public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
+    public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
     {
+        $queryText = str_replace(' ', '_', $queryText);
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
 
         $queryRewrites = $this->cacheHelper->loadCache($cacheKey);
 
         if ($queryRewrites === false) {
-            $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText);
+            $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost);
             $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
         }
 
@@ -114,10 +116,11 @@ class Index
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
      *
      * @return array
      */
-    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
+    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost)
     {
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
@@ -127,11 +130,11 @@ class Index
         if ($config->isSynonymSearchEnabled()) {
             $thesaurusType   = ThesaurusInterface::TYPE_SYNONYM;
             $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites);
-            $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider());
+            $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider(), $originalBoost);
         }
 
         if ($config->isExpansionSearchEnabled()) {
-            $synonymRewrites = array_merge([$queryText => 1], $rewrites);
+            $synonymRewrites = array_merge([$queryText => $originalBoost], $rewrites);
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;

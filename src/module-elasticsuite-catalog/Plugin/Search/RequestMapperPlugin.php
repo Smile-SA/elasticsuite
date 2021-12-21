@@ -13,14 +13,18 @@
  */
 namespace Smile\ElasticsuiteCatalog\Plugin\Search;
 
-use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
-use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCatalog\Api\LayeredNavAttributeInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Apply catalog product settings to the search API request mapper.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
@@ -34,16 +38,6 @@ class RequestMapperPlugin
     private $productSearchContainers = [
         'quick_search_container',
         'catalog_view_container',
-    ];
-
-    /**
-     * @var array
-     */
-    private $fieldMapper = [
-        'price'        => 'price.price',
-        'position'     => 'category.position',
-        'category_id'  => 'category.category_id',
-        'category_ids' => 'category.category_id',
     ];
 
     /**
@@ -72,14 +66,26 @@ class RequestMapperPlugin
     private $categoryRepository;
 
     /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
+
+    /**
+     * @var LayeredNavAttributesProvider
+     */
+    protected $layeredNavAttributesProvider;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Customer\Model\Session                     $customerSession         Customer session.
-     * @param \Magento\Store\Model\StoreManagerInterface          $storeManager            Store manager.
-     * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper           Mapping helper.
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext           Search context.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository      Category Repository.
-     * @param array                                               $productSearchContainers Product Search containers.
+     * @param \Magento\Customer\Model\Session                     $customerSession              Customer session.
+     * @param \Magento\Store\Model\StoreManagerInterface          $storeManager                 Store manager.
+     * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper                Mapping helper.
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext                Search context.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository           Category Repository.
+     * @param RequestFieldMapper                                  $requestFieldMapper           Search request field mapper.
+     * @param LayeredNavAttributesProvider                        $layeredNavAttributesProvider Layered navigation Attributes Provider.
+     * @param array                                               $productSearchContainers      Product Search containers.
      */
     public function __construct(
         \Magento\Customer\Model\Session $customerSession,
@@ -87,13 +93,17 @@ class RequestMapperPlugin
         \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        RequestFieldMapper $requestFieldMapper,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $productSearchContainers = []
     ) {
-        $this->customerSession    = $customerSession;
-        $this->storeManager       = $storeManager;
-        $this->mappingHelper      = $mappingHelper;
-        $this->searchContext      = $searchContext;
-        $this->categoryRepository = $categoryRepository;
+        $this->customerSession           = $customerSession;
+        $this->storeManager              = $storeManager;
+        $this->mappingHelper             = $mappingHelper;
+        $this->searchContext             = $searchContext;
+        $this->categoryRepository        = $categoryRepository;
+        $this->requestFieldMapper        = $requestFieldMapper;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
         if (is_array($productSearchContainers) && !empty($productSearchContainers)) {
             $this->productSearchContainers = array_merge($productSearchContainers, $this->productSearchContainers);
         }
@@ -161,7 +171,7 @@ class RequestMapperPlugin
 
             foreach ($result as $fieldName => $filterValue) {
                 $fieldName = $this->getMappingField($containerConfiguration, $fieldName);
-                $filters[$fieldName] = $filterValue;
+                $filters[$fieldName] = $this->getFieldValue($containerConfiguration, $fieldName, $filterValue);
             }
 
             $result = $filters;
@@ -215,19 +225,55 @@ class RequestMapperPlugin
      */
     private function getMappingField(ContainerConfigurationInterface $containerConfiguration, $fieldName)
     {
-        if (isset($this->fieldMapper[$fieldName])) {
-            $fieldName = $this->fieldMapper[$fieldName];
+        $fieldName = $this->requestFieldMapper->getMappedFieldName($fieldName);
+
+        $layeredNavAttribute = $this->layeredNavAttributesProvider->getLayeredNavAttribute($fieldName);
+        if ($layeredNavAttribute instanceof LayeredNavAttributeInterface) {
+            return $layeredNavAttribute->getFilterField();
         }
 
         try {
-            $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
-            $containerConfiguration->getMapping()->getField($optionTextFieldName);
-            $fieldName = $optionTextFieldName;
+            $field = $containerConfiguration->getMapping()->getField($fieldName);
+        } catch (\Exception $e) {
+            $field = null;
+        }
+
+        try {
+            if ($field === null || $field->getType() != 'boolean') {
+                $optionTextFieldName = $this->mappingHelper->getOptionTextFieldName($fieldName);
+                $containerConfiguration->getMapping()->getField($optionTextFieldName);
+                $fieldName = $optionTextFieldName;
+            }
         } catch (\Exception $e) {
             ;
         }
 
         return $fieldName;
+    }
+
+    /**
+     * Get field value in the proper type.
+     *
+     * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
+     * @param string                          $fieldName              Field name.
+     * @param mixed                           $fieldValue             Field value.
+     *
+     * @return mixed
+     */
+    private function getFieldValue(ContainerConfigurationInterface $containerConfiguration, string $fieldName, $fieldValue)
+    {
+        try {
+            $field = $containerConfiguration->getMapping()->getField($fieldName);
+            if ($field->getType() === 'boolean' && is_array($fieldValue)) {
+                foreach ($fieldValue as &$value) {
+                    $value = (bool) $value;
+                }
+            }
+        } catch (\Exception $e) {
+            ;
+        }
+
+        return $fieldValue;
     }
 
     /**

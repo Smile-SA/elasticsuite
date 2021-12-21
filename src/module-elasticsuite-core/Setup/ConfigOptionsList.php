@@ -19,7 +19,6 @@ use Magento\Framework\Config\File\ConfigFilePool;
 use Magento\Framework\Config\Data\ConfigData;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Setup\Option\SelectConfigOption;
-use Magento\Setup\Model\SearchConfigOptionsList;
 
 /**
  * Handle ES parameters during setup.
@@ -65,6 +64,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     ];
 
     /**
+     * @var \Smile\ElasticsuiteCore\Setup\SearchConfigOptionsList
+     */
+    private $searchConfigOptionsList;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder           ES client builder.
@@ -77,7 +81,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         $fallbackMapping = []
     ) {
         $this->clientBuilder           = $clientBuilder;
-        $this->fallbackMapping         = $fallbackMapping;
+        $this->fallbackMapping         = array_merge($this->fallbackMapping, $fallbackMapping);
         $this->searchConfigOptionsList = $searchConfigOptionsList;
     }
 
@@ -217,7 +221,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             $configPath = $option->getConfigPath($inputKey);
             $config = $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : $option->getDefault());
 
-            if (!$config && (in_array($inputKey, $this->fallbackMapping))) {
+            if (!$config && (array_key_exists($inputKey, $this->fallbackMapping))) {
                 $config = $this->readConfiguration($options, $deploymentConfig, $this->fallbackMapping[$inputKey]);
             }
         }

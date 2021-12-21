@@ -5,6 +5,7 @@ query getAllFilterValues($filters: ProductAttributeFilterInput, $search: String,
             count
             attribute_code
             has_more
+            rel_nofollow
             options {
                 label
                 value

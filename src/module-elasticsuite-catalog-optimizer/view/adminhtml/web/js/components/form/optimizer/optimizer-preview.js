@@ -15,8 +15,9 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'jquery',
     'Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/preview/item',
+    'uiRegistry',
     'MutationObserver'
-], function (Component, $, Product) {
+], function (Component, $, Product, uiRegistry) {
     'use strict';
 
     return Component.extend({
@@ -25,6 +26,9 @@ define([
             template: "Smile_ElasticsuiteCatalogOptimizer/form/element/optimizer-preview",
             refreshFields: {},
             maxRefreshInterval: 200,
+            listens: {
+                "${ $.provider }:data.model" : "resetPreview"
+            },
             imports: {
                 formData: "${ $.provider }:data"
             },
@@ -65,6 +69,11 @@ define([
 
                 var formData = this.formData;
                 formData['page_size'] = this.currentSize();
+                formData['search_container_preview'] = formData[this.searchContainerPreviewField];
+
+                if (!this.isFulltext) {
+                    formData['query_text_preview'] = null;
+                }
 
                 $.post(this.loadUrl, this.formData, this.onProductListLoad.bind(this));
             }.bind(this), this.maxRefreshInterval);
@@ -101,6 +110,17 @@ define([
         showMoreProducts: function () {
             this.currentSize(this.currentSize() + this.pageSize);
             this.refreshProductList();
-        }
+        },
+
+        resetPreview: function () {
+            this.baseProducts([]);
+            this.optimizedProducts([]);
+            this.countTotalProducts(0)
+            this.currentSize(this.pageSize);
+            let searchInput = uiRegistry.get(this.parentName + '.' + this.searchInput);
+            if (searchInput !== undefined) {
+                searchInput.reset();
+            }
+        },
     });
 });

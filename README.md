@@ -3,7 +3,7 @@
  [![fork this repo](http://githubbadges.com/fork.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite/fork) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
 
 <p align="center">
-    <img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" />
+    <a href="https://elasticsuite.io"><img alt="Smile" width="400px" src="doc/static/elasticsuite-logo.jpg" /></a>
 </p>
 
 ## News
@@ -67,10 +67,10 @@ The project was originally created by Smile and released to the Open Source comm
 ## Who is developing ElasticSuite ?
 
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
+    <a href="http://www.smile.eu"><img alt="Smile" width="200px" src="doc/static/smile.png" /></a>
 </p>
 <p align="center">
-    <a href="http://www.smile-oss.com"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
+    <a href="http://www.smile.eu"><img alt="Smile" width="100px" src="doc/static/sponsoredby_smileinovation.jpg" /></a>
 </p>
 
 ElasticSuite is built by the Innovation board of Smile. 
@@ -120,6 +120,18 @@ Actually, there are the features actually included :
 
 <br/>
 
+* **Recommendations engine :**
+
+    On top of the behavioral analysis part will come our recommendations engine. It allows you to propose **custom recommendations to your customers, based on their previous visits on your websites**, and on other customer behaviors.
+
+    Recommendations features are :
+     + "Customers also bought"
+     + Similar products
+     + Cross Selling
+     + Per-user recommendations, based on current customer profile and its previous visits and orders.
+
+<br/>
+
 * **Search optimizations :**
 
     ElasticSuite also features several ways to **optimize the search engine relevance**. This part is again based on rules that can be defined in the Magento's back-office.
@@ -131,6 +143,13 @@ Actually, there are the features actually included :
     You are also able to **preview each fine-tuning before publishing it** :
 
     ![Search Optimizers Preview](doc/static/search_optimizers_preview.png)
+
+<br/>
+
+* **Behavioral Optimizers :**
+
+    This allows you to build **rules matching your customer's behavior**.
+    Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.
 
 <br/>
 
@@ -301,22 +320,6 @@ Actually, there are the features actually included :
 
 The next versions that will be coming all among this year will include the following features :
 
-* **Behavioral Search optimizations :**
-
-    Second part of the relevance optimization features will be the behavioral optimizers. This will allow you to build **rules matching your customer's behavior**.
-    Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.
-
-* **Recommendations engine :**
-
-    On top of the behavioral analysis part will come our recommendations engine. It will allow you to propose **custom recommendations to your customers, based on their previous visits on your websites**, and on other customer behaviors.
-
-    Planned recommendations features are :
-     + "Customers also bought"
-     + Similar products
-     + Cross Selling
-     + Per-user recommendations, based on current customer profile and its previous visits and orders.
-     + Per-search recommendations, to push products that were bought by previous users that have searched for the same terms.
-     + And more to come !
 
 * **And many of our users' RFCs !**
 

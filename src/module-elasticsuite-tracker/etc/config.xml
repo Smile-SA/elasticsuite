@@ -20,7 +20,7 @@
         <smile_elasticsuite_tracker>
             <general>
                 <enabled>1</enabled>
-                <retention_delay>365</retention_delay>
+                <retention_delay>12</retention_delay>
             </general>
             <session>
                 <visit_cookie_name>STUID</visit_cookie_name>
@@ -33,5 +33,11 @@
                 <delay>365</delay>
             </anonymization>
         </smile_elasticsuite_tracker>
+        <smile_elasticsuite_telemetry>
+            <telemetry>
+                <enabled>1</enabled>
+                <url>https://t.elasticsuite.io/track</url>
+            </telemetry>
+        </smile_elasticsuite_telemetry>
     </default>
 </config>

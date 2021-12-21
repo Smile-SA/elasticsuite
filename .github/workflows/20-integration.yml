@@ -8,9 +8,11 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
+        types: [labeled]
 
 jobs:
     build:
+        if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
         runs-on: ubuntu-18.04
         name: 'Integration'
         services:
@@ -29,10 +31,23 @@ jobs:
                 options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
         strategy:
+            fail-fast: false
             matrix:
-                php-versions: ['7.3', '7.4']
-                magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1']
+                php-versions: ['7.4']
+                magento-versions: ['2.4.1', '2.4.1-p1', '2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3', '2.4.3-p1']
                 magento-editions: ['community', 'enterprise']
+                experimental: [false]
+                include:
+                  - php-versions: '8.0'
+                    magento-versions: '2.4.4-beta2'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.0'
+                    magento-versions: '2.4.4-beta2'
+                    magento-editions: 'enterprise'
+                    experimental: true
+
+        continue-on-error: ${{ matrix.experimental }}
 
         env:
             magento-directory: /var/www/magento
@@ -42,6 +57,9 @@ jobs:
         steps:
             - name: "[Init] Checkout"
               uses: actions/checkout@v2
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}
+                persist-credentials: false
 
             - name: "[Init] Setup PHP"
               uses: shivammathur/setup-php@v2
@@ -84,10 +102,22 @@ jobs:
                 npm install -g graphqurl
 
             - name: "[Init] Downgrade Composer"
-              run: composer self-update --1
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer self-update --1
+                fi
 
             - name: "[Init] Optimize Composer"
-              run : composer global require hirak/prestissimo:0.3.10
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer global require hirak/prestissimo:0.3.10
+                fi
 
             - name: "[Init] Determine composer cache directory"
               id: composer-cache-directory
@@ -143,9 +173,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ${{ env.magento-directory }}
-                  key: ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
-                      ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                    magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
             - name: "[Init] Prepare credentials"
               if: ${{env.MAGENTO_USERNAME}} != 0
@@ -169,9 +199,13 @@ jobs:
               env:
                   MAGENTO_VERSION: ${{ matrix.magento-versions }}
                   MAGENTO_EDITION: ${{ matrix.magento-editions }}
-                  STABILITY: "--stability=stable"
                   MAGENTO_ROOT: ${{ env.magento-directory }}
+                  EXPERIMENTAL: ${{ matrix.experimental }}
               run: |
+                STABILITY="--stability=stable"
+                if [ $EXPERIMENTAL = true ]; then
+                  STABILITY=""
+                fi
                 sudo rm -rf $MAGENTO_ROOT
                 sudo mkdir -p $MAGENTO_ROOT
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
@@ -186,7 +220,8 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: |
                 composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
-                cp -R $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+                rm -rf vendor/smile/elasticsuite/**
+                cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
             - name: "[Init] Fix Magento directory permissions"
               env:

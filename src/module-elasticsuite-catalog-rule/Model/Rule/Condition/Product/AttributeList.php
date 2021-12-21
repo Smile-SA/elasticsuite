@@ -13,12 +13,14 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory as AttributeCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Helper\Mapping as MappingHelper;
+use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 
 /**
  * List of attributes used in query building.
@@ -70,37 +72,45 @@ class AttributeList
     private $mappingHelper;
 
     /**
-     * @var @array
+     * @var RequestFieldMapper
      */
-    private $fieldNameMapping = [
-        'price'        => 'price.price',
-        'category_ids' => 'category.category_id',
-    ];
+    private $requestFieldMapper;
+
+    /**
+     * @var LayeredNavAttributesProvider
+     */
+    private $layeredNavAttributesProvider;
 
     /**
      * Constructor.
      *
-     * @param AttributeCollectionFactory $attributeCollectionFactory Product attribute collection factory.
-     * @param StoreManagerInterface      $storeManager               Store manager.
-     * @param IndexOperationInterface    $indexManager               Search engine index manager.
-     * @param MappingHelper              $mappingHelper              Mapping helper.
-     * @param string                     $indexName                  Search engine index name.
-     * @param string                     $typeName                   Search engine type name.
+     * @param AttributeCollectionFactory   $attributeCollectionFactory   Product attribute collection factory.
+     * @param StoreManagerInterface        $storeManager                 Store manager.
+     * @param IndexOperationInterface      $indexManager                 Search engine index manager.
+     * @param MappingHelper                $mappingHelper                Mapping helper.
+     * @param RequestFieldMapper           $requestFieldMapper           Search request field mapper.
+     * @param LayeredNavAttributesProvider $layeredNavAttributesProvider Layered navigation attributes provider.
+     * @param string                       $indexName                    Search engine index name.
+     * @param string                       $typeName                     Search engine type name.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
         StoreManagerInterface $storeManager,
         IndexOperationInterface $indexManager,
         MappingHelper $mappingHelper,
+        RequestFieldMapper $requestFieldMapper,
+        LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $indexName = 'catalog_product',
         $typeName = 'product'
     ) {
-        $this->attributeCollectionFactory = $attributeCollectionFactory;
-        $this->storeManager               = $storeManager;
-        $this->indexManager               = $indexManager;
-        $this->indexName                  = $indexName;
-        $this->typeName                   = $typeName;
-        $this->mappingHelper              = $mappingHelper;
+        $this->attributeCollectionFactory   = $attributeCollectionFactory;
+        $this->storeManager                 = $storeManager;
+        $this->indexManager                 = $indexManager;
+        $this->mappingHelper                = $mappingHelper;
+        $this->requestFieldMapper           = $requestFieldMapper;
+        $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
+        $this->indexName                    = $indexName;
+        $this->typeName                     = $typeName;
     }
 
     /**
@@ -112,13 +122,13 @@ class AttributeList
     {
         if ($this->attributeCollection === null) {
             $this->attributeCollection = $this->attributeCollectionFactory->create();
-            $attributeNameMapping      = array_flip($this->fieldNameMapping);
+            $attributeNameMapping      = $this->requestFieldMapper->getFieldNameMappings();
 
             $arrayNameCb = function (FieldInterface $field) use ($attributeNameMapping) {
                 $attributeName = $field->getName();
 
-                if (isset($attributeNameMapping[$attributeName])) {
-                    $attributeName = $attributeNameMapping[$attributeName];
+                if ($fieldMapping = array_search($attributeName, $attributeNameMapping)) {
+                    $attributeName = $fieldMapping;
                 }
 
                 return $attributeName;
@@ -128,6 +138,13 @@ class AttributeList
 
             $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames)
                  ->addFieldToFilter('backend_type', ['neq' => 'datetime']);
+
+            if (!empty($this->layeredNavAttributesProvider->getList())) {
+                $this->attributeCollection->addFieldToFilter(
+                    'attribute_code',
+                    ['nin' => array_keys($this->layeredNavAttributesProvider->getList())]
+                );
+            }
         }
 
         return $this->attributeCollection;
@@ -142,9 +159,7 @@ class AttributeList
      */
     public function getField($attributeName)
     {
-        if (isset($this->fieldNameMapping[$attributeName])) {
-            $attributeName = $this->fieldNameMapping[$attributeName];
-        }
+        $attributeName = $this->requestFieldMapper->getMappedFieldName($attributeName);
 
         return $this->getMapping()->getField($attributeName);
     }

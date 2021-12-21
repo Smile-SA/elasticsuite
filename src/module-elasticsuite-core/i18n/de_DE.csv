@@ -66,3 +66,8 @@ General,Generell
 "Maximum number of popular search terms to display in autocomplete results.","Maximale Anzahl der dargestellten häufig gesuchten Begriffe in den Ergebnissen der Autovervollständigung."
 "Default Config","Standardeinstellung"
 "Search terms","Suchbegriffe"
+"Footer Settings","Fußzeileneinstellungen"
+"Display ElasticSuite link","ElasticSuite-Link anzeigen"
+"Select Yes if you want to display an ElasticSuite copyright link in the footer.","Wählen Sie Ja, wenn Sie einen ElasticSuite-Copyright-Link in der Fußzeile anzeigen möchten."
+"Search engine powered by %1","Suchmaschine unterstützt von %1"
+"Miscellaneous","Sonstiges"

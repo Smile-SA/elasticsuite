@@ -74,7 +74,9 @@ class Preview implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
             'price_format' => $this->localeFormat->getPriceFormat(),
         ];
 
-        $meta['optimizer_preview_fieldset']['children']['optimizer_preview']['arguments']['data']['config'] = $config;
+        $optimizerPreviewFieldset['optimizer_preview_fieldset']['children']['optimizer_preview']['arguments']['data']['config'] = $config;
+        $meta['quick_search_container']['children'] = $optimizerPreviewFieldset;
+        $meta['catalog_view_container']['children'] = $optimizerPreviewFieldset;
 
         return $meta;
     }

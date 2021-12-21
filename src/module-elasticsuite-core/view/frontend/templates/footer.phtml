@@ -1,0 +1,22 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2021 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+<?php
+    /** @var $footerHelper \Smile\ElasticsuiteCore\Helper\FooterSettings */
+    $footerHelper = $this->helper('Smile\ElasticsuiteCore\Helper\FooterSettings');
+    $esLink = '<a href="https://elasticsuite.io" rel="nofollow" style="color:inherit">ElasticSuite</a>';
+?>
+<?php if ($footerHelper->isEsLinkEnabled()) : ?>
+    <small class="copyright"><span><?php echo __("Search engine powered by %1", $esLink); ?></span></small>
+<?php endif; ?>

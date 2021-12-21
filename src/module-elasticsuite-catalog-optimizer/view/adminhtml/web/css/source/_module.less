@@ -20,6 +20,7 @@ div.admin__fieldset.elasticsuite-optimizer-preview {
 }
 
 div.optimizer-preview-fieldset {
+    margin-left: 4rem;
     .category {
         float:left;
         margin-bottom: 0;
@@ -190,4 +191,85 @@ div.fieldset-wrapper[data-index="attribute_value"] {
 
 .a-right {
     text-align: right;
+}
+
+.slider-field {
+    .admin__field-control._with-tooltip, .admin__field-control {
+        input.admin__control-text, admin__field-error {
+            width: 20%;
+        }
+    }
+    .admin__field-error {
+        margin-left: 40%;
+        width: 20%;
+    }
+}
+
+.smile-es-slider {
+    width: 40%;
+    margin-top: -1rem;
+    padding-right: 2rem;
+    float: left;
+    [data-role=from-label] {
+        display: block;
+        float: left;
+        padding: 0 0 @indent__xs;
+    }
+
+    [data-role=to-label] {
+        display: block;
+        float: right;
+        padding: 0 0 @indent__xs;
+    }
+    [data-role=warning-slider] {
+        margin-left: 0.5rem;
+        &:before {
+            font-family: 'Admin Icons';
+            content: '\e623';
+        }
+    }
+
+    .ui-slider {
+        margin: @indent__xs;
+        clear: both;
+    }
+
+    .ui-slider-handle {
+        .lib-css(background, @active__color);
+        padding: 0;
+        margin: -3px 0 0 -7px;
+        border-radius: 15px;
+        width: 15px;
+        height: 15px;
+    }
+}
+
+
+.admin__fieldset {
+    fieldset.optimizer-radioset-tooltip {
+        margin-bottom: 0;
+    }
+
+    > .admin__field {
+        > .admin__field-control.optimizer-chart {
+            .chart-range {
+                width: 25%;
+                display: inline-block;
+                vertical-align: top;
+                padding: 2rem 3rem;
+                [data-role=range] {
+                    display: block;
+                    cursor: pointer;
+                    color: #ffffff;
+                    margin-top: 1rem;
+                    width: 7em;
+                }
+            }
+            .chart-canvas {
+                width: 70%;
+                display: inline-block;
+                float: left;
+            }
+        }
+    }
 }

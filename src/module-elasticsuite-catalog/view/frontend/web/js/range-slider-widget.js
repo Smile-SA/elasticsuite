@@ -44,13 +44,19 @@ define([
         },
 
         _create: function () {
-            this._initSliderValues();
+            this.showAdaptiveSlider = this.options.showAdaptiveSlider;
+            if (this.showAdaptiveSlider) {
+                this._initAdaptiveSliderValues();
+            } else {
+                this._initSliderValues();
+            }
+
             this._createSlider();
             this._refreshDisplay();
             this.element.find(this.options.applyButton).bind('click', this._applyRange.bind(this));
         },
 
-        _initSliderValues: function() {
+        _initSliderValues: function () {
             this.rate         = parseFloat(this.options.rate);
             this.from         = Math.floor(this.options.currentValue.from * this.rate);
             this.to           = Math.round(this.options.currentValue.to * this.rate);
@@ -61,7 +67,19 @@ define([
             this.maxValue = Math.round(this.options.maxValue * this.rate);
         },
 
-        _createSlider: function() {
+        _initAdaptiveSliderValues: function () {
+            this.intervals = this.options.adaptiveIntervals;
+            this.from      = this._getAdaptiveValue(Number(this.options.currentValue.from));
+            this.to        = this._getAdaptiveValue(Number(this.options.currentValue.to));
+            this.rate      = parseFloat(this.options.rate);
+            this.intervals = this.intervals.map(
+                function(item) { item.originalValue = Math.round(item.originalValue * this.rate); return item}.bind(this)
+            );
+            this.minValue  = this.intervals[0].value;
+            this.maxValue  = this.intervals[this.intervals.length - 1].value;
+        },
+
+        _createSlider: function () {
             this.element.find(this.options.sliderBar).slider({
                 range: true,
                 min: this.minValue,
@@ -73,20 +91,24 @@ define([
         },
 
         _onSliderChange : function (ev, ui) {
-            this.from = ui.values[0];
-            this.to   = ui.values[1];
+            this.from = this._getClosestAdaptiveValue(ui.values[0]);
+            this.to   = this._getClosestAdaptiveValue(ui.values[1]);
             this._refreshDisplay();
         },
 
-        _refreshDisplay: function() {
+        _refreshDisplay: function () {
             this.count = this._getItemCount();
 
             if (this.element.find('[data-role=from-label]')) {
-                this.element.find('[data-role=from-label]').html(this._formatLabel(this.from));
+                this.element.find('[data-role=from-label]').html(this._formatLabel(this._getOriginalValue(this.from)));
             }
 
             if (this.element.find('[data-role=to-label]')) {
-                this.element.find('[data-role=to-label]').html(this._formatLabel(this.to - this.options.maxLabelOffset));
+                var to = this._getOriginalValue(this.to) - this.options.maxLabelOffset;
+                if (this.showAdaptiveSlider && to < this._getOriginalValue(this.minValue)) {
+                    to = this._getOriginalValue(this.to);
+                }
+                this.element.find('[data-role=to-label]').html(this._formatLabel(to));
             }
 
             if (this.element.find('[data-role=message-box]')) {
@@ -106,23 +128,84 @@ define([
         _applyRange : function () {
             // Do not submit "rate applied" values. Revert the rate on submitted values.
             var range = {
-                from : this.from * (1 / this.rate),
-                to   : this.to * (1 / this.rate)
+                from : this._getOriginalValue(this.from) * (1 / this.rate),
+                to   : this._getOriginalValue(this.to) * (1 / this.rate)
             };
 
             var url = mageTemplate(this.options.urlTemplate)(range);
             this.element.find(this.options.applyButton).attr('href', url);
         },
 
+        _getAdaptiveValue : function (value) {
+            if (!this.showAdaptiveSlider) {
+                return value;
+            }
 
-        _getItemCount : function() {
+            var adaptiveValue = this.intervals[0].value;
+            var found = false;
+            this.intervals.forEach(function (item) {
+                if (item.originalValue === value) {
+                    adaptiveValue = item.value;
+                    found = true;
+                }
+
+                if (found === false && item.originalValue < value) {
+                    adaptiveValue = item.value;
+                }
+            });
+
+            return adaptiveValue;
+        },
+
+        _getClosestAdaptiveValue : function (value) {
+            if (!this.showAdaptiveSlider) {
+                return value;
+            }
+
+            var closestValue = this.intervals[0].value;
+            var found = false;
+            this.intervals.forEach(function (item) {
+                if (item.value === value) {
+                    closestValue = value;
+                    found = true;
+                }
+
+                if (found === false && item.value < value) {
+                    closestValue = item.value;
+                }
+            });
+
+            return closestValue;
+        },
+
+        _getOriginalValue : function (value) {
+            if (!this.showAdaptiveSlider) {
+                return value;
+            }
+
+            var originalValue = null;
+            this.intervals.forEach(function (item) {
+                if (item.value === value) {
+                    originalValue = item.originalValue;
+                }
+            });
+
+            return originalValue;
+        },
+
+        _getItemCount : function () {
             var from = this.from, to = this.to, intervals = this.intervals;
-            var count = intervals.map(function(item) {return item.value >= from && item.value < to ? item.count : 0;})
-                                 .reduce(function(a,b) {return a + b;});
+
+            var count = intervals.map(function (item) {
+                return (item.value >= from && (item.value < to || ((from === to) && item.value <= to))) ? item.count : 0;
+            })
+            .reduce(function (a,b) {
+                return a + b;
+            });
             return count;
         },
 
-        _formatLabel : function(value) {
+        _formatLabel : function (value) {
             var formattedValue = value;
 
             if (this.options.fieldFormat) {

@@ -13,10 +13,11 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
-use Smile\ElasticsuiteCore\Search\RequestInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
+use Smile\ElasticsuiteCore\Search\RequestInterface;
 
 /**
  * Search engine product collection.
@@ -72,15 +73,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $facets = [];
 
     /**
-     * @var array
-     */
-    private $fieldNameMapping = [
-        'price'        => 'price.price',
-        'position'     => 'category.position',
-        'category_ids' => 'category.category_id',
-    ];
-
-    /**
      * @var boolean
      */
     private $isSpellchecked = false;
@@ -103,6 +95,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var array
      */
     private $countByAttributeCode;
+
+    /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
 
     /**
      * Constructor.
@@ -130,6 +127,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @param \Magento\Customer\Api\GroupManagementInterface               $groupManagement         Customer group manager.
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder               $requestBuilder          Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine            Search engine
+     * @param RequestFieldMapper                                           $requestFieldMapper      Search request field mapper.
      * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection              Db Connection.
      * @param string                                                       $searchRequestName       Search request name.
      */
@@ -155,6 +153,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
+        RequestFieldMapper $requestFieldMapper,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
     ) {
@@ -181,9 +180,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $connection
         );
 
-        $this->requestBuilder    = $requestBuilder;
-        $this->searchEngine      = $searchEngine;
-        $this->searchRequestName = $searchRequestName;
+        $this->requestBuilder     = $requestBuilder;
+        $this->searchEngine       = $searchEngine;
+        $this->requestFieldMapper = $requestFieldMapper;
+        $this->searchRequestName  = $searchRequestName;
     }
 
     /**
@@ -334,14 +334,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function addCategoryFilter(\Magento\Catalog\Model\Category $category)
     {
-        $categoryId = $category;
-
-        if (is_object($category)) {
-            $categoryId = $category->getId();
+        $categoryId = $category->getId();
+        if ($categoryId) {
+            $this->addFieldToFilter('category_ids', $categoryId);
+            $this->_productLimitationFilters['category_ids'] = $categoryId;
         }
-
-        $this->addFieldToFilter('category_ids', $categoryId);
-        $this->_productLimitationFilters['category_ids'] = $categoryId;
 
         return $this;
     }
@@ -674,10 +671,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     private function mapFieldName($fieldName)
     {
-        if (isset($this->fieldNameMapping[$fieldName])) {
-            $fieldName = $this->fieldNameMapping[$fieldName];
-        }
-
-        return $fieldName;
+        return $this->requestFieldMapper->getMappedFieldName($fieldName);
     }
 }

@@ -41,7 +41,7 @@ class MovingFunction extends AbstractPipeline
     private $window;
 
     /**
-     * BucketSelector constructor.
+     * MovingFunction constructor.
      *
      * @param string       $name        Pipeline name.
      * @param array|string $bucketsPath Pipeline buckets path.

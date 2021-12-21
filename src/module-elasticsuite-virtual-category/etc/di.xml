@@ -11,11 +11,11 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
+
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
     <type name="Smile\ElasticsuiteCatalogRule\Model\RuleFactory">
@@ -29,13 +29,13 @@
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Combine</argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product</argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder">
         <arguments>
             <argument name="nestedFilters" xsi:type="array">
@@ -43,7 +43,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalogRule\Controller\Adminhtml\Product\Rule\Conditions">
         <arguments>
             <argument name="acls" xsi:type="array">
@@ -51,9 +51,9 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="\Magento\Catalog\Model\ResourceModel\Category">
-        <plugin name="smile_elasticsuite_virtual_categories_save_products_positions" 
+        <plugin name="smile_elasticsuite_virtual_categories_save_products_positions"
                 type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\SaveProductsPositions" />
     </type>
 
@@ -63,18 +63,18 @@
         <plugin name="smile_elasticsuite_virtual_categories_reindex_on_update_store_positions"
                 type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\ReindexOnUpdateStorePositions" />
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData">
         <arguments>
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData</argument>
         </arguments>
     </type>
-    
+
     <type name="Magento\Catalog\Model\Category\DataProvider">
         <plugin name="smile_elasticsuite_virtual_categories_category_form_dataprovider"
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\DataProviderPlugin" />
     </type>
-    
+
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="virtualCategoryProductRequestMapper" type="Smile\ElasticsuiteVirtualCategory\Plugin\Search\RequestMapperPlugin" sortOrder="20"/>
     </type>
@@ -114,7 +114,115 @@
         </arguments>
     </type>
 
+     <type name="Magento\Eav\Model\TypeLocator">
+        <arguments>
+            <argument name="typeLocators" xsi:type="array">
+                <item name="virtualCategoryType" sortOrder="1" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Webapi\TypeLocator\VirtualCategoryLocator</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <plugin name="add_virtual_category_query" type="Smile\ElasticsuiteVirtualCategory\Plugin\Collection\AddVirtualCategoryQuery" />
+    </type>
+
+    <!-- Page builder compatibility   -->
+    <type name="Magento\CatalogWidget\Block\Product\ProductsList">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+            <argument name="sqlBuilder" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Condition\ElasticsearchBuilder</argument>
+        </arguments>
+        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" />
+    </type>
+
+    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory" type="Magento\CatalogWidget\Model\Rule\Condition\CombineFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Combine</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\ProductFactory" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Product</argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CatalogWidget\Model\Rule">
+        <arguments>
+            <argument name="conditionsFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory</argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\Combine">
+        <arguments>
+            <argument name="conditionFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\ProductFactory</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Rule\Model\ConditionFactory">
+        <plugin name="change_rule_condition_models" type="Smile\ElasticsuiteVirtualCategory\Plugin\Rule\ConditionFactoryPlugin"/>
+    </type>
+
+    <type name="Magento\PageBuilder\Model\Catalog\Sorting\OptionInterface">
+        <plugin name="fix_page_builder_sorting" type="Smile\ElasticsuiteVirtualCategory\Plugin\PageBuilder\Catalog\Sorting\OptionPlugin"/>
+    </type>
+
+    <!-- PageBuilder Sorting -->
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\HighToLow" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Price: high to low</argument>
+            <argument name="sortDirection" xsi:type="string">desc</argument>
+            <argument name="attributeField" xsi:type="string">price</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\LowToHigh" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Price: low to high</argument>
+            <argument name="sortDirection" xsi:type="string">asc</argument>
+            <argument name="attributeField" xsi:type="string">price</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Ascending" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Stock: low stock first</argument>
+            <argument name="sortDirection" xsi:type="string">asc</argument>
+            <argument name="attributeField" xsi:type="string">stock.qty</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Descending" type="Magento\PageBuilder\Model\Catalog\Sorting\SimpleOption">
+        <arguments>
+            <argument name="label" xsi:type="string">Stock: high stock first</argument>
+            <argument name="sortDirection" xsi:type="string">desc</argument>
+            <argument name="attributeField" xsi:type="string">stock.qty</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Magento\PageBuilder\Model\Catalog\Sorting">
+        <arguments>
+            <argument name="sortClasses" xsi:type="array">
+                <item name="price_high_to_low" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\HighToLow</item>
+                <item name="price_low_to_high" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Price\LowToHigh</item>
+                <item name="low_stock_first" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Ascending</item>
+                <item name="high_stock_first" xsi:type="string">Smile\ElasticsuitePageBuilder\Model\Catalog\Sorting\Stock\Descending</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- End PageBuilder Sorting -->
+    <!-- End PageBuilder Compatibility -->
+
     <preference for="Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider" type="Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider"/>
 
     <preference for="Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface" type="Smile\ElasticsuiteVirtualCategory\Model\Rule"/>
+
+    <!-- In GraphQL, discard the "virtual_rule" field of categories -->
+    <type name="Magento\CatalogGraphQl\Model\Config\CategoryAttributeReader">
+        <plugin name="remove_virtual_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\CatalogGraphQl\Model\Config\CategoryAttributeReaderPlugin"/>
+    </type>
+
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteVirtualCategory\Helper\Rule">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

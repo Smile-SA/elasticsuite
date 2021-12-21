@@ -60,3 +60,19 @@
         }
     }
 }
+
+.merchandiser-app {
+    #catalog_category_products {
+        display: none; // Hide native grid which become useless with the add product button.
+    }
+
+    .merchandiser-tabs {
+        border-top: none;
+        > .tabs {
+            display: none;
+        }
+    }
+    .regular-category-settings {
+        width: ~'calc( (100%) * 0.25 - 20px )';
+    }
+}
