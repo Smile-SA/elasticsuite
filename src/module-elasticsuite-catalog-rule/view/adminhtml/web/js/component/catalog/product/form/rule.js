@@ -60,7 +60,7 @@ define([
             var hashValues = [];
             
             $(this.rootNode).find("[name*=" + this.index + "]").each(function () {
-                hashValues.push(this.name + $(this).val().toString());
+                hashValues.push(this.name + ($(this).val() ? $(this).val().toString() : ''));
                 var currentRuleObject = ruleObject;
 
                 var path = this.name.match(/\[([^[\[\]]+)\]/g)
