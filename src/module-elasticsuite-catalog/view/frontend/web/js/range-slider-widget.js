@@ -73,7 +73,7 @@ define([
             this.to        = this._getAdaptiveValue(Number(this.options.currentValue.to));
             this.rate      = parseFloat(this.options.rate);
             this.intervals = this.intervals.map(
-                function(item) { item.originalValue = Math.round(item.originalValue * this.rate); return item}.bind(this)
+                function(item) { item.originalValue = Math.ceil(item.originalValue * this.rate); return item}.bind(this)
             );
             this.minValue  = this.intervals[0].value;
             this.maxValue  = this.intervals[this.intervals.length - 1].value;
@@ -144,7 +144,7 @@ define([
             var adaptiveValue = this.intervals[0].value;
             var found = false;
             this.intervals.forEach(function (item) {
-                if (item.originalValue === value) {
+                if (found === false && item.originalValue === value) {
                     adaptiveValue = item.value;
                     found = true;
                 }
