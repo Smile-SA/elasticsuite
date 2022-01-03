@@ -31,7 +31,7 @@ define(['underscore'], function(_) {
             }, {});
 
             data = _.pairs(data).sort(function(item1, item2) {
-                return item2[0] - item1[0]
+                return item2[1] - item1[1]
             }).map(function(item) {return item[0]});
 
             if (data.length > 2) {
