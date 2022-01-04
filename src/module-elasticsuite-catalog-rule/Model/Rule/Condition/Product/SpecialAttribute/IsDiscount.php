@@ -33,12 +33,12 @@ class IsDiscount implements SpecialAttributeInterface
     /**
      * @var \Magento\Customer\Model\Session
      */
-    private $customerSession;
+    protected $customerSession;
 
     /**
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
-    private $queryFactory;
+    protected $queryFactory;
 
     /**
      * IsDiscount constructor.
