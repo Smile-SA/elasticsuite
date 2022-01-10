@@ -36,11 +36,15 @@ class CustomerLink extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             $linkData['delete_after'] = $this->formatDate($linkData['delete_after']);
         }
 
-        $connection->insertOnDuplicate(
-            $this->getMainTable(),
-            $linkData,
-            array_keys($linkData)
-        );
+        try {
+            $connection->insertOnDuplicate(
+                $this->getMainTable(),
+                $linkData,
+                array_keys($linkData)
+            );
+        } catch (\Exception $e) {
+            ;
+        }
     }
 
     /**
