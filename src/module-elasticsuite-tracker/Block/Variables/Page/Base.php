@@ -142,7 +142,7 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
     {
         return [
             'locale' => $this->localeResolver->getLocale(),
-            'domain' => $this->requestInterface->getServer('SERVER_ADDR')
+            'domain' => $this->requestInterface->getServer('SERVER_ADDR'),
         ];
     }
 
