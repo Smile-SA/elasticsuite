@@ -20,9 +20,7 @@ $notification = $block->getData('notification');
 <script>
     define('elasticPopupConfig', function () {
         return {
-            elasticsuiteVisible: <?= $notification->isTelemetryVisible() ? 1 : 0; ?>,
-            analyticsVisible: <?= $notification->isAnalyticsVisible() ? 1 : 0; ?>,
-            releaseVisible: <?= $notification->isReleaseVisible() ? 1 : 0; ?>,
+            elasticsuiteVisible: <?= $notification->isTelemetryVisible() ? 1 : 0; ?>
         }
     });
 </script>
