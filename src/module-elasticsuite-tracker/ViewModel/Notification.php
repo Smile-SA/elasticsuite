@@ -14,13 +14,11 @@
 
 namespace Smile\ElasticsuiteTracker\ViewModel;
 
-use Magento\AdminAnalytics\Model\Condition\CanViewNotification as AdminAnalyticsNotification;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Magento\ReleaseNotification\Model\Condition\CanViewNotification as ReleaseNotification;
 use Smile\ElasticsuiteTracker\Model\Condition\CanViewNotification as ElasticsuiteNotification;
 
 /**
- * Control display of elasticsuite, admin analytics and release notification modals
+ * Control display of elasticsuite notification modal
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
@@ -34,30 +32,14 @@ class Notification implements ArgumentInterface
     private $canViewNotificationElasticsuite;
 
     /**
-     * @var AdminAnalyticsNotification
-     */
-    private $canViewNotificationAnalytics;
-
-    /**
-     * @var ReleaseNotification
-     */
-    private $canViewNotificationRelease;
-
-    /**
      * Notification view model constructor.
      *
-     * @param ElasticsuiteNotification   $canViewNotificationElasticsuite Elasticsuite notification.
-     * @param AdminAnalyticsNotification $canViewNotificationAnalytics    Analytics notification.
-     * @param ReleaseNotification        $canViewNotificationRelease      Release notification.
+     * @param ElasticsuiteNotification $canViewNotificationElasticsuite Elasticsuite notification.
      */
     public function __construct(
-        ElasticsuiteNotification $canViewNotificationElasticsuite,
-        AdminAnalyticsNotification $canViewNotificationAnalytics,
-        ReleaseNotification $canViewNotificationRelease
+        ElasticsuiteNotification $canViewNotificationElasticsuite
     ) {
         $this->canViewNotificationElasticsuite = $canViewNotificationElasticsuite;
-        $this->canViewNotificationAnalytics = $canViewNotificationAnalytics;
-        $this->canViewNotificationRelease = $canViewNotificationRelease;
     }
 
     /**
@@ -70,25 +52,5 @@ class Notification implements ArgumentInterface
         return $this->canViewNotificationElasticsuite->isVisible(
             ['notification_code' => 'elasticsuite_telemetry']
         );
-    }
-
-    /**
-     * Determine if the analytics popup is visible
-     *
-     * @return bool
-     */
-    public function isAnalyticsVisible(): bool
-    {
-        return $this->canViewNotificationAnalytics->isVisible([]);
-    }
-
-    /**
-     * Determine if the release popup is visible
-     *
-     * @return bool
-     */
-    public function isReleaseVisible(): bool
-    {
-        return $this->canViewNotificationRelease->isVisible([]);
     }
 }
