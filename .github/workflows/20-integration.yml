@@ -264,6 +264,12 @@ jobs:
                 composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                 composer update --no-interaction --ignore-platform-reqs
 
+            - name: "[Init] Data : Prepare for beta Magento versions"
+              if: matrix.experimental == true
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated --quiet
