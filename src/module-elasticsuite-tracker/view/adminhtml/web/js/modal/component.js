@@ -15,7 +15,7 @@
 define([
     'underscore',
     'jquery',
-    'Magento_AdminAnalytics/js/modal/component',
+    'Magento_Ui/js/modal/modal-component',
     'uiRegistry',
     'elasticPopupConfig'
 ],
@@ -30,13 +30,6 @@ define([
                     },
                     options: {},
                     notificationWindow: null
-                },
-
-                /**
-                 * Initialize modal's content components
-                 */
-                initializeContent: function () {
-                    $.async({ component: this.name }, this.initModal);
                 },
 
                 /**
@@ -61,21 +54,7 @@ define([
                             }
                         }
                     ).fail(this.onError);
-                    this.openOtherPopup();
                     this.closeModal();
-                },
-
-                /**
-                 * Allows admin usage popup to be shown first and then new release notification
-                 */
-                openOtherPopup: function () {
-                    if (elasticPopupConfig.analyticsVisible) {
-                        registry.get('admin_usage_notification.admin_usage_notification.notification_modal_1')
-                            .initializeContentAfterElasticsuite();
-                    } else if (elasticPopupConfig.releaseVisible) {
-                        registry.get('release_notification.release_notification.notification_modal_1')
-                            .initializeContentAfterElasticsuite();
-                    }
                 }
             }
         );
