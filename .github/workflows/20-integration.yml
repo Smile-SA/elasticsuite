@@ -245,6 +245,11 @@ jobs:
                 composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                 composer update --no-interaction --ignore-platform-reqs
 
+            - name: "[Init] Data : Remove Downloadable / Virtual products"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                  rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
+
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated --quiet
