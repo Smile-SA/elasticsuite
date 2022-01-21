@@ -270,6 +270,11 @@ jobs:
               run: |
                 sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
 
+            - name: "[Init] Data : Remove Downloadable / Virtual products"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                  rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
+
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated --quiet
