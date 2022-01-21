@@ -211,10 +211,11 @@ jobs:
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
                 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
-            - name: "[Init] Fix symfony/console version"
+            - name: "[Init] Fix symfony/console and symfony string version"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require symfony/console:4.4.26 --ignore-platform-reqs
+                  composer require symfony/console:4.4.26 --ignore-platform-reqs
+                  composer require symfony/string:5.4.2 --ignore-platform-reqs
 
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
