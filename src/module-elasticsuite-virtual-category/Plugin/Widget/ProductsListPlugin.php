@@ -21,6 +21,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Helper\Conditions;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Product\CollectionFactory;
+use \Smile\ElasticsuiteVirtualCategory\Model\Widget\SortOrder\SkuPosition\Builder as SkuPositionSortOrderBuilder;
 
 /**
  * Apply category filter on widget collection.
@@ -47,20 +48,28 @@ class ProductsListPlugin
     private $conditionsHelper;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Widget\SortOrder\SkuPosition\Builder
+     */
+    private $skuPositionSortOrderBuilder;
+
+    /**
      * ProductsListPlugin constructor.
      *
-     * @param StoreManagerInterface       $storeManager       Store manager.
-     * @param CategoryRepositoryInterface $categoryRepository Category repository.
-     * @param Conditions                  $conditionsHelper   Condition helper.
+     * @param StoreManagerInterface       $storeManager                Store manager.
+     * @param CategoryRepositoryInterface $categoryRepository          Category repository.
+     * @param Conditions                  $conditionsHelper            Condition helper.
+     * @param SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder Sort order builder for sku_position
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         CategoryRepositoryInterface $categoryRepository,
-        Conditions $conditionsHelper
+        Conditions $conditionsHelper,
+        SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder
     ) {
         $this->storeManager = $storeManager;
         $this->categoryRepository = $categoryRepository;
         $this->conditionsHelper = $conditionsHelper;
+        $this->skuPositionSortOrderBuilder = $skuPositionSortOrderBuilder;
     }
 
     /**
@@ -91,7 +100,22 @@ class ProductsListPlugin
      */
     public function afterCreateCollection(ProductsList $subject, $collection)
     {
-        $storeId = $this->storeManager->getStore()->getId();
+        $storeId    = $this->storeManager->getStore()->getId();
+        $sortOption = $subject->getData('sort_order');
+
+        // Manage legacy "position_by_sku" sorting.
+        // This sorting should keep the skus sorted in the same order they were contributed.
+        if (($subject->getData('condition_option') === 'sku') && ($sortOption === 'position_by_sku')) {
+            if ((string) $subject->getData('condition_option_value') !== '') {
+                $skus = explode(',', (string) $subject->getData('condition_option_value'));
+                if (!empty($skus)) {
+                    $sortOrder = $this->skuPositionSortOrderBuilder->buildSortOrder($skus);
+                    $attribute = key($sortOrder);
+                    $dir       = current($sortOrder);
+                    $collection->setOrder($attribute, $dir);
+                }
+            }
+        }
 
         if ($subject->getData('condition_option') == 'condition' || !$subject->getData('condition_option')) {
             $conditions = $subject->getData('conditions_encoded') ?: $subject->getData('conditions');
