@@ -31,6 +31,7 @@ interface SortOrderInterface
 
     const TYPE_STANDARD = 'standardSortOrder';
     const TYPE_NESTED   = 'nestedSortOrder';
+    const TYPE_SCRIPT   = 'scriptSortOrder';
 
     const SCORE_MODE_MIN = 'min';
     const SCORE_MODE_MAX = 'max';

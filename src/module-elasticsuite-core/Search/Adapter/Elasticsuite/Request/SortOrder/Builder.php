@@ -69,7 +69,12 @@ class Builder
 
         $sortOrderConfig = ['order' => $sortOrder->getDirection()];
 
-        if ($sortField !== SortOrderInterface::DEFAULT_SORT_FIELD) {
+        if ($sortOrder->getType() === SortOrderInterface::TYPE_SCRIPT) {
+            $sortOrderConfig = [
+                'type'   => $sortOrder->getScriptType(),
+                'script' => $sortOrder->getScript(),
+            ];
+        } elseif ($sortField !== SortOrderInterface::DEFAULT_SORT_FIELD) {
             $sortOrderConfig['missing']       = $sortOrder->getMissing();
             $sortOrderConfig['unmapped_type'] = FieldInterface::FIELD_TYPE_KEYWORD;
         }
