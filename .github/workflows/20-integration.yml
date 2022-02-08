@@ -25,7 +25,7 @@ jobs:
                     - 3306:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
             elasticsearch:
-                image: docker://magento/magento-cloud-docker-elasticsearch:7.5-1.2.2
+                image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
                 ports:
                     - 9200:9200
                 options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
@@ -211,10 +211,11 @@ jobs:
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
                 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
-            - name: "[Init] Fix symfony/console version"
+            - name: "[Init] Fix symfony/console and symfony string version"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require symfony/console:4.4.26 --ignore-platform-reqs
+                  composer require symfony/console:4.4.26 --ignore-platform-reqs
+                  composer require symfony/string:5.4.2 --ignore-platform-reqs
 
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
@@ -263,6 +264,17 @@ jobs:
                 composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                 composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                 composer update --no-interaction --ignore-platform-reqs
+
+            - name: "[Init] Data : Prepare for beta Magento versions"
+              if: matrix.experimental == true
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+
+            - name: "[Init] Data : Remove Downloadable / Virtual products"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                  rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
 
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
