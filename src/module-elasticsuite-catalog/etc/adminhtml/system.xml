@@ -75,6 +75,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the price slider behavior changes so that the middle of the slider range corresponds to the median price instead of the price at the middle of the range.]]></comment>
                 </field>
+                <field id="include_child_attributes" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include child attributes during indexing</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, attributes of associated child products will be included with their parents when indexing. This will impact what filters are shown in category pages. For example, if a child of a bundle product has a particular colour then its parent will have this colour associated with it. <br><strong>Note when changing this setting</strong>, it is recommended to perform a full reindex of the <q>Catalog Search</q> indexer.]]></comment>
+                </field>
             </group>
         </section>
     </system>

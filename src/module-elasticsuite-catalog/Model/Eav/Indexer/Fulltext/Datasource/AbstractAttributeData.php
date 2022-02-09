@@ -18,6 +18,7 @@ use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
+use Smile\ElasticsuiteCatalog\Scope\Config;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
@@ -43,6 +44,9 @@ abstract class AbstractAttributeData
      * @var \Smile\ElasticsuiteCatalog\Helper\AbstractAttribute
      */
     protected $attributeHelper;
+
+    /** @var Config */
+    protected $config;
 
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
@@ -75,17 +79,20 @@ abstract class AbstractAttributeData
     /**
      * Constructor
      *
+     * @param Config          $config               Configuration retriever
      * @param ResourceModel   $resourceModel        Resource model.
      * @param FieldFactory    $fieldFactory         Mapping field factory.
      * @param AttributeHelper $attributeHelper      Attribute helper.
      * @param array           $indexedBackendModels List of indexed backend models added to the default list.
      */
     public function __construct(
+        Config $config,
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         AttributeHelper $attributeHelper,
         array $indexedBackendModels = []
     ) {
+        $this->config          = $config;
         $this->resourceModel   = $resourceModel;
         $this->attributeHelper = $attributeHelper;
         $this->fieldFactory    = $fieldFactory;
