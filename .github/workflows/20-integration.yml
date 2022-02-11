@@ -162,10 +162,15 @@ jobs:
 
             - name: "[Init] Prepare Sample Data local repos"
               working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
               run: |
-                composer config --global --no-interaction --ansi repositories.module-catalog-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
-                composer config --global --no-interaction --ansi repositories.module-configurable-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
-                composer config --global --no-interaction --ansi repositories.sample-data-media-venia git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer config --global --no-interaction --ansi repositories.module-catalog-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
+                  composer config --global --no-interaction --ansi repositories.module-configurable-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
+                  composer config --global --no-interaction --ansi repositories.sample-data-media-venia git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                fi
                 composer config --global repositories
 
             - name: "[Init] Cache Magento install"
@@ -256,14 +261,33 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:di:compile
 
-            - name: "[Test] Data : Require"
+            - name: "[Test] Data : Require for Magento <2.4.2"
               working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
               run: |
-                composer config discard-changes true
-                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer update --no-interaction --ignore-platform-reqs
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer config discard-changes true
+                  composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs
+                fi
+
+            - name: "[Test] Data : Require for Magento >=2.4.2"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -ge $(version "2.4.2") ]; then
+                  composer config discard-changes true
+                  composer require magento/module-catalog-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/module-configurable-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/sample-data-media-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs
+                fi
 
             - name: "[Init] Data : Prepare for beta Magento versions"
               if: matrix.experimental == true
