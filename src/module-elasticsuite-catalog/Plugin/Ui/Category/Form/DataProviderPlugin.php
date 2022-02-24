@@ -61,11 +61,11 @@ class DataProviderPlugin
     /**
      * DataProviderPlugin constructor.
      *
-     * @param AttributeCollectionFactory          $attributeCollectionFactory Attribute Collection Factory.
-     * @param FulltextCollectionFactory           $fulltextCollectionFactory  Fulltext Collection Factory.
-     * @param StoreManagerInterface               $storeManager               Store Manager.
-     * @param ContextInterface                    $searchContext              Search context.
-     * @param CategoryFilterProvider              $categoryFilterProvider     Category Filter Provider.
+     * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
+     * @param FulltextCollectionFactory  $fulltextCollectionFactory  Fulltext Collection Factory.
+     * @param StoreManagerInterface      $storeManager               Store Manager.
+     * @param ContextInterface           $searchContext              Search context.
+     * @param CategoryFilterProvider     $categoryFilterProvider     Category Filter Provider.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
