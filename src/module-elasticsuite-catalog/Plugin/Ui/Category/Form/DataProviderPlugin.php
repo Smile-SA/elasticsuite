@@ -22,7 +22,6 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider as CategoryFilterProvider;
-
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 
 /**
@@ -62,11 +61,11 @@ class DataProviderPlugin
     /**
      * DataProviderPlugin constructor.
      *
-     * @param AttributeCollectionFactory $attributeCollectionFactory Attribute Collection Factory.
-     * @param FulltextCollectionFactory  $fulltextCollectionFactory  Fulltext Collection Factory.
-     * @param StoreManagerInterface      $storeManager               Store Manager.
-     * @param ContextInterface           $searchContext              Search context.
-     * @param CategoryFilterProvider     $categoryFilterProvider     Category Filter Provider.
+     * @param AttributeCollectionFactory          $attributeCollectionFactory Attribute Collection Factory.
+     * @param FulltextCollectionFactory           $fulltextCollectionFactory  Fulltext Collection Factory.
+     * @param StoreManagerInterface               $storeManager               Store Manager.
+     * @param ContextInterface                    $searchContext              Search context.
+     * @param CategoryFilterProvider              $categoryFilterProvider     Category Filter Provider.
      */
     public function __construct(
         AttributeCollectionFactory $attributeCollectionFactory,
@@ -242,9 +241,9 @@ class DataProviderPlugin
                 ->setPageSize(0)
                 ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
 
-            $attributeSetIds = array_keys($fulltextCollection->getFacetedData('attribute_set_id'));
-            if (!empty($attributeSetIds)) {
-                $collection->setAttributeSetFilter($attributeSetIds);
+            $indexedAttributes = array_keys($fulltextCollection->getFacetedData('indexed_attributes'));
+            if (!empty($indexedAttributes)) {
+                $collection->setCodeFilter($indexedAttributes);
             }
         }
 
