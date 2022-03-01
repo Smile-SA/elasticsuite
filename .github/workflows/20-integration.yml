@@ -39,11 +39,11 @@ jobs:
                 experimental: [false]
                 include:
                   - php-versions: '8.0'
-                    magento-versions: '2.4.4-beta2'
+                    magento-versions: '2.4.4-beta4'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.0'
-                    magento-versions: '2.4.4-beta2'
+                    magento-versions: '2.4.4-beta4'
                     magento-editions: 'enterprise'
                     experimental: true
 
