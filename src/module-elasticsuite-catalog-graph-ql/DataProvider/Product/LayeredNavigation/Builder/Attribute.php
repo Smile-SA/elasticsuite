@@ -60,6 +60,7 @@ class Attribute implements LayerBuilderInterface
         Price::PRICE_BUCKET,
         Category::CATEGORY_BUCKET,
         'attribute_set_id',
+        'indexed_attributes',
     ];
 
     /**
