@@ -18,6 +18,7 @@ use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Model\ScopeInterface;
 
 /**
  * Create an autocomplete item from a category.
@@ -69,7 +70,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     ) {
         parent::__construct($objectManager);
         $this->urlBuilder = $urlBuilder;
-        $this->categoryUrlSuffix = $scopeConfig->getValue(self::XML_PATH_CATEGORY_URL_SUFFIX);
+        $this->categoryUrlSuffix = $scopeConfig->getValue(self::XML_PATH_CATEGORY_URL_SUFFIX, ScopeInterface::SCOPE_STORES);
         $this->categoryResource = $categoryResource;
     }
 
