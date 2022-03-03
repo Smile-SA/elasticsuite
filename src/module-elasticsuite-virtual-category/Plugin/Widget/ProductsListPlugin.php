@@ -107,7 +107,7 @@ class ProductsListPlugin
         // This sorting should keep the skus sorted in the same order they were contributed.
         if (($subject->getData('condition_option') === 'sku') && ($sortOption === 'position_by_sku')) {
             if ((string) $subject->getData('condition_option_value') !== '') {
-                $skus = explode(',', (string) $subject->getData('condition_option_value'));
+                $skus = array_map("trim", explode(',', (string) $subject->getData('condition_option_value')));
                 if (!empty($skus)) {
                     $sortOrder = $this->skuPositionSortOrderBuilder->buildSortOrder($skus);
                     $attribute = key($sortOrder);
