@@ -14,13 +14,18 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
 
 /**
  * Datasource used to index product attributes.
  * This class is also used to generate attribute mapping since it implements DynamicFieldProviderInterface.
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -31,13 +36,26 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * @var array
      */
-    private $forbidenChildrenAttributeCode = [
-        'visibility',
-        'status',
-        'price',
-        'tax_class_id',
-        'name',
-    ];
+    private array $forbiddenChildrenAttributes;
+
+    /**
+     * Constructor
+     *
+     * @param ResourceModel   $resourceModel               Resource model.
+     * @param FieldFactory    $fieldFactory                Mapping field factory.
+     * @param AttributeHelper $attributeHelper             Attribute helper.
+     * @param array           $forbiddenChildrenAttributes List of the forbidden children attributes.
+     */
+    public function __construct(
+        ResourceModel $resourceModel,
+        FieldFactory $fieldFactory,
+        AttributeHelper $attributeHelper,
+        array $forbiddenChildrenAttributes = []
+    ) {
+        parent::__construct($resourceModel, $fieldFactory, $attributeHelper);
+
+        $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
+    }
 
     /**
      * {@inheritdoc}
@@ -153,7 +171,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
         $childrenAttributes = array_merge(
             $parentData['children_attributes'],
-            array_diff($childAttributeCodes, $this->forbidenChildrenAttributeCode)
+            array_diff($childAttributeCodes, $this->forbiddenChildrenAttributes)
         );
 
         if (isset($relation['configurable_attributes']) && !empty($relation['configurable_attributes'])) {

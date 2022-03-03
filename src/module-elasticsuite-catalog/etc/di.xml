@@ -203,6 +203,18 @@
         <arguments>
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
+            <!--
+                Only values are taken into account for materializing forbidden attributes. If you want to remove one of these attributes from the forbidden attributes list,
+                you can add a new line with the same name and a non-existing attribute code, like:
+                <item name="visibility" xsi:type="string">_doNothing</item>
+            -->
+            <argument name="forbiddenChildrenAttributes" xsi:type="array">
+                <item name="visibility" xsi:type="string">visibility</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="price" xsi:type="string">price</item>
+                <item name="tax_class_id" xsi:type="string">tax_class_id</item>
+                <item name="name" xsi:type="string">name</item>
+            </argument>
         </arguments>
     </type>
     
