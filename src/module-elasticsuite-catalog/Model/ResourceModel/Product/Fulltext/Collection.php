@@ -237,6 +237,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
+    public function setCurPage($page)
+    {
+        $this->_isFiltersRendered = false;
+
+        return parent::setCurPage($page);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setPageSize($size)
     {
         /*
@@ -245,6 +255,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
          */
         $size = ($size === null) ? false : $size;
         $this->_pageSize = $size;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -256,6 +267,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $field = $this->mapFieldName($field);
         $this->filters[$field] = $condition;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -282,6 +294,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addQueryFilter(QueryInterface $queryFilter)
     {
         $this->queryFilters[] = $queryFilter;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -296,6 +309,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function setSearchQuery($query)
     {
         $this->query = $query;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -349,6 +363,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $this->addFieldToFilter('category_ids', $categoryId);
             $this->_productLimitationFilters['category_ids'] = $categoryId;
         }
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
