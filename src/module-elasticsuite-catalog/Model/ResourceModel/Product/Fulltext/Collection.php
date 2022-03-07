@@ -201,6 +201,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
+    public function clear()
+    {
+        $this->_isFiltersRendered = false;
+
+        return parent::clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
         if (!isset($this->_orders[$attribute]) || ($this->_orders[$attribute] !== $dir)) {
