@@ -27,6 +27,11 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class CategoryData implements DatasourceInterface
 {
     /**
+     * @var boolean
+     */
+    protected $filterZeroPositions;
+
+    /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData
      */
     private $resourceModel;
@@ -34,11 +39,15 @@ class CategoryData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Resource model.
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @param ResourceModel $resourceModel       Resource model.
+     * @param boolean       $filterZeroPositions Whether to filter out 0 product positions
      */
-    public function __construct(ResourceModel $resourceModel)
+    public function __construct(ResourceModel $resourceModel, $filterZeroPositions = true)
     {
         $this->resourceModel = $resourceModel;
+        $this->filterZeroPositions = $filterZeroPositions;
     }
 
     /**
@@ -65,13 +74,17 @@ class CategoryData implements DatasourceInterface
 
             if (isset($categoryDataRow['position']) && $categoryDataRow['position'] !== null) {
                 $categoryDataRow['position'] = (int) $categoryDataRow['position'];
+                if ($this->filterZeroPositions && ($categoryDataRow['position'] === 0)) {
+                    unset($categoryDataRow['position']);
+                }
             }
 
             if (isset($categoryDataRow['is_blacklisted'])) {
                 $categoryDataRow['is_blacklisted'] = (bool) $categoryDataRow['is_blacklisted'];
             }
 
-            $indexData[$productId]['category'][] = array_filter($categoryDataRow);
+            // Filtering out empty, null and false metadata.
+            $indexData[$productId]['category'][] = array_filter($categoryDataRow, 'strlen');
         }
 
         return $indexData;
