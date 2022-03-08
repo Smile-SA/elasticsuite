@@ -289,11 +289,53 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      *
      * @param QueryInterface $queryFilter Query filter.
      *
-     * @return $this
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addQueryFilter(QueryInterface $queryFilter)
     {
         $this->queryFilters[] = $queryFilter;
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove a specific field filter.
+     *
+     * @param string $field Field to remove the filter for.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeFieldFilter($field)
+    {
+        $field = $this->mapFieldName($field);
+        unset($this->filters[$field]);
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove all field filters.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeFieldFilters()
+    {
+        $this->filters = [];
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove all previously added query filters.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeQueryFilters()
+    {
+        $this->queryFilters = [];
         $this->_isFiltersRendered = false;
 
         return $this;
