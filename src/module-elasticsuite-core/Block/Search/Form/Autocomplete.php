@@ -48,7 +48,7 @@ class Autocomplete extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         FormatInterface $localeFormat,
-        array $data
+        array $data = []
     ) {
         $this->jsonHelper   = $jsonHelper;
         $this->localeFormat = $localeFormat;
