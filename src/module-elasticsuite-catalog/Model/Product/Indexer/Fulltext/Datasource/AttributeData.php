@@ -36,7 +36,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * @var array
      */
-    private array $forbiddenChildrenAttributes;
+    private $forbiddenChildrenAttributes = [];
 
     /**
      * Constructor
