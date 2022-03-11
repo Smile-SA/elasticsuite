@@ -32,7 +32,17 @@ class Client implements ClientInterface
     /**
      * @var \Elasticsearch\Client
      */
-    private $esClient;
+    private $esClient = null;
+
+    /**
+     * @var ClientConfigurationInterface
+     */
+    private $clientConfiguration;
+
+    /**
+     * @var ClientBuilder
+     */
+    private $clientBuilder;
 
     /**
      * Constructor.
@@ -42,7 +52,8 @@ class Client implements ClientInterface
      */
     public function __construct(ClientConfigurationInterface $clientConfiguration, ClientBuilder $clientBuilder)
     {
-        $this->esClient = $clientBuilder->build($clientConfiguration->getOptions());
+        $this->clientConfiguration = $clientConfiguration;
+        $this->clientBuilder = $clientBuilder;
     }
 
     /**
@@ -50,7 +61,7 @@ class Client implements ClientInterface
      */
     public function info()
     {
-        return $this->esClient->info();
+        return $this->getEsClient()->info();
     }
 
     /**
@@ -58,7 +69,7 @@ class Client implements ClientInterface
      */
     public function ping()
     {
-        return $this->esClient->ping();
+        return $this->getEsClient()->ping();
     }
 
     /**
@@ -66,7 +77,7 @@ class Client implements ClientInterface
      */
     public function createIndex($indexName, $indexSettings)
     {
-        $this->esClient->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
+        $this->getEsClient()->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
     }
 
     /**
@@ -74,7 +85,7 @@ class Client implements ClientInterface
      */
     public function deleteIndex($indexName)
     {
-        $this->esClient->indices()->delete(['index' => $indexName]);
+        $this->getEsClient()->indices()->delete(['index' => $indexName]);
     }
 
     /**
@@ -82,7 +93,7 @@ class Client implements ClientInterface
      */
     public function indexExists($indexName)
     {
-        return $this->esClient->indices()->exists(['index' => $indexName]);
+        return $this->getEsClient()->indices()->exists(['index' => $indexName]);
     }
 
     /**
@@ -90,7 +101,7 @@ class Client implements ClientInterface
      */
     public function putIndexSettings($indexName, $indexSettings)
     {
-        $this->esClient->indices()->putSettings(['index' => $indexName, 'body' => $indexSettings]);
+        $this->getEsClient()->indices()->putSettings(['index' => $indexName, 'body' => $indexSettings]);
     }
 
     /**
@@ -98,7 +109,7 @@ class Client implements ClientInterface
      */
     public function putMapping($indexName, $mapping)
     {
-        $this->esClient->indices()->putMapping(['index' => $indexName, 'body'  => $mapping]);
+        $this->getEsClient()->indices()->putMapping(['index' => $indexName, 'body'  => $mapping]);
     }
 
     /**
@@ -106,7 +117,7 @@ class Client implements ClientInterface
      */
     public function getMapping($indexName)
     {
-        return $this->esClient->indices()->getMapping(['index' => $indexName]);
+        return $this->getEsClient()->indices()->getMapping(['index' => $indexName]);
     }
 
     /**
@@ -114,7 +125,7 @@ class Client implements ClientInterface
      */
     public function getSettings($indexName)
     {
-        return $this->esClient->indices()->getSettings(['index' => $indexName]);
+        return $this->getEsClient()->indices()->getSettings(['index' => $indexName]);
     }
 
     /**
@@ -122,7 +133,7 @@ class Client implements ClientInterface
      */
     public function forceMerge($indexName)
     {
-        $this->esClient->indices()->forceMerge(['index' => $indexName]);
+        $this->getEsClient()->indices()->forceMerge(['index' => $indexName]);
     }
 
     /**
@@ -130,7 +141,7 @@ class Client implements ClientInterface
      */
     public function refreshIndex($indexName)
     {
-        $this->esClient->indices()->refresh(['index' => $indexName]);
+        $this->getEsClient()->indices()->refresh(['index' => $indexName]);
     }
 
     /**
@@ -140,7 +151,7 @@ class Client implements ClientInterface
     {
         $indices = [];
         try {
-            $indices = $this->esClient->indices()->getMapping(['index' => $indexAlias]);
+            $indices = $this->getEsClient()->indices()->getMapping(['index' => $indexAlias]);
         } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
             ;
         }
@@ -153,7 +164,7 @@ class Client implements ClientInterface
      */
     public function getIndexAliases($params = []): array
     {
-        return $this->esClient->indices()->getAliases($params);
+        return $this->getEsClient()->indices()->getAliases($params);
     }
 
     /**
@@ -161,7 +172,7 @@ class Client implements ClientInterface
      */
     public function updateAliases($aliasActions)
     {
-        $this->esClient->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
+        $this->getEsClient()->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
     }
 
     /**
@@ -169,7 +180,7 @@ class Client implements ClientInterface
      */
     public function bulk($bulkParams)
     {
-        return $this->esClient->bulk($bulkParams);
+        return $this->getEsClient()->bulk($bulkParams);
     }
 
     /**
@@ -177,7 +188,7 @@ class Client implements ClientInterface
      */
     public function search($params)
     {
-        return $this->esClient->search($params);
+        return $this->getEsClient()->search($params);
     }
 
     /**
@@ -185,7 +196,7 @@ class Client implements ClientInterface
      */
     public function analyze($params)
     {
-        return $this->esClient->indices()->analyze($params);
+        return $this->getEsClient()->indices()->analyze($params);
     }
 
     /**
@@ -194,7 +205,7 @@ class Client implements ClientInterface
     public function indexStats($indexName): array
     {
         try {
-            $stats = $this->esClient->indices()->stats(['index' => $indexName]);
+            $stats = $this->getEsClient()->indices()->stats(['index' => $indexName]);
         } catch (\Exception $e) {
             throw new Missing404Exception($e->getMessage());
         }
@@ -207,7 +218,7 @@ class Client implements ClientInterface
      */
     public function termvectors($params)
     {
-        return $this->esClient->termvectors($params);
+        return $this->getEsClient()->termvectors($params);
     }
 
     /**
@@ -215,7 +226,7 @@ class Client implements ClientInterface
      */
     public function mtermvectors($params)
     {
-        return $this->esClient->mtermvectors($params);
+        return $this->getEsClient()->mtermvectors($params);
     }
 
     /**
@@ -223,6 +234,18 @@ class Client implements ClientInterface
      */
     public function reindex(array $params): array
     {
-        return $this->esClient->reindex($params);
+        return $this->getEsClient()->reindex($params);
+    }
+
+    /**
+     * @return \Elasticsearch\Client
+     */
+    private function getEsClient(): \Elasticsearch\Client
+    {
+        if ($this->esClient === null) {
+            $this->esClient = $this->clientBuilder->build($this->clientConfiguration->getOptions());
+        }
+
+        return $this->esClient;
     }
 }
