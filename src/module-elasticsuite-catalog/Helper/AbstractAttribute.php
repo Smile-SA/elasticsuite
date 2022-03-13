@@ -191,7 +191,8 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        // Filter empty values while keeping "0" (int or float) and "false" value.
+        $value = array_filter($value, function ($v) { return (($v === false) || strlen($v)); });
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
@@ -254,7 +255,10 @@ abstract class AbstractAttribute extends Mapping
         if (!isset($this->attributeOptionTextCache[$storeId][$attributeId][$optionId])) {
             $optionValue = $attribute->getSource()->getIndexOptionText($optionId);
             if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
-                $optionValue = $attribute->getStoreLabel($storeId);
+                $optionValue = null;
+                if ($optionId == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
+                    $optionValue = $attribute->getStoreLabel($storeId);
+                }
             }
             $this->attributeOptionTextCache[$storeId][$attributeId][$optionId] = $optionValue;
         }
