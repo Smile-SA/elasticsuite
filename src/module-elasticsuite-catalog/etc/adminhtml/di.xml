@@ -28,4 +28,34 @@
         <plugin name="smile_elasticsuite_categories_form_data_provider" type="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin" />
     </type>
 
+    <!-- Prevent computing categories aggregations (that's used only for displaying facets in front) in back-office objects that manipulate products collections -->
+    <virtualType name="categoryRequestBuilderWithoutAggregations" type="Smile\ElasticsuiteCore\Search\Request\Builder">
+        <arguments>
+            <argument name="aggregationResolver" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Aggregation\Resolver</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="fulltextProductCollectionWithoutAggregations" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">categoryRequestBuilderWithoutAggregations</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="fulltextProductCollectionWithoutAggregationsFactory" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">fulltextProductCollectionWithoutAggregations</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteCatalog\Model\ProductSorter\PreviewInterface">
+        <arguments>
+            <argument name="productCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsFactory</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin">
+        <arguments>
+            <argument name="fulltextCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsFactory</argument>
+        </arguments>
+    </type>
 </config>
