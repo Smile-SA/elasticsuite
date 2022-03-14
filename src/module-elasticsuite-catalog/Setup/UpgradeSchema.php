@@ -80,6 +80,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->addSortOrderMissingFields($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.5.2', '<')) {
+            $this->catalogSetup->addIncludeZeroFalseValues($setup);
+        }
+
         $setup->endSetup();
     }
 }
