@@ -82,6 +82,11 @@ abstract class AbstractAttribute extends Mapping
     private $attributeMappers = [];
 
     /**
+     * @var array
+     */
+    private $attributeCleaners = [];
+
+    /**
      * @param Context          $context           Helper context.
      * @param AttributeFactory $attributeFactory  Factory used to create attributes.
      * @param mixed            $collectionFactory Attribute collection factory.
@@ -184,6 +189,8 @@ abstract class AbstractAttribute extends Mapping
      * multivalued attributes merging on composite products).
      * ES doesn't care of having array of int when it an int is required.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param int     $attributeId Product attribute Id.
      * @param integer $storeId     Store id.
      * @param mixed   $value       Raw value to be parsed.
@@ -201,11 +208,24 @@ abstract class AbstractAttribute extends Mapping
         $values = [];
 
         $mapperKey = 'simple_' . $attributeId;
-
         if (!isset($this->attributeMappers[$mapperKey])) {
             $this->attributeMappers[$mapperKey] = function ($value) use ($attributeId) {
                 return $this->prepareSimpleIndexAttributeValue($attributeId, $value);
             };
+        }
+
+        if (!isset($this->attributeCleaners[$mapperKey])) {
+            if ($this->includesZeroFalseValues($attributeId)) {
+                // Filter empty values while keeping "0" (int or float) and "false" value.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return (($value === false) || strlen($value));
+                };
+            } else {
+                // Filter out empty values. Also removes "0" and "false" values.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return !empty($value);
+                };
+            }
         }
 
         if ($this->usesSource($attributeId) && !is_array($value)) {
@@ -217,7 +237,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        $value = array_filter($value, $this->attributeCleaners[$mapperKey]);
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
@@ -279,7 +299,10 @@ abstract class AbstractAttribute extends Mapping
         if (!isset($this->attributeOptionTextCache[$storeId][$attributeId][$optionId])) {
             $optionValue = $attribute->getSource()->getIndexOptionText($optionId);
             if ($this->getFieldType($attributeId) == FieldInterface::FIELD_TYPE_BOOLEAN) {
-                $optionValue = $attribute->getStoreLabel($storeId);
+                $optionValue = null;
+                if ($optionId == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
+                    $optionValue = $attribute->getStoreLabel($storeId);
+                }
             }
             $this->attributeOptionTextCache[$storeId][$attributeId][$optionId] = $optionValue;
         }
@@ -384,7 +407,7 @@ abstract class AbstractAttribute extends Mapping
      *
      * @param int $attributeId Product attribute id.
      *
-     * @return \Magento\Catalog\Api\Data\EavAttributeInterface
+     * @return string
      */
     private function getAttributeCodeById($attributeId)
     {
@@ -421,7 +444,7 @@ abstract class AbstractAttribute extends Mapping
      * Compute result of $attribute->usesSource() into a local cache.
      * Mandatory because a lot of costly plugins (like in Swatches module) are plugged on this method.
      *
-     * @param int $attributeId Attribute
+     * @param int $attributeId Attribute ID
      *
      * @return bool
      */
@@ -439,7 +462,7 @@ abstract class AbstractAttribute extends Mapping
      * Compute result of $attribute->getBackendType() into a local cache.
      * Mandatory because a lot of costly plugins (like in Swatches module) are plugged on this method.
      *
-     * @param int $attributeId Attribute
+     * @param int $attributeId Attribute ID
      *
      * @return string|null
      */
@@ -451,5 +474,18 @@ abstract class AbstractAttribute extends Mapping
         }
 
         return $this->attributeBackendCache[$attributeId];
+    }
+
+    /**
+     * Returns true if attribute allows indexing zero/false values.
+     * Not using a local cache since it is only called once per attribute.
+     *
+     * @param int $attributeId Attribute ID
+     *
+     * @return bool
+     */
+    private function includesZeroFalseValues($attributeId)
+    {
+        return (bool) $this->getAttributeById($attributeId)->getIncludeZeroFalseValues();
     }
 }
