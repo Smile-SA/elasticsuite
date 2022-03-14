@@ -22,6 +22,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Api\LayeredNavAttributeInterface;
 use Smile\ElasticsuiteCatalog\Helper\ProductAttribute;
 use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
  * Product boolean filter implementation.
@@ -147,6 +148,7 @@ class Boolean extends Attribute
     /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * {@inheritDoc}
      */
@@ -182,6 +184,12 @@ class Boolean extends Attribute
             }
 
             $item->setApplyFilterValue(array_values($applyValue));
+        }
+
+        if (($this->getAttributeModel()->getFacetSortOrder() == BucketInterface::SORT_ORDER_MANUAL)
+            && (count($this->_items) > 1)
+        ) {
+            krsort($this->_items, SORT_NUMERIC);
         }
 
         return $this;
