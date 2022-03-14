@@ -551,6 +551,32 @@ class CatalogSetup
     }
 
     /**
+     * Add "include_zero_false_values" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addIncludeZeroFalseValues(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'include_zero_false_values' into the db.
+        $connection->addColumn(
+            $table,
+            'include_zero_false_values',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'Should the search engine index zero (integer or decimal attribute) or false (boolean attribute) values',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *

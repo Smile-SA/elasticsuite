@@ -19,7 +19,6 @@ use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
 
@@ -103,6 +102,16 @@ class FrontPlugin
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
+        }
+
+        if (($this->getAttribute()->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean')
+            || ($this->getAttribute()->getBackendType() == 'int')
+            || ($this->getAttribute()->getFrontendClass() == 'validate-digits')
+            || ($this->getAttribute()->getBackendType() == 'decimal' || $this->getAttribute()->getFrontendClass() == 'validate-number')
+            || (in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect'])
+                || $this->getAttribute()->getSourceModel() != '')
+        ) {
+            $this->addIncludeZeroFalseField($fieldset);
         }
 
         $this->appendFieldsDependency($subject);
@@ -395,6 +404,32 @@ class FrontPlugin
             $displayFieldset = $this->createDisplayFieldset($form, $subject);
             $this->addDisplayFields($displayFieldset);
         }
+
+        return $this;
+    }
+
+    /**
+     * Add field allowing to configure if zero/false values should be indexed or ignored.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addIncludeZeroFalseField(Fieldset $fieldset)
+    {
+        $fieldset->addField(
+            'include_zero_false_values',
+            'select',
+            [
+                'name'   => 'include_zero_false_values',
+                'label'  => __('Include zero or false values'),
+                'values' => $this->booleanSource->toOptionArray(),
+                'note'   => __(
+                    'If set to Yes, zero (integer or numeric attribute) or false (boolean attribute) values will be indexed in the search engine (default is No). Also applies to source model keys/values of Dropdown/Multiple Select attributes.'
+                ),
+            ],
+            'used_for_sortby'
+        );
 
         return $this;
     }
