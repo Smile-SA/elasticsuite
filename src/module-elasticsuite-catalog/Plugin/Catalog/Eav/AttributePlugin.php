@@ -45,6 +45,11 @@ class AttributePlugin
     private $indicesConfig;
 
     /**
+     * @var \Magento\Framework\Indexer\IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
      * AttributePlugin constructor.
      *
      * @param \Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig   Indices config.
@@ -81,6 +86,10 @@ class AttributePlugin
         }
 
         if ($subject->dataHasChangedFor(EavAttributeInterface::USED_FOR_SORT_BY)) {
+            $invalidateIndex = true;
+        }
+
+        if ($subject->dataHasChangedFor('include_zero_false_values')) {
             $invalidateIndex = true;
         }
 

@@ -65,6 +65,11 @@ abstract class AbstractAttribute extends Mapping
     private $attributeMappers = [];
 
     /**
+     * @var array
+     */
+    private $attributeCleaners = [];
+
+    /**
      * @param Context          $context           Helper context.
      * @param AttributeFactory $attributeFactory  Factory used to create attributes.
      * @param mixed            $collectionFactory Attribute collection factory.
@@ -163,6 +168,8 @@ abstract class AbstractAttribute extends Mapping
      * multivalued attributes merging on composite products).
      * ES doesn't care of having array of int when it an int is required.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param AttributeInterface $attribute Product attribute.
      * @param integer            $storeId   Store id.
      * @param mixed              $value     Raw value to be parsed.
@@ -175,11 +182,24 @@ abstract class AbstractAttribute extends Mapping
         $values = [];
 
         $mapperKey = 'simple_' . $attribute->getId();
-
         if (!isset($this->attributeMappers[$mapperKey])) {
             $this->attributeMappers[$mapperKey] = function ($value) use ($attribute) {
                 return $this->prepareSimpleIndexAttributeValue($attribute, $value);
             };
+        }
+
+        if (!isset($this->attributeCleaners[$mapperKey])) {
+            if ($attribute->getIncludeZeroFalseValues()) {
+                // Filter empty values while keeping "0" (int or float) and "false" value.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return (($value === false) || strlen($value));
+                };
+            } else {
+                // Filter out empty values. Also removes "0" and "false" values.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return !empty($value);
+                };
+            }
         }
 
         if ($this->usesSource($attribute) && !is_array($value)) {
@@ -191,7 +211,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        $value = array_filter($value, $this->attributeCleaners[$mapperKey]);
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
@@ -254,7 +274,10 @@ abstract class AbstractAttribute extends Mapping
         if (!isset($this->attributeOptionTextCache[$storeId][$attributeId][$optionId])) {
             $optionValue = $attribute->getSource()->getIndexOptionText($optionId);
             if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
-                $optionValue = $attribute->getStoreLabel($storeId);
+                $optionValue = null;
+                if ($optionId == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
+                    $optionValue = $attribute->getStoreLabel($storeId);
+                }
             }
             $this->attributeOptionTextCache[$storeId][$attributeId][$optionId] = $optionValue;
         }
