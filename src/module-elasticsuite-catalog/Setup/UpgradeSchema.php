@@ -49,6 +49,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
      *
      * @return void
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function upgrade(
         SchemaSetupInterface $setup,

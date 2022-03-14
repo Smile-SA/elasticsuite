@@ -190,6 +190,7 @@ abstract class AbstractAttribute extends Mapping
      * ES doesn't care of having array of int when it an int is required.
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param int     $attributeId Product attribute Id.
      * @param integer $storeId     Store id.
