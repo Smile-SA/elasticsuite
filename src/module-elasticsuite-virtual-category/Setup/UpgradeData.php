@@ -83,39 +83,9 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         if (version_compare($context->getVersion(), '1.5.0', '<')) {
-            $this->addGenerateVirtualCategorySubtreeAttribute($setup);
+            $this->virtualCategorySetup->addGenerateVirtualCategorySubtreeAttribute($this->eavSetupFactory->create(['setup' => $setup]));
         }
 
         $setup->endSetup();
-    }
-
-    /**
-     * Append the "generate_root_category_subtree" attribute to categories
-     *
-     * @param \Magento\Framework\Setup\ModuleDataSetupInterface $setup Setup.
-     */
-    private function addGenerateVirtualCategorySubtreeAttribute(ModuleDataSetupInterface $setup)
-    {
-        /**
-         * @var \Magento\Eav\Setup\EavSetup $eavSetup
-         */
-        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
-
-        $eavSetup->addAttribute(
-            Category::ENTITY,
-            'generate_root_category_subtree',
-            [
-                'type'       => 'int',
-                'label'      => 'Generate Virtual Category Subtree',
-                'input'      => null,
-                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'required'   => false,
-                'default'    => 0,
-                'visible'    => true,
-                'note'       => "If the subtree of this virtual category should be displayed into category search filter",
-                'sort_order' => 200,
-                'group'      => 'General Information',
-            ]
-        );
     }
 }
