@@ -24,6 +24,7 @@ use Magento\Framework\EntityManager\MetadataPool;
  * Generic Setup class for Virtual Categories
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory

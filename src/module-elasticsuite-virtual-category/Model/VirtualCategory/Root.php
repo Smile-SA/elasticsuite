@@ -13,6 +13,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\CategoryFactory;
 use Magento\Framework\Registry;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory as CategoryCollectionFactory;
@@ -37,6 +38,11 @@ class Root
     private $categoryCollectionFactory;
 
     /**
+     * @var \Magento\Catalog\Model\CategoryFactory
+     */
+    private $categoryFactory;
+
+    /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
@@ -46,15 +52,18 @@ class Root
      *
      * @param Registry                  $coreRegistry              Category Repository
      * @param CategoryCollectionFactory $categoryCollectionFactory Category Collection Factory
+     * @param CategoryFactory           $categoryFactory           Category Factory
      * @param StoreManagerInterface     $storeManagerInterface     Store Manager
      */
     public function __construct(
         Registry $coreRegistry,
         CategoryCollectionFactory $categoryCollectionFactory,
+        CategoryFactory $categoryFactory,
         StoreManagerInterface $storeManagerInterface
     ) {
         $this->coreRegistry = $coreRegistry;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->categoryFactory = $categoryFactory;
         $this->storeManager = $storeManagerInterface;
     }
 
@@ -160,6 +169,45 @@ class Root
         $categoryIds = array_merge($rootPathIds, $pathIds);
 
         return $categoryIds;
+    }
+
+
+    /**
+     * Check if a category is configured to use its "virtual root category" to display facets
+     *
+     * @param CategoryInterface $category The category
+     *
+     * @return bool
+     */
+    public function useVirtualRootCategorySubtree($category)
+    {
+        $rootCategory = $this->getVirtualCategoryRoot($category);
+
+        return ($rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree());
+    }
+
+    /**
+     * Load the root category used for a virtual category.
+     *
+     * @param CategoryInterface $category Virtual category.
+     *
+     * @return CategoryInterface|null
+     */
+    public function getVirtualCategoryRoot(CategoryInterface $category): ?CategoryInterface
+    {
+        $storeId      = $category->getStoreId();
+        $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
+
+        if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
+            $rootCategoryId = $category->getVirtualCategoryRoot();
+            $rootCategory->load($rootCategoryId);
+        }
+
+        if ($rootCategory && $rootCategory->getId() && ($rootCategory->getLevel() < 1)) {
+            $rootCategory = null;
+        }
+
+        return $rootCategory;
     }
 
     /**

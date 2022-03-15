@@ -15,16 +15,14 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory as CategoryCollectionFactory;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
+use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory as CategoryCollectionFactory;
 use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCategoryRoot;
 
 /**
@@ -54,11 +52,6 @@ class Url
     private $scopeConfig;
 
     /**
-     * @var CategoryRepositoryInterface
-     */
-    private $categoryRepository;
-
-    /**
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
@@ -66,7 +59,7 @@ class Url
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
      */
-    private $categoryFactory;
+    private $categoryCollectionFactory;
 
     /**
      * @var \Magento\UrlRewrite\Model\UrlFinderInterface
@@ -90,13 +83,13 @@ class Url
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         StoreManagerInterface $storeManager,
-        CategoryFactory $categoryFactory,
+        CategoryCollectionFactory $categoryCollectionFactory,
         UrlFinderInterface $urlFinder,
         VirtualCategoryRoot $virtualCategoryRoot
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
-        $this->categoryFactory = $categoryFactory;
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->urlFinder = $urlFinder;
         $this->virtualCategoryRoot       = $virtualCategoryRoot;
     }
@@ -277,7 +270,7 @@ class Url
      */
     private function loadVirtualCategoryByUrlPath($requestPath): DataObject
     {
-        $collection = $this->categoryFactory->create();
+        $collection = $this->categoryCollectionFactory->create();
         $collection->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_path', ['eq' => $requestPath])
             ->addAttributeToFilter('is_virtual_category', ['eq' => 1]);

@@ -16,6 +16,9 @@ namespace Smile\ElasticsuiteVirtualCategory\Controller;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\App\ActionFactory;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\RouterInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\UrlInterface;
@@ -60,11 +63,11 @@ class Router implements RouterInterface
     /**
      * Router Constructor
      *
-     * @param ActionFactory         $actionFactory Action Factory
-     * @param ManagerInterface      $eventManager  Event Manager
-     * @param StoreManagerInterface $storeManager  Store Manager
-     * @param Url                   $urlModel      Url Model
-     * @param VirtualCategoryRoot   $virtualCategoryRoot Virtual Category Root                                            
+     * @param ActionFactory         $actionFactory       Action Factory
+     * @param ManagerInterface      $eventManager        Event Manager
+     * @param StoreManagerInterface $storeManager        Store Manager
+     * @param Url                   $urlModel            Url Model
+     * @param VirtualCategoryRoot   $virtualCategoryRoot Virtual Category Root
      */
     public function __construct(
         ActionFactory $actionFactory,
@@ -99,7 +102,7 @@ class Router implements RouterInterface
             'smile_elasticsuite_virtualcategory_controller_router_match_before',
             ['router' => $this, 'condition' => $condition]
         );
-        
+
         if ($appliedRoot && $appliedRoot->getId()) {
             $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
         }
