@@ -80,7 +80,9 @@ class QueryBuilder
 
         $query = $this->getSpecialAttributesSearchQuery($productCondition);
 
-        if ($query === null && !empty($productCondition->getValue())) {
+        $conditionValue = $productCondition->getValue();
+        $conditionValue = array_filter(is_array($conditionValue) ? $conditionValue : [$conditionValue], 'strlen');
+        if ($query === null && !empty($conditionValue)) {
             $this->prepareFieldValue($productCondition);
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
