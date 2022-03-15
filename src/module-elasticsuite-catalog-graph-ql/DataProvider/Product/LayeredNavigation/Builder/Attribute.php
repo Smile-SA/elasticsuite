@@ -86,6 +86,7 @@ class Attribute implements LayerBuilderInterface
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @throws \Zend_Db_Statement_Exception
      */
     public function build(AggregationInterface $aggregation, ?int $storeId): array
@@ -129,9 +130,14 @@ class Attribute implements LayerBuilderInterface
                     continue;
                 }
 
+                $label = $value->getValue();
+                if ($attribute && $attribute->getFrontendInput() == 'boolean') {
+                    $label = $attribute->getSource()->getOptionText($value->getValue());
+                }
+
                 $metrics                             = $value->getMetrics();
                 $result[$attributeCode]['options'][] = $this->layerFormatter->buildItem(
-                    $attribute['options'][$value->getValue()] ?? $value->getValue(),
+                    $label,
                     $value->getValue(),
                     $metrics['count']
                 );
