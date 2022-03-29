@@ -294,11 +294,13 @@ jobs:
                   composer update --no-interaction --ignore-platform-reqs
                 fi
 
-            - name: "[Init] Data : Prepare for beta Magento versions"
-              if: matrix.experimental == true
+            - name: "[Init] Data : Prepare for Magento >= 2.4.4"
               working-directory: ${{ env.magento-directory }}
               run: |
-                sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -ge $(version "2.4.2") ]; then
+                  sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+                fi
 
             - name: "[Init] Data : Remove Downloadable / Virtual products"
               working-directory: ${{ env.magento-directory }}
