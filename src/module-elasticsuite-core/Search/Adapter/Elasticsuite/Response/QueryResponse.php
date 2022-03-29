@@ -64,7 +64,7 @@ class QueryResponse implements ResponseInterface
     /**
      * {@inheritDoc}
      */
-    public function count()
+    public function count() : int
     {
         return $this->count;
     }
