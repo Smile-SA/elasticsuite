@@ -92,7 +92,9 @@ class CategoryData implements DatasourceInterface
             // Filtering out empty, null and false metadata.
             $indexData[$productId]['category'][] = array_filter(
                 $categoryDataRow,
-                function ($str) { return $str !== null && strlen($str); }
+                function ($str) {
+                    return $str !== null && strlen($str);
+                }
             );
         }
 
