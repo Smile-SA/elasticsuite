@@ -72,7 +72,7 @@ class QueryResponse implements ResponseInterface
     /**
      * {@inheritDoc}
      */
-    public function getIterator()
+    public function getIterator() : \Traversable
     {
         return new \ArrayIterator($this->documents);
     }
