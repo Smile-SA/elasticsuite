@@ -144,9 +144,13 @@
             <language>turkish</language>
         </filter>
         <filter name="standard_override" type="stemmer_override" language="fr">
-            <!-- No known issues with the "french" or "light_french" stemmers. But this is to show that having an empty list of rules is valid.
+            <!-- Having an empty list of rules is valid.
                  This means existing rules can be both re-defined or voided in a custom module. -->
-            <rules>[]</rules>
+            <!--<rules>[]</rules>-->
+            <!--
+                Known issues with the "french" stemmer.
+                 -->
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou"]</rules>
         </filter>
         <filter name="standard_override" type="stemmer_override" language="it">
             <!--
