@@ -29,6 +29,11 @@ class MappingPlugin
     private $serverVersion;
 
     /**
+     * @var string
+     */
+    private $serverDistribution;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo Cluster information API.
@@ -36,6 +41,7 @@ class MappingPlugin
     public function __construct(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo)
     {
         $this->serverVersion = $clusterInfo->getServerVersion();
+        $this->serverDistribution = $clusterInfo->getServerDistribution();
     }
 
     /**
@@ -50,7 +56,9 @@ class MappingPlugin
      */
     public function afterAsArray(MappingInterface $mapping, $result)
     {
-        if (strcmp($this->serverVersion, "6") < 0) {
+        if (strcmp($this->serverVersion, "6") < 0
+            && $this->serverDistribution == ClusterInfoInterface::DISTRO_ES
+        ) {
             $result['_all'] = ['enabled' => false];
         }
 

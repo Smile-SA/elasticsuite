@@ -56,4 +56,16 @@ class ClusterInfo implements ClusterInfoInterface
 
         return $this->serverVersion;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getServerDistribution()
+    {
+        if ($this->serverDistribution === null) {
+            $this->serverDistribution = $this->client->info()['version']['distribution'] ?? self::DISTRO_ES;
+        }
+
+        return $this->serverDistribution;
+    }
 }

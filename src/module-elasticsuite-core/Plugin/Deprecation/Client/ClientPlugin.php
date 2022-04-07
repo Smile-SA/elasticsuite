@@ -33,6 +33,11 @@ class ClientPlugin
     private $serverVersion;
 
     /**
+     * @var string
+     */
+    private $serverDistribution;
+
+    /**
      * @var \Smile\ElasticsuiteCore\Client\ClientBuilder
      */
     private $clientBuilder;
@@ -55,6 +60,7 @@ class ClientPlugin
         ClientBuilder $clientBuilder
     ) {
         $this->serverVersion       = $clusterInfo->getServerVersion();
+        $this->serverDistribution  = $clusterInfo->getServerDistribution();
         $this->clientBuilder       = $clientBuilder;
         $this->clientConfiguration = $clientConfiguration;
     }
@@ -73,7 +79,9 @@ class ClientPlugin
         $indexName,
         $mapping
     ) {
-        if (strcmp($this->serverVersion, "7") >= 0) {
+        if (strcmp($this->serverVersion, "7") >= 0
+            || $this->serverDistribution === ClusterInfoInterface::DISTRO_OS
+        ) {
             return $proceed($indexName, $mapping);
         }
 
