@@ -23,8 +23,8 @@ namespace Smile\ElasticsuiteCore\Api\Cluster;
  */
 interface ClusterInfoInterface
 {
-    public CONST DISTRO_ES = 'elasticsearch';
-    public CONST DISTRO_OS = 'opensearch';
+    public const DISTRO_ES = 'elasticsearch';
+    public const DISTRO_OS = 'opensearch';
 
     /**
      * Returns ElasticSearch server version.
