@@ -13,7 +13,7 @@
 define([
     'Magento_Ui/js/form/element/abstract',
     'jquery',
-    'MutationObserver'
+    'Smile_ElasticsuiteCore/js/MutationObserver'
 ], function (Component, $) {
     'use strict';
 

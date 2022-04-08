@@ -16,7 +16,7 @@ define([
     'jquery',
     'Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/preview/item',
     'uiRegistry',
-    'MutationObserver'
+    'Smile_ElasticsuiteCore/js/MutationObserver'
 ], function (Component, $, Product, uiRegistry) {
     'use strict';
 

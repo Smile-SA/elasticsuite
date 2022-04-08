@@ -16,7 +16,7 @@ define([
     'jquery',
     'Smile_ElasticsuiteCatalog/js/form/element/product-sorter/item',
     'Magento_Ui/js/modal/confirm',
-    'MutationObserver',
+    'Smile_ElasticsuiteCore/js/MutationObserver',
     'ko'
 ], function (Component, $, Product, confirm, MutationObserver, ko) {
     'use strict';
