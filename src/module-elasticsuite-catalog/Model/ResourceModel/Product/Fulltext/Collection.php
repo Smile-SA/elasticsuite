@@ -18,6 +18,8 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
+use Magento\Search\Model\QueryFactory;
+use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
 
 /**
  * Search engine product collection.
@@ -102,6 +104,18 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $requestFieldMapper;
 
     /**
+     * Query factory
+     *
+     * @var QueryFactory
+     */
+    private $queryFactory;
+
+    /**
+     * @var TermDataProvider
+     */
+    private $termDataProvider;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -154,6 +168,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
         RequestFieldMapper $requestFieldMapper,
+        QueryFactory $queryFactory,
+        TermDataProvider $termDataProvider,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
     ) {
@@ -184,6 +200,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->searchEngine       = $searchEngine;
         $this->requestFieldMapper = $requestFieldMapper;
         $this->searchRequestName  = $searchRequestName;
+        $this->queryFactory       = $queryFactory;
+        $this->termDataProvider   = $termDataProvider;
     }
 
     /**
@@ -350,7 +368,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setSearchQuery($query)
     {
-        $this->query = $query;
+        $terms = $this->getQueryText();
+        $this->query = $terms;
         $this->_isFiltersRendered = false;
 
         return $this;
@@ -368,6 +387,25 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function addSearchFilter($query)
     {
         return $this->setSearchQuery($query);
+    }
+
+    /**
+     * @return array
+     */
+    private function getQueryText()
+    {
+        $terms = array_map(
+            function ($termItem) {
+                return $termItem->getTitle();
+            },
+            $this->termDataProvider->getItems()
+        );
+
+        if (empty($terms)) {
+            $terms = [$this->queryFactory->get()->getQueryText()];
+        }
+
+        return $terms;
     }
 
     /**
