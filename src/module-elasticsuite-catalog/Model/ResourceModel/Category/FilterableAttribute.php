@@ -171,7 +171,7 @@ class FilterableAttribute extends AbstractDb
         unset($row['attribute_id']);
         unset($row['facet_display_mode']);
 
-        if (!empty(array_filter($row, 'strlen'))) { // Preserve 0 values.
+        if (!empty(array_filter($row, function ($str) { return $str !== null && strlen($str); }))) { // Preserve 0 values.
             $result = true;
         }
 
