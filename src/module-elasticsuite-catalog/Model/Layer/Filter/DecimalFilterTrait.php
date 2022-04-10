@@ -85,28 +85,36 @@ trait DecimalFilterTrait
         /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
         $productCollection = $this->getLayer()->getProductCollection();
         $facets = $productCollection->getFacetedData($this->getFilterField());
+        $products = $productCollection->addAttributeToSelect($this->_requestVar)->getItems();
 
         $minValue = false;
         $maxValue = false;
 
         $data = [];
-        if (count($facets) > 1) {
-            foreach ($facets as $key => $aggregation) {
-                $count = $aggregation['count'];
-                $data[] = ['label' => $key, 'value' => $key, 'count' => $count];
+        if (!count($facets)) {
+            return $data;
+        }
 
-                if ($minValue === false || $minValue > $key) {
-                    $minValue = $key;
-                }
-
-                if ($maxValue === false || $maxValue < $key) {
-                    $maxValue = $key;
-                }
+        foreach($products as $product) {
+            $value = $product->getData($this->_requestVar);
+            if ($minValue === false || $minValue > $value) {
+                $minValue = $value;
             }
 
-            $this->setMinValue($minValue);
-            $this->setMaxValue($maxValue);
+            if ($maxValue === false || $maxValue < $value) {
+                $maxValue = $value;
+            }
         }
+
+        foreach ($facets as $key => $aggregation) {
+            $count = $aggregation['count'];
+            if ($key >= $minValue && $key <= $maxValue) {
+                $data[] = ['label' => $key, 'value' => $key, 'count' => $count];
+            }
+        }
+
+        $this->setMinValue($minValue);
+        $this->setMaxValue($maxValue);
 
         return $data;
     }
