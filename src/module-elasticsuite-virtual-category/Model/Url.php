@@ -208,7 +208,7 @@ class Url
      */
     public function getCategoryRewrite($categoryPath, $storeId)
     {
-        $categoryPath = str_replace($this->getCategoryUrlSuffix(), '', $categoryPath);
+        $categoryPath = str_replace($this->getCategoryUrlSuffix() ?? '', '', $categoryPath);
         $category = $this->loadCategoryByUrlKey($categoryPath);
         $rewrite  = null;
 
