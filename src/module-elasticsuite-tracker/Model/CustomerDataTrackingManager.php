@@ -52,7 +52,7 @@ class CustomerDataTrackingManager
         $customer = $this->customerSession->getCustomer();
         $shippingAddress = $customer->getDefaultShippingAddress();
 
-        $dob = new DateTime($customer->getDob());
+        $dob = new DateTime($customer->getDob() ?? '');
         $now = new DateTime();
 
         return [
