@@ -13,6 +13,7 @@
 namespace Smile\ElasticsuiteCore\Plugin\Deprecation\Index;
 
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
 
 /**
  * Implements backward compatibility of mapping definitions with ES 5.x.
