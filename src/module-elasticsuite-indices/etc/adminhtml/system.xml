@@ -22,7 +22,7 @@
             <resource>Magento_Backend::smile_elasticsuite_indices</resource>
             <group id="indices_mapping" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Indices Mapping</label>
-                <field id="mapping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="mapping" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Mapping</label>
                     <frontend_model>Smile\ElasticsuiteIndices\Block\Adminhtml\Form\Field\Mapping</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
