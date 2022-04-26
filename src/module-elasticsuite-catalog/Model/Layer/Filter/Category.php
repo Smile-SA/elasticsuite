@@ -220,7 +220,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         if ($this->searchContext->getCurrentSearchQuery()) {
             return false;
         }
-        
+
         return $this->useUrlRewrites;
     }
 
