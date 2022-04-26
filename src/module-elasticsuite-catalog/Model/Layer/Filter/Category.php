@@ -216,6 +216,11 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
      */
     protected function useUrlRewrites()
     {
+        /** If within search context, always make categories behave as filter */
+        if ($this->searchContext->getCurrentSearchQuery()) {
+            return false;
+        }
+        
         return $this->useUrlRewrites;
     }
 
