@@ -23,6 +23,7 @@ namespace Smile\ElasticsuiteThesaurus\Helper;
  * @category  Smile
  * @package   Smile\ElasticsuiteThesaurus
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @SuppressWarnings(PHPMD)
  */
 class Combinatorics
 {
@@ -45,7 +46,6 @@ class Combinatorics
      * List of pointers that record the current combination.
      *
      * @var array
-     * @access private
      */
     private $_pointers = [];
 
@@ -91,6 +91,29 @@ class Combinatorics
         return $combinations;
     }
 
+
+    /**
+     * Find all permutations given a set and a subset size.
+     *
+     * @access public
+     *
+     * @param array $set         Parent set
+     * @param int   $subset_size Subset size
+     *
+     * @return array An array of permutations
+     */
+    public function permutations(array $set, $subset_size = null)
+    {
+        $combinations = $this->combinations($set, $subset_size);
+        $permutations = [];
+
+        foreach ($combinations as $combination) {
+            $permutations = array_merge($permutations, $this->_findPermutations($combination));
+        }
+
+        return $permutations;
+    }
+
     /**
      * Recursive function used to advance the list of 'pointers' that record the
      * current combination.
@@ -110,11 +133,12 @@ class Combinatorics
 
         if ($this->_pointers[$pointer_number] < $limit) {
             $this->_pointers[$pointer_number]++;
+
             return true;
         } else {
             if ($this->_advancePointers($pointer_number - 1, $limit - 1)) {
-                $this->_pointers[$pointer_number] =
-                    $this->_pointers[$pointer_number - 1] + 1;
+                $this->_pointers[$pointer_number] = $this->_pointers[$pointer_number - 1] + 1;
+
                 return true;
             } else {
                 return false;
@@ -145,28 +169,6 @@ class Combinatorics
     }
 
     /**
-     * Find all permutations given a set and a subset size.
-     *
-     * @access public
-     *
-     * @param array $set         Parent set
-     * @param int   $subset_size Subset size
-     *
-     * @return array An array of permutations
-     */
-    public function permutations(array $set, $subset_size = null)
-    {
-        $combinations = $this->combinations($set, $subset_size);
-        $permutations = [];
-
-        foreach ($combinations as $combination) {
-            $permutations = array_merge($permutations, $this->_findPermutations($combination));
-        }
-
-        return $permutations;
-    }
-
-    /**
      * Recursive function to find the permutations of the current combination.
      *
      * @access private
@@ -183,7 +185,7 @@ class Combinatorics
 
         $permutations = [];
 
-        list($key, $val) = $this->array_shift_assoc($set);
+        list($key, $val) = $this->arrayShiftAssoc($set);
         $sub_permutations = $this->_findPermutations($set);
 
         foreach ($sub_permutations as $permutation) {
@@ -196,8 +198,7 @@ class Combinatorics
 
         $key = $this->_firstKey($set);
         while ($key != $start_key) {
-
-            list($key, $val) = $this->array_shift_assoc($set);
+            list($key, $val) = $this->arrayShiftAssoc($set);
             $sub_permutations = $this->_findPermutations($set);
 
             foreach ($sub_permutations as $permutation) {
@@ -221,12 +222,13 @@ class Combinatorics
      * @return array Array with 1st element as the shifted key and the 2nd
      *               element as the shifted value
      */
-    public function array_shift_assoc(array &$array)
+    private function arrayShiftAssoc(array &$array)
     {
         foreach ($array as $key => $val) {
             unset($array[$key]);
             break;
         }
+
         return [$key => $val];
     }
 
@@ -243,6 +245,7 @@ class Combinatorics
         foreach ($array as $key => $val) {
             break;
         }
+
         return $key;
     }
 }
