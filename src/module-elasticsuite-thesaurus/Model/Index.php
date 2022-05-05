@@ -261,8 +261,6 @@ class Index
      */
     private function getQueryCombinations($queryText)
     {
-        $words = explode(' ', $queryText);
-
         // Get all the space character positions in the queryText.
         $spacesPosition = [];
         $offset         = 0;
@@ -273,7 +271,8 @@ class Index
 
         // Get all possible combinations of spaces to be replaced.
         $spacesCombinations = [];
-        for ($cpt = 1; $cpt <= count($spacesPosition); $cpt++) {
+        $spacesCount        = count($spacesPosition);
+        for ($cpt = 1; $cpt <= $spacesCount; $cpt++) {
             foreach ($this->combinatorics->combinations($spacesPosition, $cpt) as $combination) {
                 $spacesCombinations[] = $combination;
             }
