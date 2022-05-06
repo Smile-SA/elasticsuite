@@ -201,6 +201,11 @@ class IndexStatusProvider
             $indexName = str_replace($alias, '', $indexName);
             $date      = substr(preg_replace('/[^0-9]/', '', $indexName), -$count);
 
+            // Tracking indices are built monthly and does not fit with standard pattern containing datetime with hours.
+            if (strlen($date) !== 14) {
+                return false;
+            }
+
             return new Zend_Date($date, $format);
         } catch (Zend_Date_Exception $e) {
             return false;

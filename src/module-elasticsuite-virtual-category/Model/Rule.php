@@ -214,6 +214,24 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Combine several category queries
+     *
+     * @param CategoryInterface[] $categories The categories
+     *
+     * @return QueryInterface
+     */
+    public function mergeCategoryQueries(array $categories)
+    {
+        $queries = [];
+
+        foreach ($categories as $category) {
+            $queries[] = $this->getCategorySearchQuery($category);
+        }
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queries]);
+    }
+
+    /**
      * Load the root category used for a virtual category.
      *
      * @param CategoryInterface $category Virtual category.

@@ -14,7 +14,7 @@
 define([
     'Magento_Ui/js/form/components/html',
     'underscore',
-    'MutationObserver'
+    'Smile_ElasticsuiteCore/js/MutationObserver'
 ], function (Component, _) {
     'use strict';
 

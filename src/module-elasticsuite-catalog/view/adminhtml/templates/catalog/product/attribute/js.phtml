@@ -112,7 +112,7 @@ function bindAttributeInputType()
     switch ($('frontend_input').value) {
         case 'textarea':
             setRowVisibility('is_wysiwyg_enabled', true);
-            if($('is_wysiwyg_enabled').value == '0'){
+            if($('is_wysiwyg_enabled') && $('is_wysiwyg_enabled').value == '0'){
                 setRowVisibility('is_html_allowed_on_front', true);
                 $('is_html_allowed_on_front').disabled = false;
             }

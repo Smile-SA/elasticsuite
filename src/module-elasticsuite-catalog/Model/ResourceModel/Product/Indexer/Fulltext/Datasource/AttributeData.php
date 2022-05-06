@@ -103,7 +103,7 @@ class AttributeData extends AbstractAttributeData
                     $parentId = (int) $relationRow['parent_id'];
                     $childId  = (int) $relationRow['child_id'];
                     $sku      = (string) $relationRow['sku'];
-                    $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"]));
+                    $configurableAttributes = array_filter(explode(',', $relationRow["configurable_attributes"] ?? ''));
                     $children[$childId][] = [
                         "parent_id"               => $parentId,
                         "configurable_attributes" => $configurableAttributes,

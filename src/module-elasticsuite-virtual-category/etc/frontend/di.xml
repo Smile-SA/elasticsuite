@@ -53,4 +53,43 @@
         </arguments>
     </type>
 
+    <type name="Magento\Catalog\Model\Product">
+        <plugin name="smile_elasticsuite_virtual_categories_product"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\ProductPlugin" />
+    </type>
+
+    <type name="Magento\Framework\App\RouterList">
+        <arguments>
+            <argument name="routerList" xsi:type="array">
+                <item name="smile_elasticsuite_virtualcategory" xsi:type="array">
+                    <item name="class" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Controller\Router</item>
+                    <item name="disable" xsi:type="boolean">false</item>
+                    <item name="sortOrder" xsi:type="string">50</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\CategoryFactory"
+                 type="Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\Category</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\Category">
+        <arguments>
+            <argument name="dataProviderFactory" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\CategoryFactory</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Helper\Data">
+        <plugin name="smile_elasticsuite_virtual_categories_breadcrumb"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Helper\BreadcrumbPlugin" />
+    </type>
+
+    <type name="Magento\Catalog\Model\Design">
+        <plugin name="smile_elasticsuite_virtual_categories_design"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\DesignPlugin" />
+    </type>
 </config>

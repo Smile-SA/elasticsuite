@@ -19,7 +19,7 @@ define([
     'jquery',
     'Magento_Catalog/js/price-utils',
     'mage/template',
-    'jquery-ui-modules/slider',
+    'Smile_ElasticsuiteCatalog/js/slider',
     'Magento_Ui/js/modal/modal',
     'Smile_ElasticsuiteCatalog/js/jquery.ui.touch-punch.min'
 ], function ($, priceUtil, mageTemplate) {
