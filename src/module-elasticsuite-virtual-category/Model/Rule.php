@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
+use Magento\Catalog\Model\Category;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory as ConditionDataFactory ;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -34,6 +36,8 @@ use Magento\Framework\Model\Context;
  * Virtual category rule.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -70,6 +74,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @var StoreManagerInterface
      */
     private $storeManager;
+
+    /**
+     * @var Category[]
+     */
+    protected $instances = [];
 
     /**
      * Constructor.
@@ -129,10 +138,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Build search query by category.
      *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $category           Search category.
-     * @param array                                       $excludedCategories Categories that should not be used into search
-     *                                                                        query building. Used to avoid infinite recursion
-     *                                                                        while building virtual categories rules.
+     * @param CategoryInterface $category           Search category.
+     * @param array             $excludedCategories Categories that should not be used into search query building.
+     *                                              Used to avoid infinite recursion while building virtual categories rules.
      *
      * @return QueryInterface|null
      */
@@ -163,7 +171,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Retrieve search queries of children categories.
      *
-     * @param \Magento\Catalog\Api\Data\CategoryInterface $rootCategory Root category.
+     * @param CategoryInterface $rootCategory Root category.
      *
      * @return QueryInterface[]
      */
@@ -237,6 +245,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param CategoryInterface $category Virtual category.
      *
      * @return CategoryInterface|null
+     * @throws NoSuchEntityException
      */
     private function getVirtualRootCategory(CategoryInterface $category): ?CategoryInterface
     {
@@ -245,7 +254,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
             $rootCategoryId = $category->getVirtualCategoryRoot();
-            $rootCategory->load($rootCategoryId);
+            $rootCategory = $this->getRootCategory($rootCategoryId, $storeId);
         }
 
         if ($rootCategory && $rootCategory->getId()
@@ -255,6 +264,35 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $rootCategory;
+    }
+
+    /**
+     * Get info about category by category id.
+     * This code uses a local cache for better performance.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @param int      $rootCategoryId Root category id.
+     * @param int|null $storeId        Store id.
+     * @return CategoryInterface
+     * @throws NoSuchEntityException
+     */
+    private function getRootCategory(int $rootCategoryId, int $storeId = null)
+    {
+        $cacheKey = $storeId ?? 'all';
+        if (!isset($this->instances[$rootCategoryId][$cacheKey])) {
+            $rootCategory = $this->categoryFactory->create();
+            if (null !== $storeId) {
+                $rootCategory->setStoreId($storeId);
+            }
+            $rootCategory->load($rootCategoryId);
+            if (!$rootCategory->getId()) {
+                throw NoSuchEntityException::singleField('id', $rootCategoryId);
+            }
+            $this->instances[$rootCategoryId][$cacheKey] = $rootCategory;
+        }
+
+        return $this->instances[$rootCategoryId][$cacheKey];
     }
 
     /**
