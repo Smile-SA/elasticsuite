@@ -23,56 +23,70 @@
 <?php
 /** @var $helper \Magento\Search\Helper\Data */
 $helper = $this->helper('Magento\Search\Helper\Data');
+
+$blockId = preg_replace('/[^a-z0-9]+/i', '-', $block->getNameInLayout());
+$formId = 'minisearch-form-' . $blockId;
+$autoCompleteId = 'minisearch-autocomplete-' . $blockId;
 ?>
+
 <div class="block block-search">
-    <div class="block block-title"><strong><?php /* @escapeNotVerified */ echo __('Search'); ?></strong></div>
+    <div class="block block-title">
+        <strong><?= /* @escapeNotVerified */ __('Search') ?></strong>
+    </div>
+
     <div class="block block-content">
-        <form class="form minisearch" id="search_mini_form" action="<?php /* @escapeNotVerified */ echo $helper->getResultUrl() ?>" method="get">
+        <form
+            id="<?= /* @noEscape */ $formId ?>"
+            class="form minisearch"
+            action="<?= /* @escapeNotVerified */ $helper->getResultUrl() ?>"
+            method="get"
+        >
             <div class="field search">
                 <label class="label" for="search" data-role="minisearch-label">
-                    <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
+                    <span><?= /* @escapeNotVerified */ __('Search') ?></span>
                 </label>
+
                 <div class="control">
-                    <input id="search"
-                           type="text"
-                           name="<?php /* @escapeNotVerified */ echo $helper->getQueryParamName() ?>"
-                           value="<?php /* @escapeNotVerified */ echo $helper->getEscapedQueryText() ?>"
-                           placeholder="<?php /* @escapeNotVerified */ echo __('Search entire store here...'); ?>"
-                           class="input-text"
-                           maxlength="<?php /* @escapeNotVerified */ echo $helper->getMaxQueryLength();?>"
-                           role="combobox"
-                           aria-haspopup="false"
-                           aria-autocomplete="both"
-                           aria-expanded="false"
-                           autocomplete="off"
-                           data-block="autocomplete-form"/>
-                    <div id="search_autocomplete" class="search-autocomplete"></div>
-                    <?php echo $block->getChildHtml() ?>
+                    <input
+                        type="text"
+                        name="<?= /* @escapeNotVerified */ $helper->getQueryParamName() ?>"
+                        value="<?= /* @escapeNotVerified */ $helper->getEscapedQueryText() ?>"
+                        placeholder="<?= /* @escapeNotVerified */ __('Search entire store here...') ?>"
+                        class="input-text"
+                        maxlength="<?= /* @escapeNotVerified */ $helper->getMaxQueryLength() ?>"
+                        role="combobox"
+                        aria-haspopup="false"
+                        aria-autocomplete="both"
+                        aria-expanded="false"
+                        autocomplete="off"
+                        data-block="autocomplete-form"
+                        data-mage-init="<?= $escaper->escapeHtmlAttr(json_encode([
+                            'quickSearch' => [
+                                'formSelector' => '#' . $formId,
+                                'url' => $block->getUrl('search/ajax/suggest'),
+                                'destinationSelector' => '#' . $autoCompleteId,
+                                'templates' => json_decode($block->getJsonSuggestRenderers()),
+                                'priceFormat' => json_decode($block->getJsonPriceFormat()),
+                                'minSearchLength' => $helper->getMinQueryLength(),
+                            ],
+                        ]))?>"
+                    />
+
+                    <div id="<?= /* @noEscape */ $autoCompleteId ?>" class="search-autocomplete"></div>
+
+                    <?= $block->getChildHtml() ?>
                 </div>
             </div>
+
             <div class="actions">
-                <button type="submit"
-                        title="<?php echo $block->escapeHtml(__('Search')) ?>"
-                        class="action search">
-                    <span><?php /* @escapeNotVerified */ echo __('Search'); ?></span>
+                <button
+                    type="submit"
+                    title="<?= $block->escapeHtml(__('Search')) ?>"
+                    class="action search"
+                >
+                    <span><?= /* @escapeNotVerified */ __('Search') ?></span>
                 </button>
             </div>
         </form>
     </div>
 </div>
-<script type="text/x-magento-init">
-{
-    "#search" :
-    {
-        "quickSearch" :
-        {
-            "formSelector":"#search_mini_form",
-            "url":"<?php /* @escapeNotVerified */ echo $block->getUrl('search/ajax/suggest'); ?>",
-            "destinationSelector":"#search_autocomplete",
-            "templates": <?php /* @noEscape */ echo $block->getJsonSuggestRenderers();?>,
-            "priceFormat" : <?php /* @noEscape */ echo $block->getJsonPriceFormat();?>,
-            "minSearchLength" : <?php /* @escapeNotVerified */ echo $helper->getMinQueryLength();?>
-        }
-    }
-}
-</script>
