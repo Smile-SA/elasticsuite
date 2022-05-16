@@ -81,13 +81,13 @@ class Index
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
-        Combinatorics $combinatorics
+        Combinatorics $combinatorics = null
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
-        $this->combinatorics          = $combinatorics;
+        $this->combinatorics          = $combinatorics ?? \Magento\Framework\App\ObjectManager::getInstance()->get(Combinatorics::class);
     }
 
     /**
