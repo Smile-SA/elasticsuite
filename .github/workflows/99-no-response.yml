@@ -14,6 +14,7 @@ jobs:
         with:
           token: ${{ github.token }}
           responseRequiredLabel: "needs update"
+          daysUntilClose: 14
           closeComment: >-
             This issue was waiting update from the author for too long.
             Without any update, we are unfortunately not sure how to
