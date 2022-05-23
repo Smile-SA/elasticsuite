@@ -44,15 +44,17 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      * @param ResourceModel   $resourceModel               Resource model.
      * @param FieldFactory    $fieldFactory                Mapping field factory.
      * @param AttributeHelper $attributeHelper             Attribute helper.
+     * @param array           $indexedBackendModels        List of indexed backend models added to the default list.
      * @param array           $forbiddenChildrenAttributes List of the forbidden children attributes.
      */
     public function __construct(
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         AttributeHelper $attributeHelper,
+        array $indexedBackendModels = [],
         array $forbiddenChildrenAttributes = []
     ) {
-        parent::__construct($resourceModel, $fieldFactory, $attributeHelper);
+        parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
         $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
     }
