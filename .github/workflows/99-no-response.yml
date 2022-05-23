@@ -1,0 +1,24 @@
+name: No Response
+
+on:
+  issue_comment:
+    types: [created]
+  schedule:
+    - cron: '30 * * * *'
+
+jobs:
+  noResponse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lee-dohm/no-response@v0.5.0
+        with:
+          token: ${{ github.token }}
+          responseRequiredLabel: "needs update"
+          closeComment: >-
+  This issue was waiting update from the author for too long.
+  Without any update, we are unfortunately not sure how to
+  resolve this issue.
+  We are therefore reluctantly going to close this
+  bug for now. Please don't hesitate to comment on the bug if you have
+  any more information for us; we will reopen it right away!
+  Thanks for your contribution.
