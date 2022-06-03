@@ -14,13 +14,13 @@
                    data-bind="checked: is_selected, attr: {id: id}" 
                    onclick="this.parentNode.click();" />
             <label data-bind="attr: {for: id}">
-                <span data-bind="html: label"></span>
+                <span data-bind="text: label"></span>
                 <span class="count" data-bind="text: count, visible: $parent.displayProductCount"></span>
             </label>
         </a>
         
         <div data-bind="visible: count < 1">
-            <span data-bind="html: label"></span>
+            <span data-bind="text: label"></span>
             <span class="count" data-bind="text: count"></span>
         </div>
     </li>
