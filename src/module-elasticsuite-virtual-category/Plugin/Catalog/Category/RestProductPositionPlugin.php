@@ -55,6 +55,8 @@ class RestProductPositionPlugin
     }
 
     /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param \Magento\Catalog\Api\CategoryLinkRepositoryInterface   $subject     The plugin subject.
      * @param \Closure                                               $proceed     The execute method.
      * @param \Magento\Catalog\Api\Data\CategoryProductLinkInterface $productLink The product data.
