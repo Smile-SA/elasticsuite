@@ -91,6 +91,7 @@ class ProductsListPlugin
      * Apply virtual category rule on widget collection.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param ProductsList $subject    Widget product list.
      * @param Collection   $collection Product collection.
