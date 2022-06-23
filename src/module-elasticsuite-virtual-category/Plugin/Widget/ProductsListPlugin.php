@@ -102,10 +102,25 @@ class ProductsListPlugin
     {
         $storeId    = $this->storeManager->getStore()->getId();
         $sortOption = $subject->getData('sort_order');
+        $conditionOption = $subject->getData('condition_option');
 
-        // Manage legacy "position_by_sku" sorting.
+        // Manage legacy products selection by "category" and sorting by "position".
+        // This sorting should keep the position of the products in the same order they were sorted in the category.
+        if (($conditionOption === 'category_ids') && ($sortOption === 'position')) {
+            $categoryId = $subject->getData('condition_option_value');
+            if ($categoryId) {
+                $collection->addSortFilterParameters(
+                    'position',
+                    'category.position',
+                    'category',
+                    ['category.category_id' => $categoryId]
+                );
+            }
+        }
+
+        // Manage legacy products selection by "sku" and sorting by "position_by_sku".
         // This sorting should keep the skus sorted in the same order they were contributed.
-        if (($subject->getData('condition_option') === 'sku') && ($sortOption === 'position_by_sku')) {
+        if (($conditionOption === 'sku') && ($sortOption === 'position_by_sku')) {
             if ((string) $subject->getData('condition_option_value') !== '') {
                 $skus = array_map("trim", explode(',', (string) $subject->getData('condition_option_value')));
                 if (!empty($skus)) {
@@ -117,7 +132,8 @@ class ProductsListPlugin
             }
         }
 
-        if ($subject->getData('condition_option') == 'condition' || !$subject->getData('condition_option')) {
+        // Manage legacy products selection by "condition".
+        if ($conditionOption == 'condition' || !$conditionOption) {
             $conditions = $subject->getData('conditions_encoded') ?: $subject->getData('conditions');
 
             if ($conditions) {
