@@ -117,11 +117,9 @@ class ProductsListPlugin
                     ['category.category_id' => $categoryId]
                 );
             }
-        }
-
-        // Manage legacy products selection by "sku" and sorting by "position_by_sku".
-        // This sorting should keep the skus sorted in the same order they were contributed.
-        if (($conditionOption === 'sku') && ($sortOption === 'position_by_sku')) {
+        } elseif (($conditionOption === 'sku') && ($sortOption === 'position_by_sku')) {
+            // Manage legacy products selection by "sku" and sorting by "position_by_sku".
+            // This sorting should keep the skus sorted in the same order they were contributed.
             if ((string) $subject->getData('condition_option_value') !== '') {
                 $skus = array_map("trim", explode(',', (string) $subject->getData('condition_option_value')));
                 if (!empty($skus)) {
@@ -131,12 +129,9 @@ class ProductsListPlugin
                     $collection->setOrder($attribute, $dir);
                 }
             }
-        }
-
-        // Manage legacy products selection by "condition".
-        if ($conditionOption == 'condition' || !$conditionOption) {
+        } elseif ($conditionOption == 'condition' || !$conditionOption) {
+            // Manage legacy products selection by "condition".
             $conditions = $subject->getData('conditions_encoded') ?: $subject->getData('conditions');
-
             if ($conditions) {
                 $conditions = $this->conditionsHelper->decode($conditions);
                 foreach ($conditions as $condition) {
