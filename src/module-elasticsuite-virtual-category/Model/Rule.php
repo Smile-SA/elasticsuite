@@ -254,7 +254,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
             $rootCategoryId = $category->getVirtualCategoryRoot();
-            $rootCategory = $this->getRootCategory($rootCategoryId, $storeId);
+            try {
+                $rootCategory = $this->getRootCategory($rootCategoryId, $storeId);
+            } catch (NoSuchEntityException $e) {
+                $rootCategory = null;
+            }
         }
 
         if ($rootCategory && $rootCategory->getId()
