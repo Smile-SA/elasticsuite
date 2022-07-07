@@ -33,6 +33,9 @@ jobs:
                   extensions: mbstring, intl, bcmath, gd
                   ini-values: post_max_size=256M, max_execution_time=180
 
+            - name: "Downgrade Composer"
+              run: composer self-update 2.1.14
+              
             - name: Validate composer.json and composer.lock
               run: composer validate
 
