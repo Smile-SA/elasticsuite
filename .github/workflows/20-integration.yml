@@ -108,6 +108,8 @@ jobs:
                 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
                 if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
                   composer self-update --1
+                else
+                  composer self-update 2.1.14
                 fi
 
             - name: "[Init] Optimize Composer"
