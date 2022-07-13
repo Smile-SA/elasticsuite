@@ -40,8 +40,8 @@ class IsSaleable implements SpecialAttributeInterface
     /**
      * IsSaleable constructor.
      *
-     * @param Yesno         $booleanSource  Boolean Source
-     * @param QueryFactory  $queryFactory   Query Factory
+     * @param Yesno         $booleanSource Boolean Source
+     * @param QueryFactory  $queryFactory  Query Factory
      */
     public function __construct(
         Yesno $booleanSource,

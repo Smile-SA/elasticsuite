@@ -41,8 +41,8 @@ class IsInStock implements SpecialAttributeInterface
     /**
      * IsInStock constructor.
      *
-     * @param Yesno         $booleanSource  Boolean Source
-     * @param QueryFactory  $queryFactory   Query Factory
+     * @param Yesno         $booleanSource Boolean Source
+     * @param QueryFactory  $queryFactory  Query Factory
      */
     public function __construct(
         Yesno $booleanSource,
