@@ -13,7 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
-use Magento\Config\Model\Config\Source\Yesno\Magento\Config\Model\Config\Source\Yesno;
+use Magento\Config\Model\Config\Source\Yesno;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
