@@ -45,8 +45,7 @@ class IsSaleable implements SpecialAttributeInterface
     public function __construct(
         Yesno $booleanSource,
         QueryFactory $queryFactory
-    )
-    {
+    ) {
         $this->booleanSource = $booleanSource;
         $this->queryFactory   = $queryFactory;
     }
@@ -65,9 +64,9 @@ class IsSaleable implements SpecialAttributeInterface
      */
     public function getSearchQuery(ProductCondition $condition)
     {
-        return $this->queryFactory->create(QueryInterface::TYPE_TERM, [
-            'value' => true, 'field' => 'stock.is_in_stock'
-        ]);
+        return $this->queryFactory->create(QueryInterface::TYPE_TERM, 
+            ['value' => true, 'field' => 'stock.is_in_stock']
+        );
     }
 
     /**

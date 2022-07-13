@@ -32,6 +32,7 @@ class IsInStock implements SpecialAttributeInterface
      * @var Yesno
      */
     private $booleanSource;
+
     /**
      * @var QueryFactory
      */
@@ -45,10 +46,9 @@ class IsInStock implements SpecialAttributeInterface
     public function __construct(
         Yesno $booleanSource,
         QueryFactory $queryFactory
-    )
-    {
+    ) {
         $this->booleanSource = $booleanSource;
-        $this->queryFactory   = $queryFactory;
+        $this->queryFactory = $queryFactory;
     }
 
     /**
@@ -67,17 +67,15 @@ class IsInStock implements SpecialAttributeInterface
     {
         $queryParams = [];
 
-        $queryParams[] = $this->queryFactory->create(QueryInterface::TYPE_RANGE, [
-            'bounds' => ['gt' => (float) 0], 'field' => 'stock.qty'
-        ]);
+        $queryParams[] = $this->queryFactory->create(QueryInterface::TYPE_RANGE, 
+            ['bounds' => ['gt' => (float) 0], 'field' => 'stock.qty']
+        );
 
-        $queryParams[] = $this->queryFactory->create(QueryInterface::TYPE_TERM, [
-            'value' => true, 'field' => 'stock.is_in_stock'
-        ]);
+        $queryParams[] = $this->queryFactory->create(QueryInterface::TYPE_TERM, 
+            ['value' => true, 'field' => 'stock.is_in_stock']
+        );
 
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, [
-            'must' => $queryParams
-        ]);
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queryParams]);
     }
 
     /**
