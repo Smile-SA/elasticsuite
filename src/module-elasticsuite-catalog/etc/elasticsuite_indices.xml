@@ -88,6 +88,7 @@
                 <field name="position" type="integer" />
                 <field name="level" type="integer" />
                 <field name="children_count" type="integer" />
+                <field name="is_displayed_in_autocomplete" type="boolean" />
             </mapping>
         </type>
     </index>
