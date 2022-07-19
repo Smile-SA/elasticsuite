@@ -136,12 +136,12 @@ class Attribute implements LayerBuilderInterface
                     continue;
                 }
 
-                $label = $value->getValue();
+                $optionLabel = $value->getValue();
                 if ($attribute && $attribute->getFrontendInput() == 'boolean') {
-                    $label = $attribute->getSource()->getOptionText($value->getValue());
+                    $optionLabel = $attribute->getSource()->getOptionText($value->getValue());
                 }
 
-                $options[] = $this->layerFormatter->buildItem($label, $value->getValue(), $metrics['count']);
+                $options[] = $this->layerFormatter->buildItem($optionLabel, $value->getValue(), $metrics['count']);
             }
 
             if (empty($options)) {

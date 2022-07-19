@@ -144,7 +144,9 @@ class AbstractAttributeData extends Indexer
             )
             ->where("entity.{$entityIdField} IN (?)", $entityIds)
             ->having('value IS NOT NULL')
-            ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
+            ->columns(
+                ['value' => new \Zend_Db_Expr('if(t_store.value_id IS NOT NULL, t_store.value, t_default.value)')]
+            );
 
         return $this->connection->fetchAll($select);
     }

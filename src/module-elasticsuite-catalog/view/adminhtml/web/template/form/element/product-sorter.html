@@ -54,7 +54,7 @@
                     <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
 
                     <div class="info">
-                        <h1><span data-bind="html: getName(), attr: {title: getName()}"></span></h1>
+                        <h1><span data-bind="text: getName(), attr: {title: getName()}"></span></h1>
                         <p class="sku" data-bind="text: getSku()"></p>
                         <p class="price" data-bind="text: getFormattedPrice()"></p>
                         <p class="stock" data-bind="text: getStockLabel()"></p>
@@ -71,7 +71,7 @@
                 </li>
             </ul>
         </div>
-    
+
         <p class="bottom-links" data-bind="visible: hasMoreProducts()">
             <a href="#" data-bind="click: showMoreProducts, text: messages.showMore" class="show-more-link"></a>
         </p>

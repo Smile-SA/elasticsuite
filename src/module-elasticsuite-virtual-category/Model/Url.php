@@ -208,7 +208,7 @@ class Url
      */
     public function getCategoryRewrite($categoryPath, $storeId)
     {
-        $categoryPath = str_replace($this->getCategoryUrlSuffix(), '', $categoryPath);
+        $categoryPath = str_replace($this->getCategoryUrlSuffix() ?? '', '', $categoryPath);
         $category = $this->loadCategoryByUrlKey($categoryPath);
         $rewrite  = null;
 
@@ -219,7 +219,9 @@ class Url
                 UrlRewrite::ENTITY_TYPE => 'category',
             ]);
 
-            $rewrite->setRequestPath($rewrite->getTargetPath());
+            if ($rewrite) {
+                $rewrite->setRequestPath($rewrite->getTargetPath());
+            }
         }
 
         return $rewrite;

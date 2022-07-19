@@ -165,6 +165,7 @@ class DataProvider implements DataProviderInterface
      * Returns null if no suggested search terms.
      *
      * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Fulltext\Collection|null
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     private function getCategoryCollection()
     {
@@ -179,6 +180,7 @@ class DataProvider implements DataProviderInterface
 
         $categoryCollection = $this->categoryCollectionFactory->create();
         $categoryCollection->addAttributeToSelect("is_active");
+        $categoryCollection->addFieldToFilter("is_displayed_in_autocomplete", true);
         $categoryCollection->setSearchQuery($terms);
         $categoryCollection->setPageSize($this->getResultsPageSize());
 

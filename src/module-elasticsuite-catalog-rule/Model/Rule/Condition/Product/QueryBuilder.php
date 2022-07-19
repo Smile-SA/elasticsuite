@@ -140,10 +140,11 @@ class QueryBuilder
             $queryParams = [];
             $fieldName   = $this->getSearchFieldName($productCondition);
 
+            $clause = (substr($productCondition->getOperator(), 0, 1) === '!') ? 'mustNot' : 'should';
             // SKU values can be an array of value, due to the picker.
             foreach (explode(',', $productCondition->getValue()) as $value) {
-                // We add all of these values as a should match sub query.
-                $queryParams['should'][] = $this->prepareQuery(
+                // Instead of just a "should" clause, we will have "should" or "must_not" depending on the rule operator.
+                $queryParams[$clause][] = $this->prepareQuery(
                     QueryInterface::TYPE_MATCH,
                     ['field' => $fieldName, 'queryText' => trim($value), 'minimumShouldMatch' => "100%"]
                 );

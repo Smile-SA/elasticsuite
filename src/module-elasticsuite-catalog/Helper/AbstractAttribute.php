@@ -246,7 +246,7 @@ abstract class AbstractAttribute extends Mapping
             $optionTextFieldName = $this->getOptionTextFieldName($attributeCode);
             $optionTextValues    = $this->getIndexOptionsText($attributeId, $storeId, $value);
             // Filter empty values. Not using array_filter here because it could remove "0" string from values.
-            $optionTextValues    = array_diff(array_map('trim', $optionTextValues), ['', null, false]);
+            $optionTextValues    = array_diff(array_map('trim', array_map('strval', $optionTextValues)), ['', null, false]);
             $optionTextValues    = array_values($optionTextValues);
             $values[$optionTextFieldName] = $optionTextValues;
         }

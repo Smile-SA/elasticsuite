@@ -32,27 +32,27 @@ class ProductType implements SpecialAttributeInterface
     /**
      * @var QueryFactory
      */
-    private QueryFactory $queryFactory;
+    private $queryFactory;
 
     /**
      * @var Yesno
      */
-    private Yesno $booleanSource;
+    private $booleanSource;
 
     /**
      * @var string
      */
-    private string $attributeCode;
+    private $attributeCode;
 
     /**
      * @var string
      */
-    private string $typeIdentifier;
+    private $typeIdentifier;
 
     /**
      * @var string
      */
-    private string $attributeLabel;
+    private $attributeLabel;
 
     /**
      * ProductType constructor.

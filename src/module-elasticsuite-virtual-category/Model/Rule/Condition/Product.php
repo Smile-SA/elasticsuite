@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
+use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
@@ -130,6 +131,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     /**
      * Retrieve a query used to apply category filter rule.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param array    $excludedCategories  Category excluded from the loading (avoid infinite loop in query
      *                                      building when circular references are present).
@@ -148,7 +150,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         }
 
         if ($this->getOperator() === '!()') {
-            $childrenCategories = $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories();
+            try {
+                $childrenCategories = $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories();
+            } catch (NoSuchEntityException $e) {
+                $childrenCategories = [];
+            }
 
             if (is_object($childrenCategories)) {
                 $categoryIds = array_diff(

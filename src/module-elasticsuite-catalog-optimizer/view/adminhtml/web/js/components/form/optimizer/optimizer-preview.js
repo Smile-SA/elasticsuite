@@ -15,8 +15,7 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'jquery',
     'Smile_ElasticsuiteCatalogOptimizer/js/components/form/optimizer/preview/item',
-    'uiRegistry',
-    'MutationObserver'
+    'uiRegistry'
 ], function (Component, $, Product, uiRegistry) {
     'use strict';
 
