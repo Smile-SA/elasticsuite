@@ -119,7 +119,7 @@ class CatalogSetup
                 'required'   => true,
                 'default'    => 1,
                 'visible'    => true,
-                'note'       => "If the category to be displayed in autocomplete results.",
+                'note'       => "If the category can be displayed in autocomplete results.",
                 'sort_order' => 200,
                 'group'      => 'General Information',
             ]
