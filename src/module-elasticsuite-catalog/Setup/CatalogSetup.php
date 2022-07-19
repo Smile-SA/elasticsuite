@@ -18,6 +18,7 @@ use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
@@ -43,15 +44,22 @@ class CatalogSetup
     private $eavConfig;
 
     /**
+     * @var IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
      * Class Constructor
      *
-     * @param MetadataPool $metadataPool Metadata Pool.
-     * @param Config       $eavConfig    EAV Config.
+     * @param MetadataPool    $metadataPool    Metadata Pool.
+     * @param Config          $eavConfig       EAV Config.
+     * @param IndexerRegistry $indexerRegistry Indexer Registry
      */
-    public function __construct(MetadataPool $metadataPool, Config $eavConfig)
+    public function __construct(MetadataPool $metadataPool, Config $eavConfig, IndexerRegistry $indexerRegistry)
     {
         $this->metadataPool    = $metadataPool;
         $this->eavConfig       = $eavConfig;
+        $this->indexerRegistry = $indexerRegistry;
     }
 
     /**
@@ -150,6 +158,9 @@ class CatalogSetup
             ['is_searchable' => 1],
             $connection->quoteInto('attribute_id = ?', $isDisplayedInAutocompletePathAttributeId)
         );
+
+        $fulltextCategoriesIndex = $this->indexerRegistry->get(\Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
+        $fulltextCategoriesIndex->invalidate();
     }
 
     /**
