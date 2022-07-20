@@ -32,6 +32,11 @@ class MapperPlugin
     private $clusterInfo;
 
     /**
+     * @var string
+     */
+    private $serverDistribution;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo Cluster information API.
@@ -39,6 +44,7 @@ class MapperPlugin
     public function __construct(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo)
     {
         $this->clusterInfo = $clusterInfo;
+        $this->serverDistribution = $clusterInfo->getServerDistribution();
     }
 
     /**
@@ -54,7 +60,9 @@ class MapperPlugin
      */
     public function afterBuildSearchRequest(Mapper $subject, array $result, RequestInterface $request)
     {
-        if (strcmp($this->clusterInfo->getServerVersion(), "7") < 0) {
+        if (strcmp($this->clusterInfo->getServerVersion(), "7") < 0
+            && $this->serverDistribution == ClusterInfoInterface::DISTRO_ES
+        ) {
             unset($result['track_total_hits']);
         }
 
