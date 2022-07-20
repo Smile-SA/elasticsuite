@@ -119,15 +119,16 @@ class Builder
     /**
      * Create a new search request.
      *
-     * @param integer               $storeId       Search request store id.
-     * @param string                $containerName Search request name.
-     * @param integer               $from          Search request pagination from clause.
-     * @param integer               $size          Search request pagination size.
-     * @param string|QueryInterface $query         Search request query.
-     * @param array                 $sortOrders    Search request sort orders.
-     * @param array                 $filters       Search request filters.
-     * @param QueryInterface[]      $queryFilters  Search request filters prebuilt as QueryInterface.
-     * @param array                 $facets        Search request facets.
+     * @param integer               $storeId        Search request store id.
+     * @param string                $containerName  Search request name.
+     * @param integer               $from           Search request pagination from clause.
+     * @param integer               $size           Search request pagination size.
+     * @param string|QueryInterface $query          Search request query.
+     * @param array                 $sortOrders     Search request sort orders.
+     * @param array                 $filters        Search request filters.
+     * @param QueryInterface[]      $queryFilters   Search request filters prebuilt as QueryInterface.
+     * @param array                 $facets         Search request facets.
+     * @param bool|int|null         $trackTotalHits If total hits should be tracked.
      *
      * @return RequestInterface
      */
@@ -140,7 +141,8 @@ class Builder
         $sortOrders = [],
         $filters = [],
         $queryFilters = [],
-        $facets = []
+        $facets = [],
+        $trackTotalHits = null
     ) {
         $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
         $containerFilters = $this->getContainerFilters($containerConfig);
@@ -156,6 +158,10 @@ class Builder
             $spellingType = $this->getSpellingType($containerConfig, $query);
         }
 
+        if (null === $trackTotalHits) {
+            $trackTotalHits = $containerConfig->getTrackTotalHits();
+        }
+
         $requestParams = [
             'name'         => $containerName,
             'indexName'    => $containerConfig->getIndexName(),
@@ -166,7 +172,7 @@ class Builder
             'sortOrders'   => $this->sortOrderBuilder->buildSordOrders($containerConfig, $sortOrders),
             'buckets'      => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
             'spellingType' => $spellingType,
-            'trackTotalHits' => $containerConfig->getTrackTotalHits(),
+            'trackTotalHits' => $trackTotalHits,
         ];
 
         if (!empty($facetFilters)) {
