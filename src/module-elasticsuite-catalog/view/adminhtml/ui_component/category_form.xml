@@ -41,6 +41,7 @@
                 <additionalClasses>
                     <class name="smile-elasticsuite-filterable-attributes">true</class>
                     <class name="admin__field-wide">true</class>
+                    <class name="es-esfeature__logo">true</class>
                 </additionalClasses>
                 <scopeLabel>[GLOBAL]</scopeLabel>
                 <componentType>dynamicRows</componentType>
@@ -214,6 +215,7 @@
                         <item name="required-entry" xsi:type="boolean">false</item>
                     </item>
                     <item name="default" xsi:type="string">1</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
         </field>
@@ -234,6 +236,7 @@
                         <item name="required-entry" xsi:type="boolean">false</item>
                     </item>
                     <item name="default" xsi:type="string">1</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
         </field>
