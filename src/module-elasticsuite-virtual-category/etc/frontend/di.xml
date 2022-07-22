@@ -58,18 +58,6 @@
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\ProductPlugin" />
     </type>
 
-    <type name="Magento\Framework\App\RouterList">
-        <arguments>
-            <argument name="routerList" xsi:type="array">
-                <item name="smile_elasticsuite_virtualcategory" xsi:type="array">
-                    <item name="class" xsi:type="string">Smile\ElasticsuiteVirtualCategory\Controller\Router</item>
-                    <item name="disable" xsi:type="boolean">false</item>
-                    <item name="sortOrder" xsi:type="string">50</item>
-                </item>
-            </argument>
-        </arguments>
-    </type>
-
     <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter\DataProvider\CategoryFactory"
                  type="Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory">
         <arguments>
