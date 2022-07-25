@@ -73,6 +73,9 @@
     <preference for="Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterface"
                 type="Smile\ElasticsuiteCore\Index\DataSourceResolver" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\Request\SortOrder\DefaultSortOrderProviderInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\SortOrder\DefaultSortOrderProvider" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
