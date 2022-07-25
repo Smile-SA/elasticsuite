@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\SortOrder;
 
+use Smile\ElasticsuiteCore\Api\Search\Request\SortOrder\DefaultSortOrderProviderInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder;
@@ -52,23 +53,31 @@ class SortOrderBuilder
     private $scriptOrderFactory;
 
     /**
+     * @var DefaultSortOrderProviderInterface
+     */
+    private $defaultSortOrderProvider;
+
+    /**
      * Constructor.
      *
-     * @param StandardFactory $standardOrderFactory Standard sort order factory.
-     * @param NestedFactory   $nestedOrderFactory   Nested sort order factory.
-     * @param QueryBuilder    $queryBuilder         Query builder used to build queries inside nested sort order.
-     * @param ScriptFactory   $scriptOrderFactory   Script sort order factory.
+     * @param StandardFactory                   $standardOrderFactory     Standard sort order factory.
+     * @param NestedFactory                     $nestedOrderFactory       Nested sort order factory.
+     * @param QueryBuilder                      $queryBuilder             Query builder used to build queries inside nested sort order.
+     * @param ScriptFactory                     $scriptOrderFactory       Script sort order factory.
+     * @param DefaultSortOrderProviderInterface $defaultSortOrderProvider Default sort order provider.
      */
     public function __construct(
         StandardFactory $standardOrderFactory,
         NestedFactory $nestedOrderFactory,
         QueryBuilder $queryBuilder,
-        ScriptFactory $scriptOrderFactory
+        ScriptFactory $scriptOrderFactory,
+        DefaultSortOrderProviderInterface $defaultSortOrderProvider
     ) {
         $this->standardOrderFactory = $standardOrderFactory;
         $this->nestedOrderFactory   = $nestedOrderFactory;
         $this->scriptOrderFactory   = $scriptOrderFactory;
         $this->queryBuilder         = $queryBuilder;
+        $this->defaultSortOrderProvider = $defaultSortOrderProvider;
     }
 
     /**
@@ -134,18 +143,7 @@ class SortOrderBuilder
      */
     private function addDefaultSortOrders($orders, MappingInterface $mapping)
     {
-        $defaultOrders = [
-            SortOrderInterface::DEFAULT_SORT_FIELD => SortOrderInterface::SORT_DESC,
-            $mapping->getIdField()->getName()      => SortOrderInterface::SORT_DESC,
-        ];
-
-        if (count($orders) > 0) {
-            $firstOrder = current($orders);
-            if ($firstOrder['direction'] == SortOrderInterface::SORT_DESC) {
-                $defaultOrders[SortOrderInterface::DEFAULT_SORT_FIELD] = SortOrderInterface::SORT_ASC;
-                $defaultOrders[$mapping->getIdField()->getName()]      = SortOrderInterface::SORT_ASC;
-            }
-        }
+        $defaultOrders = $this->defaultSortOrderProvider->getDefaultSortOrders($orders, $mapping);
 
         foreach ($defaultOrders as $currentOrder => $direction) {
             if (!in_array($currentOrder, array_keys($orders))) {
