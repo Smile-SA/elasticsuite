@@ -229,6 +229,7 @@
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="elision" />
+                <filter ref="stemmer" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>
