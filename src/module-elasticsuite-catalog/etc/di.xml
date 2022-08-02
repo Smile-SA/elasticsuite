@@ -101,6 +101,20 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Widget\Product\Collection"
+                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="searchRequestName" xsi:type="string">catalog_product_widget</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Widget\Product\CollectionFactory"
+                 type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Widget\Product\Collection</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Layer related configurations -->
     <type name="Magento\Catalog\Model\Layer">
         <plugin name="createSortOrdersOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
