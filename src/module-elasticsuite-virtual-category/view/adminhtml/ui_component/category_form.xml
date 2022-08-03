@@ -147,7 +147,6 @@
                         <item name="imports" xsi:type="array">
                             <item name="visible" xsi:type="string">category_form.category_form.assign_products.is_virtual_category:checked</item>
                         </item>
-                        <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                     </item>
                 </argument>
             </htmlContent>
