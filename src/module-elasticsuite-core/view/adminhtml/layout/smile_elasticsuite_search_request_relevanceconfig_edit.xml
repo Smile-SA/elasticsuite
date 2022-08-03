@@ -18,7 +18,11 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="js">
-            <block class="Magento\Backend\Block\Template" template="Magento_Config::system/config/js.phtml"/>
+            <block class="Magento\Backend\Block\Template" name="js.system_config_js" template="Magento_Config::system/config/js.phtml">
+                <arguments>
+                    <argument name="countryFilter" xsi:type="object">Magento\Config\ViewModel\CountryFilter</argument>
+                </arguments>
+            </block>
         </referenceContainer>
         <referenceContainer name="page.main.actions">
             <block class="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticsuiteCore::relevance/configuration/scope/switcher.phtml">
