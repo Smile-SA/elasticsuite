@@ -81,9 +81,11 @@ class PriceData implements DatasourceInterface
                 $isDiscount = false;
                 $allChildrenIds = $this->attributeResourceModel->loadChildrens($productIds, $storeId);
                 $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
+                $priceModifier = $this->getPriceDataReader('default');
                 foreach ($childPriceData as $childPrice) {
                     if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
-                        if ($isDiscount = ($childPrice['final_price'] < $childPrice['price'])) {
+                        if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
+                            $isDiscount = true;
                             break;
                         }
                     }
