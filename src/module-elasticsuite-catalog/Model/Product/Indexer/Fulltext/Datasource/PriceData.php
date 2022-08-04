@@ -28,11 +28,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class PriceData implements DatasourceInterface
 {
     /**
-     * @var \Magento\Catalog\Model\ProductRepository
-     */
-    private $productRepository;
-
-    /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData
      */
     private $resourceModel;
