@@ -67,8 +67,6 @@ class PriceData implements DatasourceInterface
      * Add price data to the index data.
      *
      * {@inheritdoc}
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function addData($storeId, array $indexData)
     {
