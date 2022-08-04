@@ -54,7 +54,6 @@ class PriceData implements DatasourceInterface
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
      */
     public function __construct(
-        ProductRepository $productRepository,
         ResourceModel $resourceModel,
         AttributeResourceModel $attributeResourceModel,
         $priceReaderPool = []
