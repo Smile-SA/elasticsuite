@@ -51,7 +51,7 @@ class ClientConfiguration implements ClientConfigurationInterface
      */
     public function getServerList()
     {
-        return explode(',', $this->getElasticsearchClientConfigParam('servers'));
+        return explode(',', $this->getElasticsearchClientConfigParam('servers') ?? '');
     }
 
     /**

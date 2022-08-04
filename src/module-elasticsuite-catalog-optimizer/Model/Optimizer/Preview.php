@@ -14,12 +14,19 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Framework\Search\ResponseInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Preview Model for Optimizer
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -38,24 +45,29 @@ class Preview
     private $optimizer;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface
+     * @var ContainerConfigurationInterface
      */
     private $containerConfiguration;
 
     /**
-     * @var \Magento\Catalog\Api\Data\CategoryInterface
+     * @var CategoryInterface
      */
     private $category;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory
+     * @var ProviderFactory
      */
     private $providerFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder
+     * @var ResultsBuilder
      */
     private $previewResultsBuilder;
+
+    /**
+     * @var ContextInterface
+     */
+    private $searchContext;
 
     /**
      * @var null|string
@@ -70,13 +82,16 @@ class Preview
     /**
      * Constructor.
      *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param OptimizerInterface              $optimizer             The optimizer to preview.
      * @param Preview\ItemFactory             $previewItemFactory    Preview item factory.
      * @param ApplierListFactory              $applier               Preview Applier
      * @param Collection\ProviderFactory      $providerFactory       Optimizer Provider Factory
      * @param ContainerConfigurationInterface $containerConfig       Container Configuration
      * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder
-     * @param CategoryInterface               $category              Category Id to preview, if any.
+     * @param ContextInterface                $searchContext         Search Context.
+     * @param CategoryInterface|null          $category              Category Id to preview, if any.
      * @param string                          $queryText             Query Text.
      * @param int                             $size                  Preview size.
      */
@@ -87,6 +102,7 @@ class Preview
         Collection\ProviderFactory $providerFactory,
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
+        ContextInterface $searchContext,
         CategoryInterface $category = null,
         $queryText = null,
         $size = 10
@@ -100,6 +116,7 @@ class Preview
         $this->containerConfiguration = $containerConfig;
         $this->previewResultsBuilder  = $previewResultsBuilder;
         $this->category               = $category;
+        $this->searchContext          = $searchContext;
     }
 
     /**
@@ -139,7 +156,7 @@ class Preview
     /**
      * Load non-optimized results.
      *
-     * @return \Magento\Framework\Search\ResponseInterface
+     * @return ResponseInterface
      */
     private function getBaseResults()
     {
@@ -151,7 +168,7 @@ class Preview
     /**
      * Load optimized results.
      *
-     * @return \Magento\Framework\Search\ResponseInterface
+     * @return ResponseInterface
      */
     private function getOptimizedResults()
     {
@@ -176,8 +193,8 @@ class Preview
         if ($canApply && $this->containerConfiguration->getName() === 'quick_search_container') {
             $config = $this->optimizer->getQuickSearchContainer();
             if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['query_ids'])) {
-                $queries = array_column($config['query_ids'], 'query_text');
-                $canApply = in_array($this->queryText, $queries, true);
+                $queryIds = array_column($config['query_ids'], 'id');
+                $canApply = in_array($this->searchContext->getCurrentSearchQuery()->getId(), $queryIds, true);
             }
         } elseif ($canApply && $this->containerConfiguration->getName() === 'catalog_view_container') {
             $config = $this->optimizer->getCatalogViewContainer();
@@ -193,7 +210,7 @@ class Preview
     /**
      * @param ApplierList $applier Optimizer Applier
      *
-     * @return \Magento\Framework\Search\ResponseInterface
+     * @return ResponseInterface
      */
     private function getPreviewResults($applier)
     {
@@ -209,11 +226,11 @@ class Preview
     /**
      * Convert an array of products to an array of preview items.
      *
-     * @param \Magento\Framework\Search\ResponseInterface $queryResponse The Query response, with products as documents.
+     * @param ResponseInterface $queryResponse The Query response, with products as documents.
      *
      * @return Preview\Item[]
      */
-    private function preparePreviewItems(\Magento\Framework\Search\ResponseInterface $queryResponse)
+    private function preparePreviewItems(ResponseInterface $queryResponse)
     {
         $items = [];
 
@@ -262,7 +279,7 @@ class Preview
      * @param OptimizerInterface $optimizer    The optimizer
      * @param string             $providerType The provider type
      *
-     * @return \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierList
+     * @return ApplierList
      */
     private function getApplier(OptimizerInterface $optimizer, $providerType)
     {

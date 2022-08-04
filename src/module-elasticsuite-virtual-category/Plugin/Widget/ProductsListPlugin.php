@@ -91,6 +91,7 @@ class ProductsListPlugin
      * Apply virtual category rule on widget collection.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param ProductsList $subject    Widget product list.
      * @param Collection   $collection Product collection.
@@ -102,12 +103,25 @@ class ProductsListPlugin
     {
         $storeId    = $this->storeManager->getStore()->getId();
         $sortOption = $subject->getData('sort_order');
+        $conditionOption = $subject->getData('condition_option');
 
-        // Manage legacy "position_by_sku" sorting.
-        // This sorting should keep the skus sorted in the same order they were contributed.
-        if (($subject->getData('condition_option') === 'sku') && ($sortOption === 'position_by_sku')) {
+        // Manage legacy products selection by "category" and sorting by "position".
+        // This sorting should keep the position of the products in the same order they were sorted in the category.
+        if (($conditionOption === 'category_ids') && ($sortOption === 'position')) {
+            $categoryId = $subject->getData('condition_option_value');
+            if ($categoryId) {
+                $collection->addSortFilterParameters(
+                    'position',
+                    'category.position',
+                    'category',
+                    ['category.category_id' => $categoryId]
+                );
+            }
+        } elseif (($conditionOption === 'sku') && ($sortOption === 'position_by_sku')) {
+            // Manage legacy products selection by "sku" and sorting by "position_by_sku".
+            // This sorting should keep the skus sorted in the same order they were contributed.
             if ((string) $subject->getData('condition_option_value') !== '') {
-                $skus = explode(',', (string) $subject->getData('condition_option_value'));
+                $skus = array_map("trim", explode(',', (string) $subject->getData('condition_option_value')));
                 if (!empty($skus)) {
                     $sortOrder = $this->skuPositionSortOrderBuilder->buildSortOrder($skus);
                     $attribute = key($sortOrder);
@@ -115,11 +129,9 @@ class ProductsListPlugin
                     $collection->setOrder($attribute, $dir);
                 }
             }
-        }
-
-        if ($subject->getData('condition_option') == 'condition' || !$subject->getData('condition_option')) {
+        } elseif ($conditionOption == 'condition' || !$conditionOption) {
+            // Manage legacy products selection by "condition".
             $conditions = $subject->getData('conditions_encoded') ?: $subject->getData('conditions');
-
             if ($conditions) {
                 $conditions = $this->conditionsHelper->decode($conditions);
                 foreach ($conditions as $condition) {

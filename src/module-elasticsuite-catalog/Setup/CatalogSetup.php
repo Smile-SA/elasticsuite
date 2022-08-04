@@ -17,6 +17,8 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
@@ -42,15 +44,22 @@ class CatalogSetup
     private $eavConfig;
 
     /**
+     * @var IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
      * Class Constructor
      *
-     * @param MetadataPool $metadataPool Metadata Pool.
-     * @param Config       $eavConfig    EAV Config.
+     * @param MetadataPool    $metadataPool    Metadata Pool.
+     * @param Config          $eavConfig       EAV Config.
+     * @param IndexerRegistry $indexerRegistry Indexer Registry
      */
-    public function __construct(MetadataPool $metadataPool, Config $eavConfig)
+    public function __construct(MetadataPool $metadataPool, Config $eavConfig, IndexerRegistry $indexerRegistry)
     {
         $this->metadataPool    = $metadataPool;
         $this->eavConfig       = $eavConfig;
+        $this->indexerRegistry = $indexerRegistry;
     }
 
     /**
@@ -86,6 +95,72 @@ class CatalogSetup
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
         $this->eavConfig->clear();
+    }
+
+    /**
+     * Create attribute on category to enable/disable displaying category in autocomplete results.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function addIsDisplayCategoryInAutocompleteAttribute($eavSetup)
+    {
+        // Installing the new attribute.
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            'is_displayed_in_autocomplete',
+            [
+                'type'       => 'int',
+                'label'      => 'Display Category in Autocomplete',
+                'input'      => 'select',
+                'source'     => 'Magento\Eav\Model\Entity\Attribute\Source\Boolean',
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'required'   => true,
+                'default'    => 1,
+                'visible'    => true,
+                'note'       => "If the category can be displayed in autocomplete results.",
+                'sort_order' => 200,
+                'group'      => 'General Information',
+            ]
+        );
+
+        // Set the attribute value to 1 for all existing categories.
+        $this->updateCategoryAttributeDefaultValue(
+            $eavSetup,
+            Category::ENTITY,
+            'is_displayed_in_autocomplete',
+            1
+        );
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
+    }
+
+    /**
+     * Update Display Category in Autocomplete attribute to have it indexed into ES.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     */
+    public function updateIsDisplayInAutocompleteAttribute($eavSetup)
+    {
+        $setup      = $eavSetup->getSetup();
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Set is_displayed_in_autocomplete indexable.
+        $isDisplayedInAutocompletePathAttributeId = $eavSetup->getAttributeId(
+            \Magento\Catalog\Model\Category::ENTITY,
+            'is_displayed_in_autocomplete'
+        );
+        $connection->update(
+            $table,
+            ['is_searchable' => 1],
+            $connection->quoteInto('attribute_id = ?', $isDisplayedInAutocompletePathAttributeId)
+        );
+
+        $fulltextCategoriesIndex = $this->indexerRegistry->get(\Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext::INDEXER_ID);
+        $fulltextCategoriesIndex->invalidate();
     }
 
     /**
@@ -605,6 +680,32 @@ class CatalogSetup
                 'default'  => '0',
                 'comment'  => 'Boolean logic to use for displaying rel="nofollow" attribute for all filter links of current attribute',
                 'after'    => 'facet_boolean_logic',
+            ]
+        );
+    }
+
+    /**
+     * Add "include_zero_false_values" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addIncludeZeroFalseValues(SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'include_zero_false_values' into the db.
+        $connection->addColumn(
+            $table,
+            'include_zero_false_values',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'Should the search engine index zero (integer or decimal attribute) or false (boolean attribute) values',
             ]
         );
     }

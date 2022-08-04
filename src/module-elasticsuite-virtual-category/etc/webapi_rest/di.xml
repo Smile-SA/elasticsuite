@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteVirtualCategory dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteVirtualCategory
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2022 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="\Magento\Catalog\Api\CategoryLinkRepositoryInterface">
+        <plugin name="categories_save_products_positions"
+                type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\RestProductPositionPlugin" />
+    </type>
+</config>

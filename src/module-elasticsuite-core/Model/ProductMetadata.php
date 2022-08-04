@@ -17,7 +17,6 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Composer\ComposerFactory;
 use \Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformation;
 use Magento\Framework\Composer\ComposerJsonFinder;
@@ -29,7 +28,7 @@ use Magento\Framework\Composer\ComposerJsonFinder;
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class ProductMetadata implements ProductMetadataInterface
+class ProductMetadata
 {
     /**
      * Elasticsuite product edition

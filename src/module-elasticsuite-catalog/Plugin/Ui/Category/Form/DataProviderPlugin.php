@@ -22,7 +22,6 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCatalog\Model\Category\Filter\Provider as CategoryFilterProvider;
-
 use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 
 /**
@@ -242,9 +241,9 @@ class DataProviderPlugin
                 ->setPageSize(0)
                 ->addFieldToFilter('category_ids', $this->getCategoryFilterParam($category));
 
-            $attributeSetIds = array_keys($fulltextCollection->getFacetedData('attribute_set_id'));
-            if (!empty($attributeSetIds)) {
-                $collection->setAttributeSetFilter($attributeSetIds);
+            $indexedAttributes = array_keys($fulltextCollection->getFacetedData('indexed_attributes'));
+            if (!empty($indexedAttributes)) {
+                $collection->setCodeFilter($indexedAttributes);
             }
         }
 

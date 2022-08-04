@@ -67,6 +67,8 @@
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryData">
         <arguments>
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\CategoryData</argument>
+            <!-- Enforcing filtering out 0 positions since they are not supposed to happen with the specific merchandiser -->
+            <argument name="filterZeroPositions" xsi:type="boolean">true</argument>
         </arguments>
     </type>
 

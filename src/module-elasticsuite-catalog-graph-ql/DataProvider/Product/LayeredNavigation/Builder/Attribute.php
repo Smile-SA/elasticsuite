@@ -60,6 +60,7 @@ class Attribute implements LayerBuilderInterface
         Price::PRICE_BUCKET,
         Category::CATEGORY_BUCKET,
         'attribute_set_id',
+        'indexed_attributes',
     ];
 
     /**
@@ -87,6 +88,7 @@ class Attribute implements LayerBuilderInterface
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @throws \Zend_Db_Statement_Exception
      */
     public function build(AggregationInterface $aggregation, ?int $storeId): array
@@ -134,7 +136,12 @@ class Attribute implements LayerBuilderInterface
                     continue;
                 }
 
-                $options[] = $this->layerFormatter->buildItem($value->getValue(), $value->getValue(), $metrics['count']);
+                $optionLabel = $value->getValue();
+                if ($attribute && $attribute->getFrontendInput() == 'boolean') {
+                    $optionLabel = $attribute->getSource()->getOptionText($value->getValue());
+                }
+
+                $options[] = $this->layerFormatter->buildItem($optionLabel, $value->getValue(), $metrics['count']);
             }
 
             if (empty($options)) {

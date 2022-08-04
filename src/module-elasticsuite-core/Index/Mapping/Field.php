@@ -255,6 +255,8 @@ class Field implements FieldInterface
      */
     public function getSortMissing($direction = SortOrderInterface::SORT_ASC)
     {
+        $direction = strtolower($direction);
+
         // @codingStandardsIgnoreStart
         $missing = $direction === SortOrderInterface::SORT_ASC ? SortOrderInterface::MISSING_LAST : SortOrderInterface::MISSING_FIRST;
         // @codingStandardsIgnoreEnd

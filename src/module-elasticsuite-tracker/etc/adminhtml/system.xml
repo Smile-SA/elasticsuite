@@ -22,11 +22,11 @@
             <resource>Magento_Backend::smile_elasticsuite_tracker</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Global Configuration</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="retention_delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="retention_delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Retention delay</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In months (default is 12 months.).<br /> Tracking data older than this will be removed each day.]]></comment>
@@ -37,18 +37,18 @@
             </group>
             <group id="session" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Session Configuration</label>
-                <field id="visit_cookie_name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visit_cookie_name" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Visit Cookie Name</label>
                 </field>
-                <field id="visit_cookie_lifetime" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visit_cookie_lifetime" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Visit Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In seconds. (Default is 3600 sec.)<br /> Without any activity under this delay we start a new visit.]]></comment>
                 </field>
-                <field id="visitor_cookie_name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visitor_cookie_name" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Visitor Cookie Name</label>
                 </field>
-                <field id="visitor_cookie_lifetime" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="visitor_cookie_lifetime" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Visitor Cookie Lifetime</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In days. (Default is 365 days.)<br /> This cookie will be stick to the customer to allow multiple session aggregation.]]></comment>
@@ -56,11 +56,11 @@
             </group>
             <group id="anonymization" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Tracking Anonymization</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Anonymize customer data after a delay.</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="delay" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="delay" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Anonymization Delay</label>
                     <validate>integer validate-greater-than-zero</validate>
                     <comment><![CDATA[In days. (Default is 365 days.)<br /> Tracked customer related data will be anonymized after this delay.]]></comment>
@@ -76,7 +76,7 @@
             <resource>Magento_Backend::smile_elasticsuite_telemetry</resource>
             <group id="telemetry" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Telemetry</label>
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Enable telemetry</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>

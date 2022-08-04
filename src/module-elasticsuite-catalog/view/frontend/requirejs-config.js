@@ -19,7 +19,7 @@ var config = {
     },
     shim: {
         'Smile_ElasticsuiteCatalog/js/jquery.ui.touch-punch.min': {
-            deps: ['jquery-ui-modules/mouse']
+            deps: ['Smile_ElasticsuiteCatalog/js/mouse']
         }
     }
 };

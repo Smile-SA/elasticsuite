@@ -201,6 +201,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
+    public function clear()
+    {
+        $this->_isFiltersRendered = false;
+
+        return parent::clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setOrder($attribute, $dir = self::SORT_ORDER_DESC)
     {
         if (!isset($this->_orders[$attribute]) || ($this->_orders[$attribute] !== $dir)) {
@@ -227,6 +237,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /**
      * {@inheritDoc}
      */
+    public function setCurPage($page)
+    {
+        $this->_isFiltersRendered = false;
+
+        return parent::setCurPage($page);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function setPageSize($size)
     {
         /*
@@ -235,6 +255,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
          */
         $size = ($size === null) ? false : $size;
         $this->_pageSize = $size;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -246,6 +267,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $field = $this->mapFieldName($field);
         $this->filters[$field] = $condition;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -267,11 +289,54 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      *
      * @param QueryInterface $queryFilter Query filter.
      *
-     * @return $this
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
      */
     public function addQueryFilter(QueryInterface $queryFilter)
     {
         $this->queryFilters[] = $queryFilter;
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove a specific field filter.
+     *
+     * @param string $field Field to remove the filter for.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeFieldFilter($field)
+    {
+        $field = $this->mapFieldName($field);
+        unset($this->filters[$field]);
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove all field filters.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeFieldFilters()
+    {
+        $this->filters = [];
+        $this->_isFiltersRendered = false;
+
+        return $this;
+    }
+
+    /**
+     * Remove all previously added query filters.
+     *
+     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection
+     */
+    public function removeQueryFilters()
+    {
+        $this->queryFilters = [];
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -286,6 +351,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     public function setSearchQuery($query)
     {
         $this->query = $query;
+        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -339,6 +405,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $this->addFieldToFilter('category_ids', $categoryId);
             $this->_productLimitationFilters['category_ids'] = $categoryId;
         }
+        $this->_isFiltersRendered = false;
 
         return $this;
     }

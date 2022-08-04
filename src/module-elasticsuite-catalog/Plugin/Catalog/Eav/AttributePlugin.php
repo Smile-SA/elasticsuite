@@ -40,6 +40,7 @@ class AttributePlugin
         'search_weight',
         'is_used_for_sort_by',
         'is_used_in_spellcheck',
+        'include_zero_false_values',
     ];
 
     /**
