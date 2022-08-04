@@ -49,9 +49,9 @@ class PriceData implements DatasourceInterface
     /**
      * Constructor.
      *
-     * @param ResourceModel                        $resourceModel           Resource model
-     * @param AttributeResourceModel               $attributeResourceModel  Attribute Resource model
-     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool         Price modifiers pool.
+     * @param ResourceModel                        $resourceModel          Resource model
+     * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
+     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
      */
     public function __construct(
         ResourceModel $resourceModel,
