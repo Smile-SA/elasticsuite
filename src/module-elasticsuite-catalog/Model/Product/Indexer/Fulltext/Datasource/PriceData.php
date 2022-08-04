@@ -14,13 +14,9 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
-use Magento\Catalog\Model\ProductRepository;
-use Magento\Catalog\Pricing\Price\FinalPrice;
-use Magento\Catalog\Pricing\Price\RegularPrice;
-use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
-use Magento\GroupedProduct\Model\Product\Type\Grouped;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as AttributeResourceModel;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -42,25 +38,30 @@ class PriceData implements DatasourceInterface
     private $resourceModel;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData
+     */
+    private $attributeResourceModel;
+
+    /**
      * @var PriceData\PriceDataReaderInterface[]
      */
     private $priceReaderPool = [];
-
     /**
      * Constructor.
      *
-     * @param ProductRepository                    $productRepository Product Repository
-     * @param ResourceModel                        $resourceModel     Resource model
-     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool   Price modifiers pool.
+     * @param ResourceModel                        $resourceModel   Resource model
+     * @param AttributeResourceModel               $resourceModel   Attribute Resource model
+     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
      */
     public function __construct(
         ProductRepository $productRepository,
         ResourceModel $resourceModel,
+        AttributeResourceModel $attributeResourceModel,
         $priceReaderPool = []
     ) {
-        $this->productRepository    = $productRepository;
-        $this->resourceModel        = $resourceModel;
-        $this->priceReaderPool      = $priceReaderPool;
+        $this->resourceModel            = $resourceModel;
+        $this->priceReaderPool          = $priceReaderPool;
+        $this->attributeResourceModel   = $attributeResourceModel;
     }
 
     /**
@@ -72,7 +73,8 @@ class PriceData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
-        $priceData = $this->resourceModel->loadPriceData($storeId, array_keys($indexData));
+        $productIds = array_keys($indexData);
+        $priceData = $this->resourceModel->loadPriceData($storeId, $productIds);
 
         foreach ($priceData as $priceDataRow) {
             $productId     = (int) $priceDataRow['entity_id'];
@@ -82,24 +84,14 @@ class PriceData implements DatasourceInterface
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
 
-            $isDiscount = $price < $originalPrice;
-            if (in_array($productTypeId, [Grouped::TYPE_CODE, Configurable::TYPE_CODE])) {
-                $product = $this->productRepository->getById($productId);
-
+            $isDiscount    = $price < $originalPrice;
+            if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
                 $isDiscount = false;
-                if ($productTypeId === Grouped::TYPE_CODE) {
-                    $children = $product->getTypeInstance()->getAssociatedProducts($product);
-                }
-
-                if ($productTypeId === Configurable::TYPE_CODE) {
-                    $children = $product->getTypeInstance()->getUsedProducts($product);
-                }
-
-                if (isset($children)) {
-                    foreach ($children as $child) {
-                        if ($child->getPriceInfo()->getPrice(FinalPrice::PRICE_CODE)->getAmount()->getValue() < $child
-                                ->getPriceInfo()->getPrice(RegularPrice::PRICE_CODE)->getAmount()->getValue()) {
-                            $isDiscount = true;
+                $allChildrenIds = $this->attributeResourceModel->loadChildrens($productIds, $storeId);
+                $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
+                foreach ($childPriceData as $childPrice) {
+                    if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
+                        if ($isDiscount = ($childPrice['final_price'] < $childPrice['price'])) {
                             break;
                         }
                     }
@@ -130,7 +122,6 @@ class PriceData implements DatasourceInterface
 
     /**
      * Retur
-     *
      * @param string $typeId Product type id.
      *
      * @return PriceData\PriceDataReaderInterface
