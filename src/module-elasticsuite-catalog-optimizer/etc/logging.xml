@@ -1,0 +1,21 @@
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
+    <groups>
+        <group name="elasticsuite_optimizer">
+            <label translate="true">Manage Elasticsuite Search Optimizers</label>
+            <expected_models>
+                <expected_model class="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />
+            </expected_models>
+            <events>
+                <event controller_action="adminhtml_optimizer_save" action_alias="save" />
+                <event controller_action="adminhtml_optimizer_delete" action_alias="delete" />
+            </events>
+        </group>
+    </groups>
+</logging>
