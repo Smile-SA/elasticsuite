@@ -24,6 +24,7 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="opened" xsi:type="boolean">true</item>
+                <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
             </item>
         </argument>
 
@@ -47,6 +48,7 @@
                     <item name="imports" xsi:type="array">
                         <item name="visible" xsi:type="string">!${ $.provider }:data.use_default.is_virtual_category</item>
                     </item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
         </field>
@@ -104,6 +106,7 @@
                         <item name="listens" xsi:type="array">
                             <item name="${ $.namespace }.${ $.namespace }:responseData" xsi:type="string">setParsed</item>
                         </item>
+                        <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                     </item>
                 </argument>
             </field>
@@ -129,6 +132,7 @@
                         <item name="imports" xsi:type="array">
                             <item name="visible" xsi:type="string">category_form.category_form.assign_products.is_virtual_category:checked</item>
                         </item>
+                        <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                     </item>
                 </argument>
             </field>
@@ -154,6 +158,7 @@
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">30</item>
                     <item name="label" xsi:type="string" translate="true">Products List Preview and Sorting</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
 

@@ -26,6 +26,7 @@ $helper = $this->helper('Magento\Search\Helper\Data');
 
 $blockId = preg_replace('/[^a-z0-9]+/i', '-', $block->getNameInLayout());
 $formId = 'minisearch-form-' . $blockId;
+$inputId = 'minisearch-input-' . $blockId;
 $autoCompleteId = 'minisearch-autocomplete-' . $blockId;
 ?>
 
@@ -42,12 +43,13 @@ $autoCompleteId = 'minisearch-autocomplete-' . $blockId;
             method="get"
         >
             <div class="field search">
-                <label class="label" for="search" data-role="minisearch-label">
+                <label class="label" for="<?= /* @noEscape */ $inputId ?>" data-role="minisearch-label">
                     <span><?= /* @escapeNotVerified */ __('Search') ?></span>
                 </label>
 
                 <div class="control">
                     <input
+                        id="<?= /* @noEscape */ $inputId ?>"
                         type="text"
                         name="<?= /* @escapeNotVerified */ $helper->getQueryParamName() ?>"
                         value="<?= /* @escapeNotVerified */ $helper->getEscapedQueryText() ?>"

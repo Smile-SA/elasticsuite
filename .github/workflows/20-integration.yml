@@ -46,6 +46,14 @@ jobs:
                     magento-versions: '2.4.4'
                     magento-editions: 'enterprise'
                     experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5'
+                    magento-editions: 'enterprise'
+                    experimental: true
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -198,7 +206,7 @@ jobs:
                 composer remove magento/module-configurable-sample-data-venia --no-update --no-interaction
                 composer remove magento/sample-data-media-venia --no-update --no-interaction
                 composer remove smile/elasticsuite --no-update --no-interaction
-                composer update --no-interaction --ignore-platform-reqs
+                composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia smile/elasticsuite
                 composer config discard-changes false
 
             - name: "[Init] Install proper version of Magento through Composer"
@@ -279,7 +287,7 @@ jobs:
                   composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                   composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
                   composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                  composer update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia
                 fi
 
             - name: "[Test] Data : Require for Magento >=2.4.2"
@@ -293,7 +301,7 @@ jobs:
                   composer require magento/module-catalog-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
                   composer require magento/module-configurable-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
                   composer require magento/sample-data-media-venia --no-update --no-interaction --ignore-platform-reqs
-                  composer update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia
                 fi
 
             - name: "[Init] Data : Prepare for Magento >= 2.4.4"
