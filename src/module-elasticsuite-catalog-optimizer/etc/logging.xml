@@ -13,8 +13,10 @@
                 <expected_model class="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer" />
             </expected_models>
             <events>
-                <event controller_action="adminhtml_optimizer_save" action_alias="save" />
-                <event controller_action="adminhtml_optimizer_delete" action_alias="delete" />
+                <event controller_action="smile_elasticsuite_catalog_optimizer_optimizer_edit" action_alias="view" />
+                <event controller_action="smile_elasticsuite_catalog_optimizer_optimizer_delete" action_alias="delete" />
+                <event controller_action="smile_elasticsuite_catalog_optimizer_optimizer_duplicate" action_alias="duplicate" />
+                <event controller_action="smile_elasticsuite_catalog_optimizer_optimizer_save" action_alias="save" />
             </events>
         </group>
     </groups>

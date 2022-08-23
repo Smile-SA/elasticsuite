@@ -8,14 +8,16 @@
 <logging xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Logging:etc/logging.xsd">
     <groups>
-        <group name="smile_elasticsuite_thesaurus">
+        <group name="elasticsuite_thesaurus">
             <label translate="true">Manage Elasticsuite Thesaurus</label>
             <expected_models>
                 <expected_model class="Smile\ElasticsuiteThesaurus\Model\Thesaurus" />
             </expected_models>
             <events>
-                 <event controller_action="adminhtml_thesaurus_save" action_alias="save" />
-                 <event controller_action="adminhtml_thesaurus_delete" action_alias="delete" />
+                <event controller_action="smile_elasticsuite_thesaurus_thesaurus_edit" action_alias="view" />
+                <event controller_action="smile_elasticsuite_thesaurus_thesaurus_delete" action_alias="delete" />
+                <event controller_action="smile_elasticsuite_thesaurus_thesaurus_massDelete" action_alias="massDelete" />
+                <event controller_action="smile_elasticsuite_thesaurus_thesaurus_save" action_alias="save" />
             </events>
         </group>
     </groups>
