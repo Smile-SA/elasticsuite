@@ -8,9 +8,11 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
+        types: [labeled]
 
 jobs:
     build:
+        if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
         runs-on: ubuntu-18.04
         name: 'Integration'
         services:
@@ -23,16 +25,37 @@ jobs:
                     - 3306:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
             elasticsearch:
-                image: docker://magento/magento-cloud-docker-elasticsearch:7.5-1.2.2
+                image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
                 ports:
                     - 9200:9200
                 options: -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
         strategy:
+            fail-fast: false
             matrix:
-                php-versions: ['7.3', '7.4']
-                magento-versions: ['2.4.1', '2.4.2']
+                php-versions: ['7.4']
+                magento-versions: ['2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3', '2.4.3-p1']
                 magento-editions: ['community', 'enterprise']
+                experimental: [false]
+                include:
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5'
+                    magento-editions: 'enterprise'
+                    experimental: true
+
+        continue-on-error: ${{ matrix.experimental }}
 
         env:
             magento-directory: /var/www/magento
@@ -42,6 +65,9 @@ jobs:
         steps:
             - name: "[Init] Checkout"
               uses: actions/checkout@v2
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}
+                persist-credentials: false
 
             - name: "[Init] Setup PHP"
               uses: shivammathur/setup-php@v2
@@ -84,10 +110,24 @@ jobs:
                 npm install -g graphqurl
 
             - name: "[Init] Downgrade Composer"
-              run: composer self-update --1
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer self-update --1
+                else
+                  composer self-update 2.1.14
+                fi
 
             - name: "[Init] Optimize Composer"
-              run : composer global require hirak/prestissimo:0.3.10
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer global require hirak/prestissimo:0.3.10
+                fi
 
             - name: "[Init] Determine composer cache directory"
               id: composer-cache-directory
@@ -132,10 +172,15 @@ jobs:
 
             - name: "[Init] Prepare Sample Data local repos"
               working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
               run: |
-                composer config --global --no-interaction --ansi repositories.module-catalog-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
-                composer config --global --no-interaction --ansi repositories.module-configurable-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
-                composer config --global --no-interaction --ansi repositories.sample-data-media-venia git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer config --global --no-interaction --ansi repositories.module-catalog-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-catalog-sample-data-venia"
+                  composer config --global --no-interaction --ansi repositories.module-configurable-sample-data-venia git "$GITHUB_WORKSPACE/data/PMET-public/module-configurable-sample-data-venia"
+                  composer config --global --no-interaction --ansi repositories.sample-data-media-venia git "$GITHUB_WORKSPACE/data/PMET-public/sample-data-media-venia"
+                fi
                 composer config --global repositories
 
             - name: "[Init] Cache Magento install"
@@ -143,9 +188,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ${{ env.magento-directory }}
-                  key: ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
-                      ${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                    magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
             - name: "[Init] Prepare credentials"
               if: ${{env.MAGENTO_USERNAME}} != 0
@@ -161,7 +206,7 @@ jobs:
                 composer remove magento/module-configurable-sample-data-venia --no-update --no-interaction
                 composer remove magento/sample-data-media-venia --no-update --no-interaction
                 composer remove smile/elasticsuite --no-update --no-interaction
-                composer update --no-interaction --ignore-platform-reqs
+                composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia smile/elasticsuite
                 composer config discard-changes false
 
             - name: "[Init] Install proper version of Magento through Composer"
@@ -169,19 +214,35 @@ jobs:
               env:
                   MAGENTO_VERSION: ${{ matrix.magento-versions }}
                   MAGENTO_EDITION: ${{ matrix.magento-editions }}
-                  STABILITY: "--stability=stable"
                   MAGENTO_ROOT: ${{ env.magento-directory }}
+                  EXPERIMENTAL: ${{ matrix.experimental }}
               run: |
+                STABILITY="--stability=stable"
+                if [ $EXPERIMENTAL = true ]; then
+                  STABILITY=""
+                fi
                 sudo rm -rf $MAGENTO_ROOT
                 sudo mkdir -p $MAGENTO_ROOT
                 sudo chown -R $USER:www-data $MAGENTO_ROOT
                 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
+            - name: "[Init] Fix symfony/console and symfony string version"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                  MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                  function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                  if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.4") ]; then
+                    composer require symfony/console:4.4.26 --ignore-platform-reqs
+                    composer require symfony/string:5.4.2 --ignore-platform-reqs
+                  fi
+
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
               run: |
                 composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
-                cp -R $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+                rm -rf vendor/smile/elasticsuite/**
+                cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
             - name: "[Init] Fix Magento directory permissions"
               env:
@@ -215,18 +276,54 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:di:compile
 
-            - name: "[Test] Data : Require"
+            - name: "[Test] Data : Require for Magento <2.4.2"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer config discard-changes true
+                  composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia
+                fi
+
+            - name: "[Test] Data : Require for Magento >=2.4.2"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -ge $(version "2.4.2") ]; then
+                  composer config discard-changes true
+                  composer require magento/module-catalog-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/module-configurable-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer require magento/sample-data-media-venia --no-update --no-interaction --ignore-platform-reqs
+                  composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia
+                fi
+
+            - name: "[Init] Data : Prepare for Magento >= 2.4.4"
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer config discard-changes true
-                composer require magento/module-catalog-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer require magento/module-configurable-sample-data-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer require magento/sample-data-media-venia:dev-master@dev --no-update --no-interaction --ignore-platform-reqs
-                composer update --no-interaction --ignore-platform-reqs
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -ge $(version "2.4.2") ]; then
+                  sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+                fi
+
+            - name: "[Init] Data : Remove Downloadable / Virtual products"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                  rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
 
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
-              run: php bin/magento setup:upgrade --keep-generated --quiet
+              run: php bin/magento setup:upgrade --keep-generated
+
+            - name: "[Test] Cache Clean before re-indexing"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:clean
 
             - name: "[Test] Data : Index"
               working-directory: ${{ env.magento-directory }}
@@ -273,8 +370,19 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
+                -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : Search (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/query.gql"
 
             - name: "[Test] GraphQl : Category"
               run: |
@@ -282,8 +390,19 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
-                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
-                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/query.gql"
+
+            - name: "[Test] GraphQl : Category (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/query.gql"
 
             - name: "[Test] GraphQl : Product Detail"
               run: |
@@ -291,5 +410,34 @@ jobs:
                 gq \
                 http://localhost/graphql \
                 -l \
+                -H "Content-Type: application/json" \
                 --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
                 --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : View More (Category)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/query.gql"
+
+            - name: "[Test] GraphQl : View More (Search)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/query.gql"
+
+            - name: "[End] Job failed, gathering logs"
+              env:
+                MAGENTO_ROOT: ${{ env.magento-directory }}
+              if: ${{ failure() }}
+              run: |
+                tail -n 100 /var/log/apache2/apache-error.log
+                tail -n 100 $MAGENTO_ROOT/var/log/*.log

@@ -30,38 +30,43 @@
 
             <group id="es_client" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Elasticsearch Client</label>
-                <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Servers List</label>
                     <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
                 </field>
-                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Use HTTPS</label>
                     <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable basic HTTP authentication</label>
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Encode HTTP authorization headers</label>
+                    <comment>Enable this option when you want to base64 encode the Authorization headers. (Open Distro requires this)</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication user</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication password</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable Debug Mode</label>
                     <comment>When enabled the module will produce logs through Magento logging system.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="connection_timeout" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="connection_timeout" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Server Connection Timeout</label>
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
@@ -70,21 +75,22 @@
 
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Indices Settings</label>
-                <field id="alias" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="alias" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Alias Name</label>
                 </field>
-                <field id="indices_pattern" translate="label" type="text" sortOrder="58" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="indices_pattern" translate="label" type="text" sortOrder="58" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Name Pattern</label>
                 </field>
-                <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0">
+                <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Number of Replicas per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>
+
         </section>
 
         <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -94,10 +100,25 @@
 
             <group id="term_autocomplete" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Popular Term Autocomplete</label>
-                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of popular search terms to display in autocomplete results.]]></comment>
+                </field>
+            </group>
+        </section>
+
+        <section id="smile_elasticsuite_misc_settings" translate="label" type="text" sortOrder="2000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Miscellaneous</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_base_settings</resource>
+
+            <group id="footer_settings" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Footer Settings</label>
+                <field id="enable_es_link" translate="label comment" type="select" sortOrder="61" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Display ElasticSuite link</label>
+                    <comment>Select Yes if you want to display an ElasticSuite copyright link in the footer.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
         </section>

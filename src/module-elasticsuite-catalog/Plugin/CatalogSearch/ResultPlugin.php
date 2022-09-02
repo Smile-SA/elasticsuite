@@ -17,6 +17,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogSearch\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
@@ -69,6 +70,11 @@ class ResultPlugin
     private $eventManager;
 
     /**
+     * @var ResponseInterface
+     */
+    private $response;
+
+    /**
      * RedirectIfOneResult constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Resolver              $layerResolver       Layer Resolver
@@ -77,6 +83,7 @@ class ResultPlugin
      * @param \Magento\Framework\Message\ManagerInterface        $messageManager      Message Manager
      * @param \Magento\Framework\Controller\ResultFactory        $resultFactory       Result Interface Factory
      * @param \Magento\Framework\Event\ManagerInterface          $eventManager        Event Manager
+     * @param \Magento\Framework\App\ResponseInterface           $response            Response
      */
     public function __construct(
         Resolver $layerResolver,
@@ -84,7 +91,8 @@ class ResultPlugin
         Data $catalogSearchHelper,
         ManagerInterface $messageManager,
         ResultFactory $resultFactory,
-        EventManagerInterface $eventManager
+        EventManagerInterface $eventManager,
+        ResponseInterface $response
     ) {
         $this->layerResolver  = $layerResolver;
         $this->scopeConfig    = $scopeConfig;
@@ -92,6 +100,7 @@ class ResultPlugin
         $this->helper         = $catalogSearchHelper;
         $this->resultFactory  = $resultFactory;
         $this->eventManager   = $eventManager;
+        $this->response       = $response;
     }
 
     /**
@@ -123,6 +132,7 @@ class ResultPlugin
                         $this->addRedirectMessage($product);
                         $result = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
                         $result->setUrl($product->getProductUrl());
+                        $this->response->setRedirect($product->getProductUrl());
 
                         $this->eventManager->dispatch(
                             'smile_elasticsuite_redirect_if_one_result',

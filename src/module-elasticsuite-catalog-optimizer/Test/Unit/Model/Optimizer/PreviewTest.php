@@ -19,6 +19,8 @@ use ReflectionClass;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\ApplierListFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder;
+use Magento\Search\Model\QueryInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory;
@@ -27,6 +29,8 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 
 /**
  * Optimiser Preview unit testing.
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogOptimizer
@@ -41,7 +45,7 @@ class PreviewTest extends TestCase
     private $previewItemFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer
+     * @var Optimizer
      */
     private $optimizer;
 
@@ -51,22 +55,22 @@ class PreviewTest extends TestCase
     private $containerConfiguration;
 
     /**
-     * @var \Magento\Catalog\Api\Data\CategoryInterface
+     * @var CategoryInterface
      */
     private $category;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory
+     * @var ProviderFactory
      */
     private $providerFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder
+     * @var ResultsBuilder
      */
     private $previewResultsBuilder;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview
+     * @var Preview
      */
     private $preview;
 
@@ -74,6 +78,16 @@ class PreviewTest extends TestCase
      * @var ApplierListFactory
      */
     private $applierListFactory;
+
+    /**
+     * @var QueryInterface
+     */
+    private $searchQuery;
+
+    /**
+     * @var ContextInterface
+     */
+    private $searchContext;
 
     /**
      * {@inheritDoc}
@@ -87,6 +101,8 @@ class PreviewTest extends TestCase
         $this->containerConfiguration = $this->getContainerConfigMock();
         $this->previewResultsBuilder  = $this->getResultsBuilderMock();
         $this->category               = $this->getCategoryMock();
+        $this->searchQuery            = $this->getQueryMock();
+        $this->searchContext          = $this->getSearchContextMock();
         $this->preview = new Preview(
             $this->optimizer,
             $this->previewItemFactory,
@@ -94,6 +110,7 @@ class PreviewTest extends TestCase
             $this->providerFactory,
             $this->containerConfiguration,
             $this->previewResultsBuilder,
+            $this->searchContext,
             $this->category
         );
     }
@@ -109,6 +126,7 @@ class PreviewTest extends TestCase
      * @param array   $quickSearchContainer Quick Search Container
      * @param array   $catalogViewContainer Catalog View Container
      * @param string  $queryText            Query Text
+     * @param integer $queryId              Query Id
      * @param integer $category             Category
      * @param boolean $expectedResult       Expected result
      */
@@ -118,6 +136,7 @@ class PreviewTest extends TestCase
         $quickSearchContainer,
         $catalogViewContainer,
         $queryText,
+        $queryId,
         $category,
         $expectedResult
     ) : void {
@@ -128,6 +147,8 @@ class PreviewTest extends TestCase
         $this->optimizer->method('getSearchContainer')->willReturn($searchContainers);
         $this->optimizer->method('getQuickSearchContainer')->willReturn($quickSearchContainer);
         $this->optimizer->method('getCatalogViewContainer')->willReturn($catalogViewContainer);
+        $this->searchQuery->method('getId')->willReturn($queryId);
+        $this->searchContext->method('getCurrentSearchQuery')->willReturn($this->searchQuery);
         $this->category->method('getId')->willReturn($category);
         $this->containerConfiguration->method('getName')->willReturn($name);
 
@@ -150,10 +171,11 @@ class PreviewTest extends TestCase
     public function dataProvider(): array
     {
         $data = [
-            [['quick_search_container'], 'catalog_product_autocomplete', null, null, null, null, false],
+            [['quick_search_container'], 'catalog_product_autocomplete', null, null, null, null, null, false],
             [
                 ['catalog_view_container', 'catalog_product_autocomplete'],
                 'catalog_product_autocomplete',
+                null,
                 null,
                 null,
                 null,
@@ -167,11 +189,12 @@ class PreviewTest extends TestCase
                 null,
                 null,
                 null,
+                null,
                 false,
             ],
-            [null, 'quick_search_container', null, null, null, null, false],
-            [[], 'quick_search_container', null, null, null, null, false],
-            [['quick_search_container'], 'quick_search_container', null, null, null, null, true],
+            [null, 'quick_search_container', null, null, null, null, null, false],
+            [[], 'quick_search_container', null, null, null, null, null, false],
+            [['quick_search_container'], 'quick_search_container', null, null, null, null, null, true],
             [
                 ['catalog_view_container', 'quick_search_container', 'catalog_product_autocomplete'],
                 'quick_search_container',
@@ -197,6 +220,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'skirt',
+                2,
                 3,
                 true,
             ],
@@ -223,6 +247,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'skirt',
+                2,
                 3,
                 true,
             ],
@@ -249,6 +274,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'skirt',
+                2,
                 3,
                 true,
             ],
@@ -275,6 +301,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'skirt',
+                2,
                 3,
                 true,
             ],
@@ -286,6 +313,7 @@ class PreviewTest extends TestCase
                     'apply_to' => 0,
                 ],
                 null,
+                null,
                 3,
                 true,
             ],
@@ -300,6 +328,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 null,
+                null,
                 4,
                 false,
             ],
@@ -326,6 +355,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'jacket',
+                8,
                 3,
                 false,
             ],
@@ -352,6 +382,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'jacket',
+                8,
                 4,
                 false,
             ],
@@ -368,6 +399,7 @@ class PreviewTest extends TestCase
                     ],
                 ],
                 'skirt',
+                2,
                 4,
                 false,
             ],
@@ -391,6 +423,7 @@ class PreviewTest extends TestCase
                     'apply_to' => 1,
                 ],
                 'skirt',
+                2,
                 4,
                 false,
             ],
@@ -402,6 +435,7 @@ class PreviewTest extends TestCase
                 ],
                 null,
                 'skirt',
+                2,
                 null,
                 true,
             ],
@@ -412,6 +446,7 @@ class PreviewTest extends TestCase
                 [
                     'apply_to' => 1,
                 ],
+                null,
                 null,
                 3,
                 true,
@@ -506,5 +541,28 @@ class PreviewTest extends TestCase
             ->getMockBuilder(ProviderFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * Generate query mock.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getQueryMock(): \PHPUnit\Framework\MockObject\MockObject
+    {
+        return $this
+            ->getMockBuilder(\Magento\Search\Model\Query::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * Generate search context mock.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getSearchContextMock(): \PHPUnit\Framework\MockObject\MockObject
+    {
+        return $this->getMockBuilder(ContextInterface::class)->getMock();
     }
 }

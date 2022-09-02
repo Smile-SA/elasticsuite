@@ -14,7 +14,7 @@
 define([
     'Magento_Ui/js/form/components/html',
     'jquery',
-    'MutationObserver'
+    'Smile_ElasticsuiteCore/js/MutationObserver'
 ], function (Component, $) {
     'use strict';
 
@@ -30,15 +30,15 @@ define([
             this._super();
             this.initRuleListener();
         },
-        
+
         initObservable: function () {
             this._super();
             this.ruleObject = {};
             this.observe('ruleObject value');
-            
+
             return this;
         },
-        
+
         initRuleListener: function () {
             var observer = new MutationObserver(function () {
                 var rootNode = document.getElementById(this.index);
@@ -54,13 +54,13 @@ define([
             var observerConfig = {childList: true, subtree: true};
             observer.observe(document, observerConfig)
         },
-        
+
         updateRule: function () {
             var ruleObject = {};
             var hashValues = [];
-            
+
             $(this.rootNode).find("[name*=" + this.index + "]").each(function () {
-                hashValues.push(this.name + this.value.toString());
+                hashValues.push(this.name + ($(this).val() ? $(this).val().toString() : ''));
                 var currentRuleObject = ruleObject;
 
                 var path = this.name.match(/\[([^[\[\]]+)\]/g)
@@ -68,20 +68,20 @@ define([
 
                 while (path.length > 1) {
                     var currentKey = path.shift();
-                    
+
                     if (currentRuleObject[currentKey] === undefined) {
                         currentRuleObject[currentKey] = {};
                     }
-                    
+
                     currentRuleObject = currentRuleObject[currentKey];
                 }
-                
+
                 currentKey = path.shift();
                 currentRuleObject[currentKey] = $(this).val();
             });
-            
+
             var newHashValue = hashValues.sort().join('');
-            
+
             if (newHashValue !== this.currentHashValue) {
                 if (this.currentHashValue !== undefined) {
                     this.bubble('update', true);

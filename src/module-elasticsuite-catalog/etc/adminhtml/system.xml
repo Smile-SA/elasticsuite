@@ -19,7 +19,7 @@
         <section id="smile_elasticsuite_autocomplete_settings">
             <group id="product_autocomplete" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Product Autocomplete</label>
-                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of products to display in autocomplete results.]]></comment>
@@ -27,7 +27,7 @@
             </group>
             <group id="product_attribute_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Product Attributes Autocomplete</label>
-                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of product attributes to display in autocomplete results.]]></comment>
@@ -35,7 +35,7 @@
             </group>
             <group id="category_autocomplete" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Category Autocomplete</label>
-                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="max_size" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of categories to display in autocomplete results.]]></comment>
@@ -50,20 +50,30 @@
 
             <group id="catalogsearch" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Catalog Search Configuration</label>
-                <field id="redirect_if_one_result" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="category_name_weight" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Category Name Weight</label>
+                    <source_model>Magento\CatalogSearch\Model\Source\Weight</source_model>
+                    <comment><![CDATA[The search weight of category names when used in fulltext search.]]></comment>
+                </field>
+                <field id="redirect_if_one_result" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Redirect to product page if only one result</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If there is only one product matching a given search query, the user will be redirect to this product page.]]></comment>
                 </field>
-                <field id="category_filter_use_url_rewrites" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="category_filter_use_url_rewrites" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Use URL Rewrites for Category Filter in category navigation</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[When set to yes, users are redirected (and all filters are reset) to the chosen category page when they use the category filter in layered navigation.]]></comment>
                 </field>
-                <field id="expanded_facets" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="expanded_facets" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Expanded facets</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Number of facets to display expanded by default.]]></comment>
+                </field>
+                <field id="adaptive_slider_enabled" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable adaptive slider</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the price slider behavior changes so that the middle of the slider range corresponds to the median price instead of the price at the middle of the range.]]></comment>
                 </field>
             </group>
         </section>

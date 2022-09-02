@@ -56,13 +56,33 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     private $clientBuilder;
 
     /**
+     * @var array
+     */
+    private $fallbackMapping = [
+        self::INPUT_KEY_ES_USER => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_USERNAME,
+        self::INPUT_KEY_ES_PASS => SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PASSWORD,
+    ];
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Setup\SearchConfigOptionsList
+     */
+    private $searchConfigOptionsList;
+
+    /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder ES client builder.
+     * @param \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder           ES client builder.
+     * @param SearchConfigOptionsList                      $searchConfigOptionsList Legacy Magento options for search.
+     * @param array                                        $fallbackMapping         Fallback Mapping for configuration.
      */
-    public function __construct(\Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder)
-    {
-        $this->clientBuilder = $clientBuilder;
+    public function __construct(
+        \Smile\ElasticsuiteCore\Client\ClientBuilder $clientBuilder,
+        SearchConfigOptionsList $searchConfigOptionsList,
+        $fallbackMapping = []
+    ) {
+        $this->clientBuilder           = $clientBuilder;
+        $this->fallbackMapping         = array_merge($this->fallbackMapping, $fallbackMapping);
+        $this->searchConfigOptionsList = $searchConfigOptionsList;
     }
 
     /**
@@ -70,34 +90,37 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      */
     public function getOptions()
     {
-        return [
-            new TextConfigOption(
-                self::INPUT_KEY_ES_HOSTS,
-                TextConfigOption::FRONTEND_WIZARD_TEXT,
-                self::CONFIG_PATH_ES_HOSTS,
-                'ElasticSearch Servers List.'
-            ),
-            new SelectConfigOption(
-                self::INPUT_KEY_ES_SSL,
-                SelectConfigOption::FRONTEND_WIZARD_SELECT,
-                [0, 1],
-                self::CONFIG_PATH_ES_SSL,
-                'Use SSL mode to connect to ElasticSearch.',
-                0
-            ),
-            new TextConfigOption(
-                self::INPUT_KEY_ES_USER,
-                TextConfigOption::FRONTEND_WIZARD_TEXT,
-                self::CONFIG_PATH_ES_USER,
-                'ElasticSearch User Name.'
-            ),
-            new TextConfigOption(
-                self::INPUT_KEY_ES_PASS,
-                TextConfigOption::FRONTEND_WIZARD_TEXT,
-                self::CONFIG_PATH_ES_PASS,
-                'ElasticSearch password.'
-            ),
-        ];
+        return array_merge(
+            [
+                new TextConfigOption(
+                    self::INPUT_KEY_ES_HOSTS,
+                    TextConfigOption::FRONTEND_WIZARD_TEXT,
+                    self::CONFIG_PATH_ES_HOSTS,
+                    'ElasticSearch Servers List.'
+                ),
+                new SelectConfigOption(
+                    self::INPUT_KEY_ES_SSL,
+                    SelectConfigOption::FRONTEND_WIZARD_SELECT,
+                    [0, 1],
+                    self::CONFIG_PATH_ES_SSL,
+                    'Use SSL mode to connect to ElasticSearch.',
+                    0
+                ),
+                new TextConfigOption(
+                    self::INPUT_KEY_ES_USER,
+                    TextConfigOption::FRONTEND_WIZARD_TEXT,
+                    self::CONFIG_PATH_ES_USER,
+                    'ElasticSearch User Name.'
+                ),
+                new TextConfigOption(
+                    self::INPUT_KEY_ES_PASS,
+                    TextConfigOption::FRONTEND_WIZARD_TEXT,
+                    self::CONFIG_PATH_ES_PASS,
+                    'ElasticSearch password.'
+                ),
+            ],
+            $this->searchConfigOptionsList->getOptionsList() // Legacy options are injected here to be available in validate().
+        );
     }
 
     /**
@@ -124,9 +147,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
         try {
             $options = array_filter($this->getClientOptions($options, $deploymentConfig));
+
             $this->clientBuilder->build($options)->info();
         } catch (\Exception $e) {
-            $errors[] = "Unable to connect ElasticSearch server : {$e->getMessage()}";
+            $errors[] = "ElasticSuite : Unable to configure connection to Elasticsearch server : {$e->getMessage()}";
         }
 
         return $errors;
@@ -142,20 +166,41 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      */
     private function getClientOptions(array $options, DeploymentConfig $deploymentConfig)
     {
-        $clientOptions = [];
+        $clientOptions = [
+            'servers'           => $this->getServers($options, $deploymentConfig),
+            'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
+            'http_auth_user'    => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER),
+            'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
+        ];
 
-        if (isset($options[self::INPUT_KEY_ES_HOSTS]) || $deploymentConfig->get(self::CONFIG_PATH_ES_HOSTS)) {
-            $clientOptions = [
-                'servers'           => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_HOSTS),
-                'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
-                'http_auth_user'    => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER),
-                'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
-            ];
-
-            $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
-        }
+        $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
 
         return $clientOptions;
+    }
+
+    /**
+     * Get servers configuration. We try to fetch them from our own "es-hosts" parameters but allow a fallback to
+     * Magento parameters "elasticsearch-host" and "elasticsearch-port".
+     *
+     * @param array            $options          Input options.
+     * @param DeploymentConfig $deploymentConfig Deployment config.
+     *
+     * @return mixed|string|null
+     */
+    private function getServers($options, DeploymentConfig $deploymentConfig)
+    {
+        $servers = $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_HOSTS);
+
+        if (null === $servers) {
+            // Fallback to legacy Magento2 parameters.
+            $server  = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_HOST);
+            $port    = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PORT);
+            if ($server && $port) {
+                $servers = sprintf('%s:%s', $server, $port);
+            }
+        }
+
+        return $servers;
     }
 
     /**
@@ -175,6 +220,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         if ($option) {
             $configPath = $option->getConfigPath($inputKey);
             $config = $options[$inputKey] ?? ($configPath != null ? $deploymentConfig->get($configPath) : $option->getDefault());
+
+            if (!$config && (array_key_exists($inputKey, $this->fallbackMapping))) {
+                $config = $this->readConfiguration($options, $deploymentConfig, $this->fallbackMapping[$inputKey]);
+            }
         }
 
         return $config;

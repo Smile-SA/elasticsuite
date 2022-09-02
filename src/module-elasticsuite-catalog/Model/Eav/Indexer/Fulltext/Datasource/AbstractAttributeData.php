@@ -199,7 +199,7 @@ abstract class AbstractAttributeData
             $fieldConfig['is_searchable'] = false;
         }
 
-        $fieldType    = $this->attributeHelper->getFieldType($attribute);
+        $fieldType    = $this->attributeHelper->getFieldType($attribute->getId());
         $fieldOptions = ['name' => $fieldName, 'type' => $fieldType, 'fieldConfig' => $fieldConfig];
 
         $this->fields[$fieldName] = $this->fieldFactory->create($fieldOptions);

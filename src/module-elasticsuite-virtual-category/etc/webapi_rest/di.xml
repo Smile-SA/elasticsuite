@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticsuiteVirtualCategory DI.
+ * Smile_ElasticsuiteVirtualCategory dependency injection configuration.
  *
  * DISCLAIMER
  *
@@ -10,20 +10,14 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
- * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2020 Smile
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2022 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
-
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
-    <type name="Magento\Eav\Model\TypeLocator">
-        <arguments>
-            <argument name="typeLocators" xsi:type="array">
-                <item name="virtualCategoryType" sortOrder="1" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Webapi\TypeLocator\VirtualCategoryLocator</item>
-            </argument>
-        </arguments>
+    <type name="\Magento\Catalog\Api\CategoryLinkRepositoryInterface">
+        <plugin name="categories_save_products_positions"
+                type="\Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\RestProductPositionPlugin" />
     </type>
-
 </config>

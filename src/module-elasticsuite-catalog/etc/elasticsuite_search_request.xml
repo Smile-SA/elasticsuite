@@ -27,6 +27,7 @@
         <aggregations>
             <provider name="filterableAttributesProvider">searchFilterableAttributesProvider</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
+            <aggregation xsi:type="termBucket" name="indexed_attributes" field="indexed_attributes"/>
         </aggregations>
     </request>
 
@@ -50,6 +51,7 @@
         <aggregations>
             <provider name="filterableAttributesProvider">categoryFilterableAttributesProvider</provider>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
+            <aggregation xsi:type="termBucket" name="indexed_attributes" field="indexed_attributes"/>
         </aggregations>
     </request>
 

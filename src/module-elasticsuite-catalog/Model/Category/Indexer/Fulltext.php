@@ -83,7 +83,7 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
 
         foreach ($storeIds as $storeId) {
             $dimension = $this->dimensionFactory->create(['name' => 'scope', 'value' => $storeId]);
-            $this->indexerHandler->deleteIndex([$dimension], new \ArrayObject($ids));
+            $this->indexerHandler->deleteIndex([$dimension], new ExtendedArray($ids));
             $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId, $ids));
         }
     }

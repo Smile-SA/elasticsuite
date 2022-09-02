@@ -16,6 +16,8 @@ namespace Smile\ElasticsuiteThesaurus\Block\Adminhtml\Thesaurus\Renderer;
 /**
  * Abstract Renderer for array-composite fields
  *
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -31,6 +33,13 @@ class AbstractRenderer extends \Magento\Config\Block\System\Config\Form\Field\Fi
      * @var \Magento\Framework\Data\Form\Element\Factory
      */
     protected $elementFactory;
+
+    /**
+     * Override the default Backend system config array field render
+     *
+     * @var string
+     */
+    protected $_template = 'Smile_ElasticsuiteThesaurus::system/config/form/field/array.phtml';
 
     /**
      * @param \Magento\Backend\Block\Template\Context      $context        Application context

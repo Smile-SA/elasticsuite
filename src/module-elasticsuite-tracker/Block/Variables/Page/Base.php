@@ -31,14 +31,28 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
     private $pageTypeConfig;
 
     /**
+     * Magento Locale Resolver
+     *
+     * @var \Magento\Framework\Locale\ResolverInterface
+     */
+    protected $localeResolver;
+
+    /**
+     * @var \Magento\Framework\App\RequestInterface
+     */
+    protected $requestInterface;
+
+    /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                               $context        The template context
-     * @param \Magento\Framework\Json\Helper\Data            $jsonHelper     The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data         $trackerHelper  The Smile Tracker helper
-     * @param \Magento\Framework\Registry                    $registry       Magento Core Registry
-     * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig The page type configuration
-     * @param array                                          $data           The block data
+     * @param Template\Context                               $context          The template context
+     * @param \Magento\Framework\Json\Helper\Data            $jsonHelper       The Magento's JSON Helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data         $trackerHelper    The Smile Tracker helper
+     * @param \Magento\Framework\Registry                    $registry         Magento Core Registry
+     * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig   The page type configuration
+     * @param \Magento\Framework\Locale\ResolverInterface    $localeResolver   Locale Resolver
+     * @param \Magento\Framework\App\RequestInterface        $requestInterface RequestInterface
+     * @param array                                          $data             The block data
      */
     public function __construct(
         Template\Context $context,
@@ -46,9 +60,13 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
+        \Magento\Framework\Locale\ResolverInterface $localeResolver,
+        \Magento\Framework\App\RequestInterface $requestInterface,
         array $data = []
     ) {
         $this->pageTypeConfig = $pageTypeConfig;
+        $this->localeResolver = $localeResolver;
+        $this->requestInterface = $requestInterface;
 
         return parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
@@ -60,7 +78,10 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
      */
     public function getVariables()
     {
-        return $this->getPageTypeInformations();
+        return array_merge(
+            $this->getPageTypeInformations(),
+            $this->getPageInformation()
+        );
     }
 
     /**
@@ -108,6 +129,21 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
         }
 
         return $this->getData('page_type_label');
+    }
+
+    /**
+     * Get telemetry variables.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
+     * @return array
+     */
+    private function getPageInformation()
+    {
+        return [
+            'locale' => $this->localeResolver->getLocale(),
+            'domain' => $this->requestInterface->getServer('SERVER_ADDR'),
+        ];
     }
 
     /**

@@ -168,7 +168,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 $inputType = 'category';
             } elseif (in_array($frontendInput, ['select', 'multiselect'])) {
                 $inputType = 'multiselect';
-            } elseif (in_array($frontendClass, ['validate-digits', 'validate-number'])) {
+            } elseif (in_array($frontendClass, ['validate-digits', 'validate-number']) || $frontendInput === 'price') {
                 $inputType = 'numeric';
             } elseif ($frontendInput === 'date') {
                 $inputType = 'date';

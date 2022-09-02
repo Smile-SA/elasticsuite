@@ -69,11 +69,13 @@ class Copier
         /** @var Optimizer $duplicate */
         $duplicate = $this->optimizerFactory->create();
         $duplicate->setData($optimizerData);
-        if ($fromDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['from_date'])) {
+        if (isset($optimizerData['from_date'])) {
+            $fromDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['from_date']);
             // Warning: user locale dependent.
             $duplicate->setFromDate($fromDate->format('m/d/Y'));
         }
-        if ($toDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['to_date'])) {
+        if (isset($optimizerData['to_date'])) {
+            $toDate = \DateTime::createFromFormat('Y-m-d', $optimizerData['to_date']);
             // Warning: user locale dependent.
             $duplicate->setToDate($toDate->format('m/d/Y'));
         }

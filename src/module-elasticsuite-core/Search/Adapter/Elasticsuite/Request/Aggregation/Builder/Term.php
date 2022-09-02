@@ -30,6 +30,8 @@ class Term implements BuilderInterface
     /**
      * Build the aggregation.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param BucketInterface $bucket Term bucket.
      *
      * @return array
@@ -51,6 +53,16 @@ class Term implements BuilderInterface
         } elseif ($bucket->getSortOrder() == $bucket::SORT_ORDER_RELEVANCE && !$bucket->isNested()) {
             $aggregation['aggregations']['termRelevance'] = ['avg' => ['script' => $bucket::SORT_ORDER_RELEVANCE]];
             $aggregation['terms']['order'] = ['termRelevance' => SortOrderInterface::SORT_DESC];
+        }
+
+        if (!empty($bucket->getInclude())) {
+            $aggregation['terms']['include'] = $bucket->getInclude();
+        }
+        if (!empty($bucket->getExclude())) {
+            $aggregation['terms']['exclude'] = $bucket->getExclude();
+        }
+        if ($bucket->getMinDocCount() !== null) {
+            $aggregation['terms']['min_doc_count'] = $bucket->getMinDocCount();
         }
 
         return $aggregation;

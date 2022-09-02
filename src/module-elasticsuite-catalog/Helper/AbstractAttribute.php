@@ -23,6 +23,8 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 /**
  * Abstract ElasticSuite catalog attributes helper.
  *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -47,6 +49,16 @@ abstract class AbstractAttribute extends Mapping
     /**
      * @var array
      */
+    private $attributes = [];
+
+    /**
+     * @var array
+     */
+    private $attributesCode = [];
+
+    /**
+     * @var array
+     */
     private $attributeOptionTextCache = [];
 
     /**
@@ -62,7 +74,17 @@ abstract class AbstractAttribute extends Mapping
     /**
      * @var array
      */
+    private $attributeBackendCache = [];
+
+    /**
+     * @var array
+     */
     private $attributeMappers = [];
+
+    /**
+     * @var array
+     */
+    private $attributeCleaners = [];
 
     /**
      * @param Context          $context           Helper context.
@@ -123,28 +145,32 @@ abstract class AbstractAttribute extends Mapping
      * Get mapping field type for an attribute.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
-     * @param AttributeInterface $attribute Product attribute.
+     * @param int $attributeId Product attribute id.
      *
      * @return string
      */
-    public function getFieldType(AttributeInterface $attribute)
+    public function getFieldType($attributeId)
     {
-        $attributeId = $attribute->getAttributeId();
+        // Backward compatibility.
+        if (!is_numeric($attributeId)) {
+            $attributeId = $this->getAttributeId($attributeId);
+        }
 
         if (!isset($this->attributeFieldTypeCache[$attributeId])) {
+            $attribute = $this->getAttributeById($attributeId);
             $type = FieldInterface::FIELD_TYPE_TEXT;
 
             if ($attribute->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean') {
                 $type = FieldInterface::FIELD_TYPE_BOOLEAN;
-            } elseif ($attribute->getBackendType() == 'int') {
+            } elseif ($this->getBackendType($attributeId) == 'int') {
                 $type = FieldInterface::FIELD_TYPE_INTEGER;
             } elseif ($attribute->getFrontendClass() == 'validate-digits') {
                 $type = FieldInterface::FIELD_TYPE_LONG;
-            } elseif ($attribute->getBackendType() == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
+            } elseif ($this->getBackendType($attributeId) == 'decimal' || $attribute->getFrontendClass() == 'validate-number') {
                 $type = FieldInterface::FIELD_TYPE_DOUBLE;
-            } elseif ($attribute->getBackendType() == 'datetime') {
+            } elseif ($this->getBackendType($attributeId) == 'datetime') {
                 $type = FieldInterface::FIELD_TYPE_DATE;
-            } elseif ($this->usesSource($attribute)) {
+            } elseif ($this->usesSource($attributeId)) {
                 $type = $attribute->getSourceModel() ? FieldInterface::FIELD_TYPE_KEYWORD : FieldInterface::FIELD_TYPE_INTEGER;
             }
 
@@ -163,26 +189,47 @@ abstract class AbstractAttribute extends Mapping
      * multivalued attributes merging on composite products).
      * ES doesn't care of having array of int when it an int is required.
      *
-     * @param AttributeInterface $attribute Product attribute.
-     * @param integer            $storeId   Store id.
-     * @param mixed              $value     Raw value to be parsed.
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @param int     $attributeId Product attribute Id.
+     * @param integer $storeId     Store id.
+     * @param mixed   $value       Raw value to be parsed.
      *
      * @return array
      */
-    public function prepareIndexValue(AttributeInterface $attribute, $storeId, $value)
+    public function prepareIndexValue($attributeId, $storeId, $value)
     {
-        $attributeCode = $attribute->getAttributeCode();
+        // Backward compatibility.
+        if (!is_numeric($attributeId)) {
+            $attributeId = $this->getAttributeId($attributeId);
+        }
+
+        $attributeCode = $this->getAttributeCodeById($attributeId);
         $values = [];
 
-        $mapperKey = 'simple_' . $attribute->getId();
-
+        $mapperKey = 'simple_' . $attributeId;
         if (!isset($this->attributeMappers[$mapperKey])) {
-            $this->attributeMappers[$mapperKey] = function ($value) use ($attribute) {
-                return $this->prepareSimpleIndexAttributeValue($attribute, $value);
+            $this->attributeMappers[$mapperKey] = function ($value) use ($attributeId) {
+                return $this->prepareSimpleIndexAttributeValue($attributeId, $value);
             };
         }
 
-        if ($this->usesSource($attribute) && !is_array($value)) {
+        if (!isset($this->attributeCleaners[$mapperKey])) {
+            if ($this->includesZeroFalseValues($attributeId)) {
+                // Filter empty values while keeping "0" (int or float) and "false" value.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return (($value === false) || strlen($value));
+                };
+            } else {
+                // Filter out empty values. Also removes "0" and "false" values.
+                $this->attributeCleaners[$mapperKey] = function ($value) {
+                    return !empty($value);
+                };
+            }
+        }
+
+        if ($this->usesSource($attributeId) && !is_array($value)) {
             $value = explode(',', $value);
         }
 
@@ -191,15 +238,15 @@ abstract class AbstractAttribute extends Mapping
         }
 
         $value = array_map($this->attributeMappers[$mapperKey], $value);
-        $value = array_filter($value);
+        $value = array_filter($value, $this->attributeCleaners[$mapperKey]);
         $value = array_values($value);
         $values[$attributeCode] = $value;
 
-        if ($this->usesSource($attribute)) {
+        if ($this->usesSource($attributeId)) {
             $optionTextFieldName = $this->getOptionTextFieldName($attributeCode);
-            $optionTextValues    = $this->getIndexOptionsText($attribute, $storeId, $value);
+            $optionTextValues    = $this->getIndexOptionsText($attributeId, $storeId, $value);
             // Filter empty values. Not using array_filter here because it could remove "0" string from values.
-            $optionTextValues    = array_diff(array_map('trim', $optionTextValues), ['', null, false]);
+            $optionTextValues    = array_diff(array_map('trim', array_map('strval', $optionTextValues)), ['', null, false]);
             $optionTextValues    = array_values($optionTextValues);
             $values[$optionTextFieldName] = $optionTextValues;
         }
@@ -211,19 +258,19 @@ abstract class AbstractAttribute extends Mapping
      * Transform an array of options ids into an arrays of option values for attribute that uses a source.
      * Values are localized for a store id.
      *
-     * @param AttributeInterface $attribute Product attribute.
-     * @param integer            $storeId   Store id
-     * @param array              $optionIds Array of options ids.
+     * @param int     $attributeId Product attribute Id.
+     * @param integer $storeId     Store id
+     * @param array   $optionIds   Array of options ids.
      *
      * @return array
      */
-    public function getIndexOptionsText(AttributeInterface $attribute, $storeId, array $optionIds)
+    public function getIndexOptionsText($attributeId, $storeId, array $optionIds)
     {
-        $mapperKey = sprintf("options_%s_%s", $attribute->getId(), $storeId);
+        $mapperKey = sprintf("options_%s_%s", $attributeId, $storeId);
 
         if (!isset($this->attributeMappers[$mapperKey])) {
-            $this->attributeMappers[$mapperKey] = function ($optionId) use ($attribute, $storeId) {
-                return $this->getIndexOptionText($attribute, $storeId, $optionId);
+            $this->attributeMappers[$mapperKey] = function ($optionId) use ($attributeId, $storeId) {
+                return $this->getIndexOptionText($attributeId, $storeId, $optionId);
             };
         }
 
@@ -236,16 +283,15 @@ abstract class AbstractAttribute extends Mapping
      * Transform an options id into an array of option value for attribute that uses a source.
      * Value islocalized for a store id.
      *
-     * @param AttributeInterface $attribute Product attribute.
-     * @param integer            $storeId   Store id.
-     * @param string|integer     $optionId  Option id.
+     * @param int            $attributeId Product attribute.
+     * @param integer        $storeId     Store id.
+     * @param string|integer $optionId    Option id.
      *
      * @return string|boolean
      */
-    public function getIndexOptionText(AttributeInterface $attribute, $storeId, $optionId)
+    public function getIndexOptionText($attributeId, $storeId, $optionId)
     {
-        $attribute = $this->getAttributeByStore($attribute, $storeId);
-        $attributeId = $attribute->getAttributeId();
+        $attribute = $this->getAttributeByStore($attributeId, $storeId);
 
         if (!isset($this->attributeOptionTextCache[$storeId]) || !isset($this->attributeOptionTextCache[$storeId][$attributeId])) {
             $this->attributeOptionTextCache[$storeId][$attributeId] = [];
@@ -253,8 +299,11 @@ abstract class AbstractAttribute extends Mapping
 
         if (!isset($this->attributeOptionTextCache[$storeId][$attributeId][$optionId])) {
             $optionValue = $attribute->getSource()->getIndexOptionText($optionId);
-            if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
-                $optionValue = $attribute->getStoreLabel($storeId);
+            if ($this->getFieldType($attributeId) == FieldInterface::FIELD_TYPE_BOOLEAN) {
+                $optionValue = null;
+                if ($optionId == \Magento\Eav\Model\Entity\Attribute\Source\Boolean::VALUE_YES) {
+                    $optionValue = $attribute->getStoreLabel($storeId);
+                }
             }
             $this->attributeOptionTextCache[$storeId][$attributeId][$optionId] = $optionValue;
         }
@@ -273,7 +322,12 @@ abstract class AbstractAttribute extends Mapping
     {
         $field = $attribute->getAttributeCode();
 
-        if ($this->usesSource($attribute)) {
+        // Do not use self::usesSource($attributeId) here.
+        // This method is called in layered navigation with an already loaded attribute.
+        // Going through $this->usesSource() would cause a reload of this unique attribute.
+        // In layered navigation context, all filterable attributes goes through this, it would cause a huge overload.
+        // Let's stick with the legacy usesSource() of attribute object.
+        if ($attribute->usesSource()) {
             $field = $this->getOptionTextFieldName($field);
         }
 
@@ -283,18 +337,18 @@ abstract class AbstractAttribute extends Mapping
     /**
      * Ensure types of numerical values is correct before indexing.
      *
-     * @param AttributeInterface $attribute Product attribute.
-     * @param mixed              $value     Raw value.
+     * @param int   $attributeId Product attribute Id.
+     * @param mixed $value       Raw value.
      *
      * @return mixed
      */
-    private function prepareSimpleIndexAttributeValue(AttributeInterface $attribute, $value)
+    private function prepareSimpleIndexAttributeValue($attributeId, $value)
     {
-        if ($this->getFieldType($attribute) == FieldInterface::FIELD_TYPE_BOOLEAN) {
+        if ($this->getFieldType($attributeId) == FieldInterface::FIELD_TYPE_BOOLEAN) {
             $value = boolval($value);
-        } elseif ($attribute->getBackendType() == 'decimal') {
+        } elseif ($this->getBackendType($attributeId) == 'decimal') {
             $value = floatval($value);
-        } elseif ($attribute->getBackendType() == 'int') {
+        } elseif ($this->getBackendType($attributeId) == 'int') {
             $value = intval($value);
         }
 
@@ -327,6 +381,49 @@ abstract class AbstractAttribute extends Mapping
     }
 
     /**
+     * Load an attribute by id.
+     * This code uses a local cache to ensure correct performance during indexing.
+     *
+     * @param int $attributeId Product attribute id.
+     *
+     * @return \Magento\Catalog\Api\Data\EavAttributeInterface
+     */
+    private function getAttributeById($attributeId)
+    {
+        if (!isset($this->attributes[$attributeId])) {
+            /**
+             * @var EavAttributeInterface
+             */
+            $attribute = $this->attributeFactory->create();
+            $attribute->load($attributeId);
+            $this->attributes[$attributeId] = $attribute;
+        }
+
+        return $this->attributes[$attributeId];
+    }
+
+    /**
+     * Load an attribute by id.
+     * This code uses a local cache to ensure correct performance during indexing.
+     *
+     * @param int $attributeId Product attribute id.
+     *
+     * @return string
+     */
+    private function getAttributeCodeById($attributeId)
+    {
+        if (!isset($this->attributesCode[$attributeId])) {
+            /**
+             * @var EavAttributeInterface
+             */
+            $attribute = $this->getAttributeById($attributeId);
+            $this->attributesCode[$attributeId] = $attribute->getAttributeCode();
+        }
+
+        return $this->attributesCode[$attributeId];
+    }
+
+    /**
      * This util method is used to ensure the attribute is an integer and uses it's id if it is an object.
      *
      * @param AttributeInterface|integer $attribute Product attribute.
@@ -348,18 +445,48 @@ abstract class AbstractAttribute extends Mapping
      * Compute result of $attribute->usesSource() into a local cache.
      * Mandatory because a lot of costly plugins (like in Swatches module) are plugged on this method.
      *
-     * @param AttributeInterface $attribute Attribute
+     * @param int $attributeId Attribute ID
      *
      * @return bool
      */
-    private function usesSource($attribute)
+    private function usesSource($attributeId)
     {
-        $attributeId = $attribute->getId();
-
         if (!isset($this->attributeUsesSourceCache[$attributeId])) {
+            $attribute = $this->getAttributeById($attributeId);
             $this->attributeUsesSourceCache[$attributeId] = $attribute->usesSource();
         }
 
         return $this->attributeUsesSourceCache[$attributeId];
+    }
+
+    /**
+     * Compute result of $attribute->getBackendType() into a local cache.
+     * Mandatory because a lot of costly plugins (like in Swatches module) are plugged on this method.
+     *
+     * @param int $attributeId Attribute ID
+     *
+     * @return string|null
+     */
+    private function getBackendType($attributeId)
+    {
+        if (!isset($this->attributeBackendCache[$attributeId])) {
+            $attribute = $this->getAttributeById($attributeId);
+            $this->attributeBackendCache[$attributeId] = $attribute->getBackendType();
+        }
+
+        return $this->attributeBackendCache[$attributeId];
+    }
+
+    /**
+     * Returns true if attribute allows indexing zero/false values.
+     * Not using a local cache since it is only called once per attribute.
+     *
+     * @param int $attributeId Attribute ID
+     *
+     * @return bool
+     */
+    private function includesZeroFalseValues($attributeId)
+    {
+        return (bool) $this->getAttributeById($attributeId)->getIncludeZeroFalseValues();
     }
 }

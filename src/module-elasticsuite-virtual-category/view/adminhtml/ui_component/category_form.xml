@@ -16,7 +16,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
+
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
 
@@ -24,9 +24,10 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="opened" xsi:type="boolean">true</item>
+                <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
             </item>
         </argument>
-    
+
         <field name="is_virtual_category">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -47,10 +48,11 @@
                     <item name="imports" xsi:type="array">
                         <item name="visible" xsi:type="string">!${ $.provider }:data.use_default.is_virtual_category</item>
                     </item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
         </field>
-        
+
         <container name="assign_products_container">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -76,7 +78,7 @@
                     <item name="sortOrder" xsi:type="number">20</item>
                 </item>
             </argument>
-            
+
             <field name="virtual_category_root">
                 <argument name="data" xsi:type="array">
                     <!-- Options provider is a virtualType defined in DI -->
@@ -104,10 +106,37 @@
                         <item name="listens" xsi:type="array">
                             <item name="${ $.namespace }.${ $.namespace }:responseData" xsi:type="string">setParsed</item>
                         </item>
+                        <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                     </item>
                 </argument>
             </field>
-            
+
+            <field name="generate_root_category_subtree">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="label" xsi:type="string" translate="true">Generate Virtual Category Root Subtree</item>
+                        <item name="dataType" xsi:type="string">boolean</item>
+                        <item name="formElement" xsi:type="string">checkbox</item>
+                        <item name="source" xsi:type="string">category</item>
+                        <item name="prefer" xsi:type="string">toggle</item>
+                        <item name="sortOrder" xsi:type="number">15</item>
+                        <item name="required" xsi:type="boolean">false</item>
+                        <item name="valueMap" xsi:type="array">
+                            <item name="true" xsi:type="string">1</item>
+                            <item name="false" xsi:type="string">0</item>
+                        </item>
+                        <item name="validation" xsi:type="array">
+                            <item name="required-entry" xsi:type="boolean">false</item>
+                        </item>
+                        <item name="default" xsi:type="string">0</item>
+                        <item name="imports" xsi:type="array">
+                            <item name="visible" xsi:type="string">category_form.category_form.assign_products.is_virtual_category:checked</item>
+                        </item>
+                        <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
+                    </item>
+                </argument>
+            </field>
+
             <htmlContent name="virtual_rule">
                 <argument name="block" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\Catalog\Category\VirtualRule</argument>
                 <argument name="data" xsi:type="array">
@@ -121,14 +150,15 @@
                     </item>
                 </argument>
             </htmlContent>
-            
+
         </container>
-        
+
         <container name="product_sorter_container" template="Smile_ElasticsuiteVirtualCategory/form/element/container">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">30</item>
                     <item name="label" xsi:type="string" translate="true">Products List Preview and Sorting</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
 

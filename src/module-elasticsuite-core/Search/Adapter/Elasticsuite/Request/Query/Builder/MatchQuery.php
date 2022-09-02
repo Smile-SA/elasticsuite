@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\BuilderInte
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Match implements BuilderInterface
+class MatchQuery implements BuilderInterface
 {
     /**
      * {@inheritDoc}

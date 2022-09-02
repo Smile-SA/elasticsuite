@@ -112,6 +112,7 @@ class Config extends \Magento\Framework\Config\Data
     {
         parent::reset();
         $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [$this->cacheId]);
+        $this->initData();
     }
 
     /**

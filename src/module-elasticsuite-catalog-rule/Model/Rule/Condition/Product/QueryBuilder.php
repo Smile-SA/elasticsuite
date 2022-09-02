@@ -73,6 +73,7 @@ class QueryBuilder
      * @param ProductCondition $productCondition Product condition.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getSearchQuery(ProductCondition $productCondition)
     {
@@ -80,7 +81,9 @@ class QueryBuilder
 
         $query = $this->getSpecialAttributesSearchQuery($productCondition);
 
-        if ($query === null && !empty($productCondition->getValue())) {
+        $conditionValue = $productCondition->getValue();
+        $conditionValue = array_filter(is_array($conditionValue) ? $conditionValue : [$conditionValue], 'strlen');
+        if ($query === null && !empty($conditionValue)) {
             $this->prepareFieldValue($productCondition);
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
@@ -137,10 +140,11 @@ class QueryBuilder
             $queryParams = [];
             $fieldName   = $this->getSearchFieldName($productCondition);
 
+            $clause = (substr($productCondition->getOperator(), 0, 1) === '!') ? 'mustNot' : 'should';
             // SKU values can be an array of value, due to the picker.
             foreach (explode(',', $productCondition->getValue()) as $value) {
-                // We add all of these values as a should match sub query.
-                $queryParams['should'][] = $this->prepareQuery(
+                // Instead of just a "should" clause, we will have "should" or "must_not" depending on the rule operator.
+                $queryParams[$clause][] = $this->prepareQuery(
                     QueryInterface::TYPE_MATCH,
                     ['field' => $fieldName, 'queryText' => trim($value), 'minimumShouldMatch' => "100%"]
                 );
@@ -287,7 +291,9 @@ class QueryBuilder
             $analyzer = $field->getDefaultSearchAnalyzer();
         }
 
-        return $field->getMappingProperty($analyzer);
+        // If the field is "used_for_promo_rules" but not "searchable", $field->getMappingProperty() might return null.
+        // In this case, we fallback to raw field name, that should exist in mapping.
+        return $field->getMappingProperty($analyzer) ?? $field->getName();
     }
 
     /**

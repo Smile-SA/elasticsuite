@@ -72,6 +72,12 @@ class InstallSchema implements InstallSchemaInterface
         // Introduced in version 1.5.1.
         $this->catalogSetup->addSortOrderMissingFields($setup);
 
+        // Introduced in version 1.6.0.
+        $this->catalogSetup->addFilterBooleanLogicField($setup);
+
+        // Introduced in version 1.6.1.
+        $this->catalogSetup->addIncludeZeroFalseValues($setup);
+
         $setup->endSetup();
     }
 }

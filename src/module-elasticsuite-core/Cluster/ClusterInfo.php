@@ -36,6 +36,11 @@ class ClusterInfo implements ClusterInfoInterface
     private $serverVersion;
 
     /**
+     * @var string
+     */
+    private $serverDistribution;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client ElasticSearch client.
@@ -55,5 +60,17 @@ class ClusterInfo implements ClusterInfoInterface
         }
 
         return $this->serverVersion;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getServerDistribution()
+    {
+        if ($this->serverDistribution === null) {
+            $this->serverDistribution = $this->client->info()['version']['distribution'] ?? self::DISTRO_ES;
+        }
+
+        return $this->serverDistribution;
     }
 }

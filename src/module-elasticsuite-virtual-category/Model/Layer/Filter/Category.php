@@ -14,8 +14,13 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+
 /**
  * Product category filter implementation using virtual categories.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -27,6 +32,16 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider
      */
     private $filterProvider;
+
+    /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root
+     */
+    private $virtualCategoryRoot;
+
+    /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Url
+     */
+    private $urlModel;
 
     /**
      * Constructor.
@@ -43,6 +58,9 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
      * @param \Magento\Framework\App\Config\ScopeConfigInterface                $scopeConfig         Scope config.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface               $context             Search context.
      * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider      Category Filter provider.
+     * @param RequestFieldMapper                                                $requestFieldMapper  Search request field mapper.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root     $virtualCategoryRoot Virtual Category Root.
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\Url                      $urlModel            Url Model.
      * @param boolean                                                           $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                             $data                Custom data.
      */
@@ -56,6 +74,9 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
         \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider,
+        RequestFieldMapper $requestFieldMapper,
+        \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot,
+        \Smile\ElasticsuiteVirtualCategory\Model\Url $urlModel,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -68,19 +89,14 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             $dataProviderFactory,
             $scopeConfig,
             $context,
+            $requestFieldMapper,
             $useUrlRewrites,
             $data
         );
 
         $this->filterProvider = $filterProvider;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getFilterField()
-    {
-        return 'categories';
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
+        $this->urlModel = $urlModel;
     }
 
     /**
@@ -98,12 +114,72 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     }
 
     /**
+     * Retrieve currently selected category children categories.
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
+     */
+    protected function getChildrenCategories()
+    {
+        if ($this->childrenCategories === null) {
+            $currentCategory = $this->getDataProvider()->getCategory();
+            $this->childrenCategories = $currentCategory->getChildrenCategories();
+            // Use the root category to retrieve children if needed.
+            if ($this->virtualCategoryRoot->useVirtualRootCategorySubtree($currentCategory)) {
+                $rootCategory = $this->virtualCategoryRoot->getVirtualCategoryRoot($currentCategory);
+                if ($rootCategory->getId()) {
+                    $this->childrenCategories = $rootCategory->getChildrenCategories();
+                    $this->childrenCategories->clear()->addFieldToFilter(
+                        'entity_id',
+                        ['neq' => $currentCategory->getId()]
+                    );
+                }
+            }
+        }
+
+        return $this->childrenCategories;
+    }
+
+    /**
+     * Retrieve Category Url to build filter
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $childCategory Category.
+     *
+     * @return string
+     */
+    protected function getCategoryFilterUrl($childCategory)
+    {
+        $url = parent::getCategoryFilterUrl($childCategory);
+
+        $currentCategory = $this->getDataProvider()->getCategory();
+
+        $appliedRootCategory = $this->getDataProvider()->getAppliedRootCategory();
+
+        // Use the root category to retrieve children categories Url if needed.
+        if ($this->virtualCategoryRoot->useVirtualRootCategorySubtree($currentCategory)) {
+            $url = $this->urlModel->getVirtualCategorySubtreeUrl($currentCategory, $childCategory);
+        } elseif ($appliedRootCategory) {
+            // Occurs when navigating through the subtree of a virtual root category.
+            $url = $this->urlModel->getVirtualCategorySubtreeUrl($appliedRootCategory, $childCategory);
+        }
+
+        return $url;
+    }
+
+    /**
      * Current category filter query.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
     private function getFilterQuery()
     {
-        return $this->filterProvider->getQueryFilter($this->getDataProvider()->getCategory());
+        $category            = $this->getDataProvider()->getCategory();
+        $appliedRootCategory = $this->getDataProvider()->getAppliedRootCategory();
+        $categoryFilter      = $this->filterProvider->getQueryFilter($this->getDataProvider()->getCategory());
+
+        if ($appliedRootCategory && $appliedRootCategory->getId()) {
+            $categoryFilter = $category->getVirtualRule()->mergeCategoryQueries([$category, $appliedRootCategory]);
+        }
+
+        return $categoryFilter;
     }
 }

@@ -11,7 +11,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogRule
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
@@ -24,9 +24,71 @@
                 <item name="has_image" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\HasImage</item>
                 <item name="stock.is_in_stock" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsInStock</item>
                 <item name="price.is_discount" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount</item>
+                <item name="is_bundle" xsi:type="object">isBundleProduct</item>
+                <item name="is_configurable" xsi:type="object">isConfigurableProduct</item>
+                <item name="is_downloadable" xsi:type="object">isDownloadableProduct</item>
+                <item name="is_giftcard" xsi:type="object">isGiftCardProduct</item>
+                <item name="is_grouped" xsi:type="object">isGroupedProduct</item>
+                <item name="is_simple" xsi:type="object">isSimpleProduct</item>
             </argument>
         </arguments>
     </type>
 
+    <!-- Add the Virtual Types for distinguish between product types -->
+    <virtualType name="isBundleProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_bundle</argument>
+            <argument name="typeIdentifier" xsi:type="string">bundle</argument>
+            <argument name="attributeLabel" xsi:type="string">Only bundle products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isConfigurableProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_configurable</argument>
+            <argument name="typeIdentifier" xsi:type="string">configurable</argument>
+            <argument name="attributeLabel" xsi:type="string">Only configurable products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isDownloadableProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_downloadable</argument>
+            <argument name="typeIdentifier" xsi:type="string">downloadable</argument>
+            <argument name="attributeLabel" xsi:type="string">Only downloadable products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isGiftCardProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_giftcard</argument>
+            <argument name="typeIdentifier" xsi:type="string">giftcard</argument>
+            <argument name="attributeLabel" xsi:type="string">Only giftcard products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isGroupedProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_grouped</argument>
+            <argument name="typeIdentifier" xsi:type="string">grouped</argument>
+            <argument name="attributeLabel" xsi:type="string">Only grouped products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isSimpleProduct" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_simple</argument>
+            <argument name="typeIdentifier" xsi:type="string">simple</argument>
+            <argument name="attributeLabel" xsi:type="string">Only simple products</argument>
+        </arguments>
+    </virtualType>
+
     <preference for="Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface" type="Smile\ElasticsuiteCatalogRule\Model\Data\Condition"/>
+
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

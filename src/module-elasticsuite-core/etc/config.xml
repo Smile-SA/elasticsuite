@@ -46,5 +46,10 @@
             </search>
         </catalog>
 
+        <smile_elasticsuite_misc_settings>
+            <footer_settings>
+                <enable_es_link>1</enable_es_link>
+            </footer_settings>
+        </smile_elasticsuite_misc_settings>
     </default>
 </config>

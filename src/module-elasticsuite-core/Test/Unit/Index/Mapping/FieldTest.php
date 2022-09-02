@@ -129,12 +129,12 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $mappingPropertyConfig = $field->getMappingPropertyConfig();
         $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $mappingPropertyConfig['type']);
 
-        $this->assertEquals(FieldInterface::ANALYZER_STANDARD, $mappingPropertyConfig['analyzer']);
+        $this->assertEquals(FieldInterface::ANALYZER_KEYWORD, $mappingPropertyConfig['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_WHITESPACE, $mappingPropertyConfig['fields']['whitespace']['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_SHINGLE, $mappingPropertyConfig['fields']['shingle']['analyzer']);
         $this->assertEquals(FieldInterface::ANALYZER_SORTABLE, $mappingPropertyConfig['fields']['sortable']['analyzer']);
 
-        $this->assertEquals('field', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
+        $this->assertEquals('field.standard', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
         $this->assertEquals('field.whitespace', $field->getMappingProperty(FieldInterface::ANALYZER_WHITESPACE));
         $this->assertEquals('field.shingle', $field->getMappingProperty(FieldInterface::ANALYZER_SHINGLE));
         $this->assertEquals('field.sortable', $field->getMappingProperty(FieldInterface::ANALYZER_SORTABLE));
@@ -156,7 +156,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $mappingPropertyConfig['type']);
 
         $this->assertEquals(null, $field->getMappingProperty());
-        $this->assertEquals('field', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
+        $this->assertEquals('field.standard', $field->getMappingProperty(FieldInterface::ANALYZER_STANDARD));
     }
 
     /**

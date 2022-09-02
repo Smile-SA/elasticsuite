@@ -159,4 +159,19 @@
             <argument name="productProvider" xsi:type="object">elasticsuiteProductProvider</argument>
         </arguments>
     </type>
+
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Aggregations" type="Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Aggregations"/>
+
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="viewMoreFilterModifier" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\ViewMore</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface">
+        <plugin name="layered_nav_attributes_replace_filter_field"
+                type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
+    </type>
 </config>

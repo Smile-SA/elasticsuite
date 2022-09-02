@@ -39,10 +39,9 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             $attributesData = $this->loadAttributesRawData($storeId, $categoryIds, $backendTable, $attributeIds);
             foreach ($attributesData as $row) {
                 $productId = (int) $row['entity_id'];
-                $attribute = $this->attributesById[$row['attribute_id']];
 
                 $indexValues = $this->attributeHelper->prepareIndexValue(
-                    $attribute,
+                    $row['attribute_id'],
                     $storeId,
                     $row['value']
                 );
