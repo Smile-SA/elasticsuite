@@ -20,7 +20,6 @@ use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
 
@@ -93,16 +92,14 @@ class FrontPlugin
     /**
      * Append ES specifics fields into the attribute edit store front tab.
      *
-     * @param Front    $subject The StoreFront tab
-     * @param \Closure $proceed The parent function
-     * @param Form     $form    The form
+     * @param Front $subject The StoreFront tab
+     * @param Front $result  Result
+     * @param Form  $form    The form
      *
      * @return Front
      */
-    public function aroundSetForm(Front $subject, \Closure $proceed, Form $form)
+    public function afterSetForm(Front $subject, Front $result, Form $form)
     {
-        $block = $proceed($form);
-
         $fieldset = $this->createFieldset($form, $subject);
 
         $this->moveOrginalFields($form);
@@ -110,15 +107,26 @@ class FrontPlugin
         $this->addAutocompleteFields($fieldset);
         $this->addFacetFields($fieldset);
         $this->addSortFields($fieldset);
+        $this->addRelNofollowFields($fieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
         }
 
+        if (($this->getAttribute()->getSourceModel() == 'Magento\Eav\Model\Entity\Attribute\Source\Boolean')
+            || ($this->getAttribute()->getBackendType() == 'int')
+            || ($this->getAttribute()->getFrontendClass() == 'validate-digits')
+            || ($this->getAttribute()->getBackendType() == 'decimal' || $this->getAttribute()->getFrontendClass() == 'validate-number')
+            || (in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect'])
+                || $this->getAttribute()->getSourceModel() != '')
+        ) {
+            $this->addIncludeZeroFalseField($fieldset);
+        }
+
         $this->appendFieldsDependency($subject);
 
-        return $block;
+        return $result;
     }
 
     /**
@@ -149,6 +157,8 @@ class FrontPlugin
             ],
             'front_fieldset'
         );
+
+        $fieldset->addClass('es-esfeature__logo');
 
         return $fieldset;
     }
@@ -353,6 +363,33 @@ class FrontPlugin
     }
 
     /**
+     * Append rel tag related fields.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addRelNofollowFields(Fieldset $fieldset)
+    {
+        $fieldset->addField(
+            'is_display_rel_nofollow',
+            'select',
+            [
+                'name'   => 'is_display_rel_nofollow',
+                'label'  => __('Add rel="nofollow" to filter links in Layered Navigation'),
+                'values' => $this->booleanSource->toOptionArray(),
+                'note'   => __(
+                    'Adds HTML attribute rel with value "nofollow" to all filter links of current attribute in Layered Navigation.'
+                ),
+            ],
+            'is_filterable'
+        );
+
+        return $this;
+    }
+
+
+    /**
      * Append the "Slider Display Configuration" fieldset to the tab.
      *
      * @param Form  $form    Target form.
@@ -431,6 +468,36 @@ class FrontPlugin
     }
 
     /**
+     * Add field allowing to configure if zero/false values should be indexed or ignored.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addIncludeZeroFalseField(Fieldset $fieldset)
+    {
+        $includeZeroFalseNote = __(
+            // phpcs:ignore Generic.Files.LineLength
+            'If set to Yes, zero (integer or numeric attribute) or false (boolean attribute) values will be indexed in the search engine (default is No).'
+            . ' Also applies to source model keys/values of Dropdown/Multiple Select attributes.'
+        );
+        $fieldset->addField(
+            'include_zero_false_values',
+            'select',
+            [
+                'name'   => 'include_zero_false_values',
+                'label'  => __('Include zero or false values'),
+                'values' => $this->booleanSource->toOptionArray(),
+                // phpcs:ignore Generic.Files.LineLength
+                'note'   => $includeZeroFalseNote,
+            ],
+            'used_for_sortby'
+        );
+
+        return $this;
+    }
+
+    /**
      * Manage dependency between fields.
      *
      * @param Front $subject The StoreFront tab
@@ -445,16 +512,19 @@ class FrontPlugin
         if ($dependencyBlock) {
             $dependencyBlock
                 ->addFieldMap('is_displayed_in_autocomplete', 'is_displayed_in_autocomplete')
+                ->addFieldMap('is_filterable', 'is_filterable')
                 ->addFieldMap('is_filterable_in_search', 'is_filterable_in_search')
                 ->addFieldMap('is_searchable', 'is_searchable')
                 ->addFieldMap('is_used_in_spellcheck', 'is_used_in_spellcheck')
                 ->addFieldMap('used_for_sort_by', 'used_for_sort_by')
                 ->addFieldMap('sort_order_asc_missing', 'sort_order_asc_missing')
                 ->addFieldMap('sort_order_desc_missing', 'sort_order_desc_missing')
+                ->addFieldMap('is_display_rel_nofollow', 'is_display_rel_nofollow')
                 ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
                 ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1')
                 ->addFieldDependence('sort_order_asc_missing', 'used_for_sort_by', '1')
-                ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1');
+                ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1')
+                ->addFieldDependence('is_display_rel_nofollow', 'is_filterable', '1');
         }
 
         return $this;

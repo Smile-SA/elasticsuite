@@ -27,6 +27,7 @@ interface PipelineInterface
      */
     const TYPE_BUCKET_SELECTOR      = 'bucketSelectorPipeline';
     const TYPE_MOVING_FUNCTION      = 'movingFunctionPipeline';
+    const TYPE_MAX_BUCKET           = 'maxBucketPipeline';
 
     /**
      * Available gap policies.

@@ -210,11 +210,17 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
             $linkField = $this->getEntityMetaData(CategoryInterface::class)->getLinkField();
 
             $conditions    = [
-                "p.category_id = use_store_positions.{$linkField}",
+                "c.{$linkField} = use_store_positions.{$linkField}",
                 "use_store_positions.store_id = " . (int) $storeId,
                 "use_store_positions.attribute_id = " . (int) $useStorePositionsAttr->getAttributeId(),
             ];
             $joinCondition = new \Zend_Db_Expr(implode(" AND ", $conditions));
+
+            $select->joinLeft(
+                ['c' => $this->getTable('catalog_category_entity')],
+                'p.category_id = c.entity_id',
+                []
+            );
 
             $select->joinLeft(
                 ['use_store_positions' => $useStorePositionsAttr->getBackendTable()],

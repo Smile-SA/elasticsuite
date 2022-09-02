@@ -25,6 +25,15 @@ interface CustomerTrackingServiceInterface
     /**
      * Add a tracked event.
      *
+     * @param mixed $eventData Event data.
+     *
+     * @return void
+     */
+    public function hit($eventData): void;
+
+    /**
+     * Add a tracked event.
+     *
      * @param array $eventData The event Data
      *
      * @return mixed

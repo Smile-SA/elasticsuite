@@ -86,6 +86,8 @@ class InstallData implements InstallDataInterface
         $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
 
         $this->catalogSetup->addCategoryNameSearchAttribute($eavSetup);
+        $this->catalogSetup->addIsDisplayCategoryInAutocompleteAttribute($eavSetup);
+        $this->catalogSetup->updateIsDisplayInAutocompleteAttribute($eavSetup);
         $this->catalogSetup->updateCategoryIsAnchorAttribute($eavSetup);
         $this->catalogSetup->updateDefaultValuesForNameAttributes($eavSetup);
         $this->catalogSetup->updateCategorySearchableAttributes($eavSetup);

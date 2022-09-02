@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /**
- * Smile_ElasticsuiteCore analysis configguration validation.
+ * Smile_ElasticsuiteCore analysis configuration validation.
  *
  * DISCLAIMER
  *
@@ -24,6 +24,7 @@
                 <xs:element name="filters" type="filtersDefinition" />
                 <xs:element name="analyzers" type="analyzersDefinition"/>
                 <xs:element name="normalizers" type="normalizersDefinition"/>
+                <xs:element name="tokenizers" type="tokenizersDefinition"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -59,7 +60,7 @@
             <xs:element name="filter" type="filterDefinition" />
         </xs:choice>
     </xs:complexType>
-    
+
     <xs:complexType name="filterDefinition">
         <xs:annotation>
             <xs:documentation>Filter definition node</xs:documentation>
@@ -88,6 +89,27 @@
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="char_filters" type="analyzerCharFiltersOptional" />
             <xs:element name="filters" type="analyzerFilters" />
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="type" type="xs:string" use="required" />
+        <xs:attribute name="language" type="xs:string" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="tokenizersDefinition">
+        <xs:annotation>
+            <xs:documentation>Tokenizers declaration root node</xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="tokenizer" type="tokenizerDefinition" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="tokenizerDefinition">
+        <xs:annotation>
+            <xs:documentation>Tokenizer definition node</xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any processContents="lax" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="type" type="xs:string" use="required" />

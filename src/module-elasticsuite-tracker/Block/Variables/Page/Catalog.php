@@ -13,7 +13,9 @@
  */
 namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
+use Magento\Catalog\Model\Category;
 use Magento\Framework\View\Element\Template;
+use Smile\ElasticsuiteCatalog\Block\Navigation;
 
 /**
  * Catalog variables block for page tracking, exposes all catalog tracking variables
@@ -32,14 +34,29 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
     private $catalogLayer;
 
     /**
+     * Category resource
+     *
+     * @var \Magento\Catalog\Model\ResourceModel\Category
+     */
+    private $categoryResource;
+
+    /**
+     * Category names.
+     *
+     * @var array
+     */
+    private $categoryNames = [];
+
+    /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                       $context       The template context
-     * @param \Magento\Framework\Json\Helper\Data    $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper The Smile Tracker helper
-     * @param \Magento\Framework\Registry            $registry      Magento Core Registry
-     * @param \Magento\Catalog\Model\Layer\Resolver  $layerResolver The Magento layer resolver
-     * @param array                                  $data          The block data
+     * @param Template\Context                              $context          The template context
+     * @param \Magento\Framework\Json\Helper\Data           $jsonHelper       The Magento's JSON Helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data        $trackerHelper    The Smile Tracker helper
+     * @param \Magento\Framework\Registry                   $registry         Magento Core Registry
+     * @param \Magento\Catalog\Model\Layer\Resolver         $layerResolver    The Magento layer resolver
+     * @param \Magento\Catalog\Model\ResourceModel\Category $categoryResource Category resource
+     * @param array                                         $data             The block data
      */
     public function __construct(
         Template\Context $context,
@@ -47,9 +64,11 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
+        \Magento\Catalog\Model\ResourceModel\Category $categoryResource,
         array $data = []
     ) {
-        $this->catalogLayer = $layerResolver->get();
+        $this->catalogLayer     = $layerResolver->get();
+        $this->categoryResource = $categoryResource;
 
         parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
@@ -81,10 +100,12 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
         $variables = [];
 
         if ($this->registry->registry('current_category')) {
+            /** @var Category $category */
             $category = $this->registry->registry('current_category');
             $variables['category.id']    = $category->getId();
             $variables['category.label'] = $category->getName();
             $variables['category.path']  = $category->getPath();
+            $variables['category.breadcrumb'] = $this->getCategoryBreadcrumb($category);
         }
 
         return $variables;
@@ -173,5 +194,49 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
         $productListBlock = $this->getLayout()->getBlock('product_list_toolbar');
 
         return is_object($productListBlock) ? $productListBlock : null;
+    }
+
+    /**
+     * Return a mini-breadcrumb for a category
+     *
+     * @param \Magento\Catalog\Model\Category $category The category
+     *
+     * @return string
+     */
+    private function getCategoryBreadcrumb(\Magento\Catalog\Model\Category $category)
+    {
+        $path    = $category->getPath();
+        $rawPath = explode('/', $path);
+
+        // First occurence is root category (1), second is root category of store.
+        $rawPath = array_slice($rawPath, 2);
+
+        // Last occurence is the category displayed.
+        array_pop($rawPath);
+
+        $breadcrumb = [];
+        foreach ($rawPath as $categoryId) {
+            $breadcrumb[] = html_entity_decode($this->getCategoryNameById($categoryId, $category->getStoreId()));
+        }
+
+        return implode('|', $breadcrumb);
+    }
+
+    /**
+     * Retrieve a category name by it's id, and store it in local cache
+     *
+     * @param int $categoryId The category Id
+     * @param int $storeId    The store Id
+     *
+     * @return string
+     */
+    private function getCategoryNameById($categoryId, $storeId)
+    {
+        if (!isset($this->categoryNames[$categoryId])) {
+            $this->categoryNames[$categoryId]
+                = $this->categoryResource->getAttributeRawValue($categoryId, "name", $storeId);
+        }
+
+        return $this->categoryNames[$categoryId];
     }
 }

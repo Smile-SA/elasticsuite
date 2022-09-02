@@ -13,8 +13,10 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Search\Request\Product\Attribute\Aggregation;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Magento\Catalog\Model\CategoryFactory;
 
 /**
  * Category Aggregation Builder
@@ -46,23 +48,31 @@ class Category implements AggregationInterface
     private $categoryRepository;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root
+     */
+    private $virtualCategoryRoot;
+
+    /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface   Search Context
-     * @param \Smile\ElasticsuiteVirtualCategory\Helper\Rule      $helper             Rule Helper
-     * @param \Magento\Store\Model\StoreManagerInterface          $storeManager       Store Manager
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository Category Repository
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface           $contextInterface    Search Context
+     * @param \Smile\ElasticsuiteVirtualCategory\Helper\Rule                $helper              Rule Helper
+     * @param \Magento\Store\Model\StoreManagerInterface                    $storeManager        Store Manager
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface              $categoryRepository  Category Repository
+     * @param \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot Virtual Category Root
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface,
         \Smile\ElasticsuiteVirtualCategory\Helper\Rule $helper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository
+        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot
     ) {
         $this->helper             = $helper;
         $this->context            = $contextInterface;
         $this->storeManager       = $storeManager;
         $this->categoryRepository = $categoryRepository;
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
     }
 
     /**
@@ -86,7 +96,13 @@ class Category implements AggregationInterface
      */
     private function getFacetQueries()
     {
-        return $this->helper->loadUsingCache($this->getCurrentCategory(), 'getSearchQueriesByChildren');
+        $category = $this->getCurrentCategory();
+        // Use the root category to display facets if configured this way.
+        if ($this->virtualCategoryRoot->useVirtualRootCategorySubtree($category)) {
+            $category = $this->virtualCategoryRoot->getVirtualCategoryRoot($category);
+        }
+
+        return $this->helper->loadUsingCache($category, 'getSearchQueriesByChildren');
     }
 
     /**

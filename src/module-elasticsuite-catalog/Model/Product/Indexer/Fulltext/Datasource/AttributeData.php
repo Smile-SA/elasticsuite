@@ -14,13 +14,18 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
+use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
 
 /**
  * Datasource used to index product attributes.
  * This class is also used to generate attribute mapping since it implements DynamicFieldProviderInterface.
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -31,13 +36,28 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * @var array
      */
-    private $forbidenChildrenAttributeCode = [
-        'visibility',
-        'status',
-        'price',
-        'tax_class_id',
-        'name',
-    ];
+    private $forbiddenChildrenAttributes = [];
+
+    /**
+     * Constructor
+     *
+     * @param ResourceModel   $resourceModel               Resource model.
+     * @param FieldFactory    $fieldFactory                Mapping field factory.
+     * @param AttributeHelper $attributeHelper             Attribute helper.
+     * @param array           $indexedBackendModels        List of indexed backend models added to the default list.
+     * @param array           $forbiddenChildrenAttributes List of the forbidden children attributes.
+     */
+    public function __construct(
+        ResourceModel $resourceModel,
+        FieldFactory $fieldFactory,
+        AttributeHelper $attributeHelper,
+        array $indexedBackendModels = [],
+        array $forbiddenChildrenAttributes = []
+    ) {
+        parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
+
+        $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
+    }
 
     /**
      * {@inheritdoc}
@@ -90,16 +110,15 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         foreach ($this->attributeIdsByTable as $backendTable => $attributeIds) {
             $attributesData = $this->loadAttributesRawData($storeId, $productIds, $backendTable, $attributeIds);
             foreach ($attributesData as $row) {
-                $productId    = (int) $row['entity_id'];
-                $attribute    = $this->attributesById[$row['attribute_id']];
-                $indexValues  = $this->attributeHelper->prepareIndexValue($attribute, $storeId, $row['value']);
+                $productId   = (int) $row['entity_id'];
+                $indexValues = $this->attributeHelper->prepareIndexValue($row['attribute_id'], $storeId, $row['value']);
                 if (!isset($indexData[$productId])) {
                     $indexData[$productId] = [];
                 }
 
                 $indexData[$productId] += $indexValues;
 
-                $this->addIndexedAttribute($indexData[$productId], $attribute);
+                $this->addIndexedAttribute($indexData[$productId], $row['attribute_code']);
             }
         }
 
@@ -153,7 +172,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
         $childrenAttributes = array_merge(
             $parentData['children_attributes'],
-            array_diff($childAttributeCodes, $this->forbidenChildrenAttributeCode)
+            array_diff($childAttributeCodes, $this->forbiddenChildrenAttributes)
         );
 
         if (isset($relation['configurable_attributes']) && !empty($relation['configurable_attributes'])) {
@@ -217,10 +236,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Append an indexed attributes to indexed data of a given product.
      *
-     * @param array                                                  $productIndexData Product Index data
-     * @param \Magento\Eav\Model\Entity\Attribute\AttributeInterface $attribute        The attribute
+     * @param array  $productIndexData Product Index data
+     * @param string $attributeCode    The attribute code
      */
-    private function addIndexedAttribute(&$productIndexData, $attribute)
+    private function addIndexedAttribute(&$productIndexData, $attributeCode)
     {
         if (!isset($productIndexData['indexed_attributes'])) {
             $productIndexData['indexed_attributes'] = [];
@@ -228,10 +247,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
 
         // Data can be missing for this attribute (Eg : due to null value being escaped,
         // or this attribute is already included in the array).
-        if (isset($productIndexData[$attribute->getAttributeCode()])
-            && !in_array($attribute->getAttributeCode(), $productIndexData['indexed_attributes'])
+        if (isset($productIndexData[$attributeCode])
+            && !in_array($attributeCode, $productIndexData['indexed_attributes'])
         ) {
-            $productIndexData['indexed_attributes'][] = $attribute->getAttributeCode();
+            $productIndexData['indexed_attributes'][] = $attributeCode;
         }
     }
 }

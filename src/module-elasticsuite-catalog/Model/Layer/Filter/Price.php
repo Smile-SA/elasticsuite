@@ -13,7 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -50,11 +50,16 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     private $queryFactory;
 
     /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory               $filterItemFactory   Item filter facotory.
+     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory               $filterItemFactory   Item filter factory.
      * @param \Magento\Store\Model\StoreManagerInterface                    $storeManager        Store manager.
      * @param \Magento\Catalog\Model\Layer                                  $layer               Search layer.
      * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder          $itemDataBuilder     Item data builder.
@@ -65,6 +70,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
      * @param \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory  $algorithmFactory    Algorithm factory.
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory Data provider.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory     $queryFactory        Query Factory.
+     * @param RequestFieldMapper                                            $requestFieldMapper  Search request field mapper.
      * @param array                                                         $data                Custom data.
      */
     public function __construct(
@@ -79,6 +85,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
         \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory $algorithmFactory,
         \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        RequestFieldMapper $requestFieldMapper,
         array $data = []
     ) {
         parent::__construct(
@@ -95,10 +102,11 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
             $data
         );
 
-        $this->dataProvider    = $dataProviderFactory->create(['layer' => $this->getLayer()]);
-        $this->customerSession = $customerSession;
-        $this->priceCurrency   = $priceCurrency;
-        $this->queryFactory    = $queryFactory;
+        $this->dataProvider       = $dataProviderFactory->create(['layer' => $this->getLayer()]);
+        $this->customerSession    = $customerSession;
+        $this->priceCurrency      = $priceCurrency;
+        $this->queryFactory       = $queryFactory;
+        $this->requestFieldMapper = $requestFieldMapper;
     }
 
     /**
@@ -130,7 +138,7 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
      */
     private function getFilterField()
     {
-        return 'price.price';
+        return $this->requestFieldMapper->getMappedFieldName('price');
     }
 
     /**

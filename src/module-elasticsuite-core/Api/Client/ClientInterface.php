@@ -194,4 +194,13 @@ interface ClientInterface
      * @return array
      */
     public function mtermvectors($params);
+
+    /**
+     * Run reindex query.
+     *
+     * @param array $params Params.
+     *
+     * @return array
+     */
+    public function reindex(array $params): array;
 }

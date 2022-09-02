@@ -57,6 +57,7 @@
 
                 <!-- Static fields handled by the "categories" datasource -->
                 <field name="category.category_id" type="integer" nestedPath="category" />
+                <field name="category.category_uid" type="text" nestedPath="category" />
                 <field name="category.position" type="integer" nestedPath="category" />
                 <field name="category.is_parent" type="boolean" nestedPath="category" />
                 <field name="category.name" type="text" nestedPath="category">
@@ -87,6 +88,7 @@
                 <field name="position" type="integer" />
                 <field name="level" type="integer" />
                 <field name="children_count" type="integer" />
+                <field name="is_displayed_in_autocomplete" type="boolean" />
             </mapping>
         </type>
     </index>

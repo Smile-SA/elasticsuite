@@ -63,6 +63,11 @@ class Products implements ResolverInterface
         $this->contextUpdater->updateSearchContext($args);
 
         $searchResult = $this->searchQuery->getResult($args, $info, $context);
+        $layerType    = Resolver::CATALOG_LAYER_CATEGORY;
+
+        if (isset($args['search']) && (!empty($args['search']))) {
+            $layerType = Resolver::CATALOG_LAYER_SEARCH;
+        }
 
         return [
             'total_count'   => $searchResult->getTotalCount(),
@@ -73,7 +78,7 @@ class Products implements ResolverInterface
                 'total_pages'  => $searchResult->getTotalPages(),
             ],
             'search_result' => $searchResult,
-            'layer_type'    => isset($args['search']) ? Resolver::CATALOG_LAYER_SEARCH : Resolver::CATALOG_LAYER_CATEGORY,
+            'layer_type'    => $layerType,
         ];
     }
 

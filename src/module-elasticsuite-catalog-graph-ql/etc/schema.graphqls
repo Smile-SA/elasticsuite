@@ -1,0 +1,17 @@
+type Aggregation {
+    has_more: Boolean @doc(description: "Whether the aggregation has more values to be displayed.")
+    rel_nofollow: Boolean @doc(description: "Whether the aggregation has an html attribute rel=\"nofollow\" to be displayed at filter links of current attribute in Layered Navigation.")
+}
+
+type Query {
+    viewMoreFilter (
+        filterName: String! @doc(description: "The filter name to get all values for."),
+        search: String @doc(description: "Current search query of the product context, if any."),
+        filter: ProductAttributeFilterInput @doc(description: "Current applied filters of the product context, if any."),
+    ): ViewMoreResult
+    @resolver(class: "Smile\\ElasticsuiteCatalogGraphQl\\Model\\Resolver\\Layer\\Filter\\ViewMore") @doc(description: "The viewMoreFilter query searches for all values of a given filter name in a specific context.")
+}
+
+type ViewMoreResult @doc(description: "The Products object is the top-level object returned in a product search.") {
+    aggregations: [Aggregation] @doc(description: "Layered navigation aggregations.") @resolver(class: "Smile\\ElasticsuiteCatalogGraphQl\\Model\\Resolver\\Aggregations")
+}

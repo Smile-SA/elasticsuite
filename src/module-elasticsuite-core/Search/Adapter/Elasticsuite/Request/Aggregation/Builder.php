@@ -61,6 +61,8 @@ class Builder
     /**
      * Build ES aggregations from search request buckets.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param BucketInterface[] $buckets Bucket to be converted into ES aggregations
      *
      * @return array
@@ -81,6 +83,9 @@ class Builder
 
             foreach ($bucket->getMetrics() as $metric) {
                 $metricDefinition = array_merge(['field' => $metric->getField()], $metric->getConfig() ?? []);
+                if (isset($metricDefinition['script'])) {
+                    unset($metricDefinition['field']);
+                }
                 $subAggregations[$metric->getName()] = [$metric->getType() => $metricDefinition];
             }
 

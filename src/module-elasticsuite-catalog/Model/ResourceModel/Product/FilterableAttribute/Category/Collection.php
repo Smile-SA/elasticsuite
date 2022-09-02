@@ -33,6 +33,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
     private $category;
 
     /**
+     * Object Cache of getMaxPosition results
+     * @var int[]
+     * @see self::getMaxPosition()
+     */
+    private $maxPosition = [];
+
+    /**
      * @var array
      */
     private $overridenColumns = ['position', 'facet_max_size', 'facet_sort_order', 'facet_min_coverage_rate'];
@@ -160,13 +167,19 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
      */
     private function getMaxPosition()
     {
-        $fullTableName = $this->getResource()->getTable(self::CATEGORY_FILTER_CONFIG_TABLE);
-        $categoryPositionSelect = $this->getConnection()->select()
-            ->from($fullTableName, [])
-            ->columns(['category_max_position' => new \Zend_Db_Expr('MAX(position)')])
-            ->where($this->getConnection()->quoteInto('entity_id = ?', (int) $this->category->getId()));
+        $categoryId = (int) $this->category->getId();
 
-        return (int) $this->getConnection()->fetchOne($categoryPositionSelect);
+        if (!isset($this->maxPosition[$categoryId])) {
+            $fullTableName = $this->getResource()->getTable(self::CATEGORY_FILTER_CONFIG_TABLE);
+            $categoryPositionSelect = $this->getConnection()->select()
+                ->from($fullTableName, [])
+                ->columns(['category_max_position' => new \Zend_Db_Expr('MAX(position)')])
+                ->where($this->getConnection()->quoteInto('entity_id = ?', $categoryId));
+
+            $this->maxPosition[$categoryId] = (int) $this->getConnection()->fetchOne($categoryPositionSelect);
+        }
+
+        return $this->maxPosition[$categoryId];
     }
 
     /**

@@ -83,6 +83,7 @@
                 <xs:attribute type="xs:string" name="field" use="optional" />
                 <xs:attribute type="xs:integer" name="size" use="optional" />
                 <xs:attribute type="xs:integer" name="sortOrder" use="optional" />
+                <xs:attribute type="xs:boolean" name="unsetNestedPath" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -161,6 +162,15 @@
             <xs:extension base="pipelineDefinition">
                 <xs:attribute type="xs:string" name="script" use="required" />
                 <xs:attribute type="xs:string" name="gapPolicy" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="maxBucketPipeline">
+        <xs:complexContent>
+            <xs:extension base="pipelineDefinition">
+                <xs:attribute type="xs:string" name="gapPolicy" use="optional" />
+                <xs:attribute type="xs:string" name="format" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

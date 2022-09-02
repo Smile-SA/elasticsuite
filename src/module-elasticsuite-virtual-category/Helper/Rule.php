@@ -8,7 +8,7 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteVirtualCategory
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -31,13 +31,22 @@ class Rule
     private $cache;
 
     /**
+     * @var \Magento\Customer\Model\Session
+     */
+    private $customerSession;
+
+    /**
      * Provider constructor.
      *
-     * @param \Magento\Framework\App\CacheInterface $cache Cache
+     * @param \Magento\Framework\App\CacheInterface $cache           Cache.
+     * @param \Magento\Customer\Model\Session       $customerSession Customer session.
      */
-    public function __construct(\Magento\Framework\App\CacheInterface $cache)
-    {
+    public function __construct(
+        \Magento\Framework\App\CacheInterface $cache,
+        \Magento\Customer\Model\Session $customerSession
+    ) {
         $this->cache = $cache;
+        $this->customerSession = $customerSession;
     }
 
     /**
@@ -52,7 +61,7 @@ class Rule
     public function loadUsingCache(CategoryInterface $category, $callback)
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
-        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId()]);
+        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId(), $this->customerSession->getCustomerGroupId()]);
 
         $data = $this->cache->load($cacheKey);
 
@@ -66,7 +75,7 @@ class Rule
             $virtualRule = $category->getVirtualRule();
             $data        = call_user_func_array([$virtualRule, $callback], [$category]);
             $cacheData   = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, [\Magento\Catalog\Model\Category::CACHE_TAG]);
+            $this->cache->save($cacheData, $cacheKey, $category->getCacheTags());
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 

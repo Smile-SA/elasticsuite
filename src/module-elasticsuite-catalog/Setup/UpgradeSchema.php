@@ -48,6 +48,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
      * @param ModuleContextInterface $context Context
      *
      * @return void
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function upgrade(
         SchemaSetupInterface $setup,
@@ -82,6 +84,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '1.6.0', '<')) {
             $this->catalogSetup->addFilterBooleanLogicField($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.6.1', '<')) {
+            $this->catalogSetup->addIsDisplayRelNofollowColumn($setup);
+        }
+
+        if (version_compare($context->getVersion(), '1.6.2', '<')) {
+            $this->catalogSetup->addIncludeZeroFalseValues($setup);
         }
 
         $setup->endSetup();

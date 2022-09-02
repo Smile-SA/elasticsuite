@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteVirtualCategory\Setup;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
 use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 
@@ -23,6 +24,7 @@ use Magento\Framework\EntityManager\MetadataPool;
  * Generic Setup class for Virtual Categories
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -149,6 +151,7 @@ class VirtualCategorySetup
         $eavSetup->updateAttribute(Category::ENTITY, 'virtual_rule', 'frontend_input', null);
 
         $this->addUseStorePositionsAttribute($eavSetup);
+        $this->addGenerateVirtualCategorySubtreeAttribute($eavSetup);
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
         $this->eavConfig->clear();
@@ -471,6 +474,35 @@ class VirtualCategorySetup
                 'visible'    => true,
                 'note'       => "Use store positions.",
                 'sort_order' => 220,
+                'group'      => 'General Information',
+            ]
+        );
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
+    }
+
+
+    /**
+     * Append the "generate_root_category_subtree" attribute to categories
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV Setup
+     */
+    public function addGenerateVirtualCategorySubtreeAttribute(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            'generate_root_category_subtree',
+            [
+                'type'       => 'int',
+                'label'      => 'Generate Virtual Category Subtree',
+                'input'      => null,
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'   => false,
+                'default'    => 0,
+                'visible'    => true,
+                'note'       => "If the subtree of this virtual category should be displayed into category search filter",
+                'sort_order' => 200,
                 'group'      => 'General Information',
             ]
         );

@@ -63,7 +63,16 @@ class HasImage implements SpecialAttributeInterface
      */
     public function getSearchQuery(ProductCondition $condition)
     {
-        return $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'image']);
+        $queryParams = [];
+        $queryClause = 'must';
+
+        $queryParams[$queryClause][] = $this->queryFactory->create(QueryInterface::TYPE_EXISTS, ['field' => 'image']);
+
+        $queryParams[$queryClause][] = $this->queryFactory->create(QueryInterface::TYPE_NOT, [
+            'query' => $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'image', 'values' => ['no_selection']]),
+        ]);
+
+        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
     }
 
     /**

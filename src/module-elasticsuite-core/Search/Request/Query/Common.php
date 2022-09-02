@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class Common extends Match
+class Common extends MatchQuery
 {
     /**
      * @var string

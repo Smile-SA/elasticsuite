@@ -146,6 +146,39 @@ class IndexOperation implements IndexOperationInterface
     /**
      * {@inheritDoc}
      */
+    public function updateMapping($indexIdentifier, $store, $fields = [])
+    {
+        // Refresh indices configuration.
+        $this->indicesConfiguration = $this->indexSettings->getIndicesConfig();
+        try {
+            $index = $this->getIndexByName($indexIdentifier, $store);
+            // Mapping is injected in initIndex();.
+            $mapping = $index->getMapping()->asArray();
+
+            if (!empty($fields)) {
+                $properties = $mapping['properties'] ?? [];
+                if (!empty($properties) && is_array($properties)) {
+                    $properties = array_filter(
+                        $properties,
+                        function ($key) use ($fields) {
+                            return in_array($key, $fields);
+                        },
+                        ARRAY_FILTER_USE_KEY
+                    );
+
+                    $mapping['properties'] = $properties;
+                }
+            }
+
+            $this->client->putMapping($index->getName(), $mapping);
+        } catch (\LogicException $exception) {
+            ; // Do nothing, we cannot update mapping of a non existing index.
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function installIndex(\Smile\ElasticsuiteCore\Api\Index\IndexInterface $index, $store)
     {
         if ($index->needInstall()) {
@@ -229,6 +262,25 @@ class IndexOperation implements IndexOperationInterface
         foreach ($deletedIndices as $deletedIndex) {
             $this->client->deleteIndex($deletedIndex);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reindex(
+        array $sourceIndices,
+        string $destIndex,
+        array $bodyParams = [],
+        array $sourceParams = [],
+        array $destParams = []
+    ): array {
+        $params = [
+            'source' => array_merge(['index' => $sourceIndices], $sourceParams),
+            'dest'   => array_merge(['index' => $destIndex], $destParams),
+        ];
+        $params = array_merge($params, $bodyParams);
+
+        return $this->client->reindex(['body' => $params]);
     }
 
     /**

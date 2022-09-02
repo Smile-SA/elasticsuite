@@ -33,9 +33,11 @@
         </smile_elasticsuite_autocomplete_settings>
         <smile_elasticsuite_catalogsearch_settings>
             <catalogsearch>
+                <category_name_weight>1</category_name_weight>
                 <redirect_if_one_result>1</redirect_if_one_result>
                 <category_filter_use_url_rewrites>1</category_filter_use_url_rewrites>
                 <expanded_facets>3</expanded_facets>
+                <adaptive_slider_enabled>0</adaptive_slider_enabled>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
     </default>

@@ -23,7 +23,7 @@
             <argument name="typeName" xsi:type="string">product</argument>
         </arguments>
     </virtualType>
-    
+
     <type name="Magento\CatalogSearch\Model\Indexer\IndexerHandlerFactory">
         <arguments>
             <argument name="handlers" xsi:type="array">
@@ -105,7 +105,7 @@
     <type name="Magento\Catalog\Model\Layer">
         <plugin name="createSortOrdersOnPrepareFrontCollection" type="Smile\ElasticsuiteCatalog\Plugin\LayerPlugin"/>
     </type>
-    
+
     <virtualType name="Magento\CatalogSearch\Model\Layer\Category\Context" type="Magento\Catalog\Model\Layer\Category\Context">
         <arguments>
             <argument name="collectionProvider" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Layer\Category\ItemCollectionProvider</argument>
@@ -152,7 +152,7 @@
     <!-- End of proper collection for Advanced Search -->
 
     <!-- End since Magento 2.3.2 -->
-    
+
     <!-- End Layer related configuration -->
 
     <type name="Magento\CatalogSearch\Block\Result">
@@ -203,9 +203,21 @@
         <arguments>
             <argument name="attributeHelper" xsi:type="object">Smile\ElasticsuiteCatalog\Helper\ProductAttribute</argument>
             <argument name="resourceModel" xsi:type="object">Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData</argument>
+            <!--
+                Only values are taken into account for materializing forbidden attributes. If you want to remove one of these attributes from the forbidden attributes list,
+                you can add a new line with the same name and a non-existing attribute code, like:
+                <item name="visibility" xsi:type="string">_doNothing</item>
+            -->
+            <argument name="forbiddenChildrenAttributes" xsi:type="array">
+                <item name="visibility" xsi:type="string">visibility</item>
+                <item name="status" xsi:type="string">status</item>
+                <item name="price" xsi:type="string">price</item>
+                <item name="tax_class_id" xsi:type="string">tax_class_id</item>
+                <item name="name" xsi:type="string">name</item>
+            </argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData">
         <arguments>
             <argument name="priceReaderPool" xsi:type="array">
@@ -215,7 +227,7 @@
                 <item name="bundle" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\PriceData\PriceGrouped</item>
             </argument>
         </arguments>
-    </type> 
+    </type>
 
     <!-- Advanced Search Compatibility -->
     <virtualType name="Magento\CatalogSearch\Model\ResourceModel\Advanced\CollectionFactory"
@@ -250,7 +262,7 @@
             </argument>
         </arguments>
     </type>
-    
+
     <type name="Smile\ElasticsuiteCore\Model\Search\RequestMapper">
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
@@ -327,7 +339,29 @@
         </arguments>
     </type>
 
+    <!-- Dealing with index invalidation and mapping changes -->
+    <type name="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin">
+        <arguments>
+            <!-- Index Operation is injected as a proxy so that it's instantiated just-in-time (after cleaning indices config cache) to fetch latest config version -->
+            <argument name="indexOperation" xsi:type="object">\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Catalog\Model\ResourceModel\Attribute">
+        <!-- Disable the legacy plugin, we'll do nearly the same thing in our own plugin -->
+        <plugin name="catalogsearchFulltextIndexerAttribute" disabled="true"/>
+    </type>
+
+    <!-- Plugin to deal with index invalidation, mapping update and config flush when editing an attribute -->
     <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
+    </type>
+
+    <!-- Inject Category Name Weight just after reading XML files-->
+    <type name="Smile\ElasticsuiteCore\Index\Indices\Config\Reader">
+        <plugin name="injectCategoryWeight" type="\Smile\ElasticsuiteCatalog\Plugin\Index\Indices\Config\ReaderPlugin"/>
+    </type>
+    <type name="Smile\ElasticsuiteCore\Api\Index\MappingInterface">
+        <plugin name="copyCategoryName" type="\Smile\ElasticsuiteCatalog\Plugin\Index\MappingPlugin"/>
     </type>
 </config>

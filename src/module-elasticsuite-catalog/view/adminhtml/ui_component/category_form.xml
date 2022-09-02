@@ -16,7 +16,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
- 
+
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
 
@@ -29,7 +29,7 @@
                 </item>
             </argument>
         </field>
-        
+
         <dynamicRows
             name="facet_config"
             sortOrder="200"
@@ -41,6 +41,7 @@
                 <additionalClasses>
                     <class name="smile-elasticsuite-filterable-attributes">true</class>
                     <class name="admin__field-wide">true</class>
+                    <class name="es-esfeature__logo">true</class>
                 </additionalClasses>
                 <scopeLabel>[GLOBAL]</scopeLabel>
                 <componentType>dynamicRows</componentType>
@@ -193,7 +194,7 @@
                 </field>
             </container>
         </dynamicRows>
-        
+
     </fieldset>
 
     <fieldset name="general">
@@ -214,6 +215,28 @@
                         <item name="required-entry" xsi:type="boolean">false</item>
                     </item>
                     <item name="default" xsi:type="string">1</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
+                </item>
+            </argument>
+        </field>
+        <field name="is_displayed_in_autocomplete">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">150</item>
+                    <item name="dataType" xsi:type="string">boolean</item>
+                    <item name="formElement" xsi:type="string">checkbox</item>
+                    <item name="source" xsi:type="string">category</item>
+                    <item name="prefer" xsi:type="string">toggle</item>
+                    <item name="label" xsi:type="string" translate="true">Display Category in Autocomplete</item>
+                    <item name="valueMap" xsi:type="array">
+                        <item name="true" xsi:type="string">1</item>
+                        <item name="false" xsi:type="string">0</item>
+                    </item>
+                    <item name="validation" xsi:type="array">
+                        <item name="required-entry" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="default" xsi:type="string">1</item>
+                    <item name="additionalClasses" xsi:type="string">es-esfeature__logo</item>
                 </item>
             </argument>
         </field>

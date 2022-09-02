@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+
 /**
  * Product category filter implementation.
  *
@@ -47,12 +49,17 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
      */
-    private $childrenCategories;
+    protected $childrenCategories;
 
     /**
      * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
      */
     private $searchContext;
+
+    /**
+     * @var RequestFieldMapper
+     */
+    private $requestFieldMapper;
 
     /**
      * Constructor.
@@ -68,6 +75,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
      * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory Data provider.
      * @param \Magento\Framework\App\Config\ScopeConfigInterface               $scopeConfig         Scope configuration.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface              $context             Search Context.
+     * @param RequestFieldMapper                                               $requestFieldMapper  Search request field mapper.
      * @param boolean                                                          $useUrlRewrites      Uses URLs rewrite for rendering.
      * @param array                                                            $data                Custom data.
      */
@@ -80,6 +88,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         \Magento\Catalog\Model\Layer\Filter\DataProvider\CategoryFactory $dataProviderFactory,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $context,
+        RequestFieldMapper $requestFieldMapper,
         $useUrlRewrites = false,
         array $data = []
     ) {
@@ -96,6 +105,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
         $this->escaper        = $escaper;
         $this->dataProvider   = $dataProviderFactory->create(['layer' => $this->getLayer()]);
         $this->searchContext  = $context;
+        $this->requestFieldMapper = $requestFieldMapper;
         $this->useUrlRewrites = ($useUrlRewrites === true) ? (bool) $scopeConfig->isSetFlag(
             self::XML_CATEGORY_FILTER_USE_URL_REWRITE,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
@@ -151,7 +161,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
                             'label' => $this->escaper->escapeHtml($category->getName()),
                             'value' => $category->getId(),
                             'count' => $optionsFacetedData[$category->getId()]['count'],
-                            'url'   => $category->getUrl(),
+                            'url'   => $this->getCategoryFilterUrl($category),
                         ];
 
                         $items[] = $item;
@@ -231,7 +241,7 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
      */
     protected function getFilterField()
     {
-        return 'category.category_id';
+        return $this->requestFieldMapper->getMappedFieldName('category_ids');
     }
 
     /**
@@ -242,5 +252,17 @@ class Category extends \Magento\CatalogSearch\Model\Layer\Filter\Category
     protected function getDataProvider()
     {
         return $this->dataProvider;
+    }
+
+    /**
+     * Retrieve Category Url to build filter
+     *
+     * @param \Magento\Catalog\Api\Data\CategoryInterface $category Category.
+     *
+     * @return string
+     */
+    protected function getCategoryFilterUrl($category)
+    {
+        return $category->getUrl();
     }
 }

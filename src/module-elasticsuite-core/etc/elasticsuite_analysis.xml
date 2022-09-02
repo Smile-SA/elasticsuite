@@ -24,6 +24,10 @@
 
     <filters>
         <filter name="trim" type="trim" language="default"/>
+        <filter name="truncate_to_max" type="truncate" language="default">
+            <!-- Absolute max supported by Lucene for a token length is 32766 bytes, so using 1/4 of that to accomodate multibyte UTF-8 characters -->
+            <length>8192</length>
+        </filter>
         <filter name="lowercase" type="lowercase" language="default"/>
         <filter name="word_delimiter" type="word_delimiter" language="default">
             <generate_word_parts>true</generate_word_parts>
@@ -139,12 +143,16 @@
         <filter name="stemmer" type="stemmer" language="tr">
             <language>turkish</language>
         </filter>
-        <filter name="standard_override" type="stemmer_override" language="fr">
-            <!-- No known issues with the "french" or "light_french" stemmers. But this is to show that having an empty list of rules is valid.
+        <filter name="stemmer_override" type="stemmer_override" language="fr">
+            <!-- Having an empty list of rules is valid.
                  This means existing rules can be both re-defined or voided in a custom module. -->
-            <rules>[]</rules>
+            <!--<rules>[]</rules>-->
+            <!--
+                Known issues with the "french" stemmer.
+                 -->
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou"]</rules>
         </filter>
-        <filter name="standard_override" type="stemmer_override" language="it">
+        <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
                 Known issues with the "italian" stemmer. Please note that we do not claim 100% accuracy in the selected stems.
                 For instance, the stem for "trapani" is originally "trapan", the same as the verb "trapanare".
@@ -170,6 +178,11 @@
     </filters>
 
     <analyzers>
+        <analyzer name="keyword" tokenizer="keyword" language="default">
+            <filters>
+                <filter ref="truncate_to_max" />
+            </filters>
+        </analyzer>
         <analyzer name="standard" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
@@ -177,7 +190,7 @@
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="elision" />
-                <filter ref="standard_override" />
+                <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
             </filters>
             <char_filters>
@@ -216,6 +229,8 @@
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="elision" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>

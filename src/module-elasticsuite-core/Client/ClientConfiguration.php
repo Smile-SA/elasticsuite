@@ -51,7 +51,7 @@ class ClientConfiguration implements ClientConfigurationInterface
      */
     public function getServerList()
     {
-        return explode(',', $this->getElasticsearchClientConfigParam('servers'));
+        return explode(',', $this->getElasticsearchClientConfigParam('servers') ?? '');
     }
 
     /**
@@ -91,6 +91,16 @@ class ClientConfiguration implements ClientConfigurationInterface
     /**
      * {@inheritdoc}
      */
+    public function isHttpAuthEncodingEnabled()
+    {
+        $authEncodingEnabled = (bool) $this->getElasticsearchClientConfigParam('enable_http_auth_encoding');
+
+        return $authEncodingEnabled && $this->isHttpAuthEnabled() !== false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHttpAuthUser()
     {
         return (string) $this->getElasticsearchClientConfigParam('http_auth_user');
@@ -121,6 +131,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'servers'               => $this->getServerList(),
             'scheme'                => $this->getScheme(),
             'enable_http_auth'      => $this->isHttpAuthEnabled(),
+            'http_auth_encoded'     => $this->isHttpAuthEncodingEnabled(),
             'http_auth_user'        => $this->getHttpAuthUser(),
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),

@@ -130,7 +130,7 @@ class AbstractAttributeData extends Indexer
             ->joinInner(
                 ['attr' => $this->getTable('eav_attribute')],
                 $this->connection->quoteInto('attr.attribute_id IN (?)', $attributeIds),
-                ['attribute_id']
+                ['attribute_id', 'attribute_code']
             )
             ->joinLeft(
                 ['t_default' => $tableName],
@@ -144,7 +144,9 @@ class AbstractAttributeData extends Indexer
             )
             ->where("entity.{$entityIdField} IN (?)", $entityIds)
             ->having('value IS NOT NULL')
-            ->columns(['value' => new \Zend_Db_Expr('COALESCE(t_store.value, t_default.value)')]);
+            ->columns(
+                ['value' => new \Zend_Db_Expr('if(t_store.value_id IS NOT NULL, t_store.value, t_default.value)')]
+            );
 
         return $this->connection->fetchAll($select);
     }

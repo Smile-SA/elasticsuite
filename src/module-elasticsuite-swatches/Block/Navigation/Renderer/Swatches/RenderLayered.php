@@ -56,6 +56,9 @@ class RenderLayered extends \Magento\Swatches\Block\LayeredNavigation\RenderLaye
             $sortingArr[] = $item['label'];
         }
 
+        // Apply proper storeview to the attribute. We need to fetch options labels in the store locale.
+        $this->eavAttribute->setStoreId($this->filter->getStoreId());
+
         foreach ($this->eavAttribute->getOptions() as $option) {
             if ($currentOption = $this->getFilterOption($this->filter->getItems(), $option)) {
                 /*

@@ -21,6 +21,7 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteThesaurus\Helper\Combinatorics;
 
 /**
  * Thesaurus index.
@@ -73,17 +74,20 @@ class Index
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param Combinatorics          $combinatorics          Helper to generate query combinations.
      */
     public function __construct(
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
-        ThesaurusConfigFactory $thesaurusConfigFactory
+        ThesaurusConfigFactory $thesaurusConfigFactory,
+        Combinatorics $combinatorics = null
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
+        $this->combinatorics          = $combinatorics ?? \Magento\Framework\App\ObjectManager::getInstance()->get(Combinatorics::class);
     }
 
     /**
@@ -91,10 +95,11 @@ class Index
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
      *
      * @return array
      */
-    public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
+    public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
     {
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
@@ -102,7 +107,7 @@ class Index
         $queryRewrites = $this->cacheHelper->loadCache($cacheKey);
 
         if ($queryRewrites === false) {
-            $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText);
+            $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost);
             $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
         }
 
@@ -114,10 +119,11 @@ class Index
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
      *
      * @return array
      */
-    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText)
+    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost)
     {
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
@@ -127,11 +133,11 @@ class Index
         if ($config->isSynonymSearchEnabled()) {
             $thesaurusType   = ThesaurusInterface::TYPE_SYNONYM;
             $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites);
-            $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider());
+            $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider(), $originalBoost);
         }
 
         if ($config->isExpansionSearchEnabled()) {
-            $synonymRewrites = array_merge([$queryText => 1], $rewrites);
+            $synonymRewrites = array_merge([$queryText => $originalBoost], $rewrites);
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
@@ -212,27 +218,79 @@ class Index
      */
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
-        $indexName = $this->getIndexAlias($storeId);
+        $indexName          = $this->getIndexAlias($storeId);
+        $analyzedQueries    = $this->getQueryCombinations($queryText);
+        $synonymByPositions = [];
+        $synonyms           = [];
 
-        try {
-            $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $type]]
+        foreach ($analyzedQueries as $query) {
+            try {
+                $analysis = $this->client->analyze(
+                    ['index' => $indexName, 'body' => ['text' => $query, 'analyzer' => $type]]
+                );
+            } catch (\Exception $e) {
+                $analysis = ['tokens' => []];
+            }
+
+            foreach ($analysis['tokens'] ?? [] as $token) {
+                if ($token['type'] == 'SYNONYM') {
+                    $positionKey                        = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
+                    $token['token']                     = str_replace('_', ' ', $token['token']);
+                    $synonymByPositions[$positionKey][] = $token;
+                }
+            }
+
+            $synonyms = array_merge(
+                $synonyms,
+                $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites)
             );
-        } catch (\Exception $e) {
-            $analysis = ['tokens' => []];
         }
 
-        $synonymByPositions = [];
+        return $synonyms;
+    }
 
-        foreach ($analysis['tokens'] ?? [] as $token) {
-            if ($token['type'] == 'SYNONYM') {
-                $positionKey = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
-                $token['token'] = str_replace('_', ' ', $token['token']);
-                $synonymByPositions[$positionKey][] = $token;
+    /**
+     * Explode the query text and fetch combination of words inside it.
+     * Eg : "long sleeve dress" => "long_sleeve dress", "long sleeve_dress", "long_sleeve_dress".
+     * This allow to find synonyms for couple of words that are "inside" the complete query.
+     * Multi-words synonyms are indexed with "_" as separator.
+     *
+     * @param string $queryText The base query text
+     *
+     * @return array
+     */
+    private function getQueryCombinations($queryText)
+    {
+        // Get all the space character positions in the queryText.
+        $spacesPosition = [];
+        $offset         = 0;
+        while (($pos = mb_strpos($queryText, ' ', $offset)) !== false) {
+            $offset           = $pos + 1;
+            $spacesPosition[] = $pos;
+        }
+
+        // Get all possible combinations of spaces to be replaced.
+        $spacesCombinations = [];
+        $spacesCount        = count($spacesPosition);
+        for ($cpt = 1; $cpt <= $spacesCount; $cpt++) {
+            foreach ($this->combinatorics->combinations($spacesPosition, $cpt) as $combination) {
+                $spacesCombinations[] = $combination;
             }
         }
 
-        return $this->combineSynonyms($queryText, $synonymByPositions, $maxRewrites);
+        // Create all variations of the query by replacing spaces by '_'.
+        $queries[] = $queryText;
+        foreach ($spacesCombinations as $combination) {
+            $query = $queryText;
+            foreach ($combination as $spaceOffset) {
+                $query[$spaceOffset] = '_';
+            }
+            $queries[] = $query;
+        }
+
+        $queries = array_unique($queries);
+
+        return $queries;
     }
 
     /**

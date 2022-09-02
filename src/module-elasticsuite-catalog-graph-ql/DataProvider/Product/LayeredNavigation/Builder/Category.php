@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder;
 
+use Magento\Catalog\Model\Product\Attribute\Repository as AttributeRepository;
 use Magento\CatalogGraphQl\DataProvider\Category\Query\CategoryAttributeQuery;
 use Magento\CatalogGraphQl\DataProvider\CategoryAttributesMapper;
 use Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Formatter\LayerFormatter;
@@ -73,24 +74,40 @@ class Category implements LayerBuilderInterface
     private $layerFormatter;
 
     /**
+     * @var AttributeRepository
+     */
+    private $attributeRepository;
+
+    /**
+     * @var string
+     */
+    private $attributeCode;
+
+    /**
      * @param CategoryAttributeQuery   $categoryAttributeQuery   Category Attribute Query
      * @param CategoryAttributesMapper $categoryAttributesMapper Category Attributes Mapper
      * @param RootCategoryProvider     $rootCategoryProvider     Root Category Provider
      * @param LayerFormatter           $layerFormatter           Layer Formatter
      * @param ResourceConnection       $resourceConnection       Resource Connection
+     * @param AttributeRepository      $attributeRepository      Product attribute repository
+     * @param string                   $attributeCode            Product attribute code used to load the localized frontend label
      */
     public function __construct(
         CategoryAttributeQuery $categoryAttributeQuery,
         CategoryAttributesMapper $categoryAttributesMapper,
         RootCategoryProvider $rootCategoryProvider,
         LayerFormatter $layerFormatter,
-        ResourceConnection $resourceConnection
+        ResourceConnection $resourceConnection,
+        AttributeRepository $attributeRepository,
+        string $attributeCode = 'category_ids'
     ) {
         $this->categoryAttributeQuery = $categoryAttributeQuery;
         $this->attributesMapper       = $categoryAttributesMapper;
         $this->rootCategoryProvider   = $rootCategoryProvider;
         $this->layerFormatter         = $layerFormatter;
         $this->resourceConnection     = $resourceConnection;
+        $this->attributeRepository    = $attributeRepository;
+        $this->attributeCode          = $attributeCode;
     }
 
     /**
@@ -128,8 +145,12 @@ class Category implements LayerBuilderInterface
             return [];
         }
 
+        $label = __(self::$bucketMap[self::CATEGORY_BUCKET]['label']);
+        if ($frontendLabel = $this->getFrontendLabel($storeId)) {
+            $label = $frontendLabel;
+        }
         $result = $this->layerFormatter->buildLayer(
-            self::$bucketMap[self::CATEGORY_BUCKET]['label'],
+            $label,
             \count($categoryIds),
             self::$bucketMap[self::CATEGORY_BUCKET]['request_name']
         );
@@ -146,7 +167,9 @@ class Category implements LayerBuilderInterface
             );
         }
 
-        return [$result];
+        $result['has_more'] = false;
+
+        return ['category_id' => $result];
     }
 
     /**
@@ -159,5 +182,35 @@ class Category implements LayerBuilderInterface
     private function isBucketEmpty(?BucketInterface $bucket): bool
     {
         return null === $bucket || !$bucket->getValues();
+    }
+
+    /**
+     * Return the frontend label of the configured attribute for the given store, if available.
+     *
+     * @param int|null $storeId Store ID.
+     *
+     * @return string|null
+     */
+    private function getFrontendLabel(?int $storeId): ?string
+    {
+        $label = null;
+
+        try {
+            $attribute  = $this->attributeRepository->get($this->attributeCode);
+            $label      = $attribute->getDefaultFrontendLabel();
+            $frontendLabels = array_filter(
+                $attribute->getFrontendLabels(),
+                function ($frontendLabel) use ($storeId) {
+                    return $frontendLabel->getStoreId() == $storeId;
+                }
+            );
+            if (!empty($frontendLabels)) {
+                $label = reset($frontendLabels)->getLabel();
+            }
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
+            ;
+        }
+
+        return $label;
     }
 }

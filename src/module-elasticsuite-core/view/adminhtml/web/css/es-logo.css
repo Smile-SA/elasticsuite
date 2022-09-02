@@ -1,0 +1,42 @@
+/* Logo to the right */
+.admin__collapsible-block-wrapper.es-esfeature__logo .admin__collapsible-title > span:first-child {         /* Collapsible block title */
+    position: relative;
+    padding-right: 35px;
+}
+
+/* Logo to the left */
+.admin__field.es-esfeature__logo > .admin__field-label > label > span:first-child,                          /* Category fields */
+fieldset.es-esfeature__logo legend span:first-child,                                                        /* Legacy form fields */
+label.es-esfeature__logo span:first-child {                                                                 /* Store view config */
+    position: relative;
+    padding-left: 35px;
+}
+
+/* Logo image - default position to the left */
+.admin__collapsible-block-wrapper.es-esfeature__logo .admin__collapsible-title > span:first-child:after,    /* Collapsible block title */
+.admin__field.es-esfeature__logo > .admin__field-label > label > span:first-child:after,                    /* Category fields */
+label.es-esfeature__logo span:first-child:after,                                                            /* Store view config */
+fieldset.es-esfeature__logo legend span:first-child:after,                                                  /* Legacy form fields */
+.section-config.es-esfeature__logo > .admin__collapsible-block > a:after {                                  /* Section config title */
+    position: absolute;
+    top: 25%;
+    left: 0;
+    transform: translateY( -50% );
+    content: "";
+    width: 30px;
+    height: 30px;
+    background: url('../images/es-logo.svg') no-repeat 0 0;
+    background-size: contain;
+}
+
+/* Logo image - position to the right */
+.admin__collapsible-block-wrapper.es-esfeature__logo .admin__collapsible-title > span:first-child:after,    /* Collapsible block title */
+.section-config.es-esfeature__logo > .admin__collapsible-block > a:after {                                  /* Section config title */
+    left: unset;
+    margin-left: 10px;
+    top: 50%;
+}
+
+fieldset.es-esfeature__logo legend span:first-child:after { /* Legacy form fields */
+    top: 50%
+}

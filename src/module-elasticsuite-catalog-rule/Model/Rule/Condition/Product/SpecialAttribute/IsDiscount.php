@@ -8,13 +8,14 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalogRule
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Special "is_discount" attribute class.
@@ -31,13 +32,30 @@ class IsDiscount implements SpecialAttributeInterface
     private $booleanSource;
 
     /**
+     * @var \Magento\Customer\Model\Session
+     */
+    protected $customerSession;
+
+    /**
+     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     */
+    protected $queryFactory;
+
+    /**
      * IsDiscount constructor.
      *
-     * @param \Magento\Config\Model\Config\Source\Yesno $booleanSource Boolean Source
+     * @param \Magento\Config\Model\Config\Source\Yesno                 $booleanSource   Boolean Source.
+     * @param \Magento\Customer\Model\Session                           $customerSession Customer session.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory    Query factory.
      */
-    public function __construct(\Magento\Config\Model\Config\Source\Yesno $booleanSource)
-    {
-        $this->booleanSource = $booleanSource;
+    public function __construct(
+        \Magento\Config\Model\Config\Source\Yesno $booleanSource,
+        \Magento\Customer\Model\Session $customerSession,
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory
+    ) {
+        $this->booleanSource    = $booleanSource;
+        $this->customerSession  = $customerSession;
+        $this->queryFactory     = $queryFactory;
     }
 
     /**
@@ -54,8 +72,31 @@ class IsDiscount implements SpecialAttributeInterface
      */
     public function getSearchQuery(ProductCondition $condition)
     {
-        // Query can be computed directly with the attribute code and value. (price.is_discount = true).
-        return null;
+        /*
+         * Query cannot be computed directly with the attribute code and value (price.is_discount = true).
+         * The customer group needs to be taken into account because the discounted price could be a tiers price.
+         */
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path' => 'price',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_BOOL,
+                    [
+                        'must' => [
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_TERM,
+                                ['field' => 'price.customer_group_id', 'value' => $this->customerSession->getCustomerGroupId()]
+                            ),
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_TERM,
+                                ['field' => 'price.is_discount', 'value' => true]
+                            ),
+                        ],
+                    ]
+                ),
+            ]
+        );
     }
 
     /**

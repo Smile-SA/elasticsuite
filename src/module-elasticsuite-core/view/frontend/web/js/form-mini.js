@@ -48,6 +48,7 @@ define([
             this._initTemplates();
             this._initTitleRenderer();
             this._super();
+            this._blur();
         },
 
         /**
@@ -238,7 +239,9 @@ define([
                 this.currentRequest = $.ajax({
                     method: "GET",
                     url: this.options.url,
-                    data:{q: value},
+                    cache: true,
+                    dataType: 'json',
+                    data: {q: value},
                     // This function will ensure proper killing of the last Ajax call.
                     // In order to prevent requests of an old request to pop up later and replace results.
                     beforeSend: function() { if (this.currentRequest !== null) { this.currentRequest.abort(); }}.bind(this),
@@ -470,6 +473,28 @@ define([
             }
 
             return prevElement;
+        },
+
+        /**
+         * Handle blur event of search input item
+         * @private
+         */
+        _blur: function() {
+            this.element.on('blur', $.proxy(function () {
+                if (!this.searchLabel.hasClass('active')) {
+                    return;
+                }
+                setTimeout($.proxy(function () {
+                    if (this.autoComplete.is(':hidden')) {
+                        this.setActiveState(false);
+                    } else {
+                        this.element.trigger('focus');
+                    }
+                    this.autoComplete.hide();
+                    $('#search').blur();
+                    this._updateAriaHasPopup(false);
+                }, this),250);
+            }, this));
         }
     });
 
