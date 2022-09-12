@@ -210,18 +210,15 @@ class Url
     {
         $categoryPath = str_replace($this->getCategoryUrlSuffix() ?? '', '', $categoryPath);
         $category = $this->loadCategoryByUrlKey($categoryPath);
+        $categoryId = $category->getId();
         $rewrite  = null;
 
-        if ($category && $category->getId()) {
+        if ($categoryId) {
             $rewrite = $this->urlFinder->findOneByData([
-                UrlRewrite::ENTITY_ID   => $category->getId(),
+                UrlRewrite::ENTITY_ID   => $categoryId,
                 UrlRewrite::STORE_ID    => $storeId,
                 UrlRewrite::ENTITY_TYPE => 'category',
             ]);
-
-            if ($rewrite) {
-                $rewrite->setRequestPath($rewrite->getTargetPath());
-            }
         }
 
         return $rewrite;

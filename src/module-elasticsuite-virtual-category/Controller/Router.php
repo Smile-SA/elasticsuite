@@ -116,7 +116,7 @@ class Router implements RouterInterface
         }
 
         $categoryRewrite = $this->getCategoryRewrite($identifier);
-        if ($categoryRewrite) {
+        if ($categoryRewrite && $categoryRewrite->getRequestPath() == $identifier) {
             $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $identifier);
             $request->setPathInfo('/' . $categoryRewrite->getTargetPath());
 
