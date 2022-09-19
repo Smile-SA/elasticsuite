@@ -41,7 +41,7 @@
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
             <max_shingle_size>4</max_shingle_size>
-            <output_unigrams>true</output_unigrams>
+            <output_unigrams>false</output_unigrams>
         </filter>
         <filter name="reference_shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
