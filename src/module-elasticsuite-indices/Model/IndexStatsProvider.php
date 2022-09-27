@@ -127,6 +127,7 @@ class IndexStatsProvider
             $data['index_status']        = $this->indexStatusProvider->getIndexStatus($indexName, $alias);
             if (isset($indexStats['total']['store']['size_in_bytes'])) {
                 $data['size'] = $this->sizeFormatted((int) $indexStats['total']['store']['size_in_bytes']);
+                $data['size_in_bytes'] = $indexStats['total']['store']['size_in_bytes'];
             }
         } catch (Exception $e) {
             $data['index_status'] = IndexStatus::REBUILDING_STATUS;
