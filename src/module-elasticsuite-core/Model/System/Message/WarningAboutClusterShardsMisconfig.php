@@ -80,12 +80,15 @@ class WarningAboutClusterShardsMisconfig implements MessageInterface
     public function isDisplayed()
     {
         $numberOfShards = $this->helper->getNumberOfShards();
-        $indexMaxSize = $this->getElasticsuiteIndexMaxSize()['size_in_bytes'];
 
         if ($numberOfShards > 1) {
-            /* 10 Gb => 10737418240 bytes (in binary) */
-            if ($indexMaxSize < '10737418240') {
-                return true;
+            if ($this->getElasticsuiteIndexMaxSize()) {
+                $indexMaxSize = $this->getElasticsuiteIndexMaxSize()['size_in_bytes'];
+
+                /* 10 Gb => 10737418240 bytes (in binary) */
+                if ($indexMaxSize < '10737418240') {
+                    return true;
+                }
             }
         }
 
@@ -140,18 +143,28 @@ class WarningAboutClusterShardsMisconfig implements MessageInterface
      */
     private function getElasticsuiteIndexMaxSize()
     {
-        $elasticsuiteIndices = $this->indexStatsProvider->getElasticSuiteIndices();
-        $indexSizes = [];
+        if ($this->indexStatsProvider->getElasticSuiteIndices() !== null) {
+            $elasticsuiteIndices = $this->indexStatsProvider->getElasticSuiteIndices();
+            $indexSizes = [];
 
-        foreach ($elasticsuiteIndices as $indexName => $indexAlias) {
-            $indexData = $this->indexStatsProvider->indexStats($indexName, $indexAlias);
-            $indexSizes[] = ['human_size' => $indexData['size'], 'size_in_bytes' => $indexData['size_in_bytes']];
+            foreach ($elasticsuiteIndices as $indexName => $indexAlias) {
+                $indexData = $this->indexStatsProvider->indexStats($indexName, $indexAlias);
+
+                if (array_key_exists('size', $indexData) && array_key_exists('size_in_bytes', $indexData)
+                    && $indexData['size_in_bytes'] !== 'undefined') {
+                    $indexSizes[] = ['human_size' => $indexData['size'], 'size_in_bytes' => $indexData['size_in_bytes']];
+                }
+            }
+
+            if (!empty($indexSizes)) {
+                $indexSizesInBytes = array_column($indexSizes, "size_in_bytes");
+                array_multisort($indexSizesInBytes, SORT_DESC, $indexSizes);
+
+                return current($indexSizes);
+            }
         }
 
-        $indexSizesInBytes = array_column($indexSizes, "size_in_bytes");
-        array_multisort($indexSizesInBytes, SORT_DESC, $indexSizes);
-
-        return current($indexSizes);
+        return false;
     }
 
     /**
