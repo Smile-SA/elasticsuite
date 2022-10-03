@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
  * @copyright 2022 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Model\System\Message;
+namespace Smile\ElasticsuiteIndices\Model\System\Message;
 
 use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
@@ -21,7 +21,7 @@ use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
  * ElasticSuite Warning about too much ghost indices in the cluster
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCore
+ * @package  Smile\ElasticsuiteIndices
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
 class WarningAboutClusterGhostIndices implements MessageInterface
@@ -30,6 +30,8 @@ class WarningAboutClusterGhostIndices implements MessageInterface
      * Route to Elasticsuite -> Indices page
      */
     private const ROUTE_ELASTICSUITE_INDICES = 'smile_elasticsuite_indices';
+
+    public const GHOST_STATUS = 'ghost';
 
     /**
      * @var IndexStatsProvider
@@ -119,7 +121,8 @@ class WarningAboutClusterGhostIndices implements MessageInterface
             foreach ($elasticsuiteIndices as $indexName => $indexAlias) {
                 $indexData = $this->indexStatsProvider->indexStats($indexName, $indexAlias);
 
-                if (array_key_exists('index_status', $indexData) && $indexData['index_status'] === 'ghost') {
+                if (array_key_exists('index_status', $indexData)
+                    && $indexData['index_status'] === self::GHOST_STATUS) {
                     $ghostIndices[] = [
                         'index_name' => $indexData['index_name'],
                         'index_status' => $indexData['index_status'],
