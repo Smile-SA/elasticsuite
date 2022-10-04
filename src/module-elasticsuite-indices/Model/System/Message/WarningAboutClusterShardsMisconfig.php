@@ -5,13 +5,13 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
  * @copyright 2022 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Model\System\Message;
+namespace Smile\ElasticsuiteIndices\Model\System\Message;
 
 use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
@@ -22,7 +22,7 @@ use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
  * ElasticSuite Warning about Cluster mis-configuration for shards
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCore
+ * @package  Smile\ElasticsuiteIndices
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  *
  * @SuppressWarnings(PHPMD.LongVariable)
@@ -43,6 +43,8 @@ class WarningAboutClusterShardsMisconfig implements MessageInterface
      * URL for Elasticsuite Indices Settings wiki page
      */
     private const ES_INDICES_SETTINGS_WIKI_PAGE = 'https://github.com/Smile-SA/elasticsuite/wiki/ModuleInstall#indices-settings';
+
+    public const UNDEFINED_SIZE = 'undefined';
 
     /**
      * @var IndexSettingsHelper
@@ -151,7 +153,7 @@ class WarningAboutClusterShardsMisconfig implements MessageInterface
                 $indexData = $this->indexStatsProvider->indexStats($indexName, $indexAlias);
 
                 if (array_key_exists('size', $indexData) && array_key_exists('size_in_bytes', $indexData)
-                    && $indexData['size_in_bytes'] !== 'undefined') {
+                    && $indexData['size_in_bytes'] !== self::UNDEFINED_SIZE) {
                     $indexSizes[] = ['human_size' => $indexData['size'], 'size_in_bytes' => $indexData['size_in_bytes']];
                 }
             }

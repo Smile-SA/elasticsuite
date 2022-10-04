@@ -21,6 +21,7 @@
     <type name="Magento\Framework\Notification\MessageList">
         <arguments>
             <argument name="messages" xsi:type="array">
+                <item name="elasticsuite_cluster_shards_misconfig_warning" xsi:type="string">Smile\ElasticsuiteIndices\Model\System\Message\WarningAboutClusterShardsMisconfig</item>
                 <item name="elasticsuite_cluster_ghost_indices_warning" xsi:type="string">Smile\ElasticsuiteIndices\Model\System\Message\WarningAboutClusterGhostIndices</item>
             </argument>
         </arguments>
