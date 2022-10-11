@@ -8,6 +8,12 @@
 
 ## News
 
+### 🎉 Hyvä compatibility
+
+Elasticsuite is compatible with Hyvä theme. Please checkout [their blog article](https://hyva.io/blog/news/elasticsuite-hyva-partnership.html) to find out more about that.
+
+If you want to use Elasticsuite with Hyvä theme, you'll need to install the [compatibility module](https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-smile-elasticsuite/)
+
 ### ⚠️ Magento versions compatibility :
 
 Due to several changes in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
