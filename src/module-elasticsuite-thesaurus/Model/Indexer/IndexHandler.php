@@ -112,9 +112,22 @@ class IndexHandler
             'max_shingle_size' => ThesaurusIndex::MAX_SIZE,
         ];
 
+        $settings['analysis']['filter']['analyze_shingle'] = [
+            'type'             => 'shingle',
+            'output_unigrams'  => false,
+            'token_separator'  => ThesaurusIndex::WORD_DELIMITER,
+            'min_shingle_size' => 2,
+            'max_shingle_size' => ThesaurusIndex::MAX_SIZE,
+        ];
+
         $settings['analysis']['filter']['type_filter'] = [
             'type' => 'keep_types',
             'types' => [ "SYNONYM" ],
+        ];
+
+        $settings['analysis']['analyzer']['shingles'] = [
+            'tokenizer' => 'whitespace',
+            'filter' => ['lowercase', 'asciifolding', 'analyze_shingle'],
         ];
 
         $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms);
