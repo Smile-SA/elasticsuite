@@ -136,7 +136,7 @@ class IndexHandler
     {
         $settings['analysis']['analyzer'][$type] = [
             'tokenizer' => 'whitespace',
-            'filter' => ['lowercase', 'shingle'],
+            'filter' => ['lowercase', 'asciifolding', 'shingle'],
         ];
 
         if (!empty($values)) {
