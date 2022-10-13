@@ -103,9 +103,11 @@ class Router implements RouterInterface
             ['router' => $this, 'condition' => $condition]
         );
 
-        if ($appliedRoot && $appliedRoot->getId()) {
-            $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
+        if (!$appliedRoot || !$appliedRoot->getId()) {
+            return null;
         }
+
+        $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
 
         $productRewrite = $this->getProductRewrite($identifier);
         if ($productRewrite) {
