@@ -161,7 +161,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         } elseif ($this->getAttribute() === 'price') {
             $inputType = 'numeric';
         } elseif ($this->getAttribute() === 'sku') {
-            $inputType = 'multiselect';
+            $inputType = 'sku';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
             $frontendClass = $this->getAttributeObject()->getFrontendClass();
@@ -257,6 +257,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 'multiselect' => ['()', '!()'],
                 'grid'        => ['()', '!()'],
                 'category'    => ['()', '!()'],
+                'sku'         => ['()', '!()', '{}', '!{}'],
             ];
             $this->_arrayInputTypes            = ['multiselect', 'grid', 'category'];
         }
