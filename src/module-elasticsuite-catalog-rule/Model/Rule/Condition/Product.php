@@ -160,6 +160,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $inputType        = $specialAttribute->getInputType();
         } elseif ($this->getAttribute() === 'price') {
             $inputType = 'numeric';
+        } elseif ($this->getAttribute() === 'sku') {
+            $inputType = 'multiselect';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
             $frontendClass = $this->getAttributeObject()->getFrontendClass();
