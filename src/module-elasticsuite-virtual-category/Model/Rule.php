@@ -139,6 +139,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
         $query         = null;
+        $rootCategory  = null;
 
         if (!is_object($category)) {
             $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
@@ -146,8 +147,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if (!in_array($category->getId(), $excludedCategories)) {
             $excludedCategories[] = $category->getId();
-
-            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
+            if ($category->getIsVirtualCategory() && $category->getVirtualCategoryRoot() !== null
+                && !empty($category->getVirtualCategoryRoot())) {
+                $rootCategoryId = $category->getVirtualCategoryRoot();
+                $rootCategory = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($rootCategoryId);
+                $catId = $rootCategory->getId();
+            }
+            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive() && isset($catId)) {
                 $query = $this->getVirtualCategoryQuery($category, $excludedCategories, $category->getData('virtual_category_root'));
             } elseif ($category->getId() && $category->getIsActive()) {
                 $query = $this->getStandardCategoryQuery($category, $excludedCategories);
