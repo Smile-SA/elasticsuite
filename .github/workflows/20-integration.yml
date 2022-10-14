@@ -203,10 +203,11 @@ jobs:
                   composer require symfony/console:4.4.26 --ignore-platform-reqs
                   composer require symfony/string:5.4.2 --ignore-platform-reqs
 
-            - name: "[Init] Fix laminas/laminas-stdlib version"
+            - name: "[Init] Fix laminas/laminas-stdlib and laminas/laminas-eventmanager version"
               working-directory: ${{ env.magento-directory }}
               run: |
                 composer require laminas/laminas-stdlib:3.11.0 --ignore-platform-reqs
+                composer require laminas/laminas-eventmanager:3.5.0 --ignore-platform-reqs
 
             - name: "[Init] Add current build of Elasticsuite"
               working-directory: ${{ env.magento-directory }}
