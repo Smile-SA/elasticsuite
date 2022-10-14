@@ -143,7 +143,6 @@ jobs:
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
                       composer-${{ matrix.php-versions }}-
-                      composer-
 
             - name: "[Init] Cache Sample data repo"
               id: sampledata-cache
