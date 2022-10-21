@@ -279,7 +279,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      *
      * @return bool
      */
-    public function isIndexChildProductSkuEnabled(): bool
+    private function isIndexChildProductSkuEnabled(): bool
     {
         return (bool) $this->scopeConfig->getValue(
             self::XML_PATH_INDEX_CHILD_PRODUCT_SKU,
