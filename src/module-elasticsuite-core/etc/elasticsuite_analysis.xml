@@ -175,6 +175,9 @@
             <encoder>beider_morse</encoder>
             <languageset>french</languageset>
         </filter>
+        <filter name="lowercase" type="lowercase" language="el">
+            <language>greek</language>
+        </filter>
     </filters>
 
     <analyzers>
