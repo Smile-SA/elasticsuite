@@ -103,7 +103,7 @@ class RequestMapperPlugin
                 $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
 
                 unset($result['category.category_id']);
-            } elseif (isset($result['category.category_uid']) && !isset($result['category.category_id'])) {
+            } elseif (isset($result['category.category_uid']) && isset($result['category.category_uid']['eq']) && !isset($result['category.category_id'])) {
                 $categoryUid[] = $this->uidEncoder->decode($result['category.category_uid']['eq']);
 
                 $result[] = $this->getCategoriesQuery($categoryUid, $storeId);
