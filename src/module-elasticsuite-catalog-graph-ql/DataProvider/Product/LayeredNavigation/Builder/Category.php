@@ -169,6 +169,9 @@ class Category implements LayerBuilderInterface
 
         $result['has_more'] = false;
 
+        $attribute = $this->attributeRepository->get($this->attributeCode);
+        $result['frontend_input'] = $attribute->getFrontendInput();
+
         return ['category_id' => $result];
     }
 
