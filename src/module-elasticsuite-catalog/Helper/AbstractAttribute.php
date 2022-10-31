@@ -79,6 +79,11 @@ abstract class AbstractAttribute extends Mapping
     /**
      * @var array
      */
+    private $attributeFrontendCache = [];
+
+    /**
+     * @var array
+     */
     private $attributeMappers = [];
 
     /**
@@ -346,7 +351,8 @@ abstract class AbstractAttribute extends Mapping
     {
         if ($this->getFieldType($attributeId) == FieldInterface::FIELD_TYPE_BOOLEAN) {
             $value = boolval($value);
-        } elseif ($this->getBackendType($attributeId) == 'decimal') {
+        } elseif ($this->getBackendType($attributeId) == 'decimal'
+            || $this->getFrontendClass($attributeId) == 'validate-number') {
             $value = floatval($value);
         } elseif ($this->getBackendType($attributeId) == 'int') {
             $value = intval($value);
@@ -475,6 +481,23 @@ abstract class AbstractAttribute extends Mapping
         }
 
         return $this->attributeBackendCache[$attributeId];
+    }
+
+    /**
+     * Compute result of $attribute->getFrontendClass() into a local cache.
+     *
+     * @param int $attributeId Attribute ID
+     *
+     * @return string|null
+     */
+    private function getFrontendClass($attributeId)
+    {
+        if (!isset($this->attributeFrontendCache[$attributeId])) {
+            $attribute = $this->getAttributeById($attributeId);
+            $this->attributeFrontendCache[$attributeId] = $attribute->getFrontendClass();
+        }
+
+        return $this->attributeFrontendCache[$attributeId];
     }
 
     /**

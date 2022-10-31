@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Smile_ElasticsuiteCore dependency injection configuration.
+ * Smile_ElasticsuiteIndices dependency injection configuration.
  *
  * DISCLAIMER
  *
@@ -9,8 +9,8 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
- * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
  * @copyright 2022 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
@@ -21,8 +21,8 @@
     <type name="Magento\Framework\Notification\MessageList">
         <arguments>
             <argument name="messages" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\NotificationAboutVersions</item>
-                <item name="elasticsuite_cluster_replicas_misconfig_warning" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\WarningAboutClusterReplicasMisconfig</item>
+                <item name="elasticsuite_cluster_shards_misconfig_warning" xsi:type="string">Smile\ElasticsuiteIndices\Model\System\Message\WarningAboutClusterShardsMisconfig</item>
+                <item name="elasticsuite_cluster_ghost_indices_warning" xsi:type="string">Smile\ElasticsuiteIndices\Model\System\Message\WarningAboutClusterGhostIndices</item>
             </argument>
         </arguments>
     </type>

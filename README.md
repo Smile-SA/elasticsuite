@@ -8,6 +8,12 @@
 
 ## News
 
+### 🎉 Hyvä compatibility
+
+Elasticsuite is compatible with Hyvä theme. Please checkout [their blog article](https://hyva.io/blog/news/elasticsuite-hyva-partnership.html) to find out more about that.
+
+If you want to use Elasticsuite with Hyvä theme, you'll need to install the [compatibility module](https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-smile-elasticsuite/)
+
 ### ⚠️ Magento versions compatibility :
 
 Due to several changes in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
@@ -25,10 +31,11 @@ Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ``
 Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
 Magento **<2.3.2** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.4** : ```composer require smile/elasticsuite 2.8.4``` | 5.x & 6.x | No
 Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
-Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | **Yes**
+Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | No
 Magento **2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | No
 Magento **>=2.4.1** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
-Magento **>=2.4.4** Opensource (CE) / Commerce (EE)   |ElasticSuite **>=2.10.10** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x **and OpenSearch** | **Yes**
+Magento **>=2.4.4** Opensource (CE) / Commerce (EE)   |ElasticSuite **>=2.10.10** : ```composer require smile/elasticsuite ~2.10.10``` | 6.x & 7.x **and OpenSearch** | **Yes**
+Magento **>=2.4.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **>=2.10.12** : ```composer require smile/elasticsuite ~2.10.12``` | 6.x & 7.x **and OpenSearch** | **Yes**
 
 ### Magento2 B2B Compatibility
 

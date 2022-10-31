@@ -287,7 +287,8 @@ class QueryBuilder
         $field    = $this->attributeList->getField($attributeName);
         $analyzer = FieldInterface::ANALYZER_UNTOUCHED;
 
-        if ($productCondition->getInputType() === "string" && !in_array($productCondition->getOperator(), ['()', '!()'])) {
+        // "sku" can support both "contains" : will use the default search analyzer, and "is one of" that will use the untouched.
+        if (in_array($productCondition->getInputType(), ["string", "sku"]) && !in_array($productCondition->getOperator(), ['()', '!()'])) {
             $analyzer = $field->getDefaultSearchAnalyzer();
         }
 
