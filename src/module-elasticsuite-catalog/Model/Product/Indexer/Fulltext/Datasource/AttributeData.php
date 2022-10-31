@@ -235,6 +235,8 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Append SKU of children product to the parent product index data.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param array $parentData Parent product data.
      * @param array $relation   Relation data between the child and the parent.
      */
