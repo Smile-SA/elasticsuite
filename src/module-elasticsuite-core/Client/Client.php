@@ -67,6 +67,14 @@ class Client implements ClientInterface
     /**
      * {@inheritDoc}
      */
+    public function nodes()
+    {
+        return $this->getEsClient()->nodes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function ping()
     {
         return $this->getEsClient()->ping();

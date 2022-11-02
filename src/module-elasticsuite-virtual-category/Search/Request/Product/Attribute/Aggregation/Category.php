@@ -17,6 +17,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\AggregationInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Catalog\Model\CategoryFactory;
+use Magento\Catalog\Model\Config\LayerCategoryConfig;
 
 /**
  * Category Aggregation Builder
@@ -53,6 +54,11 @@ class Category implements AggregationInterface
     private $virtualCategoryRoot;
 
     /**
+     * @var \Magento\Catalog\Model\Config\LayerCategoryConfig
+     */
+    private $layerCategoryConfig;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface           $contextInterface    Search Context
@@ -60,19 +66,22 @@ class Category implements AggregationInterface
      * @param \Magento\Store\Model\StoreManagerInterface                    $storeManager        Store Manager
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface              $categoryRepository  Category Repository
      * @param \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot Virtual Category Root
+     * @param \Magento\Catalog\Model\Config\LayerCategoryConfig             $layerCategoryConfig Layer config for category
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $contextInterface,
         \Smile\ElasticsuiteVirtualCategory\Helper\Rule $helper,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
-        \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot
+        \Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root $virtualCategoryRoot,
+        \Magento\Catalog\Model\Config\LayerCategoryConfig $layerCategoryConfig
     ) {
         $this->helper             = $helper;
         $this->context            = $contextInterface;
         $this->storeManager       = $storeManager;
         $this->categoryRepository = $categoryRepository;
         $this->virtualCategoryRoot = $virtualCategoryRoot;
+        $this->layerCategoryConfig = $layerCategoryConfig;
     }
 
     /**
@@ -81,9 +90,13 @@ class Category implements AggregationInterface
     public function getAggregationData(\Magento\Catalog\Model\ResourceModel\Eav\Attribute $attribute)
     {
         $bucketConfig = [];
-        $facetQueries = $this->getFacetQueries();
-        if (!empty($facetQueries)) {
-            $bucketConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => 'categories', 'queries' => $facetQueries];
+
+        // Do not compute the fetching of sub-queries by child category if the category filter is not meant to be displayed.
+        if ($this->layerCategoryConfig->isCategoryFilterVisibleInLayerNavigation() === true) {
+            $facetQueries = $this->getFacetQueries();
+            if (!empty($facetQueries)) {
+                $bucketConfig = ['type' => BucketInterface::TYPE_QUERY_GROUP, 'name' => 'categories', 'queries' => $facetQueries];
+            }
         }
 
         return $bucketConfig;

@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products;
 
 use Magento\Catalog\Api\CategoryRepositoryInterfaceFactory;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Framework\GraphQl\Query\Uid;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
@@ -24,6 +25,8 @@ use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class ContextUpdater
 {
@@ -42,25 +45,34 @@ class ContextUpdater
      */
     private $categoryRepositoryFactory;
 
+    /** @var Uid */
+    private $uidEncoder;
+
     /**
      * @param ContextInterface                   $context                   Elasticsuite Context
      * @param QueryFactory                       $queryFactory              Query Factory
      * @param CategoryRepositoryInterfaceFactory $categoryRepositoryFactory Category Repository Factory
+     * @param Uid                                $uidEncoder                Encoder Uid
      */
     public function __construct(
         ContextInterface $context,
         QueryFactory $queryFactory,
-        CategoryRepositoryInterfaceFactory $categoryRepositoryFactory
+        CategoryRepositoryInterfaceFactory $categoryRepositoryFactory,
+        Uid $uidEncoder
     ) {
         $this->context                   = $context;
         $this->queryFactory              = $queryFactory;
         $this->categoryRepositoryFactory = $categoryRepositoryFactory;
+        $this->uidEncoder                = $uidEncoder;
     }
 
     /**
      * Update search context according to current search.
      *
      * @param array $args GraphQL request arguments.
+     *
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function updateSearchContext($args)
     {
@@ -72,12 +84,17 @@ class ContextUpdater
             }
 
             $this->context->setCurrentSearchQuery($query);
-        } elseif (!empty($args['filter']) && !empty($args['filter']['category_id'])) {
-            if (isset($args['filter']['category_id']['eq'])) {
+        } elseif (!empty($args['filter']) && (!empty($args['filter']['category_id']) || !empty($args['filter']['category_uid']))) {
+            if (isset($args['filter']['category_uid'])) {
+                $categoryUid = $this->uidEncoder->decode($args['filter']['category_uid']['eq']);
+            }
+            $categoryId = $args['filter']['category_id']['eq'] ?? $categoryUid ?? false;
+
+            if ($categoryId) {
                 try {
                     /** @var CategoryRepositoryInterface $categoryRepository */
                     $categoryRepository = $this->categoryRepositoryFactory->create();
-                    $category           = $categoryRepository->get($args['filter']['category_id']['eq']);
+                    $category           = $categoryRepository->get($categoryId);
                     if ($category->getId()) {
                         $this->context->setCurrentCategory($category);
                     }

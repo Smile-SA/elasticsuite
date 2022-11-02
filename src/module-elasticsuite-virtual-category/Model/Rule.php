@@ -156,7 +156,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $excludedCategories[] = $category->getId();
 
             if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
-                $query = $this->getVirtualCategoryQuery($category, $excludedCategories, $category->getData('virtual_category_root'));
+                $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
             } elseif ($category->getId() && $category->getIsActive()) {
                 $query = $this->getStandardCategoryQuery($category, $excludedCategories);
             }
@@ -331,27 +331,25 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Transform the virtual category into a QueryInterface used for filtering.
      *
-     * @param CategoryInterface $category            Virtual category.
-     * @param array             $excludedCategories  Category already used into the building stack. Avoid short circuit.
-     * @param int|null          $virtualCategoryRoot Category root for Virtual Category.
+     * @param CategoryInterface $category           Virtual category.
+     * @param array             $excludedCategories Category already used into the building stack. Avoid short circuit.
      *
      * @return QueryInterface
      */
     private function getVirtualCategoryQuery(
         CategoryInterface $category,
-        $excludedCategories = [],
-        $virtualCategoryRoot = null
+        $excludedCategories = []
     ): ?QueryInterface {
-        $query          = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories, $virtualCategoryRoot);
-        $parentCategory = $this->getVirtualRootCategory($category);
+        $query        = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
+        $rootCategory = $this->getVirtualRootCategory($category);
 
-        if ($parentCategory && in_array($parentCategory->getId(), $excludedCategories)) {
+        if ($rootCategory && in_array($rootCategory->getId(), $excludedCategories)) {
             $query = null;
         }
-        if ($parentCategory && $parentCategory->getId()) {
-            $parentQuery = $this->getCategorySearchQuery($parentCategory, $excludedCategories);
-            if ($parentQuery) {
-                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => [$query, $parentQuery]]);
+        if ($rootCategory && $rootCategory->getId()) {
+            $rootQuery = $this->getCategorySearchQuery($rootCategory, $excludedCategories);
+            if ($rootQuery) {
+                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => [$query, $rootQuery]]);
             }
         }
 
