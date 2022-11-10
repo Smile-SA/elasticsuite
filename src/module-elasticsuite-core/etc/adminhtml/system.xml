@@ -71,6 +71,11 @@
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
                 </field>
+                <field id="timeout" translate="label comment" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Read Timeout</label>
+                    <comment>In seconds.</comment>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
             </group>
 
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
