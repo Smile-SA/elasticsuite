@@ -15,6 +15,8 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Eav\Model\Config;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\EntityManager\MetadataPool;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
@@ -48,12 +50,20 @@ class AttributeData extends AbstractAttributeData
     private $productEmulators = [];
 
     /**
+     * Eav config
+     *
+     * @var Config
+     */
+    private $eavConfig;
+
+    /**
      * Constructor.
      *
      * @param ResourceConnection    $resource           Database adpater.
      * @param StoreManagerInterface $storeManager       Store manager.
      * @param MetadataPool          $metadataPool       Metadata Pool.
      * @param ProductType           $catalogProductType Product type.
+     * @param Config                $eavConfig          Eav config.
      * @param string                $entityType         Product entity type.
      */
     public function __construct(
@@ -61,10 +71,12 @@ class AttributeData extends AbstractAttributeData
         StoreManagerInterface $storeManager,
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
+        Config $eavConfig,
         $entityType = ProductInterface::class
     ) {
         parent::__construct($resource, $storeManager, $metadataPool, $entityType);
         $this->catalogProductType = $catalogProductType;
+        $this->eavConfig = $eavConfig;
     }
 
     /**
@@ -129,8 +141,12 @@ class AttributeData extends AbstractAttributeData
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection
     ) {
         $attributeCollection = parent::addIndexedFilterToAttributeCollection($attributeCollection);
+        $entityTypeId = $this->eavConfig->getEntityType(Product::ENTITY)->getId();
 
-        $attributeCollection->getSelect()->orWhere("attribute_code IN ('status', 'sku')");
+        $attributeCollection->getSelect()->orWhere(
+            "attribute_code IN ('status', 'sku') AND main_table.entity_type_id=?",
+            $entityTypeId
+        );
 
         return $attributeCollection;
     }
