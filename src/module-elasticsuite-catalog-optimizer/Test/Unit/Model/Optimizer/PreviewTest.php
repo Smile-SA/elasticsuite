@@ -23,7 +23,7 @@ use Magento\Search\Model\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
 

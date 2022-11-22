@@ -24,6 +24,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @deprecated : Replaced by a mechanism loading optimizers functions instead of collection.
  */
 class Only implements ProviderInterface
 {
