@@ -45,8 +45,7 @@
         "magento/module-inventory-sales": ">=1.1.0",
         "magento/module-inventory-indexer": ">=2.0.0",
         "magento/magento-composer-installer": "*",
-        "elasticsearch/elasticsearch": "~6.7|~7.2",
-        "smile/magento2-smilelab-phpcs": "^2.0"
+        "elasticsearch/elasticsearch": "~6.7|~7.2"
     },
     "replace": {
         "smile/module-elasticsuite-core": "self.version",

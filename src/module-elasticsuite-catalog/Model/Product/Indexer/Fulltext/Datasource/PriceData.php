@@ -68,6 +68,9 @@ class PriceData implements DatasourceInterface
         $productIds = array_keys($indexData);
         $priceData = $this->resourceModel->loadPriceData($storeId, $productIds);
 
+        $allChildrenIds = $this->attributeResourceModel->loadChildrens($productIds, $storeId);
+        $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
+
         foreach ($priceData as $priceDataRow) {
             $productId     = (int) $priceDataRow['entity_id'];
             $productTypeId = $indexData[$productId]['type_id'];
@@ -80,8 +83,6 @@ class PriceData implements DatasourceInterface
             if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
                 $isDiscount = false;
                 $priceModifier = $this->getPriceDataReader('default');
-                $allChildrenIds = $this->attributeResourceModel->loadChildrens([$productId], $storeId);
-                $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
                 foreach ($childPriceData as $childPrice) {
                     if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
                         if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
