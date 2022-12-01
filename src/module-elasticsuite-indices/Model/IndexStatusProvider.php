@@ -198,7 +198,7 @@ class IndexStatusProvider
 
         try {
             // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
-            $indexName = str_replace($alias, '', $indexName);
+            $indexName = str_replace($alias ?? '', '', $indexName);
             $date      = substr(preg_replace('/[^0-9]/', '', $indexName), -$count);
 
             // Tracking indices are built monthly and does not fit with standard pattern containing datetime with hours.
