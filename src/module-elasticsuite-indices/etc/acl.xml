@@ -23,6 +23,7 @@
                     <resource id="Smile_ElasticsuiteIndices::system" title="System">
                         <resource id="Smile_ElasticsuiteIndices::manage" title="Manage Indexes Status" />
                         <resource id="Smile_ElasticsuiteIndices::remove" title="Deleting index" />
+                        <resource id="Smile_ElasticsuiteIndices::analysis" title="Analysis" />
                     </resource>
                 </resource>
             </resource>
