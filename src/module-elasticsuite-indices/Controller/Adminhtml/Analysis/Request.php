@@ -78,14 +78,16 @@ class Request extends Action
 
             $result = $this->resultJsonFactory->create();
             $result->setData(['success' => false, 'output' => $errors]);
-        } else {
-            $postData = $this->getRequest()->getPostValue();
-            unset($postData['form_key']);
-            $responseData = $this->getAnalyzeRequest($postData);
 
-            $result = $this->resultJsonFactory->create();
-            $result->setData(['success' => true, 'output' => $responseData]);
+            return $result;
         }
+
+        $postData = $this->getRequest()->getPostValue();
+        unset($postData['form_key']);
+        $responseData = $this->getAnalyzeRequest($postData);
+
+        $result = $this->resultJsonFactory->create();
+        $result->setData(['success' => true, 'output' => $responseData]);
 
         return $result;
     }
