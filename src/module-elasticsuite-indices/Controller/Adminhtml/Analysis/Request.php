@@ -63,9 +63,9 @@ class Request extends Action
     {
         $errors = [];
 
-        if ($_POST['index'] == '0') {
+        if ($this->getRequest()->getPost('index', null) == '0') {
             $errors['index'] = __('Index not selected!');
-        } elseif ($_POST['analyzer'] == '0') {
+        } elseif ($this->getRequest()->getPost('analyzer', null) == '0') {
             $errors['analyzer'] = __('Analyzer not selected!');
         }
 

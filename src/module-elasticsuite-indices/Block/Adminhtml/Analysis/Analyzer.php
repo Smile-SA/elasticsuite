@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteIndices\Block\Adminhtml\Analysis;
 
 use Exception;
 use Magento\Backend\Block\Template;
+use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexSettings\CollectionFactory as IndexSettingsFactory;
 
@@ -27,10 +28,6 @@ use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexSettings\CollectionFactor
  */
 class Analyzer extends Template
 {
-    public const GHOST_STATUS = 'ghost';
-    public const EXTERNAL_STATUS = 'external';
-    public const UNDEFINED_STATUS = 'undefined';
-
     /**
      * @var IndexStatsProvider
      */
@@ -72,9 +69,9 @@ class Analyzer extends Template
         if ($this->indexStatsProvider->getElasticSuiteIndices() !== null) {
             $elasticSuiteIndices = $this->indexStatsProvider->getElasticSuiteIndices();
             $excludedIndexStatus = [
-                self::GHOST_STATUS,
-                self::EXTERNAL_STATUS,
-                self::UNDEFINED_STATUS
+                IndexStatus::GHOST_STATUS,
+                IndexStatus::EXTERNAL_STATUS,
+                IndexStatus::UNDEFINED_STATUS
             ];
             $indices = [];
 
