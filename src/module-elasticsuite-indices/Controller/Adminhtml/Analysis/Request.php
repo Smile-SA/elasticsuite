@@ -16,7 +16,10 @@ namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Analysis;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\ResponseInterface;
+use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\ResultInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
 /**
@@ -39,17 +42,16 @@ class Request extends Action
     private $client;
 
     /**
-     * @param ClientInterface $client
-     * @param JsonFactory     $resultJsonFactory
-     * @param Context         $context
+     * @param ClientInterface $client            ES client.
+     * @param JsonFactory     $resultJsonFactory Result Json Factory.
+     * @param Context         $context           Context.
      *
      */
     public function __construct(
         ClientInterface $client,
         JsonFactory $resultJsonFactory,
         Context $context
-    )
-    {
+    ) {
         $this->client = $client;
         $this->resultJsonFactory = $resultJsonFactory;
 
@@ -58,6 +60,8 @@ class Request extends Action
 
     /**
      * @inheritDoc
+     *
+     * @return ResponseInterface|Json|ResultInterface
      */
     public function execute()
     {
@@ -97,9 +101,11 @@ class Request extends Action
     {
         return $this->client->analyze(
             [
-                'index' => $params['index'], 'body' => [
-                    'text' => $params['text'], 'analyzer' => $params['analyzer']
-                ]
+                'index' => $params['index'],
+                'body' => [
+                    'text' => $params['text'],
+                    'analyzer' => $params['analyzer'],
+                ],
             ]
         );
     }

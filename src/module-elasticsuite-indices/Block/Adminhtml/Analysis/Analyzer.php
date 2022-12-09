@@ -71,7 +71,7 @@ class Analyzer extends Template
             $excludedIndexStatus = [
                 IndexStatus::GHOST_STATUS,
                 IndexStatus::EXTERNAL_STATUS,
-                IndexStatus::UNDEFINED_STATUS
+                IndexStatus::UNDEFINED_STATUS,
             ];
             $indices = [];
 
@@ -84,7 +84,7 @@ class Analyzer extends Template
                     $indices[] = [
                         'index_name' => $indexData['index_name'],
                         'index_status' => $indexData['index_status'],
-                        'analyzers' => array_keys($indexCollection->getItems()["analysis"]["analyzer"])
+                        'analyzers' => array_keys($indexCollection->getItems()["analysis"]["analyzer"]),
                     ];
                 }
             }
