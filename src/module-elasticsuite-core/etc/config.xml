@@ -24,6 +24,7 @@
                 <connection_timeout>1</connection_timeout>
                 <timeout>30</timeout>
                 <max_parallel_handles>10</max_parallel_handles>
+                <retries>2</retries>
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>

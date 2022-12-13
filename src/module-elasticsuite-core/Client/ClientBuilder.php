@@ -46,6 +46,7 @@ class ClientBuilder
         'http_auth_encoded'     => false,
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
+        'retries'               => 2,
     ];
 
     /**
@@ -105,6 +106,10 @@ class ClientBuilder
         if (!empty($options['http_auth_user']) && !empty($options['http_auth_pwd']) && $options['http_auth_encoded']) {
             $authHeader = 'Basic ' . base64_encode($options['http_auth_user'] . ':' . $options['http_auth_pwd']);
             $clientBuilder->setConnectionParams(['client' => ['headers' => ['Authorization' => [$authHeader]]]]);
+        }
+
+        if (!empty($options['retries']) && is_int($options['retries']) && $options['retries'] > 0) {
+            $clientBuilder->setRetries($options['retries']);
         }
 
         if (null !== $this->selector) {
