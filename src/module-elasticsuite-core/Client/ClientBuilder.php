@@ -108,7 +108,7 @@ class ClientBuilder
             $clientBuilder->setConnectionParams(['client' => ['headers' => ['Authorization' => [$authHeader]]]]);
         }
 
-        if (!empty($options['retries']) && is_int($options['retries']) && $options['retries'] > 0) {
+        if (intval($options['num_retries']) > 0) {
             $clientBuilder->setRetries($options['retries']);
         }
 
