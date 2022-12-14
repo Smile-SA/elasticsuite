@@ -87,6 +87,13 @@ interface ClientConfigurationInterface
     public function getMaxParallelHandles();
 
     /**
+     * Get the maximum number of HTTP curl request retries the client will make
+     *
+     * @return int
+     */
+    public function getMaxRetries();
+
+    /**
      * Client config options.
      *
      * @return array
