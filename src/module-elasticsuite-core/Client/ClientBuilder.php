@@ -114,10 +114,7 @@ class ClientBuilder
         }
 
         if (null !== $this->selector) {
-            $selector = (count($hosts) > 1)
-                ? $this->selector
-                : StickyRoundRobinSelector::class;
-
+            $selector = (count($hosts) > 1) ? $this->selector : StickyRoundRobinSelector::class;
             $clientBuilder->setSelector($selector);
         }
 
@@ -163,8 +160,8 @@ class ClientBuilder
     /**
      * Return HTTP Authentication parameters used to connect to the cluster if any
      *
-     * @param $options
-     * @return array|array[]
+     * @param array $options Client options. See self::defaultOptions for available options.
+     * @return array
      */
     private function getConnectionParams($options)
     {
