@@ -71,9 +71,9 @@
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="retries" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Elasticsearch Client Number of Retries</label>
-                    <comment>Number of times to retry connection when there is a connection failure</comment>
+                <field id="max_retries" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Elasticsearch Client Maximum Number of Retries</label>
+                    <comment>Maximum number of times to retry connection when there is a connection failure</comment>
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>

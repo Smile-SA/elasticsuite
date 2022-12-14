@@ -125,9 +125,9 @@ class ClientConfiguration implements ClientConfigurationInterface
     /**
      * {@inheritdoc}
      */
-    public function getRetries()
+    public function getMaxRetries()
     {
-        return (int) $this->getElasticsearchClientConfigParam('retries');
+        return (int) $this->getElasticsearchClientConfigParam('max_retries');
     }
 
     /**
@@ -144,7 +144,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
-            'retries'               => $this->getRetries(),
+            'max_retries'           => $this->getMaxRetries(),
         ];
 
         return $options;
