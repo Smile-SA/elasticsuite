@@ -150,7 +150,7 @@
             <!--
                 Known issues with the "french" stemmer.
                  -->
-            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou"]</rules>
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo"]</rules>
         </filter>
         <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
