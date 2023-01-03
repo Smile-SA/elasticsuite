@@ -103,8 +103,6 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
                 []
             );
 
-        $this->joinStorePosition($select, $storeId, 1);
-
         $select->where('cpi.store_id = ?', (int) $storeId)
             ->where('cpi.product_id IN(?)', $productIds)
             ->columns([
@@ -175,8 +173,6 @@ class CategoryData extends \Smile\ElasticsuiteCatalog\Model\ResourceModel\Produc
                 'p.product_id = cpi.product_id AND p.category_id = cpi.category_id',
                 []
             );
-
-        $this->joinStorePosition($select, $storeId, 1);
 
         $select->where('p.product_id IN(?)', $productIds)
             ->where('cpi.product_id IS NULL')

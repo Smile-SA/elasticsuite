@@ -15,11 +15,11 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\Search\ResponseInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\ResultsBuilder;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
@@ -87,7 +87,7 @@ class Preview
      * @param OptimizerInterface              $optimizer             The optimizer to preview.
      * @param Preview\ItemFactory             $previewItemFactory    Preview item factory.
      * @param ApplierListFactory              $applier               Preview Applier
-     * @param Collection\ProviderFactory      $providerFactory       Optimizer Provider Factory
+     * @param Functions\ProviderFactory       $providerFactory       Optimizer Functions Provider Factory
      * @param ContainerConfigurationInterface $containerConfig       Container Configuration
      * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder
      * @param ContextInterface                $searchContext         Search Context.
@@ -99,7 +99,7 @@ class Preview
         OptimizerInterface $optimizer,
         Preview\ItemFactory $previewItemFactory,
         ApplierListFactory $applier,
-        Collection\ProviderFactory $providerFactory,
+        Functions\ProviderFactory $providerFactory,
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
         ContextInterface $searchContext,
@@ -285,6 +285,6 @@ class Preview
     {
         $provider = $this->providerFactory->create($providerType, ['optimizer' => $optimizer]);
 
-        return $this->applierListFactory->create(['collectionProvider' => $provider]);
+        return $this->applierListFactory->create(['functionsProvider' => $provider]);
     }
 }

@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticSuite________
+ * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -24,6 +24,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
+ * @deprecated : Replaced by a mechanism loading optimizers functions instead of collection.*
  */
 class Exclude implements ProviderInterface
 {

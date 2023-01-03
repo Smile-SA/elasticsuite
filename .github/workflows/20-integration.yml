@@ -54,6 +54,14 @@ jobs:
                     magento-versions: '2.4.5'
                     magento-editions: 'enterprise'
                     experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p1'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p1'
+                    magento-editions: 'enterprise'
+                    experimental: true                    
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -143,7 +151,6 @@ jobs:
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
                       composer-${{ matrix.php-versions }}-
-                      composer-
 
             - name: "[Init] Cache Sample data repo"
               id: sampledata-cache

@@ -38,5 +38,6 @@ fieldset.es-esfeature__logo legend span:first-child:after,                      
 }
 
 fieldset.es-esfeature__logo legend span:first-child:after { /* Legacy form fields */
-    top: 50%
+    top: 50%;
+    left: -40px;
 }
