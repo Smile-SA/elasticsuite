@@ -102,10 +102,12 @@ class DateRangeSwitcher extends \Magento\Backend\Block\Template
             \Smile\ElasticsuiteTracker\Api\EventIndexInterface::INDEX_IDENTIFIER,
             $this->reportContext->getStoreId()
         );
+
         if (!empty($dateBounds)) {
             list($minDate, $maxDate) = $dateBounds;
-            $config['minDate'] = $this->formatDate($minDate, \IntlDateFormatter::SHORT, false, 'UTC');
-            $config['maxDate'] = $this->formatDate($maxDate, \IntlDateFormatter::SHORT, false, 'UTC');
+            $today = $this->_localeDate->date(null, null, true, false);
+            $config['minDate'] = - (int) $this->_localeDate->date($minDate, null, true, false)->diff($today)->days;
+            $config['maxDate'] = + (int) $this->_localeDate->date($maxDate, null, true, false)->diff($today)->days;
         }
 
         return $this->jsonSerializer->serialize($config);
