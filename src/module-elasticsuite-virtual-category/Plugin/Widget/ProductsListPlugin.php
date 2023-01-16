@@ -20,8 +20,11 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Helper\Conditions;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Product\CollectionFactory;
 use \Smile\ElasticsuiteVirtualCategory\Model\Widget\SortOrder\SkuPosition\Builder as SkuPositionSortOrderBuilder;
+use Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 
 /**
  * Apply category filter on widget collection.
@@ -53,23 +56,39 @@ class ProductsListPlugin
     private $skuPositionSortOrderBuilder;
 
     /**
+     * @var Provider
+     */
+    private $filterProvider;
+
+    /**
+     * @var QueryFactory
+     */
+    private $queryFactory;
+
+    /**
      * ProductsListPlugin constructor.
      *
      * @param StoreManagerInterface       $storeManager                Store manager.
      * @param CategoryRepositoryInterface $categoryRepository          Category repository.
      * @param Conditions                  $conditionsHelper            Condition helper.
-     * @param SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder Sort order builder for sku_position
+     * @param SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder Sort order builder for sku_position.
+     * @param Provider                    $filterProvider              Filter provider.
+     * @param QueryFactory                $queryFactory                Query factory.
      */
     public function __construct(
         StoreManagerInterface $storeManager,
         CategoryRepositoryInterface $categoryRepository,
         Conditions $conditionsHelper,
-        SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder
+        SkuPositionSortOrderBuilder $skuPositionSortOrderBuilder,
+        Provider $filterProvider,
+        QueryFactory $queryFactory
     ) {
         $this->storeManager = $storeManager;
         $this->categoryRepository = $categoryRepository;
         $this->conditionsHelper = $conditionsHelper;
         $this->skuPositionSortOrderBuilder = $skuPositionSortOrderBuilder;
+        $this->filterProvider = $filterProvider;
+        $this->queryFactory = $queryFactory;
     }
 
     /**
@@ -136,15 +155,20 @@ class ProductsListPlugin
                 $conditions = $this->conditionsHelper->decode($conditions);
                 foreach ($conditions as $condition) {
                     if (!empty($condition['attribute'])) {
-                        if ($condition['attribute'] == 'category_ids') {
-                            if (array_key_exists('value', $condition)) {
-                                $categoryId = $condition['value'];
+                        if ($condition['attribute'] == 'category_ids' && array_key_exists('value', $condition)) {
+                            $filterQueries = [];
+                            $categoryIds = array_map("trim", explode(',', (string) $condition['value']));
+                            foreach ($categoryIds as $categoryId) {
                                 try {
                                     $category = $this->categoryRepository->get($categoryId, $storeId);
-                                    $collection->addCategoryFilter($category);
+                                    $filterQueries[] = $this->filterProvider->getQueryFilter($category);
                                 } catch (NoSuchEntityException $exception) {
-                                    $category = null;
+                                    continue;
                                 }
+                            }
+                            if (!empty($filterQueries)) {
+                                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $filterQueries]);
+                                $collection->addQueryFilter($query);
                             }
                         }
                     }
