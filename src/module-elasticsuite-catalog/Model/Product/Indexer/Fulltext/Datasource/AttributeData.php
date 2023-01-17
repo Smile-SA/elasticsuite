@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData as ResourceModel;
@@ -33,6 +35,16 @@ use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
  */
 class AttributeData extends AbstractAttributeData implements DatasourceInterface, DynamicFieldProviderInterface
 {
+    /** @var string */
+    private const XML_PATH_INDEX_CHILD_PRODUCT_SKU = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/index_child_product_sku';
+
+    /**
+     * Scope configuration
+     *
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
     /**
      * @var array
      */
@@ -41,13 +53,15 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Constructor
      *
-     * @param ResourceModel   $resourceModel               Resource model.
-     * @param FieldFactory    $fieldFactory                Mapping field factory.
-     * @param AttributeHelper $attributeHelper             Attribute helper.
-     * @param array           $indexedBackendModels        List of indexed backend models added to the default list.
-     * @param array           $forbiddenChildrenAttributes List of the forbidden children attributes.
+     * @param ScopeConfigInterface $scopeConfig                 Scope Config.
+     * @param ResourceModel        $resourceModel               Resource model.
+     * @param FieldFactory         $fieldFactory                Mapping field factory.
+     * @param AttributeHelper      $attributeHelper             Attribute helper.
+     * @param array                $indexedBackendModels        List of indexed backend models added to the default list.
+     * @param array                $forbiddenChildrenAttributes List of the forbidden children attributes.
      */
     public function __construct(
+        ScopeConfigInterface $scopeConfig,
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         AttributeHelper $attributeHelper,
@@ -56,6 +70,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     ) {
         parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
+        $this->scopeConfig = $scopeConfig;
         $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
     }
 
@@ -220,6 +235,8 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Append SKU of children product to the parent product index data.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param array $parentData Parent product data.
      * @param array $relation   Relation data between the child and the parent.
      */
@@ -229,8 +246,13 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             $parentData['sku'] = [$parentData['sku']];
         }
 
-        $parentData['sku'][] = $relation['sku'];
-        $parentData['sku'] = array_unique($parentData['sku']);
+        if (!$this->isIndexChildProductSkuEnabled()) {
+            $parentData['sku'][] = $relation['sku'];
+            $parentData['sku'] = array_unique($parentData['sku']);
+        } else {
+            $parentData['children_skus'][] = $relation['sku'];
+            $parentData['children_skus'] = array_unique($parentData['children_skus']);
+        }
     }
 
     /**
@@ -252,5 +274,18 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         ) {
             $productIndexData['indexed_attributes'][] = $attributeCode;
         }
+    }
+
+    /**
+     * Is indexing child product SKU in dedicated subfield enabled?
+     *
+     * @return bool
+     */
+    private function isIndexChildProductSkuEnabled(): bool
+    {
+        return (bool) $this->scopeConfig->getValue(
+            self::XML_PATH_INDEX_CHILD_PRODUCT_SKU,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 }
