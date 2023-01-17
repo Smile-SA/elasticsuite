@@ -84,9 +84,6 @@ class Spellchecker implements SpellcheckerInterface
         try {
             $cutoffFrequencyLimit = $this->getCutoffrequencyLimit($request);
             $termVectors          = $this->getTermVectors($request);
-            if (is_array($termVectors) && isset($termVectors['docs'])) {
-                $termVectors = current($termVectors['docs']);
-            }
             $queryTermStats       = $this->parseTermVectors($termVectors, $cutoffFrequencyLimit);
 
             if ($queryTermStats['total'] == $queryTermStats['stop']) {
@@ -143,20 +140,34 @@ class Spellchecker implements SpellcheckerInterface
      */
     private function getTermVectors(RequestInterface $request)
     {
-        $mtermVectorsQuery['body'] = [
-            'docs' => [
-                [
-                    '_index'          => $request->getIndex(),
-                    '_type'           => '_doc',
-                    'term_statistics' => true,
-                    'fields'          => [
-                        MappingInterface::DEFAULT_SPELLING_FIELD,
-                        MappingInterface::DEFAULT_SPELLING_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
-                    ],
-                    'doc'             => [MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText()],
-                ],
+        $stats  = $this->client->indexStats($request->getIndex());
+        // Get number of shards.
+        $shards = (int) ($stats['_shards']['successful'] ?? 1);
+
+        $doc = [
+            '_index'          => $request->getIndex(),
+            '_type'           => '_doc',
+            'term_statistics' => true,
+            'fields'          => [
+                MappingInterface::DEFAULT_SPELLING_FIELD,
+                MappingInterface::DEFAULT_SPELLING_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
+                MappingInterface::DEFAULT_SEARCH_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
+            ],
+            'doc'             => [
+                MappingInterface::DEFAULT_SEARCH_FIELD   => $request->getQueryText(),
+                MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText(),
             ],
         ];
+
+        $docs = [];
+
+        // Compute the mtermvector query on all shards to ensure exhaustive results.
+        foreach (range(0, $shards - 1) as $shard) {
+            $doc['routing'] = sprintf("[%s][%s]", $request->getIndex(), $shard);
+            $docs[] = $doc;
+        }
+
+        $mtermVectorsQuery['body'] = ['docs' => $docs];
 
         return $this->client->mtermvectors($mtermVectorsQuery);
     }
@@ -178,7 +189,7 @@ class Spellchecker implements SpellcheckerInterface
     private function parseTermVectors($termVectors, $cutoffFrequencyLimit)
     {
         $queryTermStats = ['stop' => 0, 'exact' => 0, 'standard' => 0, 'missing' => 0];
-        $statByPosition = $this->extractTermStatsByPoisition($termVectors);
+        $statByPosition = $this->extractTermStatsByPosition($termVectors);
 
         foreach ($statByPosition as $positionStat) {
             $type = 'missing';
@@ -202,39 +213,45 @@ class Spellchecker implements SpellcheckerInterface
      * Extract term stats by position from a term vectors query response.
      * Wil return an array of doc_freq, analayzers and term by position.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param array $termVectors The term vector query response.
      *
      * @return array
      */
-    private function extractTermStatsByPoisition($termVectors)
+    private function extractTermStatsByPosition($termVectors)
     {
         $statByPosition = [];
         $analyzers      = [FieldInterface::ANALYZER_STANDARD, FieldInterface::ANALYZER_WHITESPACE];
 
-        foreach ($termVectors['term_vectors'] as $propertyName => $fieldData) {
-            $analyzer = $this->getAnalyzer($propertyName);
-            if (in_array($analyzer, $analyzers)) {
-                foreach ($fieldData['terms'] as $term => $termStats) {
-                    foreach ($termStats['tokens'] as $token) {
-                        $positionKey = $token['position'];
+        if (is_array($termVectors) && isset($termVectors['docs'])) {
+            foreach ($termVectors['docs'] as $termVector) {
+                foreach ($termVector['term_vectors'] as $propertyName => $fieldData) {
+                    $analyzer = $this->getAnalyzer($propertyName);
+                    if (in_array($analyzer, $analyzers)) {
+                        foreach ($fieldData['terms'] as $term => $termStats) {
+                            foreach ($termStats['tokens'] as $token) {
+                                $positionKey = $token['position'];
 
-                        if (!isset($termStats['doc_freq'])) {
-                            $termStats['doc_freq'] = 0;
+                                if (!isset($termStats['doc_freq'])) {
+                                    $termStats['doc_freq'] = 0;
+                                }
+
+                                if (!isset($statByPosition[$positionKey])) {
+                                    $statByPosition[$positionKey]['term']     = $term;
+                                    $statByPosition[$positionKey]['doc_freq'] = $termStats['doc_freq'];
+                                }
+
+                                if ($termStats['doc_freq']) {
+                                    $statByPosition[$positionKey]['analyzers'][] = $analyzer;
+                                }
+
+                                $statByPosition[$positionKey]['doc_freq'] = max(
+                                    $termStats['doc_freq'],
+                                    $statByPosition[$positionKey]['doc_freq']
+                                );
+                            }
                         }
-
-                        if (!isset($statByPosition[$positionKey])) {
-                            $statByPosition[$positionKey]['term']     = $term;
-                            $statByPosition[$positionKey]['doc_freq'] = $termStats['doc_freq'];
-                        }
-
-                        if ($termStats['doc_freq']) {
-                            $statByPosition[$positionKey]['analyzers'][] = $analyzer;
-                        }
-
-                        $statByPosition[$positionKey]['doc_freq'] = max(
-                            $termStats['doc_freq'],
-                            $statByPosition[$positionKey]['doc_freq']
-                        );
                     }
                 }
             }
