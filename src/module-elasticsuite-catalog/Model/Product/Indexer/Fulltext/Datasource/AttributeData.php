@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute as AttributeHelper;
 use Smile\ElasticsuiteCatalog\Model\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
@@ -53,20 +54,20 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Constructor
      *
-     * @param ScopeConfigInterface $scopeConfig                 Scope Config.
      * @param ResourceModel        $resourceModel               Resource model.
      * @param FieldFactory         $fieldFactory                Mapping field factory.
      * @param AttributeHelper      $attributeHelper             Attribute helper.
      * @param array                $indexedBackendModels        List of indexed backend models added to the default list.
      * @param array                $forbiddenChildrenAttributes List of the forbidden children attributes.
+     * @param ScopeConfigInterface $scopeConfig                 Scope Config.
      */
     public function __construct(
-        ScopeConfigInterface $scopeConfig,
         ResourceModel $resourceModel,
         FieldFactory $fieldFactory,
         AttributeHelper $attributeHelper,
         array $indexedBackendModels = [],
-        array $forbiddenChildrenAttributes = []
+        array $forbiddenChildrenAttributes = [],
+        ScopeConfigInterface $scopeConfig = null
     ) {
         parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
@@ -283,9 +284,27 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     private function isIndexChildProductSkuEnabled(): bool
     {
-        return (bool) $this->scopeConfig->getValue(
-            self::XML_PATH_INDEX_CHILD_PRODUCT_SKU,
-            ScopeInterface::SCOPE_STORE
-        );
+        if (!isset($this->isIndexingChildProductSkuEnabled)) {
+            $this->isIndexingChildProductSkuEnabled = (bool) $this->getScopeConfig()->getValue(
+                self::XML_PATH_INDEX_CHILD_PRODUCT_SKU,
+                ScopeInterface::SCOPE_STORE
+            );
+        }
+
+        return $this->isIndexingChildProductSkuEnabled;
+    }
+
+    /**
+     * Get Scope Config object. It can be null to allow BC.
+     *
+     * @return \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    private function getScopeConfig() : ScopeConfigInterface
+    {
+        if (null === $this->scopeConfig) {
+            $this->scopeConfig = ObjectManager::getInstance()->get(ScopeConfigInterface::class);
+        }
+
+        return $this->scopeConfig;
     }
 }
