@@ -53,7 +53,7 @@ define([
 
             this._createSlider();
             this._refreshDisplay();
-            this.element.find(this.options.applyButton).bind('click', this._applyRange.bind(this));
+            this.element.find(this.options.applyButton).on('click', this._applyRange.bind(this));
         },
 
         _initSliderValues: function () {
