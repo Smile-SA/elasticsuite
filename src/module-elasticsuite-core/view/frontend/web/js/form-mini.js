@@ -491,7 +491,7 @@ define([
                         this.element.trigger('focus');
                     }
                     this.autoComplete.hide();
-                    $('#search').blur();
+                    $('#search').trigger('blur');
                     this._updateAriaHasPopup(false);
                 }, this),250);
             }, this));
