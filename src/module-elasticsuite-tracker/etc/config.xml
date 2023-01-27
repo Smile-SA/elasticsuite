@@ -35,7 +35,7 @@
         </smile_elasticsuite_tracker>
         <smile_elasticsuite_telemetry>
             <telemetry>
-                <enabled>1</enabled>
+                <enabled>0</enabled>
                 <url>https://t.elasticsuite.io/track</url>
             </telemetry>
         </smile_elasticsuite_telemetry>

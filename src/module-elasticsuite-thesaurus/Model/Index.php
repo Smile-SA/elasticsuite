@@ -21,7 +21,6 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
-use Smile\ElasticsuiteThesaurus\Helper\Combinatorics;
 
 /**
  * Thesaurus index.
@@ -74,20 +73,17 @@ class Index
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
-     * @param Combinatorics          $combinatorics          Helper to generate query combinations.
      */
     public function __construct(
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
-        ThesaurusConfigFactory $thesaurusConfigFactory,
-        Combinatorics $combinatorics = null
+        ThesaurusConfigFactory $thesaurusConfigFactory
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
-        $this->combinatorics          = $combinatorics ?? \Magento\Framework\App\ObjectManager::getInstance()->get(Combinatorics::class);
     }
 
     /**
@@ -137,13 +133,15 @@ class Index
         }
 
         if ($config->isExpansionSearchEnabled()) {
-            $synonymRewrites = array_merge([$queryText => $originalBoost], $rewrites);
+            // Use + instead of array_merge because $queryText can be purely numeric and would be casted to 0 by array_merge.
+            $synonymRewrites = [(string) $queryText => $originalBoost] + $rewrites;
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
                 $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
-                $rewrites          = array_merge($rewrites, $expansionRewrites);
+                // Use + instead of array_merge because keys can be purely numeric and would be casted to 0 by array_merge.
+                $rewrites          = $rewrites + $expansionRewrites;
             }
         }
 
@@ -219,14 +217,14 @@ class Index
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
         $indexName          = $this->getIndexAlias($storeId);
-        $analyzedQueries    = $this->getQueryCombinations($queryText);
+        $analyzedQueries    = $this->getQueryCombinations($storeId, $queryText);
         $synonymByPositions = [];
         $synonyms           = [];
 
         foreach ($analyzedQueries as $query) {
             try {
                 $analysis = $this->client->analyze(
-                    ['index' => $indexName, 'body' => ['text' => $query, 'analyzer' => $type]]
+                    ['index' => $indexName, 'body' => ['text' => (string) $query, 'analyzer' => $type]]
                 );
             } catch (\Exception $e) {
                 $analysis = ['tokens' => []];
@@ -239,11 +237,8 @@ class Index
                     $synonymByPositions[$positionKey][] = $token;
                 }
             }
-
-            $synonyms = array_merge(
-                $synonyms,
-                $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites)
-            );
+            // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
+            $synonyms = $synonyms + $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites);
         }
 
         return $synonyms;
@@ -255,39 +250,38 @@ class Index
      * This allow to find synonyms for couple of words that are "inside" the complete query.
      * Multi-words synonyms are indexed with "_" as separator.
      *
+     * @param int    $storeId   The store id
      * @param string $queryText The base query text
      *
      * @return array
      */
-    private function getQueryCombinations($queryText)
+    private function getQueryCombinations($storeId, $queryText)
     {
-        // Get all the space character positions in the queryText.
-        $spacesPosition = [];
-        $offset         = 0;
-        while (($pos = mb_strpos($queryText, ' ', $offset)) !== false) {
-            $offset           = $pos + 1;
-            $spacesPosition[] = $pos;
+        if (str_word_count($queryText) < 2) {
+            return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
-        // Get all possible combinations of spaces to be replaced.
-        $spacesCombinations = [];
-        $spacesCount        = count($spacesPosition);
-        for ($cpt = 1; $cpt <= $spacesCount; $cpt++) {
-            foreach ($this->combinatorics->combinations($spacesPosition, $cpt) as $combination) {
-                $spacesCombinations[] = $combination;
-            }
+        // Generate the shingles.
+        // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
+        // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
+        $indexName = $this->getIndexAlias($storeId);
+        try {
+            $analysis = $this->client->analyze(
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
         }
 
-        // Create all variations of the query by replacing spaces by '_'.
+        // Get all variations of the query text by injecting the shingles inside.
+        // $tokens = ['long sleeve dress', 'long_sleeve dress', 'long sleeve_dress'];.
         $queries[] = $queryText;
-        foreach ($spacesCombinations as $combination) {
-            $query = $queryText;
-            foreach ($combination as $spaceOffset) {
-                $query[$spaceOffset] = '_';
-            }
-            $queries[] = $query;
+        foreach ($analysis['tokens'] ?? [] as $token) {
+            $startOffset        = $token['start_offset'];
+            $length             = $token['end_offset'] - $token['start_offset'];
+            $rewrittenQueryText = $this->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
+            $queries[]          = $rewrittenQueryText;
         }
-
         $queries = array_unique($queries);
 
         return $queries;

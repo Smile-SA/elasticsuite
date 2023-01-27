@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Plugin\Search;
 
+use Magento\Framework\GraphQl\Query\Uid;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
@@ -26,6 +27,8 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.LongVariable)
  */
 class RequestMapperPlugin
 {
@@ -52,21 +55,27 @@ class RequestMapperPlugin
      */
     private $queryFactory;
 
+    /** @var Uid */
+    private $uidEncoder;
+
     /**
      * Constructor.
      *
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface                  $categoryRepository Category repository.
      * @param \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider     Category Filter provider.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory         $queryFactory       Query Factory.
+     * @param Uid                                                               $uidEncoder         Encoder Uid.
      */
     public function __construct(
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
         \Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider $filterProvider,
-        QueryFactory $queryFactory
+        QueryFactory $queryFactory,
+        Uid $uidEncoder
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->queryFactory       = $queryFactory;
         $this->filterProvider     = $filterProvider;
+        $this->uidEncoder         = $uidEncoder;
     }
 
     /**
@@ -80,6 +89,7 @@ class RequestMapperPlugin
      * @param SearchCriteriaInterface         $searchCriteria         Search criteria.
      *
      * @return array[]
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException
      */
     public function afterGetFilters(
         RequestMapper $subject,
@@ -87,11 +97,24 @@ class RequestMapperPlugin
         ContainerConfigurationInterface $containerConfiguration,
         SearchCriteriaInterface $searchCriteria
     ) {
-        if ($this->isEnabled($containerConfiguration) && isset($result['category.category_id'])) {
-            $storeId  = $containerConfiguration->getStoreId();
-            $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
+        $storeId  = $containerConfiguration->getStoreId();
+        if ($this->isEnabled($containerConfiguration)) {
+            if (isset($result['category.category_id']) && !isset($result['category.category_uid'])) {
+                $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
 
-            unset($result['category.category_id']);
+                unset($result['category.category_id']);
+            } elseif (isset($result['category.category_uid']) && isset($result['category.category_uid']['eq']) &&
+                !isset($result['category.category_id'])) {
+                $categoryUid[] = $this->uidEncoder->decode($result['category.category_uid']['eq']);
+
+                $result[] = $this->getCategoriesQuery($categoryUid, $storeId);
+                unset($result['category.category_uid']);
+            } elseif (isset($result['category.category_id']) && isset($result['category.category_uid'])) {
+                $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
+
+                unset($result['category.category_id']);
+                unset($result['category.category_uid']);
+            }
         }
 
         return $result;

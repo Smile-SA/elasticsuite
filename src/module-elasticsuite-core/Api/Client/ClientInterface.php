@@ -31,6 +31,13 @@ interface ClientInterface
     public function info();
 
     /**
+     * Returns nodes information.
+     *
+     * @return mixed
+     */
+    public function nodes();
+
+    /**
      * Try to connect the server and returns :
      * - true if succeed
      * - false if failed

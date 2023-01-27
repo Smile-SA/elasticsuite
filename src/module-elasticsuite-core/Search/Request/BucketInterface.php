@@ -42,7 +42,7 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     /**
      * @var integer
      */
-    const MAX_BUCKET_SIZE = 100000;
+    const MAX_BUCKET_SIZE = 10000;
 
     /**
      * Indicates if the aggregation is nested.

@@ -107,6 +107,9 @@ class Price implements LayerBuilderInterface
         $result['has_more'] = false;
         $result['rel_nofollow'] = false;
 
+        $attribute = $this->attributeRepository->get($this->attributeCode);
+        $result['frontend_input'] = $attribute->getFrontendInput();
+
         return ['price' => $result];
     }
 

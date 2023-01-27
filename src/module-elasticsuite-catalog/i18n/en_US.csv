@@ -115,3 +115,5 @@ Attributes,Attributes
 "If set to Yes, zero (integer or numeric attribute) or false (boolean attribute) values will be indexed in the search engine (default is No). Also applies to source model keys/values of Dropdown/Multiple Select attributes.","If set to Yes, zero (integer or numeric attribute) or false (boolean attribute) values will be indexed in the search engine (default is No). Also applies to source model keys/values of Dropdown/Multiple Select attributes."
 "Display Category in Autocomplete","Display Category in Autocomplete"
 "If the category can be displayed in autocomplete results.","If the category can be displayed in autocomplete results."
+"Enable indexing child product SKU in dedicated subfield","Enable indexing child product SKU in dedicated subfield"
+"If enabled, child products SKUs of composite products will be indexed in a separate field and the ""sku"" field will only contain the parent product sku.","If enabled, child products SKUs of composite products will be indexed in a separate field and the ""sku"" field will only contain the parent product sku."

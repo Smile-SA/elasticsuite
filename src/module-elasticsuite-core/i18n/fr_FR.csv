@@ -72,3 +72,5 @@ General,Général
 "Search engine powered by %1","Recherche propulsée par %1"
 "Miscellaneous","Divers"
 "The value should be different to zero.","La valeur doit être différente de zéro."
+"The number of replicas configured for Elasticsuite is incorrect. You cannot use <strong>%1 replicas</strong> since there is only <strong>%2 nodes</strong> in your Elasticsearch cluster.","Le nombre de replicas configuré pour Elasticsuite est incorrect. Vous ne pouvez pas utiliser <strong>%1 replicas</strong> car il n'y a que <strong>%2 nodes</strong> dans votre cluster Elasticsearch."
+"Click here to go to the <a href=""%1""><strong>Elasticsuite Config</strong></a> page and change your <strong>Number of Replicas per Index</strong> parameter according to our <a href=""%2"" target=""_blank""><strong>wiki page</strong></a>.","Cliquez ici pour accéder à la <a href=""%1""><strong>configuration Elasticsuite</strong></a> et changer le paramètre <strong>Nombre de replicas par Index</strong> conformément à notre <a href=""%2"" target=""_blank""><strong>page de wiki</strong></a>."
