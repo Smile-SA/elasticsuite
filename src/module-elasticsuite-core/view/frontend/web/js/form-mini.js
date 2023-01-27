@@ -239,7 +239,9 @@ define([
                 this.currentRequest = $.ajax({
                     method: "GET",
                     url: this.options.url,
-                    data:{q: value},
+                    cache: true,
+                    dataType: 'json',
+                    data: {q: value},
                     // This function will ensure proper killing of the last Ajax call.
                     // In order to prevent requests of an old request to pop up later and replace results.
                     beforeSend: function() { if (this.currentRequest !== null) { this.currentRequest.abort(); }}.bind(this),
@@ -489,7 +491,7 @@ define([
                         this.element.trigger('focus');
                     }
                     this.autoComplete.hide();
-                    $('#search').blur();
+                    $('#search').trigger('blur');
                     this._updateAriaHasPopup(false);
                 }, this),250);
             }, this));

@@ -158,6 +158,8 @@ class FrontPlugin
             'front_fieldset'
         );
 
+        $fieldset->addClass('es-esfeature__logo');
+
         return $fieldset;
     }
 

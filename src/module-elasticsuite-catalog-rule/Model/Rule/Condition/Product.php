@@ -160,6 +160,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $inputType        = $specialAttribute->getInputType();
         } elseif ($this->getAttribute() === 'price') {
             $inputType = 'numeric';
+        } elseif ($this->getAttribute() === 'sku') {
+            $inputType = 'sku';
         } elseif (is_object($this->getAttributeObject())) {
             $frontendInput = $this->getAttributeObject()->getFrontendInput();
             $frontendClass = $this->getAttributeObject()->getFrontendClass();
@@ -168,7 +170,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 $inputType = 'category';
             } elseif (in_array($frontendInput, ['select', 'multiselect'])) {
                 $inputType = 'multiselect';
-            } elseif (in_array($frontendClass, ['validate-digits', 'validate-number'])) {
+            } elseif (in_array($frontendClass, ['validate-digits', 'validate-number']) || $frontendInput === 'price') {
                 $inputType = 'numeric';
             } elseif ($frontendInput === 'date') {
                 $inputType = 'date';
@@ -255,6 +257,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 'multiselect' => ['()', '!()'],
                 'grid'        => ['()', '!()'],
                 'category'    => ['()', '!()'],
+                'sku'         => ['()', '!()', '{}', '!{}'],
             ];
             $this->_arrayInputTypes            = ['multiselect', 'grid', 'category'];
         }

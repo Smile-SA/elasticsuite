@@ -219,7 +219,9 @@ class Url
                 UrlRewrite::ENTITY_TYPE => 'category',
             ]);
 
-            $rewrite->setRequestPath($rewrite->getTargetPath());
+            if ($rewrite) {
+                $rewrite->setRequestPath($rewrite->getTargetPath());
+            }
         }
 
         return $rewrite;

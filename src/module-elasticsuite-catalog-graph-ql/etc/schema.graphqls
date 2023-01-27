@@ -1,6 +1,7 @@
 type Aggregation {
     has_more: Boolean @doc(description: "Whether the aggregation has more values to be displayed.")
     rel_nofollow: Boolean @doc(description: "Whether the aggregation has an html attribute rel=\"nofollow\" to be displayed at filter links of current attribute in Layered Navigation.")
+    frontend_input: String @doc(description: "The attribute frontend input type model.")
 }
 
 type Query {

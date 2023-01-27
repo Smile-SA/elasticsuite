@@ -98,6 +98,21 @@
                  type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
         <arguments>
             <argument name="searchRequestName" xsi:type="string">quick_search_container</argument>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Widget\Product\Collection"
+                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="searchRequestName" xsi:type="string">catalog_product_widget</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Smile\ElasticsuiteCatalog\Model\Widget\Product\CollectionFactory"
+                 type="Magento\Catalog\Model\ResourceModel\Product\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCatalog\Model\Widget\Product\Collection</argument>
         </arguments>
     </virtualType>
 
@@ -364,4 +379,27 @@
     <type name="Smile\ElasticsuiteCore\Api\Index\MappingInterface">
         <plugin name="copyCategoryName" type="\Smile\ElasticsuiteCatalog\Plugin\Index\MappingPlugin"/>
     </type>
+
+    <!-- Session proxies -->
+    <type name="Smile\ElasticsuiteCatalog\Model\Layer\Filter\Price">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\Price">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    
 </config>

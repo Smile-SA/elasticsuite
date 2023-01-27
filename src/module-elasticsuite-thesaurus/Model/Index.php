@@ -97,7 +97,6 @@ class Index
      */
     public function getQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
     {
-        $queryText = str_replace(' ', '_', $queryText);
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
 
@@ -134,13 +133,15 @@ class Index
         }
 
         if ($config->isExpansionSearchEnabled()) {
-            $synonymRewrites = array_merge([$queryText => $originalBoost], $rewrites);
+            // Use + instead of array_merge because $queryText can be purely numeric and would be casted to 0 by array_merge.
+            $synonymRewrites = [(string) $queryText => $originalBoost] + $rewrites;
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
                 $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
-                $rewrites          = array_merge($rewrites, $expansionRewrites);
+                // Use + instead of array_merge because keys can be purely numeric and would be casted to 0 by array_merge.
+                $rewrites          = $rewrites + $expansionRewrites;
             }
         }
 
@@ -215,27 +216,75 @@ class Index
      */
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
-        $indexName = $this->getIndexAlias($storeId);
+        $indexName          = $this->getIndexAlias($storeId);
+        $analyzedQueries    = $this->getQueryCombinations($storeId, $queryText);
+        $synonymByPositions = [];
+        $synonyms           = [];
 
+        foreach ($analyzedQueries as $query) {
+            try {
+                $analysis = $this->client->analyze(
+                    ['index' => $indexName, 'body' => ['text' => (string) $query, 'analyzer' => $type]]
+                );
+            } catch (\Exception $e) {
+                $analysis = ['tokens' => []];
+            }
+
+            foreach ($analysis['tokens'] ?? [] as $token) {
+                if ($token['type'] == 'SYNONYM') {
+                    $positionKey                        = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
+                    $token['token']                     = str_replace('_', ' ', $token['token']);
+                    $synonymByPositions[$positionKey][] = $token;
+                }
+            }
+            // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
+            $synonyms = $synonyms + $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites);
+        }
+
+        return $synonyms;
+    }
+
+    /**
+     * Explode the query text and fetch combination of words inside it.
+     * Eg : "long sleeve dress" => "long_sleeve dress", "long sleeve_dress", "long_sleeve_dress".
+     * This allow to find synonyms for couple of words that are "inside" the complete query.
+     * Multi-words synonyms are indexed with "_" as separator.
+     *
+     * @param int    $storeId   The store id
+     * @param string $queryText The base query text
+     *
+     * @return array
+     */
+    private function getQueryCombinations($storeId, $queryText)
+    {
+        if (str_word_count($queryText) < 2) {
+            return [$queryText]; // No need to compute variations of shingles with a one-word-query.
+        }
+
+        // Generate the shingles.
+        // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
+        // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
+        $indexName = $this->getIndexAlias($storeId);
         try {
             $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $type]]
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
             );
         } catch (\Exception $e) {
             $analysis = ['tokens' => []];
         }
 
-        $synonymByPositions = [];
-
+        // Get all variations of the query text by injecting the shingles inside.
+        // $tokens = ['long sleeve dress', 'long_sleeve dress', 'long sleeve_dress'];.
+        $queries[] = $queryText;
         foreach ($analysis['tokens'] ?? [] as $token) {
-            if ($token['type'] == 'SYNONYM') {
-                $positionKey = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
-                $token['token'] = str_replace('_', ' ', $token['token']);
-                $synonymByPositions[$positionKey][] = $token;
-            }
+            $startOffset        = $token['start_offset'];
+            $length             = $token['end_offset'] - $token['start_offset'];
+            $rewrittenQueryText = $this->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
+            $queries[]          = $rewrittenQueryText;
         }
+        $queries = array_unique($queries);
 
-        return $this->combineSynonyms($queryText, $synonymByPositions, $maxRewrites);
+        return $queries;
     }
 
     /**

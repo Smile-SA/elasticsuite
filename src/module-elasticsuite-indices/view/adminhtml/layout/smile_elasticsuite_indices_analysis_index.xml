@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticSuiteIndices module analysis index layout.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym HONCHARUK <vahonc@smile.fr>
+ * @copyright 2022 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Smile_ElasticsuiteIndices::css/es-analysis.css"/>
+    </head>>
+    <body>
+        <referenceContainer name="content">
+            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\Analysis\Analyzer" name="analysis_by_analyzer" template="Smile_ElasticsuiteIndices::analysis/analyzer.phtml" />
+        </referenceContainer>
+    </body>
+</page>

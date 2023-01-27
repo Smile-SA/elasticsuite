@@ -41,7 +41,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="fulltextProductCollectionWithoutAggregationsFactory" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory">
+    <virtualType name="fulltextProductCollectionWithoutAggregationsBuilder" type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\CollectionFactory">
         <arguments>
             <argument name="instanceName" xsi:type="string">fulltextProductCollectionWithoutAggregations</argument>
         </arguments>
@@ -49,13 +49,13 @@
 
     <type name="Smile\ElasticsuiteCatalog\Model\ProductSorter\PreviewInterface">
         <arguments>
-            <argument name="productCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsFactory</argument>
+            <argument name="productCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsBuilder</argument>
         </arguments>
     </type>
 
     <type name="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin">
         <arguments>
-            <argument name="fulltextCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsFactory</argument>
+            <argument name="fulltextCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsBuilder</argument>
         </arguments>
     </type>
 </config>

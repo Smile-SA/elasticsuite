@@ -38,13 +38,22 @@ class Context
     private $request;
 
     /**
+     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
+     */
+    private $localeDate;
+
+    /**
      * Context constructor.
      *
-     * @param \Magento\Framework\App\RequestInterface $request App request.
+     * @param \Magento\Framework\App\RequestInterface              $request    App request.
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate Locale Date format.
      */
-    public function __construct(\Magento\Framework\App\RequestInterface $request)
-    {
-        $this->request = $request;
+    public function __construct(
+        \Magento\Framework\App\RequestInterface $request,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+    ) {
+        $this->request    = $request;
+        $this->localeDate = $localeDate;
     }
 
     /**
@@ -91,7 +100,7 @@ class Context
     private function createDateFromText($text)
     {
         try {
-            $date = new \DateTime($text);
+            $date = $this->localeDate->date($text, null, true, false);
         } catch (\Exception $e) {
             $date = new \DateTime(self::DEFAULT_TO_DATE);
         }

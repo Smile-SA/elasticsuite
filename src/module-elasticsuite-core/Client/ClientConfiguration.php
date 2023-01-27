@@ -51,7 +51,7 @@ class ClientConfiguration implements ClientConfigurationInterface
      */
     public function getServerList()
     {
-        return explode(',', $this->getElasticsearchClientConfigParam('servers'));
+        return explode(',', $this->getElasticsearchClientConfigParam('servers') ?? '');
     }
 
     /**
@@ -123,6 +123,14 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getMaxRetries()
+    {
+        return (int) $this->getElasticsearchClientConfigParam('max_retries');
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getOptions()
@@ -136,6 +144,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'http_auth_pwd'         => $this->getHttpAuthPassword(),
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
+            'max_retries'           => $this->getMaxRetries(),
         ];
 
         return $options;

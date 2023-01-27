@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
+use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
@@ -30,11 +31,6 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
-
-    /**
-     * @var \Magento\Catalog\Model\CategoryRepository
-     */
-    private $categoryRepository;
 
     /**
      * Constructor.
@@ -55,7 +51,6 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @param SpecialAttributesProvider                                                 $specialAttributesProvider Special attributes
      *                                                                                                             provider.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory              Search query factory.
-     * @param \Magento\Catalog\Model\CategoryRepository                                 $categoryRepository        Category Repository
      * @param array                                                                     $data                      Additional data.
      */
     public function __construct(
@@ -71,7 +66,6 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         \Magento\Framework\Locale\FormatInterface $localeFormat,
         SpecialAttributesProvider $specialAttributesProvider,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Magento\Catalog\Model\CategoryRepository $categoryRepository,
         array $data = []
     ) {
         parent::__construct(
@@ -89,23 +83,21 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $data
         );
         $this->queryFactory = $queryFactory;
-        $this->categoryRepository = $categoryRepository;
     }
 
     /**
      * Build a search query for the current rule.
      *
-     * @param array    $excludedCategories  Categories excluded of query building (avoid infinite recursion).
-     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
+     * @param array $excludedCategories Categories excluded of query building (avoid infinite recursion).
      *
      * @return QueryInterface|null
      */
-    public function getSearchQuery($excludedCategories = [], $virtualCategoryRoot = null): ?QueryInterface
+    public function getSearchQuery($excludedCategories = []): ?QueryInterface
     {
         $searchQuery = parent::getSearchQuery();
 
         if ($this->getAttribute() === 'category_ids') {
-            $searchQuery = $this->getCategorySearchQuery($excludedCategories, $virtualCategoryRoot);
+            $searchQuery = $this->getCategorySearchQuery($excludedCategories);
         }
 
         return $searchQuery;
@@ -130,14 +122,14 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     /**
      * Retrieve a query used to apply category filter rule.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @param array    $excludedCategories  Category excluded from the loading (avoid infinite loop in query
-     *                                      building when circular references are present).
-     * @param int|null $virtualCategoryRoot Category root for Virtual Category.
+     * @param array $excludedCategories Category excluded from the loading (avoid infinite loop in query
+     *                                  building when circular references are present).
      *
      * @return QueryInterface|null
      */
-    private function getCategorySearchQuery($excludedCategories, $virtualCategoryRoot = null): ?QueryInterface
+    private function getCategorySearchQuery($excludedCategories): ?QueryInterface
     {
         $categoryIds = [];
         $subQueries  = [];
@@ -147,22 +139,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $valueArray = explode(',', str_replace(' ', '', $valueArray));
         }
 
-        if ($this->getOperator() === '!()') {
-            $childrenCategories = $this->categoryRepository->get($virtualCategoryRoot)->getChildrenCategories();
+        $categoryIds = $valueArray;
 
-            if (is_object($childrenCategories)) {
-                $categoryIds = array_diff(
-                    $childrenCategories->getAllIds(),
-                    $valueArray
-                );
-            } elseif (is_array($childrenCategories)) {
-                ksort($childrenCategories);
-                $categoryIds = array_diff(
-                    array_keys($childrenCategories),
-                    $valueArray
-                );
-            }
-        }
         if ($this->getOperator() !== '!()') {
             $categoryIds = array_diff($valueArray, $excludedCategories);
         }
@@ -180,6 +158,10 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $query = current($subQueries);
         } elseif (count($subQueries) > 1) {
             $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $subQueries]);
+        }
+
+        if ($this->getOperator() === '!()' && ($query !== null)) {
+            $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['mustNot' => [$query]]);
         }
 
         return $query;

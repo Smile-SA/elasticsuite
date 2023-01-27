@@ -131,7 +131,7 @@
     <!-- Page builder compatibility   -->
     <type name="Magento\CatalogWidget\Block\Product\ProductsList">
         <arguments>
-            <argument name="productCollectionFactory" xsi:type="object">Magento\CatalogSearch\Model\ResourceModel\Fulltext\CollectionFactory</argument>
+            <argument name="productCollectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Widget\Product\CollectionFactory</argument>
             <argument name="sqlBuilder" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Condition\ElasticsearchBuilder</argument>
         </arguments>
         <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" />

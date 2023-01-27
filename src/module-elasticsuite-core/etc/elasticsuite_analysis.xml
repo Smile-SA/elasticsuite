@@ -40,8 +40,8 @@
         </filter>
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
-            <max_shingle_size>2</max_shingle_size>
-            <output_unigrams>true</output_unigrams>
+            <max_shingle_size>4</max_shingle_size>
+            <output_unigrams>false</output_unigrams>
         </filter>
         <filter name="reference_shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
@@ -143,16 +143,16 @@
         <filter name="stemmer" type="stemmer" language="tr">
             <language>turkish</language>
         </filter>
-        <filter name="standard_override" type="stemmer_override" language="fr">
+        <filter name="stemmer_override" type="stemmer_override" language="fr">
             <!-- Having an empty list of rules is valid.
                  This means existing rules can be both re-defined or voided in a custom module. -->
             <!--<rules>[]</rules>-->
             <!--
                 Known issues with the "french" stemmer.
                  -->
-            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou"]</rules>
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo"]</rules>
         </filter>
-        <filter name="standard_override" type="stemmer_override" language="it">
+        <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
                 Known issues with the "italian" stemmer. Please note that we do not claim 100% accuracy in the selected stems.
                 For instance, the stem for "trapani" is originally "trapan", the same as the verb "trapanare".
@@ -175,6 +175,9 @@
             <encoder>beider_morse</encoder>
             <languageset>french</languageset>
         </filter>
+        <filter name="lowercase" type="lowercase" language="el">
+            <language>greek</language>
+        </filter>
     </filters>
 
     <analyzers>
@@ -190,7 +193,7 @@
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="elision" />
-                <filter ref="standard_override" />
+                <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
             </filters>
             <char_filters>
@@ -229,6 +232,8 @@
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
                 <filter ref="elision" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>

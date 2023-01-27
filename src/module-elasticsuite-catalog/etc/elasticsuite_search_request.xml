@@ -57,4 +57,15 @@
 
     <request name="category_search_container" label="Catalog Category Search" index="catalog_category" fulltext="true"/>
 
+    <request name="catalog_product_widget" label="Catalog Product Widget" index="catalog_product" track_total_hits="true" fulltext="false">
+        <filters>
+            <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
+            <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
+        </filters>
+        <aggregations>
+            <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
+            <aggregation xsi:type="termBucket" name="indexed_attributes" field="indexed_attributes"/>
+        </aggregations>
+    </request>
+
 </requests>

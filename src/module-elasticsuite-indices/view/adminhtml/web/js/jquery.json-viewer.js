@@ -145,13 +145,13 @@
 
       // Simulate click on toggle button when placeholder is clicked
       $(this).on('click', 'a.json-placeholder', function() {
-        $(this).siblings('a.json-toggle').click();
+        $(this).siblings('a.json-toggle').trigger('click');
         return false;
       });
 
       if (options.collapsed == true) {
         // Trigger click to collapse all nodes
-        $(this).find('a.json-toggle').click();
+        $(this).find('a.json-toggle').trigger('click');
       }
     });
   };
