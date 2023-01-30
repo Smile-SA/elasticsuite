@@ -107,7 +107,7 @@ class IndexStatusProvider
     /**
      * Returns if index is rebuilding.
      *
-     * @param string $indexName Index name.
+     * @param string         $indexName Index name.
      * @param DateTime|false $indexDate Index updated date.
      * @return bool
      */
@@ -119,6 +119,7 @@ class IndexStatusProvider
                     if (str_contains($indexName, $indexKey)) {
                         $today = new DateTime('Ymd');
                         $day = new DateTime($indexDate);
+
                         return ($today == $day);
                     }
                 }
