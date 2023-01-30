@@ -75,6 +75,7 @@ class Collection extends DataCollection
      * @return Collection
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.StaticAccess)
      * @throws Exception
      */
     public function loadData($printQuery = false, $logQuery = false): Collection
