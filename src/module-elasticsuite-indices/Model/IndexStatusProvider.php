@@ -110,23 +110,22 @@ class IndexStatusProvider
      * @param string         $indexName Index name.
      * @param DateTime|false $indexDate Index updated date.
      * @return bool
+     * @throws Exception
      */
     private function isRebuilding(string $indexName, $indexDate): bool
     {
-        try {
-            if (!empty($this->workingIndexers)) {
-                foreach (array_keys($this->workingIndexers) as $indexKey) {
-                    if (str_contains($indexName, $indexKey)) {
-                        $today = new DateTime('Ymd');
-                        $day = new DateTime($indexDate);
+        if (!empty($this->workingIndexers)) {
+            foreach (array_keys($this->workingIndexers) as $indexKey) {
+                if (str_contains($indexName, $indexKey)) {
+                    $today = new DateTime('Ymd');
+                    $day = new DateTime($indexDate);
 
-                        return ($today == $day);
-                    }
+                    return ($today == $day);
                 }
             }
-        } catch (Exception $e) {
-            return false;
         }
+
+        return false;
     }
 
     /**
