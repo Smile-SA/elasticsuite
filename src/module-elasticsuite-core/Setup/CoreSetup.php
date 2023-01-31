@@ -59,7 +59,6 @@ class CoreSetup
         IndexSettingsHelper $indexSettingsHelper,
         Config $resourceConfig,
         TypeListInterface $cacheTypeList
-
     ) {
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->resourceConfig = $resourceConfig;
