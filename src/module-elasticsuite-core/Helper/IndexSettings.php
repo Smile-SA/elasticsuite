@@ -15,13 +15,8 @@
 namespace Smile\ElasticsuiteCore\Helper;
 
 use DateTime;
-use Magento\Config\Model\ResourceModel\Config;
-use Magento\Framework\App\Cache\Type\Config as ConfigCache;
-use Magento\Framework\App\Cache\TypeListInterface;
-use Magento\Framework\App\Helper\Context;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Indices related configuration helper.
@@ -40,17 +35,12 @@ class IndexSettings extends AbstractConfiguration
     /**
      * @var string
      */
-    const INDICES_SETTINGS_CONFIG_XML_INDICES_PATTERN_PATH = 'smile_elasticsuite_core_base_settings/indices_settings/indices_pattern';
+    const OLD_DEFAULT_INDICES_PATTERN = '{{YYYYMMdd}}_{{HHmmss}}';
 
     /**
      * @var string
      */
-    const DEFAULT_INDICES_PATTERN_NAME_OLD = '{{YYYYMMdd}}_{{HHmmss}}';
-
-    /**
-     * @var string
-     */
-    const DEFAULT_INDICES_PATTERN_NAME_NEW = '{{Ymd}}_{{His}}';
+    const DEFAULT_INDICES_PATTERN = '{{Ymd}}_{{His}}';
 
     /**
      * @var string
@@ -81,35 +71,6 @@ class IndexSettings extends AbstractConfiguration
      * @var integer
      */
     const MAX_NGRAM_SIZE_DEFAULT = 2;
-
-    /**
-     * @var Config
-     */
-    protected $resourceConfig;
-
-    /**
-     * @var TypeListInterface
-     */
-    protected $cacheTypeList;
-
-    /**
-     * Constructor.
-     *
-     * @param Context               $context        Helper context.
-     * @param StoreManagerInterface $storeManager   Store manager.
-     * @param Config                $resourceConfig Resource config.
-     * @param TypeListInterface     $cacheTypeList  Cache type list.
-    */
-    public function __construct(
-        Context $context,
-        StoreManagerInterface $storeManager,
-        Config $resourceConfig,
-        TypeListInterface $cacheTypeList
-    ) {
-        $this->resourceConfig = $resourceConfig;
-        $this->cacheTypeList = $cacheTypeList;
-        parent::__construct($context, $storeManager);
-    }
 
     /**
      * Return the locale code (e.g.: "en_US") for a store.
@@ -170,11 +131,8 @@ class IndexSettings extends AbstractConfiguration
         * e.g : Default pattern "{{Ymd}}_{{His}}" is converted to "20160221_123421".
         */
         $indexNameSuffix = $this->getIndicesSettingsConfigParam('indices_pattern');
-
-        if ($indexNameSuffix === self::DEFAULT_INDICES_PATTERN_NAME_OLD) {
-            $indexNameSuffix = self::DEFAULT_INDICES_PATTERN_NAME_NEW;
-            $this->resourceConfig->saveConfig(self::INDICES_SETTINGS_CONFIG_XML_INDICES_PATTERN_PATH, $indexNameSuffix);
-            $this->cacheTypeList->cleanType(ConfigCache::TYPE_IDENTIFIER);
+        if ($indexNameSuffix === self::OLD_DEFAULT_INDICES_PATTERN) {
+            $indexNameSuffix = self::DEFAULT_INDICES_PATTERN;
         }
 
         // Parse pattern to extract datetime tokens.
@@ -316,7 +274,7 @@ class IndexSettings extends AbstractConfiguration
      *
      * @return mixed
      */
-    private function getIndicesSettingsConfigParam($configField)
+    public function getIndicesSettingsConfigParam($configField)
     {
         $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
 
