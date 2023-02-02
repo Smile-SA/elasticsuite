@@ -160,6 +160,7 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus the thesaurus to validate
      *
      * @return void
+     * @SuppressWarnings(PHPMD.StaticAccess)
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Validator\ValidateException
      */
