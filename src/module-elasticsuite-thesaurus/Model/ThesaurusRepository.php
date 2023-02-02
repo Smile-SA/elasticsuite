@@ -17,6 +17,8 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Validator\NotEmpty;
+use Magento\Framework\Validator\ValidatorChain;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusSearchResultsInterfaceFactory;
 use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 
@@ -159,14 +161,14 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
      *
      * @return void
      * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Validator\ValidateException
      */
     protected function validate(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
     {
         $exception = new \Magento\Framework\Exception\InputException();
 
-        $validator = new \Zend_Validate();
-        if (!$validator->is(trim($thesaurus->getName()), 'NotEmpty')) {
-            $exception->addError(__(InputException::REQUIRED_FIELD, ['fieldName' => 'name']));
+        if (!ValidatorChain::is(trim($thesaurus->getName()), NotEmpty::class)) {
+            $exception->addError(__('"%fieldName" is required. Enter and try again.', ['fieldName' => 'name']));
         }
 
         if ($exception->wasErrorAdded()) {
