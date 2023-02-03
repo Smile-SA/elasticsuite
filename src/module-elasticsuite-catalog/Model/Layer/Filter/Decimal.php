@@ -135,7 +135,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
         if ((int) $attribute->getDisplayPrecision() > 0) {
             $locale = $this->localeResolver->getLocale();
             $options = ['locale' => $locale, 'precision' => (int) $attribute->getDisplayPrecision()];
-            $valueFormatter = new \Zend_Filter_NormalizedToLocalized($options);
+            $valueFormatter = new \Magento\Framework\Filter\LocalizedToNormalized($options);
             $value = $valueFormatter->filter($value);
         }
 
