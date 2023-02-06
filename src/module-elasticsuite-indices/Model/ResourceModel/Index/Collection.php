@@ -59,7 +59,7 @@ class Collection extends DataCollection
 
         $res = [];
         foreach ($this as $item) {
-            if (strpos($item->getData($column), $value) !== false) {
+            if (str_contains($item->getData($column), $value)) {
                 $res[] = $item;
             }
         }
