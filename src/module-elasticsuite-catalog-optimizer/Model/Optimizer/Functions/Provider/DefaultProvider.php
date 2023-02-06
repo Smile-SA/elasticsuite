@@ -65,6 +65,11 @@ class DefaultProvider implements ProviderInterface
     private $cacheLifeTime;
 
     /**
+     * @var array
+     */
+    private $functions;
+
+    /**
      * Provider constructor.
      *
      * @param CollectionProviderFactory $collectionProviderFactory Optimizer Collection Provider Factory

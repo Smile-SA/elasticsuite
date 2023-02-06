@@ -43,6 +43,11 @@ class Provider
     private $size;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\RequestInterface
+     */
+    private $request;
+
+    /**
      * Provider constructor.
      *
      * @param \Magento\Search\Model\SearchEngine              $searchEngine Search Engine

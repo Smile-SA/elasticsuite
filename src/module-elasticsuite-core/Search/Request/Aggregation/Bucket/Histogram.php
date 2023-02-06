@@ -39,6 +39,11 @@ class Histogram extends AbstractBucket
     private $minDocCount;
 
     /**
+     * @var array
+     */
+    private $extendedBounds;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
