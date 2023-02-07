@@ -28,9 +28,14 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 class Validator implements ValidatorInterface
 {
     /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
      * Validator constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client ES Client (injected as proxy in DI).
+     * @param ClientInterface $client ES Client (injected as proxy in DI).
      */
     public function __construct(ClientInterface $client)
     {

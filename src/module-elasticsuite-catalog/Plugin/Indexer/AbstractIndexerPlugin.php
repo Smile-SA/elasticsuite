@@ -30,6 +30,11 @@ class AbstractIndexerPlugin
     private $fullIndexer;
 
     /**
+     * @var \Magento\Framework\Indexer\IndexerRegistry
+     */
+    private $indexerRegistry;
+
+    /**
      * ReindexProductsAfterSave constructor.
      *
      * @param \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry The indexer registry
