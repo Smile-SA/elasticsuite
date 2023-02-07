@@ -116,7 +116,7 @@ class IndexStatusProvider
     {
         if (!empty($this->workingIndexers)) {
             foreach (array_keys($this->workingIndexers) as $indexKey) {
-                if (str_contains($indexName, $indexKey)) {
+                if (strpos((string) $indexName, $indexKey) !== false) {
                     $today = new DateTime('Ymd');
                     $day = new DateTime($indexDate);
 
@@ -138,7 +138,7 @@ class IndexStatusProvider
     private function isExternal(string $indexName): bool
     {
         foreach ($this->storeIndices as $store) {
-            if (str_contains($indexName, $store['pattern'])) {
+            if (strpos((string) $indexName, $store['pattern']) !== false) {
                 return false;
             }
         }
