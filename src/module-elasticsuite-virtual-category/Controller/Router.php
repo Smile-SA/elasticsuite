@@ -103,7 +103,7 @@ class Router implements RouterInterface
 
         $identifier = $condition->getIdentifier();
         $appliedRoot = $this->getAppliedVirtualCategoryRoot($identifier);
-        if (!$appliedRoot || !$appliedRoot->getId()) {
+        if ($appliedRoot && $appliedRoot->getId()) {
             $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
         }
 
