@@ -93,7 +93,7 @@ class Router implements RouterInterface
     public function match(RequestInterface $request): ?ActionInterface
     {
         $condition = new DataObject([
-            'identifier' => trim($request->getPathInfo(), '/')
+            'identifier' => trim($request->getPathInfo(), '/'),
         ]);
 
         $this->eventManager->dispatch(
