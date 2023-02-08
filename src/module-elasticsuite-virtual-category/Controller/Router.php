@@ -92,13 +92,16 @@ class Router implements RouterInterface
      */
     public function match(RequestInterface $request): ?ActionInterface
     {
-        $identifier = trim($request->getPathInfo(), '/');
-        $condition = new DataObject(['identifier' => $identifier]);
+        $condition = new DataObject([
+            'identifier' => trim($request->getPathInfo(), '/')
+        ]);
+
         $this->eventManager->dispatch(
             'smile_elasticsuite_virtualcategory_controller_router_match_before',
             ['router' => $this, 'condition' => $condition]
         );
 
+        $identifier = $condition->getIdentifier();
         $appliedRoot = $this->getAppliedVirtualCategoryRoot($identifier);
         if (!$appliedRoot || !$appliedRoot->getId()) {
             $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
