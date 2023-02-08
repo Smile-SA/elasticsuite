@@ -57,6 +57,11 @@ class FrontPlugin
     private $booleanSource;
 
     /**
+     * @var Registry
+     */
+    private $coreRegistry;
+
+    /**
      * @var \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder
      */
     private $filterSortOrder;
@@ -71,20 +76,20 @@ class FrontPlugin
      *
      * @param Yesno              $booleanSource      The YesNo source.
      * @param Weight             $weightSource       Weight source.
-     * @param Registry           $registry           Core registry.
+     * @param Registry           $coreRegistry       Core registry.
      * @param FilterSortOrder    $filterSortOrder    Filter Sort Order.
      * @param FilterBooleanLogic $filterBooleanLogic Filter boolean logic source model.
      */
     public function __construct(
         Yesno $booleanSource,
         Weight $weightSource,
-        Registry $registry,
+        Registry $coreRegistry,
         FilterSortOrder $filterSortOrder,
         FilterBooleanLogic $filterBooleanLogic
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
-        $this->coreRegistry    = $registry;
+        $this->coreRegistry    = $coreRegistry;
         $this->filterSortOrder = $filterSortOrder;
         $this->filterBooleanLogic = $filterBooleanLogic;
     }

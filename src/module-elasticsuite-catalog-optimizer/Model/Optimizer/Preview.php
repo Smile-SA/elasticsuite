@@ -40,6 +40,11 @@ class Preview
     private $previewItemFactory;
 
     /**
+     * @var ApplierListFactory
+     */
+    private $applierListFactory;
+
+    /**
      * @var OptimizerInterface
      */
     private $optimizer;
@@ -86,10 +91,10 @@ class Preview
      *
      * @param OptimizerInterface              $optimizer             The optimizer to preview.
      * @param Preview\ItemFactory             $previewItemFactory    Preview item factory.
-     * @param ApplierListFactory              $applier               Preview Applier
-     * @param Functions\ProviderFactory       $providerFactory       Optimizer Functions Provider Factory
-     * @param ContainerConfigurationInterface $containerConfig       Container Configuration
-     * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder
+     * @param ApplierListFactory              $applierListFactory    Preview Applier.
+     * @param Functions\ProviderFactory       $providerFactory       Optimizer Functions Provider Factory.
+     * @param ContainerConfigurationInterface $containerConfig       Container Configuration.
+     * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder.
      * @param ContextInterface                $searchContext         Search Context.
      * @param CategoryInterface|null          $category              Category Id to preview, if any.
      * @param string                          $queryText             Query Text.
@@ -98,7 +103,7 @@ class Preview
     public function __construct(
         OptimizerInterface $optimizer,
         Preview\ItemFactory $previewItemFactory,
-        ApplierListFactory $applier,
+        ApplierListFactory $applierListFactory,
         Functions\ProviderFactory $providerFactory,
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
@@ -111,7 +116,7 @@ class Preview
         $this->previewItemFactory     = $previewItemFactory;
         $this->optimizer              = $optimizer;
         $this->queryText              = $queryText;
-        $this->applierListFactory     = $applier;
+        $this->applierListFactory     = $applierListFactory;
         $this->providerFactory        = $providerFactory;
         $this->containerConfiguration = $containerConfig;
         $this->previewResultsBuilder  = $previewResultsBuilder;
