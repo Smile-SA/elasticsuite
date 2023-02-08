@@ -102,7 +102,9 @@ class Router implements RouterInterface
         );
 
         $appliedRoot = $this->getAppliedVirtualCategoryRoot($identifier);
-        $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
+        if (!$appliedRoot || !$appliedRoot->getId()) {
+            $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
+        }
 
         $productRewrite = $this->getProductRewrite($identifier);
         if ($productRewrite) {
@@ -110,10 +112,6 @@ class Router implements RouterInterface
             $request->setPathInfo('/' . $productRewrite->getTargetPath());
 
             return $this->actionFactory->create('Magento\Framework\App\Action\Forward');
-        }
-
-        if (!$appliedRoot || !$appliedRoot->getId()) {
-            return null;
         }
 
         $categoryRewrite = $this->getCategoryRewrite($identifier);
