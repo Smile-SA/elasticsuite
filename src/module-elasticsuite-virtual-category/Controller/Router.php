@@ -92,8 +92,6 @@ class Router implements RouterInterface
      */
     public function match(RequestInterface $request): ?ActionInterface
     {
-        $action = null;
-
         $identifier = trim($request->getPathInfo(), '/');
         $condition = new DataObject(['identifier' => $identifier]);
         $this->eventManager->dispatch(
@@ -122,7 +120,7 @@ class Router implements RouterInterface
             return $this->actionFactory->create('Magento\Framework\App\Action\Forward');
         }
 
-        return $action;
+        return null;
     }
 
     /**
