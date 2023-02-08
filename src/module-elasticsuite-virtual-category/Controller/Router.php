@@ -96,13 +96,12 @@ class Router implements RouterInterface
 
         $identifier = trim($request->getPathInfo(), '/');
         $condition = new DataObject(['identifier' => $identifier]);
-        $appliedRoot = $this->getAppliedVirtualCategoryRoot($identifier);
-
         $this->eventManager->dispatch(
             'smile_elasticsuite_virtualcategory_controller_router_match_before',
             ['router' => $this, 'condition' => $condition]
         );
 
+        $appliedRoot = $this->getAppliedVirtualCategoryRoot($identifier);
         $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
 
         $productRewrite = $this->getProductRewrite($identifier);
