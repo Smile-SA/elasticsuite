@@ -30,6 +30,10 @@
     text-align: right;
 }
 
+#admin__es-index-select {
+    max-width: 417px;
+}
+
 #admin__es-analyzer-select {
     padding-right: 0;
     width: 130px;
