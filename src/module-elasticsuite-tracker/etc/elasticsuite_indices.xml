@@ -34,19 +34,19 @@
                 <field name="page.store_id" type="integer" />
                 <field name="page.title" type="keyword" />
                 <field name="page.url" type="keyword" />
-                
+
                 <!-- Page data (type) -->
                 <field name="page.type.identifier" type="keyword" />
                 <field name="page.type.label" type="keyword" />
-                
+
                 <!-- Page data (category) -->
                 <field name="page.category.id" type="integer" />
                 <field name="page.category.label" type="keyword" />
                 <field name="page.category.path" type="keyword" />
-                
+
                 <!-- Page data (cart) -->
                 <field name="page.cart.product_id" type="integer" />
-                
+
                 <!-- Page data (product) -->
                 <field name="page.product.id" type="integer" />
                 <field name="page.product.sku" type="text">
@@ -56,7 +56,7 @@
                 <field name="page.product.label" type="text">
                     <isSearchable>true</isSearchable>
                 </field>
-                
+
                 <!-- Page data (product list) -->
                 <field name="page.product_list.current_page" type="integer" />
                 <field name="page.product_list.page_count" type="integer" />
@@ -66,14 +66,15 @@
                 <field name="page.product_list.sort_direction" type="keyword" />
                 <field name="page.product_list.filters.name" type="keyword" nestedPath="page.product_list.filters" />
                 <field name="page.product_list.filters.value" type="keyword" nestedPath="page.product_list.filters" />
-                
+
                 <!-- Page data (searches) -->
                 <field name="page.search.query" type="text">
                     <isSearchable>true</isSearchable>
                     <isUsedForSortBy>true</isUsedForSortBy>
                 </field>
+                <field name="page.search.query_id" type="integer" />
                 <field name="page.search.is_spellchecked" type="boolean" />
-                
+
                 <!-- Page data (CMS) -->
                 <field name="page.cms.identifier" type="text">
                     <isSearchable>true</isSearchable>
@@ -81,7 +82,7 @@
                 <field name="page.cms.title" type="text">
                     <isSearchable>true</isSearchable>
                 </field>
-                
+
                 <!-- Page data (order) -->
                 <field name="page.order.grand_total" type="double" />
                 <field name="page.order.discount_total" type="double" />
@@ -97,17 +98,17 @@
                 <field name="page.order.items.price" type="double" nestedPath="page.order.items" />
                 <field name="page.order.items.row_total" type="double" nestedPath="page.order.items" />
                 <field name="page.order.items.qty" type="double" nestedPath="page.order.items" />
-                
+
                 <!-- Page data (referrer) -->
                 <field name="page.referrer.domain" type="keyword" />
                 <field name="page.referrer.page" type="keyword" />
-                
+
                 <!-- Page data (campaign) -->
                 <field name="page.utm_source" type="keyword" />
                 <field name="page.utm_campaign" type="keyword" />
                 <field name="page.utm_medium" type="keyword" />
                 <field name="page.utm_term" type="keyword" />
-                
+
                 <!-- Page data (resolution) -->
                 <field name="page.resolution.x" type="integer" />
                 <field name="page.resolution.y" type="integer" />
