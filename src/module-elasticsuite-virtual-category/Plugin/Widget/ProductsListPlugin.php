@@ -161,7 +161,10 @@ class ProductsListPlugin
                             foreach ($categoryIds as $categoryId) {
                                 try {
                                     $category = $this->categoryRepository->get($categoryId, $storeId);
-                                    $filterQueries[] = $this->filterProvider->getQueryFilter($category);
+                                    $queryFilter = $this->filterProvider->getQueryFilter($category);
+                                    if ($queryFilter !== null) {
+                                        $filterQueries[] = $queryFilter;
+                                    }
                                 } catch (NoSuchEntityException $exception) {
                                     continue;
                                 }
