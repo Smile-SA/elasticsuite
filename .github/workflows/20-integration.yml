@@ -65,19 +65,19 @@ jobs:
                     magento-editions: 'enterprise'
                     experimental: true
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-beta2'
+                    magento-versions: '2.4.6-beta8'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-beta2'
+                    magento-versions: '2.4.6-beta8'
                     magento-editions: 'enterprise'
                     experimental: true
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-beta2'
+                    magento-versions: '2.4.6-beta8'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-beta2'
+                    magento-versions: '2.4.6-beta8'
                     magento-editions: 'enterprise'
                     experimental: true
 
