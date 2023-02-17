@@ -51,7 +51,7 @@ class MultiMatch implements BuilderInterface
         ];
 
         if ($query->getCutoffFrequency()) {
-            $searchQueryParams['cutoff_frequency'] = $query->getCutoffFrequency();
+        //    $searchQueryParams['cutoff_frequency'] = $query->getCutoffFrequency();
         }
 
         if ($query->getFuzzinessConfiguration()) {
