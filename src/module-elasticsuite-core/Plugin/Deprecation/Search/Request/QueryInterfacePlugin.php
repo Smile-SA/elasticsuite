@@ -25,9 +25,14 @@ use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
 class QueryInterfacePlugin
 {
     /**
-     * @var ClusterInfoInterface
+     * @var string
      */
-    private $clusterInfo;
+    private $serverVersion;
+
+    /**
+     * @var string
+     */
+    private $serverDistribution;
 
     /**
      * Constructor.
@@ -36,12 +41,13 @@ class QueryInterfacePlugin
      */
     public function __construct(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo)
     {
-        $this->clusterInfo = $clusterInfo;
+        $this->serverVersion      = $clusterInfo->getServerVersion();
+        $this->serverDistribution = $clusterInfo->getServerDistribution();
     }
 
     /**
      * Discard cutoff_frequency value to prevent the query builder to inject it into the query sent to ES.
-     * cutoff_frequency is deprecated since Elasticsearch 7.3
+     * cutoff_frequency is deprecated since Elasticsearch 7.3 and has been removed in ES 8.
      * @see https://github.com/elastic/elasticsearch/issues/37096
      * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html#query-dsl-match-query-cutoff
      *
@@ -54,8 +60,14 @@ class QueryInterfacePlugin
      */
     public function afterGetCutoffFrequency(\Smile\ElasticsuiteCore\Search\Request\QueryInterface $subject, $result)
     {
-        if (version_compare($this->clusterInfo->getServerVersion(), "7.3.0") >= 0) {
-            $result = 0; // Will be evaluated as false and discarded by the Query Builder.
+        if ($this->serverDistribution === ClusterInfoInterface::DISTRO_ES) {
+            if (version_compare($this->clusterInfo->getServerVersion(), "8.0.0") >= 0) {
+                $result = 0; // Will be evaluated as false and discarded by the Query Builder.
+            }
+        } elseif ($this->serverDistribution === ClusterInfoInterface::DISTRO_OS) {
+            if (version_compare($this->clusterInfo->getServerVersion(), "2.0.0") >= 0) {
+                $result = 0; // Will be evaluated as false and discarded by the Query Builder.
+            }
         }
 
         return $result;

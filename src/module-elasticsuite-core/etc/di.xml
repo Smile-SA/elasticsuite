@@ -500,10 +500,10 @@
     <!-- If you want to get rid of this message you can enable those plugins again, but search engine relevance will take a hit. -->
     <!-- When building ES 8 compatibility, cutoff_frequency feature will be replaced by another mechanism. -->
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Common">
-        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin" disabled="true"/>
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
     </type>
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\MultiMatch">
-        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin" disabled="true"/>
+        <plugin name="cutoffFrequencyForwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Search\Request\QueryInterfacePlugin"/>
     </type>
 
     <!-- Async Operations -->

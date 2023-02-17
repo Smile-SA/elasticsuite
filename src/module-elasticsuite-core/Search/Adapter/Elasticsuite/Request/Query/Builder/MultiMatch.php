@@ -50,8 +50,9 @@ class MultiMatch implements BuilderInterface
             'type'                 => $query->getMatchType(),
         ];
 
+        // cutoff_frequency is deprecated with ES >= 8.0
         if ($query->getCutoffFrequency()) {
-        //    $searchQueryParams['cutoff_frequency'] = $query->getCutoffFrequency();
+            $searchQueryParams['cutoff_frequency'] = $query->getCutoffFrequency();
         }
 
         if ($query->getFuzzinessConfiguration()) {

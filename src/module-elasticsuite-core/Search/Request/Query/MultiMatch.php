@@ -196,6 +196,8 @@ class MultiMatch implements QueryInterface
     /**
      * Query cutoff frequency.
      *
+     * @deprecated on multi_match since ES 8.
+     *
      * @return float
      */
     public function getCutoffFrequency()
