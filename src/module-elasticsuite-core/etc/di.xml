@@ -76,6 +76,12 @@
     <preference for="Smile\ElasticsuiteCore\Api\Search\Request\SortOrder\DefaultSortOrderProviderInterface"
                 type="Smile\ElasticsuiteCore\Search\Request\SortOrder\DefaultSortOrderProvider" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface"
+                type="Smile\ElasticsuiteCore\Search\SearchCriteria"/>
+
+    <preference for="Magento\Framework\Api\Search\SearchCriteriaInterface"
+                type="Smile\ElasticsuiteCore\Search\SearchCriteria" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">

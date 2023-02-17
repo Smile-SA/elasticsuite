@@ -146,7 +146,12 @@ class Builder
     ) {
         $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
         $containerFilters = $this->getContainerFilters($containerConfig);
-        $containerAggs    = $this->getContainerAggregations($containerConfig, $query, $filters, $queryFilters);
+        $containerAggs    = [];
+
+        // If "track_total_hits" is explicitely true, we are just "counting" the result, and we do not care about the aggregations.
+        if ($trackTotalHits !== true) {
+            $containerAggs = $this->getContainerAggregations($containerConfig, $query, $filters, $queryFilters);
+        }
 
         $facets       = array_merge($facets, $containerAggs);
         $facetFilters = array_intersect_key($filters, $facets);

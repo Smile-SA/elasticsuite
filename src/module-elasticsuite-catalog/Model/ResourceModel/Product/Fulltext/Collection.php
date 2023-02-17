@@ -520,9 +520,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->queryResponse = $this->searchEngine->search($searchRequest);
 
-        // Update the product count.
-        // $this->_totalRecords = $this->queryResponse->count();
-
         // Filter search results. The pagination has to be resetted since it is managed by the engine itself.
         $docIds = array_map(
             function (\Magento\Framework\Api\Search\Document $doc) {

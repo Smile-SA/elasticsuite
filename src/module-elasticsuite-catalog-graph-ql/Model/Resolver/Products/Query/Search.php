@@ -18,7 +18,7 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
-use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Search\Api\SearchInterface;
@@ -86,7 +86,15 @@ class Search implements ProductQueryInterface
     {
         $queryFields    = $this->fieldSelection->getProductsFieldSelection($info);
         $searchCriteria = $this->buildSearchCriteria($args, $info);
+        // Do not apply track_total_hits to ensure best relevance.
+        $searchCriteria->setTrackTotalHits(false);
         $searchResults  = $this->search->search($searchCriteria);
+
+        $countCriteria = clone($searchCriteria);
+        // Apply track_total_hits only for counting.
+        $countCriteria->setTrackTotalHits(true);
+        $countCriteria->setPageSize(0);
+        $countResults  = $this->search->search($countCriteria);
 
         // Pass a dummy search criteria (no filter) to product provider : filtering is already done.
         $providerSearchCriteria = clone($searchCriteria);
@@ -103,11 +111,11 @@ class Search implements ProductQueryInterface
 
         $maxPages = 0;
         if ($searchCriteria->getPageSize() && $searchCriteria->getPageSize() > 0) {
-            $maxPages = (int) ceil($searchResults->getTotalCount() / $searchCriteria->getPageSize());
+            $maxPages = (int) ceil($countResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
         return $this->searchResultFactory->create([
-            'totalCount'           => $searchResults->getTotalCount(),
+            'totalCount'           => $countResults->getTotalCount(),
             'productsSearchResult' => $productArray,
             'searchAggregation'    => $searchResults->getAggregations(),
             'pageSize'             => $searchCriteria->getPageSize(),
