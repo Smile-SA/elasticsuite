@@ -61,11 +61,11 @@ class QueryInterfacePlugin
     public function afterGetCutoffFrequency(\Smile\ElasticsuiteCore\Search\Request\QueryInterface $subject, $result)
     {
         if ($this->serverDistribution === ClusterInfoInterface::DISTRO_ES) {
-            if (version_compare($this->clusterInfo->getServerVersion(), "8.0.0") >= 0) {
+            if (version_compare($this->serverVersion, "8.0.0") >= 0) {
                 $result = 0; // Will be evaluated as false and discarded by the Query Builder.
             }
         } elseif ($this->serverDistribution === ClusterInfoInterface::DISTRO_OS) {
-            if (version_compare($this->clusterInfo->getServerVersion(), "2.0.0") >= 0) {
+            if (version_compare($this->serverVersion, "2.0.0") >= 0) {
                 $result = 0; // Will be evaluated as false and discarded by the Query Builder.
             }
         }
