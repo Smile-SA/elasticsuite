@@ -1,0 +1,61 @@
+.col-md-6 {
+    width: 562px;
+}
+
+.col-sm-4 {
+    float: left;
+    padding-right: 15px;
+    margin-bottom: 15px;
+}
+
+.row .col-sm-4:nth-child(2) {
+    padding-right: 0;
+}
+
+.admin__field-label {
+    color: #303030;
+    font-size: 14px;
+    font-weight: 600;
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.admin__control-text {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.col-xs-12.text-right {
+    text-align: right;
+}
+
+#admin__es-index-select {
+    max-width: 417px;
+}
+
+#admin__es-analyzer-select {
+    padding-right: 0;
+    width: 130px;
+}
+
+#admin__es-index-select.has-error,
+#admin__es-analyzer-select.has-error,
+#admin__es-analyzer-term.has-error {
+    border: 2px dashed #ee0000;
+}
+
+#admin__es-analysis-tokens {
+    display: none;
+}
+
+#form-warning-notice {
+    color: #ee0000;
+    font-size: 8.5pt;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+#form-response {
+    margin-top: 20px;
+}

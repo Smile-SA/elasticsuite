@@ -61,8 +61,24 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.5-p1'
                     magento-editions: 'enterprise'
-                    experimental: true                    
-
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.6-beta2'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.6-beta2'
+                    magento-editions: 'enterprise'
+                    experimental: true
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.6-beta2'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.6-beta2'
+                    magento-editions: 'enterprise'
+                    experimental: true
+                    
         continue-on-error: ${{ matrix.experimental }}
 
         env:

@@ -53,20 +53,22 @@
 
                     <div class="product-image"><img data-bind="attr: { src: getImageUrl() }" /></div>
 
-                    <div class="info">
-                        <h1><span data-bind="text: getName(), attr: {title: getName()}"></span></h1>
-                        <p class="sku" data-bind="text: getSku()"></p>
-                        <p class="price" data-bind="text: getFormattedPrice()"></p>
-                        <p class="stock" data-bind="text: getStockLabel()"></p>
-                    </div>
+                    <div class="info-wrapper">
+                        <div class="info">
+                            <h1><span data-bind="text: getName(), attr: {title: getName()}"></span></h1>
+                            <p class="sku" data-bind="text: getSku()"></p>
+                            <p class="price" data-bind="text: getFormattedPrice()"></p>
+                            <p class="stock" data-bind="text: getStockLabel()"></p>
+                        </div>
 
-                    <div class="admin__actions-switch" data-role="switcher" data-bind="click: $parent.toggleSortType.bind($parent)">
-                        <input type="checkbox" class="admin__actions-switch-checkbox" simple-checked="hasPosition()" ko-value="hasPosition()" />
-                        <label class="admin__actions-switch-label">
-                            <span class="admin__actions-switch-text"
-                                  attr="'data-text-on': $parent.messages.manualSort, 'data-text-off': $parent.messages.automaticSort">
-                              </span>
-                        </label>
+                        <div class="admin__actions-switch" data-role="switcher" data-bind="click: $parent.toggleSortType.bind($parent)">
+                            <input type="checkbox" class="admin__actions-switch-checkbox" simple-checked="hasPosition()" ko-value="hasPosition()" />
+                            <label class="admin__actions-switch-label">
+                                <span class="admin__actions-switch-text"
+                                      attr="'data-text-on': $parent.messages.manualSort, 'data-text-off': $parent.messages.automaticSort">
+                                  </span>
+                            </label>
+                        </div>
                     </div>
                 </li>
             </ul>

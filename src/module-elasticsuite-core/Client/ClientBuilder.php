@@ -46,6 +46,7 @@ class ClientBuilder
         'http_auth_encoded'     => false,
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
+        'max_retries'           => 2,
     ];
 
     /**
@@ -102,16 +103,18 @@ class ClientBuilder
             $clientBuilder->setHandler($handler);
         }
 
-        if (!empty($options['http_auth_user']) && !empty($options['http_auth_pwd']) && $options['http_auth_encoded']) {
-            $authHeader = 'Basic ' . base64_encode($options['http_auth_user'] . ':' . $options['http_auth_pwd']);
-            $clientBuilder->setConnectionParams(['client' => ['headers' => ['Authorization' => [$authHeader]]]]);
+        $connectionParams = $this->getConnectionParams($options);
+
+        if (!empty($connectionParams)) {
+            $this->clientBuilder->setConnectionParams($connectionParams);
+        }
+
+        if ($options['max_retries'] > 0) {
+            $clientBuilder->setRetries((int) $options['max_retries']);
         }
 
         if (null !== $this->selector) {
-            $selector = $this->selector;
-            if (count($hosts) <= 1) {
-                $selector = StickyRoundRobinSelector::class;
-            }
+            $selector = (count($hosts) > 1) ? $this->selector : StickyRoundRobinSelector::class;
             $clientBuilder->setSelector($selector);
         }
 
@@ -152,5 +155,28 @@ class ClientBuilder
         }
 
         return $hosts;
+    }
+
+    /**
+     * Return HTTP Authentication parameters used to connect to the cluster if any
+     *
+     * @param array $options Client options. See self::defaultOptions for available options.
+     * @return array
+     */
+    private function getConnectionParams($options)
+    {
+        return (
+            !empty($options['http_auth_user']) &&
+            !empty($options['http_auth_pwd']) &&
+            $options['http_auth_encoded']
+        ) ? [
+            'client' => [
+                'headers' => [
+                    'Authorization' => [
+                        'Basic ' . base64_encode($options['http_auth_user'] . ':' . $options['http_auth_pwd']),
+                    ],
+                ],
+            ],
+        ] : [];
     }
 }

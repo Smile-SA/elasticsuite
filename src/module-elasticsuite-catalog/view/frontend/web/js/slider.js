@@ -106,7 +106,7 @@ define([
                         options.values = [this._valueMin(), this._valueMin()];
                     } else if (options.values.length && options.values.length !== 2) {
                         options.values = [options.values[0], options.values[0]];
-                    } else if ($.isArray(options.values)) {
+                    } else if (Array.isArray(options.values)) {
                         options.values = options.values.slice(0);
                     }
                 }
@@ -202,7 +202,7 @@ define([
 
             closestHandle
                 .addClass("ui-state-active")
-                .focus();
+                .trigger("focus");
 
             offset = closestHandle.offset();
             mouseOverHandle = !$(event.target).parents().addBack().is(".ui-slider-handle");
@@ -394,7 +394,7 @@ define([
             }
 
             if (arguments.length) {
-                if ($.isArray(arguments[0])) {
+                if (Array.isArray(arguments[0])) {
                     vals = this.options.values;
                     newValues = arguments[0];
                     for (i = 0; i < vals.length; i += 1) {
@@ -428,7 +428,7 @@ define([
                 }
             }
 
-            if ($.isArray(this.options.values)) {
+            if (Array.isArray(this.options.values)) {
                 valsLength = this.options.values.length;
             }
 

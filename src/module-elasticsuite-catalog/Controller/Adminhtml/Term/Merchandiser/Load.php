@@ -18,6 +18,7 @@ use Magento\Framework\Json\Helper\Data;
 use Magento\Search\Controller\Adminhtml\Term;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalog\Model\Search\PreviewFactory;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Search term merchandiser preview load controller.
@@ -44,23 +45,31 @@ class Load extends Term
     private $previewFactory;
 
     /**
+     * @var ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
-     * @param Context        $context        Controller context.
-     * @param QueryFactory   $queryFactory   Search query factory.
-     * @param Data           $jsonHelper     Json Helper.
-     * @param PreviewFactory $previewFactory Preview factory.
+     * @param Context          $context        Controller context.
+     * @param QueryFactory     $queryFactory   Search query factory.
+     * @param Data             $jsonHelper     Json Helper.
+     * @param PreviewFactory   $previewFactory Preview factory.
+     * @param ContextInterface $searchContext  Search context.
      */
     public function __construct(
-        Context $context,
-        \Magento\Search\Model\QueryFactory $queryFactory,
-        Data $jsonHelper,
-        PreviewFactory $previewFactory
+        Context          $context,
+        QueryFactory     $queryFactory,
+        Data             $jsonHelper,
+        PreviewFactory   $previewFactory,
+        ContextInterface $searchContext
     ) {
         parent::__construct($context);
         $this->queryFactory   = $queryFactory;
         $this->jsonHelper     = $jsonHelper;
         $this->previewFactory = $previewFactory;
+        $this->searchContext = $searchContext;
     }
 
     /**
@@ -77,6 +86,7 @@ class Load extends Term
         $responseData = ['products' => [], 'size' => 0];
 
         if ($query->getId()) {
+            $this->searchContext->setCurrentSearchQuery($query);
             $productPositions = $this->getRequest()->getParam('product_position', []);
 
             $query->setSortedProductIds(array_keys($productPositions));

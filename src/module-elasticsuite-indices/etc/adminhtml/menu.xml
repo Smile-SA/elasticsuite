@@ -31,6 +31,16 @@
             sortOrder="10"
             parent="Smile_ElasticsuiteIndices::system"
             action="smile_elasticsuite_indices/index/index"
-            resource="Smile_ElasticsuiteIndices::manage"/>
+            resource="Smile_ElasticsuiteIndices::manage"
+        />
+        <add
+            id="Smile_ElasticsuiteIndices::analysis"
+            title="Analysis"
+            module="Smile_ElasticsuiteIndices"
+            sortOrder="20"
+            parent="Smile_ElasticsuiteIndices::system"
+            action="smile_elasticsuite_indices/analysis/index"
+            resource="Smile_ElasticsuiteIndices::analysis"
+        />
     </menu>
 </config>

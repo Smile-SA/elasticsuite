@@ -26,7 +26,7 @@
     </li>
 </ol>
 
-<div class="no-results-message" data-bind="if: fulltextSearch() && !hasSearchResult()" class="empty">
+<div class="no-results-message empty" data-bind="if: fulltextSearch() && !hasSearchResult()">
     <p data-bind="html: getSearchResultMessage()"></p>
 </div>
 

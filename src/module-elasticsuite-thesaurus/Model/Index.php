@@ -133,13 +133,15 @@ class Index
         }
 
         if ($config->isExpansionSearchEnabled()) {
-            $synonymRewrites = array_merge([$queryText => $originalBoost], $rewrites);
+            // Use + instead of array_merge because $queryText can be purely numeric and would be casted to 0 by array_merge.
+            $synonymRewrites = [(string) $queryText => $originalBoost] + $rewrites;
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
                 $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
-                $rewrites          = array_merge($rewrites, $expansionRewrites);
+                // Use + instead of array_merge because keys can be purely numeric and would be casted to 0 by array_merge.
+                $rewrites          = $rewrites + $expansionRewrites;
             }
         }
 
@@ -222,7 +224,7 @@ class Index
         foreach ($analyzedQueries as $query) {
             try {
                 $analysis = $this->client->analyze(
-                    ['index' => $indexName, 'body' => ['text' => $query, 'analyzer' => $type]]
+                    ['index' => $indexName, 'body' => ['text' => (string) $query, 'analyzer' => $type]]
                 );
             } catch (\Exception $e) {
                 $analysis = ['tokens' => []];
@@ -235,11 +237,8 @@ class Index
                     $synonymByPositions[$positionKey][] = $token;
                 }
             }
-
-            $synonyms = array_merge(
-                $synonyms,
-                $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites)
-            );
+            // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
+            $synonyms = $synonyms + $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites);
         }
 
         return $synonyms;

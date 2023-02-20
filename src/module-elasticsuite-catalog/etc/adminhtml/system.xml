@@ -75,6 +75,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the price slider behavior changes so that the middle of the slider range corresponds to the median price instead of the price at the middle of the range.]]></comment>
                 </field>
+                <field id="index_child_product_sku" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable indexing child product SKU in dedicated subfield</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, child products SKUs of composite products will be indexed in a separate field and the "sku" field will only contain the parent product sku.]]></comment>
+                </field>
             </group>
         </section>
     </system>

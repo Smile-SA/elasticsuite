@@ -103,12 +103,12 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
         'jquery'
     ], function($){
         $(function() {
-            $("#<?= $block->getJsId() ?> .action-help").click(function(event) {
+            $("#<?= $block->getJsId() ?> .action-help").on('click', function(event) {
                 event.preventDefault();
                 $("#<?= $block->getJsId() ?> .dashboard-item-help").slideToggle();
             });
 
-            $("#<?= $block->getJsId() ?>_toggle").click(function() {
+            $("#<?= $block->getJsId() ?>_toggle").on('click', function() {
                 if ($("#<?= $block->getJsId() ?>_extra").is(":hidden")) {
                     $(this).text('<?= $block->escapeJs(__('Show less...')) ?>');
                 } else {
