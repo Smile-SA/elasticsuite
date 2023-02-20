@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <!--
 /**
+ * Smile_ElasticsuiteTracker database schema configuration.
+ *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
@@ -15,6 +17,61 @@
  -->
 <schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- create elasticsuite_tracker_log_event table -->
+    <table name="elasticsuite_tracker_log_event">
+        <column name="event_id"
+                xsi:type="varchar"
+                length="32"
+                nullable="false"
+                comment="Event ID"/>
+        <column name="created_at"
+                xsi:type="datetime"
+                nullable="false"
+                default="CURRENT_TIMESTAMP"
+                comment="Event date"/>
+        <column name="data"
+                xsi:type="text"
+                nullable="false"
+                comment="Event data"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="event_id"/>
+        </constraint>
+    </table>
+
+    <!-- create elasticsuite_tracker_log_customer_link table -->
+    <table name="elasticsuite_tracker_log_customer_link">
+        <column name="customer_id"
+                xsi:type="int"
+                nullable="false"
+                unsigned="true"
+                comment="Customer ID"/>
+        <column name="session_id"
+                xsi:type="varchar"
+                length="255"
+                nullable="false"
+                comment="Session ID"/>
+        <column name="visitor_id"
+                xsi:type="varchar"
+                length="255"
+                nullable="false"
+                comment="Visitor ID"/>
+        <column name="delete_after"
+                xsi:type="datetime"
+                nullable="true"
+                default="NULL"
+                comment="Delete after"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="customer_id"/>
+            <column name="session_id"/>
+            <column name="visitor_id"/>
+        </constraint>
+        <constraint xsi:type="foreign"
+                    referenceId="ELASTICSUITE_TRACKER_LOG_CSTR_LNK_CSTR_ID_CSTR_ENTT_ENTT_ID"
+                    table="elasticsuite_tracker_log_customer_link"
+                    column="customer_id"
+                    referenceTable="customer_entity"
+                    referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
     <table name="smile_elasticsuite_notification_log" resource="default" engine="innodb" comment="Elasticsuite Notification Viewer Log Table">
         <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Log ID"/>
