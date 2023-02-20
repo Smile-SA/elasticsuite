@@ -118,6 +118,7 @@ class Builder
 
     /**
      * Create a new search request.
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param integer               $storeId        Search request store id.
      * @param string                $containerName  Search request name.

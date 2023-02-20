@@ -113,7 +113,18 @@ class RequestBuilder
 
         $trackTotalHits = $searchCriteria->getTrackTotalHits() ?? null;
 
-        return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, [], [], $trackTotalHits);
+        return $this->searchRequestBuilder->create(
+            $storeId,
+            $containerName,
+            $from,
+            $size,
+            $queryText,
+            $sortOrders,
+            $filters,
+            [],
+            [],
+            $trackTotalHits
+        );
     }
 
     /**

@@ -28,7 +28,13 @@ interface SearchCriteriaInterface extends \Magento\Framework\Api\Search\SearchCr
     public function getTrackTotalHits();
 
     /**
-     * @param int|bool $trackTotalHits
+     * If the number of total hits should be tracked.
+     * This can be an integer or a boolean :
+     *  - int : the maximum number of hits that will be tracked.
+     *  - boolean "false" : total hits will not be tracked.
+     *  - boolean "true" : total hits will be tracked and the exact total will be returned.
+     *
+     * @param int|bool $trackTotalHits Number of hits to track, or boolean.
      *
      * @return $this
      */

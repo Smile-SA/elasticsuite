@@ -41,10 +41,6 @@ class ClusterInfo implements ClusterInfoInterface
     private $serverDistribution;
 
     /**
-     * @var null|array
-     */
-    private $info = null;
-    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client ElasticSearch client.
