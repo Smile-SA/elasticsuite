@@ -45,6 +45,10 @@ class DateHistogram implements BuilderInterface
             'min_doc_count' => $bucket->getMinDocCount(),
         ];
 
+        if (!empty($bucket->getExtendedBounds())) {
+            $aggParams['extended_bounds'] = $bucket->getExtendedBounds();
+        }
+
         return ['date_histogram' => $aggParams];
     }
 }

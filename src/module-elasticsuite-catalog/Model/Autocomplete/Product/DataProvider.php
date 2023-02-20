@@ -13,9 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product;
 
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
 use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Catalog product autocomplete data provider.
@@ -54,21 +55,29 @@ class DataProvider implements DataProviderInterface
     private $productCollection;
 
     /**
+     * @var ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param ItemFactory         $itemFactory               Suggest item factory.
      * @param Collection\Provider $productCollectionProvider Product collection provider.
      * @param ConfigurationHelper $configurationHelper       Autocomplete configuration helper.
+     * @param ContextInterface    $searchContext             Query search context.
      * @param string              $type                      Autocomplete provider type.
      */
     public function __construct(
         ItemFactory $itemFactory,
         Collection\Provider $productCollectionProvider,
         ConfigurationHelper $configurationHelper,
+        ContextInterface    $searchContext,
         $type = self::AUTOCOMPLETE_TYPE
     ) {
         $this->itemFactory         = $itemFactory;
         $this->configurationHelper = $configurationHelper;
+        $this->searchContext       = $searchContext;
         $this->type                = $type;
         $this->productCollection   = $this->prepareProductCollection($productCollectionProvider->getProductCollection());
     }
@@ -107,6 +116,18 @@ class DataProvider implements DataProviderInterface
     private function prepareProductCollection(ProductCollection $productCollection)
     {
         $productCollection->setPageSize($this->getResultsPageSize());
+        $productCollection->setOrder('relevance', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+
+        if ($searchQuery = $this->searchContext->getCurrentSearchQuery()) {
+            if ($searchQuery->getId()) {
+                $productCollection->addSortFilterParameters(
+                    'relevance',
+                    'search_query.position',
+                    'search_query',
+                    ['search_query.query_id' => $searchQuery->getId()]
+                );
+            }
+        }
 
         return $productCollection;
     }
