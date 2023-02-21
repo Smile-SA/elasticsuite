@@ -4,12 +4,10 @@ on:
     push:
         branches:
             - master
-            - feature-magento-246
 
     pull_request_target:
         branches:
             - master
-            - feature-magento-246
         types: [labeled]
 
 jobs:
