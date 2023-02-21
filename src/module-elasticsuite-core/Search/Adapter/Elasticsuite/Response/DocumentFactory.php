@@ -38,6 +38,11 @@ class DocumentFactory
     private $instanceName;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * Constructor.
      *
      * @param ObjectManagerInterface $objectManager  Object manager.

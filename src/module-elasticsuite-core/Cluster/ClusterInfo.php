@@ -56,7 +56,7 @@ class ClusterInfo implements ClusterInfoInterface
     public function getServerVersion()
     {
         if ($this->serverVersion === null) {
-            $this->serverVersion = $this->client->info()['version']['number'];
+            $this->getInfo();
         }
 
         return $this->serverVersion;
@@ -68,9 +68,23 @@ class ClusterInfo implements ClusterInfoInterface
     public function getServerDistribution()
     {
         if ($this->serverDistribution === null) {
-            $this->serverDistribution = $this->client->info()['version']['distribution'] ?? self::DISTRO_ES;
+            $this->getInfo();
         }
 
         return $this->serverDistribution;
+    }
+
+    /**
+     * Get server info.
+     *
+     * @return array
+     */
+    private function getInfo()
+    {
+        $info                     = $this->client->info();
+        $this->serverVersion      = $info['version']['number'];
+        $this->serverDistribution = $info['version']['distribution'] ?? self::DISTRO_ES;
+
+        return $info;
     }
 }

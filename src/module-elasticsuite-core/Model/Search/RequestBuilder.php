@@ -89,11 +89,11 @@ class RequestBuilder
     /**
      * Build a search request from a search criteria.
      *
-     * @param \Magento\Framework\Api\Search\SearchCriteriaInterface $searchCriteria Search criteria.
+     * @param \Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface $searchCriteria Search criteria.
      *
      * @return \Smile\ElasticsuiteCore\Search\RequestInterface
      */
-    public function getRequest(\Magento\Framework\Api\Search\SearchCriteriaInterface $searchCriteria)
+    public function getRequest(\Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface $searchCriteria)
     {
         $storeId = $this->getCurrentStoreId();
 
@@ -111,7 +111,20 @@ class RequestBuilder
         $sortOrders = $this->requestMapper->getSortOrders($containerConfiguration, $searchCriteria);
         $filters    = $this->requestMapper->getFilters($containerConfiguration, $searchCriteria);
 
-        return $this->searchRequestBuilder->create($storeId, $containerName, $from, $size, $queryText, $sortOrders, $filters, []);
+        $trackTotalHits = $searchCriteria->getTrackTotalHits() ?? null;
+
+        return $this->searchRequestBuilder->create(
+            $storeId,
+            $containerName,
+            $from,
+            $size,
+            $queryText,
+            $sortOrders,
+            $filters,
+            [],
+            [],
+            $trackTotalHits
+        );
     }
 
     /**

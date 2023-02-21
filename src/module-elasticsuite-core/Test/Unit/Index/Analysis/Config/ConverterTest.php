@@ -38,7 +38,7 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
     {
         $xml = new \DOMDocument();
         $xml->load(__DIR__ . '/elasticsuite_analysis.xml');
-        $converter = new Converter(new \Magento\Framework\Json\Decoder());
+        $converter = new Converter(new \Magento\Framework\Json\Decoder(new \Magento\Framework\Serialize\Serializer\Json()));
         $this->parsedData = $converter->convert($xml);
     }
 

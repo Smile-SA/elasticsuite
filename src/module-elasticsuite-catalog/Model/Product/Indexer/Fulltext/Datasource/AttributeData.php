@@ -52,6 +52,11 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     private $forbiddenChildrenAttributes = [];
 
     /**
+     * @var boolean
+     */
+    private $isIndexingChildProductSkuEnabled;
+
+    /**
      * Constructor
      *
      * @param ResourceModel        $resourceModel               Resource model.
