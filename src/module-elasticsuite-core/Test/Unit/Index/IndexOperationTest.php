@@ -149,12 +149,12 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $this->clientMock->method('bulk')->will($this->returnValue([
             'errors' => true,
             'items'  => [
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc1']],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc2']],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc3', 'error' => $error1]],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc4', 'error' => $error1]],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc5', 'error' => $error2]],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc6', 'error' => $error2]],
+                ['index' => ['_index' => 'index', '_id' => 'doc1']],
+                ['index' => ['_index' => 'index', '_id' => 'doc2']],
+                ['index' => ['_index' => 'index', '_id' => 'doc3', 'error' => $error1]],
+                ['index' => ['_index' => 'index', '_id' => 'doc4', 'error' => $error1]],
+                ['index' => ['_index' => 'index', '_id' => 'doc5', 'error' => $error2]],
+                ['index' => ['_index' => 'index', '_id' => 'doc6', 'error' => $error2]],
             ],
         ]));
 
@@ -166,7 +166,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('errors', $this->logRows);
         $this->assertCount(2, $this->logRows['errors']);
         $errMessages = [
-            'Bulk index operation failed 2 times in index index for type type.',
+            'Bulk index operation failed 2 times in index index.',
             'Error (reason2) : Reason 2.',
             'Failed doc ids sample : doc5, doc6.',
         ];
