@@ -83,6 +83,7 @@ class PriceData implements DatasourceInterface
 
     /**
      * Add price data to the index data.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * {@inheritdoc}
      */
