@@ -13,7 +13,7 @@ on:
 jobs:
     build:
         if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
-        runs-on: ubuntu-18.04
+        runs-on: ubuntu-20.04
         name: 'Integration'
         services:
             mysql:
@@ -61,15 +61,7 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.5-p1'
                     magento-editions: 'enterprise'
-                    experimental: true     
-                  - php-versions: '8.1'
-                    magento-versions: '2.4.6-beta1'
-                    magento-editions: 'community'
                     experimental: true
-                  - php-versions: '8.1'
-                    magento-versions: '2.4.6-beta1'
-                    magento-editions: 'enterprise'
-                    experimental: true                    
 
         continue-on-error: ${{ matrix.experimental }}
 

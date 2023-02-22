@@ -40,6 +40,7 @@
                 <adaptive_slider_enabled>0</adaptive_slider_enabled>
                 <index_child_product_sku>0</index_child_product_sku>
                 <include_child_attributes>1</include_child_attributes>
+                <compute_child_product_discount>0</compute_child_product_discount>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
     </default>

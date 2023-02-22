@@ -39,15 +39,21 @@ class Search extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlo
     private $catalogSearchData;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                       $context           The template context
-     * @param \Magento\Framework\Json\Helper\Data    $jsonHelper        The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper     The Smile Tracker helper
-     * @param \Magento\Framework\Registry            $registry          Magento Core Registry
-     * @param \Magento\Catalog\Model\Layer\Resolver  $layerResolver     The Magento layer resolver
-     * @param \Magento\CatalogSearch\Helper\Data     $catalogSearchData The Catalogsearch data
-     * @param array                                  $data              The block data
+     * @param Template\Context                                    $context           The template context
+     * @param \Magento\Framework\Json\Helper\Data                 $jsonHelper        The Magento's JSON Helper
+     * @param \Smile\ElasticsuiteTracker\Helper\Data              $trackerHelper     The Smile Tracker helper
+     * @param \Magento\Framework\Registry                         $registry          Magento Core Registry
+     * @param \Magento\Catalog\Model\Layer\Resolver               $layerResolver     The Magento layer resolver
+     * @param \Magento\CatalogSearch\Helper\Data                  $catalogSearchData The Catalogsearch data
+     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext     The search context
+     * @param array                                               $data              The block data
      */
     public function __construct(
         Template\Context $context,
@@ -56,10 +62,12 @@ class Search extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlo
         \Magento\Framework\Registry $registry,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         \Magento\CatalogSearch\Helper\Data $catalogSearchData,
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface     $searchContext,
         array $data = []
     ) {
         $this->catalogLayer      = $layerResolver->get();
         $this->catalogSearchData = $catalogSearchData;
+        $this->searchContext = $searchContext;
         parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 
@@ -71,6 +79,10 @@ class Search extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlo
     public function getVariables()
     {
         $variables = ['search.query' => $this->catalogSearchData->getEscapedQueryText()];
+
+        if ($searchQuery = $this->searchContext->getCurrentSearchQuery()) {
+            $variables['search.query_id'] = (int) $searchQuery->getQueryId();
+        }
 
         if ($layer = $this->catalogLayer) {
             $productCollection = $layer->getProductCollection();

@@ -43,16 +43,17 @@ class Histogram extends AbstractBucket
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string              $name         Bucket name.
-     * @param string              $field        Bucket field.
-     * @param MetricInterface[]   $metrics      Bucket metrics.
-     * @param BucketInterface[]   $childBuckets Child buckets.
-     * @param PipelineInterface[] $pipelines    Bucket pipelines.
-     * @param string              $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface      $filter       Bucket filter.
-     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
-     * @param integer             $interval     Histogram interval.
-     * @param integer             $minDocCount  Histogram min doc count.
+     * @param string              $name           Bucket name.
+     * @param string              $field          Bucket field.
+     * @param MetricInterface[]   $metrics        Bucket metrics.
+     * @param BucketInterface[]   $childBuckets   Child buckets.
+     * @param PipelineInterface[] $pipelines      Bucket pipelines.
+     * @param string              $nestedPath     Nested path for nested bucket.
+     * @param QueryInterface      $filter         Bucket filter.
+     * @param QueryInterface      $nestedFilter   Nested filter for the bucket.
+     * @param integer             $interval       Histogram interval.
+     * @param integer             $minDocCount    Histogram min doc count.
+     * @param array               $extendedBounds Histogram extended bounds.
      */
     public function __construct(
         $name,
@@ -64,11 +65,13 @@ class Histogram extends AbstractBucket
         QueryInterface $filter = null,
         QueryInterface $nestedFilter = null,
         $interval = 1,
-        $minDocCount = 0
+        $minDocCount = 0,
+        $extendedBounds = []
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
         $this->interval    = $interval;
         $this->minDocCount = $minDocCount;
+        $this->extendedBounds = $extendedBounds;
     }
 
     /**
@@ -97,5 +100,15 @@ class Histogram extends AbstractBucket
     public function getMinDocCount()
     {
         return $this->minDocCount;
+    }
+
+    /**
+     * Get histogram extended bounds.
+     *
+     * @return array
+     */
+    public function getExtendedBounds()
+    {
+        return $this->extendedBounds;
     }
 }

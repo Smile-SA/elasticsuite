@@ -14,8 +14,12 @@
 
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
+use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as AttributeResourceModel;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -26,10 +30,26 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
  */
 class PriceData implements DatasourceInterface
 {
+    /** @var string */
+    private const XML_PATH_COMPUTE_CHILD_PRODUCT_DISCOUNT
+        = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/compute_child_product_discount';
+
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData
      */
     private $resourceModel;
+
+    /**
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData
+     */
+    private $attributeResourceModel;
+
+    /**
+     * Scope configuration
+     *
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
 
     /**
      * @var PriceData\PriceDataReaderInterface[]
@@ -37,25 +57,45 @@ class PriceData implements DatasourceInterface
     private $priceReaderPool = [];
 
     /**
+     * @var boolean
+     */
+    private $isComputeChildDiscountEnabled;
+
+    /**
      * Constructor.
      *
-     * @param ResourceModel                        $resourceModel   Resource model
-     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
+     * @param ResourceModel                        $resourceModel          Resource model
+     * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
+     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
+     * @param ScopeConfigInterface                 $scopeConfig            Scope Config.
      */
-    public function __construct(ResourceModel $resourceModel, $priceReaderPool = [])
-    {
-        $this->resourceModel     = $resourceModel;
-        $this->priceReaderPool = $priceReaderPool;
+    public function __construct(
+        ResourceModel $resourceModel,
+        AttributeResourceModel $attributeResourceModel,
+        $priceReaderPool = [],
+        ScopeConfigInterface $scopeConfig = null
+    ) {
+        $this->resourceModel            = $resourceModel;
+        $this->priceReaderPool          = $priceReaderPool;
+        $this->attributeResourceModel   = $attributeResourceModel;
+        $this->scopeConfig              = $scopeConfig ?: ObjectManager::getInstance()->get(ScopeConfigInterface::class);
     }
 
     /**
      * Add price data to the index data.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * {@inheritdoc}
      */
     public function addData($storeId, array $indexData)
     {
-        $priceData = $this->resourceModel->loadPriceData($storeId, array_keys($indexData));
+        $productIds = array_keys($indexData);
+        $priceData  = $this->resourceModel->loadPriceData($storeId, $productIds);
+
+        if ($this->isComputeChildDiscountEnabled()) {
+            $allChildrenIds = $this->attributeResourceModel->loadChildrens($productIds, $storeId);
+            $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
+        }
 
         foreach ($priceData as $priceDataRow) {
             $productId     = (int) $priceDataRow['entity_id'];
@@ -65,10 +105,27 @@ class PriceData implements DatasourceInterface
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
 
+            $isDiscount    = $price < $originalPrice;
+
+            if ($this->isComputeChildDiscountEnabled()) {
+                if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
+                    $isDiscount    = false;
+                    $priceModifier = $this->getPriceDataReader('default');
+                    foreach ($childPriceData as $childPrice) {
+                        if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
+                            if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
+                                $isDiscount = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             $indexData[$productId]['price'][] = [
                 'price'             => (float) $price,
                 'original_price'    => (float) $originalPrice,
-                'is_discount'       => $price < $originalPrice,
+                'is_discount'       => $isDiscount,
                 'customer_group_id' => (int) $priceDataRow['customer_group_id'],
                 'tax_class_id'      => (int) $priceDataRow['tax_class_id'],
                 'final_price'       => (float) $priceDataRow['final_price'],
@@ -102,5 +159,22 @@ class PriceData implements DatasourceInterface
         }
 
         return $priceModifier;
+    }
+
+    /**
+     * Is computing child product discount enabled.
+     *
+     * @return bool
+     */
+    private function isComputeChildDiscountEnabled(): bool
+    {
+        if (!isset($this->isIndexingChildProductSkuEnabled)) {
+            $this->isComputeChildDiscountEnabled = (bool) $this->scopeConfig->getValue(
+                self::XML_PATH_COMPUTE_CHILD_PRODUCT_DISCOUNT,
+                ScopeInterface::SCOPE_STORE
+            );
+        }
+
+        return $this->isComputeChildDiscountEnabled;
     }
 }
