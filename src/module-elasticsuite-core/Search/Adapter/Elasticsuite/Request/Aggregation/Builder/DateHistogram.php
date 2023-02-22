@@ -41,12 +41,17 @@ class DateHistogram implements BuilderInterface
 
         $aggParams = [
             'field'         => $bucket->getField(),
-            'interval'      => $bucket->getInterval(),
             'min_doc_count' => $bucket->getMinDocCount(),
         ];
 
         if (!empty($bucket->getExtendedBounds())) {
             $aggParams['extended_bounds'] = $bucket->getExtendedBounds();
+        }
+
+        if (null !== $bucket->getCalendarInterval()) {
+            $aggParams['calendar_interval'] = $bucket->getCalendarInterval();
+        } elseif (null !== $bucket->getFixedInterval()) {
+            $aggParams['fixed_interval'] = $bucket->getFixedInterval();
         }
 
         return ['date_histogram' => $aggParams];
