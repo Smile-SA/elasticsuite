@@ -80,6 +80,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, child products SKUs of composite products will be indexed in a separate field and the "sku" field will only contain the parent product sku.]]></comment>
                 </field>
+                <field id="compute_child_product_discount" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable indexing discount on child products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable this if your catalog contains configurable products that are having childrens with different prices that could have separated discounts.]]></comment>
+                </field>
             </group>
         </section>
     </system>
