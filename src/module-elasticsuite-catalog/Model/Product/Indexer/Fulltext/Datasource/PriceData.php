@@ -31,7 +31,8 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datas
 class PriceData implements DatasourceInterface
 {
     /** @var string */
-    private const XML_PATH_COMPUTE_CHILD_PRODUCT_DISCOUNT = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/compute_child_product_discount';
+    private const XML_PATH_COMPUTE_CHILD_PRODUCT_DISCOUNT
+        = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/compute_child_product_discount';
 
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData
@@ -66,6 +67,7 @@ class PriceData implements DatasourceInterface
      * @param ResourceModel                        $resourceModel          Resource model
      * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
+     * @param ScopeConfigInterface                 $scopeConfig            Scope Config.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -81,6 +83,7 @@ class PriceData implements DatasourceInterface
 
     /**
      * Add price data to the index data.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * {@inheritdoc}
      */
