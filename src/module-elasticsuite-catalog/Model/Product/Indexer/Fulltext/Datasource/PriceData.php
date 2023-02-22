@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as AttributeResourceModel;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -32,20 +33,29 @@ class PriceData implements DatasourceInterface
     private $resourceModel;
 
     /**
+     * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData
+     */
+    private $attributeResourceModel;
+
+    /**
      * @var PriceData\PriceDataReaderInterface[]
      */
     private $priceReaderPool = [];
-
     /**
      * Constructor.
      *
-     * @param ResourceModel                        $resourceModel   Resource model
-     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool Price modifiers pool.
+     * @param ResourceModel                        $resourceModel          Resource model
+     * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
+     * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
      */
-    public function __construct(ResourceModel $resourceModel, $priceReaderPool = [])
-    {
-        $this->resourceModel     = $resourceModel;
-        $this->priceReaderPool = $priceReaderPool;
+    public function __construct(
+        ResourceModel $resourceModel,
+        AttributeResourceModel $attributeResourceModel,
+        $priceReaderPool = []
+    ) {
+        $this->resourceModel            = $resourceModel;
+        $this->priceReaderPool          = $priceReaderPool;
+        $this->attributeResourceModel   = $attributeResourceModel;
     }
 
     /**
@@ -55,7 +65,11 @@ class PriceData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
-        $priceData = $this->resourceModel->loadPriceData($storeId, array_keys($indexData));
+        $productIds = array_keys($indexData);
+        $priceData = $this->resourceModel->loadPriceData($storeId, $productIds);
+
+        $allChildrenIds = $this->attributeResourceModel->loadChildrens($productIds, $storeId);
+        $childPriceData = $this->resourceModel->loadPriceData($storeId, array_keys($allChildrenIds));
 
         foreach ($priceData as $priceDataRow) {
             $productId     = (int) $priceDataRow['entity_id'];
@@ -65,10 +79,24 @@ class PriceData implements DatasourceInterface
             $originalPrice = $priceModifier->getOriginalPrice($priceDataRow);
             $price         = $priceModifier->getPrice($priceDataRow);
 
+            $isDiscount    = $price < $originalPrice;
+            if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
+                $isDiscount = false;
+                $priceModifier = $this->getPriceDataReader('default');
+                foreach ($childPriceData as $childPrice) {
+                    if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
+                        if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
+                            $isDiscount = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             $indexData[$productId]['price'][] = [
-                'price'             => (float) $price,
-                'original_price'    => (float) $originalPrice,
-                'is_discount'       => $price < $originalPrice,
+                'price'             => $price,
+                'original_price'    => $originalPrice,
+                'is_discount'       => $isDiscount,
                 'customer_group_id' => (int) $priceDataRow['customer_group_id'],
                 'tax_class_id'      => (int) $priceDataRow['tax_class_id'],
                 'final_price'       => (float) $priceDataRow['final_price'],
