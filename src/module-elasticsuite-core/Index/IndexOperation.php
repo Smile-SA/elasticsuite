@@ -305,11 +305,10 @@ class IndexOperation implements IndexOperationInterface
                 $sampleDocumentIds = implode(', ', array_slice($error['document_ids'], 0, 10));
                 $errorMessages = [
                     sprintf(
-                        "Bulk %s operation failed %d times in index %s for type %s.",
+                        "Bulk %s operation failed %d times in index %s.",
                         $error['operation'],
                         $error['count'],
-                        $error['index'],
-                        $error['document_type']
+                        $error['index']
                     ),
                     sprintf(
                         "Error (%s) : %s.",
