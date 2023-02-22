@@ -5,13 +5,13 @@ on:
         branches:
         - 2.9.x
         - 2.10.x
-        - feature-magento-246
-        
+        - master
+
     pull_request_target:
         branches:
         - 2.9.x
         - 2.10.x
-        - feature-magento-246
+        - master
 
 jobs:
     qualit:
