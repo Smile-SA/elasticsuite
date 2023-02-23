@@ -285,6 +285,10 @@ class Spellchecker implements SpellcheckerInterface
 
     /**
      * Get index stats.
+     *
+     * @param string $indexName The index name
+     *
+     * @return array
      */
     private function getIndexStats(string $indexName): array
     {
