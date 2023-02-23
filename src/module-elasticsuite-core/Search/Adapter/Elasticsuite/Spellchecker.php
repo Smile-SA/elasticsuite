@@ -290,7 +290,7 @@ class Spellchecker implements SpellcheckerInterface
     private function getIndexStats(string $indexName): array
     {
         if (!isset($this->indexStatsCache[$indexName])) {
-            $this->indexStatsCache[$indexName] = $this->client->indices()->stats(['index' => $indexName]);
+            $this->indexStatsCache[$indexName] = $this->client->indexStats(['index' => $indexName]);
         }
 
         return $this->indexStatsCache[$indexName];
