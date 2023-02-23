@@ -42,6 +42,11 @@ class Spellchecker implements SpellcheckerInterface
     private $cacheHelper;
 
     /**
+     * @var array
+     */
+    private $indexStatsCache = [];
+
+    /**
      * Constructor.
      *
      * @param ClientInterface $client      ES Client Factory.
@@ -124,7 +129,7 @@ class Spellchecker implements SpellcheckerInterface
      */
     private function getCutoffrequencyLimit(RequestInterface $request)
     {
-        $indexStatsResponse = $this->client->indexStats($request->getIndex());
+        $indexStatsResponse = $this->getIndexStats($request->getIndex());
         $indexStats         = current($indexStatsResponse['indices']);
         $totalIndexedDocs = $indexStats['total']['docs']['count'];
 
@@ -140,7 +145,7 @@ class Spellchecker implements SpellcheckerInterface
      */
     private function getTermVectors(RequestInterface $request)
     {
-        $stats  = $this->client->indexStats($request->getIndex());
+        $stats = $this->getIndexStats($request->getIndex());
         // Get number of shards.
         $shards = (int) ($stats['_shards']['successful'] ?? 1);
 
@@ -277,5 +282,17 @@ class Spellchecker implements SpellcheckerInterface
         }
 
         return $analyzer;
+    }
+
+    /**
+     * Get index stats.
+     */
+    private function getIndexStats(string $indexName): array
+    {
+        if (!isset($this->indexStatsCache[$indexName])) {
+            $this->indexStatsCache[$indexName] = $this->client->indices()->stats(['index' => $indexName]);
+        }
+
+        return $this->indexStatsCache[$indexName];
     }
 }
