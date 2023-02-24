@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Api;
 
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+
 /**
  * LayeredNavAttributeInterface class.
  *
@@ -36,6 +38,15 @@ interface LayeredNavAttributeInterface
      * @return string
      */
     public function getFilterField(): string;
+
+    /**
+     * Get filter query.
+     *
+     * @param array $value Filter value.
+     *
+     * @return array|QueryInterface
+     */
+    public function getFilterQuery(array $value);
 
     /**
      * Get additional aggregation data.

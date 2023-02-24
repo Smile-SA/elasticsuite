@@ -106,7 +106,8 @@ class Boolean extends Attribute
             /** @var \Magento\CatalogSearch\Model\ResourceModel\Fulltext\Collection $productCollection */
             $productCollection = $this->getLayer()->getProductCollection();
 
-            $productCollection->addFieldToFilter($this->getFilterField(), $attributeValue);
+            $filterField = $this->getFilterField();
+            $productCollection->addFieldToFilter($filterField, $this->getFilterValue($attributeValue));
             $layerState = $this->getLayer()->getState();
 
             foreach ($this->currentFilterValue as $currentFilter) {
@@ -193,5 +194,24 @@ class Boolean extends Attribute
         }
 
         return $this;
+    }
+
+    /**
+     * Get filter value.
+     *
+     * @param mixed $value Filter value.
+     *
+     * @return mixed
+     */
+    private function getFilterValue(array $value)
+    {
+        $field = $this->getAttributeModel()->getAttributeCode();
+
+        $layeredNavAttribute = $this->layeredNavAttributesProvider->getLayeredNavAttribute($field);
+        if ($layeredNavAttribute instanceof LayeredNavAttributeInterface) {
+            return $layeredNavAttribute->getFilterQuery($value);
+        }
+
+        return $value;
     }
 }
