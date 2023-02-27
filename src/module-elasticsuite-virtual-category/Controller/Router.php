@@ -106,7 +106,7 @@ class Router implements RouterInterface
         $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
 
         $productRewrite = $this->getProductRewrite($identifier);
-        if ($productRewrite) {
+        if ($productRewrite && $productRewrite->getEntityType() === UrlRewriteFinder::ENTITY_TYPE_PRODUCT) {
             $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $productRewrite->getRequestPath());
             $request->setPathInfo('/' . $productRewrite->getTargetPath());
 
