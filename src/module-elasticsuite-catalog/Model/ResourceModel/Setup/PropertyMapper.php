@@ -1,6 +1,6 @@
 <?php
 
-namespace Economix\Elasticsuite\Model\ResourceModel\Setup;
+namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Setup;
 
 use Magento\Eav\Model\Entity\Setup\PropertyMapperAbstract;
 

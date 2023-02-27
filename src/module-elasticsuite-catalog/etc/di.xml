@@ -406,7 +406,7 @@
     <type name="Magento\Eav\Model\Entity\Setup\PropertyMapper\Composite">
         <arguments>
             <argument name="propertyMappers" xsi:type="array">
-                <item name="elasticsuite-propertymapper" xsi:type="string">Economix\Elasticsuite\Model\ResourceModel\Setup\PropertyMapper</item>
+                <item name="elasticsuite-propertymapper" xsi:type="string">Smile\ElasticsuiteCatalog\Model\ResourceModel\Setup\PropertyMapper</item>
             </argument>
         </arguments>
     </type>
