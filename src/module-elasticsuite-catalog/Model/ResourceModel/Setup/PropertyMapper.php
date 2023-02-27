@@ -8,6 +8,7 @@
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Benjamin Rosenberger <bensch.rosenberger@gmail.com>
+ * @copyright 2023 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Setup;
