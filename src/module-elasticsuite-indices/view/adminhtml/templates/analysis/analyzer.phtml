@@ -1,0 +1,201 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym HONCHARUK <vahonc@smile.fr>
+ * @copyright 2022 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var Smile\ElasticsuiteIndices\Block\Adminhtml\Analysis\Analyzer $block
+ */
+
+$blockId = preg_replace('/[^a-z0-9]+/i', '-', $block->getNameInLayout());
+$formId = 'form-' . $blockId;
+?>
+
+<?php if ($block->getElasticSuiteIndices()) : ?>
+    <div class="col-md-6">
+        <h3><?= /* @escapeNotVerified */ __('Analyze by Analyzer') ?></h3>
+        <div class="content">
+            <form id="<?= /* @noEscape */ $formId ?>" class="form minisearch">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="admin__es-index-select" class="admin__field-label">
+                                <?= /* @escapeNotVerified */ __('Index name:') ?>
+                            </label>
+                            <select id="admin__es-index-select" class="admin__control-select">
+                                <option value="0" selected="selected"></option>
+                                <?php
+                                    $indices = $block->getElasticSuiteIndices();
+                                    foreach ($indices as $key => $value) {
+                                        $option['text'] = $value['index_name'];
+                                        ?>
+                                        <option value="<?= $block->escapeHtml($option['text']) ?>">
+                                            <?= $block->escapeHtml($option['text']) ?>
+                                        </option>
+                                        <?php
+                                    }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="admin__es-analyzer-select" class="admin__field-label">
+                                <?= /* @escapeNotVerified */ __('Analyzer name:') ?>
+                            </label>
+                            <select id="admin__es-analyzer-select" class="admin__control-select"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="admin__es-analyzer-term"></label>
+                            <input
+                                id="admin__es-analyzer-term"
+                                type="text"
+                                class="form-control input-text admin__control-text"
+                                placeholder="<?= /* @escapeNotVerified */ __('text to analyze') ?>"
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 text-right">
+                        <button id="admin__es-analyzer-button" type="submit" class="action-default">
+                            <span><?= /* @escapeNotVerified */ __('Analyze') ?></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div id="form-response">
+                <div id="form-error"></div>
+                <table id="admin__es-analysis-tokens" class="data-grid">
+                    <thead>
+                    <tr>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Token') ?></th>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Position') ?></th>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Start Offset') ?></th>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('End Offset') ?></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        require(['jquery'],
+            function ($) {
+                $(function () {
+                    $('#admin__es-index-select').on("change", function () {
+                        let currentIndex = $(this).val();
+
+                        let analyzerSelect = $('#admin__es-analyzer-select');
+
+                        if (currentIndex !== 0) {
+                            let data = <?= json_encode($block->getElasticSuiteIndices()); ?>
+
+                            let option = $('<option>', {value: 0, selected: true});
+                            analyzerSelect.empty();
+                            analyzerSelect.append(option);
+
+                            let indexSettings = data.find(({index_name}) => index_name === currentIndex);
+                            for (const analyzer of indexSettings["analyzers"].sort()) {
+                                let option = $('<option>', {value: analyzer}).text(analyzer);
+                                analyzerSelect.append(option);
+                            }
+                        }
+                    });
+
+                    let form = $('#form-analysis-by-analyzer');
+                    form.on('submit', function (e) {
+                        let ajaxUrl = '<?= $block->getAjaxRequestUrl(); ?>';
+
+                        let formData = {
+                            index: $('#admin__es-index-select').val(),
+                            analyzer: $('#admin__es-analyzer-select').val(),
+                            text: document.getElementById('admin__es-analyzer-term').value,
+                        };
+
+                        e.preventDefault();
+
+                        $.ajax({
+                            data: formData,
+                            url: ajaxUrl,
+                            type: 'POST',
+                            dataType: "json",
+                            encode: true,
+                            showLoader: true,
+                            context: '#form-response',
+                        }).done(function (responseData) {
+                            if (!responseData.success) {
+                                if (responseData.output['index']) {
+                                    $('#form-warning-notice').remove();
+                                    $('#admin__es-analysis-tokens').hide();
+
+                                    $("#admin__es-index-select").addClass("has-error");
+                                    $("#admin__es-index-select").parent().append(
+                                        '<div id="form-warning-notice">' + responseData.output['index'] + '</div>'
+                                    );
+                                }
+
+                                if (responseData.output['analyzer']) {
+                                    $("#admin__es-index-select").removeClass("has-error");
+
+                                    $('#form-warning-notice').remove();
+                                    $('#admin__es-analysis-tokens').hide();
+
+                                    $("#admin__es-analyzer-select").addClass("has-error");
+                                    $("#admin__es-analyzer-select").parent().append(
+                                        '<div id="form-warning-notice">' + responseData.output['analyzer'] + '</div>'
+                                    );
+                                }
+                            } else {
+                                if ($('#admin__es-analyzer-select').val() !== 0) {
+                                    $("#admin__es-index-select").removeClass("has-error");
+                                    $("#admin__es-analyzer-select").removeClass("has-error");
+                                    $('#form-warning-notice').remove();
+                                }
+
+                                $('#error-message').remove();
+                                $('#admin__es-analysis-tokens tbody tr').remove();
+
+                                let results = '';
+                                $.each(responseData.output['tokens'], function (idx, row) {
+                                    // token	position	start offset	end offset
+                                    results += '<tr class="data-row">' +
+                                        '<td>' + row.token + '</td>' +
+                                        '<td>' + row.position + '</td>' +
+                                        '<td>' + row.start_offset + '</td>' +
+                                        '<td>' + row.end_offset + '</td></tr>';
+                                });
+
+                                $('#admin__es-analysis-tokens').show();
+                                $('#admin__es-analysis-tokens tbody').append(results).slideDown(1000);
+                            }
+                        }).fail(function(res) {
+                            $('#error-message').remove();
+                            $('#admin__es-analysis-tokens').hide();
+                            $('#form-error').append(
+                                '<div id="error-message">Oops, something wrong. Please fill all fields.</div>'
+                            );
+                        });
+                    });
+                });
+            }
+        );
+    </script>
+<?php endif; ?>

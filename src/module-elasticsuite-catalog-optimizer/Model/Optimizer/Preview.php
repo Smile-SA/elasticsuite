@@ -194,7 +194,8 @@ class Preview
             $config = $this->optimizer->getQuickSearchContainer();
             if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['query_ids'])) {
                 $queryIds = array_column($config['query_ids'], 'id');
-                $canApply = in_array($this->searchContext->getCurrentSearchQuery()->getId(), $queryIds, true);
+                $canApply = ($this->searchContext->getCurrentSearchQuery() !== null) &&
+                    in_array($this->searchContext->getCurrentSearchQuery()->getId(), $queryIds, true);
             }
         } elseif ($canApply && $this->containerConfiguration->getName() === 'catalog_view_container') {
             $config = $this->optimizer->getCatalogViewContainer();

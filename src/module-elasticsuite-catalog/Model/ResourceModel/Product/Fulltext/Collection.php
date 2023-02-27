@@ -704,13 +704,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $sortOrders = [];
 
-        $useProductuctLimitation = isset($this->_productLimitationFilters['sortParams']);
+        $useProductLimitation = isset($this->_productLimitationFilters['sortParams']);
 
         foreach ($this->_orders as $attribute => $direction) {
             $sortParams = ['direction' => $direction];
             $sortField  = $this->mapFieldName($attribute);
 
-            if ($useProductuctLimitation && isset($this->_productLimitationFilters['sortParams'][$attribute])) {
+            if ($useProductLimitation && isset($this->_productLimitationFilters['sortParams'][$attribute])) {
                 $sortField  = $this->_productLimitationFilters['sortParams'][$attribute]['sortField'];
                 $sortParams = array_merge($sortParams, $this->_productLimitationFilters['sortParams'][$attribute]);
             } elseif ($attribute == 'price') {

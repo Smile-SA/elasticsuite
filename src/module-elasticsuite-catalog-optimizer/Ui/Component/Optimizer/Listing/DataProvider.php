@@ -13,8 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Listing;
 
+use Magento\Framework\Data\Collection;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory;
+use Zend_Db_Expr;
 
 /**
  * Data Provider for UI components based on Sellers
@@ -106,5 +108,27 @@ class DataProvider extends AbstractDataProvider
             return;
         }
         parent::addFilter($filter);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addOrder($field, $direction)
+    {
+        // Add custom behavior for boost_weight sorting.
+        if ($field == 'boost_weight') {
+            // Put optimizer without boost weight at the end of the list.
+            parent::addOrder('model', Collection::SORT_ORDER_DESC);
+
+            // Extract boost weight value from config field.
+            parent::addOrder(
+                new Zend_Db_Expr("SUBSTRING_INDEX(SUBSTRING_INDEX(config, 'constant_score_value\":\"', -1), '\"', 1)"),
+                $direction
+            );
+
+            return;
+        }
+
+        parent::addOrder($field, $direction);
     }
 }
