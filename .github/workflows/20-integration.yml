@@ -37,15 +37,19 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.6'
                     magento-editions: 'community'
+                    experimental: false
                   - php-versions: '8.1'
                     magento-versions: '2.4.6'
                     magento-editions: 'enterprise'
+                    experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6'
                     magento-editions: 'community'
+                    experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6'
                     magento-editions: 'enterprise'
+                    experimental: false
 
         continue-on-error: ${{ matrix.experimental }}
 
