@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Controller;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\CatalogUrlRewrite\Model\Map\UrlRewriteFinder;
 use Magento\Framework\App\ActionFactory;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
@@ -106,7 +107,7 @@ class Router implements RouterInterface
         $this->virtualCategoryRoot->setAppliedRootCategory($appliedRoot);
 
         $productRewrite = $this->getProductRewrite($identifier);
-        if ($productRewrite) {
+        if ($productRewrite && $productRewrite->getEntityType() === UrlRewriteFinder::ENTITY_TYPE_PRODUCT) {
             $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $productRewrite->getRequestPath());
             $request->setPathInfo('/' . $productRewrite->getTargetPath());
 
