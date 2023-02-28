@@ -159,6 +159,8 @@ class RequestMapperPlugin
      * @param SearchCriteriaInterface         $searchCriteria         Search criteria.
      *
      * @return array[]
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function afterGetFilters(
         RequestMapper $subject,
@@ -170,8 +172,15 @@ class RequestMapperPlugin
             $filters = [];
 
             foreach ($result as $fieldName => $filterValue) {
-                $fieldName = $this->getMappingField($containerConfiguration, $fieldName);
-                $filters[$fieldName] = $this->getFieldValue($containerConfiguration, $fieldName, $filterValue);
+                $layeredNavAttribute = $this->layeredNavAttributesProvider->getLayeredNavAttribute($fieldName);
+                if ($layeredNavAttribute instanceof LayeredNavAttributeInterface) {
+                    $fieldName = $layeredNavAttribute->getFilterField();
+                    // Use reset to remove graphql operator.
+                    $filters[$fieldName] = $layeredNavAttribute->getFilterQuery(reset($filterValue));
+                } else {
+                    $fieldName = $this->getMappingField($containerConfiguration, $fieldName);
+                    $filters[$fieldName] = $this->getFieldValue($containerConfiguration, $fieldName, $filterValue);
+                }
             }
 
             $result = $filters;
@@ -226,11 +235,6 @@ class RequestMapperPlugin
     private function getMappingField(ContainerConfigurationInterface $containerConfiguration, $fieldName)
     {
         $fieldName = $this->requestFieldMapper->getMappedFieldName($fieldName);
-
-        $layeredNavAttribute = $this->layeredNavAttributesProvider->getLayeredNavAttribute($fieldName);
-        if ($layeredNavAttribute instanceof LayeredNavAttributeInterface) {
-            return $layeredNavAttribute->getFilterField();
-        }
 
         try {
             $field = $containerConfiguration->getMapping()->getField($fieldName);
