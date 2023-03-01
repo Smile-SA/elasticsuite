@@ -42,11 +42,11 @@ interface LayeredNavAttributeInterface
     /**
      * Get filter query.
      *
-     * @param array $value Filter value.
+     * @param mixed $value Filter value.
      *
      * @return array|QueryInterface
      */
-    public function getFilterQuery(array $value);
+    public function getFilterQuery(mixed $value);
 
     /**
      * Get additional aggregation data.
