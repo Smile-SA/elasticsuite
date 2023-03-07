@@ -116,8 +116,8 @@ class PriceData implements DatasourceInterface
                             if ($childIdsData['parent_id'] === $productId &&
                                 $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
                             ) {
-                                if ($priceModifier->getPrice($childPrice) <
-                                    $priceModifier->getOriginalPrice($childPrice)) {
+                                if ($priceModifier->getPrice($childPrice)
+                                     < $priceModifier->getOriginalPrice($childPrice)) {
                                     $isDiscount = true;
                                     break;
                                 }
