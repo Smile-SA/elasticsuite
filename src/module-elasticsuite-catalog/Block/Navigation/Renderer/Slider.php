@@ -53,21 +53,6 @@ class Slider extends AbstractRenderer
     protected $catalogSliderHelper;
 
     /**
-     * @var array
-     */
-    protected $intervals;
-
-    /**
-     * @var boolean
-     */
-    protected $showAdaptiveSlider;
-
-    /**
-     * @var array
-     */
-    protected $adaptiveIntervals;
-
-    /**
      *
      * @param Context             $context             Template context.
      * @param CatalogHelper       $catalogHelper       Catalog helper.
@@ -124,42 +109,39 @@ class Slider extends AbstractRenderer
      */
     public function showAdaptiveSlider(): bool
     {
-        if (null === $this->showAdaptiveSlider) {
-            $this->showAdaptiveSlider = false;
-            if ($this->catalogSliderHelper->isAdaptiveSliderEnabled()
-                && ($this->getFilter()->getItemsCount() >= CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS)
-            ) {
-                $hasDispersedData = false;
-                try {
-                    $layer = $this->getFilter()->getLayer();
-                    $attributeModel = $this->getFilter()->getAttributeModel();
-                    if ($layer && $attributeModel) {
-                        $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
-                        $stats = $layer->getProductCollection()->getFacetedData($facetName);
-                        $stats = current($stats);
-                        /* Coefficient of Variation */
-                        $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
-                        $hasDispersedData = ($cv > 1.0);
-                        $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
-                        $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
-                        if ($lowerStdDevBound && $upperStdDevBound) {
-                            $hasDispersedData = (
-                                $hasDispersedData || (
-                                    ($this->getMinValue() < $lowerStdDevBound)
-                                    || ($this->getMaxValue() > $upperStdDevBound)
-                                )
-                            );
-                        }
+        $showAdaptiveSlider = false;
+        if ($this->catalogSliderHelper->isAdaptiveSliderEnabled()
+            && ($this->getFilter()->getItemsCount() >= CatalogSliderHelper::ADAPTIVE_MINIMUM_ITEMS)
+        ) {
+            $hasDispersedData = false;
+            try {
+                $layer = $this->getFilter()->getLayer();
+                $attributeModel = $this->getFilter()->getAttributeModel();
+                if ($layer && $attributeModel) {
+                    $facetName = $this->catalogSliderHelper->getStatsAggregation($attributeModel->getAttributeCode());
+                    $stats = $layer->getProductCollection()->getFacetedData($facetName);
+                    $stats = current($stats);
+                    /* Coefficient of Variation */
+                    $cv = ($stats['std_deviation'] ?? 0) / ($stats['avg'] ?? 1);
+                    $hasDispersedData = ($cv > 1.0);
+                    $lowerStdDevBound = $stats['std_deviation_bounds']['lower'] ?? 0;
+                    $upperStdDevBound = $stats['std_deviation_bounds']['upper'] ?? 0;
+                    if ($lowerStdDevBound && $upperStdDevBound) {
+                        $hasDispersedData = (
+                            $hasDispersedData || (
+                                ($this->getMinValue() < $lowerStdDevBound)
+                                || ($this->getMaxValue() > $upperStdDevBound)
+                            )
+                        );
                     }
-                } catch (\Magento\Framework\Exception\LocalizedException $e) {
-                    ;
                 }
-
-                $this->showAdaptiveSlider = $hasDispersedData;
+            } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                ;
             }
+            $showAdaptiveSlider = $hasDispersedData;
         }
 
-        return $this->showAdaptiveSlider;
+        return $showAdaptiveSlider;
     }
 
     /**
@@ -266,15 +248,12 @@ class Slider extends AbstractRenderer
      */
     private function getIntervals()
     {
-        if (null === $this->intervals) {
-            $intervals = [];
-            foreach ($this->getFilter()->getItems() as $item) {
-                $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
-            }
-            $this->intervals = $intervals;
+        $intervals = [];
+        foreach ($this->getFilter()->getItems() as $item) {
+            $intervals[] = ['value' => $item->getValue(), 'count' => $item->getCount()];
         }
 
-        return $this->intervals;
+        return $intervals;
     }
 
     /**
@@ -284,14 +263,12 @@ class Slider extends AbstractRenderer
      */
     private function getAdaptiveIntervals(): array
     {
-        if (null === $this->adaptiveIntervals) {
-            $this->adaptiveIntervals = [];
-            if ($this->showAdaptiveSlider()) {
-                $this->adaptiveIntervals = $this->prepareAdaptiveIntervals();
-            }
+        $adaptiveIntervals = [];
+        if ($this->showAdaptiveSlider()) {
+            $adaptiveIntervals = $this->prepareAdaptiveIntervals();
         }
 
-        return $this->adaptiveIntervals;
+        return $adaptiveIntervals;
     }
 
     /**
