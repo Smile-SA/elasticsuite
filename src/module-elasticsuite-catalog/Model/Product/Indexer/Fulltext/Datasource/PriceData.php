@@ -67,7 +67,7 @@ class PriceData implements DatasourceInterface
      * @param ResourceModel                        $resourceModel          Resource model
      * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
-     * @param ScopeConfigInterface                 $scopeConfig            Scope Config.
+     * @param ScopeConfigInterface|null            $scopeConfig            Scope Config.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -116,8 +116,8 @@ class PriceData implements DatasourceInterface
                             if ($childIdsData['parent_id'] === $productId &&
                                 $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
                             ) {
-                                if ($priceModifier->getPrice($childPrice)
-                                    < $priceModifier->getOriginalPrice($childPrice)) {
+                                if ($priceModifier->getPrice($childPrice) <
+                                    $priceModifier->getOriginalPrice($childPrice)) {
                                     $isDiscount = true;
                                     break;
                                 }
