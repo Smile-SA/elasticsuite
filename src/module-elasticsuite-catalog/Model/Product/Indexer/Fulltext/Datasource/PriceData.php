@@ -112,10 +112,15 @@ class PriceData implements DatasourceInterface
                     $isDiscount    = false;
                     $priceModifier = $this->getPriceDataReader('default');
                     foreach ($childPriceData as $childPrice) {
-                        if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
-                            if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
-                                $isDiscount = true;
-                                break;
+                        foreach ($allChildrenIds[$childPrice['entity_id']] as $childIdsData) {
+                            if ($childIdsData['parent_id'] === $productId &&
+                                $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
+                            ) {
+                                if ($priceModifier->getPrice($childPrice)
+                                    < $priceModifier->getOriginalPrice($childPrice)) {
+                                    $isDiscount = true;
+                                    break;
+                                }
                             }
                         }
                     }
