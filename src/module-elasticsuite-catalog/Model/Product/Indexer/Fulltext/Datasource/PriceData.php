@@ -107,18 +107,19 @@ class PriceData implements DatasourceInterface
 
             $isDiscount    = $price < $originalPrice;
 
-            if ($this->isComputeChildDiscountEnabled()) {
-                if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
-                    $isDiscount    = false;
-                    $priceModifier = $this->getPriceDataReader('default');
-                    foreach ($childPriceData as $childPrice) {
-                        foreach ($allChildrenIds[$childPrice['entity_id']] as $childIdsData) {
-                            if ($childIdsData['parent_id'] === $productId
-                                && $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
-                                && $priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
-                                $isDiscount = true;
-                                break 2;
-                            }
+            if ($this->isComputeChildDiscountEnabled() &&
+                in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())
+            ) {
+                $isDiscount = false;
+                $priceModifier = $this->getPriceDataReader('default');
+                foreach ($childPriceData as $childPrice) {
+                    foreach ($allChildrenIds[$childPrice['entity_id']] as $childIdsData) {
+                        if ($childIdsData['parent_id'] === $productId
+                            && $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
+                            && $priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)
+                        ) {
+                            $isDiscount = true;
+                            break 2;
                         }
                     }
                 }
