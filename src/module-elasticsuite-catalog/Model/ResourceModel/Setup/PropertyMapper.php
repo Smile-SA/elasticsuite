@@ -34,17 +34,21 @@ class PropertyMapper extends PropertyMapperAbstract
             'is_used_in_spellcheck' => $this->_getValue($input, 'is_used_in_spellcheck', 0),
             'facet_min_coverage_rate' => $this->_getValue($input, 'facet_min_coverage_rate', 90),
             'facet_max_size' => $this->_getValue($input, 'facet_max_size', 10),
-            'facet_sort_order' => $this->_getValue($input, 'facet_sort_order', 25),
+            'facet_sort_order' => $this->_getValue(
+                $input,
+                'facet_sort_order',
+                \Smile\ElasticsuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT
+            ),
             'display_pattern' => $this->_getValue($input, 'display_pattern', 10),
             'display_precision' => $this->_getValue($input, 'display_precision', 0),
-            'sort_order_asc_missing' => $this->_getValue($input, 'sort_order_asc_missing', 10),
-            'sort_order_desc_missing' => $this->_getValue($input, 'sort_order_desc_missing', 10),
+            'sort_order_asc_missing' => $this->_getValue($input, 'sort_order_asc_missing', '_last'),
+            'sort_order_desc_missing' => $this->_getValue($input, 'sort_order_desc_missing', '_last'),
             'facet_boolean_logic' => $this->_getValue(
                 $input,
                 'facet_boolean_logic',
                 \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface::FILTER_LOGICAL_OPERATOR_OR
             ),
-            'is_display_rel_nofollow' => $this->_getValue($input, 'is_display_rel_nofollow', '0'),
+            'is_display_rel_nofollow' => $this->_getValue($input, 'is_display_rel_nofollow', 0),
             'include_zero_false_values' => $this->_getValue($input, 'include_zero_false_values', 0),
         ];
     }
