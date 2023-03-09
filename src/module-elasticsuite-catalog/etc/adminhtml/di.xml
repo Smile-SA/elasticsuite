@@ -58,4 +58,29 @@
             <argument name="fulltextCollectionFactory" xsi:type="object">fulltextProductCollectionWithoutAggregationsBuilder</argument>
         </arguments>
     </type>
+
+    <!-- Use the coverage mechanism in BO -->
+    <type name="\Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage">
+        <arguments>
+            <argument name="coverageRequestBuilder" xsi:type="object">\Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="searchFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Search\AttributeList</argument>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="categoryFilterableAttributesProvider" type="Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes">
+        <arguments>
+            <argument name="attributeList" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Category\AttributeList</argument>
+            <argument name="modifiersPool" xsi:type="array">
+                <item name="coverageModifier" xsi:type="object">Smile\ElasticsuiteCatalog\Search\Request\Product\Aggregation\Provider\FilterableAttributes\Modifier\Coverage</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>
