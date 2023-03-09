@@ -76,6 +76,7 @@ class Root
      */
     public function setAppliedRootCategory(CategoryInterface $category)
     {
+        $this->coreRegistry->unregister('applied_virtual_root_category');
         $this->coreRegistry->register('applied_virtual_root_category', $category);
 
         return $this;
