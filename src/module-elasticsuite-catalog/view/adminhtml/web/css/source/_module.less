@@ -77,7 +77,7 @@
             background: #FFFFFF;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            /*justify-content: space-between;*/
             width: 200px;
             min-height: 221px;
             margin: 5px 0 0 5px;
@@ -99,6 +99,7 @@
             .info-wrapper {
                 position: absolute;
                 bottom: 0;
+                width: 100%;
             }
 
             .info {
@@ -122,6 +123,9 @@
                     display: block;
                     width: 100%;
                     margin-bottom: 5px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 h1 {
