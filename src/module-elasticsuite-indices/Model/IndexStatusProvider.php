@@ -118,7 +118,7 @@ class IndexStatusProvider
             foreach (array_keys($this->workingIndexers) as $indexKey) {
                 if (strpos((string) $indexName, $indexKey) !== false) {
                     $today = new DateTime('Ymd');
-                    $day = new DateTime($indexDate);
+                    $day   = new DateTime($indexDate);
 
                     return ($today == $day);
                 }
@@ -149,13 +149,14 @@ class IndexStatusProvider
     /**
      * Returns if index is ghost.
      *
-     * @param DateInterval|false $indexDate Index updated date.
+     * @param DateTime $indexDate Index updated date.
+     *
      * @return bool
      */
     private function isGhost($indexDate): bool
     {
         try {
-            return (new DateTime())->sub($indexDate)->getTimestamp() / self::SECONDS_IN_DAY >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
+            return (new DateTime())->diff($indexDate)->days >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
         } catch (Exception $e) {
             return false;
         }
@@ -174,6 +175,7 @@ class IndexStatusProvider
 
     /**
      * Get index updated date from index name.
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @param string $indexName Index name.
      * @param string $alias     Index alias.
@@ -189,24 +191,17 @@ class IndexStatusProvider
             return false;
         }
 
-        $count = 0;
         $format = '';
         foreach ($matches[1] as $value) {
-            $count += strlen($value);
             $format .= $value;
         }
 
         try {
             // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
-            $indexName = str_replace($alias ?? '', '', $indexName);
-            $date      = substr(preg_replace('/[^0-9]/', '', $indexName), -$count);
+            $indexName = str_replace($alias ?? $this->indexSettingsHelper->getIndexAlias(), '', $indexName);
+            $date      = preg_replace('/[^0-9]/', '', $indexName);
 
-            // Tracking indices are built monthly and does not fit with standard pattern containing datetime with hours.
-            if (strlen($date) !== 14) {
-                return false;
-            }
-
-            return (new \DateTime($date))->format($format);
+            return DateTime::createFromFormat($format, $date);
         } catch (Exception $e) {
             return false;
         }

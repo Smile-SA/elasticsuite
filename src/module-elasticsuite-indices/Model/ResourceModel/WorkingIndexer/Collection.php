@@ -90,7 +90,10 @@ class Collection extends DataCollection
             if ($indexer->getStatus() === StateInterface::STATUS_WORKING) {
                 $item = $this->prepareItem($indexer);
                 if (array_key_exists($item['indexer_id'], $indicesMapping)) {
-                    $indexUpdateDate = DateTime::createFromFormat(DateTimeInterface::ISO8601, $item['indexer_updated']);
+                    $indexUpdateDate = DateTime::createFromFormat(
+                        \Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT,
+                        $item['indexer_updated']
+                    );
                     $indexNameSuffix = $this->indexSettings->getIndexNameSuffix($indexUpdateDate);
 
                     foreach ($indicesMapping[$item['indexer_id']] as $index) {
