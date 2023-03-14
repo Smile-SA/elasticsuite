@@ -5,12 +5,14 @@ on:
         branches:
         - 2.9.x
         - 2.10.x
+        - 2.11.x
         - master
 
     pull_request_target:
         branches:
         - 2.9.x
         - 2.10.x
+        - 2.11.x
         - master
 
 jobs:
