@@ -38,6 +38,10 @@ class IndexResolver
      */
     private $indexSettings;
 
+    /**
+     * @var \Smile\ElasticsuiteTracker\Model\IndexManager
+     */
+    private $indexManager;
 
     /**
      * Constructor.
@@ -49,7 +53,7 @@ class IndexResolver
     public function __construct(
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
         \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory $indexFactory,
-        IndexManager $indexManager
+        \Smile\ElasticsuiteTracker\Model\IndexManager $indexManager
     ) {
         $this->indexFactory  = $indexFactory;
         $this->indexSettings = $indexSettings;
