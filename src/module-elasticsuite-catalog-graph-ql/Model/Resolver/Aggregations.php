@@ -126,7 +126,7 @@ class Aggregations implements ResolverInterface
         $categoryFilters = $this->filtersProvider->getFilters($layerType);
         /** @var \Magento\Catalog\Model\Layer\Filter\AbstractFilter $filter */
 
-        $order = ['category_id']; // The category filter is always displayed first in legacy frontend.
+        $order = ['category_id', 'category_uid']; // The category filter is always displayed first in legacy frontend.
         foreach ($categoryFilters as $filter) {
             if (!$filter->hasAttributeModel()) {
                 continue;
