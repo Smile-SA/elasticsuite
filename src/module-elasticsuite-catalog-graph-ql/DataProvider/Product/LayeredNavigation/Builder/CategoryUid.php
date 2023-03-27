@@ -28,6 +28,8 @@ use Magento\Framework\GraphQl\Query\Uid;
 /**
  * Layered Navigation Builder for Category items.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Vadym Honcharuk <vahonc@smile.fr>
