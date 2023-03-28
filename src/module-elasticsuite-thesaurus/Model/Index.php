@@ -234,7 +234,12 @@ class Index
                 if ($token['type'] == 'SYNONYM') {
                     $positionKey                        = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
                     $token['token']                     = str_replace('_', ' ', $token['token']);
-                    $synonymByPositions[$positionKey][] = $token;
+                    // Prevent a token already contained in the query to be added.
+                    // Eg : you have a synonyme between "dress" and "red dress".
+                    // If someone search for "red dress", you don't want the final query to be "red red dress".
+                    if (stripos($queryText, $token['token']) === false) {
+                        $synonymByPositions[$positionKey][] = $token;
+                    }
                 }
             }
             // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
