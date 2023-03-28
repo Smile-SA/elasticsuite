@@ -156,6 +156,8 @@ class IndexStatusProvider
     private function isGhost($indexDate): bool
     {
         try {
+            $indexDate = ($indexDate instanceof DateTime) ? $indexDate : new DateTime();
+
             return (new DateTime())->diff($indexDate)->days >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
         } catch (Exception $e) {
             return false;
@@ -199,7 +201,7 @@ class IndexStatusProvider
         try {
             // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
             $indexName = str_replace($alias ?? $this->indexSettingsHelper->getIndexAlias(), '', $indexName);
-            $date      = preg_replace('/[^0-9]/', '', $indexName);
+            $date      = preg_replace('/[^0-9]|(?<=[a-zA-Z])[0-9]/', '', $indexName);
 
             return DateTime::createFromFormat($format, $date);
         } catch (Exception $e) {
