@@ -39,6 +39,13 @@
     <preference for="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"
                 type="Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\Price"/>
 
+    <type name="Magento\CatalogGraphQl\DataProvider\Product\LayeredNavigation\LayerBuilder">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="category_uid_bucket" xsi:type="object">Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\LayeredNavigation\Builder\CategoryUid</item>
+            </argument>
+        </arguments>
+    </type>
 
     <!-- Layer filters implementation -->
     <virtualType name="Smile\ElasticsuiteCatalogGraphQl\Model\ResourceModel\Product\SearchResultCollectionFactory"
