@@ -112,6 +112,7 @@
                 <item name="spanOrQuery" xsi:type="object">spanOrFactory</item>
                 <item name="spanTermQuery" xsi:type="object">spanTermFactory</item>
                 <item name="spanWithinQuery" xsi:type="object">spanWithinFactory</item>
+                <item name="prefixQuery" xsi:type="object">prefixQueryFactory</item>
             </argument>
         </arguments>
     </type>
@@ -140,6 +141,7 @@
     <virtualType name="spanOrFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanOrFactory" />
     <virtualType name="spanTermFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanTermFactory" />
     <virtualType name="spanWithinFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanWithinFactory" />
+    <virtualType name="prefixQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\PrefixFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -168,6 +170,7 @@
                 <item name="spanOrQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanOr\Proxy</item>
                 <item name="spanTermQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanTerm\Proxy</item>
                 <item name="spanWithinQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanWithin\Proxy</item>
+                <item name="prefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Prefix\Proxy</item>
             </argument>
         </arguments>
     </type>
