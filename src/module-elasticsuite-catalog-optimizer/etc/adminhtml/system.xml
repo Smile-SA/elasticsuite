@@ -1,0 +1,43 @@
+<!--
+/**
+ * Smil_ElasticsuiteCatalogOptimizer module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogOptimizer
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2023 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="smile_elasticsuite_optimizers" translate="label" type="text" sortOrder="1100" showInDefault="1" showInWebsite="1" showInStore="0">
+            <label>Optimizers</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_optimizers</resource>
+            <group id="score_mode_configuration" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Score Mode Configuration</label>
+                <field id="score_mode" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Score Mode</label>
+                    <source_model>Smile\ElasticsuiteCatalogOptimizer\Model\Config\Source\ScoreMode</source_model>
+                    <comment><![CDATA[Select the score_mode to use for function score queries.</br></br>The parameter <code class="literal">score_mode</code> specifies how the computed scores are combined.
+                               Learn more about <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html">Function score query</a> configuration.]]></comment>
+                </field>
+            </group>
+            <group id="boost_mode_configuration" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Boost Mode Configuration</label>
+                <field id="boost_mode" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
+                    <label>Boost Mode</label>
+                    <source_model>Smile\ElasticsuiteCatalogOptimizer\Model\Config\Source\BoostMode</source_model>
+                    <comment><![CDATA[Select the boost_mode to use for function score queries.</br></br>The parameter <code class="literal">boost_mode</code> specifies how the boosted scores of each product will be added to their base score.
+                               Learn more about <a target="_blank" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html">Function score query</a> configuration.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
