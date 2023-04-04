@@ -78,6 +78,10 @@ class InstallSchema implements InstallSchemaInterface
         // Introduced in version 1.6.1.
         $this->catalogSetup->addIncludeZeroFalseValues($setup);
 
+        // Introduced in version 1.7.0.
+        $this->catalogSetup->addIsSpannableAttributeProperty($setup);
+        $this->catalogSetup->addNormsDisabledAttributeProperty($setup);
+
         $setup->endSetup();
     }
 }

@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query\Fulltext;
 
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container;
+use Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
@@ -89,6 +91,15 @@ class QueryBuilder
                 'boost'  => $boost,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
+
+            $relevanceConfig = $containerConfig->getRelevanceConfig();
+            if ($relevanceConfig->getSpanMatchBoost()) {
+                $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
+                if ($spanQuery !== null) {
+                    $queryParams['should'] = [$query, $spanQuery];
+                    $query                 = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                }
+            }
         }
 
         return $query;
@@ -319,5 +330,61 @@ class QueryBuilder
         $mapping = $containerConfig->getMapping();
 
         return $mapping->getWeightedSearchProperties($analyzer, $defaultField, $boost, $fieldFilter);
+    }
+
+    /**
+     * Build a span query to raise score of fields beginning by the query text.
+     *
+     * @param ContainerConfigurationInterface $containerConfig The container configuration
+     * @param string                          $queryText       The query text
+     * @param int                             $boost           The boost applied to the span query
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getSpanQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
+    {
+        $query     = null;
+        $wordCount = str_word_count($queryText);
+        $terms     = explode(' ', $queryText);
+
+        $spanFieldsFilter = $this->fieldFilters['spannableFieldFilter'];
+        $spanFields       = $containerConfig->getMapping()->getFields();
+        $spanFields       = array_filter($spanFields, [$spanFieldsFilter, 'filterField']);
+        $spanQueryParams  = ['boost' => $boost, 'end' => $wordCount];
+        $spanQueryType    = SpanQueryInterface::TYPE_SPAN_FIRST;
+
+        if (count($spanFields) > 0) {
+            $queries = [];
+            foreach ($spanFields as $field) {
+                $clauses = [];
+                foreach ($terms as $term) {
+                    $clauses[] = $this->queryFactory->create(
+                        SpanQueryInterface::TYPE_SPAN_TERM,
+                        [
+                            'field' => $field->getMappingProperty(FieldInterface::ANALYZER_WHITESPACE) ?? $field->getName(),
+                            'value' => $term,
+                        ]
+                    );
+                }
+
+                $spanQueryParams['match'] = $this->queryFactory->create(
+                    SpanQueryInterface::TYPE_SPAN_NEAR,
+                    [
+                        'clauses' => $clauses,
+                        'slop'    => 0,
+                        'inOrder' => true,
+                    ]
+                );
+
+                $queries[] = $this->queryFactory->create($spanQueryType, $spanQueryParams);
+            }
+
+            $query = current($queries);
+            if (count($queries) > 1) {
+                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries]);
+            }
+        }
+
+        return $query;
     }
 }

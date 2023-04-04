@@ -41,6 +41,7 @@ class AttributePlugin
         'is_used_for_sort_by',
         'is_used_in_spellcheck',
         'include_zero_false_values',
+        'disable_norms',
     ];
 
     /**
@@ -54,6 +55,8 @@ class AttributePlugin
         EavAttributeInterface::USED_FOR_SORT_BY,
         EavAttributeInterface::IS_VISIBLE_IN_ADVANCED_SEARCH,
         'search_weight',
+        'disable_norms',
+        'is_spannable',
     ];
 
     /**

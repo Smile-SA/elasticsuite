@@ -711,6 +711,58 @@ class CatalogSetup
     }
 
     /**
+     * Add "is_spannable" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addIsSpannableAttributeProperty(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_spannable' into the db.
+        $connection->addColumn(
+            $table,
+            'is_spannable',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'Should this field be used for span queries.',
+            ]
+        );
+    }
+
+    /**
+     * Add "norms_disabled" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addNormsDisabledAttributeProperty(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'norms_disabled' into the db.
+        $connection->addColumn(
+            $table,
+            'norms_disabled',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'If this field should have norms:false in Elasticsearch.',
+            ]
+        );
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *

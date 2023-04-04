@@ -65,4 +65,11 @@ interface RelevanceConfigurationInterface
      * @return \Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface|null
      */
     public function getFuzzinessConfiguration();
+
+    /**
+     * Retrieve span match boost value if enabled.
+     *
+     * @return false|int
+     */
+    public function getSpanMatchBoost();
 }

@@ -143,6 +143,14 @@ abstract class AbstractAttribute extends Mapping
             $options['sort_order_desc_missing'] = $attribute->getSortOrderDescMissing();
         }
 
+        if ($attribute->getIsSpannable()) {
+            $options['is_spannable'] = $attribute->getIsSpannable();
+        }
+
+        if ($attribute->getNormsDisabled()) {
+            $options['norms_disabled'] = $attribute->getNormsDisabled();
+        }
+
         return $options;
     }
 

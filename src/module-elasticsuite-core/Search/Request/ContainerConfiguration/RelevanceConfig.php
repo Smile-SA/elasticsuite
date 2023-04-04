@@ -56,6 +56,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $enablePhoneticSearch;
 
     /**
+     * @var integer|null
+     */
+    private $spanMatchBoost;
+
+    /**
      * RelevanceConfiguration constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -67,6 +72,8 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param float                                $cutOffFrequency      The cutoff Frequency value
      * @param FuzzinessConfigurationInterface|null $fuzziness            The fuzziness Configuration, or null
      * @param boolean                              $enablePhoneticSearch The phonetic Configuration, or null
+     * @param int|null                             $spanMatchBoost       The Span match boost value, or null if not
+     *                                                                   enabled
      */
     public function __construct(
         $minimumShouldMatch,
@@ -74,7 +81,8 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $phraseMatchBoost,
         $cutOffFrequency,
         FuzzinessConfigurationInterface $fuzziness = null,
-        $enablePhoneticSearch = false
+        $enablePhoneticSearch = false,
+        $spanMatchBoost = null
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
@@ -82,6 +90,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->cutOffFrequency        = $cutOffFrequency;
         $this->fuzzinessConfiguration = $fuzziness;
         $this->enablePhoneticSearch   = $enablePhoneticSearch;
+        $this->spanMatchBoost         = $spanMatchBoost;
     }
 
     /**
@@ -144,5 +153,13 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isPhoneticSearchEnabled()
     {
         return (bool) $this->enablePhoneticSearch;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSpanMatchBoost()
+    {
+        return (int) $this->spanMatchBoost;
     }
 }
