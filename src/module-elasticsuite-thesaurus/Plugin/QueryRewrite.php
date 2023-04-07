@@ -126,10 +126,8 @@ class QueryRewrite
         }
 
         foreach ($queryText as $currentQueryText) {
-            $rewrites = array_merge(
-                $rewrites,
-                $this->index->getQueryRewrites($containerConfig, $currentQueryText, $originalBoost)
-            );
+            // Use + instead of array_merge because $queryText can be purely numeric and would be casted to 0 by array_merge.
+            $rewrites = $rewrites + $this->index->getQueryRewrites($containerConfig, $currentQueryText, $originalBoost);
         }
 
         return $rewrites;
