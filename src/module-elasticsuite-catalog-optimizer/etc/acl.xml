@@ -20,7 +20,14 @@
         <resources>
             <resource id="Magento_Backend::admin">
                 <resource id="Smile_ElasticsuiteCore::menu">
-                    <resource id="Smile_ElasticsuiteCatalogOptimizer::manage" title="Manage Search Optimizers"/>
+                    <resource id="Smile_ElasticsuiteCatalogOptimizer::manage" title="Manage Search Optimizers" />
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Magento_Backend::smile_elasticsuite_optimizers" title="ElasticSuite Optimizers" />
+                        </resource>
+                    </resource>
                 </resource>
             </resource>
         </resources>

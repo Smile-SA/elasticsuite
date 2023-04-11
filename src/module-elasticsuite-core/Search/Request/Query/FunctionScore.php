@@ -64,9 +64,9 @@ class FunctionScore implements QueryInterface
      * Boost mode functions.
      */
     const BOOST_MODE_MULTIPLY = 'multiply';
+    const BOOST_MODE_REPLACE  = 'replace';
     const BOOST_MODE_SUM      = 'sum';
     const BOOST_MODE_AVG      = 'avg';
-    const BOOST_MODE_FIRST    = 'first';
     const BOOST_MODE_MAX      = 'max';
     const BOOST_MODE_MIN      = 'min';
 
