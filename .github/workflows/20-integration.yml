@@ -8,7 +8,7 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
-        types: [labeled]
+        types: [labeled,synchronize]
 
 jobs:
     build:
