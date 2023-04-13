@@ -151,6 +151,10 @@ abstract class AbstractAttribute extends Mapping
             $options['norms_disabled'] = $attribute->getNormsDisabled();
         }
 
+        if ($attribute->getDefaultAnalyzer()) {
+            $options['default_search_analyzer'] = $attribute->getDefaultAnalyzer();
+        }
+
         return $options;
     }
 

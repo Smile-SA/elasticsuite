@@ -42,6 +42,7 @@ class AttributePlugin
         'is_used_in_spellcheck',
         'include_zero_false_values',
         'disable_norms',
+        'default_analyzer',
     ];
 
     /**
@@ -57,6 +58,7 @@ class AttributePlugin
         'search_weight',
         'disable_norms',
         'is_spannable',
+        'default_analyzer',
     ];
 
     /**
