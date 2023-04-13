@@ -72,6 +72,22 @@
                 nullable="false"
                 default="0"
                 comment="Should the search engine index zero (integer or decimal attribute) or false (boolean attribute) values"/>
+        <column name="is_spannable"
+                xsi:type="boolean"
+                nullable="false"
+                default="0"
+                comment="Should this field be used for span queries."/>
+        <column name="norms_disabled"
+                xsi:type="boolean"
+                nullable="false"
+                default="0"
+                comment="If this field should have norms:false in Elasticsearch."/>
+        <column name="default_analyzer"
+                xsi:type="varchar"
+                nullable="false"
+                length="30"
+                default="standard"
+                comment="Default analyzer for this field"/>
         <column name="is_used_in_autocomplete" disabled="true"/>
     </table>
 

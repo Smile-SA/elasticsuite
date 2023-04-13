@@ -92,6 +92,7 @@ class InstallData implements InstallDataInterface
         $this->catalogSetup->updateDefaultValuesForNameAttributes($eavSetup);
         $this->catalogSetup->updateCategorySearchableAttributes($eavSetup);
         $this->catalogSetup->updateImageAttribute($eavSetup);
+        $this->catalogSetup->updateDefaultValuesForSkuAttribute($eavSetup);
 
         $this->getIndexer('elasticsuite_categories_fulltext')->reindexAll();
 

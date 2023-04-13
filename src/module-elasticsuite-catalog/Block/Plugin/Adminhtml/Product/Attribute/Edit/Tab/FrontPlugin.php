@@ -22,6 +22,7 @@ use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Plugin that happend custom fields dedicated to search configuration
@@ -38,12 +39,13 @@ class FrontPlugin
      * @var array
      */
     private $movedFields = [
-        'is_searchable',
-        'is_visible_in_advanced_search',
-        'is_filterable',
-        'is_filterable_in_search',
-        'used_for_sort_by',
-        'search_weight',
+        'is_searchable' => 'elasticsuite_catalog_attribute_fieldset',
+        'is_visible_in_advanced_search' => 'elasticsuite_catalog_attribute_fieldset',
+        'is_filterable' => 'elasticsuite_catalog_attribute_navigation_fieldset',
+        'is_filterable_in_search' => 'elasticsuite_catalog_attribute_navigation_fieldset',
+        'used_for_sort_by' => 'elasticsuite_catalog_attribute_fieldset',
+        'search_weight' => 'elasticsuite_catalog_attribute_fieldset',
+        'position' => 'elasticsuite_catalog_attribute_navigation_fieldset',
     ];
 
     /**
@@ -97,6 +99,8 @@ class FrontPlugin
     /**
      * Append ES specifics fields into the attribute edit store front tab.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param Front $subject The StoreFront tab
      * @param Front $result  Result
      * @param Form  $form    The form
@@ -105,14 +109,16 @@ class FrontPlugin
      */
     public function afterSetForm(Front $subject, Front $result, Form $form)
     {
-        $fieldset = $this->createFieldset($form, $subject);
+        $searchFieldset            = $this->createSearchFieldset($form, $subject);
+        $layeredNavigationFieldset = $this->createLayeredNavigationFieldset($form, $subject);
+        $advancedFieldset          = $this->createAdvancedFieldset($form, $subject);
 
-        $this->moveOrginalFields($form);
-        $this->addSearchFields($fieldset);
-        $this->addAutocompleteFields($fieldset);
-        $this->addFacetFields($fieldset);
-        $this->addSortFields($fieldset);
-        $this->addRelNofollowFields($fieldset);
+        $this->moveOriginalFields($form);
+        $this->addSearchFields($searchFieldset);
+        $this->addAutocompleteFields($searchFieldset);
+        $this->addFacetFields($layeredNavigationFieldset);
+        $this->addSortFields($advancedFieldset);
+        $this->addRelNofollowFields($layeredNavigationFieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
@@ -126,9 +132,17 @@ class FrontPlugin
             || (in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect'])
                 || $this->getAttribute()->getSourceModel() != '')
         ) {
-            $this->addIncludeZeroFalseField($fieldset);
+            $this->addIncludeZeroFalseField($advancedFieldset);
         }
 
+        if (($this->getAttribute()->getBackendType() == 'varchar')
+            || (in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect']))
+        ) {
+            $this->addIsSpannableField($advancedFieldset);
+            $this->addDisableNormsField($advancedFieldset);
+        }
+
+        $this->addDefaultAnalyzer($advancedFieldset);
         $this->appendFieldsDependency($subject);
 
         return $result;
@@ -152,7 +166,7 @@ class FrontPlugin
      *
      * @return Fieldset
      */
-    private function createFieldset(Form $form, Front $subject)
+    private function createSearchFieldset(Form $form, Front $subject)
     {
         $fieldset = $form->addFieldset(
             'elasticsuite_catalog_attribute_fieldset',
@@ -169,20 +183,68 @@ class FrontPlugin
     }
 
     /**
+     * Append the "Search Configuration" fieldset to the tab.
+     *
+     * @param Form  $form    Target form.
+     * @param Front $subject Target tab.
+     *
+     * @return Fieldset
+     */
+    private function createLayeredNavigationFieldset(Form $form, Front $subject)
+    {
+        $fieldset = $form->addFieldset(
+            'elasticsuite_catalog_attribute_navigation_fieldset',
+            [
+                'legend'      => __('Layered Navigation Configuration'),
+                'collapsable' => $subject->getRequest()->has('popup'),
+            ],
+            'elasticsuite_catalog_attribute_fieldset'
+        );
+
+        $fieldset->addClass('es-esfeature__logo');
+
+        return $fieldset;
+    }
+
+    /**
+     * Append the "Advanced Search Configuration" fieldset to the tab.
+     *
+     * @param Form  $form    Target form.
+     * @param Front $subject Target tab.
+     *
+     * @return Fieldset
+     */
+    private function createAdvancedFieldset(Form $form, Front $subject)
+    {
+        $fieldset = $form->addFieldset(
+            'elasticsuite_catalog_attribute_advanced_fieldset',
+            [
+                'legend'      => __('Advanced Elasticsuite Configuration'),
+                'collapsable' => $subject->getRequest()->has('popup'),
+            ],
+            'elasticsuite_catalog_attribute_navigation_fieldset'
+        );
+
+        $fieldset->addClass('es-esfeature__logo');
+
+        return $fieldset;
+    }
+
+    /**
      * Move original fields to the new fieldset.
      *
      * @param Form $form Form
      *
      * @return FrontPlugin
      */
-    private function moveOrginalFields(Form $form)
+    private function moveOriginalFields(Form $form)
     {
         $originalFieldset = $form->getElement('front_fieldset');
-        $targetFieldset   = $form->getElement('elasticsuite_catalog_attribute_fieldset');
 
-        foreach ($this->movedFields as $elementId) {
+        foreach ($this->movedFields as $elementId => $fieldset) {
             $element = $form->getElement($elementId);
             if ($element) {
+                $targetFieldset = $form->getElement($fieldset);
                 $originalFieldset->removeField($elementId);
                 $targetFieldset->addElement($element);
             }
@@ -393,7 +455,6 @@ class FrontPlugin
         return $this;
     }
 
-
     /**
      * Append the "Slider Display Configuration" fieldset to the tab.
      *
@@ -503,6 +564,107 @@ class FrontPlugin
     }
 
     /**
+     * Add field allowing to configure if a field can be used for span queries.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addIsSpannableField(Fieldset $fieldset)
+    {
+        $isSpannableNote = __(
+        // phpcs:ignore Generic.Files.LineLength
+            'Default : No. If set to Yes, the engine will try to match the current query string at the beginning of this string.'
+            . ' Eg: when enabled on "name", if a customer search for "red dress", the engine will give an higher score to products having'
+            . ' a name beginning by "red dress". This requires the Span Match Boost feature to be enabled.'
+        );
+        $fieldset->addField(
+            'is_spannable',
+            'select',
+            [
+                'name'   => 'is_spannable',
+                'label'  => __('Use this field for span queries'),
+                'values' => $this->booleanSource->toOptionArray(),
+                // phpcs:ignore Generic.Files.LineLength
+                'note'   => $isSpannableNote,
+            ],
+            'is_used_in_spellcheck'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add field allowing to configure if zero/false values should be indexed or ignored.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addDisableNormsField(Fieldset $fieldset)
+    {
+        $disableNormsNote = __(
+        // phpcs:ignore Generic.Files.LineLength
+            'Default : No. By default, the score of a text match in a field will vary according to the field length.'
+            . ' Eg: when searching for "dress", a product named "red dress" will have an higher score than a product named'
+            . ' "red dress with long sleeves". You can set this to "Yes" to discard this behavior.'
+        );
+        $fieldset->addField(
+            'norms_disabled',
+            'select',
+            [
+                'name'   => 'norms_disabled',
+                'label'  => __('Discard the field length for scoring'),
+                'values' => $this->booleanSource->toOptionArray(),
+                // phpcs:ignore Generic.Files.LineLength
+                'note'   => $disableNormsNote,
+            ],
+            'is_spannable'
+        );
+
+        return $this;
+    }
+
+    /**
+     * Add field allowing to configure if a field can be used for span queries.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addDefaultAnalyzer(Fieldset $fieldset)
+    {
+        $defaultAnalyzerNote = __(
+        // phpcs:ignore Generic.Files.LineLength
+            'Default : standard. The default analyzer for this field. Should be set to "reference" for SKU-like fields.'
+        );
+
+        $config = [
+            'name'   => 'default_analyzer',
+            'label'  => __('Default Search Analyzer'),
+            'values' => [
+                ['value' => FieldInterface::ANALYZER_STANDARD, 'label' => __('standard')],
+                ['value' => FieldInterface::ANALYZER_REFERENCE, 'label' => __('reference')],
+            ],
+            // phpcs:ignore Generic.Files.LineLength
+            'note'   => $defaultAnalyzerNote,
+        ];
+
+        if ($this->getAttribute()->getAttributeCode() === "sku") {
+            $config['value'] = FieldInterface::ANALYZER_REFERENCE;
+        }
+
+        $fieldset->addField(
+            'default_analyzer',
+            'select',
+            $config,
+            'norms_disabled'
+        );
+
+        return $this;
+    }
+
+    /**
      * Manage dependency between fields.
      *
      * @param Front $subject The StoreFront tab
@@ -525,8 +687,16 @@ class FrontPlugin
                 ->addFieldMap('sort_order_asc_missing', 'sort_order_asc_missing')
                 ->addFieldMap('sort_order_desc_missing', 'sort_order_desc_missing')
                 ->addFieldMap('is_display_rel_nofollow', 'is_display_rel_nofollow')
+                ->addFieldMap('is_spannable', 'is_spannable')
+                ->addFieldMap('norms_disabled', 'norms_disabled')
+                ->addFieldMap('default_analyzer', 'default_analyzer')
+                ->addFieldMap('search_weight', 'search_weight')
                 ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
                 ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1')
+                ->addFieldDependence('is_spannable', 'is_searchable', '1')
+                ->addFieldDependence('norms_disabled', 'is_searchable', '1')
+                ->addFieldDependence('search_weight', 'is_searchable', '1')
+                ->addFieldDependence('default_analyzer', 'is_searchable', '1')
                 ->addFieldDependence('sort_order_asc_missing', 'used_for_sort_by', '1')
                 ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1')
                 ->addFieldDependence('is_display_rel_nofollow', 'is_filterable', '1');

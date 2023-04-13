@@ -56,6 +56,16 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $enablePhoneticSearch;
 
     /**
+     * @var integer|null
+     */
+    private $spanMatchBoost;
+
+    /**
+     * @var integer|null
+     */
+    private $spanSize;
+
+    /**
      * RelevanceConfiguration constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -67,6 +77,9 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param float                                $cutOffFrequency      The cutoff Frequency value
      * @param FuzzinessConfigurationInterface|null $fuzziness            The fuzziness Configuration, or null
      * @param boolean                              $enablePhoneticSearch The phonetic Configuration, or null
+     * @param int|null                             $spanMatchBoost       The Span match boost value, or null if not
+     *                                                                   enabled
+     * @param int|null                             $spanSize             The number of terms to match in span queries
      */
     public function __construct(
         $minimumShouldMatch,
@@ -74,7 +87,9 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $phraseMatchBoost,
         $cutOffFrequency,
         FuzzinessConfigurationInterface $fuzziness = null,
-        $enablePhoneticSearch = false
+        $enablePhoneticSearch = false,
+        $spanMatchBoost = null,
+        $spanSize = null
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
@@ -82,6 +97,8 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->cutOffFrequency        = $cutOffFrequency;
         $this->fuzzinessConfiguration = $fuzziness;
         $this->enablePhoneticSearch   = $enablePhoneticSearch;
+        $this->spanMatchBoost         = $spanMatchBoost;
+        $this->spanSize               = $spanSize;
     }
 
     /**
@@ -144,5 +161,21 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isPhoneticSearchEnabled()
     {
         return (bool) $this->enablePhoneticSearch;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSpanMatchBoost()
+    {
+        return (int) $this->spanMatchBoost;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSpanSize()
+    {
+        return (int) $this->spanSize;
     }
 }

@@ -70,6 +70,7 @@ class Field implements FieldInterface
         'default_search_analyzer' => self::ANALYZER_STANDARD,
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
         'norms_disabled'          => false,
+        'is_spannable'            => false,
     ];
 
     /**
@@ -147,6 +148,14 @@ class Field implements FieldInterface
     public function normsDisabled(): bool
     {
         return (bool) $this->config['norms_disabled'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSpannable(): bool
+    {
+        return (bool) $this->config['is_spannable'];
     }
 
     /**
