@@ -64,6 +64,11 @@ class Factory
     const PHONETIC_CONFIG_XML_PATH = 'spellchecking/phonetic/enable';
 
     /**
+     * XML node for span match configuration
+     */
+    const SPAN_MATCH_CONFIG_XML_PREFIX = 'span_match_configuration';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -134,6 +139,8 @@ class Factory
             'cutOffFrequency'      => $this->getCutoffFrequencyConfiguration($scopeCode),
             'fuzziness'            => $this->getFuzzinessConfiguration($scopeCode),
             'enablePhoneticSearch' => $this->isPhoneticSearchEnabled($scopeCode),
+            'spanMatchBoost'       => $this->getSpanMatchBoostConfiguration($scopeCode),
+            'spanSize'             => $this->getSpanSize($scopeCode),
         ];
 
         return $configurationParams;
@@ -280,5 +287,45 @@ class Factory
     private function getScopeCode($storeId, $containerName)
     {
         return sprintf("%s|%s", $containerName, $storeId);
+    }
+
+    /**
+     * Retrieve span boost configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool|int
+     */
+    private function getSpanMatchBoostConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::SPAN_MATCH_CONFIG_XML_PREFIX;
+
+        $boost = (bool) $this->getConfigValue($path . "/enable_span_match", $scopeCode);
+
+        if ($boost === true) {
+            $boost = (int) $this->getConfigValue($path . "/span_match_boost_value", $scopeCode);
+        }
+
+        return $boost;
+    }
+
+    /**
+     * Retrieve span boost size configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool|int
+     */
+    private function getSpanSize($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::SPAN_MATCH_CONFIG_XML_PREFIX;
+
+        $size = (bool) $this->getConfigValue($path . "/enable_span_match", $scopeCode);
+
+        if ($size === true) {
+            $size = (int) $this->getConfigValue($path . "/span_size", $scopeCode);
+        }
+
+        return $size;
     }
 }

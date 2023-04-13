@@ -128,7 +128,7 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Recommendations engine :**
+* **Recommendations engine (premium version only) :**
 
     On top of the behavioral analysis part will come our recommendations engine. It allows you to propose **custom recommendations to your customers, based on their previous visits on your websites**, and on other customer behaviors.
 
@@ -154,7 +154,7 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Behavioral Optimizers :**
+* **Behavioral Optimizers (premium version only) :**
 
     This allows you to build **rules matching your customer's behavior**.
     Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.

@@ -20,6 +20,7 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Generic Setup for ElasticsuiteCatalog module.
@@ -200,6 +201,32 @@ class CatalogSetup
             $connection->update(
                 $table,
                 ['is_used_in_spellcheck' => true],
+                $connection->quoteInto('attribute_id = ?', $attributeId)
+            );
+        }
+    }
+
+    /**
+     * Update default values for the sku field of product entity.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function updateDefaultValuesForSkuAttribute($eavSetup)
+    {
+        $setup      = $eavSetup->getSetup();
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        $attributeIds = [
+            $eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'sku'),
+        ];
+
+        foreach ($attributeIds as $attributeId) {
+            $connection->update(
+                $table,
+                ['default_analyzer' => FieldInterface::ANALYZER_REFERENCE],
                 $connection->quoteInto('attribute_id = ?', $attributeId)
             );
         }

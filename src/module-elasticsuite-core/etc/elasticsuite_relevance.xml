@@ -29,6 +29,11 @@
             <cutoff_frequency_configuration>
                 <cutoff_frequency>0.15</cutoff_frequency>
             </cutoff_frequency_configuration>
+            <span_match_configuration>
+                <enable_span_match>0</enable_span_match>
+                <span_match_boost_value>10</span_match_boost_value>
+                <span_size>1</span_size>
+            </span_match_configuration>
         </relevance>
         <spellchecking>
             <fuzziness>
