@@ -249,4 +249,11 @@
         <!-- This plugin is defined in magento/module-inventory-catalog -->
         <plugin name="update_toolbar_count" disabled="true"/>
     </type>
+
+    <!-- Disable erratic plugin on collection.
+     This plugin is not needed because Elasticsuite can achieve the same thing with an optimizer. -->
+    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection">
+        <!-- This plugin is defined in magento/module-inventory-catalog -->
+        <plugin name="outOfStockSorting" disabled="true"/>
+    </type>
 </config>
