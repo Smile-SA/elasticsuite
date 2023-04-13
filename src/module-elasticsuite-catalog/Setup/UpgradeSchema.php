@@ -94,6 +94,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->addIncludeZeroFalseValues($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.7.0', '<')) {
+            $this->catalogSetup->addIsSpannableAttributeProperty($setup);
+            $this->catalogSetup->addNormsDisabledAttributeProperty($setup);
+            $this->catalogSetup->addDefaultAnalyzer($setup);
+        }
+
         $setup->endSetup();
     }
 }

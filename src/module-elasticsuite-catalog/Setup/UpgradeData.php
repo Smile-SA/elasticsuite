@@ -83,6 +83,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->catalogSetup->updateIsDisplayInAutocompleteAttribute($eavSetup);
         }
 
+        if (version_compare($context->getVersion(), '1.7.0', '<')) {
+            $this->catalogSetup->updateDefaultValuesForSkuAttribute($eavSetup);
+        }
+
         $setup->endSetup();
     }
 }

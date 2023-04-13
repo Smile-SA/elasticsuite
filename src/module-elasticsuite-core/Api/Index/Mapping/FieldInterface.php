@@ -178,4 +178,18 @@ interface FieldInterface
      * @return array
      */
     public function getConfig();
+
+    /**
+     * If "norms" of the field in mapping should be set to false.
+     *
+     * @return bool
+     */
+    public function normsDisabled();
+
+    /**
+     * Is the field should be used for span queries.
+     *
+     * @return boolean
+     */
+    public function isSpannable();
 }
