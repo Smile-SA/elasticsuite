@@ -72,6 +72,13 @@
                     </depends>
                     <validate>integer validate-greater-than-zero</validate>
                 </field>
+                <field id="span_size" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Number of words to match at the beginning of the string</label>
+                    <depends>
+                        <field id="enable_span_match">1</field>
+                    </depends>
+                    <validate>integer validate-greater-than-zero</validate>
+                </field>
             </group>
         </section>
 

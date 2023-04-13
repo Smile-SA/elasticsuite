@@ -140,6 +140,7 @@ class Factory
             'fuzziness'            => $this->getFuzzinessConfiguration($scopeCode),
             'enablePhoneticSearch' => $this->isPhoneticSearchEnabled($scopeCode),
             'spanMatchBoost'       => $this->getSpanMatchBoostConfiguration($scopeCode),
+            'spanSize'             => $this->getSpanSize($scopeCode),
         ];
 
         return $configurationParams;
@@ -306,5 +307,25 @@ class Factory
         }
 
         return $boost;
+    }
+
+    /**
+     * Retrieve span boost size configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool|int
+     */
+    private function getSpanSize($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::SPAN_MATCH_CONFIG_XML_PREFIX;
+
+        $size = (bool) $this->getConfigValue($path . "/enable_span_match", $scopeCode);
+
+        if ($size === true) {
+            $size = (int) $this->getConfigValue($path . "/span_size", $scopeCode);
+        }
+
+        return $size;
     }
 }

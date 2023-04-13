@@ -343,10 +343,18 @@ class QueryBuilder
      */
     private function getSpanQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
     {
-        $query     = null;
-        $wordCount = str_word_count($queryText);
-        $terms     = explode(' ', $queryText);
+        $query = null;
+        $terms = explode(' ', $queryText);
 
+        $relevanceConfig  = $containerConfig->getRelevanceConfig();
+        $spanSize         = $relevanceConfig->getSpanSize();
+
+        if ((int) $spanSize === 0) {
+            return $query;
+        }
+
+        $terms            = array_slice($terms, 0, $spanSize);
+        $wordCount        = count($terms);
         $spanFieldsFilter = $this->fieldFilters['spannableFieldFilter'];
         $spanFields       = $containerConfig->getMapping()->getFields();
         $spanFields       = array_filter($spanFields, [$spanFieldsFilter, 'filterField']);

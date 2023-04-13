@@ -526,7 +526,7 @@ class FrontPlugin
             'select',
             [
                 'name'   => 'is_spannable',
-                'label'  => __('Use this field for span queries.'),
+                'label'  => __('Use this field for span queries'),
                 'values' => $this->booleanSource->toOptionArray(),
                 // phpcs:ignore Generic.Files.LineLength
                 'note'   => $isSpannableNote,
@@ -557,7 +557,7 @@ class FrontPlugin
             'select',
             [
                 'name'   => 'norms_disabled',
-                'label'  => __('Discard the field length for scoring.'),
+                'label'  => __('Discard the field length for scoring'),
                 'values' => $this->booleanSource->toOptionArray(),
                 // phpcs:ignore Generic.Files.LineLength
                 'note'   => $disableNormsNote,

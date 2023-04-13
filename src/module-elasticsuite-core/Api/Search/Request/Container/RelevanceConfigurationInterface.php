@@ -72,4 +72,11 @@ interface RelevanceConfigurationInterface
      * @return false|int
      */
     public function getSpanMatchBoost();
+
+    /**
+     * Retrieve span number value if enabled.
+     *
+     * @return false|int
+     */
+    public function getSpanSize();
 }
