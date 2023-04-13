@@ -10,7 +10,7 @@ on:
         branches:
           - 2.11.x
           - master
-        types: [labeled]
+        types: [labeled,synchronize]
 
 jobs:
     build:
