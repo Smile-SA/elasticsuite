@@ -250,7 +250,7 @@ class OptimizerSetup
                     $setup->getFkName(
                         OptimizerInterface::TABLE_NAME_LIMITATION,
                         'category_id',
-                        'catalog_category_entity',
+                        $setup->getTable('catalog_category_entity'),
                         $categoryIdField
                     ),
                     'category_id',
