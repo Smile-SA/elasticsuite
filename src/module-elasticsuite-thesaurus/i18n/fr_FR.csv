@@ -18,9 +18,9 @@ Store,Vue magasin
 Synonyms,Synonymes
 "Reference Term","Terme de référence"
 "Expansion terms","Termes étendus"
-"Add Expansion","Ajouter une expansion"
+"Add Expansion Rule","Ajouter une règle d'expansion"
 "Synonym terms","Termes synonymes"
-"Add Synonym","Ajouter un synonyme"
+"Add Synonym Rule","Ajouter une liste de synonymes"
 "This thesaurus no longer exists.","Ce thésaurus n'existe plus."
 "You deleted the thesaurus %1.","Vous avez supprimé le thésaurus %1."
 "Edit %1 (%2)","Édition : %1 (%2)"
