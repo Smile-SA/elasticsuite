@@ -14,7 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+use Opensearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+use Http\Adapter\Guzzle7\Client;
 
 /**
  * ElasticSearch client builder.
@@ -26,7 +27,7 @@ use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
 class ClientBuilder
 {
     /**
-     * @var \Elasticsearch\ClientBuilder
+     * @var \OpenSearch\ClientBuilder|\Elastic\Elasticsearch\ClientBuilder
      */
     private $clientBuilder;
 
@@ -56,18 +57,21 @@ class ClientBuilder
     private $selector;
 
     /**
+     * @var integer
+     */
+    private $clientVersion = 7;
+
+    /**
      * Constructor.
      *
-     * @param \Elasticsearch\ClientBuilder $clientBuilder Client builder.
-     * @param \Psr\Log\LoggerInterface     $logger        Logger.
-     * @param string                       $selector      Node Selector.
+     * @param \Psr\Log\LoggerInterface $logger   Logger.
+     * @param string                   $selector Node Selector.
      */
     public function __construct(
-        \Elasticsearch\ClientBuilder $clientBuilder,
         \Psr\Log\LoggerInterface $logger,
         $selector = StickyRoundRobinSelector::class
     ) {
-        $this->clientBuilder = $clientBuilder;
+        $this->clientVersion = $this->getClientVersion();
         $this->logger        = $logger;
         $this->selector      = $selector;
     }
@@ -76,38 +80,63 @@ class ClientBuilder
      * Build an ES client from options.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param array $options Client options. See self::defaultOptions for available options.
      *
-     * @return \Elasticsearch\Client
+     * @return \OpenSearch\Client|\Elasticsearch\Client|\Elastic\Elasticsearch\Client
      */
     public function build($options = [])
     {
         $options       = array_merge($this->defaultOptions, $options);
 
-        $clientBuilder = $this->clientBuilder->create();
+        $clientBuilder = $this->getClientBuilder()->create();
 
         $hosts = $this->getHosts($options);
 
         if (!empty($hosts)) {
-            $clientBuilder->setHosts($hosts);
+            if ($this->clientVersion === 7) {
+                $clientBuilder->setHosts($hosts);
+            } elseif ($this->clientVersion === 8) {
+                $preparedHosts = [];
+                foreach ($hosts as $host) {
+                    if ($options['enable_http_auth'] && !empty($host['user']) && (!empty($host['pass']))) {
+                        $clientBuilder->setBasicAuthentication($host['user'], $host['pass']);
+                    }
+                    $preparedHosts[] = $host['scheme'] . '://' . $host['host'] . ":" . $host['port'];
+                }
+                $clientBuilder->setHosts($preparedHosts);
+            }
         }
 
         if ($options['is_debug_mode_enabled']) {
             $clientBuilder->setLogger($this->logger);
-            $clientBuilder->setTracer($this->logger);
+            // The method setTracer() was removed in v8.
+            if (($this->clientVersion === 7) && method_exists($clientBuilder, 'setTracer')) {
+                $clientBuilder->setTracer($this->logger);
+            }
         }
 
         if ($options['max_parallel_handles']) {
-            $handlerParams = ['max_handles' => (int) $options['max_parallel_handles']];
-            $handler = \Elasticsearch\ClientBuilder::defaultHandler($handlerParams);
-            $clientBuilder->setHandler($handler);
+            // The method defaultHandler() was removed in v8.
+            if (($this->clientVersion === 7) && method_exists($clientBuilder, "defaultHandler")) {
+                $handlerParams = ['max_handles' => (int) $options['max_parallel_handles']];
+                $handler       = $this->clientBuilder::defaultHandler($handlerParams);
+                $clientBuilder->setHandler($handler);
+            } elseif (method_exists($clientBuilder, 'setAsyncHttpClient')) {
+                $asyncClient = \Http\Adapter\Guzzle7\Client::createWithConfig([]);
+                $clientBuilder->setAsyncHttpClient($asyncClient);
+            }
         }
 
-        $connectionParams = $this->getConnectionParams($options);
+        $connectionParams = $this->getEncodedConnectionParams($options);
 
         if (!empty($connectionParams)) {
-            $this->clientBuilder->setConnectionParams($connectionParams);
+            // The setConnectionParams() was removed in v8.
+            if (($this->clientVersion === 7) && method_exists($clientBuilder, 'setConnectionParams')) {
+                $this->clientBuilder->setConnectionParams($connectionParams);
+            }
         }
 
         if ($options['max_retries'] > 0) {
@@ -118,7 +147,11 @@ class ClientBuilder
             $clientBuilder->setSSLVerification($options['verify']);
         }
 
-        if (null !== $this->selector) {
+        if (null !== $this->selector
+            && ($this->clientVersion === 7)
+            && class_exists($this->selector)
+            && class_exists(StickyRoundRobinSelector::class)
+        ) {
             $selector = (count($hosts) > 1) ? $this->selector : StickyRoundRobinSelector::class;
             $clientBuilder->setSelector($selector);
         }
@@ -168,7 +201,7 @@ class ClientBuilder
      * @param array $options Client options. See self::defaultOptions for available options.
      * @return array
      */
-    private function getConnectionParams($options)
+    private function getEncodedConnectionParams($options)
     {
         return (
             !empty($options['http_auth_user']) &&
@@ -183,5 +216,71 @@ class ClientBuilder
                 ],
             ],
         ] : [];
+    }
+
+    /**
+     * Fetch the Elasticsearch Client builder.
+     *
+     * FQCN changed between version 7 and 8 of the client.
+     *
+     * Magento also requires the OpenSearch client library since 2.4.6. So it should always be here.
+     *
+     * OS PHP client v1/v2 : \OpenSearch\ClientBuilder
+     * ES PHP client v7 : \Elasticsearch\ClientBuilder
+     * ES PHP client v8 : \Elastic\Elasticsearch\ClientBuilder
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @return \OpenSearch\ClientBuilder|\Elasticsearch\ClientBuilder|\Elastic\Elasticsearch\ClientBuilder
+     */
+    private function getClientBuilder()
+    {
+        if (null === $this->clientBuilder) {
+            // If the Elasticsearch v8 client is there, it's probably been installed on purpose.
+            // It's not required by Magento. So let's use it if people added it.
+            if (class_exists("\Elastic\Elasticsearch\ClientBuilder")) {
+                $this->clientBuilder = new \Elastic\Elasticsearch\ClientBuilder();
+            } elseif (class_exists("\Elasticsearch\ClientBuilder")) {
+                $this->clientBuilder = new \Elasticsearch\ClientBuilder();
+            } elseif (class_exists("\OpenSearch\ClientBuilder")) {
+                $this->clientBuilder = new \OpenSearch\ClientBuilder();
+            } else {
+                $message = "Impossible to create Elasticsearch client builder. "
+                    . "Neither \Elasticsearch\ClientBuilder nor \Elastic\Elasticsearch\ClientBuilder "
+                    . "nor \OpenSearch\ClientBuilder classes exists.";
+
+                throw new \LogicException($message);
+            }
+        }
+
+        return $this->clientBuilder;
+    }
+
+    /**
+     * Fetch the Elasticsearch Client builder version.
+     *
+     * FQCN changed between version 7 and 8 of the client.
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @return integer
+     */
+    private function getClientVersion()
+    {
+        // If the Elasticsearch v8 client is there, it's probably been installed on purpose.
+        // It's not required by Magento. So let's use it if people added it.
+        if (class_exists("\Elastic\Elasticsearch\ClientBuilder")) {
+            return 8;
+        } elseif (class_exists("\Elasticsearch\ClientBuilder") || class_exists("\OpenSearch\ClientBuilder")) {
+            // ES PHP client v7 and OS PHP client v1/v2 are the same... for now...
+            // Let's assume they are identical and consider they can be used the same way.
+            return 7;
+        } else {
+            $message = "Impossible to fetch Elasticsearch client version. "
+                . "Neither \Elasticsearch\ClientBuilder nor \Elastic\Elasticsearch\ClientBuilder "
+                . "nor \OpenSearch\ClientBuilder classes exists.";
+
+            throw new \LogicException($message);
+        }
     }
 }

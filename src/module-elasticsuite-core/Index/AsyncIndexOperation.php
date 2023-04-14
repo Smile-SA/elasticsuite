@@ -111,6 +111,11 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
 
         /** @var \GuzzleHttp\Ring\Future\FutureArray $futureBulkResponse */
         foreach ($this->futureBulks as $futureBulkResponse) {
+            // Actually I don't know how to let all the future response resolve when using Guzzle7.
+            if ($futureBulkResponse instanceof \Http\Adapter\Guzzle7\Promise) {
+                $futureBulkResponse = $futureBulkResponse->wait();
+            }
+
             $resolvedResponse = [
                 'items'  => $futureBulkResponse['items'],  // Implicit resolution of the promise.
                 'errors' => $futureBulkResponse['errors'], // Implicit resolution of the promise.

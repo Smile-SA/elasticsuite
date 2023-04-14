@@ -30,7 +30,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 class Client implements ClientInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \Elasticsearch\Client|\OpenSearch\Client|\Elastic\Elasticsearch\Client
      */
     private $esClient = null;
 
@@ -77,7 +77,7 @@ class Client implements ClientInterface
      */
     public function ping()
     {
-        return $this->getEsClient()->ping();
+        return $this->parseBoolIfNeeded($this->getEsClient()->ping());
     }
 
     /**
@@ -101,7 +101,7 @@ class Client implements ClientInterface
      */
     public function indexExists($indexName)
     {
-        return $this->getEsClient()->indices()->exists(['index' => $indexName]);
+        return $this->parseBoolIfNeeded($this->getEsClient()->indices()->exists(['index' => $indexName]));
     }
 
     /**
@@ -125,7 +125,7 @@ class Client implements ClientInterface
      */
     public function getMapping($indexName)
     {
-        return $this->getEsClient()->indices()->getMapping(['index' => $indexName]);
+        return $this->parseArrayIfNeeded($this->getEsClient()->indices()->getMapping(['index' => $indexName]));
     }
 
     /**
@@ -133,7 +133,7 @@ class Client implements ClientInterface
      */
     public function getSettings($indexName)
     {
-        return $this->getEsClient()->indices()->getSettings(['index' => $indexName]);
+        return $this->parseArrayIfNeeded($this->getEsClient()->indices()->getSettings(['index' => $indexName]));
     }
 
     /**
@@ -159,8 +159,8 @@ class Client implements ClientInterface
     {
         $indices = [];
         try {
-            $indices = $this->getEsClient()->indices()->getMapping(['index' => $indexAlias]);
-        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
+            $indices = $this->parseArrayIfNeeded($this->getEsClient()->indices()->getMapping(['index' => $indexAlias]));
+        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception | \Elastic\Elasticsearch\Exception\ClientResponseException $e) {
             ;
         }
 
@@ -172,7 +172,7 @@ class Client implements ClientInterface
      */
     public function getIndexAliases($params = []): array
     {
-        return $this->getEsClient()->indices()->getAliases($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->indices()->getAlias($params));
     }
 
     /**
@@ -188,7 +188,14 @@ class Client implements ClientInterface
      */
     public function bulk($bulkParams)
     {
-        return $this->getEsClient()->bulk($bulkParams);
+        if (isset($bulkParams['client']['future']) && method_exists($this->getEsClient(), "setAsync")) {
+            $client = clone $this->getEsClient();
+            $client->setAsync(true);
+
+            return $this->parseArrayIfNeeded($client->bulk($bulkParams));
+        }
+
+        return $this->parseArrayIfNeeded($this->getEsClient()->bulk($bulkParams));
     }
 
     /**
@@ -196,7 +203,7 @@ class Client implements ClientInterface
      */
     public function search($params)
     {
-        return $this->getEsClient()->search($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->search($params));
     }
 
     /**
@@ -204,7 +211,7 @@ class Client implements ClientInterface
      */
     public function analyze($params)
     {
-        return $this->getEsClient()->indices()->analyze($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->indices()->analyze($params));
     }
 
     /**
@@ -212,13 +219,9 @@ class Client implements ClientInterface
      */
     public function indexStats($indexName): array
     {
-        try {
-            $stats = $this->getEsClient()->indices()->stats(['index' => $indexName]);
-        } catch (\Exception $e) {
-            throw new Missing404Exception($e->getMessage());
-        }
+        $stats = $this->getEsClient()->indices()->stats(['index' => $indexName]);
 
-        return $stats;
+        return $this->parseArrayIfNeeded($stats);
     }
 
     /**
@@ -226,7 +229,7 @@ class Client implements ClientInterface
      */
     public function termvectors($params)
     {
-        return $this->getEsClient()->termvectors($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->termvectors($params));
     }
 
     /**
@@ -234,7 +237,7 @@ class Client implements ClientInterface
      */
     public function mtermvectors($params)
     {
-        return $this->getEsClient()->mtermvectors($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->mtermvectors($params));
     }
 
     /**
@@ -242,18 +245,50 @@ class Client implements ClientInterface
      */
     public function reindex(array $params): array
     {
-        return $this->getEsClient()->reindex($params);
+        return $this->parseArrayIfNeeded($this->getEsClient()->reindex($params));
     }
 
     /**
-     * @return \Elasticsearch\Client
+     * @return \Elasticsearch\Client|\OpenSearch\Client|\Elastic\Elasticsearch\Client
      */
-    private function getEsClient(): \Elasticsearch\Client
+    private function getEsClient(): \Elasticsearch\Client|\OpenSearch\Client|\Elastic\Elasticsearch\Client
     {
         if ($this->esClient === null) {
             $this->esClient = $this->clientBuilder->build($this->clientConfiguration->getOptions());
         }
 
         return $this->esClient;
+    }
+
+    /**
+     * Parse the Elasticsearch response as array if needed.
+     *
+     * @param array|\Elastic\Elasticsearch\Response\Elasticsearch $response The response
+     *
+     * @return array
+     */
+    private function parseArrayIfNeeded($response)
+    {
+        if (is_object($response) && method_exists($response, "asArray")) {
+            $response = $response->asArray();
+        }
+
+        return $response;
+    }
+
+    /**
+     * Parse the Elasticsearch response as array if needed.
+     *
+     * @param array|\Elastic\Elasticsearch\Response\Elasticsearch $response The response
+     *
+     * @return array
+     */
+    private function parseBoolIfNeeded($response)
+    {
+        if (is_object($response) && method_exists($response, "asBool")) {
+            $response = $response->asBool();
+        }
+
+        return $response;
     }
 }
