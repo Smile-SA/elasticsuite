@@ -18,6 +18,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
 use Magento\Framework\Registry;
+use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Magento\Framework\Data\Form\Element\Fieldset;
@@ -74,6 +75,11 @@ class FrontPlugin
     private $filterBooleanLogic;
 
     /**
+     * @var UrlInterface
+     */
+    private $urlBuilder;
+
+    /**
      * Class constructor
      *
      * @param Yesno              $booleanSource      The YesNo source.
@@ -81,19 +87,22 @@ class FrontPlugin
      * @param Registry           $coreRegistry       Core registry.
      * @param FilterSortOrder    $filterSortOrder    Filter Sort Order.
      * @param FilterBooleanLogic $filterBooleanLogic Filter boolean logic source model.
+     * @param UrlInterface       $urlBuilder         Url Builder.
      */
     public function __construct(
         Yesno $booleanSource,
         Weight $weightSource,
         Registry $coreRegistry,
         FilterSortOrder $filterSortOrder,
-        FilterBooleanLogic $filterBooleanLogic
+        FilterBooleanLogic $filterBooleanLogic,
+        UrlInterface $urlBuilder
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
         $this->coreRegistry    = $coreRegistry;
         $this->filterSortOrder = $filterSortOrder;
         $this->filterBooleanLogic = $filterBooleanLogic;
+        $this->urlBuilder         = $urlBuilder;
     }
 
     /**
@@ -117,7 +126,7 @@ class FrontPlugin
         $this->addSearchFields($searchFieldset);
         $this->addAutocompleteFields($searchFieldset);
         $this->addFacetFields($layeredNavigationFieldset);
-        $this->addSortFields($advancedFieldset);
+        $this->addSortFields($searchFieldset);
         $this->addRelNofollowFields($layeredNavigationFieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
 
@@ -135,6 +144,8 @@ class FrontPlugin
             $this->addIncludeZeroFalseField($advancedFieldset);
         }
 
+        $this->addDefaultAnalyzer($advancedFieldset);
+
         if (($this->getAttribute()->getBackendType() == 'varchar')
             || (in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect']))
         ) {
@@ -142,7 +153,6 @@ class FrontPlugin
             $this->addDisableNormsField($advancedFieldset);
         }
 
-        $this->addDefaultAnalyzer($advancedFieldset);
         $this->appendFieldsDependency($subject);
 
         return $result;
@@ -588,7 +598,7 @@ class FrontPlugin
                 // phpcs:ignore Generic.Files.LineLength
                 'note'   => $isSpannableNote,
             ],
-            'is_used_in_spellcheck'
+            'default_analyzer'
         );
 
         return $this;
@@ -634,9 +644,17 @@ class FrontPlugin
      */
     private function addDefaultAnalyzer(Fieldset $fieldset)
     {
+        $link = sprintf(
+            '<a href="%s" target="_blank">%s</a>',
+            $this->urlBuilder->getUrl('smile_elasticsuite_indices/analysis/index', ['_query' => []]),
+            __("Analysis Page")
+        );
+
         $defaultAnalyzerNote = __(
         // phpcs:ignore Generic.Files.LineLength
             'Default : standard. The default analyzer for this field. Should be set to "reference" for SKU-like fields.'
+            . ' You can check the %1 screen to view how these analyzers behave.',
+            $link
         );
 
         $config = [
@@ -658,7 +676,7 @@ class FrontPlugin
             'default_analyzer',
             'select',
             $config,
-            'norms_disabled'
+            'is_used_in_spellcheck'
         );
 
         return $this;

@@ -33,7 +33,7 @@ class Expansions extends AbstractRenderer
         $this->addColumn('reference_term', ['label' => __('Reference Term')]);
         $this->addColumn('values', ['label' => __('Expansion terms')]);
         $this->_addAfter = false;
-        $this->_addButtonLabel = __('Add Expansion');
+        $this->_addButtonLabel = __('Add Expansion Rule');
 
         parent::_construct();
     }

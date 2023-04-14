@@ -41,7 +41,7 @@ class Synonyms extends AbstractRenderer
         );
 
         $this->_addAfter = false;
-        $this->_addButtonLabel = __('Add Synonym');
+        $this->_addButtonLabel = __('Add Synonym Rule');
 
         parent::_construct();
     }
