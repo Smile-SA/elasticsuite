@@ -22,6 +22,9 @@ Elasticsuite is compatible with Hyvä theme. Please checkout [their blog article
 
 If you want to use Elasticsuite with Hyvä theme, you'll need to install the [compatibility module](https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-smile-elasticsuite/)
 
+### Breezefront compatibility
+
+If you want to use Elasticsuite with the [Breezefront themes](https://breezefront.com), you will need to install their [module] (https://github.com/breezefront/module-breeze-smile-elasticsuite)
 
 **Which version should I use ?**
 
