@@ -76,6 +76,11 @@ class EventIndex implements EventIndexInterface
 
         foreach ($events as $event) {
             if (isset($event['page']['store_id'])) {
+                // Previous "date" column has been renamed to "created_at" in db_schema.xml
+                if (!isset($event['date'])) {
+                    $event['date'] = $event['created_at'];
+                }
+
                 $date = substr($event['date'], 0, 7);
                 $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $date);
                 if ($index !== null) {
