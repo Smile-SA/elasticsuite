@@ -369,25 +369,41 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function addChildrenQueries($query, CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
-        $childrenCategories    = $this->getChildrenCategories($category, $excludedCategories);
-        $childrenCategoriesIds = [];
+        $isStandardCategory = ! $category->getIsVirtualCategory();
+        $childrenStandardCategoriesIds = [];
+        $childrenCategories = $this->getChildrenCategories($category, $excludedCategories);
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
 
+            $childrenCategoriesIds = [];
             foreach ($childrenCategories as $childrenCategory) {
-                if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
-                    $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+                $childrenCategoriesIds[] = $childrenCategory->getId();
+            }
+
+            foreach ($childrenCategories as $childrenCategory) {
+                $isChildrenVirtual = (bool) $childrenCategory->getIsVirtualCategory();
+                if ($isChildrenVirtual) {
+                    $childrenQuery = null;
+                    $virtualRootCategory = $childrenCategory->getVirtualCategoryRoot();
+                    if (!$virtualRootCategory
+                        || (
+                            !in_array($virtualRootCategory, $childrenCategoriesIds)
+                            && $virtualRootCategory != $category->getId()
+                        )
+                    ) {
+                        $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+                    }
                     if ($childrenQuery !== null) {
                         $queryParams['should'][] = $childrenQuery;
                     }
-                } else {
-                    $childrenCategoriesIds[] = $childrenCategory->getId();
+                } elseif (!$isStandardCategory) {
+                    $childrenStandardCategoriesIds[] = $childrenCategory->getId();
                 }
             }
 
-            if (!empty($childrenCategoriesIds)) {
-                $queryParams['should'][] = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+            if (!empty($childrenStandardCategoriesIds)) {
+                $queryParams['should'][] = $this->getStandardCategoriesQuery($childrenStandardCategoriesIds, $excludedCategories);
             }
 
             if (count($queryParams['should']) > 1) {
@@ -412,10 +428,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
         $categoryCollection->addIsActiveFilter()->addPathFilter(sprintf('%s/.*', $category->getPath()));
-
-        if (((bool) $category->getIsVirtualCategory()) === false) {
-            $categoryCollection->addFieldToFilter('is_virtual_category', '1');
-        }
 
         if (!empty($excludedCategories)) {
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
