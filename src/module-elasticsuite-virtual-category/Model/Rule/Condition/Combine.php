@@ -57,6 +57,7 @@ class Combine extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Combin
         }
 
         $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+        $query->setName($this->asStringRecursive());
 
         return $query;
     }
