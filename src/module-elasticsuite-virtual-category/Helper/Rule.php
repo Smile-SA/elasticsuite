@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Helper;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler;
 
 /**
  * Smile Elasticsuite virtual category cache helper.
@@ -36,17 +37,25 @@ class Rule
     private $customerSession;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler
+     */
+    private $readHandler;
+
+    /**
      * Provider constructor.
      *
      * @param \Magento\Framework\App\CacheInterface $cache           Cache.
      * @param \Magento\Customer\Model\Session       $customerSession Customer session.
+     * @param ReadHandler                           $readHandler     Rule read handler.
      */
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        ReadHandler $readHandler
     ) {
         $this->cache = $cache;
         $this->customerSession = $customerSession;
+        $this->readHandler = $readHandler;
     }
 
     /**
@@ -73,6 +82,15 @@ class Rule
 
         if ($data === false) {
             $virtualRule = $category->getVirtualRule();
+
+            if (!is_object($virtualRule)) {
+                // If virtual rule is not an object, probably the rule was not properly loaded.
+                // @see https://github.com/Smile-SA/elasticsuite/issues/1985.
+                // In such cases, we go through the readHandler once again.
+                $category    = $this->readHandler->execute($category);
+                $virtualRule = $category->getVirtualRule();
+            }
+
             $data        = call_user_func_array([$virtualRule, $callback], [$category]);
             $cacheData   = serialize($data);
             $this->cache->save($cacheData, $cacheKey, $category->getCacheTags());
