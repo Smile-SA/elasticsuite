@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class HistogramTest extends \PHPUnit\Framework\TestCase
+class HistorgramTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Build an histogram aggregation from a bucket.
