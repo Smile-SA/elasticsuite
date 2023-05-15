@@ -80,6 +80,20 @@ class ProductAttribute extends AbstractEntity
     ];
 
     /**
+     * Count if updated items.
+     *
+     * @var int
+     */
+    protected $countItemsUpdated = 0;
+
+    /**
+     * Need to log in import history.
+     *
+     * @var bool
+     */
+    protected $logInHistory = true;
+
+    /**
      * @var Config
      */
     private $_eavConfig;
@@ -185,7 +199,10 @@ class ProductAttribute extends AbstractEntity
             foreach ($bunch as $rowData) {
                 $attributeCode = isset($rowData['attribute_code']) ? trim($rowData['attribute_code']) : '';
                 $attribute = $this->_eavConfig->getAttribute(self::ENTITY_TYPE_CODE, $attributeCode);
-                $this->updateAttributeData($attribute, $rowData);
+                $result = $this->updateAttributeData($attribute, $rowData);
+                if ($result) {
+                    $this->countItemsUpdated++;
+                }
             }
         }
 
