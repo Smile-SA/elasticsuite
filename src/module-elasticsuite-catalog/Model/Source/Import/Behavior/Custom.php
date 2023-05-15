@@ -25,23 +25,31 @@ use Magento\ImportExport\Model\Source\Import\AbstractBehavior;
  *
  * @SuppressWarnings(PHPMD)
  *
+ * @category Smile
+ * @package  Smile\ElasticsuiteCatalog
+ * @author   Vadym Honcharuk <vahonc@smile.fr>
+ *
  * @api
  * @since 100.0.2
  */
 class Custom extends AbstractBehavior
 {
     /**
-     * @inheritdoc
+     * Get array of possible values.
+     *
+     * @return array
      */
     public function toArray()
     {
         return [
-            Import::BEHAVIOR_APPEND => __('Update')
+            Import::BEHAVIOR_APPEND => __('Update'),
         ];
     }
 
     /**
-     * @inheritdoc
+     * Get current behaviour group code.
+     *
+     * @return string
      */
     public function getCode()
     {
