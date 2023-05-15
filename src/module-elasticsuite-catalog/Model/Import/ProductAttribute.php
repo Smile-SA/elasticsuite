@@ -82,14 +82,14 @@ class ProductAttribute extends AbstractEntity
     /**
      * Count if updated items.
      *
-     * @var int
+     * @var integer
      */
     protected $countItemsUpdated = 0;
 
     /**
      * Need to log in import history.
      *
-     * @var bool
+     * @var boolean
      */
     protected $logInHistory = true;
 
