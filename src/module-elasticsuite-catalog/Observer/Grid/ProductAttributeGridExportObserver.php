@@ -30,7 +30,7 @@ class ProductAttributeGridExportObserver implements ObserverInterface
     /**
      * Execute.
      *
-     * @param Observer $observer
+     * @param Observer $observer Observer.
      * @return void
      * @throws \Magento\Framework\Exception\LocalizedException
      */

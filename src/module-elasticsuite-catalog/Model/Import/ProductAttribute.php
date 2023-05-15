@@ -44,7 +44,7 @@ class ProductAttribute extends AbstractEntity
      */
     protected $_permanentAttributes = [
         'attribute_code',
-        'attribute_label'
+        'attribute_label',
     ];
 
     /**
@@ -130,7 +130,7 @@ class ProductAttribute extends AbstractEntity
      * Validate data row.
      *
      * @param array $rowData Data.
-     * @param int $rowNum Row number.
+     * @param int   $rowNum  Row number.
      *
      * @return bool
      * @throws LocalizedException
@@ -161,6 +161,7 @@ class ProductAttribute extends AbstractEntity
             foreach ($errors as $error) {
                 $this->addRowError($error, $rowNum);
             }
+
             return false;
         }
 
@@ -190,8 +191,8 @@ class ProductAttribute extends AbstractEntity
     /**
      * Update attribute data with new values from CSV.
      *
-     * @param Attribute $attribute
-     * @param array $rowData
+     * @param Attribute $attribute Attribute.
+     * @param array     $rowData   Row Data.
      * @return bool
      */
     private function updateAttributeData($attribute, $rowData)
@@ -226,6 +227,7 @@ class ProductAttribute extends AbstractEntity
                     $attribute->getAttributeCode(),
                     $e->getMessage()
                 );
+
                 return false;
             }
         }

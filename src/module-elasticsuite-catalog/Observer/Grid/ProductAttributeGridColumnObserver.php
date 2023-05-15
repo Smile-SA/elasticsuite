@@ -30,7 +30,7 @@ class ProductAttributeGridColumnObserver implements ObserverInterface
     /**
      * Execute.
      *
-     * @param Observer $observer
+     * @param Observer $observer Observer.
      * @return void
      */
     public function execute(Observer $observer)
@@ -47,7 +47,7 @@ class ProductAttributeGridColumnObserver implements ObserverInterface
                 'type' => 'text',
                 'align' => 'center',
                 'sortable' => true,
-                'escape' => true
+                'escape' => true,
             ],
             'is_searchable'
         );
@@ -62,7 +62,7 @@ class ProductAttributeGridColumnObserver implements ObserverInterface
                 'options' => ['1' => __('Yes'), '0' => __('No')],
                 'align' => 'center',
                 'sortable' => true,
-                'escape' => true
+                'escape' => true,
             ],
             'is_filterable'
         );
