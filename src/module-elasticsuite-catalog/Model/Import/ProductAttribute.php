@@ -26,6 +26,10 @@ use Magento\ImportExport\Model\ResourceModel\Import\Data;
 /**
  * Product attribute import model.
  *
+ * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.ElseExpression)
+ *
  * @category Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Vadym Honcharuk <vahonc@smile.fr>
