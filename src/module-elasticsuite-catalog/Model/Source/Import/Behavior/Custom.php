@@ -1,9 +1,5 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-/**
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
@@ -23,14 +19,9 @@ use Magento\ImportExport\Model\Source\Import\AbstractBehavior;
 /**
  * Custom import behavior source model used for defining the behavior during the product attributes import.
  *
- * @SuppressWarnings(PHPMD)
- *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Vadym Honcharuk <vahonc@smile.fr>
- *
- * @api
- * @since 100.0.2
  */
 class Custom extends AbstractBehavior
 {
