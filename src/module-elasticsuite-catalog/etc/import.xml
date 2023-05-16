@@ -16,11 +16,11 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_ImportExport:etc/import.xsd">
-    <entity name="catalog_product"
+    <entity name="elasticsuite_product_attribute"
             label="ElasticSuite Product Attributes"
             model="Smile\ElasticsuiteCatalog\Model\Import\ProductAttribute"
             behaviorModel="Smile\ElasticsuiteCatalog\Model\Source\Import\Behavior\Custom"
     />
 
-    <relatedIndexer entity="catalog_product" name="catalogsearch_fulltext" />
+    <relatedIndexer entity="elasticsuite_product_attribute" name="catalogsearch_fulltext" />
 </config>

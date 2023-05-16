@@ -139,7 +139,7 @@ class ExportProductAttributeCsv extends Action
 
         // Prepare and send the CSV file to the browser.
         $date = date('Ymd_His');
-        $fileName = 'product_attributes-' . $date . '.csv';
+        $fileName = 'elasticsuite_product_attribute-' . $date . '.csv';
         $directory = $this->filesystem->getDirectoryWrite(DirectoryList::VAR_DIR);
         $stream = $directory->openFile($fileName, 'w+');
         foreach ($content as $line) {

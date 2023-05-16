@@ -39,7 +39,7 @@ class ProductAttribute extends AbstractEntity
     /**
      * Entity type code.
      */
-    const ENTITY_TYPE_CODE = 'catalog_product';
+    const ENTITY_TYPE_CODE = 'elasticsuite_product_attribute';
 
     /**
      * Permanent entity columns.
@@ -162,7 +162,7 @@ class ProductAttribute extends AbstractEntity
         if (!$attributeCode) {
             $errors[] = __('Attribute code is required.');
         } else {
-            $attribute = $this->_eavConfig->getAttribute(self::ENTITY_TYPE_CODE, $attributeCode);
+            $attribute = $this->_eavConfig->getAttribute('catalog_product', $attributeCode);
             if (!$attribute->getId()) {
                 $errors[] = __('Attribute with code %1 does not exist.', $attributeCode);
             }
@@ -198,7 +198,7 @@ class ProductAttribute extends AbstractEntity
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             foreach ($bunch as $rowData) {
                 $attributeCode = isset($rowData['attribute_code']) ? trim($rowData['attribute_code']) : '';
-                $attribute = $this->_eavConfig->getAttribute(self::ENTITY_TYPE_CODE, $attributeCode);
+                $attribute = $this->_eavConfig->getAttribute('catalog_product', $attributeCode);
                 $result = $this->updateAttributeData($attribute, $rowData);
                 if ($result) {
                     $this->countItemsUpdated++;

@@ -44,6 +44,6 @@ class Custom extends AbstractBehavior
      */
     public function getCode()
     {
-        return 'custom';
+        return 'elasticsuite_product_attribute_import_custom_behavior';
     }
 }
