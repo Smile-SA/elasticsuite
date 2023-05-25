@@ -410,4 +410,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\ImportExport\Model\Import\SampleFileProvider">
+        <arguments>
+            <argument name="samples" xsi:type="array">
+                <item name="elasticsuite_product_attribute" xsi:type="string">Smile_ElasticsuiteCatalog</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
