@@ -79,4 +79,11 @@ interface RelevanceConfigurationInterface
      * @return false|int
      */
     public function getSpanSize();
+
+    /**
+     * Retrieve min_score value if enabled.
+     *
+     * @return false|int
+     */
+    public function getMinScore();
 }

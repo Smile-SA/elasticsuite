@@ -69,6 +69,11 @@ class Factory
     const SPAN_MATCH_CONFIG_XML_PREFIX = 'span_match_configuration';
 
     /**
+     * XML node for min_score configuration
+     */
+    const MIN_SCORE_CONFIG_XML_PREFIX = 'min_score_configuration';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -141,6 +146,7 @@ class Factory
             'enablePhoneticSearch' => $this->isPhoneticSearchEnabled($scopeCode),
             'spanMatchBoost'       => $this->getSpanMatchBoostConfiguration($scopeCode),
             'spanSize'             => $this->getSpanSize($scopeCode),
+            'minScore'             => $this->getMinScoreConfiguration($scopeCode),
         ];
 
         return $configurationParams;
@@ -327,5 +333,25 @@ class Factory
         }
 
         return $size;
+    }
+
+    /**
+     * Retrieve min_score configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool|int
+     */
+    private function getMinScoreConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::MIN_SCORE_CONFIG_XML_PREFIX;
+
+        $minScore = (bool) $this->getConfigValue($path . "/enable_use_min_score", $scopeCode);
+
+        if ($minScore === true) {
+            $minScore = (int) $this->getConfigValue($path . "/min_score_value", $scopeCode);
+        }
+
+        return $minScore;
     }
 }

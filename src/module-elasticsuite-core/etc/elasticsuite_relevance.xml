@@ -34,6 +34,10 @@
                 <span_match_boost_value>10</span_match_boost_value>
                 <span_size>1</span_size>
             </span_match_configuration>
+            <min_score_configuration>
+                <enable_use_min_score>0</enable_use_min_score>
+                <min_score_value>0</min_score_value>
+            </min_score_configuration>
         </relevance>
         <spellchecking>
             <fuzziness>
