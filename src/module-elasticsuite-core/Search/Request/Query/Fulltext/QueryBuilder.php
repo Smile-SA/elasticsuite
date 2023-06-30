@@ -257,14 +257,16 @@ class QueryBuilder
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
-        $referenceAnalyzer  = FieldInterface::ANALYZER_REFERENCE;
 
         $fuzzyFieldFilter = $this->fieldFilters['fuzzyFieldFilter'];
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost),
-            $this->getWeightedFields($containerConfig, $referenceAnalyzer, $fuzzyFieldFilter)
+            // Allow fuzzy query to contain basic fields with their default analyzer.
+            // Same logic as defined in getWeightedSearchQuery().
+            // This will automatically include sku.reference and any other fields having defaultSearchAnalyzer.
+            $this->getWeightedFields($containerConfig, null, $fuzzyFieldFilter, $defaultSearchField),
         );
 
         $queryParams = [
