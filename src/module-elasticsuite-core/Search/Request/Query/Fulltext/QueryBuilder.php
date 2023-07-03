@@ -259,14 +259,15 @@ class QueryBuilder
         }
 
         $fuzzyFieldFilter = $this->fieldFilters['fuzzyFieldFilter'];
+        $nonStandardFuzzyFieldFilter = $this->fieldFilters['nonStandardFuzzyFieldFilter'];
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost),
-            // Allow fuzzy query to contain basic fields with their default analyzer.
+            // Allow fuzzy query to contain fields using for fuzzy search with their default analyzer.
             // Same logic as defined in getWeightedSearchQuery().
             // This will automatically include sku.reference and any other fields having defaultSearchAnalyzer.
-            $this->getWeightedFields($containerConfig, null, $fuzzyFieldFilter, $defaultSearchField),
+            $this->getWeightedFields($containerConfig, null, $nonStandardFuzzyFieldFilter, $defaultSearchField),
         );
 
         $queryParams = [

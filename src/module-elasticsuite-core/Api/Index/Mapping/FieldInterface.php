@@ -49,6 +49,7 @@ interface FieldInterface
     const ANALYZER_UNTOUCHED  = 'untouched';
     const ANALYZER_KEYWORD    = 'keyword';
     const ANALYZER_REFERENCE  = 'reference';
+    const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
      * Field filter logical operators.
