@@ -178,6 +178,10 @@
         <filter name="lowercase" type="lowercase" language="el">
             <language>greek</language>
         </filter>
+        <filter name="edge_ngram_filter" type="edge_ngram" language="default">
+            <min_gram>3</min_gram>
+            <max_gram>20</max_gram>
+        </filter>
     </filters>
 
     <analyzers>
@@ -261,6 +265,21 @@
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="standard_edge_ngram" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="elision" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="edge_ngram_filter"/>
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip"/>
             </char_filters>
         </analyzer>
     </analyzers>
