@@ -86,4 +86,26 @@ interface RelevanceConfigurationInterface
      * @return false|int
      */
     public function getMinScore();
+
+    /**
+     * Check if the reference collector field should be used instead of the simple 'sku' field
+     * when building the exact match filter query.
+     *
+     * @return bool
+     */
+    public function isUsingReferenceInExactMatchFilter();
+
+    /**
+     * Check if all tokens of the term vectors response should be used.
+     *
+     * @return bool
+     */
+    public function isUsingAllTokens();
+
+    /**
+     * Check if the term vectors request should also include the reference analyzer collector field.
+     *
+     * @return bool
+     */
+    public function isUsingReferenceAnalyzer();
 }

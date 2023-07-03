@@ -38,6 +38,9 @@
                 <enable_use_min_score>0</enable_use_min_score>
                 <min_score_value>0</min_score_value>
             </min_score_configuration>
+            <exact_match_configuration>
+                <use_reference_in_filter>0</use_reference_in_filter>
+            </exact_match_configuration>
         </relevance>
         <spellchecking>
             <fuzziness>
@@ -49,6 +52,10 @@
             <phonetic>
                 <enable>1</enable>
             </phonetic>
+            <term_vectors>
+                <use_all_tokens>0</use_all_tokens>
+                <use_reference_analyzer>0</use_reference_analyzer>
+            </term_vectors>
         </spellchecking>
     </default>
 </config>

@@ -89,7 +89,7 @@ class Spellchecker implements SpellcheckerInterface
         try {
             $cutoffFrequencyLimit = $this->getCutoffrequencyLimit($request);
             $termVectors          = $this->getTermVectors($request);
-            $queryTermStats       = $this->parseTermVectors($termVectors, $cutoffFrequencyLimit);
+            $queryTermStats       = $this->parseTermVectors($termVectors, $cutoffFrequencyLimit, $request->isUsingAllTokens());
 
             if ($queryTermStats['total'] == $queryTermStats['stop']) {
                 $spellingType = self::SPELLING_TYPE_PURE_STOPWORDS;
@@ -164,6 +164,11 @@ class Spellchecker implements SpellcheckerInterface
             ],
         ];
 
+        if ($request->isUsingReference()) {
+            $doc['fields'][] = MappingInterface::DEFAULT_REFERENCE_FIELD . "." . FieldInterface::ANALYZER_REFERENCE;
+            $doc['doc'][MappingInterface::DEFAULT_REFERENCE_FIELD] = $request->getQueryText();
+        }
+
         $docs = [];
 
         // Compute the mtermvector query on all shards to ensure exhaustive results.
@@ -186,15 +191,18 @@ class Spellchecker implements SpellcheckerInterface
      * - missing  : number of terms of the query not found into the index
      * - standard : number of terms of the query found using the standard analyzer.
      *
-     * @param array $termVectors          The term vector query response.
-     * @param int   $cutoffFrequencyLimit Cutoff freq (max absolute number of docs to consider term as a stopword).
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @param array   $termVectors          The term vector query response.
+     * @param int     $cutoffFrequencyLimit Cutoff freq (max absolute number of docs to consider term as a stopword).
+     * @param boolean $useAllTokens         Whether to use all tokens or not
      *
      * @return array
      */
-    private function parseTermVectors($termVectors, $cutoffFrequencyLimit)
+    private function parseTermVectors($termVectors, $cutoffFrequencyLimit, $useAllTokens = false)
     {
         $queryTermStats = ['stop' => 0, 'exact' => 0, 'standard' => 0, 'missing' => 0];
-        $statByPosition = $this->extractTermStatsByPosition($termVectors);
+        $statByPosition = $this->extractTermStatsByPosition($termVectors, $useAllTokens);
 
         foreach ($statByPosition as $positionStat) {
             $type = 'missing';
@@ -203,6 +211,8 @@ class Spellchecker implements SpellcheckerInterface
                 if ($positionStat['doc_freq'] >= $cutoffFrequencyLimit) {
                     $type = 'stop';
                 } elseif (in_array(FieldInterface::ANALYZER_WHITESPACE, $positionStat['analyzers'])) {
+                    $type = 'exact';
+                } elseif (in_array(FieldInterface::ANALYZER_REFERENCE, $positionStat['analyzers'])) {
                     $type = 'exact';
                 }
             }
@@ -216,18 +226,20 @@ class Spellchecker implements SpellcheckerInterface
 
     /**
      * Extract term stats by position from a term vectors query response.
-     * Wil return an array of doc_freq, analayzers and term by position.
+     * Will return an array of doc_freq, analyzers and term by position.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @param array $termVectors The term vector query response.
+     * @param array   $termVectors  The term vector query response.
+     * @param boolean $useAllTokens Whether to use all tokens returned in the term vector response.
      *
      * @return array
      */
-    private function extractTermStatsByPosition($termVectors)
+    private function extractTermStatsByPosition($termVectors, $useAllTokens = false)
     {
         $statByPosition = [];
-        $analyzers      = [FieldInterface::ANALYZER_STANDARD, FieldInterface::ANALYZER_WHITESPACE];
+        $analyzers      = [FieldInterface::ANALYZER_STANDARD, FieldInterface::ANALYZER_WHITESPACE, FieldInterface::ANALYZER_REFERENCE];
 
         if (is_array($termVectors) && isset($termVectors['docs'])) {
             foreach ($termVectors['docs'] as $termVector) {
@@ -237,6 +249,9 @@ class Spellchecker implements SpellcheckerInterface
                         foreach ($fieldData['terms'] as $term => $termStats) {
                             foreach ($termStats['tokens'] as $token) {
                                 $positionKey = $token['position'];
+                                if ($useAllTokens) {
+                                    $positionKey = "{$token['position']}_{$token['start_offset']}_{$token['end_offset']}";
+                                }
 
                                 if (!isset($termStats['doc_freq'])) {
                                     $termStats['doc_freq'] = 0;
@@ -266,7 +281,7 @@ class Spellchecker implements SpellcheckerInterface
     }
 
     /**
-     * Extract analayser from a mapping property name.
+     * Extract analyser from a mapping property name.
      *
      * @param string $propertyName Property name (eg. : search.whitespace)
      *
