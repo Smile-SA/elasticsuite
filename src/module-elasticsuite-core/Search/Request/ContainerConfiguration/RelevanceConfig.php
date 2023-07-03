@@ -66,6 +66,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $spanSize;
 
     /**
+     * @var integer|null
+     */
+    private $minScore;
+
+    /**
      * RelevanceConfiguration constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -80,6 +85,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param int|null                             $spanMatchBoost       The Span match boost value, or null if not
      *                                                                   enabled
      * @param int|null                             $spanSize             The number of terms to match in span queries
+     * @param int|null                             $minScore             The Min Score value, or null if not enabled
      */
     public function __construct(
         $minimumShouldMatch,
@@ -89,7 +95,8 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         FuzzinessConfigurationInterface $fuzziness = null,
         $enablePhoneticSearch = false,
         $spanMatchBoost = null,
-        $spanSize = null
+        $spanSize = null,
+        $minScore = null
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
@@ -99,6 +106,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->enablePhoneticSearch   = $enablePhoneticSearch;
         $this->spanMatchBoost         = $spanMatchBoost;
         $this->spanSize               = $spanSize;
+        $this->minScore               = $minScore;
     }
 
     /**
@@ -177,5 +185,13 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function getSpanSize()
     {
         return (int) $this->spanSize;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMinScore()
+    {
+        return (int) $this->minScore;
     }
 }

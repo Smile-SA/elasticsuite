@@ -663,6 +663,7 @@ class FrontPlugin
             'values' => [
                 ['value' => FieldInterface::ANALYZER_STANDARD, 'label' => __('standard')],
                 ['value' => FieldInterface::ANALYZER_REFERENCE, 'label' => __('reference')],
+                ['value' => FieldInterface::ANALYZER_EDGE_NGRAM, 'label' => __('standard_edge_ngram')],
             ],
             // phpcs:ignore Generic.Files.LineLength
             'note'   => $defaultAnalyzerNote,

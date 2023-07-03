@@ -179,6 +179,7 @@ class Builder
             'buckets'      => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
             'spellingType' => $spellingType,
             'trackTotalHits' => $trackTotalHits,
+            'minScore'       => $containerConfig->getRelevanceConfig()->getMinScore(),
         ];
 
         if (!empty($facetFilters)) {
