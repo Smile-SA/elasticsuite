@@ -226,6 +226,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $fieldFilterMock->method('filterField')->will($this->returnValue(true));
 
-        return ['searchableFieldFilter' => $fieldFilterMock, 'fuzzyFieldFilter' => $fieldFilterMock];
+        return [
+            'searchableFieldFilter'       => $fieldFilterMock,
+            'fuzzyFieldFilter'            => $fieldFilterMock,
+            'nonStandardFuzzyFieldFilter' => $fieldFilterMock,
+        ];
     }
 }
