@@ -179,8 +179,12 @@ class Builder
             'buckets'      => $this->aggregationBuilder->buildAggregations($containerConfig, $facets, $facetFilters),
             'spellingType' => $spellingType,
             'trackTotalHits' => $trackTotalHits,
-            'minScore'       => $containerConfig->getRelevanceConfig()->getMinScore(),
         ];
+
+        // Use min_score only for fulltext queries.
+        if ($query !== null) {
+            $requestParams['minScore'] = $containerConfig->getRelevanceConfig()->getMinScore();
+        }
 
         if (!empty($facetFilters)) {
             $requestParams['filter'] = $this->queryBuilder->createFilterQuery($containerConfig, $facetFilters);
