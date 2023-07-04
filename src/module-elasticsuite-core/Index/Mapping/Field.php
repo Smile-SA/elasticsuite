@@ -121,6 +121,14 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
+    public function isSearchableReference(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_REFERENCE === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return (bool) $this->config['is_filterable'];

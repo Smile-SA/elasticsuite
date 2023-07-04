@@ -43,4 +43,18 @@ interface RequestInterface
      * @return float
      */
     public function getCutoffFrequency();
+
+    /**
+     * Is the spellcheck request using all tokens returned by the term vectors.
+     *
+     * @return boolean
+     */
+    public function isUsingAllTokens();
+
+    /**
+     * Should the spellcheck request target the 'reference' collector field.
+     *
+     * @return boolean
+     */
+    public function isUsingReference();
 }

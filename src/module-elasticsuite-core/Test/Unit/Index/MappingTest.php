@@ -112,7 +112,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertCount(5, $fields);
-        $this->assertCount(6, $properties);
+        $this->assertCount(7, $properties);
 
         $this->assertEquals('entity_id', $this->mapping->getIdField()->getName());
         $this->assertArrayHasKey('entity_id', $fields);
@@ -167,7 +167,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     {
         $mapping = $this->mapping->asArray();
         $this->assertArrayHasKey('properties', $mapping);
-        $this->assertCount(6, $mapping['properties']);
+        $this->assertCount(7, $mapping['properties']);
     }
 
     /**

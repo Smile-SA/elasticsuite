@@ -124,6 +124,13 @@ class QueryBuilder
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
         ];
 
+        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
+            $queryParams['fields'] = array_fill_keys(
+                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
+                1
+            );
+        }
+
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }
 
@@ -200,7 +207,7 @@ class QueryBuilder
     }
 
     /**
-     * Spellcheked query building.
+     * Spellchecked query building.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.

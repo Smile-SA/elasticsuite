@@ -228,6 +228,8 @@ class Builder
             'index'           => $containerConfig->getIndexName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            'isUsingAllTokens'  => $containerConfig->getRelevanceConfig()->isUsingAllTokens(),
+            'isUsingReference'  => $containerConfig->getRelevanceConfig()->isUsingReferenceAnalyzer(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);

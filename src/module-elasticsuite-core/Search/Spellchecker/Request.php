@@ -40,20 +40,36 @@ class Request implements RequestInterface
     /**
      * @var float
      */
-    private $cufoffFrequency;
+    private $cutoffFrequency;
+
+    /**
+     * @var boolean
+     */
+    private $isUsingAllTokens;
+
+    /**
+     * @var boolean
+     */
+    private $isUsingReference;
 
     /**
      * Constructor.
      *
-     * @param string $index           Spellcheck request index name.
-     * @param string $queryText       Spellcheck fulltext query.
-     * @param float  $cutoffFrequency Spellcheck cutoff frequency (used to detect stopwords).
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
+     * @param string  $index            Spellcheck request index name.
+     * @param string  $queryText        Spellcheck fulltext query.
+     * @param float   $cutoffFrequency  Spellcheck cutoff frequency (used to detect stopwords).
+     * @param boolean $isUsingAllTokens Is spellcheck using all tokens returned by term vectors.
+     * @param boolean $isUsingReference Should the reference analyzer be included in the spellcheck request.
      */
-    public function __construct($index, $queryText, $cutoffFrequency)
+    public function __construct($index, $queryText, $cutoffFrequency, $isUsingAllTokens, $isUsingReference)
     {
         $this->index           = $index;
         $this->queryText       = $queryText;
-        $this->cufoffFrequency = $cutoffFrequency;
+        $this->cutoffFrequency = $cutoffFrequency;
+        $this->isUsingAllTokens = $isUsingAllTokens;
+        $this->isUsingReference = $isUsingReference;
     }
 
     /**
@@ -77,6 +93,22 @@ class Request implements RequestInterface
      */
     public function getCutoffFrequency()
     {
-        return $this->cufoffFrequency;
+        return $this->cutoffFrequency;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingAllTokens()
+    {
+        return $this->isUsingAllTokens;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingReference()
+    {
+        return $this->isUsingReference;
     }
 }
