@@ -116,16 +116,25 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
 
-        $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+        if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
+            $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
 
-        $defaultFields = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
-        $fields        = $defaultFields + $this->getWeightedFields(
-            $containerConfig,
-            null,
-            $nonStandardSearchableFieldFilter,
-            MappingInterface::DEFAULT_SEARCH_FIELD
-        );
+            $fields = $fields + $this->getWeightedFields(
+                $containerConfig,
+                null,
+                $nonStandardSearchableFieldFilter,
+                MappingInterface::DEFAULT_SEARCH_FIELD
+            );
+        }
+
+        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
+            $fields += array_fill_keys(
+                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
+                1
+            );
+        }
 
         $queryParams = [
             'fields'             => array_fill_keys(array_keys($fields), 1),
@@ -133,13 +142,6 @@ class QueryBuilder
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
         ];
-
-        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
-            $queryParams['fields'] = array_fill_keys(
-                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
-                1
-            );
-        }
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }

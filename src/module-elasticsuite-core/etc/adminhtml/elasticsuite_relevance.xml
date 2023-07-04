@@ -99,6 +99,11 @@
 
             <group id="exact_match_configuration" translate="label" type="text" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Exact Match Configuration</label>
+                <field id="use_default_analyzer" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use default analyzer in exact matching filter query</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Use the default analyzer of each field instead of the 'standard' analyzer for exact matching. Eg : for sku, it will try to match on 'sku.reference' field. If a field is using 'standard_edge_ngram' analyzer, it will try to match on 'field.standard_edge_ngram'. Useful for partial matching, or matching on beginning of words.]]></comment>
+                </field>
                 <field id="use_reference_in_filter" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>[Experimental] Use reference analyzer in exact matching filter query</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>

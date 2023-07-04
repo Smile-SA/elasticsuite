@@ -108,4 +108,11 @@ interface RelevanceConfigurationInterface
      * @return bool
      */
     public function isUsingReferenceAnalyzer();
+
+    /**
+     * If we should use the default analyzer of each field when building the exact match filter query.
+     *
+     * @return bool
+     */
+    public function isUsingDefaultAnalyzerInExactMatchFilter();
 }
