@@ -39,6 +39,7 @@
                 <min_score_value>0</min_score_value>
             </min_score_configuration>
             <exact_match_configuration>
+                <use_default_analyzer>0</use_default_analyzer>
                 <use_reference_in_filter>0</use_reference_in_filter>
             </exact_match_configuration>
         </relevance>

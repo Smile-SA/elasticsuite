@@ -116,20 +116,32 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
 
-        $queryParams = [
-            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
-            'queryText'          => $queryText,
-            'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
-            'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
-        ];
+        if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
+            $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+
+            $fields = $fields + $this->getWeightedFields(
+                $containerConfig,
+                null,
+                $nonStandardSearchableFieldFilter,
+                MappingInterface::DEFAULT_SEARCH_FIELD
+            );
+        }
 
         if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
-            $queryParams['fields'] = array_fill_keys(
+            $fields += array_fill_keys(
                 [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
                 1
             );
         }
+
+        $queryParams = [
+            'fields'             => array_fill_keys(array_keys($fields), 1),
+            'queryText'          => $queryText,
+            'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
+            'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
+        ];
 
         return $this->queryFactory->create(QueryInterface::TYPE_MULTIMATCH, $queryParams);
     }

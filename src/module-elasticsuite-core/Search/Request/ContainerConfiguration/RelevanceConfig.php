@@ -78,6 +78,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     /**
      * @var boolean
      */
+    private $useDefaultAnalyzerInExactMatchFilter;
+
+    /**
+     * @var boolean
+     */
     private $useAllTokens;
 
     /**
@@ -91,22 +96,24 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string                               $minimumShouldMatch             Minimum should match clause of the text query.
-     * @param float                                $tieBreaker                     Tie breaker for multimatch queries.
-     * @param int|null                             $phraseMatchBoost               The Phrase match boost value, or null if not
-     *                                                                             enabled
-     * @param float                                $cutOffFrequency                The cutoff Frequency value
-     * @param FuzzinessConfigurationInterface|null $fuzziness                      The fuzziness Configuration, or null
-     * @param boolean                              $enablePhoneticSearch           The phonetic Configuration, or null
-     * @param int|null                             $spanMatchBoost                 The Span match boost value, or null if not
-     *                                                                             enabled
-     * @param int|null                             $spanSize                       The number of terms to match in span queries
-     * @param int|null                             $minScore                       The Min Score value, or null if not enabled
-     * @param boolean                              $useReferenceInExactMatchFilter Whether to use the reference collector field instead of
-     *                                                                             the 'sku' field in the exact match filter query
-     * @param boolean                              $useAllTokens                   Whether to take into account all term vectors tokens
-     * @param boolean                              $useReferenceAnalyzer           Whether to include the collector field associated
-     *                                                                             with the reference analyzer in term vectors request
+     * @param string                               $minimumShouldMatch                   Minimum should match clause of the text query.
+     * @param float                                $tieBreaker                           Tie breaker for multimatch queries.
+     * @param int|null                             $phraseMatchBoost                     The Phrase match boost value, or null if not
+     *                                                                                   enabled
+     * @param float                                $cutOffFrequency                      The cutoff Frequency value
+     * @param FuzzinessConfigurationInterface|null $fuzziness                            The fuzziness Configuration, or null
+     * @param boolean                              $enablePhoneticSearch                 The phonetic Configuration, or null
+     * @param int|null                             $spanMatchBoost                       The Span match boost value, or null if not
+     *                                                                                   enabled
+     * @param int|null                             $spanSize                             The number of terms to match in span queries
+     * @param int|null                             $minScore                             The Min Score value, or null if not enabled
+     * @param boolean                              $useReferenceInExactMatchFilter       Whether to use the reference collector field
+     *                                                                                   instead of 'sku' field in the exact match filter
+     * @param boolean                              $useDefaultAnalyzerInExactMatchFilter Whether to use 'field' or 'field.default_analyzer'
+     *                                                                                   in the exact match filter query
+     * @param boolean                              $useAllTokens                         Whether to take into account all term vector tokens
+     * @param boolean                              $useReferenceAnalyzer                 Whether to include the collector field associated
+     *                                                                                   with the reference analyzer in term vectors request
      */
     public function __construct(
         $minimumShouldMatch,
@@ -119,6 +126,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $spanSize = null,
         $minScore = null,
         $useReferenceInExactMatchFilter = false,
+        $useDefaultAnalyzerInExactMatchFilter = false,
         $useAllTokens = false,
         $useReferenceAnalyzer = false
     ) {
@@ -134,6 +142,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->useReferenceInExactMatchFilter   = $useReferenceInExactMatchFilter;
         $this->useAllTokens           = $useAllTokens;
         $this->useReferenceAnalyzer   = $useReferenceAnalyzer;
+        $this->useDefaultAnalyzerInExactMatchFilter = $useDefaultAnalyzerInExactMatchFilter;
     }
 
     /**
@@ -228,6 +237,14 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isUsingReferenceInExactMatchFilter()
     {
         return (bool) $this->useReferenceInExactMatchFilter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingDefaultAnalyzerInExactMatchFilter()
+    {
+        return (bool) $this->useDefaultAnalyzerInExactMatchFilter;
     }
 
     /**
