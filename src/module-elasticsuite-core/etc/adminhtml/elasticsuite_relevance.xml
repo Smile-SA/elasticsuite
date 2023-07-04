@@ -93,7 +93,7 @@
                         <field id="enable_use_min_score">1</field>
                     </depends>
                     <validate>integer validate-no-empty validate-greater-than-zero</validate>
-                    <comment><![CDATA[An integer greater than 0. Documents with a lower <code class="literal">min_score</code> are not included in the search results.]]></comment>
+                    <comment><![CDATA[An integer greater than 0. Documents with a score lower than <code class="literal">min_score</code> are not included in the search results.]]></comment>
                 </field>
             </group>
 
