@@ -117,8 +117,18 @@ class QueryBuilder
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
+        $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+
+        $defaultFields = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+        $fields        = $defaultFields + $this->getWeightedFields(
+            $containerConfig,
+            null,
+            $nonStandardSearchableFieldFilter,
+            MappingInterface::DEFAULT_SEARCH_FIELD
+        );
+
         $queryParams = [
-            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
+            'fields'             => array_fill_keys(array_keys($fields), 1),
             'queryText'          => $queryText,
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
