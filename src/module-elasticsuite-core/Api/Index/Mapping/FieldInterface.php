@@ -80,6 +80,11 @@ interface FieldInterface
     public function isSearchable();
 
     /**
+     * Is the field searchable and contains reference (sku) data.
+     */
+    public function isSearchableReference();
+
+    /**
      * Is the field filterable in navigation.
      *
      * @return boolean

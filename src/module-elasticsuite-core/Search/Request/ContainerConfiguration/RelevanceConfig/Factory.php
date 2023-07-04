@@ -74,6 +74,26 @@ class Factory
     const MIN_SCORE_CONFIG_XML_PREFIX = 'min_score_configuration';
 
     /**
+     * XML node for exact match configuration
+     */
+    const EXACT_MATCH_CONFIG_XML_PREFIX = 'exact_match_configuration';
+
+    /**
+     * XML node for using reference in the exact match filter query
+     */
+    const EXACT_MATCH_USE_REFERENCE_IN_FILTER_XML_PATH = 'exact_match_configuration/use_reference_in_filter';
+
+    /**
+     * XML node for tokens usage in term vectors configuration.
+     */
+    const TERM_VECTORS_TOKENS_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_all_tokens';
+
+    /**
+     * XML node for reference analyzer usage in term vectors configuration.
+     */
+    const TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_reference_analyzer';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -147,6 +167,10 @@ class Factory
             'spanMatchBoost'       => $this->getSpanMatchBoostConfiguration($scopeCode),
             'spanSize'             => $this->getSpanSize($scopeCode),
             'minScore'             => $this->getMinScoreConfiguration($scopeCode),
+            'useReferenceInExactMatchFilter'    => $this->isUsingReferenceInExactMatchFilter($scopeCode),
+            'useAllTokens'                      => $this->isUsingAllTokensConfiguration($scopeCode),
+            'useReferenceAnalyzer'              => $this->isUsingReferenceAnalyzerConfiguration($scopeCode),
+            'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
         ];
 
         return $configurationParams;
@@ -353,5 +377,57 @@ class Factory
         }
 
         return $minScore;
+    }
+
+    /**
+     * Retrieve reference collector field usage configuration for a container.
+     *
+     * @param @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingReferenceInExactMatchFilter($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_USE_REFERENCE_IN_FILTER_XML_PATH;
+
+        return (bool) $this->getConfigValue($path, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors extensive tokens usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingAllTokensConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_TOKENS_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors reference analyzer usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingReferenceAnalyzerConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Check if we should use the default analyzer of each field when building the exact match filter query.
+     *
+     * @param @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingDefaultAnalyzerInExactMatchFilter($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (bool) $this->getConfigValue($path . "/use_default_analyzer", $scopeCode);
     }
 }

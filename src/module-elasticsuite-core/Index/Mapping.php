@@ -62,6 +62,11 @@ class Mapping implements MappingInterface
             FieldInterface::ANALYZER_WHITESPACE,
             FieldInterface::ANALYZER_SHINGLE,
         ],
+        self::DEFAULT_REFERENCE_FIELD => [
+            FieldInterface::ANALYZER_REFERENCE,
+            FieldInterface::ANALYZER_WHITESPACE,
+            FieldInterface::ANALYZER_SHINGLE,
+        ],
     ];
 
     /**
@@ -72,6 +77,7 @@ class Mapping implements MappingInterface
     private $copyFieldMap = [
         'isSearchable'         => self::DEFAULT_SEARCH_FIELD,
         'isUsedInSpellcheck'   => self::DEFAULT_SPELLING_FIELD,
+        'isSearchableReference' => self::DEFAULT_REFERENCE_FIELD,
     ];
 
     /**

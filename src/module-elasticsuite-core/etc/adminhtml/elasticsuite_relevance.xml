@@ -93,7 +93,21 @@
                         <field id="enable_use_min_score">1</field>
                     </depends>
                     <validate>integer validate-no-empty validate-greater-than-zero</validate>
-                    <comment><![CDATA[An integer greater than 0. Documents with a lower <code class="literal">min_score</code> are not included in the search results.]]></comment>
+                    <comment><![CDATA[An integer greater than 0. Documents with a score lower than <code class="literal">min_score</code> are not included in the search results.]]></comment>
+                </field>
+            </group>
+
+            <group id="exact_match_configuration" translate="label" type="text" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Exact Match Configuration</label>
+                <field id="use_default_analyzer" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use default analyzer in exact matching filter query</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Use the default analyzer of each field instead of the 'standard' analyzer for exact matching. Eg : for sku, it will try to match on 'sku.reference' field. If a field is using 'standard_edge_ngram' analyzer, it will try to match on 'field.standard_edge_ngram'. Useful for partial matching, or matching on beginning of words.]]></comment>
+                </field>
+                <field id="use_reference_in_filter" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use reference analyzer in exact matching filter query</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Instead of the 'sku' field, use the 'reference' collector field which contains all searchable fields using the 'reference' analyzer when building the exact/most exact matching filter query. Useful for sku/reference matching.]]></comment>
                 </field>
             </group>
         </section>
@@ -145,6 +159,19 @@
                 </field>
             </group>
 
+            <group id="term_vectors" translate="label" type="text" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Term Vectors Configuration</label>
+                <field id="use_all_tokens" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use all tokens from term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Take into account all tokens from the term vectors response, instead of one token per position. Useful for sku/reference matching.]]></comment>
+                </field>
+                <field id="use_reference_analyzer" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use reference analyzer in term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Include the 'reference' collector field which contains all searchable fields using the 'reference' analyzer when performing the term vectors request. Useful for sku/reference matching.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

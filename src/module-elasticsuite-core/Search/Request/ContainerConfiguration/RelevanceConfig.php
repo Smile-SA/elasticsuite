@@ -71,21 +71,49 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $minScore;
 
     /**
+     * @var boolean
+     */
+    private $useReferenceInExactMatchFilter;
+
+    /**
+     * @var boolean
+     */
+    private $useDefaultAnalyzerInExactMatchFilter;
+
+    /**
+     * @var boolean
+     */
+    private $useAllTokens;
+
+    /**
+     * @var boolean
+     */
+    private $useReferenceAnalyzer;
+
+    /**
      * RelevanceConfiguration constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string                               $minimumShouldMatch   Minimum should match clause of the text query.
-     * @param float                                $tieBreaker           Tie breaker for multimatch queries.
-     * @param int|null                             $phraseMatchBoost     The Phrase match boost value, or null if not
-     *                                                                   enabled
-     * @param float                                $cutOffFrequency      The cutoff Frequency value
-     * @param FuzzinessConfigurationInterface|null $fuzziness            The fuzziness Configuration, or null
-     * @param boolean                              $enablePhoneticSearch The phonetic Configuration, or null
-     * @param int|null                             $spanMatchBoost       The Span match boost value, or null if not
-     *                                                                   enabled
-     * @param int|null                             $spanSize             The number of terms to match in span queries
-     * @param int|null                             $minScore             The Min Score value, or null if not enabled
+     * @param string                               $minimumShouldMatch                   Minimum should match clause of the text query.
+     * @param float                                $tieBreaker                           Tie breaker for multimatch queries.
+     * @param int|null                             $phraseMatchBoost                     The Phrase match boost value, or null if not
+     *                                                                                   enabled
+     * @param float                                $cutOffFrequency                      The cutoff Frequency value
+     * @param FuzzinessConfigurationInterface|null $fuzziness                            The fuzziness Configuration, or null
+     * @param boolean                              $enablePhoneticSearch                 The phonetic Configuration, or null
+     * @param int|null                             $spanMatchBoost                       The Span match boost value, or null if not
+     *                                                                                   enabled
+     * @param int|null                             $spanSize                             The number of terms to match in span queries
+     * @param int|null                             $minScore                             The Min Score value, or null if not enabled
+     * @param boolean                              $useReferenceInExactMatchFilter       Whether to use the reference collector field
+     *                                                                                   instead of 'sku' field in the exact match filter
+     * @param boolean                              $useDefaultAnalyzerInExactMatchFilter Whether to use 'field' or 'field.default_analyzer'
+     *                                                                                   in the exact match filter query
+     * @param boolean                              $useAllTokens                         Whether to take into account all term vector tokens
+     * @param boolean                              $useReferenceAnalyzer                 Whether to include the collector field associated
+     *                                                                                   with the reference analyzer in term vectors request
      */
     public function __construct(
         $minimumShouldMatch,
@@ -96,7 +124,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $enablePhoneticSearch = false,
         $spanMatchBoost = null,
         $spanSize = null,
-        $minScore = null
+        $minScore = null,
+        $useReferenceInExactMatchFilter = false,
+        $useDefaultAnalyzerInExactMatchFilter = false,
+        $useAllTokens = false,
+        $useReferenceAnalyzer = false
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
@@ -107,6 +139,10 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->spanMatchBoost         = $spanMatchBoost;
         $this->spanSize               = $spanSize;
         $this->minScore               = $minScore;
+        $this->useReferenceInExactMatchFilter   = $useReferenceInExactMatchFilter;
+        $this->useAllTokens           = $useAllTokens;
+        $this->useReferenceAnalyzer   = $useReferenceAnalyzer;
+        $this->useDefaultAnalyzerInExactMatchFilter = $useDefaultAnalyzerInExactMatchFilter;
     }
 
     /**
@@ -193,5 +229,37 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function getMinScore()
     {
         return (int) $this->minScore;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingReferenceInExactMatchFilter()
+    {
+        return (bool) $this->useReferenceInExactMatchFilter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingDefaultAnalyzerInExactMatchFilter()
+    {
+        return (bool) $this->useDefaultAnalyzerInExactMatchFilter;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingAllTokens()
+    {
+        return (bool) $this->useAllTokens;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingReferenceAnalyzer()
+    {
+        return (bool) $this->useReferenceAnalyzer;
     }
 }

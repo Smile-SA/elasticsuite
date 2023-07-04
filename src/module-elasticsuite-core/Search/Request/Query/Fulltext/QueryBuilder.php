@@ -116,9 +116,28 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+
+        if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
+            $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+
+            $fields = $fields + $this->getWeightedFields(
+                $containerConfig,
+                null,
+                $nonStandardSearchableFieldFilter,
+                MappingInterface::DEFAULT_SEARCH_FIELD
+            );
+        }
+
+        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
+            $fields += array_fill_keys(
+                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
+                1
+            );
+        }
 
         $queryParams = [
-            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
+            'fields'             => array_fill_keys(array_keys($fields), 1),
             'queryText'          => $queryText,
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
@@ -200,7 +219,7 @@ class QueryBuilder
     }
 
     /**
-     * Spellcheked query building.
+     * Spellchecked query building.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.

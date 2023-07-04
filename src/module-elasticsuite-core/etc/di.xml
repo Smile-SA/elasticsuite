@@ -86,6 +86,7 @@
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
                 <item name="searchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter</item>
+                <item name="nonStandardSearchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardSearchableFieldFilter</item>
                 <item name="fuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\FuzzyFieldFilter</item>
                 <item name="nonStandardFuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardFuzzyFieldFilter</item>
                 <item name="spannableFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SpannableFieldFilter</item>
