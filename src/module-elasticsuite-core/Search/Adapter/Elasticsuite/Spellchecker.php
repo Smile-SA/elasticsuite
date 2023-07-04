@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool;
 
 /**
  * Spellchecker Elasticsearch implementation.
@@ -69,7 +70,7 @@ class Spellchecker implements SpellcheckerInterface
 
         if ($spellingType === false) {
             $spellingType = $this->loadSpellingType($request);
-            $this->cacheHelper->saveCache($cacheKey, $spellingType, [$request->getIndex()]);
+            $this->cacheHelper->saveCache($cacheKey, $spellingType, [$request->getIndex(), ScopePool::CACHE_TAG]);
         }
 
         return $spellingType;
