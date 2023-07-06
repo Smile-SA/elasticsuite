@@ -411,6 +411,9 @@ class Field implements FieldInterface
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+                    if ($analyzer === self::ANALYZER_EDGE_NGRAM) {
+                        $fieldMapping['search_analyzer'] = self::ANALYZER_STANDARD;
+                    }
 
                     if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;
