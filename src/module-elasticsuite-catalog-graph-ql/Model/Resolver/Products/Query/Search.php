@@ -121,6 +121,7 @@ class Search implements ProductQueryInterface
             'pageSize'             => $searchCriteria->getPageSize(),
             'currentPage'          => $searchCriteria->getCurrentPage(),
             'totalPages'           => $maxPages,
+            'isSpellchecked'       => $searchResults->__toArray()['is_spellchecked'] ?? false,
         ]);
     }
 

@@ -61,4 +61,11 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return int|bool
      */
     public function getTrackTotalHits();
+
+    /**
+     * Get the value of the min_score parameter, if any.
+     *
+     * @return int|bool
+     */
+    public function getMinScore();
 }

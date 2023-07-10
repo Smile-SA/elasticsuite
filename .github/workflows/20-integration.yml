@@ -239,16 +239,6 @@ jobs:
               run: |
                   rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
 
-            - name: "[Init] Data : Cleanup for PHP 8.2"
-              working-directory: ${{ env.magento-directory }}
-              env:
-                PHP_VERSION: ${{ matrix.php-versions }}
-              run: |
-                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
-                if [ $(version $PHP_VERSION) -ge $(version "8.2") ]; then
-                  sed -i '53i protected $galleryResource;' vendor/magento/module-catalog-sample-data-venia/Setup/Product/Gallery.php
-                fi
-
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated

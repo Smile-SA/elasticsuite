@@ -103,9 +103,6 @@
                 nullable="true"
                 unsigned="true"
                 comment="Query ID"/>
-        <constraint xsi:type="primary" referenceId="PRIMARY">
-            <column name="optimizer_id"/>
-        </constraint>
         <constraint xsi:type="foreign"
                     referenceId="FK_29EE1ECD41B422FDFF017973D0039789"
                     table="smile_elasticsuite_optimizer_limitation"
@@ -128,6 +125,11 @@
                     referenceColumn="query_id"
                     onDelete="CASCADE"/>
         <index referenceId="SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_QR_ID_SRCH_QR_QR_ID" indexType="btree">
+            <column name="query_id"/>
+        </index>
+        <index referenceId="SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_UNIQUE" indexType="btree">
+            <column name="optimizer_id"/>
+            <column name="category_id"/>
             <column name="query_id"/>
         </index>
     </table>

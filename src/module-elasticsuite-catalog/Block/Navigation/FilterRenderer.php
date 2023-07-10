@@ -47,7 +47,7 @@ class FilterRenderer extends AbstractBlock implements FilterRendererInterface
         $html = '';
 
         foreach ($this->getChildNames() as $childName) {
-            if ($html === '') {
+            if (trim((string) $html) === '') {
                 $renderer = $this->getChildBlock($childName);
                 $html = $renderer->render($this->getFilter());
             }

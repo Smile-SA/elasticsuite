@@ -121,6 +121,14 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
+    public function isSearchableReference(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_REFERENCE === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return (bool) $this->config['is_filterable'];
@@ -403,6 +411,9 @@ class Field implements FieldInterface
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+                    if ($analyzer === self::ANALYZER_EDGE_NGRAM) {
+                        $fieldMapping['search_analyzer'] = self::ANALYZER_STANDARD;
+                    }
 
                     if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;
