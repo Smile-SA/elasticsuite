@@ -77,8 +77,7 @@
                 xsi:type="boolean"
                 nullable="false"
                 default="0"
-                comment="Boolean logic to use for displaying rel=nofollow attribute for all filter links of current attribute"
-                onCreate="migrateDataFrom(is_display_rel_no_follow)"/>
+                comment="Boolean logic to use for displaying rel=nofollow attribute for all filter links of current attribute"/>
         <column name="include_zero_false_values"
                 xsi:type="boolean"
                 nullable="false"
