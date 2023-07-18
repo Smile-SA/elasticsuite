@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Dat
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\Store;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Indexer;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection as AttributeCollection;
 
@@ -104,51 +105,52 @@ class AbstractAttributeData extends Indexer
      */
     public function getAttributesRawData($storeId, array $entityIds, $tableName, array $attributeIds)
     {
-        $select = $this->connection->select();
-
         // The field modelizing the link between entity table and attribute values table. Either row_id or entity_id.
         $linkField = $this->getEntityMetaData($this->getEntityTypeId())->getLinkField();
 
         // The legacy entity_id field.
         $entityIdField = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
+        $entityTable   = $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable();
 
-        $joinDefaultValuesCondition = [
-            new \Zend_Db_Expr("entity.$linkField = t_default.$linkField"),
-            't_default.attribute_id = attr.attribute_id',
-            $this->connection->quoteInto('t_default.store_id = ?', \Magento\Store\Model\Store::DEFAULT_STORE_ID),
+        // Define store related conditions, keep the order of the array elements!
+        $storeConditions = [
+            'default' => $this->connection->quoteInto('t_attribute.store_id = ?', Store::DEFAULT_STORE_ID),
+            'store'   => $this->connection->quoteInto('t_attribute.store_id = ?', $storeId),
         ];
-        $joinDefaultValuesCondition = implode(' AND ', $joinDefaultValuesCondition);
 
-        $joinStoreValuesConditionClauses = [
-            new \Zend_Db_Expr("entity.$linkField = t_store.$linkField"),
-            't_store.attribute_id = attr.attribute_id',
-            $this->connection->quoteInto('t_store.store_id = ?', $storeId),
-        ];
-        $joinStoreValuesCondition = implode(' AND ', $joinStoreValuesConditionClauses);
+        $result = [];
+        foreach ($storeConditions as $condition) {
+            $joinAttributeValuesCondition = [
+                new \Zend_Db_Expr("entity.$linkField = t_attribute.$linkField"),
+                $condition,
+            ];
 
-        $select->from(['entity' => $this->getEntityMetaData($this->getEntityTypeId())->getEntityTable()], [$entityIdField])
-            ->joinInner(
-                ['attr' => $this->getTable('eav_attribute')],
-                $this->connection->quoteInto('attr.attribute_id IN (?)', $attributeIds),
-                ['attribute_id', 'attribute_code']
-            )
-            ->joinLeft(
-                ['t_default' => $tableName],
-                $joinDefaultValuesCondition,
-                []
-            )
-            ->joinLeft(
-                ['t_store' => $tableName],
-                $joinStoreValuesCondition,
-                []
-            )
-            ->where("entity.{$entityIdField} IN (?)", $entityIds)
-            ->having('value IS NOT NULL')
-            ->columns(
-                ['value' => new \Zend_Db_Expr('if(t_store.value_id IS NOT NULL, t_store.value, t_default.value)')]
-            );
+            $joinAttributeValuesCondition = implode(' AND ', $joinAttributeValuesCondition);
 
-        return $this->connection->fetchAll($select);
+            $select = $this->connection->select();
+            $select->from(['entity' => $entityTable], [$entityIdField])
+                ->joinLeft(
+                    ['t_attribute' => $tableName],
+                    $joinAttributeValuesCondition,
+                    ['attribute_id', 'value']
+                )
+                ->joinInner(
+                    ['attr' => $this->getTable('eav_attribute')],
+                    "t_attribute.attribute_id = attr.attribute_id",
+                    ['attribute_id', 'attribute_code']
+                )
+                ->where("entity.{$entityIdField} IN (?)", $entityIds)
+                ->where("t_attribute.attribute_id IN (?)", $attributeIds)
+                ->where("t_attribute.value IS NOT NULL");
+
+            // Get the result and override values from a previous loop.
+            foreach ($this->connection->fetchAll($select) as $row) {
+                $key = "{$row['entity_id']}-{$row['attribute_id']}";
+                $result[$key] = $row;
+            }
+        }
+
+        return array_values($result);
     }
 
     /**
