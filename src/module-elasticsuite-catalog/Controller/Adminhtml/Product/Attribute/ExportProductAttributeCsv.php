@@ -90,7 +90,8 @@ class ExportProductAttributeCsv extends Action
     /**
      * Execute.
      *
-     * @return Redirect|ResponseInterface|ResultInterface|void
+     * @return ResponseInterface
+     *
      * @throws LocalizedException
      * @throws NoSuchEntityException
      */
@@ -147,7 +148,7 @@ class ExportProductAttributeCsv extends Action
         }
         $stream->close();
 
-        $this->fileFactory->create(
+        return $this->fileFactory->create(
             $fileName,
             [
                 'type' => 'filename',
