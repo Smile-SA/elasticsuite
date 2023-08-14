@@ -147,7 +147,7 @@
                 xsi:type="varchar"
                 length="30"
                 default="_count"
-                nullable="false"
+                nullable="true"
                 comment="The pattern to display facet values"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="entity_id"/>
