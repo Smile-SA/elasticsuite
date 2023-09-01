@@ -96,8 +96,12 @@ class QueryBuilder
             if ($relevanceConfig->getSpanMatchBoost()) {
                 $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
                 if ($spanQuery !== null) {
-                    $queryParams['should'] = [$query, $spanQuery];
-                    $query                 = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                    $queryParams = [
+                        'must'      => [$query],
+                        'should'    => [$spanQuery],
+                        'minimumShouldMatch' => 0,
+                    ];
+                    $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
                 }
             }
         }
