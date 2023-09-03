@@ -38,6 +38,7 @@
                 <category_filter_use_url_rewrites>1</category_filter_use_url_rewrites>
                 <expanded_facets>3</expanded_facets>
                 <adaptive_slider_enabled>0</adaptive_slider_enabled>
+                <frontend_product_display_pattern_enabled>0</frontend_product_display_pattern_enabled>
                 <index_child_product_sku>0</index_child_product_sku>
                 <compute_child_product_discount>0</compute_child_product_discount>
             </catalogsearch>
