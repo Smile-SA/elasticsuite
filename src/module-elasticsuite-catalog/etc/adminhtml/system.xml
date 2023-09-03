@@ -75,6 +75,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, when necessary to support the presence of outlier values in the navigation context (for instance, a very high price amidst a majority of low prices), the price slider behavior changes so that the middle of the slider range corresponds to the median price instead of the price at the middle of the range.]]></comment>
                 </field>
+                <field id="frontend_product_display_pattern_enabled" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Enable Display Pattern on Frontend</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, will also show the Attributes Value using Display Pattern on Product Pages (Product Detail and Compare), not just in Layered Navigation. ]]></comment>
+                </field>
                 <field id="index_child_product_sku" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable indexing child product SKU in dedicated subfield</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
