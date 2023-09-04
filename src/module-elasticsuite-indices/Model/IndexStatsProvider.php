@@ -86,6 +86,7 @@ class IndexStatsProvider
                     $this->elasticsuiteIndices[$name] = $aliases ? key($aliases['aliases']) : null;
                 }
             }
+            ksort($this->elasticsuiteIndices, SORT_STRING | SORT_NATURAL);
         }
 
         return $this->elasticsuiteIndices;
