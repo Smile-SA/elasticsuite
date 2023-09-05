@@ -100,7 +100,7 @@ class Url
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->urlFinder = $urlFinder;
         $this->urlBuilder = $urlBuilder;
-        $this->virtualCategoryRoot       = $virtualCategoryRoot;
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
     }
 
     /**

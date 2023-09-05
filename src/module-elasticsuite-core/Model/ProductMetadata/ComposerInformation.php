@@ -41,7 +41,6 @@ class ComposerInformation extends \Magento\Framework\Composer\ComposerInformatio
      */
     private $composerFactory;
 
-
     /**
      * @param \Magento\Framework\Composer\ComposerFactory $composerFactory Composer Factory
      */
