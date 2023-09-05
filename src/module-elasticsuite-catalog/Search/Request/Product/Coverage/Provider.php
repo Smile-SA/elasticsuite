@@ -28,6 +28,11 @@ class Provider
     private $searchEngine;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Search\RequestInterface
+     */
+    private $request;
+
+    /**
      * @var array
      */
     private $countByAttributeSet;

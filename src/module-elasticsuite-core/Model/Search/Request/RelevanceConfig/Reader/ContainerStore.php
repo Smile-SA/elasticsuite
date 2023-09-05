@@ -49,6 +49,11 @@ class ContainerStore
     protected $containerReader;
 
     /**
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Constructor
      *
      * @param Initial               $initialConfig     Initial Configuration

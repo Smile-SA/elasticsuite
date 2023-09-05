@@ -60,6 +60,11 @@ class FrontPlugin
     private $booleanSource;
 
     /**
+     * @var Registry
+     */
+    private $coreRegistry;
+
+    /**
      * @var \Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder
      */
     private $filterSortOrder;
