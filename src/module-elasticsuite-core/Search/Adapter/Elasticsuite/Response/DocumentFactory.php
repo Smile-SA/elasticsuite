@@ -33,6 +33,11 @@ class DocumentFactory
     private $entityMetadata;
 
     /**
+     * @var ObjectManagerInterface
+     */
+    private $objectManager;
+
+    /**
      * @var string
      */
     private $instanceName;
