@@ -96,8 +96,12 @@ class QueryBuilder
             if ($relevanceConfig->getSpanMatchBoost()) {
                 $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
                 if ($spanQuery !== null) {
-                    $queryParams['should'] = [$query, $spanQuery];
-                    $query                 = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                    $queryParams = [
+                        'must'      => [$query],
+                        'should'    => [$spanQuery],
+                        'minimumShouldMatch' => 0,
+                    ];
+                    $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
                 }
             }
         }
@@ -116,9 +120,28 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+
+        if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
+            $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+
+            $fields = $fields + $this->getWeightedFields(
+                $containerConfig,
+                null,
+                $nonStandardSearchableFieldFilter,
+                MappingInterface::DEFAULT_SEARCH_FIELD
+            );
+        }
+
+        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
+            $fields += array_fill_keys(
+                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
+                1
+            );
+        }
 
         $queryParams = [
-            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
+            'fields'             => array_fill_keys(array_keys($fields), 1),
             'queryText'          => $queryText,
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
@@ -200,7 +223,7 @@ class QueryBuilder
     }
 
     /**
-     * Spellcheked query building.
+     * Spellchecked query building.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
@@ -257,14 +280,17 @@ class QueryBuilder
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
-        $referenceAnalyzer  = FieldInterface::ANALYZER_REFERENCE;
 
         $fuzzyFieldFilter = $this->fieldFilters['fuzzyFieldFilter'];
+        $nonStandardFuzzyFieldFilter = $this->fieldFilters['nonStandardFuzzyFieldFilter'];
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost),
-            $this->getWeightedFields($containerConfig, $referenceAnalyzer, $fuzzyFieldFilter)
+            // Allow fuzzy query to contain fields using for fuzzy search with their default analyzer.
+            // Same logic as defined in getWeightedSearchQuery().
+            // This will automatically include sku.reference and any other fields having defaultSearchAnalyzer.
+            $this->getWeightedFields($containerConfig, null, $nonStandardFuzzyFieldFilter, $defaultSearchField),
         );
 
         $queryParams = [

@@ -29,35 +29,19 @@ class IndexResolver
     private $indices = [];
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory
-     */
-    private $indexFactory;
-
-    /**
-     * @var \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface
-     */
-    private $indexSettings;
-
-    /**
-     * @var \Smile\ElasticsuiteTracker\Model\IndexManager
+     * @var IndexManager
      */
     private $indexManager;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings Index settings.
-     * @param \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory  $indexFactory  Index factory.
-     * @param \Smile\ElasticsuiteTracker\Model\IndexManager            $indexManager  Index Manager.
+     * @param \Smile\ElasticsuiteTracker\Model\IndexManager $indexManager Index Manager.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
-        \Smile\ElasticsuiteCore\Api\Index\IndexInterfaceFactory $indexFactory,
-        \Smile\ElasticsuiteTracker\Model\IndexManager $indexManager
+        IndexManager $indexManager
     ) {
-        $this->indexFactory  = $indexFactory;
-        $this->indexSettings = $indexSettings;
-        $this->indexManager  = $indexManager;
+        $this->indexManager = $indexManager;
     }
 
     /**

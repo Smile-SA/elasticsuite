@@ -181,6 +181,11 @@ class Builder
             'trackTotalHits' => $trackTotalHits,
         ];
 
+        // Use min_score only for fulltext queries.
+        if ($query !== null) {
+            $requestParams['minScore'] = $containerConfig->getRelevanceConfig()->getMinScore();
+        }
+
         if (!empty($facetFilters)) {
             $requestParams['filter'] = $this->queryBuilder->createFilterQuery($containerConfig, $facetFilters);
         }
@@ -235,6 +240,8 @@ class Builder
             'index'           => $containerConfig->getIndexName(),
             'queryText'       => $queryText,
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
+            'isUsingAllTokens'  => $containerConfig->getRelevanceConfig()->isUsingAllTokens(),
+            'isUsingReference'  => $containerConfig->getRelevanceConfig()->isUsingReferenceAnalyzer(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);

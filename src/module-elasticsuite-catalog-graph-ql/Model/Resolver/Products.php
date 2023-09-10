@@ -76,6 +76,7 @@ class Products implements ResolverInterface
                 'page_size'    => $searchResult->getPageSize(),
                 'current_page' => $searchResult->getCurrentPage(),
                 'total_pages'  => $searchResult->getTotalPages(),
+                'is_spellchecked' => $searchResult->isSpellchecked(),
             ],
             'search_result' => $searchResult,
             'layer_type'    => $layerType,

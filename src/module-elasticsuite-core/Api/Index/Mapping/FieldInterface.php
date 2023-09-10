@@ -49,6 +49,7 @@ interface FieldInterface
     const ANALYZER_UNTOUCHED  = 'untouched';
     const ANALYZER_KEYWORD    = 'keyword';
     const ANALYZER_REFERENCE  = 'reference';
+    const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
      * Field filter logical operators.
@@ -77,6 +78,11 @@ interface FieldInterface
      * @return boolean
      */
     public function isSearchable();
+
+    /**
+     * Is the field searchable and contains reference (sku) data.
+     */
+    public function isSearchableReference();
 
     /**
      * Is the field filterable in navigation.

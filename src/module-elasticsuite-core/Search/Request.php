@@ -14,11 +14,11 @@
 
 namespace Smile\ElasticsuiteCore\Search;
 
-use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
-use Magento\Framework\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Dimension;
+use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Default implementation of ElasticSuite search request.
@@ -50,6 +50,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $trackTotalHits = \Smile\ElasticsuiteCore\Helper\IndexSettings::PER_SHARD_MAX_RESULT_WINDOW;
 
     /**
+     * @var boolean|integer
+     */
+    private $minScore;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -65,6 +70,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @param BucketInterface[]    $buckets        Search request aggregations definition.
      * @param string               $spellingType   For fulltext query : the type of spellchecked applied.
      * @param bool|int             $trackTotalHits Value of the 'track_total_hits' ES parameter.
+     * @param bool|int             $minScore       Value of the 'min_score' ES parameter.
      */
     public function __construct(
         $name,
@@ -77,7 +83,8 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         array $dimensions = [],
         array $buckets = [],
         $spellingType = null,
-        $trackTotalHits = null
+        $trackTotalHits = null,
+        $minScore = null
     ) {
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
         $this->filter = $filter;
@@ -89,6 +96,10 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
 
         if ($trackTotalHits !== null) {
             $this->trackTotalHits = $this->parseTrackTotalHits($trackTotalHits);
+        }
+
+        if ($minScore !== null) {
+            $this->minScore = $minScore;
         }
     }
 
@@ -114,6 +125,14 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function getTrackTotalHits()
     {
         return $this->trackTotalHits;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMinScore()
+    {
+        return $this->minScore;
     }
 
     /**

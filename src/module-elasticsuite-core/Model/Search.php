@@ -71,6 +71,7 @@ class Search implements \Magento\Search\Api\SearchInterface
         $totalCount = $searchResponse->count();
         $searchResult->setTotalCount($totalCount);
         $searchResult->setSearchCriteria($searchCriteria);
+        $searchResult->setData('is_spellchecked', (bool) $searchRequest->isSpellchecked());
 
         return $searchResult;
     }

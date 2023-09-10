@@ -39,7 +39,7 @@ class PropertyMapper extends PropertyMapperAbstract
                 'facet_sort_order',
                 \Smile\ElasticsuiteCore\Search\Request\BucketInterface::SORT_ORDER_COUNT
             ),
-            'display_pattern' => $this->_getValue($input, 'display_pattern', 10),
+            'display_pattern' => $this->_getValue($input, 'display_pattern', null),
             'display_precision' => $this->_getValue($input, 'display_precision', 0),
             'sort_order_asc_missing' => $this->_getValue($input, 'sort_order_asc_missing', '_last'),
             'sort_order_desc_missing' => $this->_getValue($input, 'sort_order_desc_missing', '_last'),
