@@ -166,15 +166,19 @@ class QueryBuilder
         $searchableFieldFilter = $this->fieldFilters['searchableFieldFilter'];
         $sortableAnalyzer      = FieldInterface::ANALYZER_SORTABLE;
         $phraseAnalyzer        = FieldInterface::ANALYZER_WHITESPACE;
+        $sortableMatchBoost    = 2 * $phraseMatchBoost;
 
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
+        } elseif ($relevanceConfig->areExactMatchSingleTermBoostsCustomized()) {
+            $phraseMatchBoost = $relevanceConfig->getExactMatchSingleTermPhraseMatchBoost();
+            $sortableMatchBoost = $relevanceConfig->getExactMatchSingleTermSortableBoost();
         }
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, null, $searchableFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost),
-            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, 2 * $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, $sortableMatchBoost)
         );
 
         $queryParams = [

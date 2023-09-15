@@ -115,4 +115,27 @@ interface RelevanceConfigurationInterface
      * @return bool
      */
     public function isUsingDefaultAnalyzerInExactMatchFilter();
+
+    /**
+     * Are the exact match boosts on whitespace and sortable version of searchable attributes/fields
+     * customized.
+     *
+     * @return bool
+     */
+    public function areExactMatchSingleTermBoostsCustomized();
+
+    /**
+     * Returns the exact match boost for whitespace version of searchable attributes/fields,
+     * used instead of the shingle version of attributes/fields when a single term is searched.
+     *
+     * @return int
+     */
+    public function getExactMatchSingleTermPhraseMatchBoost();
+
+    /**
+     * Returns the exact match boost for sortable version of searchable+sortable attributes/fields.
+     *
+     * @return int
+     */
+    public function getExactMatchSingleTermSortableBoost();
 }
