@@ -19,6 +19,8 @@ use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationIn
 /**
  * Relevance Configuration object
  *
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
@@ -91,6 +93,21 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     private $useReferenceAnalyzer;
 
     /**
+     * @var boolean
+     */
+    private $exactMatchSingleTermBoostsCustomized;
+
+    /**
+     * @var integer|null
+     */
+    private $exactMatchSingleTermPhraseMatchBoost;
+
+    /**
+     * @var integer|null
+     */
+    private $exactMatchSingleTermSortableBoost;
+
+    /**
      * RelevanceConfiguration constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -114,6 +131,14 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param boolean                              $useAllTokens                         Whether to take into account all term vector tokens
      * @param boolean                              $useReferenceAnalyzer                 Whether to include the collector field associated
      *                                                                                   with the reference analyzer in term vectors request
+     * @param boolean                              $exactMatchSingleTermBoostsCustomized Are the exact match boost values on whitespace
+     *                                                                                   and sortable fields customizzed.
+     * @param int|null                             $exactMatchSingleTermPhraseMatchBoost The whitespace boost value for exact match,
+     *                                                                                   or null if the default (phrase match boost value)
+     *                                                                                   should apply
+     * @param int|null                             $exactMatchSingleTermSortableBoost    The sortable boost value for exact match,
+     *                                                                                   or null if the default (twice the phrase match
+     *                                                                                   boost value) should apply
      */
     public function __construct(
         $minimumShouldMatch,
@@ -128,7 +153,10 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $useReferenceInExactMatchFilter = false,
         $useDefaultAnalyzerInExactMatchFilter = false,
         $useAllTokens = false,
-        $useReferenceAnalyzer = false
+        $useReferenceAnalyzer = false,
+        $exactMatchSingleTermBoostsCustomized = false,
+        $exactMatchSingleTermPhraseMatchBoost = null,
+        $exactMatchSingleTermSortableBoost = null
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;
@@ -143,6 +171,9 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->useAllTokens           = $useAllTokens;
         $this->useReferenceAnalyzer   = $useReferenceAnalyzer;
         $this->useDefaultAnalyzerInExactMatchFilter = $useDefaultAnalyzerInExactMatchFilter;
+        $this->exactMatchSingleTermBoostsCustomized = $exactMatchSingleTermBoostsCustomized;
+        $this->exactMatchSingleTermPhraseMatchBoost = $exactMatchSingleTermPhraseMatchBoost;
+        $this->exactMatchSingleTermSortableBoost = $exactMatchSingleTermSortableBoost;
     }
 
     /**
@@ -261,5 +292,29 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isUsingReferenceAnalyzer()
     {
         return (bool) $this->useReferenceAnalyzer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function areExactMatchSingleTermBoostsCustomized()
+    {
+        return (bool) $this->exactMatchSingleTermBoostsCustomized;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExactMatchSingleTermPhraseMatchBoost()
+    {
+        return (int) $this->exactMatchSingleTermPhraseMatchBoost;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getExactMatchSingleTermSortableBoost()
+    {
+        return (int) $this->exactMatchSingleTermSortableBoost;
     }
 }

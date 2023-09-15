@@ -79,11 +79,6 @@ class Factory
     const EXACT_MATCH_CONFIG_XML_PREFIX = 'exact_match_configuration';
 
     /**
-     * XML node for using reference in the exact match filter query
-     */
-    const EXACT_MATCH_USE_REFERENCE_IN_FILTER_XML_PATH = 'exact_match_configuration/use_reference_in_filter';
-
-    /**
      * XML node for tokens usage in term vectors configuration.
      */
     const TERM_VECTORS_TOKENS_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_all_tokens';
@@ -171,6 +166,9 @@ class Factory
             'useAllTokens'                      => $this->isUsingAllTokensConfiguration($scopeCode),
             'useReferenceAnalyzer'              => $this->isUsingReferenceAnalyzerConfiguration($scopeCode),
             'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
+            'exactMatchSingleTermBoostsCustomized'  => $this->areExactMatchCustomBoostValuesEnabled($scopeCode),
+            'exactMatchSingleTermPhraseMatchBoost'  => $this->getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode),
+            'exactMatchSingleTermSortableBoost'     => $this->getExactMatchSortableBoostConfiguration($scopeCode),
         ];
 
         return $configurationParams;
@@ -388,9 +386,9 @@ class Factory
      */
     private function isUsingReferenceInExactMatchFilter($scopeCode)
     {
-        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_USE_REFERENCE_IN_FILTER_XML_PATH;
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
 
-        return (bool) $this->getConfigValue($path, $scopeCode);
+        return (bool) $this->getConfigValue($path . "/use_reference_in_filter", $scopeCode);
     }
 
     /**
@@ -420,7 +418,7 @@ class Factory
     /**
      * Check if we should use the default analyzer of each field when building the exact match filter query.
      *
-     * @param @param string $scopeCode The scope code
+     * @param string $scopeCode The scope code
      *
      * @return bool
      */
@@ -429,5 +427,48 @@ class Factory
         $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
 
         return (bool) $this->getConfigValue($path . "/use_default_analyzer", $scopeCode);
+    }
+
+    /**
+     * Check if custom boost values for exact match in whitespace and sortable version of fields
+     * should be applied.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function areExactMatchCustomBoostValuesEnabled($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (bool) $this->getConfigValue($path . "/enable_single_term_custom_boost_values", $scopeCode);
+    }
+
+    /**
+     * Return the configured custom boost value for whitespace fields in exact match queries.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return int
+     */
+    private function getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (int) $this->getConfigValue($path . "/single_term_phrase_match_boost_value", $scopeCode);
+    }
+
+    /**
+     * Return the configured custom boost value for sortable fields in exact match queries.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return int
+     */
+    private function getExactMatchSortableBoostConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (int) $this->getConfigValue($path . "/sortable_boost_value", $scopeCode);
     }
 }
