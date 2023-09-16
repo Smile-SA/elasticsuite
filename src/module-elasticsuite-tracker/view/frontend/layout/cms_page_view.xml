@@ -18,7 +18,9 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
-            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Cms" name="smile.tracker.page.cms"/>
+            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Cms"
+                   name="smile.tracker.page.cms"
+                   ifconfig="smile_elasticsuite_tracker/general/enabled" />
         </referenceContainer>
     </body>
 </page>
