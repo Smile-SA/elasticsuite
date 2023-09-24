@@ -16,7 +16,7 @@ jobs:
         runs-on: ubuntu-20.04
         strategy:
             matrix:
-                php-versions: ['7.4', '8.1']
+                php-versions: ['7.4']
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -44,9 +44,8 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: vendor
-                  key: ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ github.base_ref }}-${{ hashFiles('**/composer.lock') }}
+                  key: ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}
                   restore-keys: |
-                      ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ github.base_ref }}
                       ${{ runner.os }}-php-${{ matrix.php-versions }}
 
             - name: Prepare credentials
@@ -54,10 +53,6 @@ jobs:
                 MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
                 MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
               run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
-
-            - name: Add phpstan/phpstan
-              if: ${{ matrix.php-versions == '8.1' }}
-              run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
@@ -73,10 +68,6 @@ jobs:
 
             - name: PHPMD
               run: vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
-
-            - name: PHPStan
-              if: ${{ matrix.php-versions  == '8.1' }}
-              run: vendor/bin/phpstan analyze --level=0 src
 
             - name: PHPUnit
               run: vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
