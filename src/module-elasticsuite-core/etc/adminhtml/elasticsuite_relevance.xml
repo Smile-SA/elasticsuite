@@ -192,6 +192,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Experimental: Include the 'reference' collector field which contains all searchable fields using the 'reference' analyzer when performing the term vectors request. Useful for sku/reference matching.]]></comment>
                 </field>
+                <field id="use_edge_ngram_analyzer" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use edge ngram analyzer in term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Include the 'edge_ngram' collector field which contains all searchable fields using an analyzer containing an edge ngram component (like 'standard_edge_ngram') when performing the term vectors request. Useful for triggering exact matching on partial search terms that are only present in fields using an edge ngram component.]]></comment>
+                </field>
             </group>
         </section>
     </system>

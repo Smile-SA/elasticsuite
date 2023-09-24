@@ -127,6 +127,14 @@ class Field implements FieldInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function isSearchableEdgeNgram(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_EDGE_NGRAM === $this->config['default_search_analyzer']));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isFilterable(): bool

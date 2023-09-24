@@ -53,6 +53,11 @@ class Request implements RequestInterface
     private $isUsingReference;
 
     /**
+     * @var boolean
+     */
+    private $isUsingEdgeNgram;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
@@ -62,14 +67,22 @@ class Request implements RequestInterface
      * @param float   $cutoffFrequency  Spellcheck cutoff frequency (used to detect stopwords).
      * @param boolean $isUsingAllTokens Is spellcheck using all tokens returned by term vectors.
      * @param boolean $isUsingReference Should the reference analyzer be included in the spellcheck request.
+     * @param boolean $isUsingEdgeNgram Should the edge ngram based analyzers be included in the spellcheck request.
      */
-    public function __construct($index, $queryText, $cutoffFrequency, $isUsingAllTokens, $isUsingReference)
-    {
+    public function __construct(
+        $index,
+        $queryText,
+        $cutoffFrequency,
+        $isUsingAllTokens,
+        $isUsingReference,
+        $isUsingEdgeNgram
+    ) {
         $this->index           = $index;
         $this->queryText       = $queryText;
         $this->cutoffFrequency = $cutoffFrequency;
         $this->isUsingAllTokens = $isUsingAllTokens;
         $this->isUsingReference = $isUsingReference;
+        $this->isUsingEdgeNgram = $isUsingEdgeNgram;
     }
 
     /**
@@ -110,5 +123,13 @@ class Request implements RequestInterface
     public function isUsingReference()
     {
         return $this->isUsingReference;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingEdgeNgram()
+    {
+        return $this->isUsingEdgeNgram;
     }
 }

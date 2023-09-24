@@ -57,4 +57,11 @@ interface RequestInterface
      * @return boolean
      */
     public function isUsingReference();
+
+    /**
+     * Should the spellcheck request target the 'edge_ngram' collector field.
+     *
+     * @return boolean
+     */
+    public function isUsingEdgeNgram();
 }

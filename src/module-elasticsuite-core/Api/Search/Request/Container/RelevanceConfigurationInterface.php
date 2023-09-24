@@ -110,6 +110,13 @@ interface RelevanceConfigurationInterface
     public function isUsingReferenceAnalyzer();
 
     /**
+     * Check if the term vectors request should also include the edge ngram analyzer(s) collector field.
+     *
+     * @return bool
+     */
+    public function isUsingEdgeNgramAnalyzer();
+
+    /**
      * If we should use the default analyzer of each field when building the exact match filter query.
      *
      * @return bool
