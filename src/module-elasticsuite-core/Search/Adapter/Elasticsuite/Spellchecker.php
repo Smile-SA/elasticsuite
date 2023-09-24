@@ -68,7 +68,7 @@ class Spellchecker implements SpellcheckerInterface
 
         $spellingType = $this->cacheHelper->loadCache($cacheKey);
 
-        if (true || $spellingType === false) {
+        if ($spellingType === false) {
             $spellingType = $this->loadSpellingType($request);
             $this->cacheHelper->saveCache($cacheKey, $spellingType, [$request->getIndex(), ScopePool::CACHE_TAG]);
         }
