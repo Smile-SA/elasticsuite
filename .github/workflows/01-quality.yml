@@ -56,7 +56,7 @@ jobs:
               run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
 
             - name: Add phpstan/phpstan
-              if: ${{ matrix.php-versions }} == '8.1'
+              if: ${{ matrix.php-versions == '8.1' }}
               run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
             - name: Install dependencies
@@ -75,7 +75,7 @@ jobs:
               run: vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
 
             - name: PHPStan
-              if: ${{ matrix.php-versions }} == '8.1'
+              if: ${{ matrix.php-versions  == '8.1' }}
               run: vendor/bin/phpstan analyze --level=0 src
 
             - name: PHPUnit
