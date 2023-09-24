@@ -68,7 +68,7 @@ class Spellchecker implements SpellcheckerInterface
 
         $spellingType = $this->cacheHelper->loadCache($cacheKey);
 
-        if ($spellingType === false) {
+        if (true || $spellingType === false) {
             $spellingType = $this->loadSpellingType($request);
             $this->cacheHelper->saveCache($cacheKey, $spellingType, [$request->getIndex(), ScopePool::CACHE_TAG]);
         }
@@ -170,6 +170,11 @@ class Spellchecker implements SpellcheckerInterface
             $doc['doc'][MappingInterface::DEFAULT_REFERENCE_FIELD] = $request->getQueryText();
         }
 
+        if ($request->isUsingEdgeNgram()) {
+            $doc['fields'][] = MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM;
+            $doc['doc'][MappingInterface::DEFAULT_EDGE_NGRAM_FIELD] = $request->getQueryText();
+        }
+
         $docs = [];
 
         // Compute the mtermvector query on all shards to ensure exhaustive results.
@@ -215,6 +220,8 @@ class Spellchecker implements SpellcheckerInterface
                     $type = 'exact';
                 } elseif (in_array(FieldInterface::ANALYZER_REFERENCE, $positionStat['analyzers'])) {
                     $type = 'exact';
+                } elseif (in_array(FieldInterface::ANALYZER_EDGE_NGRAM, $positionStat['analyzers'])) {
+                    $type = 'exact';
                 }
             }
             $queryTermStats[$type]++;
@@ -240,7 +247,12 @@ class Spellchecker implements SpellcheckerInterface
     private function extractTermStatsByPosition($termVectors, $useAllTokens = false)
     {
         $statByPosition = [];
-        $analyzers      = [FieldInterface::ANALYZER_STANDARD, FieldInterface::ANALYZER_WHITESPACE, FieldInterface::ANALYZER_REFERENCE];
+        $analyzers      = [
+            FieldInterface::ANALYZER_STANDARD,
+            FieldInterface::ANALYZER_WHITESPACE,
+            FieldInterface::ANALYZER_REFERENCE,
+            FieldInterface::ANALYZER_EDGE_NGRAM,
+        ];
 
         if (is_array($termVectors) && isset($termVectors['docs'])) {
             foreach ($termVectors['docs'] as $termVector) {
