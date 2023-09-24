@@ -242,6 +242,7 @@ class Builder
             'cutoffFrequency' => $containerConfig->getRelevanceConfig()->getCutOffFrequency(),
             'isUsingAllTokens'  => $containerConfig->getRelevanceConfig()->isUsingAllTokens(),
             'isUsingReference'  => $containerConfig->getRelevanceConfig()->isUsingReferenceAnalyzer(),
+            'isUsingEdgeNgram'  => $containerConfig->getRelevanceConfig()->isUsingEdgeNgramAnalyzer(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
