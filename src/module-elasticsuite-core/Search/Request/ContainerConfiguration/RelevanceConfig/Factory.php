@@ -89,6 +89,11 @@ class Factory
     const TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_reference_analyzer';
 
     /**
+     * XML node for edge ngram analyzer(s) usage in term vectors configuration.
+     */
+    const TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_edge_ngram_analyzer';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -165,6 +170,7 @@ class Factory
             'useReferenceInExactMatchFilter'    => $this->isUsingReferenceInExactMatchFilter($scopeCode),
             'useAllTokens'                      => $this->isUsingAllTokensConfiguration($scopeCode),
             'useReferenceAnalyzer'              => $this->isUsingReferenceAnalyzerConfiguration($scopeCode),
+            'useEdgeNgramAnalyzer'              => $this->isUsingEdgeNgramAnalyzerConfiguration($scopeCode),
             'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
             'exactMatchSingleTermBoostsCustomized'  => $this->areExactMatchCustomBoostValuesEnabled($scopeCode),
             'exactMatchSingleTermPhraseMatchBoost'  => $this->getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode),
@@ -413,6 +419,18 @@ class Factory
     private function isUsingReferenceAnalyzerConfiguration($scopeCode)
     {
         return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors edge ngram analyzer usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingEdgeNgramAnalyzerConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH, $scopeCode);
     }
 
     /**

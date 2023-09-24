@@ -95,6 +95,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     /**
      * @var boolean
      */
+    private $useEdgeNgramAnalyzer;
+
+    /**
+     * @var boolean
+     */
     private $exactMatchSingleTermBoostsCustomized;
 
     /**
@@ -131,8 +136,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param boolean                              $useAllTokens                         Whether to take into account all term vector tokens
      * @param boolean                              $useReferenceAnalyzer                 Whether to include the collector field associated
      *                                                                                   with the reference analyzer in term vectors request
+     * @param boolean                              $useEdgeNgramAnalyzer                 Whether to include the collector field associated
+     *                                                                                   with the edge ngram analyzer(s) in the term vectors
+     *                                                                                   request
      * @param boolean                              $exactMatchSingleTermBoostsCustomized Are the exact match boost values on whitespace
-     *                                                                                   and sortable fields customizzed.
+     *                                                                                   and sortable fields customized.
      * @param int|null                             $exactMatchSingleTermPhraseMatchBoost The whitespace boost value for exact match,
      *                                                                                   or null if the default (phrase match boost value)
      *                                                                                   should apply
@@ -154,6 +162,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $useDefaultAnalyzerInExactMatchFilter = false,
         $useAllTokens = false,
         $useReferenceAnalyzer = false,
+        $useEdgeNgramAnalyzer = false,
         $exactMatchSingleTermBoostsCustomized = false,
         $exactMatchSingleTermPhraseMatchBoost = null,
         $exactMatchSingleTermSortableBoost = null
@@ -170,6 +179,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->useReferenceInExactMatchFilter   = $useReferenceInExactMatchFilter;
         $this->useAllTokens           = $useAllTokens;
         $this->useReferenceAnalyzer   = $useReferenceAnalyzer;
+        $this->useEdgeNgramAnalyzer   = $useEdgeNgramAnalyzer;
         $this->useDefaultAnalyzerInExactMatchFilter = $useDefaultAnalyzerInExactMatchFilter;
         $this->exactMatchSingleTermBoostsCustomized = $exactMatchSingleTermBoostsCustomized;
         $this->exactMatchSingleTermPhraseMatchBoost = $exactMatchSingleTermPhraseMatchBoost;
@@ -292,6 +302,14 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isUsingReferenceAnalyzer()
     {
         return (bool) $this->useReferenceAnalyzer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isUsingEdgeNgramAnalyzer()
+    {
+        return (bool) $this->useEdgeNgramAnalyzer;
     }
 
     /**

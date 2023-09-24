@@ -85,6 +85,11 @@ interface FieldInterface
     public function isSearchableReference();
 
     /**
+     * Is the field searchable and using an edge ngram based analyzer.
+     */
+    public function isSearchableEdgeNgram();
+
+    /**
      * Is the field filterable in navigation.
      *
      * @return boolean
