@@ -19,6 +19,7 @@ use Magento\Catalog\Model\ProductFactory as ProductModelFactory;
 use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Eav\Model\Config;
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Locale\FormatInterface;
 use Magento\Rule\Model\Condition\Context;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList;
@@ -27,6 +28,7 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributes
 
 /**
  * Product attribute search engine rule.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
@@ -50,6 +52,17 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     private $specialAttributesProvider;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * @var string
+     */
+    const ATTRIBUTE_OPTIONS_ALPHABETICAL_SORT_XML_PATH
+        = 'smile_elasticsuite_catalogsearch_settings/catalogrule/force_sorting_select_options';
+
+    /**
      * Constructor.
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
@@ -63,7 +76,8 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      * @param ProductResource            $productResource           Product resource model.
      * @param Collection                 $attrSetCollection         Attribute set collection.
      * @param FormatInterface            $localeFormat              Locale format.
-     * @param SpecialAttributesProvider  $specialAttributesProvider Special Attributes Provider
+     * @param SpecialAttributesProvider  $specialAttributesProvider Special Attributes Provider.
+     * @param ScopeConfigInterface       $scopeConfig               Scope configuration.
      * @param array                      $data                      Additional data.
      */
     public function __construct(
@@ -78,11 +92,13 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         Collection $attrSetCollection,
         FormatInterface $localeFormat,
         SpecialAttributesProvider $specialAttributesProvider,
+        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
         $this->attributeList             = $attributeList;
         $this->queryBuilder              = $queryBuilder;
         $this->specialAttributesProvider = $specialAttributesProvider;
+        $this->scopeConfig               = $scopeConfig;
 
         parent::__construct(
             $context,
@@ -309,5 +325,22 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         } else {
             parent::_prepareValueOptions();
         }
+
+        if ($this->scopeConfig->isSetFlag(self::ATTRIBUTE_OPTIONS_ALPHABETICAL_SORT_XML_PATH)) {
+            // Sort by labels.
+            $selectReady = $this->getData('value_select_options');
+            if ($selectReady) {
+                $labels = array_column($selectReady, 'label');
+                array_multisort($labels, SORT_STRING | SORT_NATURAL, $selectReady);
+                $this->setData('value_select_options', $selectReady);
+            }
+
+            $hashedReady = $this->getData('value_option');
+            if ($hashedReady) {
+                asort($hashedReady, SORT_STRING | SORT_NATURAL);
+            }
+        }
+
+        return $this;
     }
 }
