@@ -79,13 +79,10 @@ class Mapping extends AbstractAction implements HttpGetActionInterface
             return $resultForward;
         }
 
-        if ($index) {
-            $resultPage = $this->resultPageFactory->create();
-            $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_mapping');
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_mapping');
+        $resultPage->getConfig()->getTitle()->prepend(__('Mapping for index:') . ' ' . $indexName);
 
-            $resultPage->getConfig()->getTitle()->prepend(__('Mapping for index:') . ' ' . $indexName);
-
-            return $resultPage;
-        }
+        return $resultPage;
     }
 }

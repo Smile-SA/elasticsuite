@@ -33,7 +33,7 @@ class UpgradeData implements \Magento\Framework\Setup\UpgradeDataInterface
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Setup\OptimizerSetupFactory $optimizerSetupFactory Setup Factory
+     * @param OptimizerSetupFactory $optimizerSetupFactory Setup Factory
      */
     public function __construct(OptimizerSetupFactory $optimizerSetupFactory)
     {

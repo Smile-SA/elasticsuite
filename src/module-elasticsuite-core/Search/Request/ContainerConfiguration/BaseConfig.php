@@ -90,7 +90,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
     /**
      * Append the filters to search requests configuration.
      *
-     * @return BaseConfig
+     * @return void
      */
     private function addFilters()
     {
@@ -110,7 +110,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
     /**
      * Append the aggregation providers to search requests configuration.
      *
-     * @return BaseConfig
+     * @return void
      */
     private function addAggregationProviders()
     {
@@ -130,7 +130,7 @@ class BaseConfig extends \Magento\Framework\Config\Data
     /**
      * Append the aggregation filters to search requests configuration.
      *
-     * @return BaseConfig
+     * @return void
      */
     private function addAggregationFilters()
     {

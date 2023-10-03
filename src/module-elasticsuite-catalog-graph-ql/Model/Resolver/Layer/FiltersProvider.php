@@ -29,7 +29,7 @@ use Smile\ElasticsuiteCatalog\Model\Layer\FilterList;
 class FiltersProvider extends \Magento\CatalogGraphQl\Model\Resolver\Layer\FiltersProvider
 {
     /**
-     * @var \Magento\CatalogGraphQl\Model\Layer\Context
+     * @var Context
      */
     private $layerContext;
 

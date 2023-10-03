@@ -14,6 +14,12 @@
 
 namespace Smile\ElasticsuiteCore\Model\Search;
 
+use Magento\Search\Model\QueryFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory;
+use Smile\ElasticsuiteCore\Search\Request\Builder;
+
 /**
  * ElasticSuite search API implementation : convert search criteria to search request.
  *
@@ -29,17 +35,17 @@ class RequestBuilder
     const DEFAULT_PAGE_SIZE = 20;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Builder
+     * @var Builder
      */
     private $searchRequestBuilder;
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     private $storeManager;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory
+     * @var ContainerConfigurationInterfaceFactory
      */
     private $containerConfigFactory;
 
@@ -49,33 +55,31 @@ class RequestBuilder
     private $requestMapper;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
+     * @var ContextInterface
      */
     private $searchContext;
 
     /**
-     * @var \Magento\Search\Model\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Builder                                    $searchRequestBuilder   Search request
-     *                                                                                                                  builder.
-     * @param \Magento\Store\Model\StoreManagerInterface                                        $storeManager           Store resolver.
-     * @param \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory Container config
-     *                                                                                                                  factory.
-     * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface                               $searchContext          Search context.
-     * @param \Magento\Search\Model\QueryFactory                                                $queryFactory           Search query factory
-     * @param RequestMapper                                                                     $requestMapper          Request mapper.
+     * @param Builder                                $searchRequestBuilder   Search request builder.
+     * @param StoreManagerInterface                  $storeManager           Store resolver.
+     * @param ContainerConfigurationInterfaceFactory $containerConfigFactory Container config factory.
+     * @param ContextInterface                       $searchContext          Search context.
+     * @param QueryFactory                           $queryFactory           Search query factory
+     * @param RequestMapper                          $requestMapper          Request mapper.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterfaceFactory $containerConfigFactory,
-        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Magento\Search\Model\QueryFactory $queryFactory,
+        Builder $searchRequestBuilder,
+        StoreManagerInterface $storeManager,
+        ContainerConfigurationInterfaceFactory $containerConfigFactory,
+        ContextInterface $searchContext,
+        QueryFactory $queryFactory,
         RequestMapper $requestMapper
     ) {
         $this->searchRequestBuilder   = $searchRequestBuilder;

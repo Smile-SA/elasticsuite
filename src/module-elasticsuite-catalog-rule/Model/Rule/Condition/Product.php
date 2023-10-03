@@ -309,5 +309,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         } else {
             parent::_prepareValueOptions();
         }
+
+        return $this;
     }
 }

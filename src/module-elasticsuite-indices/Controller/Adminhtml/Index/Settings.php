@@ -79,13 +79,10 @@ class Settings extends AbstractAction implements HttpGetActionInterface
             return $resultForward;
         }
 
-        if ($index) {
-            $resultPage = $this->resultPageFactory->create();
-            $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_settings');
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getLayout()->getBlock('smile_elasticsuite_indices_index_settings');
+        $resultPage->getConfig()->getTitle()->prepend(__('Settings for index:') . ' ' . $indexName);
 
-            $resultPage->getConfig()->getTitle()->prepend(__('Settings for index:') . ' ' . $indexName);
-
-            return $resultPage;
-        }
+        return $resultPage;
     }
 }

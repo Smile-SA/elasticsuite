@@ -13,12 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
 
-use Magento\Eav\Setup\EavSetup;
-use Magento\Framework\Setup\UpgradeDataInterface;
-use Magento\Catalog\Model\Category;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
+use Magento\Framework\Setup\UpgradeDataInterface;
 
 /**
  * Catalog Data Upgrade

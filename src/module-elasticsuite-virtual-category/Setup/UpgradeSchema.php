@@ -16,7 +16,6 @@ namespace Smile\ElasticsuiteVirtualCategory\Setup;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
-use Smile\ElasticsuiteVirtualCategory\Setup\VirtualCategorySetupFactory;
 
 /**
  * Upgrade Schema for virtual categories

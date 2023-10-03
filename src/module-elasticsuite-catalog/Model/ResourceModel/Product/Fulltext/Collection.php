@@ -543,8 +543,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->originalPageSize = $this->getPageSize();
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
-
-        return parent::_renderFiltersBefore();
     }
 
     /**

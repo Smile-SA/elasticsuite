@@ -13,6 +13,13 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
+use Magento\Catalog\Model\Layer\Filter\ItemFactory;
+use Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory;
+use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 
 /**
@@ -34,7 +41,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
     /**
      * Locale interface
      *
-     * @var \Magento\Framework\Locale\ResolverInterface $localeResolver
+     * @var ResolverInterface $localeResolver
      */
     private $localeResolver;
 
@@ -48,32 +55,28 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory                           $filterItemFactory    Filter item
-     *                                                                                                        factory
-     * @param \Magento\Store\Model\StoreManagerInterface                                $storeManager         The Store Manager
-     * @param \Magento\Catalog\Model\Layer                                              $layer                The Layer
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder                      $itemDataBuilder      The data builder
-     * @param \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory          $filterDecimalFactory Factory for
-     *                                                                                                        decimal items
-     * @param \Magento\Framework\Pricing\PriceCurrencyInterface                         $priceCurrency        Price Currency
-     * @param \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory  Decimal DataProvider
-     *                                                                                                        Factory
-     * @param \Magento\Framework\Locale\ResolverInterface                               $localeResolver       Locale Resolver
-     * @param RequestFieldMapper                                                        $requestFieldMapper   Search request field
-     *                                                                                                        mapper
-     * @param array                                                                     $data                 Filter Data
+     * @param ItemFactory                           $filterItemFactory    Filter item factory
+     * @param StoreManagerInterface                 $storeManager         The Store Manager
+     * @param Layer                                 $layer                The Layer
+     * @param DataBuilder                           $itemDataBuilder      The data builder
+     * @param DecimalFactory                        $filterDecimalFactory Factory for decimal items
+     * @param PriceCurrencyInterface                $priceCurrency        Price Currency
+     * @param DataProvider\DecimalFactory           $dataProviderFactory  Decimal DataProvider Factory
+     * @param ResolverInterface                     $localeResolver       Locale Resolver
+     * @param RequestFieldMapper                    $requestFieldMapper   Search request field mapper
+     * @param array                                 $data                 Filter Data
      */
     public function __construct(
-        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\Layer $layer,
-        \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
-        \Magento\Catalog\Model\ResourceModel\Layer\Filter\DecimalFactory $filterDecimalFactory,
-        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Smile\ElasticsuiteCatalog\Model\Layer\Filter\DataProvider\DecimalFactory $dataProviderFactory,
-        \Magento\Framework\Locale\ResolverInterface $localeResolver,
-        RequestFieldMapper $requestFieldMapper,
-        array $data
+        ItemFactory                 $filterItemFactory,
+        StoreManagerInterface       $storeManager,
+        Layer                       $layer,
+        DataBuilder                 $itemDataBuilder,
+        DecimalFactory              $filterDecimalFactory,
+        PriceCurrencyInterface      $priceCurrency,
+        DataProvider\DecimalFactory $dataProviderFactory,
+        ResolverInterface           $localeResolver,
+        RequestFieldMapper          $requestFieldMapper,
+        array                       $data
     ) {
         parent::__construct(
             $filterItemFactory,

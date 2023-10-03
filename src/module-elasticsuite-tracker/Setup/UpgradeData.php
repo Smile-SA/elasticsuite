@@ -30,7 +30,7 @@ class UpgradeData implements UpgradeDataInterface
     /**
      * @var TrackerSetup
      */
-    private $trackerSetup;
+    private TrackerSetup $trackerSetup;
 
     /**
      * Class Constructor.

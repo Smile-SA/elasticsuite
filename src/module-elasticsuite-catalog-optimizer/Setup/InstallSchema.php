@@ -16,7 +16,6 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Setup;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Setup\OptimizerSetupFactory;
 
 /**
  * Install Schema for Catalog Optimizer Module
@@ -35,7 +34,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Setup\OptimizerSetupFactory $optimizerSetupFactory Setup Factory
+     * @param OptimizerSetupFactory $optimizerSetupFactory Setup Factory
      */
     public function __construct(OptimizerSetupFactory $optimizerSetupFactory)
     {

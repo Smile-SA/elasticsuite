@@ -17,8 +17,8 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Api\StoreRepositoryInterface;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
-use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 use Smile\ElasticsuiteThesaurus\Model\Thesaurus;
+use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 
 /**
  * Class Import Provider
@@ -68,7 +68,7 @@ class Provider
      */
     public function createThesaurus(): Thesaurus
     {
-         return $this->thesaurusFactory->create();
+        return $this->thesaurusFactory->create();
     }
 
     /**

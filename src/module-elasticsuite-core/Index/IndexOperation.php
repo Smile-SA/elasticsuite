@@ -145,6 +145,8 @@ class IndexOperation implements IndexOperationInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function updateMapping($indexIdentifier, $store, $fields = [])
     {

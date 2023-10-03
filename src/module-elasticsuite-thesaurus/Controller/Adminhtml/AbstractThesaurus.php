@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteThesaurus\Controller\Adminhtml;
 
 use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
 use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
@@ -28,14 +30,14 @@ use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 abstract class AbstractThesaurus extends Action
 {
     /**
-     * @var \Magento\Framework\View\Result\PageFactory|null
+     * @var PageFactory|null
      */
     protected $resultPageFactory = null;
 
     /**
      * Core registry
      *
-     * @var \Magento\Framework\Registry
+     * @var Registry
      */
     protected $coreRegistry;
 
@@ -55,16 +57,16 @@ abstract class AbstractThesaurus extends Action
     /**
      * Abstract constructor.
      *
-     * @param \Magento\Backend\App\Action\Context        $context             Application context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory   Tesult Page factory
-     * @param \Magento\Framework\Registry                $coreRegistry        Application registry
-     * @param ThesaurusRepositoryInterface               $thesaurusRepository Thesaurus Repository
-     * @param ThesaurusFactory                           $thesaurusFactory    Thesaurus Factory
+     * @param Context                           $context             Application context
+     * @param PageFactory                       $resultPageFactory   Result Page factory
+     * @param Registry                          $coreRegistry        Application registry
+     * @param ThesaurusRepositoryInterface      $thesaurusRepository Thesaurus Repository
+     * @param ThesaurusFactory                  $thesaurusFactory    Thesaurus Factory
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
+        Context $context,
         PageFactory $resultPageFactory,
-        \Magento\Framework\Registry $coreRegistry,
+        Registry $coreRegistry,
         ThesaurusRepositoryInterface $thesaurusRepository,
         ThesaurusFactory $thesaurusFactory
     ) {

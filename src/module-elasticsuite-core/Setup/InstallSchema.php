@@ -14,10 +14,9 @@
 
 namespace Smile\ElasticsuiteCore\Setup;
 
-use \Magento\Framework\Setup\InstallSchemaInterface;
-use \Magento\Framework\Setup\ModuleContextInterface;
-use \Magento\Framework\Setup\SchemaSetupInterface;
-use \Smile\ElasticsuiteCore\Setup\CoreSetupFactory;
+use Magento\Framework\Setup\InstallSchemaInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
 
 /**
  * Core Module Installer
@@ -36,7 +35,7 @@ class InstallSchema implements InstallSchemaInterface
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Setup\CoreSetupFactory $coreSetupFactory Core Setup Factory
+     * @param CoreSetupFactory $coreSetupFactory Core Setup Factory
      */
     public function __construct(CoreSetupFactory $coreSetupFactory)
     {

@@ -291,6 +291,8 @@ class Switcher extends Template
                 return $store->getName();
             }
         }
+
+        return '';
     }
 
     /**
@@ -307,6 +309,8 @@ class Switcher extends Template
                 return $this->getContainerName($container);
             }
         }
+
+        return '';
     }
 
     /**
@@ -335,6 +339,8 @@ class Switcher extends Template
                 return $this->getContainerLabel($container);
             }
         }
+
+        return '';
     }
 
     /**

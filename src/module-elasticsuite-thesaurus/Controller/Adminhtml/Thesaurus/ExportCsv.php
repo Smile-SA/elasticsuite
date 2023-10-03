@@ -21,9 +21,9 @@ use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus as ThesaurusImport;
 use Smile\ElasticsuiteThesaurus\Api\ThesaurusRepositoryInterface;
 use Smile\ElasticsuiteThesaurus\Controller\Adminhtml\AbstractThesaurus as ThesaurusController;
+use Smile\ElasticsuiteThesaurus\Model\Import\Thesaurus as ThesaurusImport;
 use Smile\ElasticsuiteThesaurus\Model\ThesaurusFactory;
 
 /**

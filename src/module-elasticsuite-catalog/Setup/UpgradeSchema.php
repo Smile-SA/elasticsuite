@@ -13,9 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalog\Setup;
 
-use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\UpgradeSchemaInterface;
 
 /**
  * Schema upgrade class for Catalog module
@@ -34,7 +34,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteCatalog\Setup\CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
+     * @param CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
      */
     public function __construct(CatalogSetupFactory $catalogSetupFactory)
     {

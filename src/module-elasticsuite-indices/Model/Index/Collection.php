@@ -30,7 +30,7 @@ class Collection extends DataCollection
     /**
      * @var IndexFactory
      */
-    protected $collectionFactory;
+    protected IndexFactory $collectionFactory;
 
     /**
      * @param EntityFactoryInterface $entityFactory     EntityFactory

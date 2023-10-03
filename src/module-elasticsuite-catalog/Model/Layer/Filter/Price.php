@@ -13,7 +13,18 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Magento\Catalog\Model\Layer;
+use Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory;
+use Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory;
+use Magento\Catalog\Model\Layer\Filter\Item\DataBuilder;
+use Magento\Catalog\Model\Layer\Filter\ItemFactory;
+use Magento\Customer\Model\Session;
+use Magento\Framework\Pricing\PriceCurrencyInterface;
+use Magento\Framework\Search\Dynamic\Algorithm;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Layer\Filter\Price as FilterPrice;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -35,17 +46,17 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
     private $dataProvider;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var Session
      */
     private $customerSession;
 
     /**
-     * @var \Magento\Framework\Pricing\PriceCurrencyInterface
+     * @var PriceCurrencyInterface
      */
     private $priceCurrency;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
@@ -59,32 +70,32 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Catalog\Model\Layer\Filter\ItemFactory               $filterItemFactory   Item filter factory.
-     * @param \Magento\Store\Model\StoreManagerInterface                    $storeManager        Store manager.
-     * @param \Magento\Catalog\Model\Layer                                  $layer               Search layer.
-     * @param \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder          $itemDataBuilder     Item data builder.
-     * @param \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price       $resource            Price resource.
-     * @param \Magento\Customer\Model\Session                               $customerSession     Customer session.
-     * @param \Magento\Framework\Search\Dynamic\Algorithm                   $priceAlgorithm      Price algorithm.
-     * @param \Magento\Framework\Pricing\PriceCurrencyInterface             $priceCurrency       Price currency.
-     * @param \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory  $algorithmFactory    Algorithm factory.
-     * @param \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory Data provider.
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory     $queryFactory        Query Factory.
-     * @param RequestFieldMapper                                            $requestFieldMapper  Search request field mapper.
-     * @param array                                                         $data                Custom data.
+     * @param ItemFactory               $filterItemFactory   Item filter factory.
+     * @param StoreManagerInterface     $storeManager        Store manager.
+     * @param Layer                     $layer               Search layer.
+     * @param DataBuilder               $itemDataBuilder     Item data builder.
+     * @param FilterPrice               $resource            Price resource.
+     * @param Session                   $customerSession     Customer session.
+     * @param Algorithm                 $priceAlgorithm      Price algorithm.
+     * @param PriceCurrencyInterface    $priceCurrency       Price currency.
+     * @param AlgorithmFactory          $algorithmFactory    Algorithm factory.
+     * @param PriceFactory              $dataProviderFactory Data provider.
+     * @param QueryFactory              $queryFactory        Query Factory.
+     * @param RequestFieldMapper        $requestFieldMapper  Search request field mapper.
+     * @param array                     $data                Custom data.
      */
     public function __construct(
-        \Magento\Catalog\Model\Layer\Filter\ItemFactory $filterItemFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\Layer $layer,
-        \Magento\Catalog\Model\Layer\Filter\Item\DataBuilder $itemDataBuilder,
-        \Magento\Catalog\Model\ResourceModel\Layer\Filter\Price $resource,
-        \Magento\Customer\Model\Session $customerSession,
-        \Magento\Framework\Search\Dynamic\Algorithm $priceAlgorithm,
-        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Magento\Catalog\Model\Layer\Filter\Dynamic\AlgorithmFactory $algorithmFactory,
-        \Magento\Catalog\Model\Layer\Filter\DataProvider\PriceFactory $dataProviderFactory,
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        ItemFactory $filterItemFactory,
+        StoreManagerInterface $storeManager,
+        Layer $layer,
+        DataBuilder $itemDataBuilder,
+        FilterPrice $resource,
+        Session $customerSession,
+        Algorithm $priceAlgorithm,
+        PriceCurrencyInterface $priceCurrency,
+        AlgorithmFactory $algorithmFactory,
+        PriceFactory $dataProviderFactory,
+        QueryFactory $queryFactory,
         RequestFieldMapper $requestFieldMapper,
         array $data = []
     ) {

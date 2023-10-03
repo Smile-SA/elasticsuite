@@ -34,7 +34,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteThesaurus\Setup\ThesaurusSetupFactory $thesaurusSetupFactory Setup Factory
+     * @param ThesaurusSetupFactory $thesaurusSetupFactory Setup Factory
      */
     public function __construct(ThesaurusSetupFactory $thesaurusSetupFactory)
     {

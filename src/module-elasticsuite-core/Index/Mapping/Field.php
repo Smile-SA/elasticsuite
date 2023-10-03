@@ -272,7 +272,7 @@ class Field implements FieldInterface
     {
         $config = array_merge($this->config, $config);
 
-        return new static($this->name, $config['type'] ?? $this->type, $this->nestedPath, $config);
+        return new self($this->name, $config['type'] ?? $this->type, $this->nestedPath, $config);
     }
 
     /**

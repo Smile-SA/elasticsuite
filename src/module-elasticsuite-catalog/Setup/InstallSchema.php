@@ -30,14 +30,14 @@ use \Magento\Framework\Setup\SchemaSetupInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCatalog\Setup\CatalogSetup
+     * @var CatalogSetup
      */
     private $catalogSetup;
 
     /**
      * InstallSchema constructor.
      *
-     * @param \Smile\ElasticsuiteCatalog\Setup\CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
+     * @param CatalogSetupFactory $catalogSetupFactory ElasticsuiteCatalog Setup.
      */
     public function __construct(CatalogSetupFactory $catalogSetupFactory)
     {
