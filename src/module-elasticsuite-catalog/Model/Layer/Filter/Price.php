@@ -70,19 +70,19 @@ class Price extends \Magento\CatalogSearch\Model\Layer\Filter\Price
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param ItemFactory               $filterItemFactory   Item filter factory.
-     * @param StoreManagerInterface     $storeManager        Store manager.
-     * @param Layer                     $layer               Search layer.
-     * @param DataBuilder               $itemDataBuilder     Item data builder.
-     * @param FilterPrice               $resource            Price resource.
-     * @param Session                   $customerSession     Customer session.
-     * @param Algorithm                 $priceAlgorithm      Price algorithm.
-     * @param PriceCurrencyInterface    $priceCurrency       Price currency.
-     * @param AlgorithmFactory          $algorithmFactory    Algorithm factory.
-     * @param PriceFactory              $dataProviderFactory Data provider.
-     * @param QueryFactory              $queryFactory        Query Factory.
-     * @param RequestFieldMapper        $requestFieldMapper  Search request field mapper.
-     * @param array                     $data                Custom data.
+     * @param ItemFactory            $filterItemFactory   Item filter factory.
+     * @param StoreManagerInterface  $storeManager        Store manager.
+     * @param Layer                  $layer               Search layer.
+     * @param DataBuilder            $itemDataBuilder     Item data builder.
+     * @param FilterPrice            $resource            Price resource.
+     * @param Session                $customerSession     Customer session.
+     * @param Algorithm              $priceAlgorithm      Price algorithm.
+     * @param PriceCurrencyInterface $priceCurrency       Price currency.
+     * @param AlgorithmFactory       $algorithmFactory    Algorithm factory.
+     * @param PriceFactory           $dataProviderFactory Data provider.
+     * @param QueryFactory           $queryFactory        Query Factory.
+     * @param RequestFieldMapper     $requestFieldMapper  Search request field mapper.
+     * @param array                  $data                Custom data.
      */
     public function __construct(
         ItemFactory $filterItemFactory,

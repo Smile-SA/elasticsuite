@@ -55,16 +55,16 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param ItemFactory                           $filterItemFactory    Filter item factory
-     * @param StoreManagerInterface                 $storeManager         The Store Manager
-     * @param Layer                                 $layer                The Layer
-     * @param DataBuilder                           $itemDataBuilder      The data builder
-     * @param DecimalFactory                        $filterDecimalFactory Factory for decimal items
-     * @param PriceCurrencyInterface                $priceCurrency        Price Currency
-     * @param DataProvider\DecimalFactory           $dataProviderFactory  Decimal DataProvider Factory
-     * @param ResolverInterface                     $localeResolver       Locale Resolver
-     * @param RequestFieldMapper                    $requestFieldMapper   Search request field mapper
-     * @param array                                 $data                 Filter Data
+     * @param ItemFactory                 $filterItemFactory    Filter item factory
+     * @param StoreManagerInterface       $storeManager         The Store Manager
+     * @param Layer                       $layer                The Layer
+     * @param DataBuilder                 $itemDataBuilder      The data builder
+     * @param DecimalFactory              $filterDecimalFactory Factory for decimal items
+     * @param PriceCurrencyInterface      $priceCurrency        Price Currency
+     * @param DataProvider\DecimalFactory $dataProviderFactory  Decimal DataProvider Factory
+     * @param ResolverInterface           $localeResolver       Locale Resolver
+     * @param RequestFieldMapper          $requestFieldMapper   Search request field mapper
+     * @param array                       $data                 Filter Data
      */
     public function __construct(
         ItemFactory                 $filterItemFactory,

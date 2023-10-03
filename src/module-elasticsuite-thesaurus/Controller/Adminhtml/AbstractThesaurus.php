@@ -57,11 +57,11 @@ abstract class AbstractThesaurus extends Action
     /**
      * Abstract constructor.
      *
-     * @param Context                           $context             Application context
-     * @param PageFactory                       $resultPageFactory   Result Page factory
-     * @param Registry                          $coreRegistry        Application registry
-     * @param ThesaurusRepositoryInterface      $thesaurusRepository Thesaurus Repository
-     * @param ThesaurusFactory                  $thesaurusFactory    Thesaurus Factory
+     * @param Context                      $context             Application context
+     * @param PageFactory                  $resultPageFactory   Result Page factory
+     * @param Registry                     $coreRegistry        Application registry
+     * @param ThesaurusRepositoryInterface $thesaurusRepository Thesaurus Repository
+     * @param ThesaurusFactory             $thesaurusFactory    Thesaurus Factory
      */
     public function __construct(
         Context $context,

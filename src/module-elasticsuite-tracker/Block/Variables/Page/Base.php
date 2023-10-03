@@ -50,14 +50,14 @@ class Base extends AbstractBlock
     /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context      $context          The template context
-     * @param Data                  $jsonHelper       The Magento's JSON Helper
-     * @param TrackerHelper         $trackerHelper    The Smile Tracker helper
-     * @param Registry              $registry         Magento Core Registry
-     * @param Config                $pageTypeConfig   The page type configuration
-     * @param ResolverInterface     $localeResolver   Locale Resolver
-     * @param RequestInterface      $requestInterface RequestInterface
-     * @param array                 $data             The block data
+     * @param Template\Context  $context          The template context
+     * @param Data              $jsonHelper       The Magento's JSON Helper
+     * @param TrackerHelper     $trackerHelper    The Smile Tracker helper
+     * @param Registry          $registry         Magento Core Registry
+     * @param Config            $pageTypeConfig   The page type configuration
+     * @param ResolverInterface $localeResolver   Locale Resolver
+     * @param RequestInterface  $requestInterface RequestInterface
+     * @param array             $data             The block data
      */
     public function __construct(
         Template\Context $context,

@@ -30,11 +30,11 @@ class AbstractBlock extends \Smile\ElasticsuiteTracker\Block\Variables\AbstractB
     /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context  $context       The template context
-     * @param Data              $jsonHelper    The Magento's JSON Helper
-     * @param TrackerHelper     $trackerHelper The Smile Tracker helper
-     * @param Registry          $registry      Magento Core Registry
-     * @param array             $data          The block data
+     * @param Template\Context $context       The template context
+     * @param Data             $jsonHelper    The Magento's JSON Helper
+     * @param TrackerHelper    $trackerHelper The Smile Tracker helper
+     * @param Registry         $registry      Magento Core Registry
+     * @param array            $data          The block data
      */
     public function __construct(
         Template\Context $context,
