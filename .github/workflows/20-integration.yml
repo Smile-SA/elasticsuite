@@ -366,6 +366,11 @@ jobs:
                   exit 2;
                 fi;
 
+            - name: "[Test] Rest : Schema"
+              run: |
+                echo "==> Testing Rest Schema..."
+                curl -i -X GET http://localhost/rest/all/schema?services=all
+
             - name: "[Test] GraphQl : Schema"
               run: |
                 echo "==> Testing GraphQL Schema..."
