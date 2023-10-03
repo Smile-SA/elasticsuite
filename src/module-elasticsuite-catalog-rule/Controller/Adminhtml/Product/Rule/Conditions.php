@@ -82,7 +82,8 @@ class Conditions extends Action
             $model->setData('url_params', $this->getRequest()->getParams());
             $result = $model->asHtmlRecursive();
         }
-        $this->getResponse()->setBody($result);
+
+        return $this->getResponse()->setBody($result);
     }
 
     /**
