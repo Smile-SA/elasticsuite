@@ -71,7 +71,7 @@ class Settings extends AbstractAction implements HttpGetActionInterface
     {
         $indexName = $this->getRequest()->getParam('name');
         try {
-            $index = $this->indexSettingsProvider->getSettings($indexName);
+            $this->indexSettingsProvider->getSettings($indexName);
         } catch (\Exception $e) {
             $resultForward = $this->resultForwardFactory->create();
             $resultForward->forward('noroute');
