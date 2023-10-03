@@ -71,7 +71,7 @@ class Mapping extends AbstractAction implements HttpGetActionInterface
     {
         $indexName = $this->getRequest()->getParam('name');
         try {
-            $index = $this->indexMappingProvider->getMapping($indexName);
+            $this->indexMappingProvider->getMapping($indexName);
         } catch (\Exception $e) {
             $resultForward = $this->resultForwardFactory->create();
             $resultForward->forward('noroute');
