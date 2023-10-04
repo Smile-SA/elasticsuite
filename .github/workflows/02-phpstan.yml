@@ -107,11 +107,6 @@ jobs:
             composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
             composer-${{ matrix.php-versions }}-
 
-      - name: "[Init] Add phpstan/phpstan"
-        if: steps.composer-cache.outputs.cache-hit == 'true'
-        working-directory: ${{ env.magento-directory }}
-        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
-
       - name: "[Init] Cache Magento install"
         id: magento-cache
         uses: actions/cache@v2
@@ -120,6 +115,11 @@ jobs:
           key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
           restore-keys: |
             magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+      - name: "[Init] Add phpstan/phpstan"
+        if: steps.composer-cache.outputs.cache-hit == 'true'
+        working-directory: ${{ env.magento-directory }}
+        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Prepare credentials"
         if: ${{env.MAGENTO_USERNAME}} != 0
