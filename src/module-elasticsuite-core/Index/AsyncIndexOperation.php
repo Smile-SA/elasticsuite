@@ -63,6 +63,8 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function executeBulk(\Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface $bulk)
     {

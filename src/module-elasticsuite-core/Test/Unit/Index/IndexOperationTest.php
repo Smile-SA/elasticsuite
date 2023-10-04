@@ -232,7 +232,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     /**
      * Client factory mocking.
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return void
      */
     private function initClientMock()
     {

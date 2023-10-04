@@ -87,7 +87,7 @@ class ChooserPlugin
             $this->getIds($controller)
         );
 
-        $controller->getResponse()->setBody($block->toHtml());
+        return $controller->getResponse()->setBody($block->toHtml());
     }
 
     /**

@@ -105,6 +105,8 @@ class BaseConfig extends \Magento\Framework\Config\Data
                 $this->_data[$requestName]['filters'] = $filters;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -125,6 +127,8 @@ class BaseConfig extends \Magento\Framework\Config\Data
                 $this->_data[$requestName]['aggregationsProviders'] = $providers;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -145,6 +149,8 @@ class BaseConfig extends \Magento\Framework\Config\Data
                 $this->_data[$requestName]['aggregations'] = $aggregations;
             }
         }
+
+        return $this;
     }
 
     /**

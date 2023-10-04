@@ -96,6 +96,7 @@ class Load extends Term
         }
 
         $json = $this->jsonHelper->jsonEncode($responseData);
-        $this->getResponse()->representJson($json);
+
+        return $this->getResponse()->representJson($json);
     }
 }

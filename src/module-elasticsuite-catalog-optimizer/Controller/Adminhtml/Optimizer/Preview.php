@@ -114,7 +114,7 @@ class Preview extends Action
         $responseData = $this->getPreviewObject()->getData();
         $json         = $this->jsonHelper->jsonEncode($responseData);
 
-        $this->getResponse()->representJson($json);
+        return $this->getResponse()->representJson($json);
     }
 
     /**

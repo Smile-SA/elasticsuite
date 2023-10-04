@@ -49,6 +49,8 @@ class Hit extends \Magento\Framework\App\Action\Action
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function execute()
     {

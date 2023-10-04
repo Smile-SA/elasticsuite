@@ -541,7 +541,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
-        return parent::_renderFiltersBefore();
+        parent::_renderFiltersBefore();
     }
 
     /**
