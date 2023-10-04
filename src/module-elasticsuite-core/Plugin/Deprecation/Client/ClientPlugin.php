@@ -71,7 +71,7 @@ class ClientPlugin
      * @param string          $indexName Index Name
      * @param array           $mapping   Mapping as array
      *
-     * @return mixed
+     * @return void
      */
     public function aroundPutMapping(
         ClientInterface $client,

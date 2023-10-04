@@ -272,6 +272,7 @@ class Field implements FieldInterface
     {
         $config = array_merge($this->config, $config);
 
+        // @phpstan-ignore-next-line
         return new static($this->name, $config['type'] ?? $this->type, $this->nestedPath, $config);
     }
 

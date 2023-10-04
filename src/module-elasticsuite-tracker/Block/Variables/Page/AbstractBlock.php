@@ -13,7 +13,10 @@
  */
 namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
+use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
+use Smile\ElasticsuiteTracker\Helper\Data as TrackerHelper;
 
 /**
  * Abstract block for page tracking, inherited by all other page tracking blocks
@@ -27,21 +30,21 @@ class AbstractBlock extends \Smile\ElasticsuiteTracker\Block\Variables\AbstractB
     /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                       $context       The template context
-     * @param \Magento\Framework\Json\Helper\Data    $jsonHelper    The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper The Smile Tracker helper
-     * @param \Magento\Framework\Registry            $registry      Magento Core Registry
-     * @param array                                  $data          The block data
+     * @param Template\Context $context       The template context
+     * @param Data             $jsonHelper    The Magento's JSON Helper
+     * @param TrackerHelper    $trackerHelper The Smile Tracker helper
+     * @param Registry         $registry      Magento Core Registry
+     * @param array            $data          The block data
      */
     public function __construct(
         Template\Context $context,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
-        \Magento\Framework\Registry $registry,
+        Data $jsonHelper,
+        TrackerHelper $trackerHelper,
+        Registry $registry,
         array $data = []
     ) {
         $data['template'] = 'Smile_ElasticsuiteTracker::/variables/page.phtml';
 
-        return parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
+        parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 }

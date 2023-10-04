@@ -72,7 +72,7 @@ interface IndexOperationInterface
      * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           Store (id, identifier or object).
      * @param array                                                 $fields          The fields to update. Default to all.
      *
-     * @return \Smile\ElasticsuiteCore\Api\Index\IndexInterface
+     * @return void
      */
     public function updateMapping($indexIdentifier, $store, $fields = []);
 

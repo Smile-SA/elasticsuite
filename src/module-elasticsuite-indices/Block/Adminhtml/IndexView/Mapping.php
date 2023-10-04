@@ -15,7 +15,7 @@ namespace Smile\ElasticsuiteIndices\Block\Adminhtml\IndexView;
 
 use Magento\Backend\Block\Template;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping\Collection;
-use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping\CollectionFactory as IndexMappingFactory;
+use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping\CollectionFactory;
 
 /**
  * Adminhtml Index mapping items grid
@@ -27,23 +27,23 @@ use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexMapping\CollectionFactory
 class Mapping extends Template
 {
     /**
-     * @var IndexMappingFactory
+     * @var CollectionFactory
      */
-    protected $indexMappingFactory;
+    protected $collectionFactory;
 
     /**
      * Index mapping items constructor.
      *
-     * @param Template\Context    $context             The current context.
-     * @param IndexMappingFactory $indexMappingFactory Index mapping factory.
-     * @param array               $data                Data.
+     * @param Template\Context  $context           The current context.
+     * @param CollectionFactory $collectionFactory Index mapping factory.
+     * @param array             $data              Data.
      */
     public function __construct(
         Template\Context $context,
-        IndexMappingFactory $indexMappingFactory,
+        CollectionFactory $collectionFactory,
         array $data = []
     ) {
-        $this->indexMappingFactory = $indexMappingFactory;
+        $this->collectionFactory = $collectionFactory;
         parent::__construct($context, $data);
     }
 
@@ -54,6 +54,6 @@ class Mapping extends Template
      */
     public function getItemsCollection(): Collection
     {
-        return $this->indexMappingFactory->create(['name' => $this->getRequest()->getParam('name')])->load();
+        return $this->collectionFactory->create(['name' => $this->getRequest()->getParam('name')])->load();
     }
 }
