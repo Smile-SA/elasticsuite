@@ -283,4 +283,25 @@
             </char_filters>
         </analyzer>
     </analyzers>
+
+    <normalizers>
+        <normalizer name="untouched" type="custom" language="default">
+            <char_filters></char_filters>
+        </normalizer>
+
+        <!--
+            If you want to have case insensitive layered navigation filters options matching,
+            you can override the "untouched" normalizer above (which does nothing) by this one.
+            Please note, though, that those filter options will now be displayed in lowercase
+            in the layered navigation filters.
+        <normalizer name="untouched" type="custom" language="default">
+            <char_filters></char_filters>
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="lowercase" />
+            </filters>
+        </normalizer>
+        -->
+    </normalizers>
 </analysis>
