@@ -11,7 +11,7 @@
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-namespace Smile\ElasticsuiteCore\Test\Unit\Model;
+namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Optimizer;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
