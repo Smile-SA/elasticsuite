@@ -111,14 +111,14 @@ jobs:
           restore-keys: |
             magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
+      - name: "[Init] Prepare credentials"
+        if: ${{env.MAGENTO_USERNAME}} != 0
+        run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
+
       - name: "[Init] Add phpstan/phpstan"
         if: steps.composer-cache.outputs.cache-hit == 'true'
         working-directory: ${{ env.magento-directory }}
         run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
-
-      - name: "[Init] Prepare credentials"
-        if: ${{env.MAGENTO_USERNAME}} != 0
-        run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
 
       - name: "[Init] Prepare Magento install if needed"
         if: steps.magento-cache.outputs.cache-hit == 'true'
