@@ -100,8 +100,7 @@ jobs:
         if: ${{env.MAGENTO_USERNAME}} != 0
         run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
 
-      - name: "[Init] Add phpstan/phpstan"
-        if: steps.composer-cache.outputs.cache-hit == 'true'
+      - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
         run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
@@ -151,11 +150,11 @@ jobs:
           sudo chown -R $USER:www-data .
           sudo chmod u+x bin/magento
 
-      - name: "[Test] Enabling modules"
+      - name: "[Init] Enabling modules"
         working-directory: ${{ env.magento-directory }}
         run: php bin/magento module:enable --all
 
-      - name: "[Test] Compile"
+      - name: "[Init] Compile"
         working-directory: ${{ env.magento-directory }}
         run: php bin/magento setup:di:compile
 
