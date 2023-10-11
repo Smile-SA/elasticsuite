@@ -417,6 +417,7 @@ class Field implements FieldInterface
                 if ($analyzer === self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['type'] = self::FIELD_TYPE_KEYWORD;
                     $fieldMapping['ignore_above'] = self::IGNORE_ABOVE_COUNT;
+                    $fieldMapping['normalizer'] = self::ANALYZER_UNTOUCHED;
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
