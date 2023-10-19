@@ -173,4 +173,36 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
             throw $exception;
         }
     }
+
+    /**
+     * Enable a thesaurus
+     *
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
+     *
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function enable(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    {
+        $thesaurus->setIsActive(true);
+        $thesaurus->save();
+
+        return $thesaurus;
+    }
+
+    /**
+     * Disable a thesaurus
+     *
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
+     *
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function disable(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    {
+        $thesaurus->setIsActive(false);
+        $thesaurus->save();
+
+        return $thesaurus;
+    }
 }
