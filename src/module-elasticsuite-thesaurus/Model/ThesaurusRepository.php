@@ -153,28 +153,6 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
     }
 
     /**
-     * Validate thesaurus values
-     *
-     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus the thesaurus to validate
-     *
-     * @return void
-     * @throws \Magento\Framework\Exception\InputException
-     */
-    protected function validate(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
-    {
-        $exception = new \Magento\Framework\Exception\InputException();
-
-        $validator = new \Zend_Validate();
-        if (!$validator->is(trim($thesaurus->getName()), 'NotEmpty')) {
-            $exception->addError(__(InputException::REQUIRED_FIELD, ['fieldName' => 'name']));
-        }
-
-        if ($exception->wasErrorAdded()) {
-            throw $exception;
-        }
-    }
-
-    /**
      * Enable a thesaurus
      *
      * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus data
@@ -204,5 +182,27 @@ class ThesaurusRepository implements ThesaurusRepositoryInterface
         $thesaurus->save();
 
         return $thesaurus;
+    }
+
+    /**
+     * Validate thesaurus values
+     *
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus the thesaurus to validate
+     *
+     * @return void
+     * @throws \Magento\Framework\Exception\InputException
+     */
+    protected function validate(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus)
+    {
+        $exception = new \Magento\Framework\Exception\InputException();
+
+        $validator = new \Zend_Validate();
+        if (!$validator->is(trim($thesaurus->getName()), 'NotEmpty')) {
+            $exception->addError(__(InputException::REQUIRED_FIELD, ['fieldName' => 'name']));
+        }
+
+        if ($exception->wasErrorAdded()) {
+            throw $exception;
+        }
     }
 }

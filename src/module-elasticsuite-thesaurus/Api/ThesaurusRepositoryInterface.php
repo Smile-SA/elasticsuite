@@ -57,7 +57,7 @@ interface ThesaurusRepositoryInterface
      * Enable a Thesaurus
      *
      * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus
-     * 
+     *
      * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
