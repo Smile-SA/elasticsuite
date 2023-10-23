@@ -43,6 +43,7 @@ class BuilderTest extends TestCase
     /**
      * Tests the correct creation of a SpellcheckerInterface with regards to parameters
      * (introduction/removal of experimental relevance settings)
+     * @covers \Smile\ElasticsuiteCore\Search\Request\Builder::getSpellingType
      *
      * @return void
      */
