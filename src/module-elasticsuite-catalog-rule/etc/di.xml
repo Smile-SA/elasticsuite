@@ -31,7 +31,6 @@
                 <item name="is_grouped" xsi:type="object">isGroupedProduct</item>
                 <item name="is_simple" xsi:type="object">isSimpleProduct</item>
                 <item name="stock.qty" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\StockQty</item>
-                <item name="search" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\Search</item>
             </argument>
         </arguments>
     </type>
