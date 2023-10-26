@@ -34,7 +34,7 @@ interface ThesaurusRepositoryInterface
     public function getById($thesaurusId);
 
     /**
-     * save a Thesaurus
+     * Save a Thesaurus
      *
      * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus
      *
@@ -44,7 +44,7 @@ interface ThesaurusRepositoryInterface
     public function save(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus);
 
     /**
-     * delete a Thesaurus
+     * Delete a Thesaurus
      *
      * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus
      *
@@ -52,4 +52,24 @@ interface ThesaurusRepositoryInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function delete(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus);
+
+    /**
+     * Enable a Thesaurus
+     *
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus
+     *
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function enable(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus);
+
+    /**
+     * Disable a Thesaurus
+     *
+     * @param \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus Thesaurus
+     *
+     * @return \Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function disable(\Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface $thesaurus);
 }
