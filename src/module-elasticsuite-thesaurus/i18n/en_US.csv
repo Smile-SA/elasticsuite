@@ -48,3 +48,18 @@ Status,Status
 Inactive,Inactive
 Action,Action
 Edit,Edit
+Any,Any
+Mass Actions,Mass Actions
+Enable,Enable
+Disable,Disable
+Select All,Select All
+Unselect All,Unselect All
+Select Visible,Select Visible
+Unselect Visible,Unselect Visible
+"Are you sure you want to enable the selected thesaurus?","Are you sure you want to enable the selected thesaurus?"
+"Are you sure you want to disable the selected thesaurus?","Are you sure you want to disable the selected thesaurus?"
+"Are you sure you want to delete the selected thesaurus?","Are you sure you want to delete the selected thesaurus?"
+"Please select thesaurus to disable.","Please select thesaurus to disable."
+"Total of %1 thesaurus were disabled.","Total of %1 thesaurus were disabled."
+"Please select thesaurus to enable.","Please select thesaurus to enable."
+"Total of %1 thesaurus were enabled.","Total of %1 thesaurus were enabled."
