@@ -128,3 +128,5 @@ Attributes,Attributs
 "Layered Navigation Configuration","Configuration de la navigation à facettes"
 "Advanced Elasticsuite Configuration","Configuration avancée d'Elasticsuite"
 "Analysis Page","page d'analyse textuelle"
+"Ignore manual positions of out of stock products","Ignorer les positions manuelles des produits épuisés"
+"If you show out of stock products in the frontend (through the ""Catalog / Inventory / Stock Options / Display Out of Stock Products"" stores configuration setting), switch this setting to Yes to make sure that a manually positionned product (in categories or in search queries) is no longer shown in the configured manual positions when it becomes out of stock.","Si vous affichez les produits épuisés en front (grâce à l'option de configuration magasin ""Catalogue / Inventory / Stock Options / Display Out of Stock Products""), basculez ce paramètre à Oui pour vous assurer qu'un produit positionné manuellement (dans des catégories ou des requêtes de recherche) ne sera plus montré à ces positions manuelles lorsqu'il devient épuisé."
