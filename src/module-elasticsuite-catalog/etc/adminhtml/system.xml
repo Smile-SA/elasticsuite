@@ -85,10 +85,15 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, attributes of associated child products will be included with their parents when indexing. This will impact what filters are shown in category pages. For example, if a child of a bundle product has a particular colour then its parent will have this colour associated with it. <br><strong>Note when changing this setting</strong>, it is recommended to perform a full reindex of the <q>Catalog Search</q> indexer.]]></comment>
                 </field>
-                <field id="compute_child_product_discount" translate="label" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                <field id="compute_child_product_discount" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable indexing discount on child products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Enable this if your catalog contains configurable products that are having childrens with different prices that could have separated discounts.]]></comment>
+                </field>
+                <field id="ignore_oos_product_positions" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Ignore manual positions of out of stock products</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If you show out of stock products in the frontend (through the "Catalog / Inventory / Stock Options / Display Out of Stock Products" stores configuration setting), switch this setting to Yes to make sure that a manually positionned product (in categories or in search queries) is no longer shown in the configured manual positions when it becomes out of stock.]]></comment>
                 </field>
             </group>
         </section>

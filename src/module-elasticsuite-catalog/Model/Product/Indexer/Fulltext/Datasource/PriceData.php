@@ -17,9 +17,9 @@ namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\ScopeInterface;
-use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
-use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\AttributeData as AttributeResourceModel;
+use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\PriceData as ResourceModel;
+use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 
 /**
  * Datasource used to append prices data to product during indexing.
@@ -67,7 +67,7 @@ class PriceData implements DatasourceInterface
      * @param ResourceModel                        $resourceModel          Resource model
      * @param AttributeResourceModel               $attributeResourceModel Attribute Resource model
      * @param PriceData\PriceDataReaderInterface[] $priceReaderPool        Price modifiers pool.
-     * @param ScopeConfigInterface                 $scopeConfig            Scope Config.
+     * @param ScopeConfigInterface|null            $scopeConfig            Scope Config.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -107,16 +107,19 @@ class PriceData implements DatasourceInterface
 
             $isDiscount    = $price < $originalPrice;
 
-            if ($this->isComputeChildDiscountEnabled()) {
-                if (in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())) {
-                    $isDiscount    = false;
-                    $priceModifier = $this->getPriceDataReader('default');
-                    foreach ($childPriceData as $childPrice) {
-                        if ($childPrice['customer_group_id'] == $priceDataRow['customer_group_id']) {
-                            if ($priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)) {
-                                $isDiscount = true;
-                                break;
-                            }
+            if ($this->isComputeChildDiscountEnabled() &&
+                in_array($productTypeId, $this->attributeResourceModel->getCompositeTypes())
+            ) {
+                $isDiscount = false;
+                $priceModifier = $this->getPriceDataReader('default');
+                foreach ($childPriceData as $childPrice) {
+                    foreach ($allChildrenIds[$childPrice['entity_id']] as $childIdsData) {
+                        if ($childIdsData['parent_id'] === $productId
+                            && $childPrice['customer_group_id'] == $priceDataRow['customer_group_id']
+                            && $priceModifier->getPrice($childPrice) < $priceModifier->getOriginalPrice($childPrice)
+                        ) {
+                            $isDiscount = true;
+                            break 2;
                         }
                     }
                 }

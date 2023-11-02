@@ -48,6 +48,8 @@ interface FieldInterface
     const ANALYZER_PHONETIC   = 'phonetic';
     const ANALYZER_UNTOUCHED  = 'untouched';
     const ANALYZER_KEYWORD    = 'keyword';
+    const ANALYZER_REFERENCE  = 'reference';
+    const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
      * Field filter logical operators.
@@ -76,6 +78,16 @@ interface FieldInterface
      * @return boolean
      */
     public function isSearchable();
+
+    /**
+     * Is the field searchable and contains reference (sku) data.
+     */
+    public function isSearchableReference();
+
+    /**
+     * Is the field searchable and using an edge ngram based analyzer.
+     */
+    public function isSearchableEdgeNgram();
 
     /**
      * Is the field filterable in navigation.
@@ -177,4 +189,18 @@ interface FieldInterface
      * @return array
      */
     public function getConfig();
+
+    /**
+     * If "norms" of the field in mapping should be set to false.
+     *
+     * @return bool
+     */
+    public function normsDisabled();
+
+    /**
+     * Is the field should be used for span queries.
+     *
+     * @return boolean
+     */
+    public function isSpannable();
 }

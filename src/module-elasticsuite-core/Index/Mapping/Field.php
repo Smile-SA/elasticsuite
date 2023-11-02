@@ -70,6 +70,7 @@ class Field implements FieldInterface
         'default_search_analyzer' => self::ANALYZER_STANDARD,
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
         'norms_disabled'          => false,
+        'is_spannable'            => false,
     ];
 
     /**
@@ -120,6 +121,22 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
+    public function isSearchableReference(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_REFERENCE === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSearchableEdgeNgram(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_EDGE_NGRAM === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return (bool) $this->config['is_filterable'];
@@ -147,6 +164,14 @@ class Field implements FieldInterface
     public function normsDisabled(): bool
     {
         return (bool) $this->config['norms_disabled'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSpannable(): bool
+    {
+        return (bool) $this->config['is_spannable'];
     }
 
     /**
@@ -247,6 +272,7 @@ class Field implements FieldInterface
     {
         $config = array_merge($this->config, $config);
 
+        // @phpstan-ignore-next-line
         return new static($this->name, $config['type'] ?? $this->type, $this->nestedPath, $config);
     }
 
@@ -391,9 +417,13 @@ class Field implements FieldInterface
                 if ($analyzer === self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['type'] = self::FIELD_TYPE_KEYWORD;
                     $fieldMapping['ignore_above'] = self::IGNORE_ABOVE_COUNT;
+                    $fieldMapping['normalizer'] = self::ANALYZER_UNTOUCHED;
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+                    if ($analyzer === self::ANALYZER_EDGE_NGRAM) {
+                        $fieldMapping['search_analyzer'] = self::ANALYZER_STANDARD;
+                    }
 
                     if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;

@@ -45,6 +45,11 @@ class Preview
     private $optimizer;
 
     /**
+     * @var ApplierListFactory
+     */
+    private $applierListFactory;
+
+    /**
      * @var ContainerConfigurationInterface
      */
     private $containerConfiguration;

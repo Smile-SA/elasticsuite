@@ -20,6 +20,7 @@ use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
  * Generic Setup for ElasticsuiteCatalog module.
@@ -200,6 +201,32 @@ class CatalogSetup
             $connection->update(
                 $table,
                 ['is_used_in_spellcheck' => true],
+                $connection->quoteInto('attribute_id = ?', $attributeId)
+            );
+        }
+    }
+
+    /**
+     * Update default values for the sku field of product entity.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function updateDefaultValuesForSkuAttribute($eavSetup)
+    {
+        $setup      = $eavSetup->getSetup();
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        $attributeIds = [
+            $eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'sku'),
+        ];
+
+        foreach ($attributeIds as $attributeId) {
+            $connection->update(
+                $table,
+                ['default_analyzer' => FieldInterface::ANALYZER_REFERENCE],
                 $connection->quoteInto('attribute_id = ?', $attributeId)
             );
         }
@@ -706,6 +733,84 @@ class CatalogSetup
                 'default'  => 0,
                 'size'     => 1,
                 'comment'  => 'Should the search engine index zero (integer or decimal attribute) or false (boolean attribute) values',
+            ]
+        );
+    }
+
+    /**
+     * Add "is_spannable" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addIsSpannableAttributeProperty(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'is_spannable' into the db.
+        $connection->addColumn(
+            $table,
+            'is_spannable',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'Should this field be used for span queries.',
+            ]
+        );
+    }
+
+    /**
+     * Add "norms_disabled" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addNormsDisabledAttributeProperty(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'norms_disabled' into the db.
+        $connection->addColumn(
+            $table,
+            'norms_disabled',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                'nullable' => false,
+                'default'  => 0,
+                'size'     => 1,
+                'comment'  => 'If this field should have norms:false in Elasticsearch.',
+            ]
+        );
+    }
+
+    /**
+     * Add "default_analyzer" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addDefaultAnalyzer(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'default_analyzer' into the db.
+        $connection->addColumn(
+            $table,
+            'default_analyzer',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'default'  => (string) FieldInterface::ANALYZER_STANDARD,
+                'length'   => 30,
+                'comment'  => 'Default analyzer for this field',
             ]
         );
     }

@@ -8,7 +8,7 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
-        types: [labeled]
+        types: [labeled,synchronize]
 
 jobs:
     build:
@@ -365,6 +365,11 @@ jobs:
                 then
                   exit 2;
                 fi;
+
+            - name: "[Test] Rest : Schema"
+              run: |
+                echo "==> Testing Rest Schema..."
+                curl -i -X GET http://localhost/rest/all/schema?services=all
 
             - name: "[Test] GraphQl : Schema"
               run: |

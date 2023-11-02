@@ -95,9 +95,12 @@ class Mapper
 
         $searchRequest['track_total_hits'] = $request->getTrackTotalHits();
 
+        if ((int) $request->getMinScore() > 0) {
+            $searchRequest['min_score'] = $request->getMinScore();
+        }
+
         return $searchRequest;
     }
-
 
     /**
      * Extract and build the root query of the search request.

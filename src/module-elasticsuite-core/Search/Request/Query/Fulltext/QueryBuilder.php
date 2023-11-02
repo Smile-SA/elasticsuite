@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query\Fulltext;
 
+use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container;
+use Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
@@ -89,6 +91,19 @@ class QueryBuilder
                 'boost'  => $boost,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
+
+            $relevanceConfig = $containerConfig->getRelevanceConfig();
+            if ($relevanceConfig->getSpanMatchBoost()) {
+                $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
+                if ($spanQuery !== null) {
+                    $queryParams = [
+                        'must'      => [$query],
+                        'should'    => [$spanQuery],
+                        'minimumShouldMatch' => 0,
+                    ];
+                    $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                }
+            }
         }
 
         return $query;
@@ -105,9 +120,28 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+
+        if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
+            $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
+
+            $fields = $fields + $this->getWeightedFields(
+                $containerConfig,
+                null,
+                $nonStandardSearchableFieldFilter,
+                MappingInterface::DEFAULT_SEARCH_FIELD
+            );
+        }
+
+        if ($containerConfig->getRelevanceConfig()->isUsingReferenceInExactMatchFilter()) {
+            $fields += array_fill_keys(
+                [MappingInterface::DEFAULT_SEARCH_FIELD, MappingInterface::DEFAULT_REFERENCE_FIELD . ".reference"],
+                1
+            );
+        }
 
         $queryParams = [
-            'fields'             => array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1),
+            'fields'             => array_fill_keys(array_keys($fields), 1),
             'queryText'          => $queryText,
             'cutoffFrequency'    => $relevanceConfig->getCutOffFrequency(),
             'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
@@ -132,15 +166,19 @@ class QueryBuilder
         $searchableFieldFilter = $this->fieldFilters['searchableFieldFilter'];
         $sortableAnalyzer      = FieldInterface::ANALYZER_SORTABLE;
         $phraseAnalyzer        = FieldInterface::ANALYZER_WHITESPACE;
+        $sortableMatchBoost    = 2 * $phraseMatchBoost;
 
         if (is_string($queryText) && str_word_count($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
+        } elseif ($relevanceConfig->areExactMatchSingleTermBoostsCustomized()) {
+            $phraseMatchBoost = $relevanceConfig->getExactMatchSingleTermPhraseMatchBoost();
+            $sortableMatchBoost = $relevanceConfig->getExactMatchSingleTermSortableBoost();
         }
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, null, $searchableFieldFilter, $defaultSearchField),
             $this->getWeightedFields($containerConfig, $phraseAnalyzer, $searchableFieldFilter, $defaultSearchField, $phraseMatchBoost),
-            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, 2 * $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, $sortableAnalyzer, $searchableFieldFilter, null, $sortableMatchBoost)
         );
 
         $queryParams = [
@@ -189,7 +227,7 @@ class QueryBuilder
     }
 
     /**
-     * Spellcheked query building.
+     * Spellchecked query building.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
@@ -248,10 +286,15 @@ class QueryBuilder
         }
 
         $fuzzyFieldFilter = $this->fieldFilters['fuzzyFieldFilter'];
+        $nonStandardFuzzyFieldFilter = $this->fieldFilters['nonStandardFuzzyFieldFilter'];
 
         $searchFields = array_merge(
             $this->getWeightedFields($containerConfig, $standardAnalyzer, $fuzzyFieldFilter, $defaultSearchField),
-            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost)
+            $this->getWeightedFields($containerConfig, $phraseAnalyzer, $fuzzyFieldFilter, $defaultSearchField, $phraseMatchBoost),
+            // Allow fuzzy query to contain fields using for fuzzy search with their default analyzer.
+            // Same logic as defined in getWeightedSearchQuery().
+            // This will automatically include sku.reference and any other fields having defaultSearchAnalyzer.
+            $this->getWeightedFields($containerConfig, null, $nonStandardFuzzyFieldFilter, $defaultSearchField),
         );
 
         $queryParams = [
@@ -317,5 +360,69 @@ class QueryBuilder
         $mapping = $containerConfig->getMapping();
 
         return $mapping->getWeightedSearchProperties($analyzer, $defaultField, $boost, $fieldFilter);
+    }
+
+    /**
+     * Build a span query to raise score of fields beginning by the query text.
+     *
+     * @param ContainerConfigurationInterface $containerConfig The container configuration
+     * @param string                          $queryText       The query text
+     * @param int                             $boost           The boost applied to the span query
+     *
+     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     */
+    private function getSpanQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
+    {
+        $query = null;
+        $terms = explode(' ', $queryText);
+
+        $relevanceConfig  = $containerConfig->getRelevanceConfig();
+        $spanSize         = $relevanceConfig->getSpanSize();
+
+        if ((int) $spanSize === 0) {
+            return $query;
+        }
+
+        $terms            = array_slice($terms, 0, $spanSize);
+        $wordCount        = count($terms);
+        $spanFieldsFilter = $this->fieldFilters['spannableFieldFilter'];
+        $spanFields       = $containerConfig->getMapping()->getFields();
+        $spanFields       = array_filter($spanFields, [$spanFieldsFilter, 'filterField']);
+        $spanQueryParams  = ['boost' => $boost, 'end' => $wordCount];
+        $spanQueryType    = SpanQueryInterface::TYPE_SPAN_FIRST;
+
+        if (count($spanFields) > 0) {
+            $queries = [];
+            foreach ($spanFields as $field) {
+                $clauses = [];
+                foreach ($terms as $term) {
+                    $clauses[] = $this->queryFactory->create(
+                        SpanQueryInterface::TYPE_SPAN_TERM,
+                        [
+                            'field' => $field->getMappingProperty(FieldInterface::ANALYZER_WHITESPACE) ?? $field->getName(),
+                            'value' => $term,
+                        ]
+                    );
+                }
+
+                $spanQueryParams['match'] = $this->queryFactory->create(
+                    SpanQueryInterface::TYPE_SPAN_NEAR,
+                    [
+                        'clauses' => $clauses,
+                        'slop'    => 0,
+                        'inOrder' => true,
+                    ]
+                );
+
+                $queries[] = $this->queryFactory->create($spanQueryType, $spanQueryParams);
+            }
+
+            $query = current($queries);
+            if (count($queries) > 1) {
+                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries]);
+            }
+        }
+
+        return $query;
     }
 }

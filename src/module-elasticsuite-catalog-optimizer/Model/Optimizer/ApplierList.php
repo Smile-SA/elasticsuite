@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -41,6 +42,11 @@ class ApplierList
     private $functionsProvider;
 
     /**
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
      * @var OptimizerFilterInterface[]
      */
     private $filters;
@@ -50,15 +56,18 @@ class ApplierList
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                       $queryFactory      Query factory.
      * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface $functionsProvider Functions provider.
+     * @param ScopeConfigInterface                                                            $scopeConfig       Scope configuration.
      * @param OptimizerFilterInterface[]                                                      $filters           Optimizer filters.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface $functionsProvider,
+        ScopeConfigInterface $scopeConfig,
         array $filters = []
     ) {
         $this->queryFactory       = $queryFactory;
         $this->functionsProvider  = $functionsProvider;
+        $this->scopeConfig        = $scopeConfig;
         $this->filters            = $filters;
     }
 
@@ -92,12 +101,15 @@ class ApplierList
      */
     private function applyFunctions(QueryInterface $query, $functions = [])
     {
+        $scoreModeConfig = $this->scopeConfig->getValue('smile_elasticsuite_optimizers/score_mode_configuration/score_mode');
+        $boostModeConfig = $this->scopeConfig->getValue('smile_elasticsuite_optimizers/boost_mode_configuration/boost_mode');
+
         if (!empty($functions)) {
             $queryParams = [
                 'query'     => $query,
                 'functions' => $functions,
-                'scoreMode' => FunctionScore::SCORE_MODE_MULTIPLY,
-                'boostMode' => FunctionScore::BOOST_MODE_MULTIPLY,
+                'scoreMode' => $scoreModeConfig,
+                'boostMode' => $boostModeConfig,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FUNCTIONSCORE, $queryParams);
         }

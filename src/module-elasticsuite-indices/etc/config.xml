@@ -19,7 +19,7 @@
     <default>
         <smile_elasticsuite_indices>
             <indices_mapping>
-                <mapping>{"_1585151585492_492":{"key":"elasticsuite_categories_fulltext","value":"catalog_category"},"_1585151601029_29":{"key":"elasticsuite_categories_fulltext","value":"catalog_product"}}</mapping>
+                <mapping>{"_1585151585492_492":{"key":"elasticsuite_categories_fulltext","value":"catalog_category"},"_1585151601029_29":{"key":"catalogsearch_fulltext","value":"catalog_product"}}</mapping>
             </indices_mapping>
         </smile_elasticsuite_indices>
     </default>

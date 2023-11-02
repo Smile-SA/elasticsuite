@@ -22,6 +22,13 @@ query productSearch($inputText: String!, $categoryId: String) {
       __typename
     }
     total_count
+    page_info {
+      current_page
+      page_size
+      total_pages
+      is_spellchecked
+      __typename
+    }
     filters {
       name
       filter_items_count

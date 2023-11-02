@@ -309,7 +309,9 @@ class QueryBuilder
         $value = $productCondition->getValue();
 
         if (is_array($value)) {
-            $value = array_filter($value);
+            // The call to array_values ensures the array keys are re-numbered correctly from 0.
+            // This prevent the Elasticsearch client to cast this array as an object in queries.
+            $value = array_values(array_filter($value, 'strlen'));
         }
 
         $productCondition->setValue($value);

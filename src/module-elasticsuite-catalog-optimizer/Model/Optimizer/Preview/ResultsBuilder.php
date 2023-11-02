@@ -27,6 +27,16 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 class ResultsBuilder
 {
     /**
+     * @var \Magento\Framework\Search\SearchEngineInterface
+     */
+    private $searchEngine;
+
+    /**
+     * @var RequestBuilder
+     */
+    private $requestBuilder;
+
+    /**
      * ResultsBuilder constructor.
      *
      * @param \Magento\Framework\Search\SearchEngineInterface $searchEngine   Search Engine

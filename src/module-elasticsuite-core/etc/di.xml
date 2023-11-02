@@ -80,7 +80,10 @@
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
                 <item name="searchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter</item>
+                <item name="nonStandardSearchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardSearchableFieldFilter</item>
                 <item name="fuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\FuzzyFieldFilter</item>
+                <item name="nonStandardFuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardFuzzyFieldFilter</item>
+                <item name="spannableFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SpannableFieldFilter</item>
             </argument>
         </arguments>
     </type>
@@ -103,6 +106,16 @@
                 <item name="moreLikeThisQuery" xsi:type="object">moreLikeThisQueryFactory</item>
                 <item name="matchPhrasePrefixQuery" xsi:type="object">matchPhrasePrefixFactory</item>
                 <item name="functionScore" xsi:type="object">functionScoreFactory</item>
+                <item name="spanContainingQuery" xsi:type="object">spanContainingFactory</item>
+                <item name="spanFieldMaskingQuery" xsi:type="object">spanFieldMaskingFactory</item>
+                <item name="spanFirstQuery" xsi:type="object">spanFirstFactory</item>
+                <item name="spanMultiTermQuery" xsi:type="object">spanMultiTermFactory</item>
+                <item name="spanNearQuery" xsi:type="object">spanNearFactory</item>
+                <item name="spanNotQuery" xsi:type="object">spanNotFactory</item>
+                <item name="spanOrQuery" xsi:type="object">spanOrFactory</item>
+                <item name="spanTermQuery" xsi:type="object">spanTermFactory</item>
+                <item name="spanWithinQuery" xsi:type="object">spanWithinFactory</item>
+                <item name="prefixQuery" xsi:type="object">prefixQueryFactory</item>
             </argument>
         </arguments>
     </type>
@@ -122,6 +135,16 @@
     <virtualType name="moreLikeThisQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThisFactory" />
     <virtualType name="functionScoreFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\FunctionScoreFactory" />
     <virtualType name="matchPhrasePrefixFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\MatchPhrasePrefixFactory" />
+    <virtualType name="spanContainingFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanContainingFactory" />
+    <virtualType name="spanFieldMaskingFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFieldMaskingFactory" />
+    <virtualType name="spanFirstFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFirstFactory" />
+    <virtualType name="spanMultiTermFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanMultiTermFactory" />
+    <virtualType name="spanNearFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanNearFactory" />
+    <virtualType name="spanNotFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanNotFactory" />
+    <virtualType name="spanOrFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanOrFactory" />
+    <virtualType name="spanTermFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanTermFactory" />
+    <virtualType name="spanWithinFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanWithinFactory" />
+    <virtualType name="prefixQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\PrefixFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -141,6 +164,16 @@
                 <item name="functionScore" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\FunctionScore\Proxy</item>
                 <item name="moreLikeThisQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MoreLikeThis\Proxy</item>
                 <item name="matchPhrasePrefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MatchPhrasePrefix\Proxy</item>
+                <item name="spanContainingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanContaining\Proxy</item>
+                <item name="spanFieldMaskingQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanFieldMasking\Proxy</item>
+                <item name="spanFirstQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanFirst\Proxy</item>
+                <item name="spanMultiTermQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanMultiTerm\Proxy</item>
+                <item name="spanNearQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanNear\Proxy</item>
+                <item name="spanNotQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanNot\Proxy</item>
+                <item name="spanOrQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanOr\Proxy</item>
+                <item name="spanTermQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanTerm\Proxy</item>
+                <item name="spanWithinQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanWithin\Proxy</item>
+                <item name="prefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Prefix\Proxy</item>
             </argument>
         </arguments>
     </type>

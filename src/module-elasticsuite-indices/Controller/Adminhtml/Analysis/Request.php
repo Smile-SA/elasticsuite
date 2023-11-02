@@ -55,7 +55,7 @@ class Request extends Action
         $this->client = $client;
         $this->resultJsonFactory = $resultJsonFactory;
 
-        return parent::__construct($context);
+        parent::__construct($context);
     }
 
     /**

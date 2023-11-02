@@ -76,6 +76,7 @@ class Root
      */
     public function setAppliedRootCategory(CategoryInterface $category)
     {
+        $this->coreRegistry->unregister('applied_virtual_root_category');
         $this->coreRegistry->register('applied_virtual_root_category', $category);
 
         return $this;
@@ -181,9 +182,16 @@ class Root
      */
     public function useVirtualRootCategorySubtree($category)
     {
-        $rootCategory = $this->getVirtualCategoryRoot($category);
+        $useVirtualRootCategorySubtree = false;
+        if ($category->getIsVirtualCategory()) {
+            $rootCategory = $this->getVirtualCategoryRoot($category);
 
-        return ($rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree());
+            $useVirtualRootCategorySubtree = (
+                $rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree()
+            );
+        }
+
+        return $useVirtualRootCategorySubtree;
     }
 
     /**
