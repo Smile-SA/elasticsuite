@@ -55,6 +55,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_RETENTION_DELAY_XPATH = 'smile_elasticsuite_tracker/general/retention_delay';
 
     /**
+     * Using API instead of invisible pixel configuration path
+     * @var string
+     */
+    const CONFIG_IS_USING_API_XPATH = 'smile_elasticsuite_tracker/general/use_api';
+
+    /**
      * Anonymization status configuration path
      * @var string
      */
@@ -134,6 +140,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getBaseUrl()
     {
         return trim($this->urlBuilder->getUrl('elasticsuite/tracker/hit', ['image' => 'h.png']), '/');
+    }
+
+    /**
+     * Return the tracking Rest endpoint URL
+     *
+     * @return string
+     */
+    public function getRestBaseUrl()
+    {
+        return $this->urlBuilder->getDirectUrl('rest/V1/elasticsuite-tracker/hit');
+    }
+
+    /**
+     * Return true if the tracker should use the (Rest) API to push its data to Magento
+     *
+     * @return bool
+     */
+    public function isUsingAPI()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_USING_API_XPATH, ScopeInterface::SCOPE_STORE);
     }
 
     /**
