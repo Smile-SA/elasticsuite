@@ -72,9 +72,17 @@ class IndexLogEvent
     {
         $events = $this->eventQueue->getEvents($this->chunkSize);
         if (!empty($events)) {
+            $invalidEvents = array_filter(
+                $events,
+                function ($eventData) {
+                    return (($eventData['is_invalid'] ?? true) === true);
+                }
+            );
+            $events = array_diff_key($events, $invalidEvents);
             $this->eventIndex->indexEvents($events);
             $this->sessionIndex->indexEvents($events);
-            $this->eventQueue->deleteEvents(array_column($events, 'event_id'));
+            $this->eventQueue->deleteEvents(array_keys($events));
+            $this->eventQueue->flagInvalidEvents(array_keys($invalidEvents));
         }
     }
 }
