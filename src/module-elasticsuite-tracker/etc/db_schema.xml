@@ -33,9 +33,17 @@
                 xsi:type="text"
                 nullable="false"
                 comment="Event data"/>
+        <column name="is_invalid"
+                xsi:type="smallint"
+                nullable="false"
+                default="0"
+                comment="Has invalid data" />
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="event_id"/>
         </constraint>
+        <index referenceId="SMILE_ELASTICSUITE_TRACKER_LOG_EVENT" indexType="btree">
+            <column name="is_invalid"/>
+        </index>
     </table>
 
     <!-- create elasticsuite_tracker_log_customer_link table -->

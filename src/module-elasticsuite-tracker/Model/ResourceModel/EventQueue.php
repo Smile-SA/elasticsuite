@@ -62,7 +62,8 @@ class EventQueue extends AbstractDb
     }
 
     /**
-     * Get event from the queue.
+     * Get event from the queue while validating them.
+     * Invalid events will be flagged as such.
      *
      * @param integer $limit Max number of events to be retrieved.
      *
@@ -76,11 +77,14 @@ class EventQueue extends AbstractDb
             $select->limit($limit);
         }
 
-        $eventData = $this->getConnection()->fetchAll($select);
+        $select->where('is_invalid = 0');
+
+        $eventData = $this->getConnection()->fetchAssoc($select);
 
         foreach ($eventData as &$currentEvent) {
             try {
                 $currentEventData = $this->jsonSerializer->unserialize($currentEvent['data']);
+                $currentEventData['is_invalid'] = $this->isEventInvalid($currentEventData);
             } catch (\InvalidArgumentException $exception) {
                 $currentEventData = [];
             }
@@ -105,6 +109,25 @@ class EventQueue extends AbstractDb
     }
 
     /**
+     * Flag some events as invalid to prevent them from being read the next time the events queue is processed.
+     *
+     * @param array $eventIds Event ids to be flagged as invalid.
+     *
+     * @return void
+     */
+    public function flagInvalidEvents(array $eventIds)
+    {
+        if (!empty($eventIds)) {
+            $connection = $this->getConnection();
+            $connection->update(
+                $this->getMainTable(),
+                ['is_invalid' => 1],
+                $connection->quoteInto('event_id IN(?)', $eventIds)
+            );
+        }
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -112,5 +135,25 @@ class EventQueue extends AbstractDb
     protected function _construct()
     {
         $this->_init('elasticsuite_tracker_log_event', 'event_id');
+    }
+
+    /**
+     * Returns true if the event is invalid and should not be indexed because it lacks some data,
+     * return false otherwise.
+     *
+     * @param array $data Event data
+     *
+     * @return bool
+     */
+    protected function isEventInvalid($data)
+    {
+        $isEventInvalid = true;
+        if (array_key_exists('session', $data)) {
+            if (array_key_exists('uid', $data['session']) && array_key_exists('vid', $data['session'])) {
+                $isEventInvalid = false;
+            }
+        }
+
+        return $isEventInvalid;
     }
 }

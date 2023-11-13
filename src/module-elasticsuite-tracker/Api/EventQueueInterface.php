@@ -42,6 +42,15 @@ interface EventQueueInterface
     public function deleteEvents($eventIds);
 
     /**
+     * Flag invalid events by their ids.
+     *
+     * @param int[] $eventsIds Event ids of events to flag as invalid.
+     *
+     * @return void
+     */
+    public function flagInvalidEvents($eventsIds);
+
+    /**
      * Retrieve event from the queue.
      *
      * @param int $limit Max number of event to retrieve.
