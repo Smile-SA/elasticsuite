@@ -501,7 +501,7 @@
     <type name="Magento\AdvancedSearch\Model\SuggestedQueries">
         <arguments>
             <argument name="data" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCatalogGraphQl\Model\DataProvider\Suggestions</item>
+                <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Model\DataProvider\Suggestions</item>
             </argument>
         </arguments>
     </type>

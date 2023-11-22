@@ -5,22 +5,22 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalogGraphQl
+ * @package   Smile\ElasticsuiteCore
  * @author    Vadym Honcharuk <vahonc@smile.fr>
  * @copyright 2023 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCatalogGraphQl\Model\DataProvider;
+namespace Smile\ElasticsuiteCore\Model\DataProvider;
 
 use Magento\Search\Model\QueryInterface;
 use Magento\AdvancedSearch\Model\SuggestedQueriesInterface;
 
 /**
- * Elasticsuite GraphQL Dummy Search Suggestions.
+ * Elasticsuite Search Suggestions.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalogGraphQl
+ * @package  Smile\ElasticsuiteCore
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
 class Suggestions implements SuggestedQueriesInterface
