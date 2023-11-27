@@ -246,6 +246,22 @@ class Client implements ClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function deleteByQuery(array $params): array
+    {
+        return $this->getEsClient()->deleteByQuery($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateByQuery(array $params): array
+    {
+        return $this->getEsClient()->updateByQuery($params);
+    }
+
+    /**
      * @return \Elasticsearch\Client
      */
     private function getEsClient(): \Elasticsearch\Client
