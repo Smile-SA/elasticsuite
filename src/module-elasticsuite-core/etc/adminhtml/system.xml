@@ -39,6 +39,11 @@
                     <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="enable_certificate_validation" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Use SSL certificate Validation</label>
+                    <comment>Select no if you are using opensearch.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable basic HTTP authentication</label>
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
