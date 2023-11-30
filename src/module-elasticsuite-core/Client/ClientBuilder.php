@@ -47,7 +47,7 @@ class ClientBuilder
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
         'max_retries'           => 2,
-        'verify'                => true
+        'verify'                => true,
     ];
 
     /**
@@ -114,7 +114,7 @@ class ClientBuilder
             $clientBuilder->setRetries((int) $options['max_retries']);
         }
 
-        if (array_key_exists('verify', $options)){
+        if (array_key_exists('verify', $options)) {
             $clientBuilder->setSSLVerification($options['verify']);
         }
 
