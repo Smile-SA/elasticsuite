@@ -95,6 +95,8 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     /**
      * PHP constructor
      *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
      * @param \Magento\Framework\Model\Context                        $context            Magento Context
      * @param \Magento\Framework\Registry                             $registry           Magento Registry
      * @param IndexerRegistry                                         $indexerRegistry    Indexers registry
