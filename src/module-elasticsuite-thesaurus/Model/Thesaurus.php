@@ -98,7 +98,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      * @param \Magento\Framework\Model\Context                        $context            Magento Context
      * @param \Magento\Framework\Registry                             $registry           Magento Registry
      * @param IndexerRegistry                                         $indexerRegistry    Indexers registry
-     * @parqm ThesaurusFactory                                        $thesaurusFactory   Thesaurus Factory
+     * @param ThesaurusFactory                                        $thesaurusFactory   Thesaurus Factory
      * @param ResourceConnection                                      $resourceConnection Resource Connection
      * @param \Magento\Store\Model\StoreManagerInterface              $storeManager       Store Manager
      * @param ManagerInterface                                        $messageManager     Message Manager
@@ -332,19 +332,6 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     }
 
     /**
-     * Get the name of the thesaurus by ID
-     *
-     * @param int $thesaurusId
-     * @return string
-     */
-    private function getThesaurusNameById($thesaurusId)
-    {
-        $thesaurus = $this->thesaurusFactory->create()->load($thesaurusId);
-
-        return $thesaurus->getName();
-    }
-
-    /**
      * Internal Constructor
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
@@ -364,5 +351,18 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
         $this->indexerRegistry->get(ThesaurusIndexer::INDEXER_ID)->invalidate();
 
         return $this;
+    }
+
+    /**
+     * Get the name of the thesaurus by ID
+     *
+     * @param int $thesaurusId Thesaurus ID
+     * @return string
+     */
+    private function getThesaurusNameById($thesaurusId)
+    {
+        $thesaurus = $this->thesaurusFactory->create()->load($thesaurusId);
+
+        return $thesaurus->getName();
     }
 }
