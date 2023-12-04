@@ -13,10 +13,12 @@
  */
 namespace Smile\ElasticsuiteThesaurus\Model;
 
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteThesaurus\Model\Indexer\Thesaurus as ThesaurusIndexer;
-use Magento\Framework\Indexer\IndexerRegistry;
 
 /**
  * Thesaurus Model
@@ -29,6 +31,11 @@ use Magento\Framework\Indexer\IndexerRegistry;
  */
 class Thesaurus extends \Magento\Framework\Model\AbstractModel implements ThesaurusInterface
 {
+    /**
+     * Name of the Thesaurus Expanded Terms Mysql Table
+     */
+    const THESAURUS_TERMS_TABLE_NAME = 'smile_elasticsuite_thesaurus_expanded_terms';
+
     /**
      * Prefix of model events names
      *
@@ -50,6 +57,20 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     protected $indexerRegistry;
 
     /**
+     * Thesaurus Factory
+     *
+     * @var ThesaurusFactory
+     */
+    protected $thesaurusFactory;
+
+    /**
+     * Resource Connection
+     *
+     * @var ResourceConnection
+     */
+    protected $resourceConnection;
+
+    /**
      * @var array The store ids of this thesaurus
      */
     private $storeIds = [];
@@ -65,12 +86,22 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     private $storeManager;
 
     /**
+     * Message manager
+     *
+     * @var ManagerInterface
+     */
+    private $messageManager;
+
+    /**
      * PHP constructor
      *
      * @param \Magento\Framework\Model\Context                        $context            Magento Context
      * @param \Magento\Framework\Registry                             $registry           Magento Registry
-     * @param IndexerRegistry                                         $indexerRegistry    Indexers registry.
-     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager       Store Manager.
+     * @param IndexerRegistry                                         $indexerRegistry    Indexers registry
+     * @parqm ThesaurusFactory                                        $thesaurusFactory   Thesaurus Factory
+     * @param ResourceConnection                                      $resourceConnection Resource Connection
+     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager       Store Manager
+     * @param ManagerInterface                                        $messageManager     Message Manager
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Magento Resource
      * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Magento Collection
      * @param array                                                   $data               Magento Data
@@ -79,13 +110,19 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
         IndexerRegistry $indexerRegistry,
+        ThesaurusFactory $thesaurusFactory,
+        ResourceConnection $resourceConnection,
         StoreManagerInterface $storeManager,
+        ManagerInterface $messageManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
-        $this->indexerRegistry = $indexerRegistry;
-        $this->storeManager    = $storeManager;
+        $this->indexerRegistry    = $indexerRegistry;
+        $this->thesaurusFactory   = $thesaurusFactory;
+        $this->resourceConnection = $resourceConnection;
+        $this->storeManager       = $storeManager;
+        $this->messageManager     = $messageManager;
 
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);
     }
@@ -99,6 +136,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     {
         parent::afterSave();
 
+        $this->checkThesaurusTerms();
         $this->invalidateIndex();
 
         return $this;
@@ -251,6 +289,59 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     public function setIsActive($status)
     {
         return $this->setData(self::IS_ACTIVE, (bool) $status);
+    }
+
+    /**
+     * Check for existing terms in other thesaurus
+     *
+     * @return void
+     */
+    public function checkThesaurusTerms()
+    {
+        $termsData = $this->getTermsData();
+
+        $terms = [];
+        foreach ($termsData as $termData) {
+            $terms[] = $termData['term'];
+        }
+
+        $connection = $this->resourceConnection->getConnection();
+        $tableName = $this->resourceConnection->getTableName(self::THESAURUS_TERMS_TABLE_NAME);
+
+        $select = $connection->select()
+            ->from($tableName, ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('term IN (?)', $terms)
+            ->where('thesaurus_id != ?', $this->getId())
+            ->group(['term', 'thesaurus_id']);
+
+        $result = $connection->fetchAll($select);
+
+        foreach ($result as $row) {
+            if ($row['count'] > 0) {
+                $existingThesaurusId = $row['thesaurus_id'];
+                $existingThesaurusName = $this->getThesaurusNameById($existingThesaurusId);
+
+                $message = __(
+                    'The term "<strong>%1</strong>" is already existing in the <strong>%2</strong> thesaurus.',
+                    $row['term'],
+                    $existingThesaurusName
+                );
+                $this->messageManager->addWarning($message);
+            }
+        }
+    }
+
+    /**
+     * Get the name of the thesaurus by ID
+     *
+     * @param int $thesaurusId
+     * @return string
+     */
+    private function getThesaurusNameById($thesaurusId)
+    {
+        $thesaurus = $this->thesaurusFactory->create()->load($thesaurusId);
+
+        return $thesaurus->getName();
     }
 
     /**
