@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use OpenSearch\Common\Exceptions\Missing404Exception;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
@@ -30,7 +30,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 class Client implements ClientInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \OpenSearch\Client
      */
     private $esClient = null;
 
@@ -160,7 +160,7 @@ class Client implements ClientInterface
         $indices = [];
         try {
             $indices = $this->getEsClient()->indices()->getMapping(['index' => $indexAlias]);
-        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
+        } catch (\OpenSearch\Common\Exceptions\Missing404Exception $e) {
             ;
         }
 
@@ -262,9 +262,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @return \Elasticsearch\Client
+     * @return \OpenSearch\Client
      */
-    private function getEsClient(): \Elasticsearch\Client
+    private function getEsClient(): \OpenSearch\Client
     {
         if ($this->esClient === null) {
             $this->esClient = $this->clientBuilder->build($this->clientConfiguration->getOptions());
