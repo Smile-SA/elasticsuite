@@ -34,7 +34,12 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     /**
      * Name of the Thesaurus Expanded Terms Mysql Table
      */
-    const THESAURUS_TERMS_TABLE_NAME = 'smile_elasticsuite_thesaurus_expanded_terms';
+    const THESAURUS_EXPANDED_TERMS_TABLE_NAME = 'smile_elasticsuite_thesaurus_expanded_terms';
+
+    /**
+     * Name of the Thesaurus Reference Terms Mysql Table
+     */
+    const THESAURUS_REFERENCE_TERMS_TABLE_NAME = 'smile_elasticsuite_thesaurus_reference_terms';
 
     /**
      * Prefix of model events names
@@ -304,19 +309,34 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
 
         $terms = [];
         foreach ($termsData as $termData) {
-            $terms[] = $termData['term'];
+            if (isset($termData['reference_term']) && !empty($termData['reference_term'])) {
+                $terms[] = $termData['reference_term'];
+            }
+
+            $terms = array_merge($terms, explode(',', $termData['values']));
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName(self::THESAURUS_TERMS_TABLE_NAME);
+        $expandedTableName = $this->resourceConnection->getTableName(self::THESAURUS_EXPANDED_TERMS_TABLE_NAME);
+        $referenceTableName = $this->resourceConnection->getTableName(self::THESAURUS_REFERENCE_TERMS_TABLE_NAME);
 
-        $select = $connection->select()
-            ->from($tableName, ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
-            ->where('term IN (?)', $terms)
-            ->where('thesaurus_id != ?', $this->getId())
+        $selectExpanded = $connection->select()
+            ->from(['expanded' => $expandedTableName], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('expanded.term IN (?)', $terms)
+            ->where('expanded.thesaurus_id != ?', $this->getId())
+            ->group(['term', 'thesaurus_id'])
+            ->order('expanded.term ASC');
+
+        $selectReference = $connection->select()
+            ->from(['reference' => $referenceTableName], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('reference.term IN (?)', $terms)
+            ->where('reference.thesaurus_id != ?', $this->getId())
             ->group(['term', 'thesaurus_id']);
 
-        $result = $connection->fetchAll($select);
+        $resultExpanded = $connection->fetchAll($selectExpanded);
+        $resultReference = $connection->fetchAll($selectReference);
+
+        $result= array_merge($resultReference, $resultExpanded);
 
         foreach ($result as $row) {
             if ($row['count'] > 0) {
