@@ -336,7 +336,7 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
         $resultExpanded = $connection->fetchAll($selectExpanded);
         $resultReference = $connection->fetchAll($selectReference);
 
-        $result= array_merge($resultReference, $resultExpanded);
+        $result = array_merge($resultReference, $resultExpanded);
 
         foreach ($result as $row) {
             if ($row['count'] > 0) {
