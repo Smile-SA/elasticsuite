@@ -71,6 +71,7 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
      * @param StoreManagerInterface $storeManager     The Store Manager
      * @param DimensionFactory      $dimensionFactory The dimension factory
      * @param ResolverInterface     $localeResolver   The locale resolver
+     * @param TranslateInterface    $translator       The translator handler
      */
     public function __construct(
         Full $fullAction,

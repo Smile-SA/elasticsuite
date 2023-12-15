@@ -47,7 +47,9 @@ class Full
     /**
      * Constructor.
      *
-     * @param ResourceModel $resourceModel Indexer resource model.
+     * @param ResourceModel      $resourceModel    Indexer resource model.
+     * @param ResolverInterface  $localeResolver   The locale resolver
+     * @param TranslateInterface $translator       The translator handler
      */
     public function __construct(
         ResourceModel $resourceModel,
