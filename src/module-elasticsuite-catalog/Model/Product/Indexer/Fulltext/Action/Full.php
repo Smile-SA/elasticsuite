@@ -15,6 +15,9 @@
 namespace Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Action;
 
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full as ResourceModel;
+use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\TranslateInterface;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Elasticsearch product full indexer.
@@ -25,19 +28,35 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Actio
  */
 class Full
 {
+
     /**
      * @var \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Action\Full
      */
     private $resourceModel;
 
     /**
+     * @var ResolverInterface
+     */
+    private $localeResolver;
+
+    /**
+     * @var TranslateInterface
+     */
+    private $translator;
+
+    /**
      * Constructor.
      *
      * @param ResourceModel $resourceModel Indexer resource model.
      */
-    public function __construct(ResourceModel $resourceModel)
-    {
+    public function __construct(
+        ResourceModel $resourceModel,
+        ResolverInterface $localeResolver = null,
+        TranslateInterface $translator = null
+    ) {
         $this->resourceModel = $resourceModel;
+        $this->localeResolver = $localeResolver ?? ObjectManager::getInstance()->get(ResolverInterface::class);
+        $this->translator = $translator ?? ObjectManager::getInstance()->get(TranslateInterface::class);
     }
 
     /**
@@ -51,6 +70,10 @@ class Full
      */
     public function rebuildStoreIndex($storeId, $productIds = null)
     {
+        // load store translation for static attribute options
+        $this->localeResolver->emulate($storeId);
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
+
         $productId = 0;
 
         // Magento is only sending children ids here. Ensure to reindex also the parents product ids, if any.
@@ -68,6 +91,10 @@ class Full
                 yield $productId => $productData;
             }
         } while (!empty($products));
+
+        // reinitialize translation
+        $this->localeResolver->revert();
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
     }
 
     /**

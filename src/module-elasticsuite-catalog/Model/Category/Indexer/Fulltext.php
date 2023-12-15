@@ -17,6 +17,9 @@ use Magento\Framework\Search\Request\DimensionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Action\Full;
 use Magento\Framework\Indexer\SaveHandler\IndexerInterface;
+use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\TranslateInterface;
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Categories fulltext indexer
@@ -53,21 +56,36 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
     private $fullAction;
 
     /**
+     * @var ResolverInterface
+     */
+    private $localeResolver;
+
+    /**
+     * @var TranslateInterface
+     */
+    private $translator;
+
+    /**
      * @param Full                  $fullAction       The full index action
      * @param IndexerInterface      $indexerHandler   The index handler
      * @param StoreManagerInterface $storeManager     The Store Manager
      * @param DimensionFactory      $dimensionFactory The dimension factory
+     * @param ResolverInterface     $localeResolver   The locale resolver
      */
     public function __construct(
         Full $fullAction,
         IndexerInterface $indexerHandler,
         StoreManagerInterface $storeManager,
-        DimensionFactory $dimensionFactory
+        DimensionFactory $dimensionFactory,
+        ResolverInterface $localeResolver = null,
+        TranslateInterface $translator = null
     ) {
         $this->fullAction = $fullAction;
         $this->indexerHandler = $indexerHandler;
         $this->storeManager = $storeManager;
         $this->dimensionFactory = $dimensionFactory;
+        $this->localeResolver = $localeResolver ?? ObjectManager::getInstance()->get(ResolverInterface::class);
+        $this->translator = $translator ?? ObjectManager::getInstance()->get(TranslateInterface::class);
     }
 
     /**
@@ -82,10 +100,19 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
         $storeIds = array_keys($this->storeManager->getStores());
 
         foreach ($storeIds as $storeId) {
+            // load store translation for static attribute options
+            $this->localeResolver->emulate($storeId);
+            $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
+
             $dimension = $this->dimensionFactory->create(['name' => 'scope', 'value' => $storeId]);
             $this->indexerHandler->deleteIndex([$dimension], new ExtendedArray($ids));
             $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId, $ids));
+
+            $this->localeResolver->revert();
         }
+
+        // reinitialize translation
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
     }
 
     /**
