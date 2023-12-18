@@ -15,11 +15,11 @@
  * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-var smileTracker = (function () {
+const smileTracker = (function () {
 
     "use strict";
 
-    var guid = (function() {
+    const guid = (function() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -32,28 +32,32 @@ var smileTracker = (function () {
     }());
 
     function getCookie(cookieName) {
-        var name = cookieName + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1);
-            if (c.indexOf(name) !== -1) return c.substring(name.length, c.length);
+        const name = cookieName + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) !== -1) {
+                return c.substring(name.length, c.length);
+            }
         }
         return null;
     }
 
     function setCookie(cookieName, cookieValue, expiresAt, path) {
-        var expires = "expires=" + expiresAt.toUTCString();
+        const expires = "expires=" + expiresAt.toUTCString();
         document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=" + path;
     }
 
     // Retrieve values for a param into URL
     function getQueryStringParameterByName(name) {
-        var results = null;
+        let results = null;
 
         if (name && name.replace) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+            const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
             results = regex.exec(window.location.search);
         }
 
@@ -78,13 +82,12 @@ var smileTracker = (function () {
     // - utm_campaign
     // - utm_medium
     function addCampaignVars() {
-
         // GA variables to be fetched from URI
-        var urlParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term'];
+        const urlParams = ['utm_source', 'utm_campaign', 'utm_medium', 'utm_term'];
 
         urlParams.forEach(function (element) {
-            var paramName = element;
-            var paramValue = getQueryStringParameterByName(paramName);
+            const paramName = element;
+            const paramValue = getQueryStringParameterByName(paramName);
             if (paramValue) {
                 // Append the GA param to the tracker
                 this.addPageVar(paramName, paramValue);
@@ -94,7 +97,7 @@ var smileTracker = (function () {
 
     function addReferrerVars() {
         if (document.referrer) {
-            var parser = document.createElement('a');
+            let parser = document.createElement('a');
             parser.href = document.referrer;
             this.addPageVar('referrer.domain', parser.hostname);
             this.addPageVar('referrer.page', parser.pathname);
@@ -116,12 +119,12 @@ var smileTracker = (function () {
     }
 
     function addMetaPageVars() {
-        var metaTags = document.getElementsByTagName('meta');
-        for (var tagIndex = 0; tagIndex < metaTags.length; tagIndex++) {
+        const metaTags = document.getElementsByTagName('meta');
+        for (let tagIndex = 0; tagIndex < metaTags.length; tagIndex++) {
             if (metaTags[tagIndex].getAttribute('name')) {
-                var components = metaTags[tagIndex].getAttribute('name').split(':');
+                let components = metaTags[tagIndex].getAttribute('name').split(':');
                 if (components.length === 2 && components[0] === 'sct') {
-                    var varName = components[1];
+                    let varName = components[1];
                     this.addPageVar(varName, metaTags[tagIndex].getAttribute('content'));
                 }
             }
@@ -138,15 +141,32 @@ var smileTracker = (function () {
             this.trackerVarsAdded = true;
         }
 
-        var urlParams = [];
+        let urlParams = [];
 
-        for (var currentVar in this.vars) {
+        for (let currentVar in this.vars) {
             if ({}.hasOwnProperty.call(this.vars, currentVar)) {
                 urlParams.push(currentVar + "=" + this.vars[currentVar]);
             }
         }
 
         return urlParams;
+    }
+
+    function getTrackerPostVars() {
+        if (this.trackerVarsAdded === false) {
+            addStandardPageVars.bind(this)();
+            addReferrerVars.bind(this)();
+            addCampaignVars.bind(this)();
+            addMetaPageVars.bind(this)();
+            addResolutionVars.bind(this)();
+            this.trackerVarsAdded = true;
+        }
+
+        Object.keys(this.vars).forEach(key => {
+            this.vars[key] = decodeURIComponent(this.vars[key]);
+        });
+
+        return bracketVarsToJson(this.vars);
     }
 
     function getTrackerUrl() {
@@ -164,13 +184,26 @@ var smileTracker = (function () {
 
     // Send the tag to the remote server
     // Append a transparent pixel to the body
-    function sendTag() {
+    function sendTag(forceCollect = false) {
         initSession.bind(this)();
 
-        if (this.trackerSent === false) {
-            let bodyNode = document.getElementsByTagName('body')[0];
-            buildTrackingImg.bind(this)(bodyNode, getTrackerUrl.bind(this)());
+        if (this.config && this.config.hasOwnProperty('storeId')) {
+            addPageVar.bind(this)('store_id', this.config.storeId);
+        }
+
+        if (this.trackerSent === false || forceCollect === true) {
+            if (this.endpointUrl) {
+                const eventData = {'eventData': getTrackerPostVars.bind(this)()};
+                let request = new XMLHttpRequest();
+                request.open('POST', this.endpointUrl, true);
+                request.setRequestHeader('Content-Type', 'application/json');
+                request.send(JSON.stringify(eventData));
+            } else {
+                const bodyNode = document.getElementsByTagName('body')[0];
+                buildTrackingImg.bind(this)(bodyNode, getTrackerUrl.bind(this)());
+            }
             this.trackerSent = true;
+            this.vars = {};
         }
     }
 
@@ -179,10 +212,10 @@ var smileTracker = (function () {
         initCustomerData.bind(this)();
         getTrackerVars.bind(this);
 
-        let vars = bracketVarsToJson(this.vars);
+        const vars = bracketVarsToJson(this.vars);
 
         if (this.telemetryEnabled && this.telemetryTrackerSent === false) {
-            var request = new XMLHttpRequest();
+            let request = new XMLHttpRequest();
             request.open('POST', this.telemetryUrl, true);
             request.setRequestHeader('Content-Type', 'application/json');
             request.send(JSON.stringify(vars));
@@ -250,27 +283,29 @@ var smileTracker = (function () {
     }
 
     function initSession() {
-        if (this.config && this.config.hasOwnProperty('sessionConfig') && !this.sessionInitialized) {
-            var config   = this.config.sessionConfig;
-            var expireAt = new Date();
-            var path     = config['path'] || '/';
+        if (this.config && this.config.hasOwnProperty('sessionConfig')) {
+            const config   = this.config.sessionConfig;
+            const expireAt = new Date();
+            const path     = config['path'] || '/';
 
-            if (getCookie(config['visit_cookie_name']) === null) {
-                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                setCookie(config['visit_cookie_name'], guid(), expireAt, path);
-            } else {
-                expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path);
-            }
+            if (!this.sessionInitialized) {
+                if (getCookie(config['visit_cookie_name']) === null) {
+                    expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                    setCookie(config['visit_cookie_name'], guid(), expireAt, path);
+                } else {
+                    expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
+                    setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path);
+                }
 
-            if (getCookie(config['visitor_cookie_name']) === null) {
-                expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
-                setCookie(config['visitor_cookie_name'], guid(), expireAt, path);
+                if (getCookie(config['visitor_cookie_name']) === null) {
+                    expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
+                    setCookie(config['visitor_cookie_name'], guid(), expireAt, path);
+                }
+                this.sessionInitialized = true;
             }
 
             addSessionVar.bind(this)('uid', getCookie(config['visit_cookie_name']));
             addSessionVar.bind(this)('vid', getCookie(config['visitor_cookie_name']));
-            this.sessionInitialized = true;
         }
     }
 
@@ -289,7 +324,7 @@ var smileTracker = (function () {
     }
 
     // Implementation of the tracker
-    var SmileTrackerImpl = function() {
+    const SmileTrackerImpl = function() {
         this.vars = {};
         this.trackerSent = false;
         this.telemetryTrackerSent = false;
@@ -298,36 +333,42 @@ var smileTracker = (function () {
         this.customerData = {};
     };
 
-    SmileTrackerImpl.prototype.sendTag = function () {
-        if (document.readyState != 'loading') {
-            sendTag.bind(this)();
+    SmileTrackerImpl.prototype.sendTag = function (forceCollect = false) {
+        if (document.readyState !== 'loading') {
+            sendTag.bind(this)(forceCollect);
             sendTelemetry.bind(this)();
         } else {
             document.addEventListener('DOMContentLoaded', function () {
-                sendTag.bind(this)();
+                sendTag.bind(this)(forceCollect);
                 sendTelemetry.bind(this)();
             }.bind(this));
         }
-    }
+    };
 
     SmileTrackerImpl.prototype.setConfig = function (config) {
         this.config           = config;
         this.baseUrl          = config.beaconUrl;
+        this.endpointUrl      = false;
+        if (config.hasOwnProperty('endpointUrl') && (config.endpointUrl.length !== 0)) {
+            this.endpointUrl = config.endpointUrl;
+        }
         this.telemetryEnabled = config.telemetryEnabled;
         this.telemetryUrl     = config.telemetryUrl;
-    }
+
+
+    };
 
     SmileTrackerImpl.prototype.addPageVar = function (varName, value) {
         addPageVar.bind(this)(varName, value);
-    }
+    };
 
     SmileTrackerImpl.prototype.addCustomerVar = function (varName, value) {
         addCustomerVar.bind(this)(varName, value);
-    }
+    };
 
     SmileTrackerImpl.prototype.addSessionVar = function (varName, value) {
         addSessionVar.bind(this)(varName, value);
-    }
+    };
 
     return new SmileTrackerImpl();
 }());

@@ -76,4 +76,12 @@ class EventQueue implements EventQueueInterface
     {
         $this->resourceModel->deleteEvents($eventIds);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function flagInvalidEvents($eventIds)
+    {
+        $this->resourceModel->flagInvalidEvents($eventIds);
+    }
 }

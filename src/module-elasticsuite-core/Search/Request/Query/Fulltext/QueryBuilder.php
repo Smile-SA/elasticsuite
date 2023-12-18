@@ -63,10 +63,11 @@ class QueryBuilder
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
      * @param float                           $boost           Boost of the created query.
+     * @param int                             $depth           Call depth of the create method. Can be used to avoid/prevent cycles.
      *
      * @return QueryInterface
      */
-    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost = 1)
+    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost = 1, $depth = 0)
     {
         $query = null;
 
@@ -75,7 +76,7 @@ class QueryBuilder
         if (is_array($queryText)) {
             $queries = [];
             foreach ($queryText as $currentQueryText) {
-                $queries[] = $this->create($containerConfig, $currentQueryText, $spellingType);
+                $queries[] = $this->create($containerConfig, $currentQueryText, $spellingType, $boost, $depth + 1);
             }
             $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries, 'boost' => $boost]);
         } elseif ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {

@@ -1,0 +1,8 @@
+parameters:
+    level: 6
+    checkMissingIterableValueType: false
+    paths:
+        - src
+
+includes:
+    - vendor/smile/magento2-smilelab-phpstan/extension.neon

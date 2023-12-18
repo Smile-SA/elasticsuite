@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCore\Search;
 
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Elasticsuite Search Context
@@ -48,6 +49,11 @@ class Context implements \Smile\ElasticsuiteCore\Api\Search\ContextInterface
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     private $storeManager;
+
+    /**
+     * @var boolean
+     */
+    private $isBlacklistingApplied = true;
 
     /**
      * Context constructor.
@@ -141,5 +147,23 @@ class Context implements \Smile\ElasticsuiteCore\Api\Search\ContextInterface
     public function getCustomerGroupId()
     {
         return $this->customerGroupId;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBlacklistingApplied(): bool
+    {
+        return $this->isBlacklistingApplied;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setIsBlacklistingApplied(bool $blacklistingApplied): ContextInterface
+    {
+        $this->isBlacklistingApplied = $blacklistingApplied;
+
+        return $this;
     }
 }

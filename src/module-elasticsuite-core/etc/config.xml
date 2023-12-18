@@ -25,6 +25,7 @@
                 <timeout>30</timeout>
                 <max_parallel_handles>10</max_parallel_handles>
                 <max_retries>2</max_retries>
+                <enable_certificate_validation>1</enable_certificate_validation>
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>
