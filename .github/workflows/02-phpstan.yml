@@ -21,7 +21,7 @@ jobs:
       matrix:
         php-versions: ['8.1']
         magento-versions: ['2.4.4-p2', '2.4.5-p5']
-        magento-editions: ['community', 'enterprise']
+        magento-editions: ['enterprise']
         experimental: [false]
 
     continue-on-error: ${{ matrix.experimental }}
