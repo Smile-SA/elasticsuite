@@ -147,7 +147,6 @@ class Base extends AbstractBlock
     {
         return [
             'locale' => $this->localeResolver->getLocale(),
-            'domain' => $this->requestInterface->getServer('SERVER_ADDR'),
         ];
     }
 
