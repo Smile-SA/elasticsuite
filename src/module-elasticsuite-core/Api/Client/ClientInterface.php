@@ -210,4 +210,22 @@ interface ClientInterface
      * @return array
      */
     public function reindex(array $params): array;
+
+    /**
+     * Run a deleteByQuery request.
+     *
+     * @param array $params Delete by query params.
+     *
+     * @return array
+     */
+    public function deleteByQuery(array $params): array;
+
+    /**
+     * Run an updateByQuery request.
+     *
+     * @param array $params Delete by query params.
+     *
+     * @return array
+     */
+    public function updateByQuery(array $params): array;
 }
