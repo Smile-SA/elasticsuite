@@ -126,10 +126,19 @@ class Fulltext implements \Magento\Framework\Indexer\ActionInterface, \Magento\F
         $storeIds = array_keys($this->storeManager->getStores());
 
         foreach ($storeIds as $storeId) {
+            // load store translation for static attribute options
+            $this->localeResolver->emulate($storeId);
+            $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
+
             $dimension = $this->dimensionFactory->create(['name' => 'scope', 'value' => $storeId]);
             $this->indexerHandler->cleanIndex([$dimension]);
             $this->indexerHandler->saveIndex([$dimension], $this->fullAction->rebuildStoreIndex($storeId));
+
+            $this->localeResolver->revert();
         }
+        
+        // reinitialize translation
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
     }
 
     /**
