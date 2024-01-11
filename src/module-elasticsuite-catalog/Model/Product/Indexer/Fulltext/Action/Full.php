@@ -34,11 +34,10 @@ class Full
     /**
      * Constructor.
      *
-     * @param ResourceModel      $resourceModel    Indexer resource model.
+     * @param ResourceModel $resourceModel Indexer resource model.
      */
-    public function __construct(
-        ResourceModel $resourceModel
-    ) {
+    public function __construct(ResourceModel $resourceModel)
+    {
         $this->resourceModel = $resourceModel;
     }
 
