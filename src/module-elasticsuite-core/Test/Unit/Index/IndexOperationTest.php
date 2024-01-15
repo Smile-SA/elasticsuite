@@ -32,7 +32,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     private $indexOperation;
 
     /**
-     * @var \Elasticsearch\Client|\\PHPUnit\Framework\MockObject\MockObject
+     * @var \OpenSearch\Client|\\PHPUnit\Framework\MockObject\MockObject
      */
     private $clientMock;
 

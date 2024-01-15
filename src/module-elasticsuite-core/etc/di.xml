@@ -548,7 +548,7 @@
     <!-- Async Operations -->
     <virtualType name="elasticsuiteAsyncClientBuilder" type="Smile\ElasticsuiteCore\Client\ClientBuilder">
         <arguments>
-            <argument name="selector" xsi:type="string">\Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector</argument>
+            <argument name="selector" xsi:type="string">\OpenSearch\ConnectionPool\Selectors\RoundRobinSelector</argument>
         </arguments>
     </virtualType>
 
