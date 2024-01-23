@@ -74,7 +74,7 @@ jobs:
 
       - name: "[Init] Determine composer cache directory"
         id: composer-cache-directory
-        run: "echo \"directory=$(composer config cache-dir)\"" >> $GITHUB_OUTPUT
+        run: "echo \"directory=$(composer config cache-dir)\"" >> "$GITHUB_OUTPUT"
 
       - name: "[Init] Cache Composer cache"
         id: composer-cache
