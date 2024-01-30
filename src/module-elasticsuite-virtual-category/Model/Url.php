@@ -315,7 +315,8 @@ class Url
     {
         $collection = $this->categoryCollectionFactory->create();
 
-        $collection->setStoreId($this->storeManager->getStore()->getId())
+        $collection->addIsActiveFilter()
+            ->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_key', ['eq' => $requestPath]);
 
         return $collection->getFirstItem();
@@ -355,7 +356,8 @@ class Url
     private function loadVirtualCategoryByUrlPath($requestPath): DataObject
     {
         $collection = $this->categoryCollectionFactory->create();
-        $collection->setStoreId($this->storeManager->getStore()->getId())
+        $collection->addIsActiveFilter()
+            ->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_path', ['eq' => $requestPath])
             ->addAttributeToFilter('is_virtual_category', ['eq' => 1]);
 
