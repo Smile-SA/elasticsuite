@@ -65,19 +65,19 @@
                     <block name="elasticsuite.analytics.search_usage.sessions" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Sessions" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Sessions</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                            <argument name="chart_type" xsi:type="string">PieChart</argument>
                         </arguments>
                     </block>
                     <block name="elasticsuite.analytics.search_usage.spellcheck" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Spellcheck" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Spellcheck usage</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                            <argument name="chart_type" xsi:type="string">PieChart</argument>
                         </arguments>
                     </block>
                     <block name="elasticsuite.analytics.search_usage.conversion" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Conversion rate</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">BarChart</argument>
+                            <argument name="chart_type" xsi:type="string">BarChart</argument>
                         </arguments>
                     </block>
                 </container>
