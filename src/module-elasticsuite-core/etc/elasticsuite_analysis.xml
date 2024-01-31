@@ -150,7 +150,7 @@
             <!--
                 Known issues with the "french" stemmer.
                  -->
-            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo"]</rules>
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo", "clef => cle", "clefs => cle"]</rules>
         </filter>
         <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
@@ -163,10 +163,10 @@
             <articles>["d", "l", "m", "n", "s", "t"]</articles>
         </filter>
         <filter name="elision" type="elision" language="fr">
-            <articles>["l", "m", "t", "qu", "n", "s","j", "d", "c"]</articles>
+            <articles>["l", "m", "t", "qu", "n", "s", "j", "d", "c"]</articles>
         </filter>
         <filter name="elision" type="elision" language="it">
-            <articles>["c", "l", "all", "dall", "dell","nell", "sull", "coll", "pell","gl", "agl", "dagl", "degl", "negl","sugl", "un", "m", "t", "s", "v", "d"]</articles>
+            <articles>["c", "l", "all", "dall", "dell", "nell", "sull", "coll", "pell", "gl", "agl", "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d"]</articles>
         </filter>
         <filter name="phonetic" type="phonetic" language="default">
             <encoder>metaphone</encoder>
@@ -194,9 +194,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
             </filters>
@@ -208,9 +208,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -220,9 +220,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="reference_word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="reference_shingle" />
             </filters>
             <char_filters>
@@ -233,9 +233,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
                 <filter ref="shingle" />
@@ -258,9 +258,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="phonetic" />
             </filters>
             <char_filters>
@@ -271,9 +271,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
                 <filter ref="edge_ngram_filter"/>
