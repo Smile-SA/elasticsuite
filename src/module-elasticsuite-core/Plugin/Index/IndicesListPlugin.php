@@ -33,6 +33,8 @@ class IndicesListPlugin
      * @param array         $result  Result list.
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterGetList($subject, $result)
     {

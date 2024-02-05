@@ -24,6 +24,8 @@ use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Vadym Honcharuk <vahonc@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class DynamicColumn extends Select
 {

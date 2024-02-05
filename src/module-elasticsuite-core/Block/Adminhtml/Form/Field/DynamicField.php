@@ -25,6 +25,8 @@ use Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\Renderer\DynamicColumn;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Vadym Honcharuk <vahonc@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class DynamicField extends AbstractFieldArray
 {
