@@ -60,7 +60,8 @@ class DynamicColumn extends Select
     /**
      * Set "name" for <select> element.
      *
-     * @param string $value
+     * @param string $value Name of element.
+     *
      * @return $this
      */
     public function setInputName($value)
@@ -71,7 +72,8 @@ class DynamicColumn extends Select
     /**
      * Set "id" for <select> element.
      *
-     * @param $value
+     * @param string $value Id of element.
+     *
      * @return $this
      */
     public function setInputId($value)
@@ -94,31 +96,6 @@ class DynamicColumn extends Select
     }
 
     /**
-     * Retrieve source options.
-     *
-     * @return array
-     */
-    private function getSourceOptions(): array
-    {
-        $indexTypes = $this->getList();
-
-        // Add an empty option as the first element
-        $options[] = [
-            'value' => '?',
-            'label' => ''
-        ];
-
-        foreach ($indexTypes as $indexType) {
-            $options[] = [
-                'value' => $indexType,
-                'label' => $indexType
-            ];
-        }
-
-        return $options;
-    }
-
-    /**
      * Get list of index types managed by Smile Elasticsuite.
      *
      * @return array
@@ -131,5 +108,30 @@ class DynamicColumn extends Select
         }
 
         return $list;
+    }
+
+    /**
+     * Retrieve source options.
+     *
+     * @return array
+     */
+    private function getSourceOptions(): array
+    {
+        $indexTypes = $this->getList();
+
+        // Add an empty option as the first element.
+        $options[] = [
+            'value' => '?',
+            'label' => '',
+        ];
+
+        foreach ($indexTypes as $indexType) {
+            $options[] = [
+                'value' => $indexType,
+                'label' => $indexType,
+            ];
+        }
+
+        return $options;
     }
 }

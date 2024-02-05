@@ -54,7 +54,7 @@ class DynamicField extends AbstractFieldArray
             [
                 'label' => __('Number of Shards'),
                 'class' => 'required-entry',
-                'size' => '10'
+                'size' => '10',
             ]
         );
 
@@ -63,7 +63,7 @@ class DynamicField extends AbstractFieldArray
             [
                 'label' => __('Number of Replicas'),
                 'class' => 'required-entry',
-                'size' => '10'
+                'size' => '10',
             ]
         );
 
@@ -74,7 +74,7 @@ class DynamicField extends AbstractFieldArray
     /**
      * Prepare existing row data object.
      *
-     * @param DataObject $row
+     * @param DataObject $row Row data object.
      *
      * @return void
      * @throws LocalizedException

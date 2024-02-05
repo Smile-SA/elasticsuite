@@ -33,7 +33,7 @@ class IndexSettings extends AbstractConfiguration
      *
      * @var string
      */
-    const BASE_CONFIG_XML_PREFIX =  'smile_elasticsuite_core_base_settings';
+    const BASE_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings';
 
     /**
      * @var string
@@ -186,6 +186,7 @@ class IndexSettings extends AbstractConfiguration
 
         if ($configValue !== null) {
             $json = ObjectManager::getInstance()->get(Json::class);
+
             return $json->unserialize($configValue);
         }
 
@@ -201,12 +202,12 @@ class IndexSettings extends AbstractConfiguration
      */
     public function getNumberOfShards(?string $indexIdentifier = null): int
     {
-        // If $indexIdentifier is null, return the default number of shards from the configuration
+        // If $indexIdentifier is null, return the default number of shards from the configuration.
         if ($indexIdentifier === null) {
             return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
         }
 
-        // Otherwise, retrieve custom number of shards per index type
+        // Otherwise, retrieve custom number of shards per index type.
         return $this->getNumberOfShardsPerIndex($indexIdentifier);
     }
 
@@ -219,18 +220,18 @@ class IndexSettings extends AbstractConfiguration
      */
     public function getNumberOfShardsPerIndex(string $indexIdentifier): int
     {
-        // Retrieve custom indices settings from the database
+        // Retrieve custom indices settings from the database.
         $customSettings = $this->getCustomIndicesSettings();
 
         if ($customSettings) {
             foreach ($customSettings as $data) {
                 if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_shards'])) {
-                    return (int)$data['custom_number_shards'];
+                    return (int) $data['custom_number_shards'];
                 }
             }
         }
 
-        // If the custom setting doesn't exist in the database, return the default value from the configuration
+        // If the custom setting doesn't exist in the database, return the default value from the configuration.
         return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
     }
 
@@ -243,12 +244,12 @@ class IndexSettings extends AbstractConfiguration
      */
     public function getNumberOfReplicas(?string $indexIdentifier = null): int
     {
-        // If $indexIdentifier is null, return the default number of replicas from the configuration
+        // If $indexIdentifier is null, return the default number of replicas from the configuration.
         if ($indexIdentifier === null) {
             return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
         }
 
-        // Otherwise, retrieve custom number of replicas per index type
+        // Otherwise, retrieve custom number of replicas per index type.
         return $this->getNumberOfReplicasPerIndex($indexIdentifier);
     }
 
@@ -261,18 +262,18 @@ class IndexSettings extends AbstractConfiguration
      */
     public function getNumberOfReplicasPerIndex(string $indexIdentifier): int
     {
-        // Retrieve specific indices settings from the database
+        // Retrieve specific indices settings from the database.
         $customSettings = $this->getCustomIndicesSettings();
 
         if ($customSettings) {
             foreach ($customSettings as $data) {
                 if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_replicas'])) {
-                    return (int)$data['custom_number_replicas'];
+                    return (int) $data['custom_number_replicas'];
                 }
             }
         }
 
-        // If the custom setting doesn't exist in the database, return the default value from the configuration
+        // If the custom setting doesn't exist in the database, return the default value from the configuration.
         return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
     }
 
