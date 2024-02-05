@@ -15,7 +15,7 @@
 namespace Smile\ElasticsuiteCore\Api\Index;
 
 /**
- * Provides acces to indices related settings / configuration.
+ * Provides access to indices related settings / configuration.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -55,16 +55,20 @@ interface IndexSettingsInterface
     /**
      * Returns settings used during index creation.
      *
+     * @param string $indexIdentifier Index identifier.
+     *
      * @return array
      */
-    public function getCreateIndexSettings();
+    public function getCreateIndexSettings($indexIdentifier);
 
     /**
      * Returns settings used when installing an index.
      *
+     * @param string $indexIdentifier Index identifier.
+     *
      * @return array
      */
-    public function getInstallIndexSettings();
+    public function getInstallIndexSettings($indexIdentifier);
 
     /**
      * Returns the list of the available indices declared in elasticsuite_indices.xml.
@@ -76,7 +80,7 @@ interface IndexSettingsInterface
     /**
      * Return config of an index.
      *
-     * @param string $indexIdentifier Index indentifier.
+     * @param string $indexIdentifier Index identifier.
      *
      * @return array
      */

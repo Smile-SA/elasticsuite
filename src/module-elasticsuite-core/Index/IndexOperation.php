@@ -132,7 +132,7 @@ class IndexOperation implements IndexOperationInterface
     {
         $index         = $this->initIndex($indexIdentifier, $store, false);
         $indexSettings = [
-            'settings' => $this->indexSettings->getCreateIndexSettings() + $this->indexSettings->getDynamicIndexSettings($store),
+            'settings' => $this->indexSettings->getCreateIndexSettings($indexIdentifier) + $this->indexSettings->getDynamicIndexSettings($store),
         ];
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
 
@@ -187,7 +187,7 @@ class IndexOperation implements IndexOperationInterface
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
             $this->client->forceMerge($indexName);
-            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings());
+            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings($indexIdentifier));
 
             $this->proceedIndexInstall($indexName, $indexAlias);
         }

@@ -27,4 +27,8 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\Renderer\DynamicColumn">
+        <plugin name="smile_elasticsuite_add_thesaurus_index" type="Smile\ElasticsuiteCore\Plugin\Index\IndicesListPlugin"/>
+    </type>
+
 </config>

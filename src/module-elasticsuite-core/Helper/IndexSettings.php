@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Helper;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Zend_Date;
 
@@ -26,6 +28,13 @@ use Zend_Date;
  */
 class IndexSettings extends AbstractConfiguration
 {
+    /**
+     * Location of ElasticSuite base settings configuration.
+     *
+     * @var string
+     */
+    const BASE_CONFIG_XML_PREFIX =  'smile_elasticsuite_core_base_settings';
+
     /**
      * @var string
      */
@@ -149,22 +158,121 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
-     * Get number of shards from the configuration.
+     * Returns custom indices settings.
      *
-     * @return integer
+     * @return array
      */
-    public function getNumberOfShards()
+    public function getCustomIndicesSettings(): array
     {
+        $serializedConfigValue = $this->getSerializedConfigValue('indices_settings/custom_number_of_shards_and_replicas_per_index');
+
+        if ($serializedConfigValue !== null) {
+            return $this->normalize($serializedConfigValue);
+        }
+
+        return [];
+    }
+
+    /**
+     * Get serialized config value.
+     *
+     * @param string $indexType Index type.
+     *
+     * @return mixed|null
+     */
+    public function getSerializedConfigValue(string $indexType)
+    {
+        $configValue = $this->getConfigValue($indexType);
+
+        if ($configValue !== null) {
+            $json = ObjectManager::getInstance()->get(Json::class);
+            return $json->unserialize($configValue);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the number of shards based on the provided index identifier.
+     *
+     * @param string|null $indexIdentifier If provided, the index identifier; otherwise, null.
+     *
+     * @return int
+     */
+    public function getNumberOfShards(?string $indexIdentifier = null): int
+    {
+        // If $indexIdentifier is null, return the default number of shards from the configuration
+        if ($indexIdentifier === null) {
+            return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
+        }
+
+        // Otherwise, retrieve custom number of shards per index type
+        return $this->getNumberOfShardsPerIndex($indexIdentifier);
+    }
+
+    /**
+     * Get custom number of shards per index type.
+     *
+     * @param string $indexIdentifier Index type identifier
+     *
+     * @return int
+     */
+    public function getNumberOfShardsPerIndex(string $indexIdentifier): int
+    {
+        // Retrieve custom indices settings from the database
+        $customSettings = $this->getCustomIndicesSettings();
+
+        if ($customSettings) {
+            foreach ($customSettings as $data) {
+                if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_shards'])) {
+                    return (int)$data['custom_number_shards'];
+                }
+            }
+        }
+
+        // If the custom setting doesn't exist in the database, return the default value from the configuration
         return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
     }
 
     /**
-     * Get number of replicas from the configuration.
-
-     * @return integer
+     * Get the number of replicas based on the provided index identifier.
+     *
+     * @param string|null $indexIdentifier If provided, the index identifier; otherwise, null.
+     *
+     * @return int
      */
-    public function getNumberOfReplicas()
+    public function getNumberOfReplicas(?string $indexIdentifier = null): int
     {
+        // If $indexIdentifier is null, return the default number of replicas from the configuration
+        if ($indexIdentifier === null) {
+            return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
+        }
+
+        // Otherwise, retrieve custom number of replicas per index type
+        return $this->getNumberOfReplicasPerIndex($indexIdentifier);
+    }
+
+    /**
+     * Get custom number of replicas per index type.
+     *
+     * @param string $indexIdentifier Index type identifier
+     *
+     * @return int
+     */
+    public function getNumberOfReplicasPerIndex(string $indexIdentifier): int
+    {
+        // Retrieve specific indices settings from the database
+        $customSettings = $this->getCustomIndicesSettings();
+
+        if ($customSettings) {
+            foreach ($customSettings as $data) {
+                if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_replicas'])) {
+                    return (int)$data['custom_number_replicas'];
+                }
+            }
+        }
+
+        // If the custom setting doesn't exist in the database, return the default value from the configuration
         return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
     }
 
@@ -201,11 +309,13 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Max number of results per query.
      *
+     * @param string $indexIdentifier Index identifier.
+     *
      * @return integer
      */
-    public function getMaxResultWindow()
+    public function getMaxResultWindow($indexIdentifier)
     {
-        return (int) $this->getNumberOfShards() * self::PER_SHARD_MAX_RESULT_WINDOW;
+        return (int) $this->getNumberOfShards($indexIdentifier) * self::PER_SHARD_MAX_RESULT_WINDOW;
     }
 
     /**
@@ -251,6 +361,40 @@ class IndexSettings extends AbstractConfiguration
         }
 
         return $maxNgramDiff;
+    }
+
+    /**
+     * Retrieve a configuration value by its key.
+     *
+     * @param string $indexType The configuration key
+     *
+     * @return mixed
+     */
+    protected function getConfigValue(string $indexType)
+    {
+        return $this->scopeConfig->getValue(self::BASE_CONFIG_XML_PREFIX . "/" . $indexType);
+    }
+
+    /**
+     * Normalize config data.
+     *
+     * @param array $data Data.
+     *
+     * @return array
+     */
+    private function normalize(array $data): array
+    {
+        $result = [];
+        foreach ($data as $item) {
+
+            $result[] = [
+                'index_type' => $item['index_type'],
+                'custom_number_shards' => $item['custom_number_shards'],
+                'custom_number_replicas' => $item['custom_number_replicas'],
+            ];
+        }
+
+        return $result;
     }
 
     /**
