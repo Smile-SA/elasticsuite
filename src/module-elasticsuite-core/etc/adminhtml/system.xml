@@ -92,11 +92,17 @@
                     <label>Indices Name Pattern</label>
                 </field>
                 <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Shards per Index</label>
+                    <label>Default Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
                 <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Replicas per Index</label>
+                    <label>Default Number of Replicas per Index</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="custom_number_of_shards_and_replicas_per_index" translate="label" sortOrder="61" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Custom Number of Shards and Replicas per Index</label>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\DynamicField</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                     <frontend_class>validate-number</frontend_class>
                 </field>
             </group>

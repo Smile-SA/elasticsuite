@@ -131,9 +131,11 @@ class IndexOperation implements IndexOperationInterface
     public function createIndex($indexIdentifier, $store)
     {
         $index         = $this->initIndex($indexIdentifier, $store, false);
+        // @codingStandardsIgnoreStart
         $indexSettings = [
-            'settings' => $this->indexSettings->getCreateIndexSettings() + $this->indexSettings->getDynamicIndexSettings($store),
+            'settings' => $this->indexSettings->getCreateIndexSettings($indexIdentifier) + $this->indexSettings->getDynamicIndexSettings($store),
         ];
+        // @codingStandardsIgnoreEnd
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
 
         $this->client->createIndex($index->getName(), $indexSettings);
@@ -172,7 +174,7 @@ class IndexOperation implements IndexOperationInterface
 
             $this->client->putMapping($index->getName(), $mapping);
         } catch (\LogicException $exception) {
-            ; // Do nothing, we cannot update mapping of a non existing index.
+            // Do nothing, we cannot update mapping of a non existing index.
         }
     }
 
@@ -187,7 +189,7 @@ class IndexOperation implements IndexOperationInterface
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
             $this->client->forceMerge($indexName);
-            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings());
+            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings($indexIdentifier));
 
             $this->proceedIndexInstall($indexName, $indexAlias);
         }
