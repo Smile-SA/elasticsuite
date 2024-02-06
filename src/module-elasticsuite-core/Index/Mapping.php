@@ -178,14 +178,41 @@ class Mapping implements MappingInterface
         }
 
         foreach ($fields as $field) {
-            $currentAnalyzer = $analyzer;
-            $canAddField     = $defaultField === null || $field->getSearchWeight() !== 1;
+            $canAddField = $defaultField === null || $field->getSearchWeight() !== 1;
+            $analyzers   = [];
 
             if ($analyzer === null) {
-                $currentAnalyzer = $field->getDefaultSearchAnalyzer();
-                $canAddField     = $canAddField || ($currentAnalyzer !== FieldInterface::ANALYZER_STANDARD);
+                $defaultAnalyzer = $field->getDefaultSearchAnalyzer();
+                $analyzers       = $field->getCustomSearchAnalyzers();
+                $analyzers[]     = $defaultAnalyzer;
+                $canAddField     = $canAddField || ($defaultAnalyzer !== FieldInterface::ANALYZER_STANDARD);
             }
 
+            if ($analyzer !== null) {
+                $analyzers[] = $analyzer;
+            }
+
+            $weightedFields = array_merge($weightedFields, $this->addWeightedFields($analyzers, $canAddField, $field, $boost));
+        }
+
+        return $weightedFields;
+    }
+
+    /**
+     * Add weighted fields for each analyzer
+     *
+     * @param array          $analyzers   Analyzers
+     * @param bool           $canAddField Field can be added
+     * @param FieldInterface $field       Fild
+     * @param int            $boost       Boost applieds
+     *
+     * @return array
+     */
+    private function addWeightedFields($analyzers, $canAddField, $field, $boost)
+    {
+        $weightedFields = [];
+
+        foreach ($analyzers as $currentAnalyzer) {
             $property = $field->getMappingProperty($currentAnalyzer);
 
             if ($property && $canAddField) {
