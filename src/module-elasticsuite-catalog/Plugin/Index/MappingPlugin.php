@@ -36,7 +36,7 @@ class MappingPlugin
      * This is due to the fact that "category.name" being nested cannot be use directly in fulltext queries.
      *
      * @param MappingInterface $subject Index Mapping
-     * @param array   $result  Mapping properties
+     * @param array            $result  Mapping properties
      *
      * @return array
      *
