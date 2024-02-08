@@ -213,6 +213,7 @@ class Factory
                 'value'        => $this->getConfigValue($path . "/value", $scopeCode),
                 'prefixLength' => $this->getConfigValue($path . "/prefix_length", $scopeCode),
                 'maxExpansion' => $this->getConfigValue($path . "/max_expansion", $scopeCode),
+                'minimumShouldMatch' => $this->getFuzzinessMinimumShouldMatch($scopeCode),
             ];
 
             $configuration = $this->createFuzzinessConfiguration($configurationParams);
@@ -488,5 +489,28 @@ class Factory
         $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
 
         return (int) $this->getConfigValue($path . "/sortable_boost_value", $scopeCode);
+    }
+
+    /**
+     * Return the minimum should match configured for fuzzy search.
+     * Either the default one, or a particular if configured so.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return string
+     */
+    private function getFuzzinessMinimumShouldMatch($scopeCode)
+    {
+        $minimumShouldMatch = $this->getMinimumShouldMatch($scopeCode);
+        $useDefaultMsmPath  = self::FUZZINESS_CONFIG_XML_PREFIX . '/use_default_minimum_should_match';
+        $useDefaultMsm      = (bool) $this->getConfigValue($useDefaultMsmPath, $scopeCode);
+        $fuzzyMsmPath       = self::FUZZINESS_CONFIG_XML_PREFIX . '/minimum_should_match';
+        $fuzzyMsm           = (string) $this->getConfigValue($fuzzyMsmPath, $scopeCode);
+
+        if ($useDefaultMsm === false && $fuzzyMsm !== '') {
+            $minimumShouldMatch = $fuzzyMsm;
+        }
+
+        return $minimumShouldMatch;
     }
 }
