@@ -37,6 +37,7 @@ interface FieldInterface
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
     const FIELD_TYPE_OBJECT  = 'object';
+    const FIELD_TYPE_KNN_VECTOR = 'knn_vector';
 
     /**
      * Analyzers declarations.
