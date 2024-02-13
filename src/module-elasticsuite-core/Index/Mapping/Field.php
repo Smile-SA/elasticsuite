@@ -404,6 +404,8 @@ class Field implements FieldInterface
      * Build the property config from the field type and an optional
      * analyzer (used for string and detected through getAnalyzers).
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param string|null $analyzer Used analyzer.
      *
      * @return array
@@ -436,6 +438,10 @@ class Field implements FieldInterface
                 break;
             case self::FIELD_TYPE_DATE:
                 $fieldMapping['format'] = implode('||', $this->dateFormats);
+                break;
+            case self::FIELD_TYPE_KNN_VECTOR:
+                $fieldMapping['dimension'] = $this->config['dimension'];
+                $fieldMapping['method']    = $this->config['model'];
                 break;
         }
 

@@ -21,5 +21,23 @@
                     <value id="elasticsuite" type="host">t.elasticsuite.io</value>
                 </values>
             </policy>
+            <policy id="img-src">
+                <values>
+                    <value id="hsnet" type="host">*.hsforms.net</value>
+                    <value id="hscom" type="host">*.hsforms.com</value>
+                </values>
+            </policy>
+            <policy id="connect-src">
+                <values>
+                    <value id="hsnet" type="host">*.hsforms.net</value>
+                    <value id="hscom" type="host">*.hsforms.com</value>
+                </values>
+            </policy>
+            <policy id="script-src">
+                <values>
+                    <value id="hsnet" type="host">*.hsforms.net</value>
+                    <value id="hscom" type="host">*.hsforms.com</value>
+                </values>
+            </policy>
         </policies>
 </csp_whitelist>
