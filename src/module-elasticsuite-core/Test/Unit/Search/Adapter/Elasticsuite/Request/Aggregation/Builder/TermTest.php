@@ -53,7 +53,46 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testAplhabeticSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], [], [], null, null, null, 1, TermBucket::SORT_ORDER_TERM);
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            TermBucket::SORT_ORDER_TERM
+        );
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertArrayHasKey('terms', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['terms']['field']);
+        $this->assertEquals([TermBucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC], $aggregation['terms']['order']);
+    }
+
+    /**
+     * Test the standard term aggregation building sorted by alphabetic order using the deprecated sort order.
+     *
+     * @return void
+     */
+    public function testAplhabeticSortOrderTermDeprecatedAggregationBuild()
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            TermBucket::SORT_ORDER_TERM_DEPRECATED
+        );
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 

@@ -79,6 +79,7 @@ class Preview extends AbstractPreview
      */
     protected function prepareProductCollection(Collection $collection) : Collection
     {
+        $this->searchContext->setIsBlacklistingApplied(false);
         $this->searchContext->setCurrentCategory($this->category);
         $this->searchContext->setStoreId($this->category->getStoreId());
         $collection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);

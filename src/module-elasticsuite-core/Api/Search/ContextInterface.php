@@ -59,22 +59,50 @@ interface ContextInterface
     public function setCustomerGroupId(int $customerGroupId);
 
     /**
+     * Return the current category
+     * Either the current category being viewed in catalog navigation,
+     * or the current applied category filter in search.
+     *
      * @return \Magento\Catalog\Api\Data\CategoryInterface
      */
     public function getCurrentCategory();
 
     /**
+     * Return the current search query.
+     *
      * @return \Magento\Search\Model\QueryInterface
      */
     public function getCurrentSearchQuery();
 
     /**
+     * Return the current store id.
+     * Used to determine the applicable optimizers.
+     *
      * @return int
      */
     public function getStoreId();
 
     /**
+     * Return the current customer group id.
+     * Used to determine which prices to filter on.
+     *
      * @return int|null
      */
     public function getCustomerGroupId();
+
+    /**
+     * Returns true if the merchandisers' blacklisting mechanism should be applied.
+     *
+     * @return bool
+     */
+    public function isBlacklistingApplied(): bool;
+
+    /**
+     * Sets if the merchandisers' blacklisting mechanism should be applied.
+     *
+     * @param bool $blacklistingApplied Whether to applied blacklisting or not.
+     *
+     * @return bool
+     */
+    public function setIsBlacklistingApplied(bool $blacklistingApplied):  ContextInterface;
 }

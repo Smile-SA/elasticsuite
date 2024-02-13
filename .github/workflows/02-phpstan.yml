@@ -30,6 +30,14 @@ jobs:
             magento-versions: '2.4.6'
             magento-editions: 'enterprise'
             experimental: false
+          - php-versions: '8.2'
+            magento-versions: '2.4.7-beta2'
+            magento-editions: 'community'
+            experimental: true
+          - php-versions: '8.2'
+            magento-versions: '2.4.7-beta2'
+            magento-editions: 'enterprise'
+            experimental: true
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -74,7 +82,7 @@ jobs:
 
       - name: "[Init] Determine composer cache directory"
         id: composer-cache-directory
-        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+        run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
 
       - name: "[Init] Cache Composer cache"
         id: composer-cache
