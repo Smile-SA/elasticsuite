@@ -362,7 +362,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param QueryInterface|NULL $query              Base query.
-     * @param CategoryInterface   $category           Current cayegory.
+     * @param CategoryInterface   $category           Current category.
      * @param array               $excludedCategories Category already used into the building stack. Avoid short circuit.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
