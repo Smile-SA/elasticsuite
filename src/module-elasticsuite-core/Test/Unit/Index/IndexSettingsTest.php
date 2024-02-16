@@ -105,8 +105,8 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
      */
     public function testIndexingSettings()
     {
-        $createIndexSettings  = $this->indexSettings->getCreateIndexSettings();
-        $installIndexSettings = $this->indexSettings->getInstallIndexSettings();
+        $createIndexSettings  = $this->indexSettings->getCreateIndexSettings('index_identifier');
+        $installIndexSettings = $this->indexSettings->getInstallIndexSettings('index_identifier');
         $this->assertEquals(1, $createIndexSettings['number_of_shards']);
         $this->assertEquals(0, $createIndexSettings['number_of_replicas']);
         $this->assertEquals(1, $installIndexSettings['number_of_replicas']);
