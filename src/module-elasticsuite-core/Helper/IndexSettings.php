@@ -365,6 +365,20 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Read config under the path smile_elasticsuite_core_base_settings/indices_settings.
+     *
+     * @param string $configField Configuration field name.
+     *
+     * @return mixed
+     */
+    public function getIndicesSettingsConfigParam($configField)
+    {
+        $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
+
+        return $this->getElasticSuiteConfigParam($path);
+    }
+
+    /**
      * Retrieve a configuration value by its key.
      *
      * @param string $indexType The configuration key
@@ -396,20 +410,6 @@ class IndexSettings extends AbstractConfiguration
         }
 
         return $result;
-    }
-
-    /**
-     * Read config under the path smile_elasticsuite_core_base_settings/indices_settings.
-     *
-     * @param string $configField Configuration field name.
-     *
-     * @return mixed
-     */
-    private function getIndicesSettingsConfigParam($configField)
-    {
-        $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
-
-        return $this->getElasticSuiteConfigParam($path);
     }
 
     /**
