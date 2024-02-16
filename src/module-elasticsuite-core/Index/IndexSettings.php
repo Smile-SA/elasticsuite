@@ -127,17 +127,17 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * {@inheritDoc}
      */
-    public function getCreateIndexSettings()
+    public function getCreateIndexSettings($indexIdentifier)
     {
         $settings = [
             'requests.cache.enable'            => true,
             'number_of_replicas'               => 0,
-            'number_of_shards'                 => $this->helper->getNumberOfShards(),
+            'number_of_shards'                 => $this->helper->getNumberOfShards($indexIdentifier),
             'refresh_interval'                 => self::FULL_REINDEX_REFRESH_INTERVAL,
             'merge.scheduler.max_thread_count' => 1,
             'translog.durability'              => self::FULL_REINDEX_TRANSLOG_DURABILITY,
             'codec'                            => self::CODEC,
-            'max_result_window'                => $this->helper->getMaxResultWindow(),
+            'max_result_window'                => $this->helper->getMaxResultWindow($indexIdentifier),
             'mapping.total_fields.limit'       => self::TOTAL_FIELD_LIMIT,
         ];
 
@@ -147,10 +147,10 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * {@inheritDoc}
      */
-    public function getInstallIndexSettings()
+    public function getInstallIndexSettings($indexIdentifier)
     {
         $settings = [
-            'number_of_replicas'     => $this->helper->getNumberOfReplicas(),
+            'number_of_replicas'     => $this->helper->getNumberOfReplicas($indexIdentifier),
             'refresh_interval'       => self::DIFF_REINDEX_REFRESH_INTERVAL,
             'translog.durability'    => self::DIFF_REINDEX_TRANSLOG_DURABILITY,
         ];
