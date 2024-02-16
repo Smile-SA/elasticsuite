@@ -75,7 +75,7 @@ class EventIndex implements EventIndexInterface
         $indices = [];
 
         foreach ($events as $event) {
-            if (isset($event['page']['store_id'])) {
+            if (isset($event['page']['store_id']) && is_numeric($event['page']['store_id'])) {
                 // Previous "date" column has been renamed to "created_at" in db_schema.xml.
                 if (!isset($event['date'])) {
                     $event['date'] = $event['created_at'];
