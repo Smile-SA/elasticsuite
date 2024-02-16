@@ -12,12 +12,12 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings;
 
 use Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
-use Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\Renderer\DynamicColumn;
+use Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\Renderer\DynamicColumn;
 
 /**
  * Adminhtml Elasticsuite -> Base Settings -> Indices Settings -> Custom Number of Shards and Replicas per Index field.

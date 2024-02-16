@@ -12,7 +12,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\Renderer;
+namespace Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\Renderer;
 
 use Magento\Framework\View\Element\Context;
 use Magento\Framework\View\Element\Html\Select;
