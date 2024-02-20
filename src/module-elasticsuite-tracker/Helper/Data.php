@@ -139,7 +139,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getBaseUrl()
     {
-        return trim($this->urlBuilder->getUrl('elasticsuite/tracker/hit', ['image' => 'h.png']), '/');
+        return trim($this->urlBuilder->getUrl('elasticsuite/tracker/hit', ['image' => 'hit.png']), '/');
     }
 
     /**
