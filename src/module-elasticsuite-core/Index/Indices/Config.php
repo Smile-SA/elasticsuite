@@ -101,6 +101,8 @@ class Config extends \Magento\Framework\Config\Data
         $this->serializer                = $serializer;
         $this->cache                     = $cache;
         $this->cacheId                   = $cacheId;
+        $this->cacheTags[]               = \Magento\Framework\App\Cache\Type\Config::CACHE_TAG;
+        $this->cacheTags[]               = \Smile\ElasticsuiteCore\Helper\Cache::CACHE_TAG;
 
         parent::__construct($reader, $cache, $cacheId, $serializer);
     }
@@ -111,7 +113,6 @@ class Config extends \Magento\Framework\Config\Data
     public function reset()
     {
         parent::reset();
-        $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [$this->cacheId]);
         $this->initData();
     }
 
@@ -229,7 +230,7 @@ class Config extends \Magento\Framework\Config\Data
                 ];
             }
 
-            $this->cache->save($this->serializer->serialize($fieldsConfig), $cacheId, $this->cacheTags + [$this->cacheId]);
+            $this->cache->save($this->serializer->serialize($fieldsConfig), $cacheId, $this->cacheTags);
         } else {
             $fieldsConfig = $this->serializer->unserialize($fieldsConfig);
         }
