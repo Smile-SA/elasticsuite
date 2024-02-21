@@ -32,11 +32,6 @@ class Cache extends AbstractHelper
     const DEFAULT_LIFETIME = 7200;
 
     /**
-     * @var string
-     */
-    const CACHE_TAG = "ELASTICSUITE";
-
-    /**
      * @var CacheInterface
      */
     private $cache;
@@ -81,7 +76,7 @@ class Cache extends AbstractHelper
             $data = serialize($data);
         }
 
-        $cacheTags[] = self::CACHE_TAG;
+        $cacheTags[] = \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG;
 
         $this->cache->save($data, $cacheKey, $cacheTags, $lifetime);
     }

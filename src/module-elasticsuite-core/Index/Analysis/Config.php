@@ -43,7 +43,7 @@ class Config extends \Magento\Framework\Config\Data
     public function __construct(Reader $reader, CacheInterface $cache, $cacheId = self::CACHE_ID)
     {
         $this->cacheTags[] = \Magento\Framework\App\Cache\Type\Config::CACHE_TAG;
-        $this->cacheTags[] = \Smile\ElasticsuiteCore\Helper\Cache::CACHE_TAG;
+        $this->cacheTags[] = \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG;
 
         parent::__construct($reader, $cache, $cacheId);
     }

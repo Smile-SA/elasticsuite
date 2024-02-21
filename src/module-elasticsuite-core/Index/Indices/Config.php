@@ -27,6 +27,7 @@ use Smile\ElasticsuiteCore\Api\Index\DataSourceResolverInterfaceFactory as DataS
  * ElasticSuite indices configuration;
  *
  * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -101,8 +102,9 @@ class Config extends \Magento\Framework\Config\Data
         $this->serializer                = $serializer;
         $this->cache                     = $cache;
         $this->cacheId                   = $cacheId;
+        $this->cacheTags[]               = $cacheId;
         $this->cacheTags[]               = \Magento\Framework\App\Cache\Type\Config::CACHE_TAG;
-        $this->cacheTags[]               = \Smile\ElasticsuiteCore\Helper\Cache::CACHE_TAG;
+        $this->cacheTags[]               = \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG;
 
         parent::__construct($reader, $cache, $cacheId, $serializer);
     }
@@ -113,6 +115,13 @@ class Config extends \Magento\Framework\Config\Data
     public function reset()
     {
         parent::reset();
+        $this->cache->clean(
+            \Zend_Cache::CLEANING_MODE_MATCHING_TAG,
+            [
+                $this->cacheId,
+                \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG,
+            ]
+        );
         $this->initData();
     }
 
