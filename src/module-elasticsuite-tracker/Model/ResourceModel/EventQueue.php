@@ -148,9 +148,12 @@ class EventQueue extends AbstractDb
     protected function isEventInvalid($data)
     {
         $isEventInvalid = true;
-        if (array_key_exists('session', $data)) {
-            if (array_key_exists('uid', $data['session']) && array_key_exists('vid', $data['session'])) {
-                $isEventInvalid = false;
+
+        if (isset($data['page']['store_id']) && is_numeric($data['page']['store_id'])) {
+            if (array_key_exists('session', $data)) {
+                if (array_key_exists('uid', $data['session']) && array_key_exists('vid', $data['session'])) {
+                    $isEventInvalid = false;
+                }
             }
         }
 
