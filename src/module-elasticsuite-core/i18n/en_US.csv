@@ -105,3 +105,4 @@ Autocomplete,Autocomplete
 "Number of Shards","Number of Shards"
 "Number of Replicas","Number of Replicas"
 "Custom settings per Index","Custom settings per Index"
+"Indices and fields configuration, redundant computations (queries spellchecking, synonyms).","Indices and fields configuration, redundant computations (queries spellchecking, synonyms)."

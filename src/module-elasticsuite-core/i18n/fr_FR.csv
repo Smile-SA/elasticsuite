@@ -105,3 +105,4 @@ General,Général
 "Number of Shards","Nombre de shards"
 "Number of Replicas","Nombre de replicas"
 "Custom settings per Index","Configuration spécifique par Index"
+"Indices and fields configuration, redundant computations (queries spellchecking, synonyms).","Configuration des index (mapping des champs, analyseurs), calculs récurrents (synonymes appliqués, pré-vérification du type de recherche floue/exacte)."
