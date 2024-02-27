@@ -419,4 +419,20 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Disable erratic plugin on collection.
+     This plugin is not needed because Elasticsuite can achieve the same thing with an optimizer. -->
+    <type name="Magento\Catalog\Model\ResourceModel\Product\Collection">
+        <!-- This plugin is defined in magento/module-inventory-catalog -->
+        <plugin name="outOfStockSorting" disabled="true"/>
+    </type>
+
+    <!-- Show product attributes on frontend with display pattern -->
+    <type name="Magento\Catalog\Block\Product\View\Attributes">
+        <plugin name="format_product_view_attribute_display_pattern" type="Smile\ElasticsuiteCatalog\Plugin\Catalog\Product\View\AttributesPlugin" />
+    </type>
+    <type name="Magento\Catalog\Block\Product\Compare\ListCompare">
+        <plugin name="format_product_compare_attribute_display_pattern" type="Smile\ElasticsuiteCatalog\Plugin\Catalog\Product\View\ListComparePlugin" />
+    </type>
+
 </config>
