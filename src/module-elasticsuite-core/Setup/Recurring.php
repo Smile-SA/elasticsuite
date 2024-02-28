@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Setup;
 
+use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
@@ -34,11 +35,18 @@ class Recurring implements InstallSchemaInterface
     private $cacheManager;
 
     /**
-     * @param \Magento\Framework\App\Cache\Manager $cacheManager Cache Manager
+     * @var DeploymentConfig
      */
-    public function __construct(Manager $cacheManager)
+    private $deploymentConfig;
+
+    /**
+     * @param \Magento\Framework\App\Cache\Manager    $cacheManager     Cache Manager
+     * @param \Magento\Framework\App\DeploymentConfig $deploymentConfig Deployment Config
+     */
+    public function __construct(Manager $cacheManager, DeploymentConfig $deploymentConfig)
     {
-        $this->cacheManager = $cacheManager;
+        $this->cacheManager     = $cacheManager;
+        $this->deploymentConfig = $deploymentConfig;
     }
 
     /**
@@ -46,9 +54,13 @@ class Recurring implements InstallSchemaInterface
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        $this->cacheManager->setEnabled(
-            [\Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::TYPE_IDENTIFIER],
-            true
-        );
+        $currentStatuses = $this->deploymentConfig->getConfigData(\Magento\Framework\App\Cache\State::CACHE_KEY) ?: [];
+
+        if (!isset($currentStatuses[\Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::TYPE_IDENTIFIER])) {
+            $this->cacheManager->setEnabled(
+                [\Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::TYPE_IDENTIFIER],
+                true
+            );
+        }
     }
 }
