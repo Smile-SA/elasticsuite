@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteTracker\Api;
 
+use Magento\Framework\Exception\LocalizedException;
+
 /**
  * Event log queue : store event to be indexed into ES.
  *
@@ -49,6 +51,24 @@ interface EventQueueInterface
      * @return void
      */
     public function flagInvalidEvents($eventsIds);
+
+    /**
+     * Return the number of events flagged as invalid in the queue.
+     *
+     * @return int
+     * @throws LocalizedException
+     */
+    public function getInvalidEventsCount();
+
+    /**
+     * Purge up to <limit> invalid events older than <delay> days from the queue.
+     *
+     * @param int      $delay Only invalid events older in <delay> days will be purged.
+     * @param int|null $limit Max number of invalid events to purge at once.
+     *
+     * @return void
+     */
+    public function purgeInvalidEvents($delay = 3, $limit = null);
 
     /**
      * Retrieve event from the queue.

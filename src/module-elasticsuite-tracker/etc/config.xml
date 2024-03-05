@@ -33,6 +33,9 @@
                 <enabled>0</enabled>
                 <delay>365</delay>
             </anonymization>
+            <queue_cleanup>
+                <delay>7</delay>
+            </queue_cleanup>
         </smile_elasticsuite_tracker>
         <smile_elasticsuite_telemetry>
             <telemetry>
