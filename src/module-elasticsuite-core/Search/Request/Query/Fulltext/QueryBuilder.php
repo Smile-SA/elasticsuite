@@ -121,7 +121,7 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
-        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD], 1);
 
         if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
             $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
