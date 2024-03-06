@@ -57,7 +57,7 @@ class Initial
 
         if (!$data) {
             $data = serialize($reader->read());
-            $cache->save($data, self::CACHE_ID);
+            $cache->save($data, self::CACHE_ID, [\Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG]);
         }
 
         $data = unserialize($data);
