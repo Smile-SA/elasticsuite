@@ -50,11 +50,11 @@ class Ajax extends \Magento\Framework\App\Action\Action
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Action\Context                   $context            Controller action context.
-     * @param \Magento\Framework\Controller\Result\JsonFactory        $jsonResultFactory  JSON result factory.
-     * @param \Magento\Catalog\Model\Layer\Resolver                   $layerResolver      Layer resolver.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterface        $categoryRepository Category Repository.
-     * @param \Magento\Catalog\Model\Layer\FilterList[]               $filterListPool     Filter list pool.
+     * @param \Magento\Framework\App\Action\Context            $context            Controller action context.
+     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory  JSON result factory.
+     * @param \Magento\Catalog\Model\Layer\Resolver            $layerResolver      Layer resolver.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository Category Repository.
+     * @param \Magento\Catalog\Model\Layer\FilterList[]        $filterListPool     Filter list pool.
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -156,7 +156,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
 
         $layer = $this->layerResolver->get();
         $filterList = $this->getFilterList();
-        $filterName = (string)$this->getFilterName();
+        $filterName = (string) $this->getFilterName();
         $baseUrl = $this->_redirect->getRedirectUrl();
 
         foreach ($filterList->getFilters($layer) as $filter) {
