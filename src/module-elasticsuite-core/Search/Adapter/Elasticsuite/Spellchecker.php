@@ -176,10 +176,14 @@ class Spellchecker implements SpellcheckerInterface
 
         $docs = [];
 
-        // Compute the mtermvector query on all shards to ensure exhaustive results.
-        foreach (range(0, $shards - 1) as $shard) {
-            $doc['routing'] = sprintf("[%s][%s]", $request->getIndex(), $shard);
-            $docs[] = $doc;
+        // Compute the mtermvector query on all indices.
+        foreach (array_keys($stats['indices']) as $indexName) {
+            // Compute the mtermvector query on all shards to ensure exhaustive results.
+            foreach (range(0, $shards - 1) as $shard) {
+                $doc['_index'] = $indexName;
+                $doc['routing'] = sprintf("[%s][%s]", $indexName, $shard);
+                $docs[] = $doc;
+            }
         }
 
         $mtermVectorsQuery['body'] = ['docs' => $docs];
