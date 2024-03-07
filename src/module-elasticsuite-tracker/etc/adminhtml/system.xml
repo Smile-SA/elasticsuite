@@ -77,6 +77,19 @@
                     </depends>
                 </field>
             </group>
+            <group id="queue_cleanup" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Queue cleanup configuration</label>
+                <field id="delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Delay</label>
+                    <validate>integer validate-greater-than-zero</validate>
+                    <comment><![CDATA[In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.]]></comment>
+                </field>
+                <field id="purge_now" translate="button_label" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
+                    <label/>
+                    <frontend_model>Smile\ElasticsuiteTracker\Block\Adminhtml\System\Config\PurgeQueue</frontend_model>
+                    <comment><![CDATA[You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.]]></comment>
+                </field>
+            </group>
         </section>
         <section id="smile_elasticsuite_telemetry" translate="label" type="text" sortOrder="911" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Telemetry</label>

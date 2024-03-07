@@ -14,7 +14,11 @@
 
 namespace Smile\ElasticsuiteTracker\Model\ResourceModel;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
+use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+use Magento\Framework\DB\Select;
 
 /**
  * Tracker log event queue resource model.
@@ -30,21 +34,27 @@ class EventQueue extends AbstractDb
      */
     private $jsonSerializer;
 
+    /** @var DateTime */
+    private $dateTime;
+
     /**
      * Constructor.
      *
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Context.
      * @param \Magento\Framework\Serialize\Serializer\Json      $jsonSerializer JSON serializer.
+     * @param DateTime                                          $dateTime       Date conversion model.
      * @param string                                            $connectionName DB connection name.
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Serialize\Serializer\Json $jsonSerializer,
+        DateTime $dateTime,
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
 
         $this->jsonSerializer = $jsonSerializer;
+        $this->dateTime = $dateTime;
     }
 
     /**
@@ -96,6 +106,23 @@ class EventQueue extends AbstractDb
     }
 
     /**
+     * Return the number of invalid events count.
+     *
+     * @return int
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getInvalidEventsCount()
+    {
+        $select = $this->getConnection()->select()->from(
+            $this->getMainTable(),
+            ['count' => 'COUNT(*)']
+        );
+        $select->where('is_invalid = 1');
+
+        return (int) $this->getConnection()->fetchOne($select);
+    }
+
+    /**
      * Clean event from the reindex queue.
      *
      * @param array $eventIds Event ids to be deleted.
@@ -125,6 +152,45 @@ class EventQueue extends AbstractDb
                 $connection->quoteInto('event_id IN(?)', $eventIds)
             );
         }
+    }
+
+    /**
+     * Purge up to <limit> invalid events older than <delay> days from the queue.
+     *
+     * @param int      $delay Only invalid events older in <delay> days will be purged.
+     * @param int|null $limit Max number of invalid events to purge at once.
+     *
+     * @return void
+     * @throws LocalizedException
+     */
+    public function purgeInvalidEvents($delay = 3, $limit = null)
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from($this->getMainTable())
+            ->where('is_invalid = ?', 1);
+
+        if (!empty($limit)) {
+            $select->limit($limit);
+        }
+
+        if ($delay > 0) {
+            $select->where(
+                'created_at <= ?',
+                $connection->getDateSubSql(
+                    $connection->quote($this->dateTime->formatDate(true)),
+                    $delay,
+                    AdapterInterface::INTERVAL_DAY
+                )
+            );
+        }
+
+        // Native deleteFromSelect+limit is broken with MariadDB.
+        $select->reset(Select::DISTINCT);
+        $select->reset(Select::COLUMNS);
+        $query = sprintf('DELETE %s', $select->assemble());
+
+        $connection->query($query);
     }
 
     /**
