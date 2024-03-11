@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Model\Category;
+use Magento\Customer\Model\Session;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory as ConditionDataFactory ;
@@ -76,9 +78,24 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $storeManager;
 
     /**
+     * @var Session
+     */
+    private $customerSession;
+
+    /**
+     * @var CacheInterface
+     */
+    private $sharedCache;
+
+    /**
      * @var Category[]
      */
     protected $instances = [];
+
+    /**
+     * @var array
+     */
+    protected static $localCache = [];
 
     /**
      * Constructor.
@@ -96,22 +113,26 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param CollectionFactory       $categoryCollectionFactory Virtual categories collection factory.
      * @param QueryBuilder            $queryBuilder              Search rule query builder.
      * @param StoreManagerInterface   $storeManagerInterface     Store Manager
+     * @param Session                 $customerSession           Customer session.
+     * @param CacheInterface          $cache                     Cache.
      * @param array                   $data                      Additional data.
      */
     public function __construct(
         Context $context,
         Registry $registry,
-        FormFactory $formFactory,
-        TimezoneInterface $localeDate,
+        FormFactory             $formFactory,
+        TimezoneInterface       $localeDate,
         CombineConditionFactory $combineConditionsFactory,
-        ConditionDataFactory  $conditionDataFactory,
+        ConditionDataFactory    $conditionDataFactory,
         ProductConditionFactory $productConditionsFactory,
-        QueryFactory $queryFactory,
-        CategoryFactory $categoryFactory,
-        CollectionFactory $categoryCollectionFactory,
-        QueryBuilder $queryBuilder,
-        StoreManagerInterface $storeManagerInterface,
-        array $data = []
+        QueryFactory            $queryFactory,
+        CategoryFactory         $categoryFactory,
+        CollectionFactory       $categoryCollectionFactory,
+        QueryBuilder            $queryBuilder,
+        StoreManagerInterface   $storeManagerInterface,
+        Session                 $customerSession,
+        CacheInterface          $cache,
+        array                   $data = []
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
@@ -119,6 +140,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->queryBuilder              = $queryBuilder;
         $this->storeManager              = $storeManagerInterface;
+        $this->customerSession           = $customerSession;
+        $this->sharedCache               = $cache;
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -136,34 +159,56 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Build search query by category.
+     * Get search query by category from cache or build it.
      *
-     * @param CategoryInterface $category           Search category.
-     * @param array             $excludedCategories Categories that should not be used into search query building.
-     *                                              Used to avoid infinite recursion while building virtual categories rules.
+     * @param CategoryInterface|int $category           Search category.
+     * @param array                 $excludedCategories Categories that should not be used into search query building.
+     *                                                  Used to avoid infinite recursion while building virtual categories rules.
+     *
+     * @codingStandardsIgnoreStart
+     * @TODO: manage cache in this file for getSearchQueriesByChildren,
+     * remove the \Smile\ElasticsuiteVirtualCategory\Helper\Rule class,
+     * do not use the $excludedCategories parameters to check if the category rule has been calculated, but use the local cache.
+     * @codingStandardsIgnoreEnd
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @return QueryInterface|null
      */
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
-        $query         = null;
+        \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
+        $categoryId = !is_object($category) ? $category : $category->getId();
+        $cacheKey = implode(
+            '|',
+            [
+                __FUNCTION__,
+                !is_object($category) ? $this->getStoreId() : $category->getStoreId(),
+                $categoryId,
+                $this->customerSession->getCustomerGroupId(),
+            ]
+        );
 
-        if (!is_object($category)) {
-            $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
+        $query = self::$localCache[$categoryId] ?? false;
+
+        // If the category is not an object, it can't be in a "draft" mode.
+        if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
+            // Due to the fact we serialize/unserialize completely pre-built queries as object.
+            // We cannot use any implementation of SerializerInterface.
+            $query = $this->sharedCache->load($cacheKey);
+            $query = $query ? unserialize($query) : false;
         }
 
-        if (!in_array($category->getId(), $excludedCategories)) {
-            $excludedCategories[] = $category->getId();
+        if ($query === false) {
+            $query = $this->buildCategorySearchQuery($category, $excludedCategories);
 
-            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
-                $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
-            } elseif ($category->getId() && $category->getIsActive()) {
-                $query = $this->getStandardCategoryQuery($category, $excludedCategories);
-            }
-            if ($query && $category->hasChildren()) {
-                $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            if (!$category->getHasDraftVirtualRule()) {
+                $cacheData   = serialize($query);
+                $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
             }
         }
+
+        self::$localCache[$categoryId] = $query;
+        \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
         return $query;
     }
@@ -237,6 +282,38 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queries]);
+    }
+
+    /**
+     * Build search query by category.
+     *
+     * @param CategoryInterface|int $category           Search category.
+     * @param array                 $excludedCategories Categories that should not be used into search query building.
+     *
+     * @return QueryInterface|null
+     */
+    private function buildCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
+    {
+        $query = null;
+
+        if (!is_object($category)) {
+            $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
+        }
+
+        if (!in_array($category->getId(), $excludedCategories)) {
+            $excludedCategories[] = $category->getId();
+
+            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
+                $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
+            } elseif ($category->getId() && $category->getIsActive()) {
+                $query = $this->getStandardCategoryQuery($category, $excludedCategories);
+            }
+            if ($query && $category->hasChildren()) {
+                $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            }
+        }
+
+        return $query;
     }
 
     /**
