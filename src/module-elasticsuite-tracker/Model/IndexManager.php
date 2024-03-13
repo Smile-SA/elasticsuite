@@ -105,11 +105,15 @@ class IndexManager
     public function createIndexIfNotExists(\Smile\ElasticsuiteCore\Api\Index\IndexInterface $index, $store)
     {
         if ($this->client->indexExists($index->getName()) === false) {
-            $indexSettings = array_merge($this->indexSettings->getCreateIndexSettings(), $this->indexSettings->getInstallIndexSettings());
+            $indexAlias = $this->getIndexAlias($index->getIdentifier(), $store);
+            $indexSettings = array_merge(
+                $this->indexSettings->getCreateIndexSettings($index->getIdentifier()),
+                $this->indexSettings->getInstallIndexSettings($index->getIdentifier())
+            );
             $indexSettings += $this->indexSettings->getDynamicIndexSettings($store);
             $indexSettings['analysis'] = $this->indexSettings->getAnalysisSettings($store);
             $this->client->createIndex($index->getName(), ['settings' => $indexSettings]);
-            $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $index->getIdentifier()]]]);
+            $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $indexAlias]]]);
             $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
         }
     }
@@ -263,12 +267,11 @@ class IndexManager
     public function getIndex(string $indexIdentifier, int $storeId, string $date)
     {
         try {
-            $indexAlias = $this->getIndexAlias($indexIdentifier, $storeId);
             $indexName  = $this->getIndexName($indexIdentifier, $storeId, $date);
 
             $indexSettings = $this->indexSettings->getIndicesConfig();
             $indexConfig = array_merge(
-                ['identifier' => $indexAlias, 'name' => $indexName],
+                ['identifier' => $indexIdentifier, 'name' => $indexName],
                 $indexSettings[$indexIdentifier]
             );
 

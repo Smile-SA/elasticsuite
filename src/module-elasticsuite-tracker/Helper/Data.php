@@ -55,6 +55,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_RETENTION_DELAY_XPATH = 'smile_elasticsuite_tracker/general/retention_delay';
 
     /**
+     * Event queue cleanup retention delay
+     * @var string
+     */
+    const CONFIG_QUEUE_CLEANUP_DELAY_XPATH = 'smile_elasticsuite_tracker/queue_cleanup/delay';
+
+    /**
      * Using API instead of invisible pixel configuration path
      * @var string
      */
@@ -215,6 +221,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getRetentionDelay()
     {
         return (int) $this->scopeConfig->getValue(self::CONFIG_RETENTION_DELAY_XPATH);
+    }
+
+    /**
+     * Return the tracking data purge delay, in days
+     *
+     * @return int
+     */
+    public function getEventsQueueCleanupDelay()
+    {
+        return (int) $this->scopeConfig->getValue(self::CONFIG_QUEUE_CLEANUP_DELAY_XPATH);
     }
 
     /**

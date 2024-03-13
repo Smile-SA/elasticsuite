@@ -46,4 +46,12 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\Renderer\DynamicColumn">
+        <arguments>
+            <argument name="specialIndices" xsi:type="array">
+                <item name="thesaurus" xsi:type="const">Smile\ElasticsuiteThesaurus\Model\Index::INDEX_IDENTIER</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

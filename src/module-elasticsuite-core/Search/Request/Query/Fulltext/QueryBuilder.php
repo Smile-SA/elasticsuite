@@ -121,7 +121,7 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
-        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD], 1);
 
         if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
             $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
@@ -301,7 +301,7 @@ class QueryBuilder
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => "100%",
+            'minimumShouldMatch' => $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'fuzzinessConfig'    => $relevanceConfig->getFuzzinessConfiguration(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
@@ -311,7 +311,7 @@ class QueryBuilder
     }
 
     /**
-     * Phonentic query part.
+     * Phonetic query part.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
@@ -330,7 +330,7 @@ class QueryBuilder
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => "100%",
+            'minimumShouldMatch' => $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
         ];

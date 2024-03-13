@@ -14,13 +14,10 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
-use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\FunctionScore;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
-use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface;
 
 /**
  * Apply the list of optimizations to a query for a given container.
@@ -32,12 +29,12 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProvide
 class ApplierList
 {
     /**
-     * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
+     * @var QueryFactory
      */
     private $queryFactory;
 
     /**
-     * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface
+     * @var ProviderInterface
      */
     private $functionsProvider;
 
@@ -54,14 +51,14 @@ class ApplierList
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                       $queryFactory      Query factory.
-     * @param \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface $functionsProvider Functions provider.
-     * @param ScopeConfigInterface                                                            $scopeConfig       Scope configuration.
-     * @param OptimizerFilterInterface[]                                                      $filters           Optimizer filters.
+     * @param QueryFactory               $queryFactory      Query factory.
+     * @param ProviderInterface          $functionsProvider Functions provider.
+     * @param ScopeConfigInterface       $scopeConfig       Scope configuration.
+     * @param OptimizerFilterInterface[] $filters           Optimizer filters.
      */
     public function __construct(
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface $functionsProvider,
+        QueryFactory $queryFactory,
+        ProviderInterface $functionsProvider,
         ScopeConfigInterface $scopeConfig,
         array $filters = []
     ) {
@@ -94,10 +91,10 @@ class ApplierList
     /**
      * Apply boost functions to a given query.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\QueryInterface $query     The Query
-     * @param array                                                 $functions The boost functions
+     * @param QueryInterface $query     The Query
+     * @param array          $functions The boost functions
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface
      */
     private function applyFunctions(QueryInterface $query, $functions = [])
     {
