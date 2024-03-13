@@ -41,8 +41,11 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="event_id"/>
         </constraint>
-        <index referenceId="SMILE_ELASTICSUITE_TRACKER_LOG_EVENT" indexType="btree">
+        <index referenceId="ELASTICSUITE_TRACKER_LOG_EVENT_IS_INVALID" indexType="btree">
             <column name="is_invalid"/>
+        </index>
+        <index referenceId="ELASTICSUITE_TRACKER_LOG_EVENT_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
         </index>
     </table>
 

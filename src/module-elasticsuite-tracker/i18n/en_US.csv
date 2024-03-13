@@ -21,3 +21,17 @@ Enabled,Enabled
 "We'd like to invite you to extend your connection with Elasticsuite by subscribing to our newsletter. Stay ahead of the curve with exclusive insights into our cutting-edge product features. Experience the freedom of open-source collaboration and receive non-intrusive updates that keep you informed without overwhelming your inbox.","We'd like to invite you to extend your connection with Elasticsuite by subscribing to our newsletter. Stay ahead of the curve with exclusive insights into our cutting-edge product features. Experience the freedom of open-source collaboration and receive non-intrusive updates that keep you informed without overwhelming your inbox."
 "Join the Elasticsuite community today.","Join the Elasticsuite community today."
 "No thanks","No thanks"
+"There are <strong>%1 invalid Elasticsuite tracker events</strong> in the tracker events queue table. This could indicate that something is wrong with the Elasticsuite tracker tags in the frontend.","There are <strong>%1 invalid Elasticsuite tracker events</strong> in the tracker events queue table. This could indicate that something is wrong with the Elasticsuite tracker tags in the frontend."
+"Those invalid tracker events will not be indexed into your behavioral data indices and will automatically be deleted after %1 days.","Those invalid tracker events will not be indexed into your behavioral data indices and will automatically be deleted after %1 days."
+"You can decide to remove all of them immediately from the <a href=""%1""><strong>Elasticsuite tracker settings</strong></a> in the ""<strong>Queue cleanup configuration</strong>"" section.","You can decide to remove all of them immediately from the <a href=""%1""><strong>Elasticsuite tracker settings</strong></a> in the ""<strong>Queue cleanup configuration</strong>"" section."
+"Purge now","Purge now"
+"Purge the queue of all invalid events now","Purge the queue of all invalid events now"
+"Queue successfully purged","Queue successfully purged"
+"Failure to purge the queue","Failure to purge the queue"
+"An error occurred while purging the tracker events queue.","An error occured while purging the tracker events queue."
+"Queue cleanup configuration","Queue cleanup configuration"
+"Delay","Delay"
+"In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.","In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue."
+"You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.","You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above."
+
+
