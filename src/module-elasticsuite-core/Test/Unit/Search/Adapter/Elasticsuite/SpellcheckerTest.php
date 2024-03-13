@@ -64,7 +64,6 @@ class SpellcheckerTest extends TestCase
                     [
                         'routing'         => "[{$indexName}][0]",
                         '_index'          => $indexName,
-                        '_type'           => '_doc',
                         'term_statistics' => true,
                         'fields'          => [
                             MappingInterface::DEFAULT_SPELLING_FIELD,
@@ -119,7 +118,6 @@ class SpellcheckerTest extends TestCase
                     [
                         'routing'         => "[{$indexName}][0]",
                         '_index'          => $indexName,
-                        '_type'           => '_doc',
                         'term_statistics' => true,
                         'fields'          => [
                             MappingInterface::DEFAULT_SPELLING_FIELD,
@@ -176,7 +174,6 @@ class SpellcheckerTest extends TestCase
                     [
                         'routing'         => "[{$indexName}][0]",
                         '_index'          => $indexName,
-                        '_type'           => '_doc',
                         'term_statistics' => true,
                         'fields'          => [
                             MappingInterface::DEFAULT_SPELLING_FIELD,
@@ -234,7 +231,6 @@ class SpellcheckerTest extends TestCase
                     [
                         'routing'         => "[{$indexName}][0]",
                         '_index'          => $indexName,
-                        '_type'           => '_doc',
                         'term_statistics' => true,
                         'fields'          => [
                             MappingInterface::DEFAULT_SPELLING_FIELD,
