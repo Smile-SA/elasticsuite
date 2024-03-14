@@ -63,7 +63,7 @@ class SearchCriteriaBuilder extends \Magento\CatalogGraphQl\DataProvider\Product
     public function build(array $args, bool $includeAggregation): SearchCriteriaInterface
     {
         $searchCriteria = $this->builder->build('products', $args);
-        $isSearch = isset($args['search']);
+        $isSearch       = !empty($args['search']);
 
         $requestName = 'catalog_view_container';
         if ($isSearch) {
