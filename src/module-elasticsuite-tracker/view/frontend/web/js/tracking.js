@@ -46,9 +46,13 @@ const smileTracker = (function () {
         return null;
     }
 
-    function setCookie(cookieName, cookieValue, expiresAt, path) {
+    function setCookie(cookieName, cookieValue, expiresAt, path, domain) {
         const expires = "expires=" + expiresAt.toUTCString();
-        document.cookie = cookieName + "=" + cookieValue + "; " + expires + "; path=" + path;
+        let cookieParams = cookieName + "=" + cookieValue + "; " + expires + "; path=" + path;
+        if (domain !== false) {
+            cookieParams += "; domain=" + domain;
+        }
+        document.cookie = cookieParams;
     }
 
     // Retrieve values for a param into URL
@@ -287,19 +291,20 @@ const smileTracker = (function () {
             const config   = this.config.sessionConfig;
             const expireAt = new Date();
             const path     = config['path'] || '/';
+            const domain   = config['domain'] || false;
 
             if (!this.sessionInitialized) {
                 if (getCookie(config['visit_cookie_name']) === null) {
                     expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                    setCookie(config['visit_cookie_name'], guid(), expireAt, path);
+                    setCookie(config['visit_cookie_name'], guid(), expireAt, path, domain);
                 } else {
                     expireAt.setSeconds(expireAt.getSeconds() + parseInt(config['visit_cookie_lifetime'], 10));
-                    setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path);
+                    setCookie(config['visit_cookie_name'], getCookie(config['visit_cookie_name']), expireAt, path, domain);
                 }
 
                 if (getCookie(config['visitor_cookie_name']) === null) {
                     expireAt.setDate(expireAt.getDate() + parseInt(config['visitor_cookie_lifetime'], 10));
-                    setCookie(config['visitor_cookie_name'], guid(), expireAt, path);
+                    setCookie(config['visitor_cookie_name'], guid(), expireAt, path, domain);
                 }
                 this.sessionInitialized = true;
             }
