@@ -199,6 +199,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         if ($query === false) {
+            if (!is_object($category)) {
+                $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
+            }
             $query = $this->buildCategorySearchQuery($category, $excludedCategories);
 
             if (!$category->getHasDraftVirtualRule()) {
@@ -295,10 +298,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private function buildCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
         $query = null;
-
-        if (!is_object($category)) {
-            $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
-        }
 
         if (!in_array($category->getId(), $excludedCategories)) {
             $excludedCategories[] = $category->getId();
