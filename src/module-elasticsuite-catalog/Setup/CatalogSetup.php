@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalog\Setup;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
@@ -132,6 +133,45 @@ class CatalogSetup
             Category::ENTITY,
             'is_displayed_in_autocomplete',
             1
+        );
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
+    }
+
+    /**
+     * Create attribute on category to change the sort direction per category.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function addSortDirectionAttribute($eavSetup)
+    {
+        // Installing the new attribute.
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            'sort_direction',
+            [
+                'type'       => 'varchar',
+                'label'      => 'Sort Direction',
+                'input'      => 'select',
+                'source'     => \Smile\ElasticsuiteCatalog\Model\Category\Attribute\Source\SortDirection::class,
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'required'   => false,
+                'default'    => 'asc',
+                'visible'    => true,
+                'group'      => 'Display Settings',
+                'sort_order' => 110,
+            ]
+        );
+
+        // Set the attribute value to 'asc' for all existing categories.
+        $this->updateCategoryAttributeDefaultValue(
+            $eavSetup,
+            Category::ENTITY,
+            'sort_direction',
+            'asc'
         );
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
@@ -816,6 +856,47 @@ class CatalogSetup
     }
 
     /**
+     * Update 'created_at' and 'updated_at' attributes and set them to editable in the back-office.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function updateDateAttributes($eavSetup)
+    {
+        $setup      = $eavSetup->getSetup();
+        $connection = $setup->getConnection();
+        $eavAttributeTable = $setup->getTable('eav_attribute');
+        $catalogEavAttributeTable = $setup->getTable('catalog_eav_attribute');
+
+        $attributesToUpdate = [
+            'created_at',
+            'updated_at',
+        ];
+
+        foreach ($attributesToUpdate as $attributeCode) {
+            $attributeId = $eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, $attributeCode);
+
+            // Update eav_attribute table.
+            $connection->update(
+                $eavAttributeTable,
+                [
+                    'is_user_defined' => 1,
+                    'frontend_label' => ($attributeCode == 'created_at') ? 'Created At' : 'Updated At',
+                ],
+                $connection->quoteInto('attribute_id = ?', $attributeId)
+            );
+
+            // Update catalog_eav_attribute table.
+            $connection->update(
+                $catalogEavAttributeTable,
+                ['is_visible' => 1],
+                $connection->quoteInto('attribute_id = ?', $attributeId)
+            );
+        }
+    }
+
+    /**
      * Update attribute value for an entity with a default value.
      * All existing values are erased by the new value.
      *
@@ -845,7 +926,12 @@ class CatalogSetup
         $entitySelect = $connection->select();
         $entitySelect->from(
             $entityTable,
-            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
+            //[new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
+            [
+                new \Zend_Db_Expr("{$attributeId} as attribute_id"),
+                $linkField,
+                new \Zend_Db_Expr((is_string($value) ? "'{$value}'" : $value) . ' as value')
+            ]
         );
 
         if (!empty($excludedIds)) {

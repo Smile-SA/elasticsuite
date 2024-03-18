@@ -87,6 +87,11 @@ class UpgradeData implements UpgradeDataInterface
             $this->catalogSetup->updateDefaultValuesForSkuAttribute($eavSetup);
         }
 
+        if (version_compare($context->getVersion(), '1.7.1', '<')) {
+            $this->catalogSetup->addSortDirectionAttribute($eavSetup);
+            $this->catalogSetup->updateDateAttributes($eavSetup);
+        }
+
         $setup->endSetup();
     }
 }

@@ -419,4 +419,27 @@
             </argument>
         </arguments>
     </type>
+
+    <!--
+        It will remove the "created_at" and "updated_at" attributes from the list of attribute metadata.
+        As a result, these attributes will not be displayed on the product create/edit page.
+    -->
+    <type name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav">
+        <plugin name="hideProductAttributes" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Ui\DataProvider\Product\Form\Modifier\HideProductAttributesPlugin"/>
+    </type>
+
+    <!-- Attributes to hide params -->
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Catalog\Ui\DataProvider\Product\Form\Modifier\HideProductAttributesPlugin">
+        <arguments>
+            <argument name="attributesToHide" xsi:type="array">
+                <item name="created_at" xsi:type="string">created_at</item>
+                <item name="updated_at" xsi:type="string">updated_at</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Inject custom sort direction per category -->
+    <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
+        <plugin name="injectSortDirectionPerCategory" type="\Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar\SortDirectionPerCategoryPlugin"/>
+    </type>
 </config>
