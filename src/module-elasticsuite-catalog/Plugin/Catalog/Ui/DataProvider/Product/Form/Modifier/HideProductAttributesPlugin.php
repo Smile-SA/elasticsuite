@@ -45,6 +45,8 @@ class HideProductAttributesPlugin
     /**
      * Hide specified attributes from the product create/edit form.
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param Eav                       $subject   Object.
      * @param array                     $meta      Attribute field config.
      * @param ProductAttributeInterface $attribute Attribute.

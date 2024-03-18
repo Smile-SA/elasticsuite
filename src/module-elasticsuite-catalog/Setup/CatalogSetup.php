@@ -27,6 +27,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
