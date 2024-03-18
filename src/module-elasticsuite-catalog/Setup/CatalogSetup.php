@@ -15,7 +15,6 @@ namespace Smile\ElasticsuiteCatalog\Setup;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Model\Category;
-use Magento\Catalog\Model\ResourceModel\Eav\Attribute;
 use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
@@ -926,11 +925,10 @@ class CatalogSetup
         $entitySelect = $connection->select();
         $entitySelect->from(
             $entityTable,
-            //[new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
             [
                 new \Zend_Db_Expr("{$attributeId} as attribute_id"),
                 $linkField,
-                new \Zend_Db_Expr((is_string($value) ? "'{$value}'" : $value) . ' as value')
+                new \Zend_Db_Expr((is_string($value) ? "'{$value}'" : $value) . ' as value'),
             ]
         );
 

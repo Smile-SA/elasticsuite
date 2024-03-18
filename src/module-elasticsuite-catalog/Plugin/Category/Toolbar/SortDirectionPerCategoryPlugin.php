@@ -53,8 +53,8 @@ class SortDirectionPerCategoryPlugin
     /**
      * Modify sorting direction before setting the collection in the toolbar.
      *
-     * @param ProductListToolbar $subject
-     * @param mixed $collection
+     * @param ProductListToolbar $subject    Product list toolbar.
+     * @param mixed              $collection Collection.
      *
      * @return array
      */
