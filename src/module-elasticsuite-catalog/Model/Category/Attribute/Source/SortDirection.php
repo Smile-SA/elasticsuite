@@ -37,13 +37,14 @@ class SortDirection extends AbstractSource
                 ['label' => __('DESC'), 'value' => 'desc'],
             ];
         }
+
         return $this->_options;
     }
 
     /**
      * Get a text for option value.
      *
-     * @param string|int $value
+     * @param string|int $value Option value.
      *
      * @return string|bool
      */
@@ -54,6 +55,7 @@ class SortDirection extends AbstractSource
                 return $option['label'];
             }
         }
+
         return false;
     }
 }
