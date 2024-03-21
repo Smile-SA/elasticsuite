@@ -79,6 +79,7 @@ class Conditions extends Action
         $result = '';
         if ($model instanceof AbstractCondition) {
             $model->setJsFormObject($this->getRequest()->getParam('form'));
+            $model->setData('form_name', $this->getRequest()->getParam('form'));
             $model->setData('url_params', $this->getRequest()->getParams());
             $result = $model->asHtmlRecursive();
         }
