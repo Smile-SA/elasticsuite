@@ -78,4 +78,14 @@ interface EventQueueInterface
      * @return array
      */
     public function getEvents($limit = null);
+
+    /**
+     * Get the number of supposedly valid events not yet indexed after the specified amount of hours.
+     *
+     * @param int $hours Only events whose creation date is older than this amount of hours will be counted.
+     *
+     * @return int
+     * @throws LocalizedException
+     */
+    public function getPendingEventsCount($hours = 24);
 }
