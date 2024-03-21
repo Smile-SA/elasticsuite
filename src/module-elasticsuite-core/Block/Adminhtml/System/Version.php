@@ -14,6 +14,10 @@
 
 namespace Smile\ElasticsuiteCore\Block\Adminhtml\System;
 
+use Magento\Backend\Block\Template\Context;
+use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
+use Smile\ElasticsuiteCore\Model\ProductMetadata;
+
 /**
  * Version block to display in footer.
  *
@@ -36,16 +40,29 @@ class Version extends \Magento\Backend\Block\Template
     protected $productMetadata;
 
     /**
-     * @param \Magento\Backend\Block\Template\Context       $context         Block context
-     * @param \Smile\ElasticsuiteCore\Model\ProductMetadata $productMetadata Product Metadata
-     * @param array                                         $data            Block data
+     * @var ClusterInfoInterface
+     */
+    protected $clusterInfo;
+
+    /**
+     * @var array
+     */
+    protected $serverInfo;
+
+    /**
+     * @param Context              $context         Block context
+     * @param ProductMetadata      $productMetadata Product Metadata
+     * @param ClusterInfoInterface $clusterInfo     Elasticsearch/OpenSearch cluster information
+     * @param array                $data            Block data
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Smile\ElasticsuiteCore\Model\ProductMetadata $productMetadata,
+        Context $context,
+        ProductMetadata $productMetadata,
+        ClusterInfoInterface $clusterInfo,
         array $data = []
     ) {
         $this->productMetadata = $productMetadata;
+        $this->clusterInfo = $clusterInfo;
         parent::__construct($context, $data);
     }
 
@@ -67,6 +84,38 @@ class Version extends \Magento\Backend\Block\Template
     public function getElasticsuiteEdition()
     {
         return $this->productMetadata->getEdition();
+    }
+
+    /**
+     * Get server distribution (Elasticsearch or OpenSearch)
+     *
+     * @return string
+     */
+    public function getServerDistribution()
+    {
+        try {
+            $serverDistribution = $this->clusterInfo->getServerDistribution();
+        } catch (\Exception $e) {
+            $serverDistribution = 'Unknown';
+        }
+
+        return $serverDistribution;
+    }
+
+    /**
+     * Get server version
+     *
+     * @return string
+     */
+    public function getServerVersion()
+    {
+        try {
+            $serverVersion = $this->clusterInfo->getServerVersion();
+        } catch (\Exception $e) {
+            $serverVersion = 'Unknown';
+        }
+
+        return $serverVersion;
     }
 
     /**
