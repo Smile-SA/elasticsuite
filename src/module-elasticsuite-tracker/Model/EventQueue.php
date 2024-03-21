@@ -100,4 +100,12 @@ class EventQueue implements EventQueueInterface
     {
         $this->resourceModel->purgeInvalidEvents($delay, $limit);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPendingEventsCount($hours = 24)
+    {
+        return $this->resourceModel->getPendingEventsCount($hours);
+    }
 }
