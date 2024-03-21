@@ -108,3 +108,5 @@ General,Général
 "Indices and fields configuration, redundant computations (queries spellchecking, synonyms).","Configuration des index (mapping des champs, analyseurs), calculs récurrents (synonymes appliqués, pré-vérification du type de recherche floue/exacte)."
 "Use default Minimum Should Match","Utiliser le Minimum Should Match par défaut"
 "When set to 'yes', the fuzzy queries will use the default value for the Minimum Should Match, defined in Relevance Configuration > Fulltext Base Settings > Minimum Should Match.","Si réglé sur 'oui', la recherche approchante utilisera comme valeur pour le Minimum Should Match, celle définie à l'emplacement Configuration de la pertinence > Paramétrage de base de la recherche fulltext > Minimum Should Match."
+"ver. %1","ver. %1"
+"(on %1 ver. %2)","(sur %1 ver. %2)"

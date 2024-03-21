@@ -108,3 +108,5 @@ Autocomplete,Autocomplete
 "Number of Replicas","Number of Replicas"
 "Custom settings per Index","Custom settings per Index"
 "Indices and fields configuration, redundant computations (queries spellchecking, synonyms).","Indices and fields configuration, redundant computations (queries spellchecking, synonyms)."
+"ver. %1","ver. %1"
+"(on %1 ver. %2)","(on %1 ver. %2)"
