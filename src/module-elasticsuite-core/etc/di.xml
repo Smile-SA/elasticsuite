@@ -82,6 +82,16 @@
     <preference for="Magento\Framework\Api\Search\SearchCriteriaInterface"
                 type="Smile\ElasticsuiteCore\Search\SearchCriteria" />
 
+    <!-- Pipeline Management related interfaces -->
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineManager"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\Pipeline"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineProcessorProviderInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineProcessorProvider"/>
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
