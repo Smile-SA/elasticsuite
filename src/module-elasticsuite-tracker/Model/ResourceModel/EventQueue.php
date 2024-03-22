@@ -194,6 +194,35 @@ class EventQueue extends AbstractDb
     }
 
     /**
+     * Get the number of supposedly valid events not yet indexed after the specified amount of hours.
+     *
+     * @param int $hours Only events whose creation date is older than this amount of hours will be counted.
+     *
+     * @return int
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getPendingEventsCount($hours = 24)
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from($this->getMainTable(), ['count' => 'COUNT(*)'])
+            ->where('is_invalid = ?', 0);
+
+        if ($hours > 0) {
+            $select->where(
+                'created_at <= ?',
+                $connection->getDateSubSql(
+                    $connection->quote($this->dateTime->formatDate(true)),
+                    $hours,
+                    AdapterInterface::INTERVAL_HOUR
+                )
+            );
+        }
+
+        return (int) $this->getConnection()->fetchOne($select);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
