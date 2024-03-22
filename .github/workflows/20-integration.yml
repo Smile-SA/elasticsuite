@@ -47,7 +47,7 @@ jobs:
 
         steps:
             - name: "[Init] Checkout"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
               with:
                 ref: ${{ github.event.pull_request.head.sha }}
                 persist-credentials: false
@@ -118,7 +118,7 @@ jobs:
 
             - name: "[Init] Cache Composer cache"
               id: composer-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ${{ steps.composer-cache-directory.outputs.directory }}
                   key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
@@ -129,7 +129,7 @@ jobs:
 
             - name: "[Init] Cache Sample data repo"
               id: sampledata-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ${{github.workspace}}/data
                   key: sampledata-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
@@ -167,7 +167,7 @@ jobs:
 
             - name: "[Init] Cache Magento install"
               id: magento-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ${{ env.magento-directory }}
                   key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
