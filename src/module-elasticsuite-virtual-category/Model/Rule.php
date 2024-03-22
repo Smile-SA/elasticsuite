@@ -174,7 +174,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return QueryInterface|null
      */
-    public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
+    public function getCategorySearchQuery($category, &$excludedCategories = []): ?QueryInterface
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
         $categoryId = !is_object($category) ? $category : $category->getId();
@@ -383,7 +383,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return QueryInterface
      */
-    private function getStandardCategoryQuery(CategoryInterface $category, $excludedCategories = []): QueryInterface
+    private function getStandardCategoryQuery(CategoryInterface $category, &$excludedCategories = []): QueryInterface
     {
         return $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
     }
@@ -396,7 +396,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return QueryInterface
      */
-    private function getStandardCategoriesQuery(array $categoryIds, $excludedCategories): QueryInterface
+    private function getStandardCategoriesQuery(array $categoryIds, &$excludedCategories): QueryInterface
     {
         $conditionsParams  = ['data' => ['attribute' => 'category_ids', 'operator' => '()', 'value' => $categoryIds]];
         $categoryCondition = $this->productConditionsFactory->create($conditionsParams);
@@ -414,7 +414,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function getVirtualCategoryQuery(
         CategoryInterface $category,
-        $excludedCategories = []
+        &$excludedCategories = []
     ): ?QueryInterface {
         $query        = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
         $rootCategory = $this->getVirtualRootCategory($category);
@@ -443,7 +443,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
-    private function addChildrenQueries($query, CategoryInterface $category, $excludedCategories = []): QueryInterface
+    private function addChildrenQueries($query, CategoryInterface $category, &$excludedCategories = []): QueryInterface
     {
         $childrenCategories    = $this->getChildrenCategories($category, $excludedCategories);
         $childrenCategoriesIds = [];
@@ -482,7 +482,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      *
      * @return Collection
      */
-    private function getChildrenCategories(CategoryInterface $category, $excludedCategories = []): Collection
+    private function getChildrenCategories(CategoryInterface $category, &$excludedCategories = []): Collection
     {
         $storeId            = $category->getStoreId();
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
