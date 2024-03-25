@@ -98,6 +98,11 @@ interface FieldInterface
     public function isFilterable();
 
     /**
+     * Is the attribute used for promo rules.
+     */
+    public function isUsedForPromoRules();
+
+    /**
      * Is the attribute used in sorting.
      */
     public function isUsedForSortBy();

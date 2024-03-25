@@ -145,6 +145,14 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
+    public function isUsedForPromoRules(): bool
+    {
+        return (bool) $this->config['is_used_for_promo_rules'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function isUsedForSortBy(): bool
     {
         return (bool) $this->config['is_used_for_sort_by'];
@@ -388,7 +396,7 @@ class Field implements FieldInterface
             $analyzers[] = self::ANALYZER_SHINGLE;
         }
 
-        if (empty($analyzers) || $this->isFilterable()) {
+        if (empty($analyzers) || $this->isFilterable() || $this->isUsedForPromoRules()) {
             // For filterable fields or fields without analyzer : append the untouched analyzer.
             $analyzers[] = self::ANALYZER_UNTOUCHED;
         }
