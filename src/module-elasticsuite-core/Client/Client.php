@@ -262,6 +262,22 @@ class Client implements ClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function putPipeline(array $params): array
+    {
+        return $this->getEsClient()->ingest()->putPipeline($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPipeline(string $name): array
+    {
+        return $this->getEsClient()->ingest()->getPipeline(['id' => $name]);
+    }
+
+    /**
      * @return \OpenSearch\Client
      */
     private function getEsClient(): \OpenSearch\Client

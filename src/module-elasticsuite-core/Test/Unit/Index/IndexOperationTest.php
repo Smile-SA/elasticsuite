@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 use Smile\ElasticsuiteCore\Index\IndexOperation;
 
 /**
@@ -52,9 +53,12 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = $this->getObjectManagerMock();
         $indexSettings = $this->getIndexSettingsMock();
+        $pipelineManager = $this->getMockBuilder(PipelineManagerInterface::class)
+                                ->disableOriginalConstructor()
+                                ->getMock();
         $logger        = $this->getLoggerMock();
 
-        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $logger);
+        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $pipelineManager, $logger);
     }
 
     /**

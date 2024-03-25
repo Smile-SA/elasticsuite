@@ -228,4 +228,22 @@ interface ClientInterface
      * @return array
      */
     public function updateByQuery(array $params): array;
+
+    /**
+     * Run an putPipeline request.
+     *
+     * @param array $params Pipeline params.
+     *
+     * @return array
+     */
+    public function putPipeline(array $params): array;
+
+    /**
+     * Run an getPipeline request.
+     *
+     * @param string $name Pipeline.
+     *
+     * @return array
+     */
+    public function getPipeline(string $name): array;
 }
