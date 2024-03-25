@@ -66,6 +66,7 @@ class Field implements FieldInterface
         'is_filterable'           => true,
         'is_used_for_sort_by'     => false,
         'is_used_in_spellcheck'   => false,
+        'is_used_for_promo_rules' => false,
         'search_weight'           => 1,
         'default_search_analyzer' => self::ANALYZER_STANDARD,
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
