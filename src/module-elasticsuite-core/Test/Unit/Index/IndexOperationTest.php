@@ -124,8 +124,8 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $this->clientMock->method('bulk')->will($this->returnValue([
             'errors' => true,
             'items'  => [
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc1']],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc2']],
+                ['index' => ['_index' => 'index', '_id' => 'doc1']],
+                ['index' => ['_index' => 'index', '_id' => 'doc2']],
             ],
         ]));
 
