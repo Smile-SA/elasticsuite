@@ -265,7 +265,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         if (null === $this->_defaultOperatorInputByType) {
             $this->_defaultOperatorInputByType = [
-                'string'      => ['{}', '!{}'],
+                'string'      => ['==', '!=', '{}', '!{}'],
                 'numeric'     => ['==', '!=', '>=', '>', '<=', '<'],
                 'date'        => ['==', '>=', '>', '<=', '<'],
                 'select'      => ['==', '!='],
