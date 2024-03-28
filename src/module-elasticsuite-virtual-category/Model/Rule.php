@@ -198,7 +198,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $query = $query ? unserialize($query) : false;
         }
 
-        if ($query === false) {
+        if (!$query) {
             if (!is_object($category)) {
                 $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
             }
