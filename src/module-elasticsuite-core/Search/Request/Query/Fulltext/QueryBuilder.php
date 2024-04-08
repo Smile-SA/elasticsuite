@@ -401,7 +401,7 @@ class QueryBuilder
                         SpanQueryInterface::TYPE_SPAN_TERM,
                         [
                             'field' => $field->getMappingProperty(FieldInterface::ANALYZER_WHITESPACE) ?? $field->getName(),
-                            'value' => $term,
+                            'value' => strtolower($term),
                         ]
                     );
                 }
