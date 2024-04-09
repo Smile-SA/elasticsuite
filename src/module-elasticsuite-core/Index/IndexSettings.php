@@ -120,8 +120,27 @@ class IndexSettings implements IndexSettingsInterface
     public function getAnalysisSettings($store)
     {
         $language = $this->helper->getLanguageCode($store);
+        $settings = $this->analysisConfig->get($language);
 
-        return $this->analysisConfig->get($language);
+        if (is_array($settings)
+            && array_key_exists('analyzer', $settings)
+            && array_key_exists('reference', $settings['analyzer'])
+            && array_key_exists('filter', $settings['analyzer']['reference'])
+        ) {
+            $referenceFilters = array_values($settings['analyzer']['reference']['filter'] ?? []);
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('trim_leading_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['trim_leading_zeroes']);
+            }
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('trim_trailing_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['trim_trailing_zeroes']);
+            }
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('reduce_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['reduce_zeroes']);
+            }
+            $settings['analyzer']['reference']['filter'] = array_values($referenceFilters);
+        }
+
+        return $settings;
     }
 
     /**
