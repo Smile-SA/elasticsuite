@@ -182,6 +182,18 @@
             <min_gram>3</min_gram>
             <max_gram>20</max_gram>
         </filter>
+        <filter name="trim_leading_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[^0+]]></pattern>
+            <replacement><![CDATA[]]></replacement>
+        </filter>
+        <filter name="trim_trailing_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[0+$]]></pattern>
+            <replacement><![CDATA[]]></replacement>
+        </filter>
+        <filter name="reduce_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[0+]]></pattern>
+            <replacement><![CDATA[0]]></replacement>
+        </filter>
     </filters>
 
     <analyzers>
@@ -222,6 +234,9 @@
                 <filter ref="trim" />
                 <filter ref="elision" />
                 <filter ref="reference_word_delimiter" />
+                <filter ref="trim_leading_zeroes" />
+                <filter ref="trim_trailing_zeroes" />
+                <filter ref="reduce_zeroes" />
                 <filter ref="lowercase" />
                 <filter ref="reference_shingle" />
             </filters>

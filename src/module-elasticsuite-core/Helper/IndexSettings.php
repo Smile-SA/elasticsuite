@@ -37,9 +37,21 @@ class IndexSettings extends AbstractConfiguration
     const BASE_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings';
 
     /**
+     * Location of Elasticsuite analysis settings configuration.
+     *
+     * @var string
+     */
+    const ANALYSIS_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_analysis_settings';
+
+    /**
      * @var string
      */
     const INDICES_SETTINGS_CONFIG_XML_PREFIX = 'indices_settings';
+
+    /**
+     * @var string
+     */
+    const REFERENCE_ANALYZER_CONFIG_XML_PREFIX = 'reference_analyzer';
 
     /**
      * @var string
@@ -390,6 +402,21 @@ class IndexSettings extends AbstractConfiguration
         $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
 
         return $this->getElasticSuiteConfigParam($path);
+    }
+
+    /**
+     * Read config flag under the path smile_elasticsuite_core_analysis_settings/reference_analyzer.
+     *
+     * @param string                        $configFlag Config flag name.
+     * @param integer|string|StoreInterface $store      Store.
+     *
+     * @return mixed
+     */
+    public function getReferenceAnalyzerConfigFlag($configFlag, $store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::REFERENCE_ANALYZER_CONFIG_XML_PREFIX . '/' . $configFlag;
+
+        return $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**
