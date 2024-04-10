@@ -108,6 +108,32 @@
 
         </section>
 
+        <section id="smile_elasticsuite_core_analysis_settings" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Analyzers Settings</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_analysis_settings</resource>
+
+            <group id="reference_analyzer" translate="label" type="text" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Reference analyzer configuration</label>
+                <field id="trim_leading_zeroes" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove leading zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "VT0009", it will be as if "VT9" was indexed instead (leading to independant elements "VT", "9" and "VT9" in the search index). This will allow someone searching for "vt9" or "vt 9" to find the product with the exact "VT0009" sku.]]></comment>
+                </field>
+                <field id="trim_trailing_zeroes" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove trailing zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "DC3000", it will be as if "DC3" was indexed instead (leading to independant elements "DC", "3" and "DC3" in the search index). This will allow someone searching for "dc3" or "dc 3" to find the product with the exact "DC3000" sku.]]></comment>
+                </field>
+                <field id="reduce_zeroes" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Reduce series of contiguous zeroes in numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "PL20004", it will be as if "PL204" was indexed instead (leading to independant elements "PL", "204" and "PL204" in the search index). This will allow someone searching for "pl204", "pl 204", "pl2004" or "pl 2004" to find the product with the exact "PL2004" sku.]]></comment>
+                </field>
+            </group>
+        </section>
+
         <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Autocomplete</label>
             <tab>smile_elasticsuite</tab>
