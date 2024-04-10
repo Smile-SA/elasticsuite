@@ -36,6 +36,14 @@
             </indices_settings>
         </smile_elasticsuite_core_base_settings>
 
+        <smile_elasticsuite_core_analysis_settings>
+            <reference_analyzer>
+                <trim_leading_zeroes>0</trim_leading_zeroes>
+                <trim_trailing_zeroes>0</trim_trailing_zeroes>
+                <reduce_zeroes>0</reduce_zeroes>
+            </reference_analyzer>
+        </smile_elasticsuite_core_analysis_settings>
+
         <smile_elasticsuite_autocomplete_settings>
             <term_autocomplete>
                 <max_size>3</max_size>
