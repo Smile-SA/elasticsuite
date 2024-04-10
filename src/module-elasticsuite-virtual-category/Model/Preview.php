@@ -107,7 +107,7 @@ class Preview extends AbstractPreview
      *
      * @return QueryInterface
      */
-    private function getQueryFilter() : QueryInterface
+    private function getQueryFilter(): ?QueryInterface
     {
         $query = null;
 
@@ -148,7 +148,7 @@ class Preview extends AbstractPreview
      *
      * @return QueryInterface
      */
-    private function getEntityIdFilterQuery($ids) : QueryInterface
+    private function getEntityIdFilterQuery($ids): QueryInterface
     {
         return $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'entity_id', 'values' => $ids]);
     }

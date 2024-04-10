@@ -177,7 +177,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
-        $categoryId = !is_object($category) ? $category : $category->getId();
+        $categoryId = (int) !is_object($category) ? $category : $category->getId();
         $cacheKey = implode(
             '|',
             [
@@ -188,7 +188,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             ]
         );
 
-        $query = self::$localCache[$categoryId] ?? false;
+        $query = $this->getFromLocalCache($categoryId);
 
         // If the category is not an object, it can't be in a "draft" mode.
         if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
@@ -204,13 +204,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
             $query = $this->buildCategorySearchQuery($category, $excludedCategories);
 
-            if (!$category->getHasDraftVirtualRule()) {
+            if (!$category->getHasDraftVirtualRule() && $query !== null) {
                 $cacheData   = serialize($query);
                 $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
             }
         }
 
-        self::$localCache[$categoryId] = $query;
+        $this->saveInLocalCache($categoryId, $query);
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
         return $query;
@@ -519,5 +519,29 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $rootCategoryId;
+    }
+
+    /**
+     * Get category query from local cache.
+     *
+     * @param int $categoryId In of the category.
+     * @return QueryInterface|bool|null
+     */
+    private function getFromLocalCache(int $categoryId): mixed
+    {
+        return self::$localCache[$categoryId] ?? false;
+    }
+
+    /**
+     * Save category query in local cache.
+     *
+     * @param int                      $categoryId Id of the category.
+     * @param QueryInterface|bool|null $query      Query of the category.
+     */
+    private function saveInLocalCache(int $categoryId, mixed $query): void
+    {
+        if ($query !== null) {
+            self::$localCache[$categoryId] = $query;
+        }
     }
 }
