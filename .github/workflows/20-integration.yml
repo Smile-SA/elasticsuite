@@ -33,10 +33,31 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                php-versions: ['8.1']
-                magento-versions: ['2.4.4-p2', '2.4.5-p5']
-                magento-editions: ['community', 'enterprise']
-                experimental: [false]
+                include:
+                  - php-version: '7.4'
+                    magento-versions: '2.4.3-p3'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-version: '7.4'
+                    magento-versions: '2.4.3-p3'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4-p8'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4-p8'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p7'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p7'
+                    magento-editions: 'enterprise'
+                    experimental: false
 
         continue-on-error: ${{ matrix.experimental }}
 
