@@ -71,4 +71,11 @@ interface IndexInterface
      * @return \Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface
      */
     public function getIdField();
+
+    /**
+     * Check if index contains knn fields.
+     *
+     * @return bool
+     */
+    public function useKnn() : bool;
 }

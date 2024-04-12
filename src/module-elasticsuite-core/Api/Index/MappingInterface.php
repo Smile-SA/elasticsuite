@@ -86,4 +86,11 @@ interface MappingInterface
         $boost = 1,
         FieldFilterInterface $fieldFilter = null
     );
+
+    /**
+     * Check if mapping contains knn fields.
+     *
+     * @return bool
+     */
+    public function hasKnnFields() : bool;
 }
