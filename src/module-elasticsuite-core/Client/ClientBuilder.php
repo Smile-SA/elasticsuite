@@ -95,7 +95,7 @@ class ClientBuilder
      * The Elasticsearch client had a change in FQCN between v7 and v8 that would require a huge rework.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
-     * @SuppressWarnings(PHPMD.NpathComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param array $options Client options. See self::defaultOptions for available options.
