@@ -153,6 +153,10 @@ class IndexOperation implements IndexOperationInterface
             $indexSettings['settings']['default_pipeline'] = $pipeline->getName();
         }
 
+        if ($index->useKnn()) {
+            $indexSettings['settings']['index.knn'] = true;
+        }
+
         $this->client->createIndex($index->getName(), $indexSettings);
 
         $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
