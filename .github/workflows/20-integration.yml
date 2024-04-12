@@ -34,11 +34,11 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                  - php-version: '7.4'
+                  - php-versions: '7.4'
                     magento-versions: '2.4.3-p3'
                     magento-editions: 'community'
                     experimental: false
-                  - php-version: '7.4'
+                  - php-versions: '7.4'
                     magento-versions: '2.4.3-p3'
                     magento-editions: 'enterprise'
                     experimental: false
