@@ -527,7 +527,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param int $categoryId In of the category.
      * @return QueryInterface|bool|null
      */
-    private function getFromLocalCache(int $categoryId): mixed
+    private function getFromLocalCache(int $categoryId)
     {
         return self::$localCache[$categoryId] ?? false;
     }
@@ -538,7 +538,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param int                      $categoryId Id of the category.
      * @param QueryInterface|bool|null $query      Query of the category.
      */
-    private function saveInLocalCache(int $categoryId, mixed $query): void
+    private function saveInLocalCache(int $categoryId, $query): void
     {
         if ($query !== null) {
             self::$localCache[$categoryId] = $query;
