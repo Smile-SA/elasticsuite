@@ -92,7 +92,7 @@ class Preview extends AbstractPreview
         $size = 10,
         $search = '',
         RequestInterface $request = null,
-        Config $categoryConfig = null,
+        Config $categoryConfig = null
     ) {
         parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size, $search);
         $this->category      = $category;
