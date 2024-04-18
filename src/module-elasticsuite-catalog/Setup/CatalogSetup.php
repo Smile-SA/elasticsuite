@@ -881,7 +881,7 @@ class CatalogSetup
             $connection->update(
                 $eavAttributeTable,
                 [
-                    'is_user_defined' => 1,
+                    'is_user_defined' => 0,
                     'frontend_label' => ($attributeCode == 'created_at') ? 'Created At' : 'Updated At',
                 ],
                 $connection->quoteInto('attribute_id = ?', $attributeId)
