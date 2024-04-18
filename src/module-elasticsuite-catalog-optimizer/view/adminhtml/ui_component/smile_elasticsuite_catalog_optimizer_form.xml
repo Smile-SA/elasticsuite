@@ -674,7 +674,7 @@
                         <item name="label" xsi:type="string" translate="true">Category Preview</item>
                         <item name="componentType" xsi:type="string">field</item>
                         <item name="formElement" xsi:type="string">select</item>
-                        <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/pick-active-category</item>
                         <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
                         <item name="dataScope" xsi:type="string">category_preview</item>
                         <item name="filterOptions" xsi:type="boolean">true</item>
