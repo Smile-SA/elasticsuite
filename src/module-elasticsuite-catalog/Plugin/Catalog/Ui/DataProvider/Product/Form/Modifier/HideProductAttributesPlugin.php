@@ -56,7 +56,7 @@ class HideProductAttributesPlugin
     public function afterSetupAttributeMeta(Eav $subject, array $meta, ProductAttributeInterface $attribute): array
     {
         if (in_array($attribute->getAttributeCode(), $this->attributesToHide)) {
-            $meta['arguments']['data']['config']['visible'] = false;
+            $meta = [];
         }
 
         return $meta;
