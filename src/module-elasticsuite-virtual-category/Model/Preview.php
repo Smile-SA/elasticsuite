@@ -80,6 +80,8 @@ class Preview extends AbstractPreview
      * @param ContextInterface          $searchContext            Search Context
      * @param int                       $size                     Preview size.
      * @param string                    $search                   Preview search.
+     * @param RequestInterface          $request                  HTTP Request.
+     * @param Config                    $categoryConfig           Category config.
      */
     public function __construct(
         CategoryInterface $category,
