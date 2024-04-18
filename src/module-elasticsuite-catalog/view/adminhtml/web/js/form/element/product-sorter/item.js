@@ -12,15 +12,15 @@
  */
 
 define([
-    'uiComponent', 
-    'jquery',  
+    'uiComponent',
+    'jquery',
     'Magento_Catalog/js/price-utils',
     'mage/translate'
 ], function (Component, $, priceUtil) {
 
     'use strict';
-    
-    
+
+
     return Component.extend({
         initialize : function () {
             this._super();
@@ -33,7 +33,7 @@ define([
             if (position) {
                 position = parseInt(position, 10);
             }
-            
+
             this.position(position);
         },
 
@@ -52,7 +52,7 @@ define([
             result = result === 0 && product.hasPosition() ? 1 : result;
             result = result === 0 ? product.getScore() - this.getScore()  : result;
             result = result === 0 ? product.getId() - this.getId(): result;
-            
+
             return result;
         },
 
@@ -71,12 +71,14 @@ define([
         getImageUrl       : function () { return this.data.image; },
 
         getName           : function () { return this.data.name; },
-        
+
         getSku            : function () { return this.data.sku; },
 
         getIsInStock      : function () { return Boolean(this.data['is_in_stock']) },
 
-        getStockLabel     : function () { return this.getIsInStock() === true ? $.mage.__('In Stock') : $.mage.__('Out Of Stock'); }
+        getStockLabel     : function () { return this.getIsInStock() === true ? $.mage.__('In Stock') : $.mage.__('Out Of Stock'); },
+
+        canUseManualSort  : function () { return this.data.can_use_manual_sort !== false; },
     });
-    
+
 });
