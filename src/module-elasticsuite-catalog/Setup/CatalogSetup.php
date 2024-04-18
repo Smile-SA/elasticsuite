@@ -27,6 +27,7 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -132,6 +133,45 @@ class CatalogSetup
             Category::ENTITY,
             'is_displayed_in_autocomplete',
             1
+        );
+
+        // Mandatory to ensure next installers will have proper EAV Attributes definitions.
+        $this->eavConfig->clear();
+    }
+
+    /**
+     * Create attribute on category to change the sort direction per category.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return void
+     */
+    public function addSortDirectionAttribute($eavSetup)
+    {
+        // Installing the new attribute.
+        $eavSetup->addAttribute(
+            Category::ENTITY,
+            'sort_direction',
+            [
+                'type'       => 'varchar',
+                'label'      => 'Sort Direction',
+                'input'      => 'select',
+                'source'     => \Smile\ElasticsuiteCatalog\Model\Category\Attribute\Source\SortDirection::class,
+                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_STORE,
+                'required'   => false,
+                'default'    => 'asc',
+                'visible'    => true,
+                'group'      => 'Display Settings',
+                'sort_order' => 110,
+            ]
+        );
+
+        // Set the attribute value to 'asc' for all existing categories.
+        $this->updateCategoryAttributeDefaultValue(
+            $eavSetup,
+            Category::ENTITY,
+            'sort_direction',
+            'asc'
         );
 
         // Mandatory to ensure next installers will have proper EAV Attributes definitions.
