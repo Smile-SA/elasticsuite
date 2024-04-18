@@ -360,7 +360,11 @@ class CatalogSetup
         $entitySelect = $connection->select();
         $entitySelect->from(
             $entityTable,
-            [new \Zend_Db_Expr("{$attributeId} as attribute_id"), $linkField, new \Zend_Db_Expr("{$value} as value")]
+            [
+                new \Zend_Db_Expr("{$attributeId} as attribute_id"),
+                $linkField,
+                new \Zend_Db_Expr((is_string($value) ? "'{$value}'" : $value) . ' as value'),
+            ]
         );
 
         if (!empty($excludedIds)) {
