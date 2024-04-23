@@ -177,7 +177,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
-        $categoryId = (int) !is_object($category) ? $category : $category->getId();
+        $categoryId = (int) (!is_object($category) ? $category : $category->getId());
         $cacheKey = implode(
             '|',
             [
