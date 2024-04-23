@@ -23,6 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 
 /**
  * Prepare a fulltext search query.
@@ -301,7 +302,7 @@ class QueryBuilder
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch(),
+            'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'fuzzinessConfig'    => $relevanceConfig->getFuzzinessConfiguration(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
@@ -324,13 +325,17 @@ class QueryBuilder
         $analyzer           = FieldInterface::ANALYZER_PHONETIC;
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
         $fuzzyFieldFilter   = $this->fieldFilters['fuzzyFieldFilter'];
+        $minimumShouldMatch = $relevanceConfig->getMinimumShouldMatch();
+        if ($relevanceConfig->getFuzzinessConfiguration() instanceof FuzzinessConfigurationInterface) {
+            $minimumShouldMatch = $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch();
+        }
 
         $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $fuzzyFieldFilter, $defaultSearchField);
 
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch(),
+            'minimumShouldMatch' => $minimumShouldMatch,
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
         ];
