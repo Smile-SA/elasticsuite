@@ -171,6 +171,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * do not use the $excludedCategories parameters to check if the category rule has been calculated, but use the local cache.
      * @codingStandardsIgnoreEnd
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return QueryInterface|null
      */
@@ -204,13 +205,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
             $query = $this->buildCategorySearchQuery($category, $excludedCategories);
 
-            if (!$category->getHasDraftVirtualRule() && $query !== null) {
+            if (!$category->getHasDraftVirtualRule() && $query !== null && !in_array($categoryId, $excludedCategories)) {
                 $cacheData   = serialize($query);
                 $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
             }
         }
 
-        $this->saveInLocalCache($categoryId, $query);
+        if (!in_array($categoryId, $excludedCategories)) {
+            $this->saveInLocalCache($categoryId, $query);
+        }
+
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
         return $query;
@@ -416,16 +420,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CategoryInterface $category,
         $excludedCategories = []
     ): ?QueryInterface {
-        $query        = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
         $rootCategory = $this->getVirtualRootCategory($category);
-
         if ($rootCategory && in_array($rootCategory->getId(), $excludedCategories)) {
-            $query = null;
+            return null;
         }
+
+        $query = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
         if ($rootCategory && $rootCategory->getId()) {
             $rootQuery = $this->getCategorySearchQuery($rootCategory, $excludedCategories);
             if ($rootQuery) {
-                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => [$query, $rootQuery]]);
+                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => array_filter([$query, $rootQuery])]);
             }
         }
 
