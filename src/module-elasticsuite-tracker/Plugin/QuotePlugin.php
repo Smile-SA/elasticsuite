@@ -14,9 +14,8 @@
 
 namespace Smile\ElasticsuiteTracker\Plugin;
 
-use \Magento\Quote\Model\Quote;
-use \Magento\Catalog\Model\Product;
-use \Magento\Catalog\Model\Product\Type\AbstractType;
+use Magento\Framework\View\Layout\PageType\Config as PageTypeConfig;
+use Magento\Quote\Model\Quote;
 
 /**
  * Log add to cart events into the event queue.
@@ -43,6 +42,11 @@ class QuotePlugin
     private $trackerHelper;
 
     /**
+     * @var PageTypeConfig
+     */
+    private $pageTypeConfig;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
@@ -50,20 +54,23 @@ class QuotePlugin
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service       Tracker service.
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager Cookie manager.
-     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper Tracker helper.
-     * @param \Psr\Log\LoggerInterface                                        $logger        Logger.
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service        Tracker service.
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager  Cookie manager.
+     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper  Tracker helper.
+     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig The Page Type Configuration
+     * @param \Psr\Log\LoggerInterface                                        $logger         Logger.
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
+        \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->service       = $service;
         $this->cookieManager = $cookieManager;
         $this->trackerHelper = $trackerHelper;
+        $this->pageTypeConfig = $pageTypeConfig;
         $this->logger        = $logger;
     }
 
@@ -107,7 +114,10 @@ class QuotePlugin
      */
     private function logEvent(int $productId, int $storeId): void
     {
-        $pageData = [];
+        $pageData = [
+            'identifier' => 'checkout_cart_add',
+            'label'      => stripslashes($this->getPageTypeLabel('checkout_cart_add')),
+        ];
         $pageData['store_id']           = $storeId;
         $pageData['cart']['product_id'] = $productId;
 
@@ -143,5 +153,23 @@ class QuotePlugin
     private function readCookieValue($cookieName)
     {
         return $this->cookieManager->getCookie($cookieName);
+    }
+
+    /**
+     * Human readable version of the page type identifier.
+     *
+     * @param string $pageTypeIdentifier Page type identifier.
+     *
+     * @return string
+     */
+    private function getPageTypeLabel($pageTypeIdentifier)
+    {
+        foreach ($this->pageTypeConfig->getPageTypes() as $identifier => $pageType) {
+            if ($pageTypeIdentifier === $identifier) {
+                return $pageType['label'];
+            }
+        }
+
+        return '';
     }
 }
