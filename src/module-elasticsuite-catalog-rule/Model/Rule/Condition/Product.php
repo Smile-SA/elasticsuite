@@ -293,6 +293,18 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             );
         }
 
+        if ($this->getInputType() == 'date' && !$this->getIsValueParsed()) {
+            // date format intentionally hard-coded
+            $date = $this->getData('value');
+            $date = (\is_numeric($date) ? '@' : '') . $date;
+            $this->setData(
+                'value',
+                (new \DateTime($date, new \DateTimeZone((string) $this->_localeDate->getConfigTimezone())))
+                    ->format('Y-m-d')
+            );
+            $this->setIsValueParsed(true);
+        }
+
         return $this->getData('value');
     }
 
