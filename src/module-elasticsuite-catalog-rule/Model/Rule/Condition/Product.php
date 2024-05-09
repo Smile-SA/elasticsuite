@@ -294,7 +294,7 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
         }
 
         if ($this->getInputType() == 'date' && !$this->getIsValueParsed()) {
-            // date format intentionally hard-coded
+            // Date format intentionally hard-coded.
             $date = $this->getData('value');
             $date = (\is_numeric($date) ? '@' : '') . $date;
             $this->setData(
