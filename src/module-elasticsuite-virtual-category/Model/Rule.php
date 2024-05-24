@@ -389,7 +389,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function getStandardCategoryQuery(CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
-        return $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
+        $query = $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
+        $query->setName(sprintf('(%s) standard category [%s]:%d', $category->getPath(), $category->getName(), $category->getId()));
+
+        return $query;
     }
 
     /**
@@ -426,10 +429,21 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         $query = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
+        if ($query instanceof QueryInterface) {
+            $query->setName(sprintf('(%s) virtual category [%s]:%d', $category->getPath(), $category->getName(), $category->getId()));
+        }
         if ($rootCategory && $rootCategory->getId()) {
             $rootQuery = $this->getCategorySearchQuery($rootCategory, $excludedCategories);
             if ($rootQuery) {
                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => array_filter([$query, $rootQuery])]);
+                $query->setName(
+                    sprintf(
+                        '(%s) virtual category [%s]:%d and its virtual root',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
             }
         }
 
@@ -459,6 +473,14 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
+                        $childrenQuery->setName(
+                            sprintf(
+                                '(%s) child virtual category [%s]:%d',
+                                $childrenCategory->getPath(),
+                                $childrenCategory->getName(),
+                                $childrenCategory->getId()
+                            )
+                        );
                         $queryParams['should'][] = $childrenQuery;
                     }
                 } else {
@@ -467,11 +489,29 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
 
             if (!empty($childrenCategoriesIds)) {
-                $queryParams['should'][] = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+                $standardChildrenQuery = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+                $standardChildrenQuery->setName(
+                    sprintf(
+                        '(%s) standard children of virtual category [%s]:%d',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
+
+                $queryParams['should'][] = $standardChildrenQuery;
             }
 
             if (count($queryParams['should']) > 1) {
                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                $query->setName(
+                    sprintf(
+                        '(%s) category [%s]:%d and its children',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
             }
         }
 
@@ -501,7 +541,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
         }
 
-        $categoryCollection->addAttributeToSelect(['is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
+        $categoryCollection->addAttributeToSelect(['name', 'is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
 
         return $categoryCollection;
     }
