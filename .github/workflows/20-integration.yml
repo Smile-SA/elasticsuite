@@ -45,11 +45,11 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.4-p8'
                     magento-editions: 'community'
-                    experimental: false
+                    experimental: true
                   - php-versions: '8.1'
                     magento-versions: '2.4.4-p8'
                     magento-editions: 'enterprise'
-                    experimental: false
+                    experimental: true
                   - php-versions: '8.1'
                     magento-versions: '2.4.5-p7'
                     magento-editions: 'community'
