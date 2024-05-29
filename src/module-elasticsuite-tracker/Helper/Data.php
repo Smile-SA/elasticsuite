@@ -67,6 +67,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_IS_USING_API_XPATH = 'smile_elasticsuite_tracker/general/use_api';
 
     /**
+     * Headless mode configuration path
+     * @var string
+     */
+    const CONFIG_IS_HEADLESS_MODE_XPATH = 'smile_elasticsuite_tracker/general/is_headless_mode';
+
+    /**
      * Anonymization status configuration path
      * @var string
      */
@@ -166,6 +172,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function isUsingAPI()
     {
         return $this->scopeConfig->isSetFlag(self::CONFIG_IS_USING_API_XPATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Return true if the headless mode is enabled
+     *
+     * @return bool
+     */
+    public function isHeadlessMode()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_HEADLESS_MODE_XPATH, ScopeInterface::SCOPE_STORE);
     }
 
     /**

@@ -42,6 +42,14 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="is_headless_mode" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Headless mode</label>
+                    <comment><![CDATA[If set to Yes, magento will assume that all the events are managed by the front app. No event will be added from php directly.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
             <group id="session" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Session Configuration</label>
