@@ -38,4 +38,13 @@ interface QueryInterface extends \Magento\Framework\Search\Request\QueryInterfac
     const TYPE_MORELIKETHIS  = 'moreLikeThisQuery';
     const TYPE_MATCHPHRASEPREFIX = 'matchPhrasePrefixQuery';
     const TYPE_PREFIX        = 'prefixQuery';
+
+    /**
+     * Set the query name
+     *
+     * @param string $name Query name
+     *
+     * @return self
+     */
+    public function setName(string $name): self;
 }
