@@ -23,6 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
+use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Magento\Catalog\Model\CategoryFactory;
@@ -88,6 +89,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $sharedCache;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @var Category[]
      */
     protected $instances = [];
@@ -115,6 +121,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param StoreManagerInterface   $storeManagerInterface     Store Manager
      * @param Session                 $customerSession           Customer session.
      * @param CacheInterface          $cache                     Cache.
+     * @param Config                  $config                    Virtual category configuration.
      * @param array                   $data                      Additional data.
      */
     public function __construct(
@@ -132,6 +139,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         StoreManagerInterface   $storeManagerInterface,
         Session                 $customerSession,
         CacheInterface          $cache,
+        Config                  $config,
         array                   $data = []
     ) {
         $this->queryFactory              = $queryFactory;
@@ -142,6 +150,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->storeManager              = $storeManagerInterface;
         $this->customerSession           = $customerSession;
         $this->sharedCache               = $cache;
+        $this->config                    = $config;
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -179,13 +188,15 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
         $categoryId = (int) (!is_object($category) ? $category : $category->getId());
+        $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
         $cacheKey = implode(
             '|',
             [
                 __FUNCTION__,
-                !is_object($category) ? $this->getStoreId() : $category->getStoreId(),
+                $storeId,
                 $categoryId,
                 $this->customerSession->getCustomerGroupId(),
+                $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
             ]
         );
 
@@ -305,6 +316,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if (!in_array($category->getId(), $excludedCategories)) {
             $excludedCategories[] = $category->getId();
+
+            if (!$category->getIsActive()
+                && $this->config->isForceZeroResultsForDisabledCategoriesEnabled($this->getStoreId())) {
+                return $this->getNoResultsQuery();
+            }
 
             if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
                 $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
@@ -600,5 +616,18 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         if ($query !== null) {
             self::$localCache[$categoryId] = $query;
         }
+    }
+
+    /**
+     * Build a query that return zero products.
+     *
+     * @return QueryInterface
+     */
+    private function getNoResultsQuery(): QueryInterface
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            ['field' => 'entity_id', 'values' => [0]]
+        );
     }
 }
