@@ -88,16 +88,18 @@ class QuotePlugin
         Quote $subject,
         $result
     ) {
-        try {
-            if ($result instanceof \Magento\Quote\Model\Quote\Item) {
-                /** @var \Magento\Quote\Model\Quote\Item $result */
-                $product = $result->getProduct();
-                if ($product !== null) {
-                    $this->logEvent($product->getId(), $product->getStoreId());
+        if (!$this->trackerHelper->isHeadlessMode()) {
+            try {
+                if ($result instanceof \Magento\Quote\Model\Quote\Item) {
+                    /** @var \Magento\Quote\Model\Quote\Item $result */
+                    $product = $result->getProduct();
+                    if ($product !== null) {
+                        $this->logEvent($product->getId(), $product->getStoreId());
+                    }
                 }
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage(), []);
             }
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(), []);
         }
 
         return $result;
