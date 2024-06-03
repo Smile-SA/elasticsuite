@@ -189,8 +189,9 @@ class QueryBuilder
     private function getRangeQueryParams(ProductCondition $productCondition)
     {
         $fieldName = $this->getSearchFieldName($productCondition);
+        $inputType = $productCondition->getInputType();
         $operator  = $productCondition->getOperator();
-        $value     = $productCondition->getValue();
+        $value     = ($inputType == 'date') ? $productCondition->getValue() : (float) $productCondition->getValue();
 
         switch ($operator) {
             case '>':
@@ -207,7 +208,7 @@ class QueryBuilder
                 break;
         }
 
-        return ['bounds' => [$operator => (float) $value], 'field' => $fieldName];
+        return ['bounds' => [$operator => $value], 'field' => $fieldName];
     }
 
     /**
