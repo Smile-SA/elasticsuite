@@ -23,10 +23,16 @@
 <?php
 $jsonHelper = $block->getJsonHelper();
 if ($block->isEnabled()) {
-$beaconUrl = $this->escapeJsQuote($block->getBeaconUrl());
-$telemetryUrl = $this->escapeJsQuote($block->getTelemetryUrl());
+$beaconUrl        = $this->escapeJsQuote($block->getBeaconUrl());
+$telemetryUrl     = $this->escapeJsQuote($block->getTelemetryUrl());
 $telemetryEnabled = $this->escapeJsQuote($block->isTelemetryEnabled());
-$sessionConfig = $jsonHelper->jsonEncode($block->getCookieConfig());
+$sessionConfig    = $jsonHelper->jsonEncode($block->getCookieConfig());
+$trackerApiConfig = "";
+
+if ($block->isUsingAPI()) {
+    $endpointUrl       = $this->escapeJsQuote($block->getEndpointUrl());
+    $trackerApiConfig .= "endpointUrl : '{$endpointUrl}'";
+}
 
 $scriptString = "
 //<![CDATA[
@@ -35,16 +41,10 @@ try {
         beaconUrl: '{$beaconUrl}',
         telemetryUrl: '{$telemetryUrl}',
         telemetryEnabled: '{$telemetryEnabled}',
-        sessionConfig: '{$sessionConfig}'
+        sessionConfig: {$sessionConfig},
+        {$trackerApiConfig}
     });
 ";
-
-if ($block->isUsingAPI()) {
-    $endpointUrl = $this->escapeJsQuote($block->getEndpointUrl());
-    $scriptString .= "
-    trackerConfig.endpointUrl = '{$endpointUrl}';
-    ";
-}
 
 $storeId = $this->escapeJsQuote($block->getStoreId());
 $userConsentScript = $this->escapeJsQuote($block->getUserConsentScript());
