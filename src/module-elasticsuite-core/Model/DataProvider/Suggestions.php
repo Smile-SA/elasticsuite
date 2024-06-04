@@ -101,13 +101,15 @@ class Suggestions implements SuggestedQueriesInterface
     public function getItems(QueryInterface $query)
     {
         $suggestions = [];
-        foreach ($this->getSuggestions($query->getQueryText(), $this->getMaxSize()) as $suggestion) {
-            $suggestions[] = $this->queryResultFactory->create(
-                [
-                    'queryText'    => $suggestion['text'],
-                    'resultsCount' => 0,
-                ]
-            );
+        if ($this->isSuggestionsAllowed()) {
+            foreach ($this->getSuggestions($query->getQueryText(), $this->getMaxSize()) as $suggestion) {
+                $suggestions[] = $this->queryResultFactory->create(
+                    [
+                        'queryText' => $suggestion['text'],
+                        'resultsCount' => 0,
+                    ]
+                );
+            }
         }
 
         return $suggestions;
@@ -208,5 +210,18 @@ class Suggestions implements SuggestedQueriesInterface
     private function getMaxSize(): int
     {
         return (int) $this->scopeConfig->getValue(self::SEARCH_SUGGESTION_COUNT, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Is Search Suggestions Allowed
+     *
+     * @return bool
+     */
+    private function isSuggestionsAllowed()
+    {
+        return $isSuggestionsEnabled = $this->scopeConfig->isSetFlag(
+            self::SEARCH_SUGGESTION_ENABLED,
+            ScopeInterface::SCOPE_STORE
+        );
     }
 }
