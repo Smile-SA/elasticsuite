@@ -38,6 +38,11 @@ class ProductDate implements SpecialAttributeInterface
     private $attributeLabel;
 
     /**
+     * @var string
+     */
+    private $fieldName;
+
+    /**
      * @var QueryFactory
      */
     protected $queryFactory;
@@ -47,15 +52,18 @@ class ProductDate implements SpecialAttributeInterface
      *
      * @param string       $attributeCode  Attribute Code.
      * @param string       $attributeLabel Attribute Label.
+     * @param string       $fieldName      Field Name.
      * @param QueryFactory $queryFactory   Query factory.
      */
     public function __construct(
         string $attributeCode,
         string $attributeLabel,
+        string $fieldName,
         QueryFactory $queryFactory
     ) {
         $this->attributeCode  = $attributeCode;
         $this->attributeLabel = $attributeLabel;
+        $this->fieldName      = $fieldName;
         $this->queryFactory   = $queryFactory;
     }
 
@@ -106,9 +114,7 @@ class ProductDate implements SpecialAttributeInterface
                 throw new \InvalidArgumentException('Invalid operator');
         }
 
-        $fieldName = ($condition->getAttribute() === 'is_created_within_last_x_days') ? 'created_at' : 'updated_at';
-
-        $queryParams = ['field' => $fieldName, 'bounds' => $bounds];
+        $queryParams = ['field' => $this->fieldName, 'bounds' => $bounds];
         $query = $this->queryFactory->create(QueryInterface::TYPE_RANGE, $queryParams);
 
         if (substr($operator, 0, 1) === '!') {

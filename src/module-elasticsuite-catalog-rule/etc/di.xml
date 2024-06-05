@@ -90,6 +90,7 @@
         <arguments>
             <argument name="attributeCode" xsi:type="string">is_created_within_last_x_days</argument>
             <argument name="attributeLabel" xsi:type="string">Product creation date (X days ago)</argument>
+            <argument name="fieldName" xsi:type="string">created_at</argument>
         </arguments>
     </virtualType>
 
@@ -97,6 +98,7 @@
         <arguments>
             <argument name="attributeCode" xsi:type="string">is_updated_within_last_x_days</argument>
             <argument name="attributeLabel" xsi:type="string">Product updation date (X days ago)</argument>
+            <argument name="fieldName" xsi:type="string">updated_at</argument>
         </arguments>
     </virtualType>
 
