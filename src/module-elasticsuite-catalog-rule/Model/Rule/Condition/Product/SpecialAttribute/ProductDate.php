@@ -75,7 +75,7 @@ class ProductDate implements SpecialAttributeInterface
     {
         // Retrieve the operator and days from the condition.
         $operator = $condition->getOperator();
-        $value = (int)$condition->getValue();
+        $value = (int) $condition->getValue();
 
         // Calculate the reference date based on the number of days.
         $dateReference = new \DateTime();
