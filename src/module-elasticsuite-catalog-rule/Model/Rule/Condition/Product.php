@@ -238,6 +238,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $valueName = $this->specialAttributesProvider->getAttribute($this->getAttribute())->getValueName($this->getData('value'));
         }
 
+        if ($this->getOperator() === '<=>') {
+            $valueName = ' ';
+        }
+
         return $valueName;
     }
 
@@ -265,12 +269,12 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         if (null === $this->_defaultOperatorInputByType) {
             $this->_defaultOperatorInputByType = [
-                'string'      => ['{}', '!{}'],
-                'numeric'     => ['==', '!=', '>=', '>', '<=', '<'],
-                'date'        => ['==', '>=', '>', '<=', '<'],
-                'select'      => ['==', '!='],
-                'boolean'     => ['==', '!='],
-                'multiselect' => ['()', '!()'],
+                'string'      => ['{}', '!{}', '<=>'],
+                'numeric'     => ['==', '!=', '>=', '>', '<=', '<', '<=>'],
+                'date'        => ['==', '>=', '>', '<=', '<', '<=>'],
+                'select'      => ['==', '!=', '<=>'],
+                'boolean'     => ['==', '!=', '<=>'],
+                'multiselect' => ['()', '!()', '<=>'],
                 'grid'        => ['()', '!()'],
                 'category'    => ['()', '!()'],
                 'sku'         => ['()', '!()', '{}', '!{}'],
