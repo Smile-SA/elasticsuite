@@ -89,6 +89,8 @@ jobs:
                   php-version: ${{ matrix.php-versions }}
                   extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
                   ini-values: post_max_size=256M, max_execution_time=180
+              env:
+                  update: true
 
             - name: "[Init] Add php-fpm"
               env:
