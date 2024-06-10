@@ -96,6 +96,7 @@ jobs:
               env:
                   version: ${{ matrix.php-versions }}
               run: |
+                sudo apt-get -qq update
                 sudo apt-get install -y php$version-fpm
                 sudo service php$version-fpm start
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
