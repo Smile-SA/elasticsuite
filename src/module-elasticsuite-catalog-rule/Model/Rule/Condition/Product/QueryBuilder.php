@@ -83,17 +83,20 @@ class QueryBuilder
 
         $conditionValue = $productCondition->getValue();
         $conditionValue = array_filter(is_array($conditionValue) ? $conditionValue : [$conditionValue], 'strlen');
-        if ($query === null && !empty($conditionValue)) {
+        if ($query === null && (!empty($conditionValue) || $productCondition->getOperator() === '<=>')) {
             $this->prepareFieldValue($productCondition);
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
-            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()'])) {
+            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()', '<=>'])) {
                 $queryType   = QueryInterface::TYPE_MATCH;
                 $queryParams = $this->getMatchQueryParams($productCondition);
             } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
                 $queryType   = QueryInterface::TYPE_RANGE;
                 $queryParams = $this->getRangeQueryParams($productCondition);
+            } elseif ($productCondition->getOperator() === '<=>') {
+                $queryType  = QueryInterface::TYPE_MISSING;
+                $queryParams = ['field' => $this->getSearchFieldName($productCondition)];
             }
 
             $query = $this->prepareQuery($queryType, $queryParams);
