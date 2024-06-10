@@ -169,6 +169,14 @@ class ContainerConfiguration implements ContainerConfigurationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function isFulltext() : bool
+    {
+        return (bool) filter_var($this->readBaseConfigParam('fulltext'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+    }
+
+    /**
      * Read configuration param from base config.
      *
      * @param string $param   Param name.
