@@ -551,6 +551,9 @@
                 <item name="listens" xsi:type="array">
                     <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
                 </item>
+                <item name="displayedForValues" xsi:type="array">
+                    <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+                </item>
             </item>
         </argument>
 
