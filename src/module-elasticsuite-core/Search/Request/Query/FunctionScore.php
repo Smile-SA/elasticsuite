@@ -51,7 +51,7 @@ class FunctionScore implements QueryInterface
     private $functions;
 
     /**
-     * @var int
+     * @var integer
      */
     private $minScore = 0;
 
@@ -90,6 +90,7 @@ class FunctionScore implements QueryInterface
      * @param string                                           $name      Query name.
      * @param string                                           $scoreMode Score mode.
      * @param string                                           $boostMode Boost mode.
+     * @param int                                              $minScore  Min Score.
      */
     public function __construct(
         \Magento\Framework\Search\Request\QueryInterface $query,
