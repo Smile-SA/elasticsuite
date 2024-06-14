@@ -82,6 +82,16 @@
     <preference for="Magento\Framework\Api\Search\SearchCriteriaInterface"
                 type="Smile\ElasticsuiteCore\Search\SearchCriteria" />
 
+    <!-- Pipeline Management related interfaces -->
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineManager"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\Pipeline"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineProcessorProviderInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineProcessorProvider"/>
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
@@ -615,4 +625,21 @@
         <plugin name="addElasticsuiteToAuthorizedSearchEngines" type="Smile\ElasticsuiteCore\Plugin\Setup\SearchConfigOptionsListPlugin"/>
     </type>
 
+    <virtualType name="relevanceConfigData" type="\Magento\Framework\App\Config\Data">
+        <arguments>
+            <argument name="processor" xsi:type="object">\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\MetadataProcessor</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="relevanceConfigDataFactory" type="\Magento\Framework\App\Config\DataFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">relevanceConfigData</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool">
+        <arguments>
+            <argument name="dataFactory" xsi:type="object">relevanceConfigDataFactory</argument>
+        </arguments>
+    </type>
 </config>

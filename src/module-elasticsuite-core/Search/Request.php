@@ -149,6 +149,14 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getSpellingType()
+    {
+        return $this->spellingType;
+    }
+
+    /**
      * Parse the track_total_hits directive to appropriate type : either int or bool.
      * It's actually passed as a string when coming from the configuration file reader.
      *

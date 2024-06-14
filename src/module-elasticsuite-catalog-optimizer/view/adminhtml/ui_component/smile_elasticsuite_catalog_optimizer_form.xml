@@ -551,6 +551,9 @@
                 <item name="listens" xsi:type="array">
                     <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
                 </item>
+                <item name="displayedForValues" xsi:type="array">
+                    <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+                </item>
             </item>
         </argument>
 
@@ -674,7 +677,7 @@
                         <item name="label" xsi:type="string" translate="true">Category Preview</item>
                         <item name="componentType" xsi:type="string">field</item>
                         <item name="formElement" xsi:type="string">select</item>
-                        <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/pick-active-category</item>
                         <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
                         <item name="dataScope" xsi:type="string">category_preview</item>
                         <item name="filterOptions" xsi:type="boolean">true</item>

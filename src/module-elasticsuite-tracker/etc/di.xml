@@ -28,6 +28,7 @@
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
                 <item name="searches" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Search</item>
+                <item name="mapPageIdentifier" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier</item>
             </argument>
         </arguments>
     </type>

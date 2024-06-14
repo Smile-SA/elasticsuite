@@ -210,6 +210,9 @@
                             <item name="virtual_category_root" xsi:type="string">virtual_category_root</item>
                             <item name="selected_products.added_products" xsi:type="string">selected_products.added_products</item>
                             <item name="selected_products.deleted_products" xsi:type="string">selected_products.deleted_products</item>
+                            <item name="default_sort_by" xsi:type="string">default_sort_by</item>
+                            <item name="use_config.default_sort_by" xsi:type="string">use_config.default_sort_by</item>
+                            <item name="sort_direction" xsi:type="string">sort_direction</item>
                         </item>
                         <item name="excludedPreviewFields" xsi:type="array">
                             <item name="facet_config" xsi:type="string">facet_config</item>

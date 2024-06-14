@@ -56,6 +56,13 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
     public function isSpellchecked();
 
     /**
+     * Get the request spelling type.
+     *
+     * @return string
+     */
+    public function getSpellingType();
+
+    /**
      * Get the value of the track_total_hits parameter, if any.
      *
      * @return int|bool

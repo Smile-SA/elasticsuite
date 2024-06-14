@@ -107,34 +107,6 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
-     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
-     *
-     * {@inheritDoc}
-     */
-    protected function _construct()
-    {
-        $this->_init(OptimizerInterface::TABLE_NAME_LIMITATION, OptimizerInterface::OPTIMIZER_ID);
-    }
-
-    /**
-     * Get Limitation data for a given optimizer.
-     *
-     * @param OptimizerInterface $optimizer The optimizer
-     * @param string             $column    The column to fetch
-     *
-     * @return array
-     */
-    private function getLimitationData(OptimizerInterface $optimizer, $column)
-    {
-        $select = $this->getConnection()
-            ->select()
-            ->from($this->getMainTable(), $column)
-            ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
-
-        return $this->getConnection()->fetchCol($select);
-    }
-
-    /**
      * Retrieve applicable optimizer ids for a given entity_id (could be a category_id or query_id).
      *
      * @param string $container The search container to filter on (quick_search_container or catalog_view_container).
@@ -144,7 +116,7 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function getApplicationData($container, $column, $idValue)
+    public function getApplicationData($container, $column, $idValue)
     {
         $select = $this->getConnection()
             ->select()
@@ -167,6 +139,34 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 )
             )
             ->group(OptimizerInterface::OPTIMIZER_ID);
+
+        return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * {@inheritDoc}
+     */
+    protected function _construct()
+    {
+        $this->_init(OptimizerInterface::TABLE_NAME_LIMITATION, OptimizerInterface::OPTIMIZER_ID);
+    }
+
+    /**
+     * Get Limitation data for a given optimizer.
+     *
+     * @param OptimizerInterface $optimizer The optimizer
+     * @param string             $column    The column to fetch
+     *
+     * @return array
+     */
+    private function getLimitationData(OptimizerInterface $optimizer, $column)
+    {
+        $select = $this->getConnection()
+                       ->select()
+                       ->from($this->getMainTable(), $column)
+                       ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
 
         return $this->getConnection()->fetchCol($select);
     }

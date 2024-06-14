@@ -37,27 +37,35 @@ jobs:
             matrix:
                 include:
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-beta2'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p1'
                     magento-editions: 'community'
                     experimental: true
-                  - php-versions: '8.2'
-                    magento-versions: '2.4.7-beta2'
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p1'
                     magento-editions: 'enterprise'
                     experimental: true
 
@@ -81,11 +89,14 @@ jobs:
                   php-version: ${{ matrix.php-versions }}
                   extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
                   ini-values: post_max_size=256M, max_execution_time=180
+              env:
+                  update: true
 
             - name: "[Init] Add php-fpm"
               env:
                   version: ${{ matrix.php-versions }}
               run: |
+                sudo apt-get -qq update
                 sudo apt-get install -y php$version-fpm
                 sudo service php$version-fpm start
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm

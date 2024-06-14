@@ -56,20 +56,28 @@ class ClientBuilder
     private $selector;
 
     /**
+     * @var array
+     */
+    private $namespaceBuilders = [];
+
+    /**
      * Constructor.
      *
-     * @param \OpenSearch\ClientBuilder $clientBuilder Client builder.
-     * @param \Psr\Log\LoggerInterface  $logger        Logger.
-     * @param string                    $selector      Node Selector.
+     * @param \OpenSearch\ClientBuilder $clientBuilder     Client builder.
+     * @param \Psr\Log\LoggerInterface  $logger            Logger.
+     * @param string                    $selector          Node Selector.
+     * @param array                     $namespaceBuilders NamespaceBuilders to extend the client if needed.
      */
     public function __construct(
         \OpenSearch\ClientBuilder $clientBuilder,
         \Psr\Log\LoggerInterface $logger,
-        string $selector = StickyRoundRobinSelector::class
+        string $selector = StickyRoundRobinSelector::class,
+        array $namespaceBuilders = []
     ) {
-        $this->clientBuilder = $clientBuilder;
-        $this->logger        = $logger;
-        $this->selector      = $selector;
+        $this->clientBuilder     = $clientBuilder;
+        $this->logger            = $logger;
+        $this->selector          = $selector;
+        $this->namespaceBuilders = $namespaceBuilders;
     }
 
     /**
@@ -87,6 +95,8 @@ class ClientBuilder
      * The Elasticsearch client had a change in FQCN between v7 and v8 that would require a huge rework.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param array $options Client options. See self::defaultOptions for available options.
      *
@@ -132,6 +142,10 @@ class ClientBuilder
         if (null !== $this->selector) {
             $selector = (count($hosts) > 1) ? $this->selector : StickyRoundRobinSelector::class;
             $clientBuilder->setSelector($selector);
+        }
+
+        foreach ($this->namespaceBuilders as $namespaceBuilder) {
+            $clientBuilder->registerNamespace($namespaceBuilder);
         }
 
         return $clientBuilder->build();

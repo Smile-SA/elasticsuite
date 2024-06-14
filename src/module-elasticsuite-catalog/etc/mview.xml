@@ -20,6 +20,8 @@
         <subscriptions>
             <!-- This subscription aims to reindex products after their category is modified -->
             <table name="catalog_category_product" entity_column="product_id" />
+            <!-- This subscription aims to reindex products modified in the search terms merchandiser -->
+            <table name="smile_elasticsuitecatalog_search_query_product_position" entity_column="product_id" />
         </subscriptions>
     </view>
     <view id="elasticsuite_categories_fulltext" class="Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext" group="indexer">

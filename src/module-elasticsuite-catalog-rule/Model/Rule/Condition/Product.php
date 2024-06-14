@@ -238,6 +238,10 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
             $valueName = $this->specialAttributesProvider->getAttribute($this->getAttribute())->getValueName($this->getData('value'));
         }
 
+        if ($this->getOperator() === '<=>') {
+            $valueName = ' ';
+        }
+
         return $valueName;
     }
 
@@ -265,12 +269,12 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
     {
         if (null === $this->_defaultOperatorInputByType) {
             $this->_defaultOperatorInputByType = [
-                'string'      => ['{}', '!{}'],
-                'numeric'     => ['==', '!=', '>=', '>', '<=', '<'],
-                'date'        => ['==', '>=', '>', '<=', '<'],
-                'select'      => ['==', '!='],
-                'boolean'     => ['==', '!='],
-                'multiselect' => ['()', '!()'],
+                'string'      => ['{}', '!{}', '<=>'],
+                'numeric'     => ['==', '!=', '>=', '>', '<=', '<', '<=>'],
+                'date'        => ['==', '>=', '>', '<=', '<', '<=>'],
+                'select'      => ['==', '!=', '<=>'],
+                'boolean'     => ['==', '!=', '<=>'],
+                'multiselect' => ['()', '!()', '<=>'],
                 'grid'        => ['()', '!()'],
                 'category'    => ['()', '!()'],
                 'sku'         => ['()', '!()', '{}', '!{}'],
@@ -291,6 +295,18 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
                 'value',
                 $this->specialAttributesProvider->getAttribute($this->getAttribute())->getValue($this->getData('value'))
             );
+        }
+
+        if ($this->getInputType() == 'date' && !$this->getIsValueParsed()) {
+            // Date format intentionally hard-coded.
+            $date = $this->getData('value');
+            $date = (\is_numeric($date) ? '@' : '') . $date;
+            $this->setData(
+                'value',
+                (new \DateTime($date, new \DateTimeZone((string) $this->_localeDate->getConfigTimezone())))
+                    ->format('Y-m-d')
+            );
+            $this->setIsValueParsed(true);
         }
 
         return $this->getData('value');

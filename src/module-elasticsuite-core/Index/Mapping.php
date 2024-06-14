@@ -41,6 +41,11 @@ class Mapping implements MappingInterface
     private $fields;
 
     /**
+     * @var boolean
+     */
+    private bool $hasKnnFields = false;
+
+    /**
      * List of default fields and associated analyzers.
      *
      * @var array
@@ -197,6 +202,14 @@ class Mapping implements MappingInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function hasKnnFields(): bool
+    {
+        return $this->hasKnnFields;
+    }
+
+    /**
      * Return the search property for a field present in defaultMappingFields.
      *
      * @throws \InvalidArgumentException If the field / analyzer does not exists.
@@ -238,6 +251,9 @@ class Mapping implements MappingInterface
 
         foreach ($fields as $field) {
             $preparedFields[$field->getName()] = $field;
+            if ($field->getType() === FieldInterface::FIELD_TYPE_KNN_VECTOR) {
+                $this->hasKnnFields = true;
+            }
         }
 
         return $preparedFields;
