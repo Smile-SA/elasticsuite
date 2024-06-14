@@ -51,6 +51,11 @@ class FunctionScore implements QueryInterface
     private $functions;
 
     /**
+     * @var int
+     */
+    private $minScore = 0;
+
+    /**
      * Score mode functions.
      */
     const SCORE_MODE_MULTIPLY = 'multiply';
@@ -91,13 +96,15 @@ class FunctionScore implements QueryInterface
         $functions = [],
         $name = null,
         $scoreMode = self::SCORE_MODE_SUM,
-        $boostMode = self::BOOST_MODE_SUM
+        $boostMode = self::BOOST_MODE_SUM,
+        $minScore = 0
     ) {
         $this->name      = $name;
         $this->query     = $query;
         $this->scoreMode = $scoreMode;
         $this->boostMode = $boostMode;
         $this->functions = $functions;
+        $this->minScore  = $minScore;
     }
 
     /**
@@ -172,5 +179,15 @@ class FunctionScore implements QueryInterface
     public function getFunctions()
     {
         return $this->functions;
+    }
+
+    /**
+     * Returns min score
+     *
+     * @return int
+     */
+    public function getMinScore()
+    {
+        return (int) $this->minScore;
     }
 }
