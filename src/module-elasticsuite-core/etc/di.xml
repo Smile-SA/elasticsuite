@@ -625,4 +625,21 @@
         <plugin name="addElasticsuiteToAuthorizedSearchEngines" type="Smile\ElasticsuiteCore\Plugin\Setup\SearchConfigOptionsListPlugin"/>
     </type>
 
+    <virtualType name="relevanceConfigData" type="\Magento\Framework\App\Config\Data">
+        <arguments>
+            <argument name="processor" xsi:type="object">\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\MetadataProcessor</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="relevanceConfigDataFactory" type="\Magento\Framework\App\Config\DataFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">relevanceConfigData</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool">
+        <arguments>
+            <argument name="dataFactory" xsi:type="object">relevanceConfigDataFactory</argument>
+        </arguments>
+    </type>
 </config>
