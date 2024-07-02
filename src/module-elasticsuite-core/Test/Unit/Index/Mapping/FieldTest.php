@@ -202,6 +202,30 @@ class FieldTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test token count fields mapping generation.
+     *
+     * @return void
+     */
+    public function testTokenCountField()
+    {
+        $fieldType = FieldInterface::FIELD_TYPE_TOKEN_COUNT;
+
+        $fieldConfig = [];
+        $field = new Field('field', $fieldType, null, $fieldConfig);
+        $mappingPropertyConfig = $field->getMappingPropertyConfig();
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TOKEN_COUNT, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::ANALYZER_STANDARD, $mappingPropertyConfig['analyzer']);
+        $this->assertEquals(true, $mappingPropertyConfig['store']);
+        $this->assertEquals(false, $mappingPropertyConfig['enable_position_increments']);
+
+        $fieldConfig = ['default_search_analyzer' => FieldInterface::ANALYZER_EDGE_NGRAM];
+        $field = new Field('field', $fieldType, null, $fieldConfig);
+        $mappingPropertyConfig = $field->getMappingPropertyConfig();
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TOKEN_COUNT, $mappingPropertyConfig['type']);
+        $this->assertEquals(FieldInterface::ANALYZER_EDGE_NGRAM, $mappingPropertyConfig['analyzer']);
+    }
+
+    /**
      * @dataProvider getMergeConfigFieldConfigDataProvider
      *
      * @param array  $fieldConfig        Field configuration from data provider

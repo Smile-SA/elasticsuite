@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search;
 
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
@@ -75,4 +76,27 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return int|bool
      */
     public function getMinScore();
+
+    /**
+     * Set the collapse configuration of the request.
+     *
+     * @param CollapseInterface $collapse Collapse configuration.
+     *
+     * @return RequestInterface
+     */
+    public function setCollapse(CollapseInterface $collapse);
+
+    /**
+     * Return true if the request has a collapse configuration.
+     *
+     * @return bool
+     */
+    public function hasCollapse();
+
+    /**
+     * Get the collapse configuration of the request.
+     *
+     * @return CollapseInterface|null
+     */
+    public function getCollapse();
 }
