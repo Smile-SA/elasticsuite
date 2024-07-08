@@ -189,7 +189,7 @@ class ProductsListPlugin
     /**
      * Get the current store ID from the widget's data or default store.
      *
-     * @param ProductsList $subject
+     * @param ProductsList $subject Widget product list.
      * @return int
      * @throws NoSuchEntityException
      */
