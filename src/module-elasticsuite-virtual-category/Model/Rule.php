@@ -430,7 +430,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         $query = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
         if ($query instanceof QueryInterface) {
-            $query->setName(sprintf('(%s) virtual category [%s]:%d', $category->getPath(), $category->getName(), $category->getId()));
+            $queryName = sprintf('(%s) virtual category [%s]:%d', $category->getPath(), $category->getName(), $category->getId());
+            $query->setName(($query->getName() !== '') ? $queryName . " => " . $query->getName() : $queryName);
         }
         if ($rootCategory && $rootCategory->getId()) {
             $rootQuery = $this->getCategorySearchQuery($rootCategory, $excludedCategories);
