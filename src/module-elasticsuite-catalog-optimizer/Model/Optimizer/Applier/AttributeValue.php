@@ -60,7 +60,7 @@ class AttributeValue implements ApplierInterface
         $queryName   = sprintf('Optimizer [%s]:%d', $optimizer->getName(), $optimizer->getId());
         $query       = $optimizer->getRuleCondition()->getSearchQuery();
         $query->setName(($query->getName() !== '') ? $queryName . " => " . $query->getName() : $queryName);
-        
+
         $function = [
             'field_value_factor' => [
                 'field'    => $field,

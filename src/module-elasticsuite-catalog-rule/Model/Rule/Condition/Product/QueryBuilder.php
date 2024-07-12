@@ -183,7 +183,7 @@ class QueryBuilder
         return [
             'field'              => $fieldName,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => $minimumShouldMatch
+            'minimumShouldMatch' => $minimumShouldMatch,
         ];
     }
 
