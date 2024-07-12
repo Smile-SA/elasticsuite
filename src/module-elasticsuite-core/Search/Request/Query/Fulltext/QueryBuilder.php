@@ -82,8 +82,10 @@ class QueryBuilder
             $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries, 'boost' => $boost]);
         } elseif ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
             $query = $this->getPureStopwordsQuery($containerConfig, $queryText, $boost);
+            $query->setName('PURE_STOPWORDS');
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
             $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType, $boost);
+            $query->setName('SPELLCHECK');
         }
 
         if ($query === null) {
@@ -93,10 +95,12 @@ class QueryBuilder
                 'boost'  => $boost,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
+            $query->setName('EXACT');
 
             $relevanceConfig = $containerConfig->getRelevanceConfig();
             if ($relevanceConfig->getSpanMatchBoost()) {
                 $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
+                $spanQuery->setName('SPAN');
                 if ($spanQuery !== null) {
                     $queryParams = [
                         'must'      => [$query],
@@ -246,11 +250,11 @@ class QueryBuilder
         $queryClauses = [];
 
         if ($relevanceConfig->isFuzzinessEnabled()) {
-            $queryClauses[] = $this->getFuzzyQuery($containerConfig, $queryText);
+            $queryClauses[] = $this->getFuzzyQuery($containerConfig, $queryText)->setName('FUZZY');
         }
 
         if ($relevanceConfig->isPhoneticSearchEnabled()) {
-            $queryClauses[] = $this->getPhoneticQuery($containerConfig, $queryText);
+            $queryClauses[] = $this->getPhoneticQuery($containerConfig, $queryText)->setName('PHONETIC');
         }
 
         if (!empty($queryClauses)) {

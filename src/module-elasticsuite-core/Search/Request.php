@@ -18,6 +18,7 @@ use Magento\Framework\Search\Request\Dimension;
 use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
@@ -38,6 +39,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @var QueryInterface
      */
     private $filter;
+
+    /**
+     * @var CollapseInterface
+     */
+    private $collapse;
 
     /**
      * @var integer
@@ -154,6 +160,32 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function getSpellingType()
     {
         return $this->spellingType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCollapse(CollapseInterface $collapse)
+    {
+        $this->collapse = $collapse;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasCollapse()
+    {
+        return ($this->collapse instanceof CollapseInterface);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCollapse()
+    {
+        return $this->collapse;
     }
 
     /**

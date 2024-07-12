@@ -105,10 +105,10 @@ class ProductDate implements SpecialAttributeInterface
                 $bounds['gt'] = $dateReference->format('Y-m-d');
                 break;
             case '>=':
-                $bounds['gte'] = $dateReference->format('Y-m-d');
+                $bounds['lte'] = $dateReference->format('Y-m-d');
                 break;
             case '<=':
-                $bounds['lte'] = $dateReference->format('Y-m-d');
+                $bounds['gte'] = $dateReference->format('Y-m-d');
                 break;
             default:
                 throw new \InvalidArgumentException('Invalid operator');

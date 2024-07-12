@@ -92,6 +92,12 @@
     <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineProcessorProviderInterface"
                 type="Smile\ElasticsuiteCore\Index\Ingest\PipelineProcessorProvider"/>
 
+    <preference for="Smile\ElasticsuiteCore\Search\Request\CollapseInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\Collapse" />
+
+    <preference for="Smile\ElasticsuiteCore\Search\Request\InnerHitsInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\InnerHits" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">

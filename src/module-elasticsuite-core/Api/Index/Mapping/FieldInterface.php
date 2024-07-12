@@ -38,6 +38,7 @@ interface FieldInterface
     const FIELD_TYPE_NESTED  = 'nested';
     const FIELD_TYPE_OBJECT  = 'object';
     const FIELD_TYPE_KNN_VECTOR = 'knn_vector';
+    const FIELD_TYPE_TOKEN_COUNT = 'token_count';
 
     /**
      * Analyzers declarations.

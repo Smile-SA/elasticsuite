@@ -229,6 +229,12 @@ class Field implements FieldInterface
             }
         }
 
+        if ($this->getType() === self::FIELD_TYPE_TOKEN_COUNT) {
+            $property = $this->getPropertyConfig(
+                $this->getDefaultSearchAnalyzer() ?? self::ANALYZER_KEYWORD
+            );
+        }
+
         return $property;
     }
 
@@ -409,6 +415,7 @@ class Field implements FieldInterface
      * @param string|null $analyzer Used analyzer.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED): array
     {
@@ -442,6 +449,11 @@ class Field implements FieldInterface
             case self::FIELD_TYPE_KNN_VECTOR:
                 $fieldMapping['dimension'] = $this->config['dimension'];
                 $fieldMapping['method']    = $this->config['model'];
+                break;
+            case self::FIELD_TYPE_TOKEN_COUNT:
+                $fieldMapping['analyzer'] = $analyzer;
+                $fieldMapping['store'] = true;
+                $fieldMapping['enable_position_increments'] = false;
                 break;
         }
 
