@@ -100,8 +100,8 @@ class QueryBuilder
             $relevanceConfig = $containerConfig->getRelevanceConfig();
             if ($relevanceConfig->getSpanMatchBoost()) {
                 $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
-                $spanQuery->setName('SPAN');
                 if ($spanQuery !== null) {
+                    $spanQuery->setName('SPAN');
                     $queryParams = [
                         'must'      => [$query],
                         'should'    => [$spanQuery],
