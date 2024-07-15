@@ -217,7 +217,7 @@ class Index
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
         $indexName        = $this->getIndexAlias($storeId);
-        $analyzedQueries  = $this->getQueryCombinations($storeId, $queryText);
+        $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
         $synonyms         = [];
 
         foreach ($analyzedQueries as $query) {
