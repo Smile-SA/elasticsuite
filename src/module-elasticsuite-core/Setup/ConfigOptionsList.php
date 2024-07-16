@@ -167,10 +167,13 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     private function getClientOptions(array $options, DeploymentConfig $deploymentConfig)
     {
         $clientOptions = [
-            'servers'           => $this->getServers($options, $deploymentConfig),
-            'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL),
-            'http_auth_user'    => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER),
-            'http_auth_pwd'     => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS),
+            'servers' => $this->getServers($options, $deploymentConfig),
+            'enable_https_mode' => $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_SSL) ?:
+                $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_OPENSEARCH_ENABLE_AUTH),
+            'http_auth_user' => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_USER) ?:
+                (string) $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_OPENSEARCH_USERNAME),
+            'http_auth_pwd' => (string) $this->readConfiguration($options, $deploymentConfig, self::INPUT_KEY_ES_PASS) ?:
+                (string) $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_OPENSEARCH_PASSWORD),
         ];
 
         $clientOptions['enable_http_auth'] = !empty($clientOptions['http_auth_user']) && !empty($clientOptions['http_auth_pwd']);
@@ -193,8 +196,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
 
         if (null === $servers) {
             // Fallback to legacy Magento2 parameters.
-            $server  = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_HOST);
-            $port    = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PORT);
+            $server = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_HOST) ?:
+                $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_OPENSEARCH_HOST);
+            $port = $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_ELASTICSEARCH_PORT) ?:
+                $this->readConfiguration($options, $deploymentConfig, SearchConfigOptionsList::INPUT_KEY_OPENSEARCH_PORT);
             if ($server && $port) {
                 $servers = sprintf('%s:%s', $server, $port);
             }
