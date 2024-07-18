@@ -173,8 +173,9 @@ class Index
     private function getCacheTags(ContainerConfigurationInterface $containerConfig)
     {
         $storeId = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
 
-        return [$this->getIndexAlias($storeId)];
+        return [$this->getIndexAlias($storeId), $containerName];
     }
 
     /**
