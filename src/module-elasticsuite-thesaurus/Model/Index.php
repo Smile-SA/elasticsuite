@@ -173,8 +173,9 @@ class Index
     private function getCacheTags(ContainerConfigurationInterface $containerConfig)
     {
         $storeId = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
 
-        return [$this->getIndexAlias($storeId)];
+        return [$this->getIndexAlias($storeId), $containerName];
     }
 
     /**
@@ -217,7 +218,7 @@ class Index
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
         $indexName        = $this->getIndexAlias($storeId);
-        $analyzedQueries  = $this->getQueryCombinations($storeId, $queryText);
+        $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
         $synonyms         = [];
 
         foreach ($analyzedQueries as $query) {
