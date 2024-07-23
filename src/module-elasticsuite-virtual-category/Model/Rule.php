@@ -424,7 +424,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $excludedCategories = []
     ): ?QueryInterface {
         $rootCategory = $this->getVirtualRootCategory($category);
-        if ($rootCategory && in_array($rootCategory->getId(), $excludedCategories)) {
+        // If the root category of the current virtual category has already been computed (exist in $excludedCategories)
+        // or if a parent of the root category of the current category has already been computed we don't need
+        // to compute the rule. All the product will already been present.
+        // For example, if you have the following category tree:
+        // - Category A (static)
+        // -   - Category B (static)
+        // -       - Category C (virtual with category B as root)
+        // When you compute the rule of the category A you do not need to compute the rule of the category C
+        // as all the product will be there.
+        if ($rootCategory && array_intersect(explode('/', $rootCategory->getPath()), $excludedCategories)) {
             return null;
         }
 
