@@ -330,7 +330,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private function getVirtualRootCategory(CategoryInterface $category): ?CategoryInterface
     {
         $storeId      = $this->getStoreId();
-        $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
+        $rootCategory = null;
 
         if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
             $rootCategoryId = $category->getVirtualCategoryRoot();
@@ -433,7 +433,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         // -       - Category C (virtual with category B as root)
         // When you compute the rule of the category A you do not need to compute the rule of the category C
         // as all the product will be there.
-        if ($rootCategory && array_intersect(explode('/', $rootCategory->getPath()), $excludedCategories)) {
+        if ($rootCategory
+            && $rootCategory->getPath()
+            && array_intersect(explode('/', (string) $rootCategory->getPath()), $excludedCategories)
+        ) {
             return null;
         }
 
