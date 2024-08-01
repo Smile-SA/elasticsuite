@@ -38,17 +38,17 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      * Input key for the options
      */
     const INPUT_KEY_ES_HOSTS = 'es-hosts';
-    const INPUT_KEY_ES_SSL = 'es-enable-ssl';
-    const INPUT_KEY_ES_USER = 'es-user';
-    const INPUT_KEY_ES_PASS = 'es-pass';
+    const INPUT_KEY_ES_SSL   = 'es-enable-ssl';
+    const INPUT_KEY_ES_USER  = 'es-user';
+    const INPUT_KEY_ES_PASS  = 'es-pass';
 
     /**
      * Path to the values in the deployment config
      */
     const CONFIG_PATH_ES_HOSTS = self::CONF_PREFIX . '/servers';
-    const CONFIG_PATH_ES_SSL = self::CONF_PREFIX . '/enable_https_mode';
-    const CONFIG_PATH_ES_USER = self::CONF_PREFIX . '/http_auth_user';
-    const CONFIG_PATH_ES_PASS = self::CONF_PREFIX . '/http_auth_pwd';
+    const CONFIG_PATH_ES_SSL   = self::CONF_PREFIX . '/enable_https_mode';
+    const CONFIG_PATH_ES_USER  = self::CONF_PREFIX . '/http_auth_user';
+    const CONFIG_PATH_ES_PASS  = self::CONF_PREFIX . '/http_auth_pwd';
 
     /**
      * @var \Smile\ElasticsuiteCore\Client\ClientBuilder
@@ -80,8 +80,8 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         SearchConfigOptionsList $searchConfigOptionsList,
         $fallbackMapping = []
     ) {
-        $this->clientBuilder = $clientBuilder;
-        $this->fallbackMapping = array_merge($this->fallbackMapping, $fallbackMapping);
+        $this->clientBuilder           = $clientBuilder;
+        $this->fallbackMapping         = array_merge($this->fallbackMapping, $fallbackMapping);
         $this->searchConfigOptionsList = $searchConfigOptionsList;
     }
 
