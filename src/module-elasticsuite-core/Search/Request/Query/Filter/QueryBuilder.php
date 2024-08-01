@@ -52,6 +52,7 @@ class QueryBuilder
         'fulltext' => 'queryText',
         'match'    => 'queryText',
         'in_set'   => 'values',
+        'currency' => 'currency',
     ];
 
     /**
