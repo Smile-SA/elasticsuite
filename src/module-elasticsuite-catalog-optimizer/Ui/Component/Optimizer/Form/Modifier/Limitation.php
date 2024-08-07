@@ -59,9 +59,9 @@ class Limitation implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
 
             $data[$optimizer->getId()]['search_container'] = array_keys($searchContainers);
 
-            $applyToCategories = (bool) ($searchContainers['catalog_view_container'] ?? false);
+            $applyToCategories = (int) ($searchContainers['catalog_view_container'] ?? 0);
             if ($applyToCategories) {
-                $containerData = ['apply_to' => (int) true];
+                $containerData = ['apply_to' => $applyToCategories];
                 $categoryIds   = $this->resource->getCategoryIdsByOptimizer($optimizer);
                 if (!empty($categoryIds)) {
                     $containerData['category_ids'] = $categoryIds;

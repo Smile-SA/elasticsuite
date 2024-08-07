@@ -52,9 +52,11 @@ Actions,Actions
 Cancel,Cancel
 "Add Selected Terms","Add Selected Terms"
 "Category Product View","Category Product View"
-"All Categories","All Categories"
+"All Categories","All categories"
 "Selected categories","Selected categories"
+"All except selected categories","All except selected categories"
 "Apply to categories","Apply to categories"
+"Categories","Categories"
 Configuration,Configuration
 "Boost value (%)","Boost value (%)"
 "From -99 to 10000","From -99 to 10000"
