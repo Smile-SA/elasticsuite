@@ -565,6 +565,10 @@
                         <item name="value" xsi:type="number">1</item>
                         <item name="label" xsi:type="string" translate="true">Selected categories</item>
                     </item>
+                    <item name="2" xsi:type="array">
+                        <item name="value" xsi:type="number">2</item>
+                        <item name="label" xsi:type="string" translate="true">All except selected categories</item>
+                    </item>
                 </item>
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">text</item>
@@ -589,6 +593,15 @@
                         </rule>
                         <rule name="1">
                             <value>1</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
+                                    <callback>show</callback>
+                                </action>
+                            </actions>
+                        </rule>
+                        <rule name="2">
+                            <value>2</value>
                             <actions>
                                 <action name="0">
                                     <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
