@@ -162,7 +162,8 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->where($this->getConnection()->quoteInto("osc.search_container = ?", (string) $container))
             ->where(
                 $this->getConnection()->quoteInto(
-                    "osc.apply_to = 0 OR (osc.apply_to = 1 AND main_table.{$column} = ?) OR (osc.apply_to = 2 AND main_table.{$column} != ?)",
+                    "osc.apply_to = 0 OR (osc.apply_to = 1 AND main_table.{$column} = ?) OR
+                    (osc.apply_to = 2 AND main_table.{$column} != ?)",
                     (int) $idValue
                 )
             )
