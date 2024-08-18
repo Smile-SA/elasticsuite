@@ -145,8 +145,6 @@ jobs:
                   key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-                      composer-${{ matrix.php-versions }}-
 
             - name: "[Init] Cache Sample data repo"
               id: sampledata-cache
