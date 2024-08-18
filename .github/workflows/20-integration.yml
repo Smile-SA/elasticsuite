@@ -149,8 +149,6 @@ jobs:
                   key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-                      composer-${{ matrix.php-versions }}-
 
             - name: "[Init] Cache Magento install"
               id: magento-cache
