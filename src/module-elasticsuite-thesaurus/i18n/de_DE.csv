@@ -1,10 +1,10 @@
-Thesaurus,Thesaurus
+"Thesaurus","Thesaurus"
 "Add New Thesaurus","Neuen Thesaurus hinzufügen"
 "Create Thesaurus","Thesaurus erstellen"
 "Create a Thesaurus","Einen Thesaurus erstellen"
-Synonym,Synonym
-Expansion,Erweiterung
-Type,Typ
+"Synonym","Synonym"
+"Expansion","Erweiterung"
+"Type","Typ"
 "Thesaurus Type","Thesaurus Typ"
 "Save Thesaurus","Thesaurus speichern"
 "Save and Continue Edit","Speichern und weiter bearbeiten"
@@ -12,15 +12,15 @@ Type,Typ
 "Edit a Thesaurus","Einen Thesaurus bearbeiten"
 "General Information","Allgemeine Informationen"
 "Thesaurus Name","Thesaurus Name"
-Active,Aktiv
-Store,Store
+"Active","Aktiv"
+"Store","Store"
 "Bag of words","Wortliste"
-Synonyms,Synonyme
+"Synonyms","Synonyme"
 "Reference Term","Referenzbegriff"
 "Expansion terms","Erweiterte Begriffe"
-"Add Expansion","Erweiterung hinzufügen"
+"Add Expansion Rule","Add Expansion Rule"
 "Synonym terms","Synonyme"
-"Add Synonym","Synonym hinzufügen"
+"Add Synonym Rule","Add Synonym Rule"
 "This thesaurus no longer exists.","Dieser Thesaurus existiert nicht mehr."
 "You deleted the thesaurus %1.","Der thesaurus %1 wurde gelöscht."
 "Edit %1 (%2)","%1 (%2) bearbeiten"
@@ -38,12 +38,28 @@ Synonyms,Synonyme
 "Concepts Weight Divider","Verteilung der Gewichtung von Begriffen"
 "ElasticSuite Thesaurus Indexing","ElasticSuite Thesaurus Indexierung"
 "Reindex ElasticSuite search engine thesaurus.","Reindexierung der ElasticSuite Suchmaschine Thesaurus."
-Delete,Löschen
+"Manage Elasticsuite Thesaurus","Manage Elasticsuite Thesaurus"
+"Delete","Löschen"
 "Are you sure?","Sind Sie sicher?"
-Name,Name
-Expansions,Erweiterungen
-Terms,Begriffe
-Status,Status
-Inactive,Inaktiv
-Action,Aktion
-Edit,Bearbeiten
+"Name","Name"
+"Expansions","Erweiterungen"
+"Terms","Begriffe"
+"Status","Status"
+"Inactive","Inaktiv"
+"Action","Aktion"
+"Edit","Bearbeiten"
+"Any","Any"
+"Mass Actions","Mass Actions"
+"Enable","Enable"
+"Disable","Disable"
+"Select All","Select All"
+"Unselect All","Unselect All"
+"Select Visible","Select Visible"
+"Unselect Visible","Unselect Visible"
+"Are you sure you want to enable the selected thesaurus?","Are you sure you want to enable the selected thesaurus?"
+"Are you sure you want to disable the selected thesaurus?","Are you sure you want to disable the selected thesaurus?"
+"Are you sure you want to delete the selected thesaurus?","Are you sure you want to delete the selected thesaurus?"
+"Please select thesaurus to disable.","Please select thesaurus to disable."
+"Total of %1 thesaurus were disabled.","Total of %1 thesaurus were disabled."
+"Please select thesaurus to enable.","Please select thesaurus to enable."
+"Total of %1 thesaurus were enabled.","Total of %1 thesaurus were enabled."
