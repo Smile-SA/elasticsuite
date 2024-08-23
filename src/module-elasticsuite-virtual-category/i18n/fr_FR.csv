@@ -1,4 +1,6 @@
 "Add/Remove Products","Ajouter/Supprimer des produits"
+"Force zero results for disabled categories","Forcer un résultat vide pour les catégories désactivées"
+"If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.","Si ce paramètre est activé, toutes catégories virtuelles qui référencent une catégorie désactivée dans leur règle ou en tant que catégorie racine retourneront un résultat vide. Attention, si vous modifiez cette option, cela va vider votre cache des requêtes de catégories."
 "Virtual rule","Règle à appliquer"
 "Virtual Category","Catégorie virtuelle"
 "Virtual Category Root","Racine de la catégorie virtuelle"
