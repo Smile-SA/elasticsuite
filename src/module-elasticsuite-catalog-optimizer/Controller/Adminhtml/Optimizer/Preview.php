@@ -18,8 +18,10 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Magento\Search\Model\QueryFactory;
+use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterfaceFactory;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\PreviewFactory;
@@ -69,6 +71,11 @@ class Preview extends Action
     private $queryFactory;
 
     /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * @var \Smile\ElasticsuiteCore\Api\Search\ContextInterface
      */
     private $searchContext;
@@ -83,6 +90,7 @@ class Preview extends Action
      * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration Factory
      * @param JsonHelper                    $jsonHelper             JSON Helper.
      * @param QueryFactory                  $queryFactory           Query Factory.
+     * @param StoreManagerInterface         $storeManager           Store Manager.
      * @param ContextInterface              $searchContext          Search context.
      */
     public function __construct(
@@ -93,6 +101,7 @@ class Preview extends Action
         ContainerConfigurationFactory $containerConfigFactory,
         JsonHelper $jsonHelper,
         QueryFactory $queryFactory,
+        StoreManagerInterface $storeManager,
         ContextInterface $searchContext
     ) {
         parent::__construct($context);
@@ -103,6 +112,7 @@ class Preview extends Action
         $this->containerConfigFactory = $containerConfigFactory;
         $this->jsonHelper             = $jsonHelper;
         $this->queryFactory           = $queryFactory;
+        $this->storeManager           = $storeManager;
         $this->searchContext          = $searchContext;
     }
 
@@ -131,15 +141,15 @@ class Preview extends Action
     /**
      * Load and initialize the preview model.
      *
-     * @return \Smile\ElasticsuiteVirtualCategory\Model\Preview
+     * @return \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview
      */
     private function getPreviewObject()
     {
         $optimizer       = $this->getOptimizer();
         $pageSize        = $this->getPageSize();
         $queryText       = $this->getQueryText();
-        $category        = $this->getCategory();
         $containerConfig = $this->getContainerConfiguration();
+        $category        = $this->getCategory($containerConfig);
 
         $this->updateSearchContext($this->getStoreId(), $category, $queryText);
 
@@ -172,15 +182,22 @@ class Preview extends Action
     /**
      * Load current category using the request params.
      *
-     * @return CategoryInterface
+     * @param ContainerConfigurationInterface $containerConfig Container config.
+     *
+     * @return CategoryInterface|null
+     * @throws NoSuchEntityException
      */
-    private function getCategory()
+    private function getCategory($containerConfig)
     {
         $storeId    = $this->getStoreId();
         $categoryId = $this->getCategoryId();
         $category   = null;
 
-        if ($this->getCategoryId()) {
+        if ((null === $categoryId) && ('catalog_view_container' === $containerConfig->getName())) {
+            $categoryId = $this->storeManager->getStore($storeId)->getRootCategoryId();
+        }
+
+        if ($categoryId) {
             $category = $this->categoryRepository->get($categoryId, $storeId);
         }
 
@@ -232,7 +249,7 @@ class Preview extends Action
     /**
      * Return the category to preview.
      *
-     * @return int
+     * @return int|null
      */
     private function getCategoryId()
     {
