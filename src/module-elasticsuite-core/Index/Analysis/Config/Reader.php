@@ -46,6 +46,8 @@ class Reader extends Filesystem
         '/analysis/filters/filter'           => ['name', 'language'],
         '/analysis/tokenizers/tokenizer'     => ['name', 'language'],
         '/analysis/analyzers/analyzer'       => ['name', 'language'],
+        '/analysis/stemmers/group'           => ['language'],
+        '/analysis/stemmers/group/stemmer'   => ['identifier'],
     ];
 
     /**
