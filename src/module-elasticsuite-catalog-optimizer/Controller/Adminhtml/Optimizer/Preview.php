@@ -81,17 +81,25 @@ class Preview extends Action
     private $searchContext;
 
     /**
+     * @var array
+     */
+    private $categoryPreviewContainers;
+
+    /**
      * Constructor.
      *
-     * @param Context                       $context                Controller  context.
-     * @param PreviewFactory                $previewModelFactory    Preview model factory.
-     * @param CategoryRepositoryInterface   $categoryRepository     Category Repository
-     * @param OptimizerInterfaceFactory     $optimizerFactory       OptimzerFactory
-     * @param ContainerConfigurationFactory $containerConfigFactory Container Configuration Factory
-     * @param JsonHelper                    $jsonHelper             JSON Helper.
-     * @param QueryFactory                  $queryFactory           Query Factory.
-     * @param StoreManagerInterface         $storeManager           Store Manager.
-     * @param ContextInterface              $searchContext          Search context.
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
+     * @param Context                       $context                   Controller  context.
+     * @param PreviewFactory                $previewModelFactory       Preview model factory.
+     * @param CategoryRepositoryInterface   $categoryRepository        Category Repository
+     * @param OptimizerInterfaceFactory     $optimizerFactory          OptimzerFactory
+     * @param ContainerConfigurationFactory $containerConfigFactory    Container Configuration Factory
+     * @param JsonHelper                    $jsonHelper                JSON Helper.
+     * @param QueryFactory                  $queryFactory              Query Factory.
+     * @param StoreManagerInterface         $storeManager              Store Manager.
+     * @param ContextInterface              $searchContext             Search context.
+     * @param array                         $categoryPreviewContainers Category view compatible containers.
      */
     public function __construct(
         Context $context,
@@ -102,7 +110,8 @@ class Preview extends Action
         JsonHelper $jsonHelper,
         QueryFactory $queryFactory,
         StoreManagerInterface $storeManager,
-        ContextInterface $searchContext
+        ContextInterface $searchContext,
+        $categoryPreviewContainers = ['catalog_view_container']
     ) {
         parent::__construct($context);
 
@@ -114,6 +123,7 @@ class Preview extends Action
         $this->queryFactory           = $queryFactory;
         $this->storeManager           = $storeManager;
         $this->searchContext          = $searchContext;
+        $this->categoryPreviewContainers = $categoryPreviewContainers;
     }
 
     /**
@@ -193,7 +203,7 @@ class Preview extends Action
         $categoryId = $this->getCategoryId();
         $category   = null;
 
-        if ((null === $categoryId) && ('catalog_view_container' === $containerConfig->getName())) {
+        if ((null === $categoryId) && in_array($containerConfig->getName(), $this->categoryPreviewContainers)) {
             $categoryId = $this->storeManager->getStore($storeId)->getRootCategoryId();
         }
 
