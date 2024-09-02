@@ -52,6 +52,8 @@ class QueryBuilder
         'fulltext' => 'queryText',
         'match'    => 'queryText',
         'in_set'   => 'values',
+        // Trick to silently ignore that condition if it slips along with a price range here from advanced search.
+        'currency' => 'currency',
     ];
 
     /**
