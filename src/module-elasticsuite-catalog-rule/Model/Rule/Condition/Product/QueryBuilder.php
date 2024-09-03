@@ -72,7 +72,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getSearchQuery(ProductCondition $productCondition)
@@ -134,7 +134,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return NULL|\Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpecialAttributesSearchQuery(ProductCondition $productCondition)
     {

@@ -159,7 +159,7 @@ class Preview extends AbstractPreview
     /**
      * Return the filter applied to the query.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      */
     private function getQueryFilter(): ?QueryInterface
     {
