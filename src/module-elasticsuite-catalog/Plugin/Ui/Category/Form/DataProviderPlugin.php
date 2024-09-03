@@ -116,6 +116,8 @@ class DataProviderPlugin
      * Append filter configuration (sort order and display mode) data.
      * Meta is added in the ui_component via XML.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param CategoryDataProvider $dataProvider Data provider.
      * @param \Closure             $proceed      Original method.
      *
@@ -149,6 +151,8 @@ class DataProviderPlugin
 
     /**
      * Modify default metadata to include 'use_config.sort_direction'.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param CategoryDataProvider $dataProvider Data provider.
      * @param array                $result       Original data.
