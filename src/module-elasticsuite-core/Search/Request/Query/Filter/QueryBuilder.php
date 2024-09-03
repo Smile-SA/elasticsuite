@@ -118,7 +118,7 @@ class QueryBuilder
      * @param array|string   $condition   Filter condition.
      * @param string|null    $currentPath Current nested path or null.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      * @SuppressWarnings(PHPMD.ElseExpression)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
@@ -235,7 +235,7 @@ class QueryBuilder
      * @param string $field  Filter field.
      * @param array  $values Filter values.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      */
     private function getCombinedTermsQuery($field, $values)
     {
