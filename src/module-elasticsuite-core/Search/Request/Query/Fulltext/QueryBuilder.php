@@ -85,7 +85,9 @@ class QueryBuilder
             $query->setName('PURE_STOPWORDS');
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
             $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType, $boost);
-            $query->setName('SPELLCHECK');
+            if ($query !== null) {
+                $query->setName('SPELLCHECK');
+            }
         }
 
         if ($query === null) {
@@ -240,7 +242,7 @@ class QueryBuilder
      * @param string                          $spellingType    The type of spellchecked applied.
      * @param float                           $boost           Boost of the created query.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost)
     {
@@ -379,7 +381,7 @@ class QueryBuilder
      * @param string                          $queryText       The query text
      * @param int                             $boost           The boost applied to the span query
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpanQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
     {
