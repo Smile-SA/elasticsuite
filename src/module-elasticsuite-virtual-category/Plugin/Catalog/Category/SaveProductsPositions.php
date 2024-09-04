@@ -27,6 +27,11 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Actio
 class SaveProductsPositions extends AbstractIndexerPlugin
 {
     /**
+     * @var \Magento\Framework\Message\ManagerInterface
+     */
+    protected $messageManager;
+
+    /**
      * @var \Magento\Framework\Json\Helper\Data
      */
     private $jsonHelper;
@@ -44,17 +49,20 @@ class SaveProductsPositions extends AbstractIndexerPlugin
      * @param \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler     Product position
      *                                                                                                          save handler.
      * @param \Magento\Framework\Json\Helper\Data                                              $jsonHelper      JSON Helper.
+     * @param \Magento\Framework\Message\ManagerInterface                                      $messageManager  Message Manager.
      */
     public function __construct(
         \Magento\Framework\Indexer\IndexerRegistry $indexerRegistry,
         FullIndexer $fullIndexer,
         \Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\Category\Product\Position $saveHandler,
-        \Magento\Framework\Json\Helper\Data $jsonHelper
+        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        \Magento\Framework\Message\ManagerInterface $messageManager
     ) {
         parent::__construct($indexerRegistry, $fullIndexer);
 
         $this->jsonHelper  = $jsonHelper;
         $this->saveHandler = $saveHandler;
+        $this->messageManager = $messageManager;
     }
 
     /**
@@ -145,17 +153,23 @@ class SaveProductsPositions extends AbstractIndexerPlugin
      *
      * @param \Magento\Catalog\Model\Category $category Category
      *
-     * @return array
+     * @return $this
      */
     private function unserializeProductPositions(\Magento\Catalog\Model\Category $category)
     {
-        $productPositions = $category->getSortedProducts() ? $category->getSortedProducts() : [];
+        // Get product positions from the category.
+        $productPositions = $category->getSortedProducts();
 
         if (is_string($productPositions)) {
             try {
                 $productPositions = $this->jsonHelper->jsonDecode($productPositions);
             } catch (\Exception $e) {
-                $productPositions = [];
+                $this->messageManager->addWarningMessage(
+                    __('Something went wrong while saving your product positions, they have been switched back to their last known state.')
+                );
+
+                // Fallback to the last known valid product positions.
+                $productPositions = $this->saveHandler->getProductPositionsByCategory($category);
             }
         }
 
