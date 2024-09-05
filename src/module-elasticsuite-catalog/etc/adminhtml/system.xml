@@ -92,5 +92,15 @@
                 </field>
             </group>
         </section>
+
+        <section id="catalog">
+            <group id="frontend">
+                <field id="default_sort_direction_by" translate="label comment" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Product Listing Sort Direction by</label>
+                    <source_model>Smile\ElasticsuiteCatalog\Model\Config\Source\SortDirectionConfig</source_model>
+                    <comment><![CDATA[Set the default sort direction for product listing.]]></comment>
+                </field>
+            </group>
+        </section>
     </system>
 </config>

@@ -83,4 +83,9 @@
             </argument>
         </arguments>
     </virtualType>
+
+    <!-- Handle category additional "use_config" checkboxes because the native ones are hardcoded in controller -->
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Save">
+        <plugin name="handle_additional_use_config" type="Smile\ElasticsuiteCatalog\Plugin\Catalog\Controller\Adminhtml\Category\SavePlugin" />
+    </type>
 </config>
