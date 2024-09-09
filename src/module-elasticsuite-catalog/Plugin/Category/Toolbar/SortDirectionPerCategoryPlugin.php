@@ -15,7 +15,11 @@ namespace Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar;
 
 use Magento\Catalog\Block\Product\ProductList\Toolbar as ProductListToolbar;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Plugin which is modified the behavior of sorting arrows based on the custom sort direction attribute.
@@ -26,6 +30,8 @@ use Magento\Framework\App\Request\Http;
  */
 class SortDirectionPerCategoryPlugin
 {
+    const XML_PATH_LIST_DEFAULT_SORT_DIRECTION_BY = 'catalog/frontend/default_sort_direction_by';
+
     /**
      * @var CategoryRepositoryInterface
      */
@@ -37,17 +43,37 @@ class SortDirectionPerCategoryPlugin
     private $request;
 
     /**
+     * Scope configuration.
+     *
+     * @var ScopeConfigInterface
+     */
+    private $scopeConfig;
+
+    /**
+     * Store manager.
+     *
+     * @var StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
      * Toolbar constructor.
      *
      * @param CategoryRepositoryInterface $categoryRepository Category Repository.
      * @param Http                        $request            Http request.
+     * @param ScopeConfigInterface        $scopeConfig        Scope configuration.
+     * @param StoreManagerInterface       $storeManager       Store manager.
      */
     public function __construct(
         CategoryRepositoryInterface $categoryRepository,
-        Http $request
+        Http $request,
+        ScopeConfigInterface $scopeConfig,
+        StoreManagerInterface $storeManager
     ) {
         $this->categoryRepository = $categoryRepository;
         $this->request = $request;
+        $this->scopeConfig = $scopeConfig;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -57,6 +83,7 @@ class SortDirectionPerCategoryPlugin
      * @param mixed              $collection Collection.
      *
      * @return array
+     * @throws NoSuchEntityException
      */
     public function beforeSetCollection(ProductListToolbar $subject, $collection)
     {
@@ -70,29 +97,54 @@ class SortDirectionPerCategoryPlugin
     }
 
     /**
+     * Retrieve Product List Default Sort Direction By
+     *
+     * @return string|null
+     * @throws NoSuchEntityException
+     */
+    private function getProductListDefaultSortDirectionBy()
+    {
+        // Get the current store ID.
+        $storeId = $this->storeManager->getStore()->getId();
+
+        // Fetch system configuration value for 'default_sort_direction_by' at the store level.
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_LIST_DEFAULT_SORT_DIRECTION_BY,
+            ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+    }
+
+    /**
      * Get the custom sort direction from the current category.
      *
      * @return string|null
+     * @throws NoSuchEntityException
      */
     private function getCustomSortDirection()
     {
         $categoryId = $this->request->getParam('id');
 
         if (!$categoryId) {
-            return null; // Return null if category ID is not available.
+            return $this->getProductListDefaultSortDirectionBy(); // Fallback to system config value if no category ID.
         }
 
         try {
             $category = $this->categoryRepository->get($categoryId);
+
+            // Check if the category has a custom sort direction set.
             $customDirection = $category->getSortDirection();
 
+            // If a custom sort direction exists for the category and is valid, return it.
             if ($customDirection && in_array($customDirection, ['asc', 'desc'])) {
                 return $customDirection;
             }
         } catch (\Exception $e) {
-            return null; // Handle category not found or other exceptions.
+            // Handle exceptions (e.g., category not found) by falling back to the system config.
+            return $this->getProductListDefaultSortDirectionBy();
         }
 
-        return null;
+        // If no custom sort direction for the category, return the default system config.
+        return $this->getProductListDefaultSortDirectionBy();
     }
 }
