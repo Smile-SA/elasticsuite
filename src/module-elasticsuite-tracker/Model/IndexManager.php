@@ -170,11 +170,14 @@ class IndexManager
         $indices    = $this->client->getIndicesNameByAlias($indexAlias);
 
         if (!empty($indices)) {
-            $dateBounds = $this->dateBounds->getIndicesDateBounds();
-            $bounds = [
-                \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['minDate']),
-                \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['maxDate']),
-            ];
+            // Indices could have been created but be empty after an elasticsuite:tracker:fix-data.
+            $dateBounds = array_filter($this->dateBounds->getIndicesDateBounds());
+            if (($dateBounds['minDate'] ?? null) && ($dateBounds['maxDate'] ?? null)) {
+                $bounds = [
+                    \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['minDate']),
+                    \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['maxDate']),
+                ];
+            }
         }
 
         return $bounds;
