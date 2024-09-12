@@ -106,10 +106,6 @@ jobs:
         if: ${{env.MAGENTO_USERNAME}} != 0
         run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
 
-      - name: "[Init] Unconditionally add phpstan/phpstan"
-        working-directory: ${{ env.magento-directory }}
-        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
-
       - name: "[Init] Prepare Magento install if needed"
         if: steps.magento-cache.outputs.cache-hit == 'true'
         working-directory: ${{ env.magento-directory }}
@@ -143,6 +139,10 @@ jobs:
           composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
           rm -rf vendor/smile/elasticsuite/**
           cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+
+      - name: "[Init] Unconditionally add phpstan/phpstan"
+        working-directory: ${{ env.magento-directory }}
+        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Fix Magento directory permissions"
         env:
