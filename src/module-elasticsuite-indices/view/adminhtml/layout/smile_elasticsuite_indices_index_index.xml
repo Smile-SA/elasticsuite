@@ -43,7 +43,6 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Index Title</argument>
                                 <argument name="index" xsi:type="string">index_name</argument>
-                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
