@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteIndices\Model;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 
@@ -42,6 +43,11 @@ class IndexStatsProvider
     protected $indexStatusProvider;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var null
      */
     private $elasticsuiteIndices = null;
@@ -57,15 +63,18 @@ class IndexStatsProvider
      * @param ClientInterface     $client              ES client.
      * @param IndicesList         $indicesList         Index list.
      * @param IndexStatusProvider $indexStatusProvider Index Status Provider.
+     * @param LoggerInterface     $logger              Logger.
      */
     public function __construct(
         ClientInterface $client,
         IndicesList $indicesList,
-        IndexStatusProvider $indexStatusProvider
+        IndexStatusProvider $indexStatusProvider,
+        LoggerInterface $logger
     ) {
         $this->client = $client;
         $this->indicesList = $indicesList;
         $this->indexStatusProvider = $indexStatusProvider;
+        $this->logger = $logger;
         $this->initStats();
     }
 
@@ -131,7 +140,11 @@ class IndexStatsProvider
                 $data['size_in_bytes'] = $indexStats['total']['store']['size_in_bytes'];
             }
         } catch (Exception $e) {
-            $data['index_status'] = IndexStatus::REBUILDING_STATUS;
+            $this->logger->error(
+                sprintf('Error when loading/parsing statistics for index "%s"', $indexName),
+                ['exception' => $e]
+            );
+            $data['index_status'] = IndexStatus::UNDEFINED_STATUS;
         }
 
         return $data;
@@ -183,8 +196,13 @@ class IndexStatsProvider
     private function initStats()
     {
         if ($this->indicesStats === null) {
-            $indexStatsResponse = $this->client->indexStats('_all');
-            $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            try {
+                $indexStatsResponse = $this->client->indexStats('_all');
+                $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices statistics', ['exception' => $e]);
+                $this->indicesStats = [];
+            }
         }
     }
 }
