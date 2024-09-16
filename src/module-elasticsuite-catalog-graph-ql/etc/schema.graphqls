@@ -20,4 +20,5 @@ type ViewMoreResult @doc(description: "The Products object is the top-level obje
 type SearchResultPageInfo
 {
     is_spellchecked: Boolean
+    query_id: Int
 }
