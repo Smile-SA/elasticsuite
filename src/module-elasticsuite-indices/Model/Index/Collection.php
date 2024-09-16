@@ -52,10 +52,18 @@ class Collection extends DataCollection
      */
     public function addFieldToFilter($field, $condition = null)
     {
-        if (in_array($field, ['index_alias', 'index_name'])) {
+        $type = 'include';
+        if ($field === 'index_status') {
+            $type = 'exclude';
+        }
+        if (in_array($field, ['index_alias', 'index_name', 'index_status'])) {
             if (is_array($condition)) {
                 foreach ($condition as $value) {
-                    $this->addFilter($field, preg_replace('/[^A-Za-z0-9\-_]/', '', $value->__toString()));
+                    $this->addFilter(
+                        $field,
+                        preg_replace('/[^A-Za-z0-9\-_]/', '', (string) $value),
+                        $type
+                    );
                 }
             }
         }
@@ -108,7 +116,13 @@ class Collection extends DataCollection
             foreach ($filters as $filter) {
                 $column = $filter->getField();
                 $value = $filter->getValue();
-                if (strpos((string) $index->getData($column), $value) === false) {
+                $type = $filter->getType();
+                if ($type === 'exclude') {
+                    if (strpos((string) $index->getData($column), $value) !== false) {
+                        $keep = false;
+                        break;
+                    }
+                } elseif (strpos((string) $index->getData($column), $value) === false) {
                     $keep = false;
                     break;
                 }
