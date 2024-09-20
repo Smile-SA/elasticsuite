@@ -23,6 +23,7 @@
             </argument>
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -41,6 +42,7 @@
             </argument>
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
             </argument>
             <argument name="containerName" xsi:type="string">tracking_log_session</argument>
         </arguments>
@@ -51,7 +53,7 @@
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder</argument>
         </arguments>
     </type>
-    
+
     <!-- Popular search terms report config -->
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
         <arguments>
@@ -60,10 +62,11 @@
             </argument>
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder</argument>
@@ -72,7 +75,7 @@
             </argument>
         </arguments>
     </virtualType>
-    
+
     <!-- Spellchecked search terms DI config. -->
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
         <arguments>
@@ -82,10 +85,11 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\QueryProvider</item>
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder</argument>
@@ -94,7 +98,7 @@
             </argument>
         </arguments>
     </virtualType>
-    
+
     <!-- No result search terms DI config. -->
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
         <arguments>
@@ -104,10 +108,11 @@
             </argument>
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
-    
+
     <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder</argument>
@@ -122,6 +127,7 @@
         <arguments>
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </type>
