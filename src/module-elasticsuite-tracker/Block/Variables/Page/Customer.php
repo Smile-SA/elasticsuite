@@ -50,13 +50,14 @@ class Customer extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractB
     /**
      * Customer constructor.
      *
-     * @param Template\Context                $context           Template Context.
-     * @param Data                            $jsonHelper        Magento JSON Helper.
-     * @param TrackerHelper                   $trackerHelper     Smile Tracker Helper.
-     * @param Registry                        $registry          Magento Core Registry.
-     * @param Session                         $customerSession   Customer Session.
-     * @param ModuleManager                   $moduleManager     Magento Module Manager.
-     * @param array                           $data              Additional data.
+     * @param Template\Context $context         Template Context.
+     * @param Data             $jsonHelper      Magento JSON Helper.
+     * @param TrackerHelper    $trackerHelper   Smile Tracker Helper.
+     * @param Registry         $registry        Magento Core Registry.
+     * @param Session          $customerSession Customer Session.
+     * @param ModuleManager    $moduleManager   Magento Module Manager.
+     * @param array            $data            Additional data.
+     *
      * @throws LocalizedException
      */
     public function __construct(
