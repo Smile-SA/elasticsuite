@@ -14,11 +14,15 @@
 
 namespace Smile\ElasticsuiteTracker\Plugin;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Layout\PageType\Config as PageTypeConfig;
 use Magento\Quote\Model\Quote;
 
 /**
  * Log add to cart events into the event queue.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
@@ -47,6 +51,16 @@ class QuotePlugin
     private $pageTypeConfig;
 
     /**
+     * @var \Magento\Customer\Model\Session
+     */
+    private $customerSession;
+
+    /**
+     * @var \Magento\Company\Api\CompanyManagementInterface|null
+     */
+    private $companyManagement = null;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
@@ -54,24 +68,44 @@ class QuotePlugin
     /**
      * Constructor.
      *
-     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service        Tracker service.
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager  Cookie manager.
-     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper  Tracker helper.
-     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig The Page Type Configuration
-     * @param \Psr\Log\LoggerInterface                                        $logger         Logger.
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service         Tracker service.
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager   Cookie manager.
+     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper   Tracker helper.
+     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig  Page type configuration.
+     * @param \Magento\Customer\Model\Session                                 $customerSession Customer session.
+     * @param \Psr\Log\LoggerInterface                                        $logger          Logger.
+     * @param \Magento\Framework\Module\Manager                               $moduleManager   Module manager.
+     *
+     * @throws LocalizedException
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
-        \Psr\Log\LoggerInterface $logger
+        \Magento\Customer\Model\Session $customerSession,
+        \Psr\Log\LoggerInterface $logger,
+        \Magento\Framework\Module\Manager $moduleManager
     ) {
         $this->service       = $service;
         $this->cookieManager = $cookieManager;
         $this->trackerHelper = $trackerHelper;
         $this->pageTypeConfig = $pageTypeConfig;
+        $this->customerSession = $customerSession;
         $this->logger        = $logger;
+
+        // Check if Magento_Company module is enabled before attempting to load the repository.
+        if ($moduleManager->isEnabled('Magento_Company')) {
+            if (interface_exists('\Magento\Company\Api\CompanyManagementInterface')) {
+                $this->companyManagement = ObjectManager::getInstance()->get(
+                    \Magento\Company\Api\CompanyManagementInterface::class
+                );
+            } else {
+                throw new LocalizedException(__('CompanyManagementInterface is not available.'));
+            }
+        }
     }
 
     /**
@@ -94,7 +128,14 @@ class QuotePlugin
                     /** @var \Magento\Quote\Model\Quote\Item $result */
                     $product = $result->getProduct();
                     if ($product !== null) {
-                        $this->logEvent($product->getId(), $product->getStoreId());
+                        // Retrieve the customer group ID from the product object.
+                        $customerGroupId = $product->getCustomerGroupId();
+
+                        // Retrieve the customer company ID rom the customer session.
+                        $companyId = $this->getCompanyId();
+
+                        // Log event with product, store, customer group and company ids.
+                        $this->logEvent($product->getId(), $product->getStoreId(), $customerGroupId, $companyId);
                     }
                 }
             } catch (\Exception $e) {
@@ -109,12 +150,14 @@ class QuotePlugin
     /**
      * Log the event.
      *
-     * @param int $productId Product Id
-     * @param int $storeId   Store Id
+     * @param int      $productId       Product ID.
+     * @param int      $storeId         Store ID.
+     * @param int|null $customerGroupId Customer Group ID (null if non-logged-in).
+     * @param int|null $companyId       Customer Company ID (null if non-logged-in or company is not available).
      *
      * @return void
      */
-    private function logEvent(int $productId, int $storeId): void
+    private function logEvent(int $productId, int $storeId, ?int $customerGroupId, ?int $companyId): void
     {
         $pageData = [
             'identifier' => 'checkout_cart_add',
@@ -123,9 +166,46 @@ class QuotePlugin
         $pageData['store_id']           = $storeId;
         $pageData['cart']['product_id'] = $productId;
 
-        $eventData = ['page' => $pageData, 'session' => $this->getSessionData()];
+        // Add customer information.
+        $customerData = [];
+        if ($customerGroupId !== null) {
+            $customerData['group_id'] = $customerGroupId;
+        }
+        if ($companyId !== null) {
+            $customerData['company_id'] = $companyId;
+        }
+
+        $eventData = [
+            'page' => $pageData,
+            'customer' => $customerData,
+            'session' => $this->getSessionData(),
+        ];
 
         $this->service->addEvent($eventData);
+    }
+
+    /**
+     * Retrieve the company ID from the customer session.
+     *
+     * If the customer has an associated company, return the company ID, otherwise return null if no company is assigned.
+     *
+     * @return int|null
+     */
+    private function getCompanyId(): ?int
+    {
+        if ($this->customerSession->isLoggedIn() && (null !== $this->companyManagement)) {
+            try {
+                $customer = $this->customerSession->getCustomer();
+                $company = $this->companyManagement->getByCustomerId($customer->getId());
+
+                return $company ? $company->getId() : null;
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        // Return null if the user is non-logged-in or companyManagement is not available.
+        return null;
     }
 
     /**

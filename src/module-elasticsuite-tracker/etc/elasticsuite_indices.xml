@@ -29,6 +29,10 @@
                 <field name="session.uid" type="keyword" />
                 <field name="session.vid" type="keyword" />
 
+                <!-- Customer data -->
+                <field name="customer.group_id" type="integer" />
+                <field name="customer.company_id" type="integer" />
+
                 <!-- Page metadata -->
                 <field name="page.site" type="keyword" />
                 <field name="page.store_id" type="integer" />
@@ -120,6 +124,8 @@
         <type name="session" idFieldName="session_id">
             <mapping>
                 <field name="session_id" type="keyword"/>
+                <field name="customer_group_id" type="integer" />
+                <field name="customer_company_id" type="integer" />
                 <field name="start_date" type="date"/>
                 <field name="end_date" type="date"/>
                 <field name="visitor_id" type="keyword"/>

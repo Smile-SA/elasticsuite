@@ -175,7 +175,7 @@ const smileTracker = (function () {
     }
 
     function getCustomerDataCodeToTrack() {
-        return ['age', 'gender', 'zipcode', 'state', 'country'];
+        return ['age', 'gender', 'zipcode', 'state', 'country', 'group_id', 'company_id'];
     }
 
     function setTrackerStyle(imgNode) {
@@ -186,6 +186,7 @@ const smileTracker = (function () {
     // Append a transparent pixel to the body
     function sendTag(forceCollect = false) {
         initSession.bind(this)();
+        initCustomerData.bind(this)();
 
         if (this.config && this.config.hasOwnProperty('storeId')) {
             addPageVar.bind(this)('store_id', this.config.storeId);
