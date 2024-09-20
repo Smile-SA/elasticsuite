@@ -59,6 +59,7 @@ class Customer extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractB
      * @param array            $data            Additional data.
      *
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function __construct(
         Template\Context $context,
@@ -103,6 +104,7 @@ class Customer extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractB
      * Otherwise, assign the 'NOT LOGGED IN' group ID.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function getCustomerGroupId()
     {
@@ -125,6 +127,7 @@ class Customer extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractB
      * Otherwise, return null for guests or when the module is not available.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     private function getCustomerCompanyId()
     {
