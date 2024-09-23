@@ -81,6 +81,10 @@ class EventIndex implements EventIndexInterface
                     $event['date'] = $event['created_at'];
                 }
 
+                if (!isset($event['customer']['group_id'])) {
+                    $event['customer']['group_id'] = \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID;
+                }
+
                 $date = substr($event['date'], 0, 7);
                 $index = $this->indexResolver->getIndex(self::INDEX_IDENTIFIER, $event['page']['store_id'], $date);
                 if ($index !== null) {
