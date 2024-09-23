@@ -41,6 +41,9 @@
             <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Catalog"
                    name="smile.tracker.page.catalog"
                    ifconfig="smile_elasticsuite_tracker/general/enabled" />
+            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Customer"
+                   name="smile.tracker.page.customer"
+                   ifconfig="smile_elasticsuite_tracker/general/enabled" />
         </referenceContainer>
     </body>
 </page>
