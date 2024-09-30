@@ -40,6 +40,7 @@ class CustomerDataTrackingManager
 
     /**
      * @param CustomerSession $customerSession Customer session
+     * @param ModuleManager   $moduleManager   Module manager
      * @throws LocalizedException
      */
     public function __construct(CustomerSession $customerSession, ModuleManager $moduleManager)
