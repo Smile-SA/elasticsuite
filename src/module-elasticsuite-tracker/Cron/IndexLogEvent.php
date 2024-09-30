@@ -47,8 +47,8 @@ class IndexLogEvent
      * Constructor.
      *
      * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface   $eventQueue   Pending events queue.
-     * @param \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $eventIndex   Event index.
-     * @param \Smile\ElasticsuiteTracker\Api\EventIndexInterface   $sessionIndex Session index.
+     * @param \Smile\ElasticsuiteTracker\Api\EventIndexInterface   $eventIndex   Event index.
+     * @param \Smile\ElasticsuiteTracker\Api\SessionIndexInterface $sessionIndex Session index.
      * @param integer                                              $chunkSize    Size of the chunk of events to index.
      */
     public function __construct(

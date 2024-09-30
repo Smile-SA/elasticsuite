@@ -249,8 +249,8 @@ class EventQueue extends AbstractDb
             if (array_key_exists('session', $data)) {
                 if (array_key_exists('uid', $data['session']) && array_key_exists('vid', $data['session'])) {
                     $isEventInvalid = false;
-                    $sessionUid = trim($data['session']['uid']);
-                    $sessionVid = trim($data['session']['vid']);
+                    $sessionUid = trim($data['session']['uid'] ?? '');
+                    $sessionVid = trim($data['session']['vid'] ?? '');
                     if (empty($sessionUid) || ("null" === $sessionUid)) {
                         $isEventInvalid = true;
                     }
