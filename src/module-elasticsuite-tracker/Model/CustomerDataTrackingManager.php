@@ -39,8 +39,12 @@ class CustomerDataTrackingManager
     private $companyRepository = null;
 
     /**
-     * @param CustomerSession $customerSession Customer session
-     * @param ModuleManager   $moduleManager   Module manager
+     * CustomerDataTrackingManager constructor.
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param CustomerSession $customerSession Customer session.
+     * @param ModuleManager   $moduleManager   Module manager.
      * @throws LocalizedException
      */
     public function __construct(CustomerSession $customerSession, ModuleManager $moduleManager)
