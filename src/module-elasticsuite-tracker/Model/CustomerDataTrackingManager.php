@@ -13,11 +13,14 @@
  */
 namespace Smile\ElasticsuiteTracker\Model;
 
-use DateTime;
 use Magento\Customer\Model\Session as CustomerSession;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Module\Manager as ModuleManager;
 
 /**
- * Tracking Indices Manager
+ * Additional customer data tracking
  *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
@@ -31,11 +34,27 @@ class CustomerDataTrackingManager
     protected $customerSession;
 
     /**
-     * @param CustomerSession $customerSession Customer session
+     * @var \Magento\Company\Api\CompanyRepositoryInterface|null
      */
-    public function __construct(CustomerSession $customerSession)
+    private $companyRepository = null;
+
+    /**
+     * @param CustomerSession $customerSession Customer session
+     * @throws LocalizedException
+     */
+    public function __construct(CustomerSession $customerSession, ModuleManager $moduleManager)
     {
         $this->customerSession = $customerSession;
+        // Check if Magento_Company module is enabled before attempting to load the repository.
+        if ($moduleManager->isEnabled('Magento_Company')) {
+            if (interface_exists('\Magento\Company\Api\CompanyRepositoryInterface')) {
+                $this->companyRepository = ObjectManager::getInstance()->get(
+                    \Magento\Company\Api\CompanyRepositoryInterface::class
+                );
+            } else {
+                throw new LocalizedException(__('CompanyRepositoryInterface is not available.'));
+            }
+        }
     }
 
     /**
@@ -45,22 +64,28 @@ class CustomerDataTrackingManager
      */
     public function getCustomerDataToTrack()
     {
+        $variables = [
+            'group_id' => \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID,
+        ];
+
         if (!$this->customerSession->getId()) {
-            return [];
+            return $variables;
         }
 
         $customer = $this->customerSession->getCustomer();
-        $shippingAddress = $customer->getDefaultShippingAddress();
+        $variables['group_id'] = (int) $customer->getGroupId() ?? \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID;
 
-        $dob = new DateTime($customer->getDob() ?? '');
-        $now = new DateTime();
+        // Check if the customer is logged in and Magento_Company is enabled.
+        if ($this->customerSession->isLoggedIn() && (null !== $this->companyRepository)) {
+            try {
+                // Retrieve company information by customer ID.
+                $company = $this->companyRepository->getByCustomerId($customer->getId());
+                $variables['company_id'] = (int) $company->getId();
+            } catch (NoSuchEntityException $e) {
+                // No company found for this customer.
+            }
+        }
 
-        return [
-            'age' => (int) $now->format('Y') - (int) $dob->format('Y'),
-            'gender' => $customer->getGender(),
-            'zipcode' => $shippingAddress ? $shippingAddress->getPostcode() : '',
-            'state' => $shippingAddress ? $shippingAddress->getRegion() : '',
-            'country' => $shippingAddress ? $shippingAddress->getCountry() : '',
-        ];
+        return $variables;
     }
 }
