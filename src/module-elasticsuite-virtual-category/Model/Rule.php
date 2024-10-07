@@ -37,7 +37,7 @@ use Magento\Framework\Model\Context;
 
 /**
  * Virtual category rule.
- *
+ * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
