@@ -53,7 +53,17 @@ class MoreLikeThis implements QueryInterface
     /**
      * @var integer
      */
-    const DEFAULT_MAX_DOC_FREQ = 100;
+    const DEFAULT_MAX_DOC_FREQ = 2147483647;
+
+    /**
+     * @var integer
+     */
+    const DEFAULT_MIN_WORD_LENGTH = 0;
+
+    /**
+     * @var integer
+     */
+    const DEFAULT_MAX_WORD_LENGTH = 0;
 
     /**
      * @var string
@@ -103,6 +113,16 @@ class MoreLikeThis implements QueryInterface
     /**
      * @var integer
      */
+    private $minWordLength;
+
+    /**
+     * @var integer
+     */
+    private $maxWordLength;
+
+    /**
+     * @var integer
+     */
     private $maxQueryTerms;
 
     /**
@@ -124,6 +144,8 @@ class MoreLikeThis implements QueryInterface
      * @param integer      $minDocFreq          Minimum doc freq for a term to be considered.
      * @param integer      $maxDocFreq          Maximum doc freq for a term to be considered.
      * @param integer      $maxQueryTerms       Maximum number of term in generated queries.
+     * @param integer      $minWordLength       Minimum length of word to consider.
+     * @param integer      $maxWordLength       Maximum length of word to consider.
      * @param integer      $includeOriginalDocs Include original doc in the result set.
      * @param string       $name                Query name.
      * @param integer      $boost               Query boost.
@@ -137,6 +159,8 @@ class MoreLikeThis implements QueryInterface
         $minDocFreq = self::DEFAULT_MIN_DOC_FREQ,
         $maxDocFreq = self::DEFAULT_MAX_DOC_FREQ,
         $maxQueryTerms = self::DEFAULT_MAX_QUERY_TERMS,
+        $minWordLength = self::DEFAULT_MIN_WORD_LENGTH,
+        $maxWordLength = self::DEFAULT_MAX_WORD_LENGTH,
         $includeOriginalDocs = false,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
@@ -152,6 +176,8 @@ class MoreLikeThis implements QueryInterface
         $this->name                = $name;
         $this->boost               = $boost;
         $this->includeOriginalDocs = $includeOriginalDocs;
+        $this->minWordLength       = $minWordLength;
+        $this->maxWordLength       = $maxWordLength;
     }
 
     /**
@@ -160,6 +186,16 @@ class MoreLikeThis implements QueryInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -225,7 +261,7 @@ class MoreLikeThis implements QueryInterface
      */
     public function getMinTermFreq()
     {
-        return $this->minTermFreq;
+        return (int) $this->minTermFreq;
     }
 
     /**
@@ -235,7 +271,7 @@ class MoreLikeThis implements QueryInterface
      */
     public function getMinDocFreq()
     {
-        return $this->minDocFreq;
+        return (int) $this->minDocFreq;
     }
 
     /**
@@ -245,7 +281,7 @@ class MoreLikeThis implements QueryInterface
      */
     public function getMaxDocFreq()
     {
-        return $this->maxDocFreq;
+        return (int) $this->maxDocFreq;
     }
 
     /**
@@ -255,7 +291,7 @@ class MoreLikeThis implements QueryInterface
      */
     public function getMaxQueryTerms()
     {
-        return $this->maxQueryTerms;
+        return (int) $this->maxQueryTerms;
     }
 
     /**
@@ -266,5 +302,25 @@ class MoreLikeThis implements QueryInterface
     public function includeOriginalDocs()
     {
         return $this->includeOriginalDocs;
+    }
+
+    /**
+     * Minimum doc freq for a term to be considered.
+     *
+     * @return integer
+     */
+    public function getMinWordLength()
+    {
+        return (int) $this->minWordLength;
+    }
+
+    /**
+     * Maximum doc freq for a term to be considered.
+     *
+     * @return integer
+     */
+    public function getMaxWordLength()
+    {
+        return (int) $this->maxWordLength;
     }
 }

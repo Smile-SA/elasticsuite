@@ -37,26 +37,17 @@ class CategoryBlacklist implements FilterInterface
     private $searchContext;
 
     /**
-     *
-     * @var \Magento\Framework\App\State
-     */
-    private $state;
-
-    /**
      * Category Blacklist filter constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory  Query factory.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface       $searchContext Current search context.
-     * @param \Magento\Framework\App\State                              $state         Current state
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
-        \Magento\Framework\App\State $state
+        \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext
     ) {
         $this->queryFactory  = $queryFactory;
         $this->searchContext = $searchContext;
-        $this->state = $state;
     }
 
     /**
@@ -65,7 +56,7 @@ class CategoryBlacklist implements FilterInterface
     public function getFilterQuery()
     {
         $query = null;
-        if ($this->searchContext->getCurrentCategory() && $this->state->getAreaCode() !== 'adminhtml') {
+        if ($this->searchContext->getCurrentCategory() && $this->searchContext->isBlacklistingApplied()) {
             $query = $this->getIsNotBlacklistedQuery((int) $this->searchContext->getCurrentCategory()->getId());
         }
 

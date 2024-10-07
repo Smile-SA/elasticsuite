@@ -1,0 +1,26 @@
+<!--
+/**
+ * Smile_ElasticsuiteCatalog import configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2023 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_ImportExport:etc/import.xsd">
+    <entity name="elasticsuite_product_attribute"
+            label="ElasticSuite Product Attributes"
+            model="Smile\ElasticsuiteCatalog\Model\Import\ProductAttribute"
+            behaviorModel="Smile\ElasticsuiteCatalog\Model\Source\Import\Behavior\Custom"
+    />
+
+    <relatedIndexer entity="elasticsuite_product_attribute" name="catalogsearch_fulltext" />
+</config>

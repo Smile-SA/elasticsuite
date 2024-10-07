@@ -1,0 +1,177 @@
+name: PHPStan Code Quality
+
+on:
+  push:
+    branches:
+      - 2.11.x
+      - master
+
+  pull_request_target:
+    branches:
+      - 2.11.x
+      - master
+    types: [labeled,synchronize]
+
+jobs:
+  build:
+    if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
+    runs-on: ubuntu-20.04
+    name: PHPStan Quality
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-versions: '8.1'
+            magento-versions: '2.4.6'
+            magento-editions: 'enterprise'
+            experimental: false
+          - php-versions: '8.2'
+            magento-versions: '2.4.6'
+            magento-editions: 'enterprise'
+            experimental: false
+          - php-versions: '8.2'
+            magento-versions: '2.4.7'
+            magento-editions: 'enterprise'
+            experimental: false
+          - php-versions: '8.3'
+            magento-versions: '2.4.7'
+            magento-editions: 'enterprise'
+            experimental: true
+
+    continue-on-error: ${{ matrix.experimental }}
+
+    env:
+      magento-directory: /var/www/magento
+      MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
+      MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
+
+    steps:
+      - name: "[Init] Checkout"
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: "[Init] Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
+          ini-values: post_max_size=256M, max_execution_time=180
+
+      - name: "[Init] Setup Magento Directory"
+        env:
+          MAGENTO_ROOT: ${{ env.magento-directory }}
+          version: ${{ matrix.php-versions }}
+        run: |
+          sudo usermod -a -G www-data $USER
+          sudo mkdir -p $MAGENTO_ROOT
+          sudo chown -R $USER:www-data $MAGENTO_ROOT
+
+      - name: "[Init] Downgrade Composer"
+        env:
+          MAGENTO_VERSION: ${{ matrix.magento-versions }}
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+            composer self-update --1
+          else
+            composer self-update 2.1.14
+          fi
+
+      - name: "[Init] Determine composer cache directory"
+        id: composer-cache-directory
+        run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
+
+      - name: "[Init] Cache Composer cache"
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache-directory.outputs.directory }}
+          key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+          restore-keys: |
+            composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+      - name: "[Init] Cache Magento install"
+        id: magento-cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.magento-directory }}
+          key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+          restore-keys: |
+            magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+      - name: "[Init] Prepare credentials"
+        if: ${{env.MAGENTO_USERNAME}} != 0
+        run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
+
+      - name: "[Init] Prepare Magento install if needed"
+        if: steps.magento-cache.outputs.cache-hit == 'true'
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          rm -rf app/etc/env.php app/etc/config.php
+          composer config discard-changes true
+          composer remove smile/elasticsuite --no-update --no-interaction
+          composer update --no-interaction --ignore-platform-reqs smile/elasticsuite
+          composer config discard-changes false
+
+      - name: "[Init] Install proper version of Magento through Composer"
+        if: steps.magento-cache.outputs.cache-hit != 'true'
+        env:
+          MAGENTO_VERSION: ${{ matrix.magento-versions }}
+          MAGENTO_EDITION: ${{ matrix.magento-editions }}
+          MAGENTO_ROOT: ${{ env.magento-directory }}
+          EXPERIMENTAL: ${{ matrix.experimental }}
+        run: |
+          STABILITY="--stability=stable"
+          if [ $EXPERIMENTAL = true ]; then
+            STABILITY=""
+          fi
+          sudo rm -rf $MAGENTO_ROOT
+          sudo mkdir -p $MAGENTO_ROOT
+          sudo chown -R $USER:www-data $MAGENTO_ROOT
+          composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
+
+      - name: "[Init] Add current build of Elasticsuite"
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
+          rm -rf vendor/smile/elasticsuite/**
+          cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+
+      - name: "[Init] Unconditionally add phpstan/phpstan"
+        working-directory: ${{ env.magento-directory }}
+        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+
+      - name: "[Init] Fix Magento directory permissions"
+        env:
+          MAGENTO_ROOT: ${{ env.magento-directory }}
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          sudo chmod -R a=r,u+w,a+X .
+          sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
+          sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
+          sudo chown -R $USER:www-data .
+          sudo chmod u+x bin/magento
+
+      - name: "[Init] Enabling modules"
+        working-directory: ${{ env.magento-directory }}
+        run: php bin/magento module:enable --all
+
+      - name: "[Init] Compile"
+        working-directory: ${{ env.magento-directory }}
+        run: php bin/magento setup:di:compile
+
+      - name: "[Test] PHPStan"
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          sudo chmod u+x vendor/bin/phpstan
+          vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
+
+      - name: "[End] Job failed, gathering logs"
+        env:
+          MAGENTO_ROOT: ${{ env.magento-directory }}
+        if: ${{ failure() }}
+        run: |
+          tail -n 100 $MAGENTO_ROOT/var/log/*.log

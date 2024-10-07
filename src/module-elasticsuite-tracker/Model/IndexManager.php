@@ -105,11 +105,15 @@ class IndexManager
     public function createIndexIfNotExists(\Smile\ElasticsuiteCore\Api\Index\IndexInterface $index, $store)
     {
         if ($this->client->indexExists($index->getName()) === false) {
-            $indexSettings = array_merge($this->indexSettings->getCreateIndexSettings(), $this->indexSettings->getInstallIndexSettings());
+            $indexAlias = $this->getIndexAlias($index->getIdentifier(), $store);
+            $indexSettings = array_merge(
+                $this->indexSettings->getCreateIndexSettings($index->getIdentifier()),
+                $this->indexSettings->getInstallIndexSettings($index->getIdentifier())
+            );
             $indexSettings += $this->indexSettings->getDynamicIndexSettings($store);
             $indexSettings['analysis'] = $this->indexSettings->getAnalysisSettings($store);
             $this->client->createIndex($index->getName(), ['settings' => $indexSettings]);
-            $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $index->getIdentifier()]]]);
+            $this->client->updateAliases([['add' => ['index' => $index->getName(), 'alias' => $indexAlias]]]);
             $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
         }
     }
@@ -166,11 +170,14 @@ class IndexManager
         $indices    = $this->client->getIndicesNameByAlias($indexAlias);
 
         if (!empty($indices)) {
-            $dateBounds = $this->dateBounds->getIndicesDateBounds();
-            $bounds = [
-                \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['minDate']),
-                \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['maxDate']),
-            ];
+            // Indices could have been created but be empty after an elasticsuite:tracker:fix-data.
+            $dateBounds = array_filter($this->dateBounds->getIndicesDateBounds());
+            if (($dateBounds['minDate'] ?? null) && ($dateBounds['maxDate'] ?? null)) {
+                $bounds = [
+                    \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['minDate']),
+                    \DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $dateBounds['maxDate']),
+                ];
+            }
         }
 
         return $bounds;
@@ -263,12 +270,11 @@ class IndexManager
     public function getIndex(string $indexIdentifier, int $storeId, string $date)
     {
         try {
-            $indexAlias = $this->getIndexAlias($indexIdentifier, $storeId);
             $indexName  = $this->getIndexName($indexIdentifier, $storeId, $date);
 
             $indexSettings = $this->indexSettings->getIndicesConfig();
             $indexConfig = array_merge(
-                ['identifier' => $indexAlias, 'name' => $indexName],
+                ['identifier' => $indexIdentifier, 'name' => $indexName],
                 $indexSettings[$indexIdentifier]
             );
 

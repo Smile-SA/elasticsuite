@@ -24,7 +24,7 @@ If you want to use Elasticsuite with Hyvä theme, you'll need to install the [co
 
 ### Breezefront compatibility
 
-If you want to use Elasticsuite with the [Breezefront themes](https://breezefront.com), you will need to install their [module] (https://github.com/breezefront/module-breeze-smile-elasticsuite)
+If you want to use Elasticsuite with the [Breezefront themes](https://breezefront.com), you will need to install their [module](https://github.com/breezefront/module-breeze-smile-elasticsuite)
 
 **Which version should I use ?**
 

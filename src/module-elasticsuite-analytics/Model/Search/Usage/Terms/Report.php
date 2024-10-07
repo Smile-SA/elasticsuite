@@ -58,12 +58,12 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
                 $data[$searchTerm] = [
                     'term'            => $searchTerm,
                     'result_count'    => 0,
-                    'sessions'        => round($value->getMetrics()['unique_sessions'] ?: 0),
-                    'visitors'        => round($value->getMetrics()['unique_visitors'] ?: 0),
+                    'sessions'        => round((int) $value->getMetrics()['unique_sessions'] ?: 0),
+                    'visitors'        => round((int) $value->getMetrics()['unique_visitors'] ?: 0),
                     'conversion_rate' => number_format(0, 2),
                 ];
                 if (array_key_exists('result_count', $value->getMetrics())) {
-                    $data[$searchTerm]['result_count'] = round($value->getMetrics()['result_count'] ?: 0);
+                    $data[$searchTerm]['result_count'] = round((float) $value->getMetrics()['result_count'] ?: 0);
                 }
             }
         }

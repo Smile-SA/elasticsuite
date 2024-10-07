@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -50,6 +51,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @param \Magento\Framework\Locale\FormatInterface                                 $localeFormat              Locale format.
      * @param SpecialAttributesProvider                                                 $specialAttributesProvider Special attributes
      *                                                                                                             provider.
+     * @param ScopeConfigInterface                                                      $scopeConfig               Scope configuration.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory              Search query factory.
      * @param array                                                                     $data                      Additional data.
      */
@@ -65,6 +67,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\Collection $attrSetCollection,
         \Magento\Framework\Locale\FormatInterface $localeFormat,
         SpecialAttributesProvider $specialAttributesProvider,
+        ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = []
     ) {
@@ -80,6 +83,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $attrSetCollection,
             $localeFormat,
             $specialAttributesProvider,
+            $scopeConfig,
             $data
         );
         $this->queryFactory = $queryFactory;

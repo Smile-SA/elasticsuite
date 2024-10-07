@@ -42,4 +42,9 @@ interface FuzzinessConfigurationInterface
      * @return int
      */
     public function getMaxExpansion();
+
+    /**
+     * @return string
+     */
+    public function getMinimumShouldMatch();
 }

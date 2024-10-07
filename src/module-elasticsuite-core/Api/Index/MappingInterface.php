@@ -29,6 +29,8 @@ interface MappingInterface
     const DEFAULT_SEARCH_FIELD       = 'search';
     const DEFAULT_SPELLING_FIELD     = 'spelling';
     const DEFAULT_AUTOCOMPLETE_FIELD = 'autocomplete';
+    const DEFAULT_REFERENCE_FIELD    = 'reference';
+    const DEFAULT_EDGE_NGRAM_FIELD   = 'edge_ngram';
 
     /**
      * List of the properties of the mapping.
@@ -84,4 +86,11 @@ interface MappingInterface
         $boost = 1,
         FieldFilterInterface $fieldFilter = null
     );
+
+    /**
+     * Check if mapping contains knn fields.
+     *
+     * @return bool
+     */
+    public function hasKnnFields() : bool;
 }

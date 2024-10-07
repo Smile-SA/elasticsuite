@@ -14,30 +14,48 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 ?>
-<?php /** @var $block Smile\ElasticsuiteTracker\Block\Config **/ ?>
-<?php $jsonHelper = $block->getJsonHelper(); ?>
-<?php if ($block->isEnabled()) : ?>
-<script>
-//<![CDATA[
-try {
-    smileTracker.setConfig({
-        beaconUrl        : '<?= /* @noEscape */ $this->escapeJsQuote($block->getBeaconUrl()); ?>',
-        telemetryUrl     : '<?= /* @noEscape */ $this->escapeJsQuote($block->getTelemetryUrl()); ?>',
-        telemetryEnabled : '<?= /* @noEscape */ $this->escapeJsQuote($block->isTelemetryEnabled()); ?>',
-        sessionConfig    : <?= /* @noEscape */ $jsonHelper->jsonEncode($block->getCookieConfig()); ?>,
-    });
+<?php
+/**
+ * @var $block Smile\ElasticsuiteTracker\Block\Config
+ * @var $secureRenderer Magento\Framework\View\Helper\SecureHtmlRenderer
+ */
+?>
+<?php
+$jsonHelper = $block->getJsonHelper();
+if ($block->isEnabled()) {
+    $beaconUrl        = $this->escapeJsQuote($block->getBeaconUrl());
+    $telemetryUrl     = $this->escapeJsQuote($block->getTelemetryUrl());
+    $telemetryEnabled = $this->escapeJsQuote($block->isTelemetryEnabled());
+    $sessionConfig    = $jsonHelper->jsonEncode($block->getCookieConfig());
+    $trackerApiConfig = "";
 
-    smileTracker.addPageVar('store_id', '<?= /* @noEscape */ $this->escapeJsQuote($block->getStoreId());?>');
+    if ($block->isUsingAPI()) {
+        $endpointUrl = $this->escapeJsQuote($block->getEndpointUrl());
+        $trackerApiConfig .= "endpointUrl:'{$endpointUrl}',";
+    }
 
-    require(['<?= /* @noEscape */ $block->getUserConsentScript() ?>'], function (userConsent) {
-        if (userConsent(<?= /* @noEscape */ $jsonHelper->jsonEncode($block->getUserConsentConfig()); ?>)) {
-            smileTracker.sendTag();
-        }
-    });
-} catch (err) {
-    ;
+    $storeId = $this->escapeJsQuote($block->getStoreId());
+    $userConsentScript = $this->escapeJsQuote($block->getUserConsentScript());
+    $userConsentConfig = $jsonHelper->jsonEncode($block->getUserConsentConfig());
+
+    $scriptString = "//<![CDATA[\n";
+    $scriptString .= "try{";
+    $scriptString .= "smileTracker.setConfig({";
+    $scriptString .= "beaconUrl:'{$beaconUrl}',";
+    $scriptString .= "telemetryUrl:'{$telemetryUrl}',";
+    $scriptString .= "telemetryEnabled:'{$telemetryEnabled}',";
+    $scriptString .= "sessionConfig:{$sessionConfig},";
+    $scriptString .= "{$trackerApiConfig}";
+    $scriptString .= "});";
+    $scriptString .= "smileTracker.addPageVar('store_id','{$storeId}');";
+    $scriptString .= "require(['{$userConsentScript}'],function(userConsent){";
+    $scriptString .= "if(userConsent({$userConsentConfig})){";
+    $scriptString .= "smileTracker.sendTag();";
+    $scriptString .= "}";
+    $scriptString .= "});";
+    $scriptString .= "}catch(err){;}\n";
+    $scriptString .= "//]]>\n";
+
+    echo /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false);
 }
-//]]>
-</script>
-
-<?php endif; ?>
+?>

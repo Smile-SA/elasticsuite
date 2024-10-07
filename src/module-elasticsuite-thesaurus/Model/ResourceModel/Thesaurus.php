@@ -176,10 +176,10 @@ class Thesaurus extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     private function saveTermsRelation(\Magento\Framework\Model\AbstractModel $object)
     {
-        $termRelations = $object->getTermsRelations();
+        $termRelations = $object->getTermsRelations() ?? [];
         $termRelations = array_filter($termRelations);
 
-        if (is_array($termRelations) && (count($termRelations) > 0)) {
+        if (count($termRelations) > 0) {
             $expansionTermLinks = [];
             $referenceTermLinks = [];
 

@@ -50,11 +50,11 @@
                 <!-- Page data (product) -->
                 <field name="page.product.id" type="integer" />
                 <field name="page.product.sku" type="text">
-                    <isSearchable>true</isSearchable>
+                    <isSearchable>1</isSearchable>
                     <defaultSearchAnalyzer>whitespace</defaultSearchAnalyzer>
                 </field>
                 <field name="page.product.label" type="text">
-                    <isSearchable>true</isSearchable>
+                    <isSearchable>1</isSearchable>
                 </field>
 
                 <!-- Page data (product list) -->
@@ -69,18 +69,18 @@
 
                 <!-- Page data (searches) -->
                 <field name="page.search.query" type="text">
-                    <isSearchable>true</isSearchable>
-                    <isUsedForSortBy>true</isUsedForSortBy>
+                    <isSearchable>1</isSearchable>
+                    <isUsedForSortBy>1</isUsedForSortBy>
                 </field>
                 <field name="page.search.query_id" type="integer" />
                 <field name="page.search.is_spellchecked" type="boolean" />
 
                 <!-- Page data (CMS) -->
                 <field name="page.cms.identifier" type="text">
-                    <isSearchable>true</isSearchable>
+                    <isSearchable>1</isSearchable>
                 </field>
                 <field name="page.cms.title" type="text">
-                    <isSearchable>true</isSearchable>
+                    <isSearchable>1</isSearchable>
                 </field>
 
                 <!-- Page data (order) -->
@@ -127,11 +127,11 @@
                 <field name="product_cart" type="integer" />
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="text">
-                    <isSearchable>true</isSearchable>
+                    <isSearchable>1</isSearchable>
                 </field>
                 <field name="search_query_void" type="text">
-                    <isSearchable>true</isSearchable>
-                    <isUsedForSortBy>true</isUsedForSortBy>
+                    <isSearchable>1</isSearchable>
+                    <isUsedForSortBy>1</isUsedForSortBy>
                 </field>
                 <field name="product_sale" type="integer" />
                 <field name="category_sale" type="integer" />

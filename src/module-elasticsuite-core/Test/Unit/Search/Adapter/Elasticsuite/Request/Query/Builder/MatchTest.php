@@ -43,7 +43,7 @@ class MatchTest extends AbstractSimpleQueryBuilderTest
         $this->assertEquals(MatchQuery::DEFAULT_MINIMUM_SHOULD_MATCH, $query['match']['searchField']['minimum_should_match']);
         $this->assertEquals(MatchQuery::DEFAULT_BOOST_VALUE, $query['match']['searchField']['boost']);
 
-        $this->assertArrayNotHasKey('_name', $query['match']);
+        $this->assertArrayNotHasKey('_name', $query['match']['searchField']);
     }
 
     /**
@@ -58,8 +58,8 @@ class MatchTest extends AbstractSimpleQueryBuilderTest
         $matchQuery = new MatchQuery('search text', 'searchField', MatchQuery::DEFAULT_BOOST_VALUE, 'queryName');
         $query = $builder->buildQuery($matchQuery);
 
-        $this->assertArrayHasKey('_name', $query['match']);
-        $this->assertEquals('queryName', $query['match']['_name']);
+        $this->assertArrayHasKey('_name', $query['match']['searchField']);
+        $this->assertEquals('queryName', $query['match']['searchField']['_name']);
     }
 
     /**

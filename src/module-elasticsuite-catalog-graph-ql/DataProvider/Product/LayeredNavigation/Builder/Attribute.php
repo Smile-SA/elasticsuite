@@ -138,7 +138,7 @@ class Attribute implements LayerBuilderInterface
 
                 $optionLabel = $value->getValue();
                 if ($attribute && $attribute->getFrontendInput() == 'boolean') {
-                    $optionLabel = $attribute->getSource()->getOptionText($value->getValue());
+                    $optionLabel = (string) $attribute->getSource()->getOptionText($value->getValue());
                 }
 
                 $options[] = $this->layerFormatter->buildItem($optionLabel, $value->getValue(), $metrics['count']);

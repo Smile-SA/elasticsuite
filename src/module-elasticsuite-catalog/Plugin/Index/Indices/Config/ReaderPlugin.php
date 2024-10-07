@@ -35,7 +35,7 @@ class ReaderPlugin
     const XML_CATEGORY_NAME_WEIGHT = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/category_name_weight';
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     private $scopeConfig;
 

@@ -20,5 +20,8 @@
         <route id="search" frontName="search">
             <module name="Smile_ElasticsuiteCatalog" before="Magento_Search" />
         </route>
+        <route id="catalog" frontName="catalog">
+            <module name="Smile_ElasticsuiteCatalog" before="Magento_Catalog" />
+        </route>
     </router>
 </config>

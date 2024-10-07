@@ -99,9 +99,11 @@ class IndexHandler
      */
     private function getIndexSettings($synonyms, $expansions)
     {
+        $indexIdentifier = ThesaurusIndex::INDEX_IDENTIER;
+
         $settings = [
-            'number_of_shards'      => $this->indexSettingsHelper->getNumberOfShards(),
-            'number_of_replicas'    => $this->indexSettingsHelper->getNumberOfReplicas(),
+            'number_of_shards'      => $this->indexSettingsHelper->getNumberOfShards($indexIdentifier),
+            'number_of_replicas'    => $this->indexSettingsHelper->getNumberOfReplicas($indexIdentifier),
             'requests.cache.enable' => true,
         ];
 

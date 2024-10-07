@@ -182,9 +182,16 @@ class Root
      */
     public function useVirtualRootCategorySubtree($category)
     {
-        $rootCategory = $this->getVirtualCategoryRoot($category);
+        $useVirtualRootCategorySubtree = false;
+        if ($category->getIsVirtualCategory()) {
+            $rootCategory = $this->getVirtualCategoryRoot($category);
 
-        return ($rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree());
+            $useVirtualRootCategorySubtree = (
+                $rootCategory && $rootCategory->getId() && (bool) $category->getGenerateRootCategorySubtree()
+            );
+        }
+
+        return $useVirtualRootCategorySubtree;
     }
 
     /**

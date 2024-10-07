@@ -28,6 +28,11 @@ class CleanTrackingData
     private $indexManager;
 
     /**
+     * @var \Smile\ElasticsuiteTracker\Helper\Data
+     */
+    private $helper;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteTracker\Model\IndexManager $indexManager Index Manager.

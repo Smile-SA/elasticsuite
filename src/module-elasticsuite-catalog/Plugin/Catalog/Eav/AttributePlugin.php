@@ -42,7 +42,7 @@ class AttributePlugin
         'is_used_in_spellcheck',
         'include_zero_false_values',
         'disable_norms',
-        'default_analyzer',
+        'default_search_analyzer',
     ];
 
     /**
@@ -178,6 +178,7 @@ class AttributePlugin
      * Check if operations (clean cache, mapping update, invalide index) must be triggered for current attribute.
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $subject Attribute being saved
      *
@@ -195,14 +196,21 @@ class AttributePlugin
         $options     = $this->getMappingFieldOptions($subject);
 
         foreach ($this->updateMappingFields as $field) {
-            $origValue = (int) ($origOptions[$field] ?? false);
-            $value     = (int) ($options[$field] ?? false);
+            $origValue = ($origOptions[$field] ?? false);
+            $value     = ($options[$field] ?? false);
 
             if ($origValue !== $value) {
+                if ($field === 'default_search_analyzer') {
+                    $cleanCache      = true;
+                    $updateMapping   = true;
+                    $invalidateIndex = true;
+                    continue;
+                }
+
                 if ($field === 'search_weight') {
                     // Search weight has changed. Cache needs to be cleaned.
                     $cleanCache = true;
-                    if (($origValue === 1) && ($value > $origValue)) {
+                    if (((int) $origValue === 1) && ((int) $value > (int) $origValue)) {
                         // Search weight moved from 1 to more. Mapping will change, so data need to be reindexed.
                         $updateMapping   = true;
                         $invalidateIndex = true;

@@ -16,3 +16,9 @@ type Query {
 type ViewMoreResult @doc(description: "The Products object is the top-level object returned in a product search.") {
     aggregations: [Aggregation] @doc(description: "Layered navigation aggregations.") @resolver(class: "Smile\\ElasticsuiteCatalogGraphQl\\Model\\Resolver\\Aggregations")
 }
+
+type SearchResultPageInfo
+{
+    is_spellchecked: Boolean
+    query_id: Int
+}

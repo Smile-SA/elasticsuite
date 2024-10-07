@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
+use OpenSearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
 
 /**
  * ElasticSearch client builder.
@@ -26,7 +26,7 @@ use Elasticsearch\ConnectionPool\Selectors\StickyRoundRobinSelector;
 class ClientBuilder
 {
     /**
-     * @var \Elasticsearch\ClientBuilder
+     * @var \OpenSearch\ClientBuilder
      */
     private $clientBuilder;
 
@@ -47,6 +47,7 @@ class ClientBuilder
         'is_debug_mode_enabled' => false,
         'max_parallel_handles'  => 100, // As per default Elasticsearch Handler configuration.
         'max_retries'           => 2,
+        'verify'                => true,
     ];
 
     /**
@@ -55,32 +56,53 @@ class ClientBuilder
     private $selector;
 
     /**
+     * @var array
+     */
+    private $namespaceBuilders = [];
+
+    /**
      * Constructor.
      *
-     * @param \Elasticsearch\ClientBuilder $clientBuilder Client builder.
-     * @param \Psr\Log\LoggerInterface     $logger        Logger.
-     * @param string                       $selector      Node Selector.
+     * @param \OpenSearch\ClientBuilder $clientBuilder     Client builder.
+     * @param \Psr\Log\LoggerInterface  $logger            Logger.
+     * @param string                    $selector          Node Selector.
+     * @param array                     $namespaceBuilders NamespaceBuilders to extend the client if needed.
      */
     public function __construct(
-        \Elasticsearch\ClientBuilder $clientBuilder,
+        \OpenSearch\ClientBuilder $clientBuilder,
         \Psr\Log\LoggerInterface $logger,
-        $selector = StickyRoundRobinSelector::class
+        string $selector = StickyRoundRobinSelector::class,
+        array $namespaceBuilders = []
     ) {
-        $this->clientBuilder = $clientBuilder;
-        $this->logger        = $logger;
-        $this->selector      = $selector;
+        $this->clientBuilder     = $clientBuilder;
+        $this->logger            = $logger;
+        $this->selector          = $selector;
+        $this->namespaceBuilders = $namespaceBuilders;
     }
 
     /**
      * Build an ES client from options.
      *
+     * We decided to use the OpenSearch client because he is versatile and can work with :
+     *
+     * - Elasticsearch 7.x
+     * - Elasticsearch 8.x
+     * - Opensearch 1.x
+     * - Opensearch 2.x
+     *
+     * At least, for now...
+     *
+     * The Elasticsearch client had a change in FQCN between v7 and v8 that would require a huge rework.
+     *
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param array $options Client options. See self::defaultOptions for available options.
      *
-     * @return \Elasticsearch\Client
+     * @return \OpenSearch\Client
      */
-    public function build($options = [])
+    public function build(array $options = []): \OpenSearch\Client
     {
         $options       = array_merge($this->defaultOptions, $options);
 
@@ -99,7 +121,7 @@ class ClientBuilder
 
         if ($options['max_parallel_handles']) {
             $handlerParams = ['max_handles' => (int) $options['max_parallel_handles']];
-            $handler = \Elasticsearch\ClientBuilder::defaultHandler($handlerParams);
+            $handler = \OpenSearch\ClientBuilder::defaultHandler($handlerParams);
             $clientBuilder->setHandler($handler);
         }
 
@@ -113,9 +135,17 @@ class ClientBuilder
             $clientBuilder->setRetries((int) $options['max_retries']);
         }
 
+        if (array_key_exists('verify', $options)) {
+            $clientBuilder->setSSLVerification($options['verify']);
+        }
+
         if (null !== $this->selector) {
             $selector = (count($hosts) > 1) ? $this->selector : StickyRoundRobinSelector::class;
             $clientBuilder->setSelector($selector);
+        }
+
+        foreach ($this->namespaceBuilders as $namespaceBuilder) {
+            $clientBuilder->registerNamespace($namespaceBuilder);
         }
 
         return $clientBuilder->build();
@@ -128,7 +158,7 @@ class ClientBuilder
      *
      * @return array
      */
-    private function getHosts($options)
+    private function getHosts(array $options): array
     {
         $hosts = [];
 
@@ -161,9 +191,10 @@ class ClientBuilder
      * Return HTTP Authentication parameters used to connect to the cluster if any
      *
      * @param array $options Client options. See self::defaultOptions for available options.
+     *
      * @return array
      */
-    private function getConnectionParams($options)
+    private function getConnectionParams(array $options): array
     {
         return (
             !empty($options['http_auth_user']) &&

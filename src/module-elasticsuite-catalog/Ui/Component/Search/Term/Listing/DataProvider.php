@@ -85,6 +85,8 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function addFilter(\Magento\Framework\Api\Filter $filter)
     {

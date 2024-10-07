@@ -36,7 +36,7 @@ interface CustomerTrackingServiceInterface
      *
      * @param array $eventData The event Data
      *
-     * @return mixed
+     * @return void
      */
     public function addEvent($eventData);
 

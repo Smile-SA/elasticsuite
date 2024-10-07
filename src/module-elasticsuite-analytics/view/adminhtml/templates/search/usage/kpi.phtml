@@ -21,7 +21,7 @@
 $data = $block->getKpi();
 ?>
 
-<div class="dashboard-main col-m-10 col-m-push-1">
+<div class="dashboard-main col-m-11">
     <div class="dashboard-totals">
         <?php if (empty($data)) : ?>
             <div class="empty-text" style="width:100%; text-align:center">
@@ -29,45 +29,73 @@ $data = $block->getKpi();
             </div>
         <?php else : ?>
         <ul class="dashboard-totals-list">
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+            <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Searches') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_page_views_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+            <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Page views') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['page_views_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+            <li class="dashboard-totals-item">
+                <span class="dashboard-totals-label"><?= __('Category views') ?></span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['category_views_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item">
+                <span class="dashboard-totals-label"><?= __('Product views') ?></span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['product_views_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item">
+                <span class="dashboard-totals-label"><?= __('Products added to cart') ?></span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['add_to_cart_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item">
+                <span class="dashboard-totals-label"><?= __('Sales') ?></span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['sales_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item">
+                <span class="dashboard-totals-label"><?= __('Visitors') ?></span>
+                <strong class="dashboard-totals-value">
+                    <span class="value"><?= $data['visitors_count']; ?></span>
+                    <span class="dashboard-totals-decimals"></span>
+                </strong>
+            </li>
+            <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Sessions') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['sessions_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+            <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Sessions with search') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_sessions_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
+            <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Searches per session') ?></span>
                 <strong class="dashboard-totals-value">
                     <span class="value"><?= $data['search_usage_rate']; ?></span>
-                    <span class="dashboard-totals-decimals"></span>
-                </strong>
-            </li>
-            <li class="dashboard-totals-item" style="width:16%; text-align:center;">
-                <span class="dashboard-totals-label"><?= __('Visitors') ?></span>
-                <strong class="dashboard-totals-value">
-                    <span class="value"><?= $data['visitors_count']; ?></span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>

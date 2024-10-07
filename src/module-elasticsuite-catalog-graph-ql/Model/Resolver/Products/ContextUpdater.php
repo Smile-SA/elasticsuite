@@ -84,7 +84,9 @@ class ContextUpdater
             }
 
             $this->context->setCurrentSearchQuery($query);
-        } elseif (!empty($args['filter']) && (!empty($args['filter']['category_id']) || !empty($args['filter']['category_uid']))) {
+        }
+
+        if (!empty($args['filter']) && (!empty($args['filter']['category_id']) || !empty($args['filter']['category_uid']))) {
             if (isset($args['filter']['category_uid']) && isset($args['filter']['category_uid']['eq'])) {
                 $categoryUid = $this->uidEncoder->decode($args['filter']['category_uid']['eq']);
             }

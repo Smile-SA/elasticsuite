@@ -532,6 +532,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $docIds[] = 0;
         }
 
+        $this->getSelect()->reset(\Magento\Framework\DB\Select::WHERE);
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $orderList = join(',', $docIds);
         $this->getSelect()->reset(\Magento\Framework\DB\Select::ORDER);
@@ -541,7 +542,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->isSpellchecked = $searchRequest->isSpellchecked();
 
-        return parent::_renderFiltersBefore();
+        parent::_renderFiltersBefore();
     }
 
     /**

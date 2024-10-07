@@ -37,6 +37,8 @@ interface FieldInterface
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
     const FIELD_TYPE_OBJECT  = 'object';
+    const FIELD_TYPE_KNN_VECTOR = 'knn_vector';
+    const FIELD_TYPE_TOKEN_COUNT = 'token_count';
 
     /**
      * Analyzers declarations.
@@ -49,6 +51,7 @@ interface FieldInterface
     const ANALYZER_UNTOUCHED  = 'untouched';
     const ANALYZER_KEYWORD    = 'keyword';
     const ANALYZER_REFERENCE  = 'reference';
+    const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
      * Field filter logical operators.
@@ -77,6 +80,16 @@ interface FieldInterface
      * @return boolean
      */
     public function isSearchable();
+
+    /**
+     * Is the field searchable and contains reference (sku) data.
+     */
+    public function isSearchableReference();
+
+    /**
+     * Is the field searchable and using an edge ngram based analyzer.
+     */
+    public function isSearchableEdgeNgram();
 
     /**
      * Is the field filterable in navigation.

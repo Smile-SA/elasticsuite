@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\SortOrder\Builder as SortOrderBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder as AggregationBuilder;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Collapse\Builder as CollapseBuilder;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
 
 /**
@@ -44,20 +45,28 @@ class Mapper
     private $aggregationBuilder;
 
     /**
+     * @var CollapseBuilder
+     */
+    private $collapseBuilder;
+
+    /**
      * Constructor.
      *
      * @param QueryBuilder       $queryBuilder       Adapter query builder.
      * @param SortOrderBuilder   $sortOrderBuilder   Adapter sort orders builder.
      * @param AggregationBuilder $aggregationBuilder Adapter aggregations builder.
+     * @param CollapseBuilder    $collapseBuilder    Adapter collapse builder.
      */
     public function __construct(
         QueryBuilder $queryBuilder,
         SortOrderBuilder $sortOrderBuilder,
-        AggregationBuilder $aggregationBuilder
+        AggregationBuilder $aggregationBuilder,
+        CollapseBuilder $collapseBuilder
     ) {
         $this->queryBuilder       = $queryBuilder;
         $this->sortOrderBuilder   = $sortOrderBuilder;
         $this->aggregationBuilder = $aggregationBuilder;
+        $this->collapseBuilder    = $collapseBuilder;
     }
 
     /**
@@ -95,9 +104,17 @@ class Mapper
 
         $searchRequest['track_total_hits'] = $request->getTrackTotalHits();
 
+        if ((int) $request->getMinScore() > 0) {
+            $searchRequest['min_score'] = $request->getMinScore();
+        }
+
+        $collapse = $this->getCollapse($request);
+        if (!empty($collapse)) {
+            $searchRequest['collapse'] = $collapse;
+        }
+
         return $searchRequest;
     }
-
 
     /**
      * Extract and build the root query of the search request.
@@ -163,5 +180,23 @@ class Mapper
         }
 
         return $aggregations;
+    }
+
+    /**
+     * Extract and build collapse configuration of the search request
+     *
+     * @param RequestInterface $request Search request.
+     *
+     * @return array
+     */
+    private function getCollapse(RequestInterface $request)
+    {
+        $collapse = [];
+
+        if ($request->hasCollapse()) {
+            $collapse = $this->collapseBuilder->buildCollapse($request->getCollapse());
+        }
+
+        return $collapse;
     }
 }

@@ -16,6 +16,10 @@
  */
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="catalog_category_collection_load_before">
+        <observer name="smile_elasticsuite_virtual_categories_collection_load_before" instance="Smile\ElasticsuiteVirtualCategory\Observer\AddCategoryAttributesToSelect"/>
+    </event>
+
     <event name="catalog_category_move_before">
         <observer name="smile_elasticsuite_virtual_categories_move_before" instance="Smile\ElasticsuiteVirtualCategory\Observer\MoveVirtualCategoryRoot"/>
     </event>

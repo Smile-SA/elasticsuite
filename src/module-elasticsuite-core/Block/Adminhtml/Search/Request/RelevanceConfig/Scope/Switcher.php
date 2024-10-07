@@ -284,13 +284,16 @@ class Switcher extends Template
      */
     public function getCurrentStoreName()
     {
+        $storeName = '';
         if ($this->getStoreId() !== null) {
             $store = $this->storeFactory->create();
             $store->load($this->getStoreId());
             if ($store->getId()) {
-                return $store->getName();
+                $storeName = $store->getName();
             }
         }
+
+        return $storeName;
     }
 
     /**
@@ -300,13 +303,16 @@ class Switcher extends Template
      */
     public function getCurrentContainerName()
     {
+        $containerName = '';
         if ($this->getContainerCode() !== null) {
             $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerName($container)) {
-                return $this->getContainerName($container);
+                $containerName = $this->getContainerName($container);
             }
         }
+
+        return $containerName;
     }
 
     /**
@@ -328,13 +334,16 @@ class Switcher extends Template
      */
     public function getCurrentContainerLabel()
     {
+        $containerLabel = '';
         if ($this->getContainerCode() !== null) {
             $container = $this->containersSource->get($this->getContainerCode());
 
             if ($this->getContainerLabel($container)) {
-                return $this->getContainerLabel($container);
+                $containerLabel = $this->getContainerLabel($container);
             }
         }
+
+        return $containerLabel;
     }
 
     /**

@@ -102,6 +102,38 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test the reference collector field mapping generation is correct.
+     *
+     * @return void
+     */
+    public function testReferenceProperty()
+    {
+        $properties = $this->mapping->getProperties();
+
+        $this->assertArrayHasKey(Mapping::DEFAULT_REFERENCE_FIELD, $properties);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $properties[Mapping::DEFAULT_REFERENCE_FIELD]['type']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_REFERENCE, $properties[Mapping::DEFAULT_REFERENCE_FIELD]['fields']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_REFERENCE_FIELD]['fields']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_REFERENCE_FIELD]['fields']);
+    }
+
+    /**
+     * Test the edge_ngram collector field mapping generation is correct.
+     *
+     * @return void
+     */
+    public function testEdgeNgramProperty()
+    {
+        $properties = $this->mapping->getProperties();
+
+        $this->assertArrayHasKey(Mapping::DEFAULT_EDGE_NGRAM_FIELD, $properties);
+        $this->assertEquals(FieldInterface::FIELD_TYPE_TEXT, $properties[Mapping::DEFAULT_EDGE_NGRAM_FIELD]['type']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_EDGE_NGRAM, $properties[Mapping::DEFAULT_EDGE_NGRAM_FIELD]['fields']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_WHITESPACE, $properties[Mapping::DEFAULT_EDGE_NGRAM_FIELD]['fields']);
+        $this->assertArrayHasKey(FieldInterface::ANALYZER_SHINGLE, $properties[Mapping::DEFAULT_EDGE_NGRAM_FIELD]['fields']);
+    }
+
+    /**
      * Test the basic fields mapping generation is correct.
      *
      *  @return void
@@ -112,7 +144,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
         $properties = $this->mapping->getProperties();
 
         $this->assertCount(5, $fields);
-        $this->assertCount(6, $properties);
+        $this->assertCount(8, $properties);
 
         $this->assertEquals('entity_id', $this->mapping->getIdField()->getName());
         $this->assertArrayHasKey('entity_id', $fields);
@@ -167,7 +199,7 @@ class MappingTest extends \PHPUnit\Framework\TestCase
     {
         $mapping = $this->mapping->asArray();
         $this->assertArrayHasKey('properties', $mapping);
-        $this->assertCount(6, $mapping['properties']);
+        $this->assertCount(8, $mapping['properties']);
     }
 
     /**

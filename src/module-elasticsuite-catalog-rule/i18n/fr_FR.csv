@@ -9,3 +9,7 @@
 "Only giftcard products","Seulement les produits carte cadeau"
 "Only grouped products","Seulement les produits groupés"
 "Only simple products","Seulement les produits simples"
+"Catalog Rules Configuration","Configuration des règles catalogue"
+"Alphabetical sorting of attribute options in the rule engine","Tri alphabétique des options d'attributs dans le moteur de règles"
+"If enabled, will forcefully sort select and multiselect attributes' option labels alphabetically when displaying them in the rule engine used by Optimizers and Virtual Categories. Useful if you have product attributes with very long list of options.","Si activé, forcera un tri alphabétique des labels des options d'attributs select et multiselect lors de leur affichage dans le moteur de règles utilisé par les Optimiseurs et les Catégories Virtuelles. Utile si vous avez des attributs produits avec un très grand nombre d'options."
+"Stock qty","Quantité en stock"

@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel;
 
+use Magento\Framework\Model\ResourceModel\Db\Context as DbContext;
+use Magento\Framework\Serialize\SerializerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
 
@@ -26,6 +28,20 @@ use Smile\ElasticsuiteCatalogRule\Model\RuleFactory;
 class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
+     * Mapping array where keys are the actual container names for which an optimizer can be active
+     * and the value is the container name used as a key under which the eventual related limitation data
+     * is stored inside the optimizer object data.
+     *
+     * @var array
+     */
+    private $containerToLimitationDataMapping = [
+        'quick_search_container' => 'quick_search_container',
+        // Treat autocomplete apply_to like the quick search.
+        'catalog_product_autocomplete' => 'quick_search_container',
+        'catalog_view_container' => 'catalog_view_container',
+    ];
+
+    /**
      * @var RuleFactory
      */
     private $ruleFactory;
@@ -33,20 +49,26 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Class constructor
      *
-     * @param \Magento\Framework\Model\ResourceModel\Db\Context $context        Context.
-     * @param RuleFactory                                       $ruleFactory    Rule factory.
-     * @param \Magento\Framework\Serialize\SerializerInterface  $serializer     Serializer.
-     * @param string                                            $connectionName Connection name.
+     * @param DbContext           $context                          Context.
+     * @param RuleFactory         $ruleFactory                      Rule factory.
+     * @param SerializerInterface $serializer                       Serializer.
+     * @param array               $containerToLimitationDataMapping Extra container/data mapping.
+     * @param string              $connectionName                   Connection name.
      */
     public function __construct(
-        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        DbContext $context,
         RuleFactory $ruleFactory,
-        \Magento\Framework\Serialize\SerializerInterface $serializer,
+        SerializerInterface $serializer,
+        array $containerToLimitationDataMapping = [],
         $connectionName = null
     ) {
         parent::__construct($context, $connectionName);
         $this->ruleFactory = $ruleFactory;
         $this->serializer  = $serializer;
+        $this->containerToLimitationDataMapping = array_merge(
+            $this->containerToLimitationDataMapping,
+            $containerToLimitationDataMapping
+        );
     }
 
     /**
@@ -154,10 +176,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
             foreach ($searchContainers as $searchContainer) {
                 $searchContainerName = (string) $searchContainer;
-                // Treat autocomplete apply_to like the quick search.
-                if ($searchContainerName === 'catalog_product_autocomplete') {
-                    $searchContainerName = 'quick_search_container';
-                }
+                $searchContainerName = $this->containerToLimitationDataMapping[$searchContainerName] ?? $searchContainerName;
                 $searchContainerData = $object->getData($searchContainerName);
                 $applyTo = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
                 $searchContainerLinks[(string) $searchContainer] = [

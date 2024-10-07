@@ -173,8 +173,9 @@ class Index
     private function getCacheTags(ContainerConfigurationInterface $containerConfig)
     {
         $storeId = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
 
-        return [$this->getIndexAlias($storeId)];
+        return [$this->getIndexAlias($storeId), $containerName];
     }
 
     /**
@@ -216,12 +217,13 @@ class Index
      */
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
-        $indexName          = $this->getIndexAlias($storeId);
-        $analyzedQueries    = $this->getQueryCombinations($storeId, $queryText);
-        $synonymByPositions = [];
-        $synonyms           = [];
+        $indexName        = $this->getIndexAlias($storeId);
+        $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
+        $synonyms         = [];
 
         foreach ($analyzedQueries as $query) {
+            $synonymByPositions = [];
+
             try {
                 $analysis = $this->client->analyze(
                     ['index' => $indexName, 'body' => ['text' => (string) $query, 'analyzer' => $type]]
@@ -235,9 +237,9 @@ class Index
                     $positionKey                        = sprintf('%s_%s', $token['start_offset'], $token['end_offset']);
                     $token['token']                     = str_replace('_', ' ', $token['token']);
                     // Prevent a token already contained in the query to be added.
-                    // Eg : you have a synonyme between "dress" and "red dress".
+                    // Eg : you have a synonym between "dress" and "red dress".
                     // If someone search for "red dress", you don't want the final query to be "red red dress".
-                    if (stripos($queryText, $token['token']) === false) {
+                    if (array_search($token['token'], str_replace('_', ' ', $analyzedQueries)) === false) {
                         $synonymByPositions[$positionKey][] = $token;
                     }
                 }

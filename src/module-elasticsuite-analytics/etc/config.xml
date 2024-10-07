@@ -20,6 +20,9 @@
             <search_terms>
                 <max_size>100</max_size>
             </search_terms>
+            <pending_events>
+                <warn_after_hours>6</warn_after_hours>
+            </pending_events>
         </smile_elasticsuite_analytics>
     </default>
 </config>

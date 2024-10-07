@@ -57,6 +57,9 @@ class AttributeValue implements ApplierInterface
     {
         $field       = $this->getField($containerConfiguration, $optimizer);
         $scaleFactor = (float) $optimizer->getConfig('scale_factor');
+        $queryName   = sprintf('Optimizer [%s]:%d', $optimizer->getName(), $optimizer->getId());
+        $query       = $optimizer->getRuleCondition()->getSearchQuery();
+        $query->setName(($query->getName() !== '') ? $queryName . " => " . $query->getName() : $queryName);
 
         $function = [
             'field_value_factor' => [
@@ -65,7 +68,7 @@ class AttributeValue implements ApplierInterface
                 'modifier' => $optimizer->getConfig('scale_function'),
                 'missing'  => 1 / $scaleFactor,
             ],
-            'filter' => $optimizer->getRuleCondition()->getSearchQuery(),
+            'filter' => $query,
         ];
 
         return $function;

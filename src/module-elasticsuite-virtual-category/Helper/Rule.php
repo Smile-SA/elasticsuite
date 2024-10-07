@@ -14,7 +14,9 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Helper;
 
+use Magento\Catalog\Api\CategoryRepositoryInterfaceFactory;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler;
 
 /**
  * Smile Elasticsuite virtual category cache helper.
@@ -36,17 +38,33 @@ class Rule
     private $customerSession;
 
     /**
+     * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler
+     */
+    private $readHandler;
+
+    /**
+     * @var \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory
+     */
+    private $categoryRepository;
+
+    /**
      * Provider constructor.
      *
-     * @param \Magento\Framework\App\CacheInterface $cache           Cache.
-     * @param \Magento\Customer\Model\Session       $customerSession Customer session.
+     * @param \Magento\Framework\App\CacheInterface                   $cache              Cache.
+     * @param \Magento\Customer\Model\Session                         $customerSession    Customer session.
+     * @param ReadHandler                                             $readHandler        Rule read handler.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
      */
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        ReadHandler $readHandler,
+        CategoryRepositoryInterfaceFactory $categoryRepository
     ) {
         $this->cache = $cache;
         $this->customerSession = $customerSession;
+        $this->readHandler = $readHandler;
+        $this->categoryRepository = $categoryRepository;
     }
 
     /**
@@ -73,6 +91,22 @@ class Rule
 
         if ($data === false) {
             $virtualRule = $category->getVirtualRule();
+
+            if (null === $virtualRule) {
+                // If virtual rule is null, probably the category himself was not properly loaded.
+                // So we load it through the repository and we ensure the readhandler will be called properly.
+                $repository  = $this->categoryRepository->create();
+                $category    = $repository->get($category->getId(), $category->getStoreId());
+                $category    = $this->readHandler->execute($category);
+                $virtualRule = $category->getVirtualRule();
+            } elseif (!is_object($virtualRule)) {
+                // If virtual rule is not an object, probably the rule was not properly loaded.
+                // @see https://github.com/Smile-SA/elasticsuite/issues/1985.
+                // In such cases, we go through the readHandler once again.
+                $category    = $this->readHandler->execute($category);
+                $virtualRule = $category->getVirtualRule();
+            }
+
             $data        = call_user_func_array([$virtualRule, $callback], [$category]);
             $cacheData   = serialize($data);
             $this->cache->save($cacheData, $cacheKey, $category->getCacheTags());

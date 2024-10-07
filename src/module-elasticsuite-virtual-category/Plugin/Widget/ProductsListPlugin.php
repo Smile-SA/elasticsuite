@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteVirtualCategory\Plugin\Widget;
 use Magento\Catalog\Api\CategoryRepositoryInterface;
 use Magento\CatalogWidget\Block\Product\ProductsList;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Helper\Conditions;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
@@ -100,7 +101,10 @@ class ProductsListPlugin
      */
     public function beforeCreateCollection(ProductsList $subject)
     {
-        $storeId = $this->storeManager->getStore()->getId();
+        // Get the current store ID.
+        $storeId = $this->getCurrentStoreId($subject);
+
+        // Set the store ID back to the widget.
         $subject->setData('store_id', $storeId);
 
         return [];
@@ -120,7 +124,7 @@ class ProductsListPlugin
      */
     public function afterCreateCollection(ProductsList $subject, $collection)
     {
-        $storeId    = $this->storeManager->getStore()->getId();
+        $storeId    = $this->getCurrentStoreId($subject);
         $sortOption = $subject->getData('sort_order');
         $conditionOption = $subject->getData('condition_option');
 
@@ -180,5 +184,25 @@ class ProductsListPlugin
         }
 
         return $collection;
+    }
+
+    /**
+     * Get the current store ID from the widget's data or default store.
+     *
+     * @param ProductsList $subject Widget product list.
+     * @return int
+     * @throws NoSuchEntityException
+     */
+    private function getCurrentStoreId(ProductsList $subject)
+    {
+        // Get the store ID from the widget's data.
+        $storeId = (int) $subject->getData('store_id');
+
+        // If the store ID is not specified (0), use the default store ID from the store manager.
+        if ($storeId === Store::DEFAULT_STORE_ID) {
+            $storeId = $this->storeManager->getStore()->getId();
+        }
+
+        return $storeId;
     }
 }

@@ -121,6 +121,22 @@ class Field implements FieldInterface
     /**
      * {@inheritdoc}
      */
+    public function isSearchableReference(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_REFERENCE === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSearchableEdgeNgram(): bool
+    {
+        return ($this->isSearchable() && (FieldInterface::ANALYZER_EDGE_NGRAM === $this->config['default_search_analyzer']));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFilterable(): bool
     {
         return (bool) $this->config['is_filterable'];
@@ -213,6 +229,12 @@ class Field implements FieldInterface
             }
         }
 
+        if ($this->getType() === self::FIELD_TYPE_TOKEN_COUNT) {
+            $property = $this->getPropertyConfig(
+                $this->getDefaultSearchAnalyzer() ?? self::ANALYZER_KEYWORD
+            );
+        }
+
         return $property;
     }
 
@@ -256,6 +278,7 @@ class Field implements FieldInterface
     {
         $config = array_merge($this->config, $config);
 
+        // @phpstan-ignore-next-line
         return new static($this->name, $config['type'] ?? $this->type, $this->nestedPath, $config);
     }
 
@@ -387,9 +410,12 @@ class Field implements FieldInterface
      * Build the property config from the field type and an optional
      * analyzer (used for string and detected through getAnalyzers).
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param string|null $analyzer Used analyzer.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED): array
     {
@@ -400,9 +426,13 @@ class Field implements FieldInterface
                 if ($analyzer === self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['type'] = self::FIELD_TYPE_KEYWORD;
                     $fieldMapping['ignore_above'] = self::IGNORE_ABOVE_COUNT;
+                    $fieldMapping['normalizer'] = self::ANALYZER_UNTOUCHED;
                 }
                 if ($analyzer !== self::ANALYZER_UNTOUCHED) {
                     $fieldMapping['analyzer'] = $analyzer;
+                    if ($analyzer === self::ANALYZER_EDGE_NGRAM) {
+                        $fieldMapping['search_analyzer'] = self::ANALYZER_STANDARD;
+                    }
 
                     if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;
@@ -415,6 +445,15 @@ class Field implements FieldInterface
                 break;
             case self::FIELD_TYPE_DATE:
                 $fieldMapping['format'] = implode('||', $this->dateFormats);
+                break;
+            case self::FIELD_TYPE_KNN_VECTOR:
+                $fieldMapping['dimension'] = $this->config['dimension'];
+                $fieldMapping['method']    = $this->config['model'];
+                break;
+            case self::FIELD_TYPE_TOKEN_COUNT:
+                $fieldMapping['analyzer'] = $analyzer;
+                $fieldMapping['store'] = true;
+                $fieldMapping['enable_position_increments'] = false;
                 break;
         }
 

@@ -25,6 +25,7 @@
                 <timeout>30</timeout>
                 <max_parallel_handles>10</max_parallel_handles>
                 <max_retries>2</max_retries>
+                <enable_certificate_validation>1</enable_certificate_validation>
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>
@@ -34,6 +35,17 @@
                 <batch_indexing_size>1000</batch_indexing_size>
             </indices_settings>
         </smile_elasticsuite_core_base_settings>
+
+        <smile_elasticsuite_core_analysis_settings>
+            <reference_analyzer>
+                <trim_leading_zeroes>0</trim_leading_zeroes>
+                <trim_trailing_zeroes>0</trim_trailing_zeroes>
+                <reduce_zeroes>0</reduce_zeroes>
+            </reference_analyzer>
+            <stemmer>
+                <use_default>1</use_default>
+            </stemmer>
+        </smile_elasticsuite_core_analysis_settings>
 
         <smile_elasticsuite_autocomplete_settings>
             <term_autocomplete>

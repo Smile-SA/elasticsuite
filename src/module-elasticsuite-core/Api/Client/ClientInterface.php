@@ -38,6 +38,13 @@ interface ClientInterface
     public function nodes();
 
     /**
+     * Returns cluster information.
+     *
+     * @return mixed
+     */
+    public function cluster();
+
+    /**
      * Try to connect the server and returns :
      * - true if succeed
      * - false if failed
@@ -210,4 +217,40 @@ interface ClientInterface
      * @return array
      */
     public function reindex(array $params): array;
+
+    /**
+     * Run a deleteByQuery request.
+     *
+     * @param array $params Delete by query params.
+     *
+     * @return array
+     */
+    public function deleteByQuery(array $params): array;
+
+    /**
+     * Run an updateByQuery request.
+     *
+     * @param array $params Delete by query params.
+     *
+     * @return array
+     */
+    public function updateByQuery(array $params): array;
+
+    /**
+     * Run an putPipeline request.
+     *
+     * @param array $params Pipeline params.
+     *
+     * @return array
+     */
+    public function putPipeline(array $params): array;
+
+    /**
+     * Run an getPipeline request.
+     *
+     * @param string $name Pipeline.
+     *
+     * @return array
+     */
+    public function getPipeline(string $name): array;
 }

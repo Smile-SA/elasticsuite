@@ -39,6 +39,11 @@
                     <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="enable_certificate_validation" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Use SSL certificate Validation</label>
+                    <comment>Select no if you are using self-signed SSL certificate.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
                 <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable basic HTTP authentication</label>
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
@@ -87,15 +92,69 @@
                     <label>Indices Name Pattern</label>
                 </field>
                 <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Shards per Index</label>
+                    <label>Default Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
                 <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Replicas per Index</label>
+                    <label>Default Number of Replicas per Index</label>
                     <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="custom_number_of_shards_and_replicas_per_index" translate="label" sortOrder="61" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Custom settings per Index</label>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\DynamicField</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
                 </field>
             </group>
 
+        </section>
+
+        <section id="smile_elasticsuite_core_analysis_settings" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Analyzers Settings</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_analysis_settings</resource>
+
+            <group id="reference_analyzer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Reference analyzer configuration</label>
+                <field id="trim_leading_zeroes" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove leading zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "VT0009", it will be as if "VT9" was indexed instead (leading to independant elements "VT", "9" and "VT9" in the search index). This will allow someone searching for "vt9" or "vt 9" to find the product with the exact "VT0009" sku.]]></comment>
+                </field>
+                <field id="trim_trailing_zeroes" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove trailing zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "DC3000", it will be as if "DC3" was indexed instead (leading to independant elements "DC", "3" and "DC3" in the search index). This will allow someone searching for "dc3" or "dc 3" to find the product with the exact "DC3000" sku.]]></comment>
+                </field>
+                <field id="reduce_zeroes" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Reduce series of contiguous zeroes in numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "PL20004", it will be as if "PL204" was indexed instead (leading to independant elements "PL", "204" and "PL204" in the search index). This will allow someone searching for "pl204", "pl 204", "pl2004" or "pl 2004" to find the product with the exact "PL2004" sku.]]></comment>
+                </field>
+            </group>
+
+            <group id="stemmer" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Language stemmer configuration</label>
+                <field id="info" translate="label comment" type="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" >
+                    <label>Settings available at the store view scope only.</label>
+                    <comment><![CDATA[The ability to select an alternative language stemmer is only available at the store view scope.]]></comment>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\System\Config\Comment</frontend_model>
+                </field>
+                <field id="use_default" translate="label comment" type="select" sortOrder="50" showInDefault="0" showInWebsite="0" showInStore="1" canRestore="1">
+                    <label>Use default stemmer</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Use the default language stemmer as defined in 'elasticsuite_analysis.xml' file for this store language (as defined by the store locale). If set to No, you'll be able to select a different stemmer for languages that have multiple possible stemmers (Dutch, English, Finnish, French, Galician, German, Hungarian, Italian, Norwegian, Portuguese, Russian, Spanish, Swedish).]]></comment>
+                </field>
+                <field id="custom" translate="label comment" type="select" sortOrder="70" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Custom stemmer</label>
+                    <source_model>Smile\ElasticsuiteCore\Model\Config\Source\Stemmers</source_model>
+                    <comment><![CDATA[In the list "[default]" indicates the stemmer used by Elasticsuite by default for the language, while "[recommended]" indicates the stemmer is the one or one of those recommended for that language by Elasticsearch in its <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-stemmer-tokenfilter.html#analysis-stemmer-tokenfilter-configure-parms' target='_blank'>online documentation</a>. Those can differ, hence this configuration parameter.]]></comment>
+                    <depends>
+                        <field id="use_default">0</field>
+                    </depends>
+                    <validate>required</validate>
+                </field>
+            </group>
         </section>
 
         <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">

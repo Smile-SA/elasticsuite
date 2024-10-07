@@ -29,6 +29,14 @@
                     <comment><![CDATA[Maximum number of search terms to display in the search usage report blocks.]]></comment>
                 </field>
             </group>
+
+            <group id="pending_events" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Pending events configuration</label>
+                <field id="warn_after_hours" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Hours before warning</label>
+                    <comment><![CDATA[A warning will be displayed on the search usage dashboard if there are pending events older than this number of hours still in the events queue table.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

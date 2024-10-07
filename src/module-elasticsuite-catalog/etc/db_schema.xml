@@ -42,9 +42,16 @@
                 default="10"
                 comment="Facet max size"/>
         <column name="facet_sort_order"
-                xsi:type="text"
+                xsi:type="varchar"
+                length="30"
+                default="_count"
                 nullable="false"
                 comment="The sort order for facet values"/>
+        <column name="facet_boolean_logic"
+                xsi:type="boolean"
+                default="0"
+                nullable="false"
+                comment="Boolean logic to use when combining multiple selected values inside the filter"/>
         <column name="display_pattern"
                 xsi:type="text"
                 nullable="true"
@@ -55,14 +62,18 @@
                 default="0"
                 comment="Attribute decimal precision for display"/>
         <column name="sort_order_asc_missing"
-                xsi:type="text"
+                xsi:type="varchar"
+                length="30"
+                default="_last"
                 nullable="false"
                 comment="Sort products without value when sorting ASC"/>
         <column name="sort_order_desc_missing"
-                xsi:type="text"
+                xsi:type="varchar"
+                length="30"
+                default="_first"
                 nullable="false"
                 comment="Sort products without value when sorting DESC"/>
-        <column name="is_display_rel_no_follow"
+        <column name="is_display_rel_nofollow"
                 xsi:type="boolean"
                 nullable="false"
                 default="0"
@@ -89,6 +100,7 @@
                 default="standard"
                 comment="Default analyzer for this field"/>
         <column name="is_used_in_autocomplete" disabled="true"/>
+        <column name="is_display_rel_no_follow" disabled="true"/>
     </table>
 
     <!-- add column to search_query table -->
@@ -132,7 +144,8 @@
                 unsigned="true"
                 comment="Facet max size"/>
         <column name="facet_sort_order"
-                xsi:type="text"
+                xsi:type="varchar"
+                length="30"
                 nullable="true"
                 comment="The pattern to display facet values"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
@@ -180,7 +193,7 @@
                 comment="If the product is blacklisted"/>
         <column name="facet_boolean_logic"
                 xsi:type="boolean"
-                default="false"
+                default="0"
                 nullable="false"
                 comment="Boolean logic to use when combining multiple selected values inside the filter"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

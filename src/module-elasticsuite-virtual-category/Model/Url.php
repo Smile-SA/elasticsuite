@@ -18,6 +18,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
@@ -67,6 +68,11 @@ class Url
     private $urlFinder;
 
     /**
+     * @var UrlInterface
+     */
+    private $urlBuilder;
+
+    /**
      * @var VirtualCategoryRoot
      */
     private $virtualCategoryRoot;
@@ -78,6 +84,7 @@ class Url
      * @param StoreManagerInterface     $storeManager              Store Manager Interface
      * @param CategoryCollectionFactory $categoryCollectionFactory Category Collection Factory
      * @param UrlFinderInterface        $urlFinder                 URL Finder
+     * @param UrlInterface              $urlBuilder                URL Builder
      * @param VirtualCategoryRoot       $virtualCategoryRoot       Virtual Category Root model
      */
     public function __construct(
@@ -85,13 +92,15 @@ class Url
         StoreManagerInterface $storeManager,
         CategoryCollectionFactory $categoryCollectionFactory,
         UrlFinderInterface $urlFinder,
+        UrlInterface $urlBuilder,
         VirtualCategoryRoot $virtualCategoryRoot
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->storeManager = $storeManager;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->urlFinder = $urlFinder;
-        $this->virtualCategoryRoot       = $virtualCategoryRoot;
+        $this->urlBuilder = $urlBuilder;
+        $this->virtualCategoryRoot = $virtualCategoryRoot;
     }
 
     /**
@@ -256,7 +265,8 @@ class Url
     {
         $collection = $this->categoryCollectionFactory->create();
 
-        $collection->setStoreId($this->storeManager->getStore()->getId())
+        $collection->addIsActiveFilter()
+            ->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_key', ['eq' => $requestPath]);
 
         return $collection->getFirstItem();
@@ -273,7 +283,8 @@ class Url
     private function loadVirtualCategoryByUrlPath($requestPath): DataObject
     {
         $collection = $this->categoryCollectionFactory->create();
-        $collection->setStoreId($this->storeManager->getStore()->getId())
+        $collection->addIsActiveFilter()
+            ->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_path', ['eq' => $requestPath])
             ->addAttributeToFilter('is_virtual_category', ['eq' => 1]);
 

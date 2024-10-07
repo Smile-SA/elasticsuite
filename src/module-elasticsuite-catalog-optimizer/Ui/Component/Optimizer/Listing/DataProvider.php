@@ -94,6 +94,8 @@ class DataProvider extends AbstractDataProvider
 
     /**
      * {@inheritdoc}
+     *
+     * @return void
      */
     public function addFilter(\Magento\Framework\Api\Filter $filter)
     {

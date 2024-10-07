@@ -69,6 +69,31 @@ class Factory
     const SPAN_MATCH_CONFIG_XML_PREFIX = 'span_match_configuration';
 
     /**
+     * XML node for min_score configuration
+     */
+    const MIN_SCORE_CONFIG_XML_PREFIX = 'min_score_configuration';
+
+    /**
+     * XML node for exact match configuration
+     */
+    const EXACT_MATCH_CONFIG_XML_PREFIX = 'exact_match_configuration';
+
+    /**
+     * XML node for tokens usage in term vectors configuration.
+     */
+    const TERM_VECTORS_TOKENS_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_all_tokens';
+
+    /**
+     * XML node for reference analyzer usage in term vectors configuration.
+     */
+    const TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_reference_analyzer';
+
+    /**
+     * XML node for edge ngram analyzer(s) usage in term vectors configuration.
+     */
+    const TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_edge_ngram_analyzer';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -141,6 +166,15 @@ class Factory
             'enablePhoneticSearch' => $this->isPhoneticSearchEnabled($scopeCode),
             'spanMatchBoost'       => $this->getSpanMatchBoostConfiguration($scopeCode),
             'spanSize'             => $this->getSpanSize($scopeCode),
+            'minScore'             => $this->getMinScoreConfiguration($scopeCode),
+            'useReferenceInExactMatchFilter'    => $this->isUsingReferenceInExactMatchFilter($scopeCode),
+            'useAllTokens'                      => $this->isUsingAllTokensConfiguration($scopeCode),
+            'useReferenceAnalyzer'              => $this->isUsingReferenceAnalyzerConfiguration($scopeCode),
+            'useEdgeNgramAnalyzer'              => $this->isUsingEdgeNgramAnalyzerConfiguration($scopeCode),
+            'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
+            'exactMatchSingleTermBoostsCustomized'  => $this->areExactMatchCustomBoostValuesEnabled($scopeCode),
+            'exactMatchSingleTermPhraseMatchBoost'  => $this->getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode),
+            'exactMatchSingleTermSortableBoost'     => $this->getExactMatchSortableBoostConfiguration($scopeCode),
         ];
 
         return $configurationParams;
@@ -179,6 +213,7 @@ class Factory
                 'value'        => $this->getConfigValue($path . "/value", $scopeCode),
                 'prefixLength' => $this->getConfigValue($path . "/prefix_length", $scopeCode),
                 'maxExpansion' => $this->getConfigValue($path . "/max_expansion", $scopeCode),
+                'minimumShouldMatch' => $this->getFuzzinessMinimumShouldMatch($scopeCode),
             ];
 
             $configuration = $this->createFuzzinessConfiguration($configurationParams);
@@ -327,5 +362,155 @@ class Factory
         }
 
         return $size;
+    }
+
+    /**
+     * Retrieve min_score configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool|int
+     */
+    private function getMinScoreConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::MIN_SCORE_CONFIG_XML_PREFIX;
+
+        $minScore = (bool) $this->getConfigValue($path . "/enable_use_min_score", $scopeCode);
+
+        if ($minScore === true) {
+            $minScore = (int) $this->getConfigValue($path . "/min_score_value", $scopeCode);
+        }
+
+        return $minScore;
+    }
+
+    /**
+     * Retrieve reference collector field usage configuration for a container.
+     *
+     * @param @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingReferenceInExactMatchFilter($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (bool) $this->getConfigValue($path . "/use_reference_in_filter", $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors extensive tokens usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingAllTokensConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_TOKENS_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors reference analyzer usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingReferenceAnalyzerConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_REFERENCE_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors edge ngram analyzer usage configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingEdgeNgramAnalyzerConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Check if we should use the default analyzer of each field when building the exact match filter query.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isUsingDefaultAnalyzerInExactMatchFilter($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (bool) $this->getConfigValue($path . "/use_default_analyzer", $scopeCode);
+    }
+
+    /**
+     * Check if custom boost values for exact match in whitespace and sortable version of fields
+     * should be applied.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function areExactMatchCustomBoostValuesEnabled($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (bool) $this->getConfigValue($path . "/enable_single_term_custom_boost_values", $scopeCode);
+    }
+
+    /**
+     * Return the configured custom boost value for whitespace fields in exact match queries.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return int
+     */
+    private function getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (int) $this->getConfigValue($path . "/single_term_phrase_match_boost_value", $scopeCode);
+    }
+
+    /**
+     * Return the configured custom boost value for sortable fields in exact match queries.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return int
+     */
+    private function getExactMatchSortableBoostConfiguration($scopeCode)
+    {
+        $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
+
+        return (int) $this->getConfigValue($path . "/sortable_boost_value", $scopeCode);
+    }
+
+    /**
+     * Return the minimum should match configured for fuzzy search.
+     * Either the default one, or a particular if configured so.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return string
+     */
+    private function getFuzzinessMinimumShouldMatch($scopeCode)
+    {
+        $minimumShouldMatch = $this->getMinimumShouldMatch($scopeCode);
+        $useDefaultMsmPath  = self::FUZZINESS_CONFIG_XML_PREFIX . '/use_default_minimum_should_match';
+        $useDefaultMsm      = (bool) $this->getConfigValue($useDefaultMsmPath, $scopeCode);
+        $fuzzyMsmPath       = self::FUZZINESS_CONFIG_XML_PREFIX . '/minimum_should_match';
+        $fuzzyMsm           = (string) $this->getConfigValue($fuzzyMsmPath, $scopeCode);
+
+        if ($useDefaultMsm === false && $fuzzyMsm !== '') {
+            $minimumShouldMatch = $fuzzyMsm;
+        }
+
+        return $minimumShouldMatch;
     }
 }

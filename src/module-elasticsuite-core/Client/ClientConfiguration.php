@@ -131,6 +131,14 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isVerifyEnabled()
+    {
+        return (bool) $this->getElasticsearchClientConfigParam('enable_certificate_validation');
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getOptions()
@@ -145,6 +153,7 @@ class ClientConfiguration implements ClientConfigurationInterface
             'is_debug_mode_enabled' => $this->isDebugModeEnabled(),
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
             'max_retries'           => $this->getMaxRetries(),
+            'verify'                => $this->isVerifyEnabled(),
         ];
 
         return $options;

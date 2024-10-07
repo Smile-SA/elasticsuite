@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use OpenSearch\Common\Exceptions\Missing404Exception;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
@@ -30,7 +30,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 class Client implements ClientInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \OpenSearch\Client
      */
     private $esClient = null;
 
@@ -70,6 +70,14 @@ class Client implements ClientInterface
     public function nodes()
     {
         return $this->getEsClient()->nodes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cluster()
+    {
+        return $this->getEsClient()->cluster();
     }
 
     /**
@@ -160,7 +168,7 @@ class Client implements ClientInterface
         $indices = [];
         try {
             $indices = $this->getEsClient()->indices()->getMapping(['index' => $indexAlias]);
-        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
+        } catch (\OpenSearch\Common\Exceptions\Missing404Exception $e) {
             ;
         }
 
@@ -246,9 +254,41 @@ class Client implements ClientInterface
     }
 
     /**
-     * @return \Elasticsearch\Client
+     * {@inheritDoc}
      */
-    private function getEsClient(): \Elasticsearch\Client
+    public function deleteByQuery(array $params): array
+    {
+        return $this->getEsClient()->deleteByQuery($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateByQuery(array $params): array
+    {
+        return $this->getEsClient()->updateByQuery($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function putPipeline(array $params): array
+    {
+        return $this->getEsClient()->ingest()->putPipeline($params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPipeline(string $name): array
+    {
+        return $this->getEsClient()->ingest()->getPipeline(['id' => $name]);
+    }
+
+    /**
+     * @return \OpenSearch\Client
+     */
+    private function getEsClient(): \OpenSearch\Client
     {
         if ($this->esClient === null) {
             $this->esClient = $this->clientBuilder->build($this->clientConfiguration->getOptions());

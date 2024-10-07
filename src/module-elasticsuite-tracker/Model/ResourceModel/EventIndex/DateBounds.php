@@ -102,8 +102,10 @@ class DateBounds
         if ($searchResponse->getAggregations()->getBucket('bounds') !== null) {
             foreach ($searchResponse->getAggregations()->getBucket('bounds')->getValues() as $aggValue) {
                 $metrics = $aggValue->getMetrics();
-                $boundsDate['minDate'] = $metrics['minDate'] ?? null;
-                $boundsDate['maxDate'] = $metrics['maxDate'] ?? null;
+                if (($metrics['count'] ?? 0) > 0) {
+                    $boundsDate['minDate'] = $metrics['minDate'] ?? null;
+                    $boundsDate['maxDate'] = $metrics['maxDate'] ?? null;
+                }
             }
         }
 

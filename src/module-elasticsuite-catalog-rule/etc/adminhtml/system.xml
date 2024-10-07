@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogRule adminhtml module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogRule
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2023 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="smile_elasticsuite_catalogsearch_settings">
+            <group id="catalogrule" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Catalog Rules Configuration</label>
+                <field id="force_sorting_select_options" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Alphabetical sorting of attribute options in the rule engine</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, will forcefully sort select and multiselect attributes' option labels alphabetically when displaying them in the rule engine used by Optimizers and Virtual Categories. Useful if you have product attributes with very long list of options.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

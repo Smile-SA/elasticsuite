@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogRule module default configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogRule
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2023 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <smile_elasticsuite_catalogsearch_settings>
+            <catalogrule>
+                <force_sorting_select_options>0</force_sorting_select_options>
+            </catalogrule>
+        </smile_elasticsuite_catalogsearch_settings>
+    </default>
+</config>

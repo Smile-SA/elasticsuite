@@ -55,6 +55,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_RETENTION_DELAY_XPATH = 'smile_elasticsuite_tracker/general/retention_delay';
 
     /**
+     * Event queue cleanup retention delay
+     * @var string
+     */
+    const CONFIG_QUEUE_CLEANUP_DELAY_XPATH = 'smile_elasticsuite_tracker/queue_cleanup/delay';
+
+    /**
+     * Using API instead of invisible pixel configuration path
+     * @var string
+     */
+    const CONFIG_IS_USING_API_XPATH = 'smile_elasticsuite_tracker/general/use_api';
+
+    /**
+     * Headless mode configuration path
+     * @var string
+     */
+    const CONFIG_IS_HEADLESS_MODE_XPATH = 'smile_elasticsuite_tracker/general/is_headless_mode';
+
+    /**
      * Anonymization status configuration path
      * @var string
      */
@@ -137,6 +155,36 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Return the tracking Rest endpoint URL
+     *
+     * @return string
+     */
+    public function getRestBaseUrl()
+    {
+        return $this->urlBuilder->getDirectUrl('rest/V1/elasticsuite-tracker/hit');
+    }
+
+    /**
+     * Return true if the tracker should use the (Rest) API to push its data to Magento
+     *
+     * @return bool
+     */
+    public function isUsingAPI()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_USING_API_XPATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Return true if the headless mode is enabled
+     *
+     * @return bool
+     */
+    public function isHeadlessMode()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_HEADLESS_MODE_XPATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
      * Return an array containing the cookie configuration
      *
      * @return array
@@ -189,6 +237,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     public function getRetentionDelay()
     {
         return (int) $this->scopeConfig->getValue(self::CONFIG_RETENTION_DELAY_XPATH);
+    }
+
+    /**
+     * Return the tracking data purge delay, in days
+     *
+     * @return int
+     */
+    public function getEventsQueueCleanupDelay()
+    {
+        return (int) $this->scopeConfig->getValue(self::CONFIG_QUEUE_CLEANUP_DELAY_XPATH);
     }
 
     /**

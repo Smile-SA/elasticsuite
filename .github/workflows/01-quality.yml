@@ -24,7 +24,7 @@ jobs:
                 php-versions: ['8.1']
         steps:
             - name: Checkout
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
               with:
                 ref: ${{ github.event.pull_request.head.sha }}
 
@@ -46,7 +46,7 @@ jobs:
 
             - name: Cache Composer packages
               id: composer-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: vendor
                   key: ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}

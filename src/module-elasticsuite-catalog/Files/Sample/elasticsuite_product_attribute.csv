@@ -1,0 +1,3 @@
+attribute_code,attribute_label,is_searchable,search_weight,is_used_in_spellcheck,is_displayed_in_autocomplete,is_filterable,is_filterable_in_search,is_used_for_promo_rules,used_for_sort_by,is_display_rel_nofollow,facet_max_size,facet_sort_order,facet_min_coverage_rate,facet_boolean_logic,position,default_analyzer,norms_disabled,is_spannable,include_zero_false_values
+activity,Activity,0,1,1,0,1,0,1,0,0,10,_count,90,1,0,standard,0,0,0
+allow_open_amount,Open Amount,0,1,1,0,0,0,0,0,0,10,_count,90,0,0,standard,0,0,0

@@ -13,8 +13,13 @@
  */
 namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
-use Magento\Framework\App\Cache\Type;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Layout\PageType\Config as PageTypeConfig;
+use Smile\ElasticsuiteTracker\Helper\Data as TrackerHelper;
 
 /**
  * Base variables block for page tracking, exposes all base tracking variables
@@ -23,52 +28,52 @@ use Magento\Framework\View\Element\Template;
  * @package  Smile\ElasticsuiteTracker
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
+class Base extends AbstractBlock
 {
     /**
-     * @var \Magento\Framework\View\Layout\PageType\Config The page type configuration
+     * @var PageTypeConfig The page type configuration
      */
     private $pageTypeConfig;
 
     /**
      * Magento Locale Resolver
      *
-     * @var \Magento\Framework\Locale\ResolverInterface
+     * @var ResolverInterface
      */
     protected $localeResolver;
 
     /**
-     * @var \Magento\Framework\App\RequestInterface
+     * @var RequestInterface
      */
     protected $requestInterface;
 
     /**
      * Set the default template for page variable blocks
      *
-     * @param Template\Context                               $context          The template context
-     * @param \Magento\Framework\Json\Helper\Data            $jsonHelper       The Magento's JSON Helper
-     * @param \Smile\ElasticsuiteTracker\Helper\Data         $trackerHelper    The Smile Tracker helper
-     * @param \Magento\Framework\Registry                    $registry         Magento Core Registry
-     * @param \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig   The page type configuration
-     * @param \Magento\Framework\Locale\ResolverInterface    $localeResolver   Locale Resolver
-     * @param \Magento\Framework\App\RequestInterface        $requestInterface RequestInterface
-     * @param array                                          $data             The block data
+     * @param Template\Context  $context          The template context
+     * @param Data              $jsonHelper       The Magento's JSON Helper
+     * @param TrackerHelper     $trackerHelper    The Smile Tracker helper
+     * @param Registry          $registry         Magento Core Registry
+     * @param PageTypeConfig    $pageTypeConfig   The page type configuration
+     * @param ResolverInterface $localeResolver   Locale Resolver
+     * @param RequestInterface  $requestInterface RequestInterface
+     * @param array             $data             The block data
      */
     public function __construct(
         Template\Context $context,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
-        \Magento\Framework\Locale\ResolverInterface $localeResolver,
-        \Magento\Framework\App\RequestInterface $requestInterface,
+        Data $jsonHelper,
+        TrackerHelper $trackerHelper,
+        Registry $registry,
+        PageTypeConfig $pageTypeConfig,
+        ResolverInterface $localeResolver,
+        RequestInterface $requestInterface,
         array $data = []
     ) {
         $this->pageTypeConfig = $pageTypeConfig;
         $this->localeResolver = $localeResolver;
         $this->requestInterface = $requestInterface;
 
-        return parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
+        parent::__construct($context, $jsonHelper, $trackerHelper, $registry, $data);
     }
 
     /**
@@ -142,7 +147,6 @@ class Base extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBlock
     {
         return [
             'locale' => $this->localeResolver->getLocale(),
-            'domain' => $this->requestInterface->getServer('SERVER_ADDR'),
         ];
     }
 

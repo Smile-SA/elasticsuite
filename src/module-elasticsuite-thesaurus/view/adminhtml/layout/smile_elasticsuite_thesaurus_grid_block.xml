@@ -44,14 +44,25 @@
                         <argument name="form_field_name" xsi:type="string">thesauri</argument>
                         <argument name="use_select_all" xsi:type="string">1</argument>
                         <argument name="options" xsi:type="array">
+                            <item name="enable" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Enable</item>
+                                <item name="url" xsi:type="string">*/*/massEnable</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to enable the selected thesaurus?</item>
+                            </item>
+                            <item name="disable" xsi:type="array">
+                                <item name="label" xsi:type="string" translate="true">Disable</item>
+                                <item name="url" xsi:type="string">*/*/massDisable</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to disable the selected thesaurus?</item>
+                            </item>
                             <item name="delete" xsi:type="array">
                                 <item name="label" xsi:type="string" translate="true">Delete</item>
                                 <item name="url" xsi:type="string">*/*/massDelete</item>
-                                <item name="confirm" xsi:type="string" translate="true">Are you sure?</item>
+                                <item name="confirm" xsi:type="string" translate="true">Are you sure you want to delete the selected thesaurus?</item>
                             </item>
                         </argument>
                     </arguments>
                 </block>
+
                 <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="adminhtml.elasticsuite.thesaurus.grid.columnSet" as="grid.columnSet">
                     <arguments>
                         <argument name="rowUrl" xsi:type="array">

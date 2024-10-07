@@ -52,10 +52,18 @@ class Collection extends DataCollection
      */
     public function addFieldToFilter($field, $condition = null)
     {
-        if ($field === 'index_alias') {
+        $type = 'include';
+        if ($field === 'index_status') {
+            $type = 'exclude';
+        }
+        if (in_array($field, ['index_alias', 'index_name', 'index_status'])) {
             if (is_array($condition)) {
                 foreach ($condition as $value) {
-                    $this->addFilter($field, preg_replace('/[^A-Za-z0-9\-_]/', '', $value->__toString()));
+                    $this->addFilter(
+                        $field,
+                        preg_replace('/[^A-Za-z0-9\-_]/', '', (string) $value),
+                        $type
+                    );
                 }
             }
         }
@@ -77,21 +85,53 @@ class Collection extends DataCollection
         $data = [];
         /** @var Collection $collection */
         $collection = $this->collectionFactory->create();
-        $filter = $this->getFilter('index_alias');
-        $indexers = [];
-
-        if ($filter) {
-            $indexers = $collection->getItemsByColumnValue('index_alias', $filter->getValue());
-        }
-        if (!$filter) {
-            $indexers = $collection->getItems();
+        $filters = $this->getFilter([]);
+        $indices = $collection->getItems();
+        if (!empty($filters)) {
+            $indices = $this->applyPostFilters($filters, $indices);
         }
 
-        foreach ($indexers as $index) {
+        foreach ($indices as $index) {
             $data[$index['index_name']] = $index;
         }
         $this->_items = $data;
 
         return $this;
+    }
+
+    /**
+     * Apply post filters to a loaded index collection items.
+     *
+     * @param array $filters Array of filters.
+     * @param array $indices Array of indices.
+     *
+     * @return array
+     */
+    private function applyPostFilters(array $filters = [], array $indices = [])
+    {
+        $filtered = [];
+
+        foreach ($indices as $index) {
+            $keep = true;
+            foreach ($filters as $filter) {
+                $column = $filter->getField();
+                $value = $filter->getValue();
+                $type = $filter->getType();
+                if ($type === 'exclude') {
+                    if (strpos((string) $index->getData($column), $value) !== false) {
+                        $keep = false;
+                        break;
+                    }
+                } elseif (strpos((string) $index->getData($column), $value) === false) {
+                    $keep = false;
+                    break;
+                }
+            }
+            if ($keep) {
+                $filtered[] = $index;
+            }
+        }
+
+        return $filtered;
     }
 }

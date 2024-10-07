@@ -79,7 +79,7 @@ class Position
      * @param array $newProductPositions Product positions.
      * @param array $blacklistedProducts Blacklisted product ids.
      *
-     * @return \Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Search\Position
+     * @return void
      */
     public function saveProductPositions($queryId, $newProductPositions, $blacklistedProducts = [])
     {

@@ -48,7 +48,7 @@ class Term implements BuilderInterface
             $aggregation['terms']['order'] = $bucket->getSortOrder();
         } elseif (in_array($bucket->getSortOrder(), [$bucket::SORT_ORDER_COUNT, $bucket::SORT_ORDER_MANUAL])) {
             $aggregation['terms']['order'] = [$bucket::SORT_ORDER_COUNT => SortOrderInterface::SORT_DESC];
-        } elseif ($bucket->getSortOrder() == $bucket::SORT_ORDER_TERM) {
+        } elseif (in_array($bucket->getSortOrder(), [$bucket::SORT_ORDER_TERM, $bucket::SORT_ORDER_TERM_DEPRECATED])) {
             $aggregation['terms']['order'] = [$bucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC];
         } elseif ($bucket->getSortOrder() == $bucket::SORT_ORDER_RELEVANCE && !$bucket->isNested()) {
             $aggregation['aggregations']['termRelevance'] = ['avg' => ['script' => $bucket::SORT_ORDER_RELEVANCE]];

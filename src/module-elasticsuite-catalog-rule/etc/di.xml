@@ -30,6 +30,9 @@
                 <item name="is_giftcard" xsi:type="object">isGiftCardProduct</item>
                 <item name="is_grouped" xsi:type="object">isGroupedProduct</item>
                 <item name="is_simple" xsi:type="object">isSimpleProduct</item>
+                <item name="is_created_within_last_x_days" xsi:type="object">isCreatedWithinLastXdays</item>
+                <item name="is_updated_within_last_x_days" xsi:type="object">isUpdatedWithinLastXdays</item>
+                <item name="stock.qty" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\StockQty</item>
             </argument>
         </arguments>
     </type>
@@ -80,6 +83,22 @@
             <argument name="attributeCode" xsi:type="string">is_simple</argument>
             <argument name="typeIdentifier" xsi:type="string">simple</argument>
             <argument name="attributeLabel" xsi:type="string">Only simple products</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isCreatedWithinLastXdays" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductDate">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_created_within_last_x_days</argument>
+            <argument name="attributeLabel" xsi:type="string">Product creation date (X days ago)</argument>
+            <argument name="fieldName" xsi:type="string">created_at</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="isUpdatedWithinLastXdays" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductDate">
+        <arguments>
+            <argument name="attributeCode" xsi:type="string">is_updated_within_last_x_days</argument>
+            <argument name="attributeLabel" xsi:type="string">Product updation date (X days ago)</argument>
+            <argument name="fieldName" xsi:type="string">updated_at</argument>
         </arguments>
     </virtualType>
 

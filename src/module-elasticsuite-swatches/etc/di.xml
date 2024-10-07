@@ -43,12 +43,4 @@
         </arguments>
     </type>
 
-    <!-- Since Magento 2.1.6 -->
-    <type name="Magento\Swatches\Model\ProductSubstitute">
-        <arguments>
-            <argument name="swatchesHelperData" xsi:type="object">Smile\ElasticsuiteSwatches\Helper\Swatches</argument>
-        </arguments>
-        <plugin name="fix_load_variations" type="Smile\ElasticsuiteSwatches\Model\Plugin\ProductSubstitute" />
-    </type>
-
 </config>

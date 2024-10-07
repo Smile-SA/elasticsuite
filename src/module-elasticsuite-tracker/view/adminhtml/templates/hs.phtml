@@ -1,0 +1,29 @@
+<?php /** @var \Smile\ElasticsuiteTracker\Block\Adminhtml\Hs $block  */ ?>
+<?php /** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer  */ ?>
+<div style="font-size: medium">
+    <p><?= __("Dear merchant or agency,");?> 🚀 </p>
+    <p><?= __("We are so grateful you're using Elasticsuite on your webshop and we truly hope we've been part of your business growth since many years now.");?></p>
+    <p><?= __("We'd like to invite you to extend your connection with Elasticsuite by subscribing to our newsletter. Stay ahead of the curve with exclusive insights into our cutting-edge product features. Experience the freedom of open-source collaboration and receive non-intrusive updates that keep you informed without overwhelming your inbox.");?></p>
+    <p style="margin-bottom: 20px"><?= __("Join the Elasticsuite community today.");?></p>
+    <?= /* @NoEscape */ $secureRenderer->renderTag('script', ['type' => 'text/javascript'], sprintf('  (() => {
+        const script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        script.src = "https://js.hsforms.net/forms/embed/v2.js";
+
+        script.addEventListener("load", () => {
+          hbspt.forms.create({
+            region: "na1",
+            portalId: "6113121",
+            formId: "1b10ec2f-3de4-4a17-b1f5-3826361fadf1",
+            onFormReady: function(form) {
+                let input = form.find(".hs-input");
+                if (input !== undefined) {
+                    input.val("%s");
+                }
+            }
+          });
+        });
+
+        document.head.append(script);
+      })();', $block->getEmail()), false) ?>
+</div>

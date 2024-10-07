@@ -9,3 +9,7 @@
 "Only giftcard products","Only giftcard products"
 "Only grouped products","Only grouped products"
 "Only simple products","Only simple products"
+"Catalog Rules Configuration","Catalog Rules Configuration"
+"Alphabetical sorting of attribute options in the rule engine","Alphabetical sorting of attribute options in the rule engine"
+"If enabled, will forcefully sort select and multiselect attributes' option labels alphabetically when displaying them in the rule engine used by Optimizers and Virtual Categories. Useful if you have product attributes with very long list of options.","If enabled, will forcefully sort select and multiselect attributes' option labels alphabetically when displaying them in the rule engine used by Optimizers and Virtual Categories. Useful if you have product attributes with very long list of options."
+"Stock qty","Stock qty"

@@ -96,7 +96,7 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     {
         $this->parseDateFields();
 
-        parent::beforeSave();
+        return parent::beforeSave();
     }
 
     /**

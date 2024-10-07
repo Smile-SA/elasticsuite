@@ -150,7 +150,7 @@
             <!--
                 Known issues with the "french" stemmer.
                  -->
-            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo"]</rules>
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo", "clef => cle", "clefs => cle", "compas => compas"]</rules>
         </filter>
         <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
@@ -163,10 +163,10 @@
             <articles>["d", "l", "m", "n", "s", "t"]</articles>
         </filter>
         <filter name="elision" type="elision" language="fr">
-            <articles>["l", "m", "t", "qu", "n", "s","j", "d", "c"]</articles>
+            <articles>["l", "m", "t", "qu", "n", "s", "j", "d", "c"]</articles>
         </filter>
         <filter name="elision" type="elision" language="it">
-            <articles>["c", "l", "all", "dall", "dell","nell", "sull", "coll", "pell","gl", "agl", "dagl", "degl", "negl","sugl", "un", "m", "t", "s", "v", "d"]</articles>
+            <articles>["c", "l", "all", "dall", "dell", "nell", "sull", "coll", "pell", "gl", "agl", "dagl", "degl", "negl", "sugl", "un", "m", "t", "s", "v", "d"]</articles>
         </filter>
         <filter name="phonetic" type="phonetic" language="default">
             <encoder>metaphone</encoder>
@@ -177,6 +177,22 @@
         </filter>
         <filter name="lowercase" type="lowercase" language="el">
             <language>greek</language>
+        </filter>
+        <filter name="edge_ngram_filter" type="edge_ngram" language="default">
+            <min_gram>3</min_gram>
+            <max_gram>20</max_gram>
+        </filter>
+        <filter name="trim_leading_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[^0+]]></pattern>
+            <replacement><![CDATA[]]></replacement>
+        </filter>
+        <filter name="trim_trailing_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[0+$]]></pattern>
+            <replacement><![CDATA[]]></replacement>
+        </filter>
+        <filter name="reduce_zeroes" type="pattern_replace" language="default">
+            <pattern><![CDATA[0+]]></pattern>
+            <replacement><![CDATA[0]]></replacement>
         </filter>
     </filters>
 
@@ -190,9 +206,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
             </filters>
@@ -204,9 +220,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -216,9 +232,12 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
-                <filter ref="reference_word_delimiter" />
-                <filter ref="lowercase" />
                 <filter ref="elision" />
+                <filter ref="reference_word_delimiter" />
+                <filter ref="trim_leading_zeroes" />
+                <filter ref="trim_trailing_zeroes" />
+                <filter ref="reduce_zeroes" />
+                <filter ref="lowercase" />
                 <filter ref="reference_shingle" />
             </filters>
             <char_filters>
@@ -229,9 +248,9 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
                 <filter ref="shingle" />
@@ -254,14 +273,198 @@
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
+                <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
-                <filter ref="elision" />
                 <filter ref="phonetic" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
+        <analyzer name="standard_edge_ngram" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="edge_ngram_filter"/>
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip"/>
+            </char_filters>
+        </analyzer>
     </analyzers>
+
+    <normalizers>
+        <normalizer name="untouched" type="custom" language="default">
+            <char_filters></char_filters>
+        </normalizer>
+
+        <!--
+            If you want to have case insensitive layered navigation filters options matching,
+            you can override the "untouched" normalizer above (which does nothing) by this one.
+            Please note, though, that those filter options will now be displayed in lowercase
+            in the layered navigation filters.
+        <normalizer name="untouched" type="custom" language="default">
+            <char_filters></char_filters>
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="lowercase" />
+            </filters>
+        </normalizer>
+        -->
+    </normalizers>
+
+    <stemmers>
+        <group language="nl" title="Dutch">
+            <stemmer identifier="dutch" recommended="true">
+                <label>Dutch Snowball</label>
+            </stemmer>
+            <stemmer identifier="dutch_kp">
+                <label>Dutch KP (Kraaij-Pohlmann)</label>
+            </stemmer>
+        </group>
+        <group language="en" title="English">
+            <stemmer identifier="english" recommended="true">
+                <label>English Porter</label>
+            </stemmer>
+            <stemmer identifier="light_english">
+                <label>Light English (Krovetz, 2000)</label>
+            </stemmer>
+            <stemmer identifier="lovins">
+                <label>English Lovins</label>
+            </stemmer>
+            <stemmer identifier="minimal_english">
+                <label>Minimal English (Harman, 1991)</label>
+            </stemmer>
+            <stemmer identifier="porter2">
+                <label>English Porter2</label>
+            </stemmer>
+            <stemmer identifier="possessive_english">
+                <label>English Possessive</label>
+            </stemmer>
+        </group>
+        <group language="fi" title="Finish">
+            <stemmer identifier="finish" recommended="true">
+                <label>Finish Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_finish">
+                <label>Light Finish (Savoy, 2003)</label>
+            </stemmer>
+        </group>
+        <group language="fr" title="French">
+            <stemmer identifier="light_french" recommended="true">
+                <label>Light French (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="french">
+                <label>French Snowball</label>
+            </stemmer>
+            <stemmer identifier="minimal_french">
+                <label>Minimal French (Savoy, 1999)</label>
+            </stemmer>
+        </group>
+        <group language="gl" title="Galician">
+            <stemmer identifier="galician" recommended="true">
+                <label>Galician</label>
+            </stemmer>
+            <stemmer identifier="minimal_galician">
+                <label>Minimal Galician (Singular/Plural only)</label>
+            </stemmer>
+        </group>
+        <group language="de" title="German">
+            <stemmer identifier="light_german" recommended="true">
+                <label>Light German (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="german">
+                <label>German Snowball</label>
+            </stemmer>
+            <stemmer identifier="german2">
+                <label>German2 Snowball variant</label>
+            </stemmer>
+            <stemmer identifier="minimal_german">
+                <label>Minimal German (Savoy, 2002a)</label>
+            </stemmer>
+        </group>
+        <group language="hu" title="Hungarian">
+            <stemmer identifier="hungarian" recommended="true">
+                <label>Hungarian (Savoy, 2002a)</label>
+            </stemmer>
+            <stemmer identifier="light_hungarian">
+                <label>Light Hungarian (Savoy, 2006)</label>
+            </stemmer>
+        </group>
+        <group language="it" title="Italian">
+            <stemmer identifier="light_italian" recommended="true">
+                <label>Light Italian (Savoy, 2001)</label>
+            </stemmer>
+            <stemmer identifier="italian">
+                <label>Italian Snowball</label>
+            </stemmer>
+        </group>
+        <group language="nb" title="Norwegian (Bokmal)">
+            <stemmer identifier="norwegian" recommended="true">
+                <label>Norwegian Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_norwegian" recommended="true">
+                <label>Light Norwegian (variant of Light Swedish)</label>
+            </stemmer>
+            <stemmer identifier="minimal_norwegian">
+                <label>Minimal Norwegian</label>
+            </stemmer>
+        </group>
+        <group language="nn" title="Norwegian (Nynorsk)">
+            <stemmer identifier="light_nynorsk" recommended="true">
+                <label>Light Nynorsk (variant of Light Swedish)</label>
+            </stemmer>
+            <stemmer identifier="minimal_nynorsk">
+                <label>Minimal Nynorsk</label>
+            </stemmer>
+        </group>
+        <group language="pt" title="Portuguese">
+            <stemmer identifier="light_portuguese" recommended="true">
+                <label>Light Portuguese (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="minimal_portuguese">
+                <label>Minimal Portuguese (Orengo, 2007)</label>
+            </stemmer>
+            <stemmer identifier="portuguese">
+                <label>Portuguese Snowball</label>
+            </stemmer>
+            <stemmer identifier="portuguese_rslp">
+                <label><![CDATA[Portuguese RSLP (Orengo & Huyck, 2001)]]></label>
+            </stemmer>
+        </group>
+        <group language="ru" title="Russian">
+            <stemmer identifier="russian" recommended="true">
+                <label>Russian Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_russian">
+                <label>Light Russian (Dolamic, 2009)</label>
+            </stemmer>
+        </group>
+        <group language="es" title="Spanish">
+            <stemmer identifier="light_spanish" recommended="true">
+                <label>Light Spanish (Savoy, 2001)</label>
+            </stemmer>
+            <stemmer identifier="spanish">
+                <label>Spanish Snowball</label>
+            </stemmer>
+            <stemmer identifier="spanish_plural">
+                <label>Spanish Plural (Singular/Plural form only)</label>
+            </stemmer>
+        </group>
+        <group language="sv" title="Swedish">
+            <stemmer identifier="swedish" recommended="true">
+                <label>Swedish Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_swedish">
+                <label>Light Swedish (Savoy, 2003)</label>
+            </stemmer>
+        </group>
+    </stemmers>
 </analysis>

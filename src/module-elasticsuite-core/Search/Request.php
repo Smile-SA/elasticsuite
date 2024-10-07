@@ -14,11 +14,12 @@
 
 namespace Smile\ElasticsuiteCore\Search;
 
-use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
-use Magento\Framework\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Magento\Framework\Search\Request\Dimension;
+use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
+use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
  * Default implementation of ElasticSuite search request.
@@ -40,6 +41,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $filter;
 
     /**
+     * @var CollapseInterface
+     */
+    private $collapse;
+
+    /**
      * @var integer
      */
     private $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
@@ -48,6 +54,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @var boolean|integer
      */
     private $trackTotalHits = \Smile\ElasticsuiteCore\Helper\IndexSettings::PER_SHARD_MAX_RESULT_WINDOW;
+
+    /**
+     * @var boolean|integer
+     */
+    private $minScore;
 
     /**
      * Constructor.
@@ -65,6 +76,7 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @param BucketInterface[]    $buckets        Search request aggregations definition.
      * @param string               $spellingType   For fulltext query : the type of spellchecked applied.
      * @param bool|int             $trackTotalHits Value of the 'track_total_hits' ES parameter.
+     * @param bool|int             $minScore       Value of the 'min_score' ES parameter.
      */
     public function __construct(
         $name,
@@ -77,7 +89,8 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         array $dimensions = [],
         array $buckets = [],
         $spellingType = null,
-        $trackTotalHits = null
+        $trackTotalHits = null,
+        $minScore = null
     ) {
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
         $this->filter = $filter;
@@ -89,6 +102,10 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
 
         if ($trackTotalHits !== null) {
             $this->trackTotalHits = $this->parseTrackTotalHits($trackTotalHits);
+        }
+
+        if ($minScore !== null) {
+            $this->minScore = $minScore;
         }
     }
 
@@ -119,6 +136,14 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     /**
      * {@inheritDoc}
      */
+    public function getMinScore()
+    {
+        return $this->minScore;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function isSpellchecked()
     {
         $fuzzySpellingTypes = [
@@ -127,6 +152,40 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         ];
 
         return in_array($this->spellingType, $fuzzySpellingTypes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSpellingType()
+    {
+        return $this->spellingType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCollapse(CollapseInterface $collapse)
+    {
+        $this->collapse = $collapse;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasCollapse()
+    {
+        return ($this->collapse instanceof CollapseInterface);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCollapse()
+    {
+        return $this->collapse;
     }
 
     /**

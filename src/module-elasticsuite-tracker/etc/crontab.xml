@@ -26,5 +26,8 @@
         <job name="elasticsuite_purge_log_event" instance="Smile\ElasticsuiteTracker\Cron\CleanTrackingData" method="execute">
             <schedule>0 1 * * *</schedule>
         </job>
+        <job name="elasticsuite_cleanup_log_event_queue" instance="Smile\ElasticsuiteTracker\Cron\CleanupInvalidEvent" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
     </group>
 </config>

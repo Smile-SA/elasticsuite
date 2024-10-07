@@ -14,6 +14,11 @@
 
 namespace Smile\ElasticsuiteCore\Model;
 
+use Magento\Framework\Search\SearchEngineInterface;
+use Magento\Framework\Search\SearchResponseBuilder;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
+use Smile\ElasticsuiteCore\Model\Search\RequestBuilder;
+
 /**
  * SearchInterface implementation using elasticsuite.
  *
@@ -24,35 +29,43 @@ namespace Smile\ElasticsuiteCore\Model;
 class Search implements \Magento\Search\Api\SearchInterface
 {
     /**
-     * @var \Smile\ElasticsuiteCore\Model\Search\RequestBuilder
+     * @var RequestBuilder
      */
     private $searchRequestBuilder;
 
     /**
-     * @var \Magento\Framework\Search\SearchEngineInterface
+     * @var SearchEngineInterface
      */
     private $searchEngine;
 
     /**
-     * @var \Magento\Framework\Search\SearchResponseBuilder
+     * @var SearchResponseBuilder
      */
     private $searchResponseBuilder;
 
     /**
+     * @var ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Framework\Search\SearchEngineInterface     $searchEngine          Search engine.
-     * @param \Smile\ElasticsuiteCore\Model\Search\RequestBuilder $searchRequestBuilder  Search request builder.
-     * @param \Magento\Framework\Search\SearchResponseBuilder     $searchResponseBuilder Search response builder.
+     * @param SearchEngineInterface $searchEngine          Search engine.
+     * @param RequestBuilder        $searchRequestBuilder  Search request builder.
+     * @param SearchResponseBuilder $searchResponseBuilder Search response builder.
+     * @param ContextInterface      $searchContext         Search context.
      */
     public function __construct(
-        \Magento\Framework\Search\SearchEngineInterface $searchEngine,
-        \Smile\ElasticsuiteCore\Model\Search\RequestBuilder $searchRequestBuilder,
-        \Magento\Framework\Search\SearchResponseBuilder $searchResponseBuilder
+        SearchEngineInterface $searchEngine,
+        RequestBuilder $searchRequestBuilder,
+        SearchResponseBuilder $searchResponseBuilder,
+        ContextInterface $searchContext
     ) {
-            $this->searchRequestBuilder  = $searchRequestBuilder;
-            $this->searchEngine          = $searchEngine;
-            $this->searchResponseBuilder = $searchResponseBuilder;
+        $this->searchRequestBuilder  = $searchRequestBuilder;
+        $this->searchEngine          = $searchEngine;
+        $this->searchResponseBuilder = $searchResponseBuilder;
+        $this->searchContext         = $searchContext;
     }
 
     /**
@@ -68,9 +81,13 @@ class Search implements \Magento\Search\Api\SearchInterface
         $searchResponse = $this->searchEngine->search($searchRequest);
         $searchResult   = $this->searchResponseBuilder->build($searchResponse);
 
+        $query = $this->searchContext->getCurrentSearchQuery();
+
         $totalCount = $searchResponse->count();
         $searchResult->setTotalCount($totalCount);
         $searchResult->setSearchCriteria($searchCriteria);
+        $searchResult->setData('is_spellchecked', (bool) $searchRequest->isSpellchecked());
+        $searchResult->setData('query_id', ($query && $query->getId()) ? (int) $query->getId() : null);
 
         return $searchResult;
     }

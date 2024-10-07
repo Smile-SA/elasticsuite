@@ -80,6 +80,57 @@
                     <validate>integer validate-greater-than-zero</validate>
                 </field>
             </group>
+
+            <group id="min_score_configuration" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Minimum Score Configuration</label>
+                <field id="enable_use_min_score" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Use Min Score</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="min_score_value" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Min Score Value</label>
+                    <depends>
+                        <field id="enable_use_min_score">1</field>
+                    </depends>
+                    <validate>integer validate-no-empty validate-greater-than-zero</validate>
+                    <comment><![CDATA[An integer greater than 0. Documents with a score lower than <code class="literal">min_score</code> are not included in the search results.]]></comment>
+                </field>
+            </group>
+
+            <group id="exact_match_configuration" translate="label" type="text" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Exact Match Configuration</label>
+                <field id="use_default_analyzer" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use default analyzer in exact matching filter query</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Use the default analyzer of each field instead of the 'standard' analyzer for exact matching. Eg : for sku, it will try to match on 'sku.reference' field. If a field is using 'standard_edge_ngram' analyzer, it will try to match on 'field.standard_edge_ngram'. Useful for partial matching, or matching on beginning of words.]]></comment>
+                </field>
+                <field id="use_reference_in_filter" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use reference analyzer in exact matching filter query</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Instead of the 'sku' field, use the 'reference' collector field which contains all searchable fields using the 'reference' analyzer when building the exact/most exact matching filter query. Useful for sku/reference matching.]]></comment>
+                </field>
+                <field id="enable_single_term_custom_boost_values" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Enable single term custom boost values</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: By default, in an exact match query, when a single term is searched, the phrase match boost value (defaults to 10) is used to both a) boost matches in the 'whitespace' version of searchable attributes/fields, in addition of their own search weight and b) apply a double boost (so defaults to 20) on matches in the 'sortable' version of searchable+sortable attributes/fields, in addition of their own search weight. This puts a huge emphasis on accurate "exactly as the user typed it" matches compared to possible singular/plural/conjugated verbs variations. Enable this setting to allow you to choose alternative boost values to use in each case.]]></comment>
+                </field>
+                <field id="single_term_phrase_match_boost_value" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Single term phrase match boost value</label>
+                    <depends>
+                        <field id="enable_single_term_custom_boost_values">1</field>
+                    </depends>
+                    <validate>integer validate-no-empty validate-not-negative-number</validate>
+                    <comment><![CDATA[Experimental: When a single term is searched, a 'whitespace' (instead of 'shingle') part of the exact match query combines the attribute/field search weight with the phrase match boost value (defaults to 10). So for instance, the 'whitespace' version of a product 'name' attribute with a search weight of 5 would be boosted by 50. You can lower that boost value to reduce the scoring gaps between 'standard' exact matches and 'whitespace' exact matches.]]></comment>
+                </field>
+                <field id="single_term_sortable_boost_value" translate="label comment" type="text" sortOrder="100" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Single term sortable matches boost value</label>
+                    <depends>
+                        <field id="enable_single_term_custom_boost_values">1</field>
+                    </depends>
+                    <validate>integer validate-no-empty validate-not-negative-number</validate>
+                    <comment><![CDATA[Experimental: The 'sortable' part of the exact match query combines the attribute/field search weight with twice the phrase match boost value (so defaults to 20). So for instance, the 'sortable' version of a product 'name' attribute with a search weight of 5 would be boosted by 100. You can lower that boost value to reduce the scoring gaps between 'standard' exact matches and 'sortable' exact matches.]]></comment>
+                </field>
+            </group>
         </section>
 
         <section id="spellchecking" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
@@ -92,6 +143,21 @@
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Enable Fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="use_default_minimum_should_match" translate="label" type="select" sortOrder="11" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Use default Minimum Should Match</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When set to 'yes', the fuzzy queries will use the default value for the Minimum Should Match, defined in Relevance Configuration > Fulltext Base Settings > Minimum Should Match.]]></comment>
+                    <depends>
+                        <field id="enable_fuzziness">1</field>
+                    </depends>
+                </field>
+                <field id="minimum_should_match" translate="label" type="text" sortOrder="12" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Minimum Should Match</label>
+                    <depends>
+                        <field id="enable_fuzziness">1</field>
+                        <field id="use_default_minimum_should_match">0</field>
+                    </depends>
                 </field>
                 <field id="value" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness Value</label>
@@ -129,6 +195,24 @@
                 </field>
             </group>
 
+            <group id="term_vectors" translate="label" type="text" sortOrder="60" showInDefault="1" showInContainer="1" showInStore="1">
+                <label>Term Vectors Configuration</label>
+                <field id="use_all_tokens" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use all tokens from term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Take into account all tokens from the term vectors response, instead of one token per position. Useful for sku/reference matching.]]></comment>
+                </field>
+                <field id="use_reference_analyzer" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use reference analyzer in term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Include the 'reference' collector field which contains all searchable fields using the 'reference' analyzer when performing the term vectors request. Useful for sku/reference matching.]]></comment>
+                </field>
+                <field id="use_edge_ngram_analyzer" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Use edge ngram analyzer in term vectors</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Experimental: Include the 'edge_ngram' collector field which contains all searchable fields using an analyzer containing an edge ngram component (like 'standard_edge_ngram') when performing the term vectors request. Useful for triggering exact matching on partial search terms that are only present in fields using an edge ngram component.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

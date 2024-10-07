@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
 
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
@@ -26,6 +27,8 @@ use Smile\ElasticsuiteCore\Index\Mapping;
 
 /**
  * Fulltext query builder test case.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
@@ -206,11 +209,12 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private function getRelevanceConfig()
     {
-        $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)
-            ->getMock();
+        $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)->getMock();
+        $fuzzinessConfig = $this->getMockBuilder(FuzzinessConfigurationInterface::class)->getMock();
 
         $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
         $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
+        $relevanceConfig->method('getFuzzinessConfiguration')->will($this->returnValue($fuzzinessConfig));
 
         return $relevanceConfig;
     }
@@ -226,6 +230,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         $fieldFilterMock->method('filterField')->will($this->returnValue(true));
 
-        return ['searchableFieldFilter' => $fieldFilterMock, 'fuzzyFieldFilter' => $fieldFilterMock];
+        return [
+            'searchableFieldFilter'       => $fieldFilterMock,
+            'fuzzyFieldFilter'            => $fieldFilterMock,
+            'nonStandardFuzzyFieldFilter' => $fieldFilterMock,
+        ];
     }
 }

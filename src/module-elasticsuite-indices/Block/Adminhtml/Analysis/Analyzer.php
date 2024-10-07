@@ -17,7 +17,7 @@ use Exception;
 use Magento\Backend\Block\Template;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
-use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexSettings\CollectionFactory as IndexSettingsFactory;
+use Smile\ElasticsuiteIndices\Model\ResourceModel\IndexSettings\CollectionFactory;
 
 /**
  * Adminhtml Analysis by Analyzer Block.
@@ -34,26 +34,26 @@ class Analyzer extends Template
     protected $indexStatsProvider;
 
     /**
-     * @var IndexSettingsFactory
+     * @var CollectionFactory
      */
-    protected $indexSettingsFactory;
+    protected $collectionFactory;
 
     /**
      * Analyzer Constructor.
      *
-     * @param Template\Context     $context              The current context.
-     * @param IndexStatsProvider   $indexStatsProvider   Index stats provider.
-     * @param IndexSettingsFactory $indexSettingsFactory Index settings factory.
-     * @param array                $data                 Data.
+     * @param Template\Context   $context            The current context.
+     * @param IndexStatsProvider $indexStatsProvider Index stats provider.
+     * @param CollectionFactory  $collectionFactory  Index settings factory.
+     * @param array              $data               Data.
      */
     public function __construct(
         Template\Context $context,
         IndexStatsProvider $indexStatsProvider,
-        IndexSettingsFactory $indexSettingsFactory,
+        CollectionFactory $collectionFactory,
         array $data = []
     ) {
-        $this->indexStatsProvider   = $indexStatsProvider;
-        $this->indexSettingsFactory = $indexSettingsFactory;
+        $this->indexStatsProvider = $indexStatsProvider;
+        $this->collectionFactory  = $collectionFactory;
         parent::__construct($context, $data);
     }
 
@@ -77,7 +77,7 @@ class Analyzer extends Template
 
             foreach ($elasticSuiteIndices as $indexName => $indexAlias) {
                 $indexData = $this->indexStatsProvider->indexStats($indexName, $indexAlias);
-                $indexCollection = $this->indexSettingsFactory->create(['name' => $indexData['index_name']])->load();
+                $indexCollection = $this->collectionFactory->create(['name' => $indexData['index_name']])->load();
 
                 if (array_key_exists('index_status', $indexData)
                     && !in_array($indexData['index_status'], $excludedIndexStatus)) {

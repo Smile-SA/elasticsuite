@@ -28,6 +28,7 @@
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
                 <item name="searches" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Search</item>
+                <item name="mapPageIdentifier" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier</item>
             </argument>
         </arguments>
     </type>
@@ -74,5 +75,46 @@
         </arguments>
     </type>
 
-    
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elasticsuiteTrackerCheckIndexedData" xsi:type="object">Smile\ElasticsuiteTracker\Console\CheckData</item>
+                <item name="elasticsuiteTrackerFixIndexedData" xsi:type="object">Smile\ElasticsuiteTracker\Console\FixData</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Console\CheckData">
+        <arguments>
+            <argument name="checker" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Console\FixData">
+        <arguments>
+            <argument name="checker" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker">
+        <arguments>
+            <argument name="checkers" xsi:type="array">
+                <item name="undefinedSessionIdInEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId</item>
+                <item name="undefinedSessionIdInSessions" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">\Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Fixer\Session\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
 </config>

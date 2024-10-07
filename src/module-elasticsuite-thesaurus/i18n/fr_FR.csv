@@ -1,8 +1,8 @@
 Thesaurus,Thesaurus
-"Add New Thesaurus","Add New Thesaurus"
-"Create Thesaurus","Create Thesaurus"
-"Create a Thesaurus","Create a Thesaurus"
-Synonym,Synonym
+"Add New Thesaurus","Ajouter un nouveau Thésaurus"
+"Create Thesaurus","Créer Thésaurus"
+"Create a Thesaurus","Créer un Thésaurus"
+Synonym,Synonyme
 Expansion,Expansion
 Type,Type
 "Thesaurus Type","Type de thésaurus"
@@ -48,3 +48,18 @@ Status,Status
 Inactive,Désactivé
 Action,Action
 Edit,Editer
+Any,Tous
+Mass Actions,Actions de masse
+Enable,Activer
+Disable,Désactiver
+Select All,Tout sélectionner
+Unselect All,Tout déselectionner
+Select Visible,Sélectionner visibles
+Unselect Visible,Désectionner visibles
+"Are you sure you want to enable the selected thesaurus?","Êtes-vous sûr(e) de vouloir activer les thésaurus sélectionnés ?"
+"Are you sure you want to disable the selected thesaurus?","Êtes-vous sûr(e) de vouloir désactiver les thésaurus sélectionnés ?"
+"Are you sure you want to delete the selected thesaurus?","Êtes-vous sûr(e) de vouloir supprimer les thésaurus sélectionnés ?"
+"Please select thesaurus to disable.","Veuillez sélectionner un thésaurus à désactiver."
+"Total of %1 thesaurus were disabled.","Un total de %1 thesaurus ont été désactivés."
+"Please select thesaurus to enable.","Veuillez sélectionner un thésaurus à activer."
+"Total of %1 thesaurus were enabled.","Un total de %1 thesaurus ont été activés."

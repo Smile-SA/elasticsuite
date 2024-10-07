@@ -82,11 +82,29 @@
     <preference for="Magento\Framework\Api\Search\SearchCriteriaInterface"
                 type="Smile\ElasticsuiteCore\Search\SearchCriteria" />
 
+    <!-- Pipeline Management related interfaces -->
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineManager"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\Pipeline"/>
+
+    <preference for="Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineProcessorProviderInterface"
+                type="Smile\ElasticsuiteCore\Index\Ingest\PipelineProcessorProvider"/>
+
+    <preference for="Smile\ElasticsuiteCore\Search\Request\CollapseInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\Collapse" />
+
+    <preference for="Smile\ElasticsuiteCore\Search\Request\InnerHitsInterface"
+                type="Smile\ElasticsuiteCore\Search\Request\InnerHits" />
+
     <type name="Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder">
         <arguments>
             <argument name="fieldFilters" xsi:type="array">
                 <item name="searchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter</item>
+                <item name="nonStandardSearchableFieldFilter" xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardSearchableFieldFilter</item>
                 <item name="fuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\FuzzyFieldFilter</item>
+                <item name="nonStandardFuzzyFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\NonStandardFuzzyFieldFilter</item>
                 <item name="spannableFieldFilter"  xsi:type="object">Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SpannableFieldFilter</item>
             </argument>
         </arguments>
@@ -120,6 +138,8 @@
                 <item name="spanTermQuery" xsi:type="object">spanTermFactory</item>
                 <item name="spanWithinQuery" xsi:type="object">spanWithinFactory</item>
                 <item name="prefixQuery" xsi:type="object">prefixQueryFactory</item>
+                <item name="neuralQuery" xsi:type="object">neuralQueryFactory</item>
+                <item name="regexpQuery" xsi:type="object">regexpQueryFactory</item>
             </argument>
         </arguments>
     </type>
@@ -149,6 +169,8 @@
     <virtualType name="spanTermFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanTermFactory" />
     <virtualType name="spanWithinFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanWithinFactory" />
     <virtualType name="prefixQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\PrefixFactory" />
+    <virtualType name="neuralQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Vector\Opensearch\NeuralFactory" />
+    <virtualType name="regexpQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\RegexpFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -178,6 +200,8 @@
                 <item name="spanTermQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanTerm\Proxy</item>
                 <item name="spanWithinQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanWithin\Proxy</item>
                 <item name="prefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Prefix\Proxy</item>
+                <item name="neuralQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Opensearch\Neural\Proxy</item>
+                <item name="regexpQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Regexp\Proxy</item>
             </argument>
         </arguments>
     </type>
@@ -499,7 +523,7 @@
     <type name="Magento\AdvancedSearch\Model\SuggestedQueries">
         <arguments>
             <argument name="data" xsi:type="array">
-                <item name="elasticsuite" xsi:type="string">Magento\AdvancedSearch\Model\DataProvider\Suggestions</item>
+                <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Model\DataProvider\Suggestions</item>
             </argument>
         </arguments>
     </type>
@@ -546,7 +570,7 @@
     <!-- Async Operations -->
     <virtualType name="elasticsuiteAsyncClientBuilder" type="Smile\ElasticsuiteCore\Client\ClientBuilder">
         <arguments>
-            <argument name="selector" xsi:type="string">\Elasticsearch\ConnectionPool\Selectors\RoundRobinSelector</argument>
+            <argument name="selector" xsi:type="string">\OpenSearch\ConnectionPool\Selectors\RoundRobinSelector</argument>
         </arguments>
     </virtualType>
 
@@ -610,4 +634,21 @@
         <plugin name="addElasticsuiteToAuthorizedSearchEngines" type="Smile\ElasticsuiteCore\Plugin\Setup\SearchConfigOptionsListPlugin"/>
     </type>
 
+    <virtualType name="relevanceConfigData" type="\Magento\Framework\App\Config\Data">
+        <arguments>
+            <argument name="processor" xsi:type="object">\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\MetadataProcessor</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="relevanceConfigDataFactory" type="\Magento\Framework\App\Config\DataFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">relevanceConfigData</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="\Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool">
+        <arguments>
+            <argument name="dataFactory" xsi:type="object">relevanceConfigDataFactory</argument>
+        </arguments>
+    </type>
 </config>

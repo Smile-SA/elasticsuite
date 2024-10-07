@@ -21,7 +21,10 @@
     </head>
     <body>
         <referenceBlock name="head.additional">
-            <block template="Smile_ElasticsuiteTracker::config.phtml" class="Smile\ElasticsuiteTracker\Block\Config" name="smile.tracker.config">
+            <block template="Smile_ElasticsuiteTracker::config.phtml"
+                   class="Smile\ElasticsuiteTracker\Block\Config"
+                   name="smile.tracker.config"
+                   ifconfig="smile_elasticsuite_tracker/general/enabled">
                 <arguments>
                     <argument name="userConsentScript" xsi:type="string">Smile_ElasticsuiteTracker/js/user-consent</argument>
                     <argument name="userConsentConfig" xsi:type="array">
@@ -32,8 +35,12 @@
             </block>
         </referenceBlock>
         <referenceContainer name="before.body.end">
-            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Base" name="smile.tracker.page.base" />
-            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Catalog" name="smile.tracker.page.catalog" />
+            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Base"
+                   name="smile.tracker.page.base"
+                   ifconfig="smile_elasticsuite_tracker/general/enabled" />
+            <block class="Smile\ElasticsuiteTracker\Block\Variables\Page\Catalog"
+                   name="smile.tracker.page.catalog"
+                   ifconfig="smile_elasticsuite_tracker/general/enabled" />
         </referenceContainer>
     </body>
 </page>

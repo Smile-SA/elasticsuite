@@ -72,10 +72,13 @@ class Products implements ResolverInterface
         return [
             'total_count'   => $searchResult->getTotalCount(),
             'items'         => $searchResult->getProductsSearchResult(),
+            'suggestions'   => $searchResult->getSuggestions(),
             'page_info'     => [
                 'page_size'    => $searchResult->getPageSize(),
                 'current_page' => $searchResult->getCurrentPage(),
                 'total_pages'  => $searchResult->getTotalPages(),
+                'is_spellchecked' => $searchResult->isSpellchecked(),
+                'query_id'     => $searchResult->getQueryId(),
             ],
             'search_result' => $searchResult,
             'layer_type'    => $layerType,

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalog adminhtml events.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2023 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="product_attribute_grid_build">
+        <!-- Adds the custom columns to the product attribute grid -->
+        <observer name="smile_elasticsuite_product_attribute_grid_column" instance="Smile\ElasticsuiteCatalog\Observer\Grid\ProductAttributeGridColumnObserver" />
+    </event>
+
+    <event name="backend_block_widget_grid_prepare_grid_before">
+        <!-- Adds an export button to the header of the product attribute grid -->
+        <observer name="smile_elasticsuite_product_attribute_grid_export" instance="Smile\ElasticsuiteCatalog\Observer\Grid\ProductAttributeGridExportObserver" />
+    </event>
+
+    <event name="adminhtml_catalog_product_attribute_edit_frontend_prepare_field_dependencies">
+        <!--
+            Circumventing the strange logic of ACP2E-1854. The specific class in addition of the disabled is to avoid
+            a warning/an error on 2.4.6 where the observer class does not exist.
+        -->
+        <observer disabled="true" name="layeredNavigation" instance="Smile\ElasticsuiteCatalog\Observer\Edit\Tab\Front\ProductAttributeFormBuildFormFieldDependenciesObserver" />
+    </event>
+</config>

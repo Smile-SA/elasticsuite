@@ -118,6 +118,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         if ($this->category && $this->category->getId()) {
             $this->applyCategory();
         }
+
+        return $this;
     }
 
     /**

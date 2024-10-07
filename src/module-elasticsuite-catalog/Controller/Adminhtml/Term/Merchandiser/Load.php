@@ -85,6 +85,7 @@ class Load extends Term
 
         $responseData = ['products' => [], 'size' => 0];
 
+        $this->searchContext->setIsBlacklistingApplied(false);
         if ($query->getId()) {
             $this->searchContext->setCurrentSearchQuery($query);
             $productPositions = $this->getRequest()->getParam('product_position', []);
@@ -96,6 +97,7 @@ class Load extends Term
         }
 
         $json = $this->jsonHelper->jsonEncode($responseData);
-        $this->getResponse()->representJson($json);
+
+        return $this->getResponse()->representJson($json);
     }
 }

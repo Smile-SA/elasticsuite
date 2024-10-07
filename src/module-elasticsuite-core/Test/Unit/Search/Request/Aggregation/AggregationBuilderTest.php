@@ -184,9 +184,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private function getQueryBuilder()
     {
-        $queryMock = $this->getMockBuilder(QueryInterface::class)
-            ->setMethods(['getQuery', 'getName', 'getType', 'getBoost'])
-            ->getMock();
+        $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
 
         $queryFactory = $this->getMockBuilder(QueryFactory::class)->disableOriginalConstructor()->getMock();
         $queryFactory->method('create')->will($this->returnValue($queryMock));
@@ -251,7 +249,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private function getMetricFactory()
     {
-        return $this->getMockBuilder(MetricFactory::class)->getMock();
+        return $this->getMockBuilder(MetricFactory::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -261,6 +259,6 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
      */
     private function getPipelineFactory()
     {
-        return $this->getMockBuilder(PipelineFactory::class)->getMock();
+        return $this->getMockBuilder(PipelineFactory::class)->disableOriginalConstructor()->getMock();
     }
 }

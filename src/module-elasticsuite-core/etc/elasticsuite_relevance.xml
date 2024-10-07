@@ -15,7 +15,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Smile_ElasticsuiteCore:etc/elasticsuite_relevance_initial_config.xsd">
     <default>
         <relevance>
             <fulltext_base_settings>
@@ -34,10 +34,23 @@
                 <span_match_boost_value>10</span_match_boost_value>
                 <span_size>1</span_size>
             </span_match_configuration>
+            <min_score_configuration>
+                <enable_use_min_score>0</enable_use_min_score>
+                <min_score_value>0</min_score_value>
+            </min_score_configuration>
+            <exact_match_configuration>
+                <use_default_analyzer>0</use_default_analyzer>
+                <use_reference_in_filter>0</use_reference_in_filter>
+                <enable_single_term_custom_boost_values>0</enable_single_term_custom_boost_values>
+                <single_term_phrase_match_boost_value>10</single_term_phrase_match_boost_value>
+                <single_term_sortable_boost_value>20</single_term_sortable_boost_value>
+            </exact_match_configuration>
         </relevance>
         <spellchecking>
             <fuzziness>
                 <enable>1</enable>
+                <use_default_minimum_should_match>1</use_default_minimum_should_match>
+                <minimum_should_match>100%</minimum_should_match>
                 <value>AUTO</value>
                 <prefix_length>1</prefix_length>
                 <max_expansion>10</max_expansion>
@@ -45,6 +58,11 @@
             <phonetic>
                 <enable>1</enable>
             </phonetic>
+            <term_vectors>
+                <use_all_tokens>0</use_all_tokens>
+                <use_reference_analyzer>0</use_reference_analyzer>
+                <use_edge_ngram_analyzer>0</use_edge_ngram_analyzer>
+            </term_vectors>
         </spellchecking>
     </default>
 </config>

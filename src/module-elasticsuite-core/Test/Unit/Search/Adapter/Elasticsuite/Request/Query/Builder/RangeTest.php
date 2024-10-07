@@ -46,22 +46,6 @@ class RangeTest extends AbstractSimpleQueryBuilderTest
     }
 
     /**
-     * Test the builder with mandatory + name params.
-     *
-     * @return void
-     */
-    public function testNamedRangeQueryBuilder()
-    {
-        $builder = $this->getQueryBuilder();
-
-        $rangeQuery = new RangeQuery('field', ['bounds'], 'queryName');
-        $query = $builder->buildQuery($rangeQuery);
-
-        $this->assertArrayHasKey('_name', $query['range']);
-        $this->assertEquals('queryName', $query['range']['_name']);
-    }
-
-    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

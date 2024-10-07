@@ -37,21 +37,37 @@ jobs:
             matrix:
                 include:
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6'
+                    magento-versions: '2.4.6-p6'
                     magento-editions: 'enterprise'
                     experimental: false
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p1'
+                    magento-editions: 'enterprise'
+                    experimental: true
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -62,7 +78,7 @@ jobs:
 
         steps:
             - name: "[Init] Checkout"
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
               with:
                 ref: ${{ github.event.pull_request.head.sha }}
                 persist-credentials: false
@@ -73,11 +89,14 @@ jobs:
                   php-version: ${{ matrix.php-versions }}
                   extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
                   ini-values: post_max_size=256M, max_execution_time=180
+              env:
+                  update: true
 
             - name: "[Init] Add php-fpm"
               env:
                   version: ${{ matrix.php-versions }}
               run: |
+                sudo apt-get -qq update
                 sudo apt-get install -y php$version-fpm
                 sudo service php$version-fpm start
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
@@ -120,22 +139,20 @@ jobs:
 
             - name: "[Init] Determine composer cache directory"
               id: composer-cache-directory
-              run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+              run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
 
             - name: "[Init] Cache Composer cache"
               id: composer-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ${{ steps.composer-cache-directory.outputs.directory }}
                   key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-                      composer-${{ matrix.php-versions }}-
 
             - name: "[Init] Cache Magento install"
               id: magento-cache
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ${{ env.magento-directory }}
                   key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
@@ -188,8 +205,7 @@ jobs:
                   MAGENTO_ROOT: ${{ env.magento-directory }}
               working-directory: ${{ env.magento-directory }}
               run: |
-                sudo find . -type f -exec chmod 644 {} \;
-                sudo find . -type d -exec chmod 755 {} \;
+                sudo chmod -R a=r,u+w,a+X .
                 sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
                 sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
                 sudo chown -R runner:www-data .
@@ -239,16 +255,6 @@ jobs:
               run: |
                   rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
 
-            - name: "[Init] Data : Cleanup for PHP 8.2"
-              working-directory: ${{ env.magento-directory }}
-              env:
-                PHP_VERSION: ${{ matrix.php-versions }}
-              run: |
-                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
-                if [ $(version $PHP_VERSION) -ge $(version "8.2") ]; then
-                  sed -i '53i protected $galleryResource;' vendor/magento/module-catalog-sample-data-venia/Setup/Product/Gallery.php
-                fi
-
             - name: "[Test] Data : Install"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade --keep-generated
@@ -290,6 +296,11 @@ jobs:
                 then
                   exit 2;
                 fi;
+
+            - name: "[Test] Rest : Schema"
+              run: |
+                echo "==> Testing Rest Schema..."
+                curl -i -X GET http://localhost/rest/all/schema?services=all
 
             - name: "[Test] GraphQl : Schema"
               run: |

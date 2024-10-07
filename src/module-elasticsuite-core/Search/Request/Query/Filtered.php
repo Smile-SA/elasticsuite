@@ -75,6 +75,16 @@ class Filtered implements QueryInterface
     /**
      * {@inheritDoc}
      */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getBoost()
     {
         return $this->boost;

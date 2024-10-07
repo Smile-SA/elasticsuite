@@ -29,6 +29,18 @@
                     <argument name="notification" xsi:type="object">Smile\ElasticsuiteTracker\ViewModel\Notification</argument>
                 </arguments>
             </block>
+            <uiComponent name="elasticsuite_hs_notification">
+                <visibilityCondition name="can_view_elasticsuite_notification" className="Smile\ElasticsuiteTracker\Model\Condition\CanViewNotification">
+                    <arguments>
+                        <argument name="notification_code" xsi:type="string">elasticsuite_hs</argument>
+                    </arguments>
+                </visibilityCondition>
+            </uiComponent>
+            <block name="elasticsuite_hs" template="Smile_ElasticsuiteTracker::notification.phtml">
+                <arguments>
+                    <argument name="notification" xsi:type="object">Smile\ElasticsuiteTracker\ViewModel\Hs</argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>
