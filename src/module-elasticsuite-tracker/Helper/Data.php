@@ -220,7 +220,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Retrieve anonymization delay (in days).
+     * Retrieve anonymization delay (in months).
      *
      * @return int
      */
