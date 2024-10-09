@@ -163,6 +163,7 @@ class Spellchecker implements SpellcheckerInterface
                 MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText(),
             ],
         ];
+        $perFieldAnalyzer = [];
 
         if ($request->isUsingReference()) {
             $doc['fields'][] = MappingInterface::DEFAULT_REFERENCE_FIELD . "." . FieldInterface::ANALYZER_REFERENCE;
@@ -171,7 +172,13 @@ class Spellchecker implements SpellcheckerInterface
 
         if ($request->isUsingEdgeNgram()) {
             $doc['fields'][] = MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM;
+            $perFieldAnalyzer[MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM]
+                = FieldInterface::ANALYZER_STANDARD;
             $doc['doc'][MappingInterface::DEFAULT_EDGE_NGRAM_FIELD] = $request->getQueryText();
+        }
+
+        if (!empty($perFieldAnalyzer)) {
+            $doc['per_field_analyzer'] = $perFieldAnalyzer;
         }
 
         $docs = [];
