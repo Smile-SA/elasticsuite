@@ -47,7 +47,10 @@ class FunctionScore extends AbstractComplexBuilder implements BuilderInterface
 
         foreach ($searchQueryParams['functions'] as &$function) {
             if (isset($function['filter'])) {
-                $function['filter'] = $this->parentBuilder->buildQuery($function['filter']);
+                // Filter query might have been prebuilt for performance reasons, if not built it now.
+                if ($function['filter'] instanceof QueryInterface) {
+                    $function['filter'] = $this->parentBuilder->buildQuery($function['filter']);
+                }
             }
         }
 
