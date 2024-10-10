@@ -81,7 +81,8 @@ class CustomerCompanySelector extends Template
      */
     public function isCompanyEnabled()
     {
-        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_B2B_COMPANY_ACTIVE_XPATH,
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_IS_B2B_COMPANY_ACTIVE_XPATH,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
     }
