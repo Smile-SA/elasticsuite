@@ -22,6 +22,8 @@ use Magento\Quote\Model\Quote;
 /**
  * Log add to cart events into the event queue.
  *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
@@ -65,6 +67,8 @@ class QuotePlugin
 
     /**
      * Constructor.
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service         Tracker service.
      * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager   Cookie manager.
