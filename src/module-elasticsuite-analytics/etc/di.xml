@@ -24,6 +24,7 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -43,6 +44,7 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
             <argument name="containerName" xsi:type="string">tracking_log_session</argument>
         </arguments>
@@ -63,6 +65,7 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -86,6 +89,7 @@
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\QueryProvider</item>
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -109,6 +113,7 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -128,6 +133,7 @@
             <argument name="queryProviders" xsi:type="array">
                 <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
                 <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
         </arguments>
     </type>

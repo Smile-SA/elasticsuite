@@ -19,12 +19,12 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteAnalytics\Model\Report\Context;
 
 /**
- * Customer group id filter query provider.
+ * Customer company id filter query provider.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteAnalytics
  */
-class CustomerGroupIdFilterQueryProvider implements QueryProviderInterface
+class CustomerCompanyIdFilterQueryProvider implements QueryProviderInterface
 {
     /**
      * @var QueryFactory
@@ -37,7 +37,7 @@ class CustomerGroupIdFilterQueryProvider implements QueryProviderInterface
     private $context;
 
     /**
-     * CustomerGroupIdFilterQueryProvider constructor.
+     * CustomerCompanyIdFilterQueryProvider constructor.
      *
      * @param QueryFactory $queryFactory Query factory.
      * @param Context      $context      Report context.
@@ -53,22 +53,22 @@ class CustomerGroupIdFilterQueryProvider implements QueryProviderInterface
      */
     public function getQuery()
     {
-        // Get customer group ID from the context.
-        $customerGroupId = $this->context->getCustomerGroupId();
+        // Get customer company ID from the context.
+        $customerCompanyId = $this->context->getCustomerCompanyId();
 
-        // Check if customer group ID is set and not 'all'.
-        if ($customerGroupId !== 'all' && $customerGroupId !== null) {
-            // Return a TERM query for the customer group ID.
+        // Check if customer company ID is set and not 'all'.
+        if ($customerCompanyId !== 'all' && $customerCompanyId !== null) {
+            // Return a TERM query for the customer company ID.
             return $this->queryFactory->create(
                 QueryInterface::TYPE_TERM,
                 [
-                    'field' => 'customer.group_id',
-                    'value' => (int) $customerGroupId,
+                    'field' => 'customer.company_id',
+                    'value' => (int) $customerCompanyId,
                 ]
             );
         }
 
-        // If 'all' is selected or no customer group ID is set, return null (no filtering).
+        // If 'all' is selected or no customer company ID is set, return null (no filtering).
         return null;
     }
 }

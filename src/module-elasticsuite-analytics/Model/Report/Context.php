@@ -77,6 +77,16 @@ class Context
     }
 
     /**
+     * Get customer company ID.
+     *
+     * @return mixed
+     */
+    public function getCustomerCompanyId()
+    {
+        return $this->request->getParam('company_id');
+    }
+
+    /**
      * Get date range.
      *
      * @return array

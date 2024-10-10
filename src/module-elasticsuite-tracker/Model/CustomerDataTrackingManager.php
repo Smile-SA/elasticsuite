@@ -34,9 +34,9 @@ class CustomerDataTrackingManager
     protected $customerSession;
 
     /**
-     * @var \Magento\Company\Api\CompanyRepositoryInterface|null
+     * @var \Magento\Company\Api\CompanyManagementInterface|null
      */
-    private $companyRepository = null;
+    private $companyManagement = null;
 
     /**
      * CustomerDataTrackingManager constructor.
@@ -52,12 +52,12 @@ class CustomerDataTrackingManager
         $this->customerSession = $customerSession;
         // Check if Magento_Company module is enabled before attempting to load the repository.
         if ($moduleManager->isEnabled('Magento_Company')) {
-            if (interface_exists('\Magento\Company\Api\CompanyRepositoryInterface')) {
-                $this->companyRepository = ObjectManager::getInstance()->get(
-                    \Magento\Company\Api\CompanyRepositoryInterface::class
+            if (interface_exists('\Magento\Company\Api\CompanyManagementInterface')) {
+                $this->companyManagement = ObjectManager::getInstance()->get(
+                    \Magento\Company\Api\CompanyManagementInterface::class
                 );
             } else {
-                throw new LocalizedException(__('CompanyRepositoryInterface is not available.'));
+                throw new LocalizedException(__('CompanyManagementInterface is not available.'));
             }
         }
     }
@@ -80,12 +80,15 @@ class CustomerDataTrackingManager
         $customer = $this->customerSession->getCustomer();
         $variables['group_id'] = (int) $customer->getGroupId() ?? \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID;
 
-        // Check if the customer is logged in and Magento_Company is enabled.
-        if ($this->customerSession->isLoggedIn() && (null !== $this->companyRepository)) {
+        if ($this->customerSession->isLoggedIn() && (null !== $this->companyManagement)) {
             try {
-                // Retrieve company information by customer ID.
-                $company = $this->companyRepository->getByCustomerId($customer->getId());
-                $variables['company_id'] = (int) $company->getId();
+                // Use CompanyUserManager to retrieve company information by customer ID.
+                $company = $this->companyManagement->getByCustomerId($customer->getId());
+
+                // If company is found, add the company ID to the variables array.
+                if ($company) {
+                    $variables['company_id'] = (int) $company->getId();
+                }
             } catch (NoSuchEntityException $e) {
                 // No company found for this customer.
             }

@@ -17,7 +17,6 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <script src="https://www.gstatic.com/charts/loader.js" src_type="url" />
-        <script src="Smile_ElasticsuiteAnalytics::js/report/customer-group-selector.js" />
     </head>
     <update handle="styles" />
     <body>
@@ -27,8 +26,12 @@
                     <argument name="use_confirm" xsi:type="boolean">false</argument>
                 </arguments>
             </block>
-            <!-- Adding the customer group selector block at the top of the page -->
-            <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerGroupSelector" name="report.customerGroup.selector" template="Smile_ElasticsuiteAnalytics::report/customer_group_selector.phtml" after="report.store.switcher" />
+
+            <!-- Adding the customer group and company selector blocks at the top of the page -->
+            <container name="page-customer-actions" htmlTag="div" htmlClass="page-customer-actions">
+                <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerGroupSelector" name="report.customerGroup.selector" template="Smile_ElasticsuiteAnalytics::report/customer_group_selector.phtml" after="report.store.switcher" />
+                <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector" name="report.companyId.selector" ifconfig="btob/website_configuration/company_active" template="Smile_ElasticsuiteAnalytics::report/customer_company_selector.phtml" after="report.customerGroup.selector" />
+            </container>
 
             <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher" name="report.dateRange.switcher"/>
         </referenceContainer>
