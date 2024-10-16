@@ -38,6 +38,13 @@ interface ClientInterface
     public function nodes();
 
     /**
+     * Returns cluster information.
+     *
+     * @return mixed
+     */
+    public function cluster();
+
+    /**
      * Try to connect the server and returns :
      * - true if succeed
      * - false if failed

@@ -75,6 +75,14 @@ class Client implements ClientInterface
     /**
      * {@inheritDoc}
      */
+    public function cluster()
+    {
+        return $this->getEsClient()->cluster();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function ping()
     {
         return $this->getEsClient()->ping();

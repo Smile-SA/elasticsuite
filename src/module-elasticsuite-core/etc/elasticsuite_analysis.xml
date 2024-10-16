@@ -150,7 +150,7 @@
             <!--
                 Known issues with the "french" stemmer.
                  -->
-            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo", "clef => cle", "clefs => cle"]</rules>
+            <rules>["clous => clou", "verrous => verrou", "ecrous => ecrou", "jeux => jeu", "photos => photo", "clef => cle", "clefs => cle", "compas => compas"]</rules>
         </filter>
         <filter name="stemmer_override" type="stemmer_override" language="it">
             <!--
@@ -319,4 +319,152 @@
         </normalizer>
         -->
     </normalizers>
+
+    <stemmers>
+        <group language="nl" title="Dutch">
+            <stemmer identifier="dutch" recommended="true">
+                <label>Dutch Snowball</label>
+            </stemmer>
+            <stemmer identifier="dutch_kp">
+                <label>Dutch KP (Kraaij-Pohlmann)</label>
+            </stemmer>
+        </group>
+        <group language="en" title="English">
+            <stemmer identifier="english" recommended="true">
+                <label>English Porter</label>
+            </stemmer>
+            <stemmer identifier="light_english">
+                <label>Light English (Krovetz, 2000)</label>
+            </stemmer>
+            <stemmer identifier="lovins">
+                <label>English Lovins</label>
+            </stemmer>
+            <stemmer identifier="minimal_english">
+                <label>Minimal English (Harman, 1991)</label>
+            </stemmer>
+            <stemmer identifier="porter2">
+                <label>English Porter2</label>
+            </stemmer>
+            <stemmer identifier="possessive_english">
+                <label>English Possessive</label>
+            </stemmer>
+        </group>
+        <group language="fi" title="Finish">
+            <stemmer identifier="finish" recommended="true">
+                <label>Finish Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_finish">
+                <label>Light Finish (Savoy, 2003)</label>
+            </stemmer>
+        </group>
+        <group language="fr" title="French">
+            <stemmer identifier="light_french" recommended="true">
+                <label>Light French (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="french">
+                <label>French Snowball</label>
+            </stemmer>
+            <stemmer identifier="minimal_french">
+                <label>Minimal French (Savoy, 1999)</label>
+            </stemmer>
+        </group>
+        <group language="gl" title="Galician">
+            <stemmer identifier="galician" recommended="true">
+                <label>Galician</label>
+            </stemmer>
+            <stemmer identifier="minimal_galician">
+                <label>Minimal Galician (Singular/Plural only)</label>
+            </stemmer>
+        </group>
+        <group language="de" title="German">
+            <stemmer identifier="light_german" recommended="true">
+                <label>Light German (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="german">
+                <label>German Snowball</label>
+            </stemmer>
+            <stemmer identifier="german2">
+                <label>German2 Snowball variant</label>
+            </stemmer>
+            <stemmer identifier="minimal_german">
+                <label>Minimal German (Savoy, 2002a)</label>
+            </stemmer>
+        </group>
+        <group language="hu" title="Hungarian">
+            <stemmer identifier="hungarian" recommended="true">
+                <label>Hungarian (Savoy, 2002a)</label>
+            </stemmer>
+            <stemmer identifier="light_hungarian">
+                <label>Light Hungarian (Savoy, 2006)</label>
+            </stemmer>
+        </group>
+        <group language="it" title="Italian">
+            <stemmer identifier="light_italian" recommended="true">
+                <label>Light Italian (Savoy, 2001)</label>
+            </stemmer>
+            <stemmer identifier="light_hungarian">
+                <label>Italian Snowball</label>
+            </stemmer>
+        </group>
+        <group language="nb" title="Norwegian (Bokmal)">
+            <stemmer identifier="norwegian" recommended="true">
+                <label>Norwegian Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_norwegian" recommended="true">
+                <label>Light Norwegian (variant of Light Swedish)</label>
+            </stemmer>
+            <stemmer identifier="minimal_norwegian">
+                <label>Minimal Norwegian</label>
+            </stemmer>
+        </group>
+        <group language="nn" title="Norwegian (Nynorsk)">
+            <stemmer identifier="light_nynorsk" recommended="true">
+                <label>Light Nynorsk (variant of Light Swedish)</label>
+            </stemmer>
+            <stemmer identifier="minimal_nynorsk">
+                <label>Minimal Nynorsk</label>
+            </stemmer>
+        </group>
+        <group language="pt" title="Portuguese">
+            <stemmer identifier="light_portuguese" recommended="true">
+                <label>Light Portuguese (Savoy, 2006)</label>
+            </stemmer>
+            <stemmer identifier="minimal_portuguese">
+                <label>Minimal Portuguese (Orengo, 2007)</label>
+            </stemmer>
+            <stemmer identifier="portuguese">
+                <label>Portuguese Snowball</label>
+            </stemmer>
+            <stemmer identifier="portuguese_rslp">
+                <label><![CDATA[Portuguese RSLP (Orengo & Huyck, 2001)]]></label>
+            </stemmer>
+        </group>
+        <group language="ru" title="Russian">
+            <stemmer identifier="russian" recommended="true">
+                <label>Russian Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_russian">
+                <label>Light Russian (Dolamic, 2009)</label>
+            </stemmer>
+        </group>
+        <group language="es" title="Spanish">
+            <stemmer identifier="light_spanish" recommended="true">
+                <label>Light Spanish (Savoy, 2001)</label>
+            </stemmer>
+            <stemmer identifier="spanish">
+                <label>Light Russian (Dolamic, 2009)</label>
+            </stemmer>
+            <stemmer identifier="spanish_plural">
+                <label>Spanish Plural (Singular/Plural form only)</label>
+            </stemmer>
+        </group>
+        <group language="sv" title="Swedish">
+            <stemmer identifier="swedish" recommended="true">
+                <label>Swedish Snowball</label>
+            </stemmer>
+            <stemmer identifier="light_swedish">
+                <label>Light Swedish (Savoy, 2003)</label>
+            </stemmer>
+        </group>
+    </stemmers>
 </analysis>

@@ -1,4 +1,6 @@
 "Add/Remove Products","Add/Remove Products"
+"Force zero results for disabled categories","Force zero results for disabled categories"
+"If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.","If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache."
 "Virtual rule","Virtual rule"
 "Virtual Category","Virtual Category"
 "Virtual Category Root","Virtual Category Root"

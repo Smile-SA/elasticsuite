@@ -149,8 +149,6 @@ jobs:
                   key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
                   restore-keys: |
                       composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-                      composer-${{ matrix.php-versions }}-
 
             - name: "[Init] Cache Magento install"
               id: magento-cache
@@ -207,8 +205,7 @@ jobs:
                   MAGENTO_ROOT: ${{ env.magento-directory }}
               working-directory: ${{ env.magento-directory }}
               run: |
-                sudo find . -type f -exec chmod 644 {} \;
-                sudo find . -type d -exec chmod 755 {} \;
+                sudo chmod -R a=r,u+w,a+X .
                 sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
                 sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
                 sudo chown -R runner:www-data .

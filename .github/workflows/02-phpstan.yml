@@ -92,8 +92,6 @@ jobs:
           key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
           restore-keys: |
             composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-            composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-            composer-${{ matrix.php-versions }}-
 
       - name: "[Init] Cache Magento install"
         id: magento-cache
@@ -107,10 +105,6 @@ jobs:
       - name: "[Init] Prepare credentials"
         if: ${{env.MAGENTO_USERNAME}} != 0
         run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
-
-      - name: "[Init] Unconditionally add phpstan/phpstan"
-        working-directory: ${{ env.magento-directory }}
-        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Prepare Magento install if needed"
         if: steps.magento-cache.outputs.cache-hit == 'true'
@@ -146,13 +140,16 @@ jobs:
           rm -rf vendor/smile/elasticsuite/**
           cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
+      - name: "[Init] Unconditionally add phpstan/phpstan"
+        working-directory: ${{ env.magento-directory }}
+        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+
       - name: "[Init] Fix Magento directory permissions"
         env:
           MAGENTO_ROOT: ${{ env.magento-directory }}
         working-directory: ${{ env.magento-directory }}
         run: |
-          sudo find . -type f -exec chmod 644 {} \;
-          sudo find . -type d -exec chmod 755 {} \;
+          sudo chmod -R a=r,u+w,a+X .
           sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
           sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
           sudo chown -R $USER:www-data .

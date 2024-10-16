@@ -63,4 +63,21 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Controller\Adminhtml\Optimizer\Preview">
+        <arguments>
+            <argument name="categoryPreviewContainers" xsi:type="array">
+                <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview">
+        <arguments>
+            <argument name="categoryPreviewContainers" xsi:type="array">
+                <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

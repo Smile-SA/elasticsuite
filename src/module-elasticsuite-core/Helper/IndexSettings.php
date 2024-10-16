@@ -56,6 +56,16 @@ class IndexSettings extends AbstractConfiguration
     /**
      * @var string
      */
+    const STEMMER_USE_DEFAULT_CONFIG_XML_PATH = 'stemmer/use_default';
+
+    /**
+     * @var string
+     */
+    const STEMMER_CUSTOM_STEMMER_CONFIG_XML_PATH = 'stemmer/custom';
+
+    /**
+     * @var string
+     */
     const OLD_DEFAULT_INDICES_PATTERN = '{{YYYYMMdd}}_{{HHmmss}}';
 
     /**
@@ -417,6 +427,35 @@ class IndexSettings extends AbstractConfiguration
         $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::REFERENCE_ANALYZER_CONFIG_XML_PREFIX . '/' . $configFlag;
 
         return $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+
+    /**
+     * Returns true if the given store used a non-default language stemmer.
+     *
+     * @param integer|string|StoreInterface $store Store.
+     *
+     * @return bool
+     */
+    public function hasCustomLanguageStemmer($store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::STEMMER_USE_DEFAULT_CONFIG_XML_PATH;
+
+        return (false === $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store));
+    }
+
+    /**
+     * Returns the custom stemmer to use for the given store.
+     *
+     * @param integer|string|StoreInterface $store Store.
+     *
+     * @return mixed
+     */
+    public function getCustomLanguageStemmer($store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::STEMMER_CUSTOM_STEMMER_CONFIG_XML_PATH;
+
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $store);
     }
 
     /**

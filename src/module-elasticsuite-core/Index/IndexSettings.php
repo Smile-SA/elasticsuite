@@ -140,6 +140,8 @@ class IndexSettings implements IndexSettingsInterface
             $settings['analyzer']['reference']['filter'] = array_values($referenceFilters);
         }
 
+        $settings = $this->applyCustomLanguageStemmer($settings, $store);
+
         return $settings;
     }
 
@@ -222,5 +224,30 @@ class IndexSettings implements IndexSettingsInterface
         $settings += $ngramDiff ? ['max_ngram_diff' => (int) $ngramDiff] : [];
 
         return $settings;
+    }
+
+    /**
+     * Alter analysis settings to apply possible custom language stemmer.
+     *
+     * @param array                                                 $analysisSettings Analysis settings.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store            Store.
+     *
+     * @return array
+     */
+    protected function applyCustomLanguageStemmer($analysisSettings, $store)
+    {
+        if ($this->helper->hasCustomLanguageStemmer($store)
+            && is_array($analysisSettings)
+            && array_key_exists('filter', $analysisSettings)
+            && array_key_exists('stemmer', $analysisSettings['filter'])
+            && array_key_exists('language', $analysisSettings['filter']['stemmer'])
+        ) {
+            $customStemmer = $this->helper->getCustomLanguageStemmer($store) ?? false;
+            if (!empty($customStemmer)) {
+                $analysisSettings['filter']['stemmer']['language'] = $customStemmer;
+            }
+        }
+
+        return $analysisSettings;
     }
 }
