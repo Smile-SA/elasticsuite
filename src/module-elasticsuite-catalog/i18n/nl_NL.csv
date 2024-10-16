@@ -4,7 +4,7 @@
 "Save and Continue Edit","Opslaan en Doorgaan"
 "Save","Opslaan"
 "1 product","1 artikel"
-"<%- count %> products","<%- aantal %> producten"
+"<%- count %> products","<%- count %> producten"
 "No products in the selected range.","Geen producten in het geselecteerde bereik."
 "Search Configuration","Zoekconfiguratie"
 "Can be used only with catalog input type Text field, Dropdown, Multiple Select and Price.","Kan alleen gebruikt worden met invoertype catalogus, tekstveld, Dropdown, Multiple select en Prijs."
