@@ -181,6 +181,10 @@ class SpellcheckerTest extends TestCase
                             MappingInterface::DEFAULT_SEARCH_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
                             MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM,
                         ],
+                        'per_field_analyzer' => [
+                            MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM
+                                => FieldInterface::ANALYZER_STANDARD,
+                        ],
                         'doc'             => [
                             MappingInterface::DEFAULT_SEARCH_FIELD   => $queryText,
                             MappingInterface::DEFAULT_SPELLING_FIELD => $queryText,
@@ -238,6 +242,10 @@ class SpellcheckerTest extends TestCase
                             MappingInterface::DEFAULT_SEARCH_FIELD . "." . FieldInterface::ANALYZER_WHITESPACE,
                             MappingInterface::DEFAULT_REFERENCE_FIELD . "." . FieldInterface::ANALYZER_REFERENCE,
                             MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM,
+                        ],
+                        'per_field_analyzer' => [
+                            MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM
+                            => FieldInterface::ANALYZER_STANDARD,
                         ],
                         'doc'             => [
                             MappingInterface::DEFAULT_SEARCH_FIELD   => $queryText,

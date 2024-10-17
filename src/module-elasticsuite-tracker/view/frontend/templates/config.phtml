@@ -38,7 +38,7 @@ if ($block->isEnabled()) {
     $userConsentScript = $this->escapeJsQuote($block->getUserConsentScript());
     $userConsentConfig = $jsonHelper->jsonEncode($block->getUserConsentConfig());
 
-    $scriptString = "//<![CDATA[\n";
+    $scriptString = "\n";
     $scriptString .= "try{";
     $scriptString .= "smileTracker.setConfig({";
     $scriptString .= "beaconUrl:'{$beaconUrl}',";
@@ -54,7 +54,6 @@ if ($block->isEnabled()) {
     $scriptString .= "}";
     $scriptString .= "});";
     $scriptString .= "}catch(err){;}\n";
-    $scriptString .= "//]]>\n";
 
     echo /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false);
 }

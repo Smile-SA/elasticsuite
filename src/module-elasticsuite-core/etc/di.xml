@@ -139,6 +139,7 @@
                 <item name="spanWithinQuery" xsi:type="object">spanWithinFactory</item>
                 <item name="prefixQuery" xsi:type="object">prefixQueryFactory</item>
                 <item name="neuralQuery" xsi:type="object">neuralQueryFactory</item>
+                <item name="regexpQuery" xsi:type="object">regexpQueryFactory</item>
             </argument>
         </arguments>
     </type>
@@ -169,6 +170,7 @@
     <virtualType name="spanWithinFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanWithinFactory" />
     <virtualType name="prefixQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\PrefixFactory" />
     <virtualType name="neuralQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\Vector\Opensearch\NeuralFactory" />
+    <virtualType name="regexpQueryFactory" type="Smile\ElasticsuiteCore\Search\Request\Query\RegexpFactory" />
 
     <type name="Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder">
         <arguments>
@@ -199,6 +201,7 @@
                 <item name="spanWithinQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanWithin\Proxy</item>
                 <item name="prefixQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Prefix\Proxy</item>
                 <item name="neuralQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Opensearch\Neural\Proxy</item>
+                <item name="regexpQuery" xsi:type="object">Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Regexp\Proxy</item>
             </argument>
         </arguments>
     </type>

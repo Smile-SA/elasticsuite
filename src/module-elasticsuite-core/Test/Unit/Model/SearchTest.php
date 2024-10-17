@@ -13,10 +13,11 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
-use Smile\ElasticsuiteCore\Model\Search;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Search API unit testing.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
@@ -39,8 +40,9 @@ class SearchTest extends \PHPUnit\Framework\TestCase
         $searchEngine          = $this->getSearchEngine($documents, $docCount);
         $searchRequestBuilder  = $this->getSearchRequestBuilder();
         $searchResponseBuilder = $this->getSearchResponseBuilder();
+        $searchContext         = $this->createMock(ContextInterface::class);
 
-        $searchApi = new \Smile\ElasticsuiteCore\Model\Search($searchEngine, $searchRequestBuilder, $searchResponseBuilder);
+        $searchApi = new \Smile\ElasticsuiteCore\Model\Search($searchEngine, $searchRequestBuilder, $searchResponseBuilder, $searchContext);
 
         $searchCriteria = $this->createMock(\Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface::class);
         $searchResponse = $searchApi->search($searchCriteria);
