@@ -1,0 +1,40 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2024 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector $block
+ */
+$companies = $block->getCompaniesList();
+?>
+<?php if ($block->isCompanyEnabled()): ?>
+    <div class="customer-company-selector">
+        <label for="company_id"><?= __('Company:') ?></label>
+        <select id="company_id" name="company_id" class="admin__control-select">
+            <option value="all"><?= __('All Companies');?></option>
+            <?php foreach ($companies as $company): ?>
+                <option value="<?= $company->getId(); ?>"><?= $company->getCompanyName(); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+<?php endif; ?>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+             "customerCompanySelector": {}
+        }
+    }
+</script>
