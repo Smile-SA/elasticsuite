@@ -62,8 +62,18 @@ class BoostWeight extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
+                $value  = '';
                 $config = $this->serializer->unserialize($item['config']);
-                $value  = $config['constant_score_value'] ? ($config['constant_score_value'] . '%') : '';
+                $type   = $item['model'] ?? 'constant_score';
+                if ($type === 'constant_score') {
+                    $value = $config['constant_score_value'] ? ($config['constant_score_value'] . '%') : '';
+                } elseif ($type === 'attribute_value') {
+                    $factor   = $config['scale_factor'] ?? '';
+                    $modifier = $config['scale_function'] ?? '';
+                    $field    = $config['attribute_code'] ?? '';
+                    $value    = sprintf("%s(%s * %s)", $modifier, $factor, $field);
+                }
+
                 $item[$this->getData('name')] = $value;
             }
         }
