@@ -29,6 +29,9 @@
                 <field name="session.uid" type="keyword" />
                 <field name="session.vid" type="keyword" />
 
+                <!-- Customer data -->
+                <field name="customer.group_id" type="integer" />
+
                 <!-- Page metadata -->
                 <field name="page.site" type="keyword" />
                 <field name="page.store_id" type="integer" />
