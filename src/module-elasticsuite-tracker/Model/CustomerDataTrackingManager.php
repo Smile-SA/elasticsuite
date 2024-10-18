@@ -45,22 +45,18 @@ class CustomerDataTrackingManager
      */
     public function getCustomerDataToTrack()
     {
+        $variables = [
+            'group_id' => \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID,
+        ];
+
         if (!$this->customerSession->getId()) {
-            return [];
+            return $variables;
         }
 
         $customer = $this->customerSession->getCustomer();
-        $shippingAddress = $customer->getDefaultShippingAddress();
+        $variables['group_id'] = (int) $customer->getGroupId() ?? \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID;
+        $variables['id']       = (int) $customer->getId();
 
-        $dob = new DateTime($customer->getDob() ?? '');
-        $now = new DateTime();
-
-        return [
-            'age' => (int) $now->format('Y') - (int) $dob->format('Y'),
-            'gender' => $customer->getGender(),
-            'zipcode' => $shippingAddress ? $shippingAddress->getPostcode() : '',
-            'state' => $shippingAddress ? $shippingAddress->getRegion() : '',
-            'country' => $shippingAddress ? $shippingAddress->getCountry() : '',
-        ];
+        return $variables;
     }
 }

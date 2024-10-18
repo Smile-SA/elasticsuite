@@ -119,11 +119,11 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
      *
      * @param array $eventData Event
      */
-    private function addCustomerLink($eventData)
+    private function addCustomerLink(&$eventData)
     {
-        // The customerId is set in session if the Magento_Persistent module is enabled and a persistent session exists.
-        if ($this->customerSession->getCustomerId() !== null) {
-            $customerId = $this->customerSession->getCustomerId();
+        // The customerId should be sent by the frontend, if any.
+        $customerId = $eventData['customer']['id'] ?? null;
+        if ($customerId !== null && ((int) $customerId > 0)) {
             $sessionId  = $eventData['session']['uid'] ?? null;
             $visitorId  = $eventData['session']['vid'] ?? null;
 
@@ -142,6 +142,7 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
 
                 $this->customerLinkResource->saveLink($data);
             }
+            unset($eventData['customer']['id']); // Do not persist the customer_id in ES index to preserve anonymization.
         }
     }
 }
