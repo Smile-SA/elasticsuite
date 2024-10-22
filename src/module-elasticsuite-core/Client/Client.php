@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Client;
 
 use OpenSearch\Common\Exceptions\Missing404Exception;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 
@@ -45,15 +46,25 @@ class Client implements ClientInterface
     private $clientBuilder;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Constructor.
      *
      * @param ClientConfigurationInterface $clientConfiguration Client configuration factory.
      * @param ClientBuilder                $clientBuilder       ES client builder.
+     * @param LoggerInterface              $logger              Logger.
      */
-    public function __construct(ClientConfigurationInterface $clientConfiguration, ClientBuilder $clientBuilder)
-    {
+    public function __construct(
+        ClientConfigurationInterface $clientConfiguration,
+        ClientBuilder $clientBuilder,
+        LoggerInterface $logger
+    ) {
         $this->clientConfiguration = $clientConfiguration;
         $this->clientBuilder = $clientBuilder;
+        $this->logger = $logger;
     }
 
     /**
@@ -201,10 +212,23 @@ class Client implements ClientInterface
 
     /**
      * {@inheritDoc}
+     * @throws \Exception
      */
     public function search($params)
     {
-        return $this->getEsClient()->search($params);
+        try {
+            $response = $this->getEsClient()->search($params);
+        } catch (\Exception $e) {
+            // If debug is enabled, no need to log, the ES client would already have done it.
+            if (false === $this->clientConfiguration->isDebugModeEnabled()) {
+                $requestInfo = json_encode($params, JSON_PRESERVE_ZERO_FRACTION + JSON_INVALID_UTF8_SUBSTITUTE);
+                $this->logger->error(sprintf("Search Request Failure [error] : %s", $e->getMessage()));
+                $this->logger->error(sprintf("Search Request Failure [request] : %s", $requestInfo));
+            }
+            throw $e;
+        }
+
+        return $response;
     }
 
     /**
