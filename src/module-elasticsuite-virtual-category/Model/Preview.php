@@ -120,7 +120,11 @@ class Preview extends AbstractPreview
         $sortBy            = $this->getSortBy() ?? 'position';
         $directionFallback = $sortBy !== 'position' ? Collection::SORT_ORDER_ASC : Collection::SORT_ORDER_DESC;
 
-        $collection->setOrder($sortBy, $this->request->getParam('sort_direction', $directionFallback));
+        $direction = $this->request->getParam('sort_direction', $directionFallback);
+        if (empty($direction)) {
+            $direction = $directionFallback;
+        }
+        $collection->setOrder($sortBy, $direction);
         $collection->addPriceData(self::DEFAULT_CUSTOMER_GROUP_ID, $this->category->getStore()->getWebsiteId());
 
         return $collection;
