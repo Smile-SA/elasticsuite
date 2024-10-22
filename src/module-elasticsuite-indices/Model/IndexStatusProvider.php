@@ -117,10 +117,9 @@ class IndexStatusProvider
         if (!empty($this->workingIndexers)) {
             foreach (array_keys($this->workingIndexers) as $indexKey) {
                 if (strpos((string) $indexName, $indexKey) !== false) {
-                    $today = new DateTime('Ymd');
-                    $day   = new DateTime($indexDate);
+                    $today = new DateTime('now');
 
-                    return ($today == $day);
+                    return ($today->format('Y-m-d') === $indexDate->format('Y-m-d'));
                 }
             }
         }
