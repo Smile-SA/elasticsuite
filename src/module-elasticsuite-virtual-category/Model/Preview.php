@@ -121,7 +121,7 @@ class Preview extends AbstractPreview
         $directionFallback = $sortBy !== 'position' ? Collection::SORT_ORDER_ASC : Collection::SORT_ORDER_DESC;
 
         $direction = $this->request->getParam('sort_direction', $directionFallback);
-        if (empty($direction)) {
+        if (empty($direction) || ((string) $direction === '')) {
             $direction = $directionFallback;
         }
         $collection->setOrder($sortBy, $direction);
