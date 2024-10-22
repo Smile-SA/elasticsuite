@@ -68,7 +68,7 @@ class Preview extends AbstractPreview
     /**
      * @var string
      */
-    private $sortBy;
+    private $sortBy = null;
 
     /**
      * Constructor.
@@ -222,7 +222,12 @@ class Preview extends AbstractPreview
             $useConfig = $this->request->getParam('use_config', []);
             $useConfig = array_key_exists('default_sort_by', $useConfig) && $useConfig['default_sort_by'] == 'true';
             $defaultSortBy = $this->categoryConfig->getProductListDefaultSortBy();
-            $this->sortBy = $useConfig ? $defaultSortBy : $this->request->getParam('default_sort_by');
+            $sortBy        = $this->request->getParam('default_sort_by', $defaultSortBy);
+            if (empty($sortBy) || ((string) $sortBy === '')) {
+                $sortBy = $defaultSortBy;
+            }
+
+            $this->sortBy  = $useConfig ? $defaultSortBy : $sortBy;
         }
 
         return $this->sortBy;
