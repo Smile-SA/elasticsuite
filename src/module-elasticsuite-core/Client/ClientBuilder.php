@@ -258,6 +258,7 @@ class ClientBuilder
 
     /**
      * Get CredentialProvider Instance to be used with Sig4 authentication.
+     * @SuppressWarnings(PHPMD.StaticAccess)
      *
      * @param array $options The client options
      *
