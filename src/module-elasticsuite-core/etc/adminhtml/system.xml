@@ -30,53 +30,87 @@
 
             <group id="es_client" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Elasticsearch Client</label>
-                <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="servers" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Servers List</label>
                     <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
                 </field>
-                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Use HTTPS</label>
                     <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_certificate_validation" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_certificate_validation" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Use SSL certificate Validation</label>
                     <comment>Select no if you are using self-signed SSL certificate.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable basic HTTP authentication</label>
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="41" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Encode HTTP authorization headers</label>
                     <comment>Enable this option when you want to base64 encode the Authorization headers. (Open Distro requires this)</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_http_auth">1</field>
+                    </depends>
                 </field>
-                <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="http_auth_user" translate="label comment" type="text" sortOrder="42" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication user</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="43" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication password</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_aws_sig4" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable AWS Signature V4</label>
+                    <comment><![CDATA[Enable this option when you are using AWS Opensearch Service (serverless or not) and you want to use <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv-create-signed-request.html">AWS Signature V4.</a>]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="aws_service" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>AWS Service</label>
+                    <depends>
+                        <field id="enable_aws_sig4">1</field>
+                    </depends>
+                    <comment><![CDATA[<strong>es</strong> for AWS OpenSearch Service, and <strong>aoss</strong> for AWS OpenSearch Service Serverless]]></comment>
+                </field>
+                <field id="aws_region" translate="label comment" type="text" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>AWS Region</label>
+                    <depends>
+                        <field id="enable_aws_sig4">1</field>
+                    </depends>
+                    <comment>Eg : eu-west-1</comment>
+                </field>
+                <field id="aws_key" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>AWS Signature V4 Key</label>
+                    <depends>
+                        <field id="enable_aws_sig4">1</field>
+                    </depends>
+                </field>
+                <field id="aws_secret" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>AWS Signature V4 Secret</label>
+                    <depends>
+                        <field id="enable_aws_sig4">1</field>
+                    </depends>
+                </field>
+                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable Debug Mode</label>
                     <comment>When enabled the module will produce logs through Magento logging system.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="connection_timeout" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="connection_timeout" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Server Connection Timeout</label>
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="max_retries" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="max_retries" translate="label comment" type="text" sortOrder="75" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Client Maximum Number of Retries</label>
                     <comment>Maximum number of times to retry connection when there is a connection failure</comment>
                     <frontend_class>validate-number</frontend_class>

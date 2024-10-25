@@ -139,6 +139,46 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isAwsSig4Enabled()
+    {
+        return (bool) $this->getElasticsearchClientConfigParam('enable_aws_sig4');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsService()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('aws_service');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsRegion()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('aws_region');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsSig4Key()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('aws_key');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsSig4Secret()
+    {
+        return (string) $this->getElasticsearchClientConfigParam('aws_secret');
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getOptions()
@@ -154,6 +194,11 @@ class ClientConfiguration implements ClientConfigurationInterface
             'max_parallel_handles'  => $this->getMaxParallelHandles(),
             'max_retries'           => $this->getMaxRetries(),
             'verify'                => $this->isVerifyEnabled(),
+            'enable_aws_sig4'       => $this->isAwsSig4Enabled(),
+            'aws_service'           => $this->getAwsService(),
+            'aws_region'            => $this->getAwsRegion(),
+            'aws_key'               => $this->getAwsSig4Key(),
+            'aws_secret'            => $this->getAwsSig4Secret(),
         ];
 
         return $options;
