@@ -94,6 +94,48 @@ interface ClientConfigurationInterface
     public function getMaxRetries();
 
     /**
+     * Check if SSL verification is enabled.
+     *
+     * @return bool
+     */
+    public function isVerifyEnabled();
+
+    /**
+     * Check if AWS Sig4 verification is enabled.
+     *
+     * @return bool
+     */
+    public function isAwsSig4Enabled();
+
+    /**
+     * Fetch the AWS Service to be used
+     *
+     * @return string
+     */
+    public function getAwsService();
+
+    /**
+     * Get the AWS Region
+     *
+     * @return string
+     */
+    public function getAwsRegion();
+
+    /**
+     * Get the AWS Sig4 Key
+     *
+     * @return string
+     */
+    public function getAwsSig4Key();
+
+    /**
+     * Get the AWS Sig4 Secret
+     *
+     * @return string
+     */
+    public function getAwsSig4Secret();
+
+    /**
      * Client config options.
      *
      * @return array

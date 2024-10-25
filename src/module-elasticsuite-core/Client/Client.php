@@ -72,6 +72,10 @@ class Client implements ClientInterface
      */
     public function info()
     {
+        if ($this->isAoss()) {
+            return ['version' => ['number' => '2 ?', 'distribution' => 'AWS OpenSearch Service Serverless']];
+        }
+
         return $this->getEsClient()->info();
     }
 
@@ -96,6 +100,10 @@ class Client implements ClientInterface
      */
     public function ping()
     {
+        if ($this->isAoss()) {
+            return true;
+        }
+
         return $this->getEsClient()->ping();
     }
 
@@ -128,6 +136,12 @@ class Client implements ClientInterface
      */
     public function putIndexSettings($indexName, $indexSettings)
     {
+        if ($this->isAoss()) {
+            unset($indexSettings['number_of_replicas']);
+            unset($indexSettings['refresh_interval']);
+            unset($indexSettings['translog.durability']);
+        }
+
         $this->getEsClient()->indices()->putSettings(['index' => $indexName, 'body' => $indexSettings]);
     }
 
@@ -319,5 +333,17 @@ class Client implements ClientInterface
         }
 
         return $this->esClient;
+    }
+
+    /**
+     * Check if using the AWS OpenSerch Service Serverless, because some operations are not permitted or behaving differently :
+     * - setting number of replicas per index is not allowed
+     * - client info is empty
+     *
+     * @return bool
+     */
+    private function isAoss(): bool
+    {
+        return ($this->clientConfiguration->isAwsSig4Enabled() && $this->clientConfiguration->getAwsService() === 'aoss');
     }
 }

@@ -207,7 +207,12 @@ class IndexOperation implements IndexOperationInterface
             $indexName       = $index->getName();
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
-            $this->client->forceMerge($indexName);
+            try {
+                $this->client->forceMerge($indexName);
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+            }
+
             $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings($indexIdentifier));
 
             $this->proceedIndexInstall($indexName, $indexAlias);

@@ -26,6 +26,9 @@
                 <max_parallel_handles>10</max_parallel_handles>
                 <max_retries>2</max_retries>
                 <enable_certificate_validation>1</enable_certificate_validation>
+                <enable_aws_sig4>0</enable_aws_sig4>
+                <aws_service>aoss</aws_service>
+                <aws_region>eu-west-1</aws_region>
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>
