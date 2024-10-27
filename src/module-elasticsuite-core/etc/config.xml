@@ -19,6 +19,7 @@
     <default>
         <smile_elasticsuite_core_base_settings>
             <es_client>
+                <enable_error_request_logging>0</enable_error_request_logging>
                 <enable_debug_mode>0</enable_debug_mode>
                 <servers>localhost:9200</servers>
                 <connection_timeout>1</connection_timeout>
