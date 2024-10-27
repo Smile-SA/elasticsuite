@@ -55,6 +55,14 @@ class ClientConfiguration implements ClientConfigurationInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function isLoggingErrorRequest()
+    {
+        return (bool) $this->getElasticsearchClientConfigParam('enable_error_request_logging');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isDebugModeEnabled()
