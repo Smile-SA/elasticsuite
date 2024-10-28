@@ -21,7 +21,6 @@ use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
-
 /**
  * Block used to display customer company selector in reports.
  *
@@ -56,11 +55,13 @@ class CustomerCompanySelector extends Template
     /**
      * CustomerCompanySelector constructor.
      *
-     * @param Context                    $context               The template context.
-     * @param ModuleManager              $moduleManager         Module manager.
-     * @param ScopeConfigInterface       $scopeConfig           Scope configuration.
-     * @param SearchCriteriaBuilder      $searchCriteriaBuilder The search criteria builder.
-     * @param array                      $data                  Additional block data.
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param Context               $context               The template context.
+     * @param ModuleManager         $moduleManager         Module manager.
+     * @param ScopeConfigInterface  $scopeConfig           Scope configuration.
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder The search criteria builder.
+     * @param array                 $data                  Additional block data.
      * @throws LocalizedException
      */
     public function __construct(
