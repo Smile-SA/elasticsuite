@@ -134,7 +134,7 @@
             <argument name="productCollectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Widget\Product\CollectionFactory</argument>
             <argument name="sqlBuilder" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Condition\ElasticsearchBuilder</argument>
         </arguments>
-        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" />
+        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" sortOrder="100"/>
     </type>
 
     <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory" type="Magento\CatalogWidget\Model\Rule\Condition\CombineFactory">

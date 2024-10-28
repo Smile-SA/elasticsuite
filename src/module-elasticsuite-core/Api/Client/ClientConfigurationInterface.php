@@ -31,6 +31,13 @@ interface ClientConfigurationInterface
     public function getServerList();
 
     /**
+     * Indicates whether the body of requests in error should be logged or not.
+     *
+     * @return boolean
+     */
+    public function isLoggingErrorRequest();
+
+    /**
      * Indicates whether the debug node is enabled or not.
      *
      * @return boolean

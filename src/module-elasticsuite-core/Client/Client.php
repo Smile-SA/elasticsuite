@@ -219,8 +219,7 @@ class Client implements ClientInterface
         try {
             $response = $this->getEsClient()->search($params);
         } catch (\Exception $e) {
-            // If debug is enabled, no need to log, the ES client would already have done it.
-            if (false === $this->clientConfiguration->isDebugModeEnabled()) {
+            if ($this->clientConfiguration->isLoggingErrorRequest()) {
                 $requestInfo = json_encode($params, JSON_PRESERVE_ZERO_FRACTION + JSON_INVALID_UTF8_SUBSTITUTE);
                 $this->logger->error(sprintf("Search Request Failure [error] : %s", $e->getMessage()));
                 $this->logger->error(sprintf("Search Request Failure [request] : %s", $requestInfo));
