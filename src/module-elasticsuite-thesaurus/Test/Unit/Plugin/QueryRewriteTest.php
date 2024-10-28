@@ -28,6 +28,8 @@ use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 use Smile\ElasticsuiteThesaurus\Plugin\QueryRewrite;
 use Smile\ElasticsuiteThesaurus\Test\Unit\FulltextQueryBuilderInterceptor;
@@ -89,11 +91,13 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $containerConfig = $this->getContainerConfigMock($this->fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
+        $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock();
+
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -130,11 +134,13 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $containerConfig = $this->getContainerConfigMock($this->fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
+        $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock();
+
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         $thesaurusIndex->expects($this->exactly(2))->method('getQueryRewrites')->withConsecutive(
@@ -217,6 +223,26 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         }
 
         return new QueryFactory($factories);
+    }
+
+    /**
+     * Mock the thesaurus config factory.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getThesaurusConfigFactoryMock()
+    {
+        $thesaurusConfig = $this->getMockBuilder(ThesaurusConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $thesaurusConfig->method('getMaxRewrittenQueries')->will($this->returnValue(0));
+
+        $thesaurusConfigFactory = $this->getMockBuilder(ThesaurusConfigFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $thesaurusConfigFactory->method('create')->will($this->returnValue($thesaurusConfig));
+
+        return $thesaurusConfigFactory;
     }
 
     /**
