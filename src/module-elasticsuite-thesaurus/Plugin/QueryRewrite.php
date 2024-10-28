@@ -17,6 +17,8 @@ namespace Smile\ElasticsuiteThesaurus\Plugin;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Model\Index;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -36,6 +38,11 @@ class QueryRewrite
     private $queryFactory;
 
     /**
+     * @var ThesaurusConfigFactory
+     */
+    private $thesaurusConfigFactory;
+
+    /**
      * @var Index
      */
     private $index;
@@ -48,12 +55,17 @@ class QueryRewrite
     /**
      * Constructor.
      *
-     * @param QueryFactory $queryFactory Search request query factory.
-     * @param Index        $index        Synonym index.
+     * @param QueryFactory           $queryFactory           Search request query factory.
+     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param Index                  $index                  Synonym index.
      */
-    public function __construct(QueryFactory $queryFactory, Index $index)
-    {
+    public function __construct(
+        QueryFactory $queryFactory,
+        ThesaurusConfigFactory $thesaurusConfigFactory,
+        Index $index
+    ) {
         $this->queryFactory           = $queryFactory;
+        $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->index                  = $index;
     }
 
@@ -141,6 +153,26 @@ class QueryRewrite
             $rewrites = $rewrites + $this->index->getQueryRewrites($containerConfig, $currentQueryText, $originalBoost);
         }
 
+        $maxRewrittenQueries = $this->getThesaurusConfig($containerConfig)->getMaxRewrittenQueries();
+        if ($maxRewrittenQueries > 0) {
+            $rewrites = array_slice($rewrites, 0, $maxRewrittenQueries, true);
+        }
+
         return $rewrites;
+    }
+
+    /**
+     * Return thesaurus/relevance configuration.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Container configuration.
+     *
+     * @return ThesaurusConfig
+     */
+    private function getThesaurusConfig(ContainerConfigurationInterface $containerConfig)
+    {
+        $storeId       = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
+
+        return $this->thesaurusConfigFactory->create($storeId, $containerName);
     }
 }

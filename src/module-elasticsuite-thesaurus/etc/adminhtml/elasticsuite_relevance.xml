@@ -23,8 +23,14 @@
 
             <group id="general" translate="label" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>General Configuration</label>
-                <field id="max_rewrites" translate="label" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
+                <field id="max_rewrites" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Max Allowed Rewrites</label>
+                    <comment><![CDATA[Maximum number of thesaurus rules applied at a given time to a given search query to produce alternative queries. That number applies first to the synonyms rules and then the expansion rules. For instance if the setting's value is 2, it means each alternative query will be the result of the application of at most 2 synonyms rules and at most 2 expansion rules. But if you have 10 synonym rules and 5 expansion rules, they could all end up being applied by pairs. So be careful about augmenting this setting's value, especially if you already have a lot of rules with long lists of alternative terms.]]></comment>
+                </field>
+                <field id="max_rewritten_queries" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Max Alternative Search Queries</label>
+                    <comment><![CDATA[Maximum number of alternative search queries taken into account. Use this setting if you have performance issues arising on your cluster related to a huge volume of thesaurus rules. Defaults to 0 (no limitation).]]></comment>
+                    <validate>integer validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
 
@@ -41,7 +47,7 @@
                     </depends>
                 </field>
             </group>
-               
+
             <group id="expansions" translate="label" type="text" sortOrder="50" showInDefault="1" showInContainer="1" showInStore="1">
                 <label>Query Expansions Configuration</label>
                 <field id="enable" translate="label" type="select" sortOrder="10" showInDefault="1" showInContainer="1" showInStore="1">
