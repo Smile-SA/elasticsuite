@@ -13,13 +13,14 @@
  */
 namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report;
 
-use Magento\Company\Api\Data\CompanyInterface;
+use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Magento\Company\Api\CompanyRepositoryInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder;
+
 
 /**
  * Block used to display customer company selector in reports.
@@ -38,11 +39,6 @@ class CustomerCompanySelector extends Template
     const CONFIG_IS_B2B_COMPANY_ACTIVE_XPATH = 'btob/website_configuration/company_active';
 
     /**
-     * @var CompanyRepositoryInterface
-     */
-    protected $companyRepository;
-
-    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
@@ -53,24 +49,41 @@ class CustomerCompanySelector extends Template
     protected $searchCriteriaBuilder;
 
     /**
+     * @var \Magento\Company\Api\CompanyRepositoryInterface|null
+     */
+    private $companyRepository = null;
+
+    /**
      * CustomerCompanySelector constructor.
      *
      * @param Context                    $context               The template context.
-     * @param CompanyRepositoryInterface $companyRepository     The company repository.
+     * @param ModuleManager              $moduleManager         Module manager.
      * @param ScopeConfigInterface       $scopeConfig           Scope configuration.
      * @param SearchCriteriaBuilder      $searchCriteriaBuilder The search criteria builder.
      * @param array                      $data                  Additional block data.
+     * @throws LocalizedException
      */
     public function __construct(
         Context $context,
-        CompanyRepositoryInterface $companyRepository,
+        ModuleManager $moduleManager,
         ScopeConfigInterface $scopeConfig,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         array $data = []
     ) {
-        $this->companyRepository = $companyRepository;
         $this->scopeConfig = $scopeConfig;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+
+        // Check if Magento_Company module is enabled before attempting to load the repository.
+        if ($moduleManager->isEnabled('Magento_Company')) {
+            if (interface_exists('\Magento\Company\Api\CompanyRepositoryInterface')) {
+                $this->companyRepository = ObjectManager::getInstance()->get(
+                    \Magento\Company\Api\CompanyRepositoryInterface::class
+                );
+            } else {
+                throw new LocalizedException(__('CompanyRepositoryInterface is not available.'));
+            }
+        }
+
         parent::__construct($context, $data);
     }
 
