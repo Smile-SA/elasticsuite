@@ -117,4 +117,9 @@
         </arguments>
     </type>
 
+    <!-- Prevent session start for tracking urls -->
+    <type name="Magento\Framework\Session\SessionStartChecker">
+        <plugin name="elasticsuite_tracker_disable_session" type="Smile\ElasticsuiteTracker\Plugin\SessionStartCheckerPlugin"/>
+    </type>
+
 </config>

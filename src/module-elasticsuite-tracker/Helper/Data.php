@@ -230,7 +230,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
-     * Return the tracking data retention delay, in days
+     * Return the tracking data retention delay, in months
      *
      * @return int
      */
