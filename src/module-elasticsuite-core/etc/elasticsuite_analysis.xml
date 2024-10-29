@@ -402,7 +402,7 @@
             <stemmer identifier="light_italian" recommended="true">
                 <label>Light Italian (Savoy, 2001)</label>
             </stemmer>
-            <stemmer identifier="light_hungarian">
+            <stemmer identifier="italian">
                 <label>Italian Snowball</label>
             </stemmer>
         </group>
@@ -452,7 +452,7 @@
                 <label>Light Spanish (Savoy, 2001)</label>
             </stemmer>
             <stemmer identifier="spanish">
-                <label>Light Russian (Dolamic, 2009)</label>
+                <label>Spanish Snowball</label>
             </stemmer>
             <stemmer identifier="spanish_plural">
                 <label>Spanish Plural (Singular/Plural form only)</label>

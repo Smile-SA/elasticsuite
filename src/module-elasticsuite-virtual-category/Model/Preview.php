@@ -68,7 +68,7 @@ class Preview extends AbstractPreview
     /**
      * @var string
      */
-    private $sortBy;
+    private $sortBy = null;
 
     /**
      * Constructor.
@@ -120,7 +120,11 @@ class Preview extends AbstractPreview
         $sortBy            = $this->getSortBy() ?? 'position';
         $directionFallback = $sortBy !== 'position' ? Collection::SORT_ORDER_ASC : Collection::SORT_ORDER_DESC;
 
-        $collection->setOrder($sortBy, $this->request->getParam('sort_direction', $directionFallback));
+        $direction = $this->request->getParam('sort_direction', $directionFallback);
+        if (empty($direction) || ((string) $direction === '')) {
+            $direction = $directionFallback;
+        }
+        $collection->setOrder($sortBy, $direction);
         $collection->addPriceData(self::DEFAULT_CUSTOMER_GROUP_ID, $this->category->getStore()->getWebsiteId());
 
         return $collection;
@@ -218,7 +222,12 @@ class Preview extends AbstractPreview
             $useConfig = $this->request->getParam('use_config', []);
             $useConfig = array_key_exists('default_sort_by', $useConfig) && $useConfig['default_sort_by'] == 'true';
             $defaultSortBy = $this->categoryConfig->getProductListDefaultSortBy();
-            $this->sortBy = $useConfig ? $defaultSortBy : $this->request->getParam('default_sort_by');
+            $sortBy        = $this->request->getParam('default_sort_by', $defaultSortBy);
+            if (empty($sortBy) || ((string) $sortBy === '')) {
+                $sortBy = $defaultSortBy;
+            }
+
+            $this->sortBy  = $useConfig ? $defaultSortBy : $sortBy;
         }
 
         return $this->sortBy;
