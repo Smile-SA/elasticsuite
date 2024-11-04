@@ -34,7 +34,10 @@ class FilteredTest extends AbstractComplexQueryBuilderTest
     {
         $builder = $this->getQueryBuilder();
 
-        $filteredQuery = new FilteredQuery($this->getSubQueryMock('baseQuery'), $this->getSubQueryMock('filterQuery'));
+        $filteredQuery = new FilteredQuery(
+            $this->getSubQueryMock('baseQuery'),
+            $this->getSubQueryMock('filterQuery')
+        );
         $query = $builder->buildQuery($filteredQuery);
 
         $this->assertArrayHasKey('bool', $query);
@@ -59,11 +62,54 @@ class FilteredTest extends AbstractComplexQueryBuilderTest
     {
         $builder = $this->getQueryBuilder();
 
-        $filteredQuery = new FilteredQuery($this->getSubQueryMock('baseQuery'), $this->getSubQueryMock('filterQuery'), 'queryName');
+        $filteredQuery = new FilteredQuery(
+            $this->getSubQueryMock('baseQuery'),
+            $this->getSubQueryMock('filterQuery'),
+            'queryName'
+        );
         $query = $builder->buildQuery($filteredQuery);
 
         $this->assertArrayHasKey('_name', $query['bool']);
         $this->assertEquals('queryName', $query['bool']['_name']);
+    }
+
+    /**
+     * Test the builder with a filter query but an empty base query.
+     *
+     * @return void
+     */
+    public function testQueryLessFilteredQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $filteredQuery = new FilteredQuery(
+            null,
+            $this->getSubQueryMock('filterQuery')
+        );
+        $query = $builder->buildQuery($filteredQuery);
+
+        $this->assertArrayHasKey('constant_score', $query);
+
+        $this->assertArrayHasKey('filter', $query['constant_score']);
+        $this->assertEquals('filterQuery', $query['constant_score']['filter']);
+    }
+
+    /**
+     * Test the builder with an empty filter query on an empty base query.
+     *
+     * @return void
+     */
+    public function testEmptyFilteredQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $filteredQuery = new FilteredQuery();
+        $query = $builder->buildQuery($filteredQuery);
+
+        $this->assertArrayHasKey('constant_score', $query);
+
+        $this->assertArrayHasKey('filter', $query['constant_score']);
+        $this->assertEquals(['match_all' => new \stdClass()], $query['constant_score']['filter']);
     }
 
     /**

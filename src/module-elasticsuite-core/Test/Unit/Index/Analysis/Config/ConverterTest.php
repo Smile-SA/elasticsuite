@@ -49,12 +49,16 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
      */
     public function testAvailableLanguages()
     {
-        $this->assertCount(5, $this->parsedData);
+        $this->assertCount(7, $this->parsedData);
         $this->assertArrayHasKey('default', $this->parsedData);
         $this->assertArrayHasKey('override_language', $this->parsedData);
 
+        $this->assertArrayHasKey('char_filter_generated_language', $this->parsedData);
         $this->assertArrayHasKey('filter_generated_language', $this->parsedData);
         $this->assertArrayHasKey('analyzer_generated_language', $this->parsedData);
+
+        $this->assertArrayHasKey('language_without_stemmer', $this->parsedData);
+        $this->assertArrayHasKey('language_with_stemmer', $this->parsedData);
     }
 
     /**
@@ -150,5 +154,29 @@ class ConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertContains('filter', $defaultAnalyzers['analyzer']['filter']);
         $this->assertContains('filter_with_params', $defaultAnalyzers['analyzer']['filter']);
+    }
+
+    /**
+     * Test analyzers with or without a stemmer depending on their availability in a given language.
+     *
+     * @return void
+     */
+    public function testStemmerPresence()
+    {
+        $this->assertArrayHasKey('language_without_stemmer', $this->parsedData);
+        $this->assertArrayHasKey('analyzer', $this->parsedData['language_without_stemmer']);
+        $this->assertArrayHasKey('stemmed_analyzer', $this->parsedData['language_without_stemmer']['analyzer']);
+
+        $stemmedAnalyzer = $this->parsedData['language_without_stemmer']['analyzer']['stemmed_analyzer'];
+        $this->assertArrayHasKey('filter', $stemmedAnalyzer);
+        $this->assertNotContains('stemmer', $stemmedAnalyzer['filter']);
+
+        $this->assertArrayHasKey('language_with_stemmer', $this->parsedData);
+        $this->assertArrayHasKey('analyzer', $this->parsedData['language_with_stemmer']);
+        $this->assertArrayHasKey('stemmed_analyzer', $this->parsedData['language_with_stemmer']['analyzer']);
+
+        $stemmedAnalyzer = $this->parsedData['language_with_stemmer']['analyzer']['stemmed_analyzer'];
+        $this->assertArrayHasKey('filter', $stemmedAnalyzer);
+        $this->assertContains('stemmer', $stemmedAnalyzer['filter']);
     }
 }
