@@ -19,6 +19,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Q
  * @category  Smile
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
 abstract class AbstractSimpleQueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
