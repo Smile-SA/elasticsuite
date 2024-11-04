@@ -53,7 +53,7 @@ General,Général
 "Basic HTTP authentication password","Mot de passe pour l'authentification HTTP"
 "Enable Debug Mode","Activer le mode debug"
 "When enabled the module will produce logs through Magento logging system.","Lorsqu'activé, le module va produire des logs via le système de logs Magento standard."
-"Enable logging of request that produce errors","Journaliser les requêtes en erreur"
+"Enable logging of requests that produce errors","Journaliser les requêtes en erreur"
 "This is an alternative to the debug mode for production environments. If enabled, even when the debug mode is disabled, the body of search requests that produce an error will be logged. If disabled, only the error message/exception message will be logged (legacy behavior). A log rotation system on the var/log/system.log file is advised if enabled.","Ceci est une alternative au mode debug pour les environnements de production. Lorsqu'activé, même si le mode debug est désactivé, le corps des requêtes en erreur sera loggé. Si désactivé, seul l'exception/le message d'erreur sera loggé (comportement historique). Un système de rotation des logs sur le fichier var/log/system.log est recommandé si activé."
 "Server Connection Timeout","Délai de connexion au serveur"
 "In seconds.","En secondes."
