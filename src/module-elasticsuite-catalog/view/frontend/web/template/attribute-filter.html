@@ -11,8 +11,7 @@
     <li class="item">
         <a data-bind="attr: {href:url, rel:$parent.displayRelNofollow}, visible: count >= 1">
             <input type="checkbox"
-                   data-bind="checked: is_selected, attr: {id: id}"
-                   onclick="this.parentNode.click();" />
+                   data-bind="checked: is_selected, attr: {id: id}, click: function(data, event) { event.target.parentNode.click(); }" />
             <label data-bind="attr: {for: id}">
                 <span data-bind="text: label"></span>
                 <span class="count" data-bind="text: count, visible: $parent.displayProductCount"></span>
