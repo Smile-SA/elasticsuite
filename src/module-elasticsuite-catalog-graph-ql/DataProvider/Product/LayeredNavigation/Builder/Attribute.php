@@ -117,7 +117,7 @@ class Attribute implements LayerBuilderInterface
                     $label = reset($frontendLabels)->getLabel();
                 } else {
                     $label = $attribute->getDefaultFrontendLabel();
-                 }
+                }
             } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
                 $label = $attributeCode;
                 $attribute = null;
