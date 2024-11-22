@@ -32,14 +32,27 @@ class MapPageIdentifier implements EventProcessorInterface
     ];
 
     /**
+     * @var array
+     */
+    private $mapping = [];
+
+    /**
+     * @param array $mapping an additional mapping of pages identifiers (coming from the DI)
+     */
+    public function __construct($mapping = [])
+    {
+        $this->mapping = array_merge_recursive(self::MAPPING_REPLACE_IDENTIFIER, $mapping);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function process($eventData)
     {
         if (isset($eventData['page']['type']['identifier'])) {
             $pageIdentifier = $eventData['page']['type']['identifier'];
-            if (isset(self::MAPPING_REPLACE_IDENTIFIER[$pageIdentifier])) {
-                $eventData['page']['type']['identifier'] = self::MAPPING_REPLACE_IDENTIFIER[$pageIdentifier];
+            if (isset($this->mapping[$pageIdentifier])) {
+                $eventData['page']['type']['identifier'] = $this->mapping[$pageIdentifier];
             }
         }
 
