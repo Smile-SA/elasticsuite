@@ -122,4 +122,12 @@
         <plugin name="elasticsuite_tracker_disable_session" type="Smile\ElasticsuiteTracker\Plugin\SessionStartCheckerPlugin"/>
     </type>
 
+    <!-- Example of extending the page map identifier -->
+    <type name="Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="checkout_klarna_success" xsi:type="string">checkout_onepage_success</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
