@@ -39,6 +39,8 @@ class TopHits implements BuilderInterface
             throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
         }
 
+        $params = [];
+
         if (!empty($bucket->getSource())) {
             $params['_source']['includes'] = $bucket->getSource();
         }
