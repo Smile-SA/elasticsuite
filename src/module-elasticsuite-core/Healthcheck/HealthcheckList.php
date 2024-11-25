@@ -46,6 +46,7 @@ class HealthcheckList
      * Sorts the checks based on the value returned by each check's `getSortOrder` method.
      *
      * @return CheckInterface[] Array of health checks sorted by order.
+     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function getChecks(): array
     {
