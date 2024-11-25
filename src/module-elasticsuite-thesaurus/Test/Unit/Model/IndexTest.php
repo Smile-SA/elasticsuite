@@ -21,6 +21,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Helper\Cache;
 use Smile\ElasticsuiteCore\Helper\IndexSettings;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
@@ -50,6 +51,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param int    $timesClientCalled        Expected number of times the client 'analyze' method will be called.
      * @param array  $clientConsecutiveReturns Array of mocked returns from client 'analyze' method.
      * @param array  $expectedRewrites         Expected final array of rewritten queries.
+     * @param bool   $cacheStorageAllowed      Whether saving results in cache is allowed.
      * @param string $containerName            Container name/request type.
      * @param int    $storeId                  Store id.
      * @param string $storeCode                Store code.
@@ -67,6 +69,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $timesClientCalled,
         $clientConsecutiveReturns,
         $expectedRewrites,
+        $cacheStorageAllowed = true,
         $containerName = 'requestType',
         $storeId = 1,
         $storeCode = 'default',
@@ -83,7 +86,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $maxRewrites
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
-
+        $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
 
         $indexAlias = sprintf('%s_%s_%s', $indexPrefix, $storeCode, ThesaurusIndex::INDEX_IDENTIER);
         $indexSettingsHelperMock->method('getIndexAliasFromIdentifier')->willReturn($indexAlias);
@@ -103,7 +106,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
-            $thesaurusConfigFactoryMock
+            $thesaurusConfigFactoryMock,
+            $thesaurusCacheConfigMock
         );
 
         $cacheKey = implode('|', [$indexAlias, $containerName, $queryText]);
@@ -111,7 +115,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
         $cacheHelperMock->expects($this->exactly(1))->method('loadCache')->with($cacheKey)
             ->willReturn(false);
-        $cacheHelperMock->expects($this->exactly(1))->method('saveCache')->with(
+        $cacheHelperMock->expects($this->exactly((int) $cacheStorageAllowed))->method('saveCache')->with(
             $cacheKey,
             $expectedRewrites,
             $cacheTags
@@ -130,7 +134,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     {
         /*
          * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
-         *      timesClientCall, clientConsecutiveReturns, expectedRewrites].
+         *      timesClientCall, clientConsecutiveReturns, expectedRewrites(, $cacheStorageAllowed)].
          */
         return [
             ['foo', false, 10, false, 10, 2,
@@ -141,6 +145,9 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             ['foo', true, 10, true, 10, 2,
                 2, [[], []], [],
+            ],
+            ['foo', true, 10, true, 10, 2,
+                2, [[], []], [], false,
             ],
         ];
     }
@@ -159,6 +166,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param int    $timesClientCalled        Expected number of times the client 'analyze' method will be called.
      * @param array  $clientConsecutiveReturns Array of mocked returns from client 'analyze' method.
      * @param array  $expectedRewrites         Expected final array of rewritten queries.
+     * @param bool   $cacheStorageAllowed      Whether saving results in cache is allowed.
      * @param string $containerName            Container name/request type.
      * @param int    $storeId                  Store id.
      * @param string $storeCode                Store code.
@@ -176,6 +184,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $timesClientCalled,
         $clientConsecutiveReturns,
         $expectedRewrites,
+        $cacheStorageAllowed = true,
         $containerName = 'requestType',
         $storeId = 1,
         $storeCode = 'default',
@@ -192,6 +201,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $maxRewrites
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
+        $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
 
         $indexAlias = sprintf('%s_%s_%s', $indexPrefix, $storeCode, ThesaurusIndex::INDEX_IDENTIER);
         $indexSettingsHelperMock->method('getIndexAliasFromIdentifier')->willReturn($indexAlias);
@@ -223,7 +233,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
-            $thesaurusConfigFactoryMock
+            $thesaurusConfigFactoryMock,
+            $thesaurusCacheConfigMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -231,7 +242,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
         $cacheHelperMock->expects($this->exactly(1))->method('loadCache')->with($cacheKey)
             ->willReturn(false);
-        $cacheHelperMock->expects($this->exactly(1))->method('saveCache')->with(
+        $cacheHelperMock->expects($this->exactly((int) $cacheStorageAllowed))->method('saveCache')->with(
             $cacheKey,
             $expectedRewrites,
             $cacheTags
@@ -250,7 +261,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     {
         /*
          * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
-         *      timesClientCall, clientConsecutiveReturns, expectedRewrites].
+         *      timesClientCall, clientConsecutiveReturns, expectedRewrites(, cacheStorageAllowed)].
          */
         return [
             // Both synonyms and expansions disabled.
@@ -431,6 +442,64 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                     'cafe' => 0.01,
                 ],
             ],
+            // Both synonyms and expansions enabled. Simulating 'foo,bar,baz' and 'bar => pub,cafe'.
+            // No cache storage allowed.
+            ['foo', true, 10, true, 10, 2,
+                4,
+                [
+                    // Synonyms call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => 'SYNONYM',
+                                'token' => 'bar',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                            [
+                                'type' => 'SYNONYM',
+                                'token' => 'baz',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // Expansions call.
+                    // No expansion for 'foo'.
+                    ['tokens' => []],
+                    // Expansion for 'bar'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => 'SYNONYM',
+                                'token' => 'pub',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                            [
+                                'type' => 'SYNONYM',
+                                'token' => 'cafe',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // No expansion for 'baz'.
+                    ['tokens' => []],
+                ],
+                [
+                    // Synonyms only for 'foo'.
+                    'bar' => 0.1,
+                    'baz' => 0.1,
+                    'pub' => 0.01,
+                    'cafe' => 0.01,
+                ],
+                false,
+            ],
             // Both synonyms and expansions enabled, multi-words search.
             // Simulating 'foo,bat,baz' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
@@ -602,6 +671,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param int    $timesClientCalled        Expected number of times the client 'analyze' method will be called.
      * @param array  $clientConsecutiveReturns Array of mocked returns from client 'analyze' method.
      * @param array  $expectedRewrites         Expected final array of rewritten queries.
+     * @param bool   $cacheStorageAllowed      Whether saving results in cache is allowed.
      * @param string $containerName            Container name/request type.
      * @param int    $storeId                  Store id.
      * @param string $storeCode                Store code.
@@ -619,6 +689,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $timesClientCalled,
         $clientConsecutiveReturns,
         $expectedRewrites,
+        $cacheStorageAllowed = true,
         $containerName = 'requestType',
         $storeId = 1,
         $storeCode = 'default',
@@ -635,6 +706,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $maxRewrites
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
+        $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
 
         $indexAlias = sprintf('%s_%s_%s', $indexPrefix, $storeCode, ThesaurusIndex::INDEX_IDENTIER);
         $indexSettingsHelperMock->method('getIndexAliasFromIdentifier')->willReturn($indexAlias);
@@ -666,7 +738,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
-            $thesaurusConfigFactoryMock
+            $thesaurusConfigFactoryMock,
+            $thesaurusCacheConfigMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -674,7 +747,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
         $cacheHelperMock->expects($this->exactly(1))->method('loadCache')->with($cacheKey)
             ->willReturn(false);
-        $cacheHelperMock->expects($this->exactly(1))->method('saveCache')->with(
+        $cacheHelperMock->expects($this->exactly((int) $cacheStorageAllowed))->method('saveCache')->with(
             $cacheKey,
             $expectedRewrites,
             $cacheTags
@@ -1582,6 +1655,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param int    $maxRewrites            Thesaurus config max rewrites.
      * @param int    $timesClientCalled      Expected number of times the client 'analyze' method will be called.
      * @param array  $expectedRewrites       Expected final array of rewritten queries.
+     * @param bool   $cacheStorageAllowed    Whether saving results in cache is allowed.
      * @param string $containerName          Container name/request type.
      * @param int    $storeId                Store id.
      * @param string $storeCode              Store code.
@@ -1598,6 +1672,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $maxRewrites,
         $timesClientCalled,
         $expectedRewrites,
+        $cacheStorageAllowed = true,
         $containerName = 'requestType',
         $storeId = 1,
         $storeCode = 'default',
@@ -1614,6 +1689,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $maxRewrites
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
+        $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
 
         $indexAlias = sprintf('%s_%s_%s', $indexPrefix, $storeCode, ThesaurusIndex::INDEX_IDENTIER);
         $indexSettingsHelperMock->method('getIndexAliasFromIdentifier')->willReturn($indexAlias);
@@ -1631,7 +1707,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
-            $thesaurusConfigFactoryMock
+            $thesaurusConfigFactoryMock,
+            $thesaurusCacheConfigMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -1639,7 +1716,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
         $cacheHelperMock->expects($this->exactly(1))->method('loadCache')->with($cacheKey)
             ->willReturn(false);
-        $cacheHelperMock->expects($this->exactly(1))->method('saveCache')->with(
+        $cacheHelperMock->expects($this->exactly((int) $cacheStorageAllowed))->method('saveCache')->with(
             $cacheKey,
             $expectedRewrites,
             $cacheTags
@@ -1747,6 +1824,24 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $thesaurusConfigFactory->method('create')->willReturn($thesaurusConfig);
 
         return $thesaurusConfigFactory;
+    }
+
+    /**
+     * Get Thesaurus cache config mock.
+     *
+     * @param bool $cacheStorageAllowed Whether cache storage of results is allowed
+     *
+     * @return MockObject|ThesaurusCacheConfig
+     */
+    private function getThesaurusCacheConfigMock($cacheStorageAllowed)
+    {
+        $thesaurusCacheConfig = $this->getMockBuilder(ThesaurusCacheConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $thesaurusCacheConfig->method('isCacheStorageAllowed')->willReturn($cacheStorageAllowed);
+
+        return $thesaurusCacheConfig;
     }
 
     /**
