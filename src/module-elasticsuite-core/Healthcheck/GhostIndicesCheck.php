@@ -157,7 +157,7 @@ class GhostIndicesCheck implements CheckInterface
      *
      * @return string
      */
-    public function getElasticsuiteIndicesUrl(): string
+    private function getElasticsuiteIndicesUrl(): string
     {
         return $this->urlBuilder->getUrl(self::ROUTE_ELASTICSUITE_INDICES);
     }

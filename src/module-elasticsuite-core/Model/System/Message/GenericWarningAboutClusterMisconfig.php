@@ -85,12 +85,14 @@ class GenericWarningAboutClusterMisconfig implements MessageInterface
     {
         $issuesCount = $this->getIssueCount();
 
+        // @codingStandardsIgnoreStart
         return __(
             'You have <strong>%1 health checks</strong> in a <strong>warning</strong> state. '
             . 'Please head to the <a href="%2"><strong>Elasticsuite Healthcheck</strong></a> page to get more details and see how to fix them.',
             $issuesCount,
             $this->getElasticsuiteHealthcheckUrl()
         );
+        // @codingStandardsIgnoreEnd
     }
 
     /**
