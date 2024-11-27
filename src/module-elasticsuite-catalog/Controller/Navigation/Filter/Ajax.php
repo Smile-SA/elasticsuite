@@ -48,12 +48,18 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private $categoryRepository;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Framework\App\Action\Context                   $context            Controller action context.
      * @param \Magento\Framework\Controller\Result\JsonFactory        $jsonResultFactory  JSON result factory.
      * @param \Magento\Catalog\Model\Layer\Resolver                   $layerResolver      Layer resolver.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
+     * @param \Psr\Log\LoggerInterface                                $logger             Logger.
      * @param \Magento\Catalog\Model\Layer\FilterList[]               $filterListPool     Filter list pool.
      */
     public function __construct(
@@ -61,6 +67,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository,
+        \Psr\Log\LoggerInterface $logger,
         $filterListPool = []
     ) {
         parent::__construct($context);
@@ -69,6 +76,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         $this->layerResolver     = $layerResolver;
         $this->filterListPool    = $filterListPool;
         $this->categoryRepository = $categoryRepository;
+        $this->logger             = $logger;
     }
 
     /**
@@ -110,12 +118,16 @@ class Ajax extends \Magento\Framework\App\Action\Action
         $this->layerResolver->create($this->getLayerType());
 
         if ($this->getRequest()->getParam('cat')) {
-            $category = $this->categoryRepository->create()->get(
-                $this->getRequest()->getParam('cat'),
-                $this->layerResolver->get()->getCurrentStore()->getId()
-            );
+            try {
+                $category = $this->categoryRepository->create()->get(
+                    $this->getRequest()->getParam('cat'),
+                    $this->layerResolver->get()->getCurrentStore()->getId()
+                );
 
-            $this->layerResolver->get()->setCurrentCategory($category);
+                $this->layerResolver->get()->setCurrentCategory($category);
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
+                $this->logger->critical($exception->getMessage());
+            }
         }
 
         $this->applyFilters();
