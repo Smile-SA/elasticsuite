@@ -15,7 +15,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Model;
 
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use OpenSearch\Common\Exceptions\BadRequest400Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
