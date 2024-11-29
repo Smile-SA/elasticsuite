@@ -17,9 +17,9 @@
 /**
  * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector $block
  */
-$companies = $block->getCompaniesList();
 ?>
 <?php if ($block->isCompanyEnabled()): ?>
+    <?php $companies = $block->getCompaniesList(); ?>
     <div class="customer-company-selector">
         <label for="company_id"><?= __('Company:') ?></label>
         <select id="company_id" name="company_id" class="admin__control-select">
@@ -29,12 +29,12 @@ $companies = $block->getCompaniesList();
             <?php endforeach; ?>
         </select>
     </div>
-<?php endif; ?>
 
-<script type="text/x-magento-init">
-    {
-        "*": {
-             "customerCompanySelector": {}
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                 "customerCompanySelector": {}
+            }
         }
-    }
-</script>
+    </script>
+<?php endif; ?>
