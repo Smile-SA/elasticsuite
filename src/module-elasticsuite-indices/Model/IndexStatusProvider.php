@@ -114,6 +114,11 @@ class IndexStatusProvider
      */
     private function isRebuilding(string $indexName, $indexDate): bool
     {
+        if ($indexDate === false) {
+            // If $indexDate is false, we cannot rebuild.
+            return false;
+        }
+
         if (!empty($this->workingIndexers)) {
             foreach (array_keys($this->workingIndexers) as $indexKey) {
                 if (strpos((string) $indexName, $indexKey) !== false) {

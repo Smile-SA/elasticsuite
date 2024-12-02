@@ -25,7 +25,7 @@
             <?php if ($filterItem->getCount() > 0): ?>
                 <a href="<?php echo $block->escapeUrl($filterItem->getUrl()) ?>">
                     <?php if ($this->isMultipleSelectEnabled()) : ?>
-                        <input type="checkbox" onclick="this.parentNode.click();" <?php if($filterItem->getIsSelected()) : ?>checked<?php endif; ?> />
+                        <input type="checkbox" data-bind="click: function(data, event) { event.target.parentNode.click(); return true; }" <?php if($filterItem->getIsSelected()) : ?>checked<?php endif; ?> />
                     <?php endif; ?>
                     <?php /* @escapeNotVerified */ echo $filterItem->getLabel() ?>
                     <?php if ($this->helper('\Magento\Catalog\Helper\Data')->shouldDisplayProductCountOnLayer()): ?>
