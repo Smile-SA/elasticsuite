@@ -20,13 +20,12 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 
 /**
- * Special "is_in_stock" attribute class.
+ * Special "is_saleable" attribute class.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
- * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class IsInStock implements SpecialAttributeInterface
+class IsSaleable implements SpecialAttributeInterface
 {
     /**
      * @var Yesno
@@ -39,7 +38,7 @@ class IsInStock implements SpecialAttributeInterface
     private QueryFactory $queryFactory;
 
     /**
-     * IsInStock constructor.
+     * IsSaleable constructor.
      *
      * @param Yesno        $booleanSource Boolean Source
      * @param QueryFactory $queryFactory  Query Factory
@@ -57,7 +56,7 @@ class IsInStock implements SpecialAttributeInterface
      */
     public function getAttributeCode()
     {
-        return 'stock.is_in_stock';
+        return 'is_saleable';
     }
 
     /**
@@ -66,19 +65,10 @@ class IsInStock implements SpecialAttributeInterface
      */
     public function getSearchQuery(ProductCondition $condition)
     {
-        $queryParams = [];
-
-        $queryParams[] = $this->queryFactory->create(
-            QueryInterface::TYPE_RANGE,
-            ['bounds' => ['gt' => (float) 0], 'field' => 'stock.qty']
-        );
-
-        $queryParams[] = $this->queryFactory->create(
+        return $this->queryFactory->create(
             QueryInterface::TYPE_TERM,
             ['value' => true, 'field' => 'stock.is_in_stock']
         );
-
-        return $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => $queryParams]);
     }
 
     /**
@@ -136,6 +126,6 @@ class IsInStock implements SpecialAttributeInterface
      */
     public function getLabel()
     {
-        return __('Only in stock products');
+        return __('Only saleable products');
     }
 }
