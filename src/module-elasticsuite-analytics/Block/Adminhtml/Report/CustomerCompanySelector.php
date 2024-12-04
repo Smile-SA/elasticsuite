@@ -109,7 +109,7 @@ class CustomerCompanySelector extends Template
      */
     public function getCompaniesList()
     {
-        if ($this->isCompanyEnabled()) {
+        if ($this->isCompanyEnabled() && ($this->companyRepository !== null)) {
             $searchCriteria = $this->searchCriteriaBuilder->create();
 
             return $this->companyRepository->getList($searchCriteria)->getItems(); // Fetch company list.
