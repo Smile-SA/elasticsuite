@@ -161,8 +161,9 @@ class IndexStatusProvider
     {
         try {
             $indexDate = ($indexDate instanceof DateTime) ? $indexDate : new DateTime();
+            $indexTimestamp = $indexDate->getTimestamp();
 
-            return (new DateTime())->diff($indexDate)->days >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
+            return ((new DateTime())->getTimestamp() - $indexTimestamp) >= $this->indexSettingsHelper->getTimeBeforeGhost();
         } catch (Exception $e) {
             return false;
         }
