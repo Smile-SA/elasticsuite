@@ -34,6 +34,7 @@
                 <number_of_shards>1</number_of_shards>
                 <number_of_replicas>0</number_of_replicas>
                 <batch_indexing_size>1000</batch_indexing_size>
+                <ghost_timeout>172800</ghost_timeout>
             </indices_settings>
         </smile_elasticsuite_core_base_settings>
 

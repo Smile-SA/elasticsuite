@@ -160,7 +160,7 @@ class IndexStatusProvider
     private function isGhost($indexDate): bool
     {
         try {
-            return (new Zend_Date())->sub($indexDate)->getTimestamp() / self::SECONDS_IN_DAY >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
+            return (new Zend_Date())->sub($indexDate)->getTimestamp() >= $this->indexSettingsHelper->getTimeBeforeGhost();
         } catch (Zend_Date_Exception $e) {
             return false;
         }
