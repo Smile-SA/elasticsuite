@@ -13,10 +13,8 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Autocomplete\Product\Collection;
 
-use Magento\Search\Model\QueryFactory;
-use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
-use Magento\Search\Model\Autocomplete\Item as TermItem;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as ProductCollection;
+use Smile\ElasticsuiteCore\Model\Autocomplete\SuggestedTermsProvider;
 
 /**
  * Catalog autocomplete product collection filter.
@@ -28,13 +26,6 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection as
 class Filter implements PreProcessorInterface
 {
     /**
-     * Query factory
-     *
-     * @var QueryFactory
-     */
-    private $queryFactory;
-
-    /**
      * @var TermDataProvider
      */
     private $termDataProvider;
@@ -42,12 +33,10 @@ class Filter implements PreProcessorInterface
     /**
      * Constructor.
      *
-     * @param QueryFactory     $queryFactory     Search term query factory.
-     * @param TermDataProvider $termDataProvider Popular search terms provider.
+     * @param SuggestedTermsProvider $termDataProvider Suggested search terms provider.
      */
-    public function __construct(QueryFactory $queryFactory, TermDataProvider $termDataProvider)
+    public function __construct(SuggestedTermsProvider $termDataProvider)
     {
-        $this->queryFactory     = $queryFactory;
         $this->termDataProvider = $termDataProvider;
     }
 
@@ -61,31 +50,8 @@ class Filter implements PreProcessorInterface
      */
     public function prepareCollection(ProductCollection $collection)
     {
-        $terms = $this->getQueryText();
-
-        $collection->setSearchQuery($terms);
+        $collection->setSearchQuery($this->termDataProvider->getSuggestedTerms());
 
         return $collection;
-    }
-
-    /**
-     * List of search terms suggested by the search terms data provider.
-     *
-     * @return array
-     */
-    private function getQueryText()
-    {
-        $terms = array_map(
-            function (TermItem $termItem) {
-                return $termItem->getTitle();
-            },
-            $this->termDataProvider->getItems()
-        );
-
-        if (empty($terms)) {
-            $terms = [$this->queryFactory->get()->getQueryText()];
-        }
-
-        return $terms;
     }
 }
