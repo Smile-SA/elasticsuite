@@ -53,6 +53,12 @@
             <term_autocomplete>
                 <max_size>3</max_size>
             </term_autocomplete>
+            <advanced>
+                <extension_enabled>1</extension_enabled>
+                <extension_limited>0</extension_limited>
+                <stop_extension_on_match>0</stop_extension_on_match>
+                <preserve_base_query>0</preserve_base_query>
+            </advanced>
         </smile_elasticsuite_autocomplete_settings>
 
         <catalog>
