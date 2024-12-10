@@ -314,6 +314,16 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Returns the time elapsed (in seconds) since its creation after which a non-live index is to be considered ghost.
+     *
+     * @return int
+     */
+    public function getTimeBeforeGhost(): int
+    {
+        return (int) $this->getIndicesSettingsConfigParam('ghost_timeout');
+    }
+
+    /**
      * Get number the batch indexing size from the configuration.
      *
      * @return integer

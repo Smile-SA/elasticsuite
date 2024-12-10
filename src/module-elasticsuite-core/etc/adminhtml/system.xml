@@ -90,24 +90,29 @@
 
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Indices Settings</label>
-                <field id="alias" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="alias" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Alias Name</label>
                 </field>
-                <field id="indices_pattern" translate="label" type="text" sortOrder="58" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="indices_pattern" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Name Pattern</label>
                 </field>
-                <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="number_of_shards" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Default Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="number_of_replicas" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Default Number of Replicas per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="custom_number_of_shards_and_replicas_per_index" translate="label" sortOrder="61" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="custom_number_of_shards_and_replicas_per_index" translate="label" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Custom settings per Index</label>
                     <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\DynamicField</frontend_model>
                     <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="ghost_timeout" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Time for an index to be considered Ghost (in seconds)</label>
+                    <comment><![CDATA[Elasticsuite derelict indices resulting from a failed full reindex are considered ghost after this amount of time (in seconds) has elapsed since their creation. You can reduce this amount of time to speed up ghost indices cleanup, but take care to add a safety on top of the maximum reindexing duration of the more complex index of your platform (usually a catalog_product/product search index). Defaults to 172,800 seconds (2 days), minimum value: 3600 (1 hour).]]></comment>
+                    <validate>integer validate-greater-than-zero validate-number-range number-range-3600-172800</validate>
                 </field>
             </group>
 
