@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2024 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Model\Search\QueryStringProviderFactory;
  * Based on the Term provider but will manipulate it according to configuration.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class SuggestedTermsProvider
