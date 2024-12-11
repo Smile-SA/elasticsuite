@@ -101,6 +101,19 @@ class Autocomplete extends AbstractConfiguration
     }
 
     /**
+     * Check if Autocomplete is supposed to always use the user raw query or not.
+     *
+     * @return bool
+     */
+    public function isPreservingBaseQuery()
+    {
+        return (bool) $this->scopeConfig->isSetFlag(
+            self::AUTOCOMPLETE_SETTINGS_CONFIG_XML_PREFIX . "/advanced/preserve_base_query",
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
      * Retrieve a configuration value by its key
      *
      * @param string $key The configuration key

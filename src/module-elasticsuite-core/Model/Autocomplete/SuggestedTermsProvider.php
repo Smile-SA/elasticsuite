@@ -6,7 +6,7 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCatalog
+ * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @copyright 2024 Smile
  * @license   Open Software License ("OSL") v. 3.0
@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Model\Search\QueryStringProviderFactory;
  * Based on the Term provider but will manipulate it according to configuration.
  *
  * @category Smile
- * @package  Smile\ElasticsuiteCatalog
+ * @package  Smile\ElasticsuiteCore
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
 class SuggestedTermsProvider
@@ -43,6 +43,11 @@ class SuggestedTermsProvider
      * @var \Smile\ElasticsuiteCore\Model\Search\QueryStringProviderFactory
      */
     private $queryStringProviderFactory;
+
+    /**
+     * @var null|string
+     */
+    private $queryString = null;
 
     /**
      * @var null
@@ -67,6 +72,8 @@ class SuggestedTermsProvider
     /**
      * List of search terms suggested by the search terms data provider, and reworked according to configuration.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @return array|string[]
      */
     public function getSuggestedTerms()
@@ -84,8 +91,8 @@ class SuggestedTermsProvider
 
                 $hasAlreadyStoppedExtending = false;
                 if ($this->helper->isExtensionStoppedOnMatch()) {
-                    if (array_search(trim($this->getQueryStringProvider()->get()), $terms) !== false) {
-                        $terms                      = [$this->getQueryStringProvider()->get()];
+                    if (array_search(trim($this->getQueryString()), $terms) !== false) {
+                        $terms                      = [$this->getQueryString()];
                         $hasAlreadyStoppedExtending = true;
                     }
                 }
@@ -93,23 +100,33 @@ class SuggestedTermsProvider
                 if ($this->helper->isExtensionLimited() && !$hasAlreadyStoppedExtending) {
                     $terms = array_slice($terms, 0, (int) $this->helper->getExtensionSize());
                 }
+
+                if ($this->helper->isPreservingBaseQuery() && !$hasAlreadyStoppedExtending) {
+                    array_unshift($terms, $this->getQueryString());
+                }
             }
 
             if (empty($terms)) {
-                $terms = [$this->getQueryStringProvider()->get()];
+                $terms = [$this->getQueryString()];
             }
 
-            $this->terms = array_unique($terms);
+            $this->terms = array_values(array_unique($terms));
         }
 
         return $this->terms;
     }
 
     /**
-     * @return \Smile\ElasticsuiteCore\Model\Search\QueryStringProvider
+     * Retrieve current query string
+     *
+     * @return string
      */
-    private function getQueryStringProvider()
+    private function getQueryString()
     {
-        return $this->queryStringProviderFactory->create();
+        if ($this->queryString === null) {
+            $this->queryString = $this->queryStringProviderFactory->create()->get();
+        }
+
+        return $this->queryString;
     }
 }

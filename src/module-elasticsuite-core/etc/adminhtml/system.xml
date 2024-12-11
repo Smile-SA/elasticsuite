@@ -186,7 +186,15 @@
                 <field id="extension_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Use suggested search terms to fetch results</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Default: Yes. When enabled, autocompletion box results will be computed from the current search term the user is typing, but also with the suggested search terms. This is intended to suggest results when the user is in the process of typing. Eg : When the user is typing "comp", the popular search term "computer" will be suggested, and therefore products or categories matching "computer" will be shown.]]></comment>
+                    <comment><![CDATA[Default: Yes. When enabled, autocompletion box results will be computed from the suggested search terms. This is intended to suggest results when the user is in the process of typing. Eg : When the user is typing "comp", the popular search term "computer" will be suggested, and therefore products or categories matching "computer" will be shown.]]></comment>
+                </field>
+                <field id="preserve_base_query" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Always use the user raw input for suggestions.</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="extension_enabled">1</field>
+                    </depends>
+                    <comment><![CDATA[Default: No. When set to "Yes", this setting will always proceed to fetch suggestions on the query typed by the user in addition to the extended terms. Eg : When the user is typing "comp", the popular search term "computer" will be suggested, but products or categories matching either "comp" or "computer" will be shown.]]></comment>
                 </field>
                 <field id="extension_limit" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Limit the amount of suggested search terms used for autocomplete matching</label>

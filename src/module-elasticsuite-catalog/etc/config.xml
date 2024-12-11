@@ -33,11 +33,6 @@
             <category_autocomplete>
                 <max_size>3</max_size>
             </category_autocomplete>
-            <advanced>
-                <extension_enabled>1</extension_enabled>
-                <extension_limit>0</extension_limit>
-                <stop_extension_on_match>0</stop_extension_on_match>
-            </advanced>
         </smile_elasticsuite_autocomplete_settings>
         <smile_elasticsuite_catalogsearch_settings>
             <catalogsearch>
