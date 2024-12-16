@@ -180,6 +180,7 @@ class IndexStatusProvider
      * @param string $indexName Index name.
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function isClosed(string $indexName): bool
     {
