@@ -120,9 +120,10 @@ class IndexStatsProvider
     public function indexStats($indexName, $alias): array
     {
         $data = [
-            'index_name'  => $indexName,
-            'index_alias' => $alias,
-            'size'        => 'undefined',
+            'index_name'          => $indexName,
+            'index_alias'         => $alias,
+            'number_of_documents' => 'undefined',
+            'size'                => 'undefined',
         ];
 
         try {
@@ -144,7 +145,7 @@ class IndexStatsProvider
                 sprintf('Error when loading/parsing statistics for index "%s"', $indexName),
                 ['exception' => $e]
             );
-            $data['index_status'] = IndexStatus::UNDEFINED_STATUS;
+            $data['index_status'] = IndexStatus::CLOSED_STATUS;
         }
 
         return $data;
