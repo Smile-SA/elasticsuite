@@ -35,6 +35,7 @@ class IndexStatus extends AbstractRenderer
     public const REBUILDING_STATUS = 'rebuilding';
     public const GHOST_STATUS = 'ghost';
     public const EXTERNAL_STATUS = 'external';
+    public const CLOSED_STATUS = 'closed';
     public const UNDEFINED_STATUS = 'undefined';
 
     /**
@@ -45,6 +46,7 @@ class IndexStatus extends AbstractRenderer
         self::REBUILDING_STATUS => self::SEVERITY_MINOR,
         self::GHOST_STATUS => self::SEVERITY_CRITICAL,
         self::EXTERNAL_STATUS => self::SEVERITY_EXTERNAL,
+        self::CLOSED_STATUS => self::SEVERITY_MINOR,
         self::UNDEFINED_STATUS => self::SEVERITY_UNDEFINED,
     ];
 

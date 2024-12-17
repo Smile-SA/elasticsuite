@@ -72,6 +72,7 @@ class Analyzer extends Template
                 IndexStatus::GHOST_STATUS,
                 IndexStatus::EXTERNAL_STATUS,
                 IndexStatus::UNDEFINED_STATUS,
+                IndexStatus::CLOSED_STATUS,
             ];
             $indices = [];
 
