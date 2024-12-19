@@ -17,6 +17,8 @@
 /**
  * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector $block
  */
+$baseUrl = $block->getUrl('*/*/*', ['_current' => true, 'company_id' => '__company_id__']);
+$companyId = $block->getCustomerCompanyId();
 ?>
 <?php if ($block->isCompanyEnabled()): ?>
     <?php $companies = $block->getCompaniesList(); ?>
@@ -25,7 +27,7 @@
         <select id="company_id" name="company_id" class="admin__control-select">
             <option value="all"><?= __('All Companies');?></option>
             <?php foreach ($companies as $company): ?>
-                <option value="<?= $company->getId(); ?>"><?= $company->getCompanyName(); ?></option>
+                <option value="<?= $block->escapeHtmlAttr($company->getId()); ?>" <?php if ($companyId == $company->getId()): ?> selected="selected"<?php endif; ?>><?= $block->escapeHtml($company->getCompanyName()); ?></option>
             <?php endforeach; ?>
         </select>
     </div>
@@ -33,7 +35,9 @@
     <script type="text/x-magento-init">
         {
             "*": {
-                 "customerCompanySelector": {}
+                 "customerCompanySelector": {
+                    "baseUrl": "<?= $block->escapeJs($block->escapeUrl($baseUrl)) ?>"
+                 }
             }
         }
     </script>

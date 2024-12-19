@@ -18,13 +18,15 @@
  * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerGroupSelector $block
  */
 $customerGroups = $block->getCustomerGroups();
+$customerGroupId = $block->getCurrentCustomerGroupId();
+$baseUrl = $block->getUrl('*/*/*', ['_current' => true, 'customer_group' => '__customer_group__']);
 ?>
 <div class="customer-group-selector">
     <label for="customer_group"><?= __('Customer Group:');?></label>
     <select id="customer_group" name="customer_group" class="admin__control-select">
         <option value="all"><?= __('All Customer Groups');?></option>
         <?php foreach ($customerGroups as $group): ?>
-            <option value="<?php echo $group['value']; ?>"><?php echo $group['label']; ?></option>
+            <option value="<?= $block->escapeHtmlAttr($group['value']); ?>" <?php if ($customerGroupId == $group['value']): ?> selected="selected"<?php endif; ?>><?= $block->escapeHtml($group['label']); ?></option>
         <?php endforeach; ?>
     </select>
 </div>
@@ -32,7 +34,9 @@ $customerGroups = $block->getCustomerGroups();
 <script type="text/x-magento-init">
     {
         "*": {
-             "customerGroupSelector": {}
+             "customerGroupSelector": {
+                "baseUrl": "<?= $block->escapeJs($block->escapeUrl($baseUrl)) ?>"
+             }
         }
     }
 </script>
