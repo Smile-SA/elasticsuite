@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Customer\Model\ResourceModel\Group\CollectionFactory;
+use Smile\ElasticsuiteAnalytics\Model\Report\Context as ReportContext;
 
 /**
  * Block used to display customer group selector in reports.
@@ -33,18 +34,26 @@ class CustomerGroupSelector extends Template
     protected $customerGroupCollectionFactory;
 
     /**
+     * @var ReportContext
+     */
+    protected $reportContext;
+
+    /**
      * CustomerGroupSelector constructor.
      *
      * @param Template\Context  $context                        The context of the template.
      * @param CollectionFactory $customerGroupCollectionFactory Factory for creating customer group collection.
+     * @param ReportContext     $reportContext                  Report context.
      * @param array             $data                           Additional block data.
      */
     public function __construct(
         Template\Context $context,
         CollectionFactory $customerGroupCollectionFactory,
+        ReportContext $reportContext,
         array $data = []
     ) {
         $this->customerGroupCollectionFactory = $customerGroupCollectionFactory;
+        $this->reportContext = $reportContext;
         parent::__construct($context, $data);
     }
 
@@ -56,5 +65,15 @@ class CustomerGroupSelector extends Template
     public function getCustomerGroups()
     {
         return $this->customerGroupCollectionFactory->create()->toOptionArray();
+    }
+
+    /**
+     * Get customer group ID.
+     *
+     * @return mixed
+     */
+    public function getCurrentCustomerGroupId()
+    {
+        return $this->reportContext->getCustomerGroupId();
     }
 }
