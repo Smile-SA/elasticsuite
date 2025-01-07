@@ -47,6 +47,7 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
@@ -63,7 +64,14 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
                     'conversion_rate' => number_format(0, 2),
                 ];
                 if (array_key_exists('result_count', $value->getMetrics())) {
-                    $data[$searchTerm]['result_count'] = round((float) $value->getMetrics()['result_count'] ?: 0);
+                    $resultCountMetrics = $value->getMetrics()['result_count'];
+                    if (is_array($resultCountMetrics)
+                        && array_key_exists('result_count', $resultCountMetrics)
+                        && array_key_exists('value', $resultCountMetrics['result_count'])
+                    ) {
+                        $resultCountMetrics = $resultCountMetrics['result_count']['value'] ?: 0;
+                    }
+                    $data[$searchTerm]['result_count'] = round((float) $resultCountMetrics ?: 0);
                 }
             }
         }
