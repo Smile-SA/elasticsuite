@@ -43,23 +43,31 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
     private $eventQueue;
 
     /**
+     * @var \Smile\ElasticsuiteTracker\Helper\BotDetector
+     */
+    private $botDetector;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteTracker\Model\ResourceModel\CustomerLink $customerLinkResource Resource model.
      * @param \Smile\ElasticsuiteTracker\Helper\Data                      $helper               Tracking Helper.
      * @param \Smile\ElasticsuiteTracker\Api\EventQueueInterface          $eventQueue           Event Queue.
      * @param \Magento\Customer\Model\Session                             $customerSession      Customer Session.
+     * @param \Smile\ElasticsuiteTracker\Helper\BotDetector               $botDetector          Bot detector.
      */
     public function __construct(
         \Smile\ElasticsuiteTracker\Model\ResourceModel\CustomerLink $customerLinkResource,
         \Smile\ElasticsuiteTracker\Helper\Data $helper,
         \Smile\ElasticsuiteTracker\Api\EventQueueInterface $eventQueue,
-        \Magento\Customer\Model\Session $customerSession
+        \Magento\Customer\Model\Session $customerSession,
+        \Smile\ElasticsuiteTracker\Helper\BotDetector $botDetector
     ) {
         $this->customerLinkResource = $customerLinkResource;
         $this->helper               = $helper;
         $this->customerSession      = $customerSession;
         $this->eventQueue           = $eventQueue;
+        $this->botDetector          = $botDetector;
     }
 
     /**
@@ -76,6 +84,9 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
     public function addEvent($eventData)
     {
         if ($this->helper->isEnabled()) {
+            if ($this->helper->isFilteringBotHits() && $this->botDetector->isBot()) {
+                return;
+            }
             $this->addCustomerLink($eventData);
             $this->eventQueue->addEvent($eventData);
         }

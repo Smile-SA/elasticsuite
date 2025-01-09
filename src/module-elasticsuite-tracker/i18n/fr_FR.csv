@@ -33,3 +33,6 @@ Tracking,Tracking
 "Delay","Délai"
 "In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.","En jours. (Par défaut 7 jours.)<br />Les évènements invalides du tracker plus anciens que ce délai seront périodiquement supprimés de la file d'attente d'indexation des évènements."
 "You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.","Vous pouvez cliquer sur ce bouton pour supprimer immédiatement tous les évènements invalides du tracker de la file d'attente d'indexation. Le paramètre ""Délai"" ci-dessus est ignoré."
+"Bot Handling","Gestion des Robots"
+"Filter bot hits","Filtrer les hits de robots"
+"If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.","Si activé, les hits du tracker générés par des robots de moteurs de recherche ou d'IA ne seront pas enregistrés afin d'empêcher la pollution de vos données comportementales par des données de nombre de résultats ou de pagination parfois totalement incohérents."
