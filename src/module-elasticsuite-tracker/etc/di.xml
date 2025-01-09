@@ -150,7 +150,9 @@
                 <item name="Baiduspider" xsi:type="string">baiduspider</item>
                 <item name="openai" xsi:type="string">openai</item>
                 <item name="duckduckbot" xsi:type="string">duckduckbot</item>
-                <item name="facebot" xsi:type="string">facebot</item>
+                <item name="FacebookBot" xsi:type="string">facebot</item>
+                <item name="FacebookExternalHit" xsi:type="string">facebookexternalhit</item>
+                <item name="FacebookCatalog" xsi:type="string">facebookcatalog</item>
                 <item name="twitterbot" xsi:type="string">twitterbot</item>
                 <item name="AlexaIaArchiver" xsi:type="string">ia_archiver</item>
             </argument>
