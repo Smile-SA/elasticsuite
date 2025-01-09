@@ -33,5 +33,6 @@
 "Delay","Verzögerung"
 "In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.","In Tagen. (Standard ist 7 Tage.)<br />Ungültige Tracker-Ereignisse, die älter als diese Verzögerung sind, werden periodisch aus der Warteschlange für Ereignisse entfernt."
 "You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.","Sie können diesen Button anklicken, um alle ungültigen Tracker-Ereignisse unabhängig von der obigen Verzögerungseinstellung sofort aus der Indexierungsphase zu entfernen."
-"",""
-"",""
+"Bot handling","Handhabung von Robotern"
+"Filter bot hits","Filtern Sie Robotertreffer"
+"If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.","Wenn diese Option aktiviert ist, wird verhindert, dass bekannte IA- oder von Suchmaschinen-Crawler-Bots generierte Tracker-Treffer aufgezeichnet werden, um zu verhindern, dass Ihre Verhaltensdaten durch manchmal völlig inkohärente Paginierungs- oder Ergebniszählungsdaten verunreinigt werden."

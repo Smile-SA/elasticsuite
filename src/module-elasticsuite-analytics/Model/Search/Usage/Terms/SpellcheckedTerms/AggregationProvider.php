@@ -35,7 +35,7 @@ class AggregationProvider extends TermsAggregationProvider
                 PipelineInterface::TYPE_BUCKET_SELECTOR,
                 [
                     'name' => 'result_count_filter',
-                    'bucketsPath' => ['avg_result_count' => 'result_count'],
+                    'bucketsPath' => ['avg_result_count' => 'result_count.result_count'],
                     'script' => 'params.avg_result_count > 0',
                 ]
             ),
