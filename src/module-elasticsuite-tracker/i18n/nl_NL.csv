@@ -33,5 +33,6 @@
 "Delay","Vertraging"
 "In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.","In dagen. (Standaard is 7 dagen.)<br />Ongeldige tracker events ouder dan deze vertraging worden periodiek verwijderd uit de wachtrij voor indexering van evenementen."
 "You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.","U kunt op deze knop klikken om onmiddellijk alle ongeldige trackergebeurtenissen uit de indexeringswachtrij te verwijderen, ongeacht de hierboven ingestelde vertraging."
-"",""
-"",""
+"Bot Handling","Robotbediening"
+"Filter bot hits","Filter robottreffers"
+"If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.","Indien ingeschakeld, voorkomt het dat door IA of zoekmachines gegenereerde tracker-hits worden geregistreerd om te voorkomen dat uw gedragsgegevens worden vervuild door soms totaal onsamenhangende paginering of gegevens over het aantal resultaten."

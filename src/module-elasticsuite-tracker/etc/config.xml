@@ -23,6 +23,7 @@
                 <retention_delay>12</retention_delay>
                 <use_api>0</use_api>
                 <is_headless_mode>0</is_headless_mode>
+                <filter_bot_hits>1</filter_bot_hits>
             </general>
             <session>
                 <visit_cookie_name>STUID</visit_cookie_name>

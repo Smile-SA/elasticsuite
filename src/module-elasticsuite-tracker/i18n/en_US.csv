@@ -33,5 +33,6 @@ Enabled,Enabled
 "Delay","Delay"
 "In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.","In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue."
 "You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.","You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above."
-
-
+"Bot Handling","Bot Handling"
+"Filter bot hits","Filter bot hits"
+"If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.","If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data."

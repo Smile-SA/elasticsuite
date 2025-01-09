@@ -130,4 +130,31 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteTracker\Helper\BotDetector">
+        <arguments>
+            <argument name="botUserAgents" xsi:type="array">
+                <item name="Googlebot" xsi:type="string">googlebot</item>
+                <item name="Adsbot-Google" xsi:type="string">adsbot-google</item>
+                <item name="Feedfetcher-Google" xsi:type="string">feedfetcher-google</item>
+                <item name="Mediapartners-Google" xsi:type="string">mediapartners-google</item>
+                <item name="MediapartnersGoogle" xsi:type="string">mediapartners (googlebot)</item>
+                <item name="APIs-Google" xsi:type="string">apis-google</item>
+                <item name="Google-InspectionTool" xsi:type="string">google-inspectiontool</item>
+                <item name="Storebot-Google" xsi:type="string">storebot-google</item>
+                <item name="GoogleOther" xsi:type="string">googleother</item>
+                <item name="bingbot" xsi:type="string">bingbot</item>
+                <item name="YahooSlurp" xsi:type="string">slurp</item>
+                <item name="LinkedIn" xsi:type="string">linkedinbot</item>
+                <item name="Yandex" xsi:type="string">yandex</item>
+                <item name="Baiduspider" xsi:type="string">baiduspider</item>
+                <item name="openai" xsi:type="string">openai</item>
+                <item name="duckduckbot" xsi:type="string">duckduckbot</item>
+                <item name="facebot" xsi:type="string">facebot</item>
+                <item name="twitterbot" xsi:type="string">twitterbot</item>
+                <item name="AlexaIaArchiver" xsi:type="string">ia_archiver</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
