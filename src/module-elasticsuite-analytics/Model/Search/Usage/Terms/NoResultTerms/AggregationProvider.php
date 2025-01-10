@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms;
 use Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\AggregationProvider as TermsAggregationProvider;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Aggregation provider for terms that always return 0 results
@@ -34,6 +35,7 @@ class AggregationProvider extends TermsAggregationProvider
         $aggParams = [
             'field'     => 'search_query_void.sortable',
             'name'      => 'search_terms',
+            'filter'    => $this->getIsFirstPageQuery(),
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
             'sortOrder' => ['unique_sessions' => 'desc'],
