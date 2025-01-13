@@ -33,7 +33,7 @@
         <arguments>
             <argument name="checks" xsi:type="array">
                 <item name="ghost_indices_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\GhostIndicesCheck</item>
-                <item name="shards_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ShardsConfigCheck</item>
+                <item name="primary_shards_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PrimaryShardsConfigCheck</item>
                 <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ReplicasConfigCheck</item>
             </argument>
         </arguments>

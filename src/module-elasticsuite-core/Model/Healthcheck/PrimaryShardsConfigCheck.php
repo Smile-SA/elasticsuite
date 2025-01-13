@@ -25,7 +25,7 @@ use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
  *
  * Checks for shard misconfigurations in the Elasticsearch cluster.
  */
-class ShardsConfigCheck implements CheckInterface
+class PrimaryShardsConfigCheck implements CheckInterface
 {
     /**
      * Route to Stores -> Configuration section.
@@ -83,7 +83,7 @@ class ShardsConfigCheck implements CheckInterface
      */
     public function getIdentifier(): string
     {
-        return 'shards_config_check';
+        return 'primary_shards_config_check';
     }
 
     /**
