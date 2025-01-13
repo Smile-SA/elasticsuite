@@ -92,6 +92,9 @@
         <filter name="stemmer" type="stemmer" language="el">
             <language>greek</language>
         </filter>
+        <filter name="stemmer" type="stemmer" language="et">
+            <language>estonian</language>
+        </filter>
         <filter name="stemmer" type="stemmer" language="fi">
             <language>finnish</language>
         </filter>
