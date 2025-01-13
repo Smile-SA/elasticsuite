@@ -44,7 +44,7 @@ class WarningAboutClusterShardsMisconfig implements MessageInterface
      */
     private const ES_INDICES_SETTINGS_WIKI_PAGE = 'https://github.com/Smile-SA/elasticsuite/wiki/ModuleInstall#indices-settings';
 
-    public const UNDEFINED_SIZE = 'undefined';
+    public const UNDEFINED_SIZE = 'N/A';
 
     /**
      * @var IndexSettingsHelper

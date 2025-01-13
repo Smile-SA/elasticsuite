@@ -141,19 +141,48 @@ class AggregationProvider implements AggregationProviderInterface
                 'filter'        => $this->queryFactory->create(
                     QueryInterface::TYPE_BOOL,
                     [
+                        'must' => [
+                            $this->getIsFirstPageQuery(),
+                        ],
                         'mustNot' => [
-                            $this->queryFactory->create(
-                                QueryInterface::TYPE_NESTED,
-                                [
-                                    'path'  => 'page.product_list.filters',
-                                    'query' => $this->queryFactory->create(
-                                        QueryInterface::TYPE_EXISTS,
-                                        ['field' => 'page.product_list.filters']
-                                    ),
-                                ]
-                            ),
+                            $this->hasNavigationFiltersQuery(),
                         ],
                     ]
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Return "only first page" query.
+     *
+     * @return QueryInterface
+     */
+    protected function getIsFirstPageQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERM,
+            [
+                'field' => 'page.product_list.current_page',
+                'value' => 1,
+            ]
+        );
+    }
+
+    /**
+     * Return query indicating there are active product list filters.
+     *
+     * @return QueryInterface
+     */
+    protected function hasNavigationFiltersQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path'  => 'page.product_list.filters',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_EXISTS,
+                    ['field' => 'page.product_list.filters']
                 ),
             ]
         );
