@@ -135,7 +135,7 @@ class ReplicasConfigCheck implements CheckInterface
      */
     public function getSortOrder(): int
     {
-        return 20; // Adjust as necessary.
+        return 30; // Adjust as necessary.
     }
 
     /**

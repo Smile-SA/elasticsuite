@@ -142,7 +142,7 @@ class ShardsConfigCheck implements CheckInterface
      */
     public function getSortOrder(): int
     {
-        return 30; // Adjust as necessary.
+        return 20; // Adjust as necessary.
     }
 
     /**
