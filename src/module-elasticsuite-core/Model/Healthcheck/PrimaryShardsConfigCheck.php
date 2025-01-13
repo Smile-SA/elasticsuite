@@ -101,14 +101,23 @@ class PrimaryShardsConfigCheck implements CheckInterface
         if ($status === CheckInterface::WARNING_STATUS) {
             // Description when the shard's configuration is incorrect.
             // @codingStandardsIgnoreStart
-            return __(
-                'The number of shards configured for Elasticsuite <strong>is incorrect.</strong> '
-                . 'You don\'t need to use <strong>%1 shards</strong> since your biggest Elasticsuite index is only <strong>%2</strong>.<br/>'
-                . 'Click <a href="%3"><strong>here</strong></a> to go to the <strong>Elasticsuite Basic Settings</strong> page and change your <strong>Number of Shards per Index</strong> parameter according to our <a href="%4" target="_blank"><strong>Wiki page</strong></a>.',
-                $numberOfShards,
-                $maxIndexSize['human_size'],
-                $this->getElasticsuiteConfigUrl(),
-                self::ES_INDICES_SETTINGS_WIKI_PAGE
+            return implode(
+                '<br />',
+                [
+                    __(
+                    'The <strong>number of shards</strong> configured for Elasticsuite is <strong>incorrect</strong>.'
+                    ),
+                    __(
+                    'You do not need to use <strong>%1 shards</strong> since your biggest Elasticsuite index is only <strong>%2</strong>.',
+                        $numberOfShards,
+                        $maxIndexSize['human_size']
+                    ),
+                    __(
+                    'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Shards per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
+                        $this->getElasticsuiteConfigUrl(),
+                        self::ES_INDICES_SETTINGS_WIKI_PAGE
+                    )
+                ]
             );
             // @codingStandardsIgnoreEnd
         }
