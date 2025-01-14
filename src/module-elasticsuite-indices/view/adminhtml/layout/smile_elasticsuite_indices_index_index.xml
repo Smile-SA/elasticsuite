@@ -70,7 +70,6 @@
                             </arguments>
                         </block>
 
-
                         <block class="Magento\Backend\Block\Widget\Grid\Column" as="size">
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Size</argument>
@@ -78,6 +77,28 @@
                                 <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="number_of_shards">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Shards</argument>
+                                <argument name="index" xsi:type="string">number_of_shards</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">right</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="number_of_replicas">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Replicas</argument>
+                                <argument name="index" xsi:type="string">number_of_replicas</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">right</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
                             </arguments>
                         </block>

@@ -20,6 +20,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Smile\ElasticsuiteAnalytics\Model\Report\Context as ReportContext;
 
 /**
  * Block used to display customer company selector in reports.
@@ -48,6 +49,11 @@ class CustomerCompanySelector extends Template
     protected $searchCriteriaBuilder;
 
     /**
+     * @var ReportContext
+     */
+    protected $reportContext;
+
+    /**
      * @var \Magento\Company\Api\CompanyRepositoryInterface|null
      */
     private $companyRepository = null;
@@ -61,6 +67,7 @@ class CustomerCompanySelector extends Template
      * @param ModuleManager         $moduleManager         Module manager.
      * @param ScopeConfigInterface  $scopeConfig           Scope configuration.
      * @param SearchCriteriaBuilder $searchCriteriaBuilder The search criteria builder.
+     * @param ReportContext         $reportContext         Report context.
      * @param array                 $data                  Additional block data.
      * @throws LocalizedException
      */
@@ -69,10 +76,12 @@ class CustomerCompanySelector extends Template
         ModuleManager $moduleManager,
         ScopeConfigInterface $scopeConfig,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        ReportContext $reportContext,
         array $data = []
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->reportContext = $reportContext;
 
         // Check if Magento_Company module is enabled before attempting to load the repository.
         if ($moduleManager->isEnabled('Magento_Company')) {
@@ -116,5 +125,15 @@ class CustomerCompanySelector extends Template
         }
 
         return [];
+    }
+
+    /**
+     * Get customer company ID.
+     *
+     * @return mixed
+     */
+    public function getCustomerCompanyId()
+    {
+        return $this->reportContext->getCustomerCompanyId();
     }
 }

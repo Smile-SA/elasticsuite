@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 use Smile\ElasticsuiteAnalytics\Model\Report\AggregationProviderInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Default AggregationProvider
@@ -84,6 +85,7 @@ class AggregationProvider implements AggregationProviderInterface
             'name'      => 'search_terms',
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
+            'childBuckets'  => [$this->getFilteredResultCountMetric()],
             'sortOrder' => ['unique_sessions' => 'desc'],
             'size'      => $this->helper->getMaxSearchTerms(),
         ];
@@ -105,9 +107,7 @@ class AggregationProvider implements AggregationProviderInterface
             $this->metricFactory->create(
                 ['name' => 'unique_visitors', 'field' => 'session.vid', 'type' => MetricInterface::TYPE_CARDINALITY]
             ),
-            $this->metricFactory->create(
-                ['name' => 'result_count', 'field' => 'page.product_list.product_count', 'type' => MetricInterface::TYPE_AVG]
-            ),
+            // Metrics result_count moved to a sub-aggregation to ignore filtered search pages.
         ];
 
         return $metrics;
@@ -123,5 +123,68 @@ class AggregationProvider implements AggregationProviderInterface
         $pipelines = [];
 
         return $pipelines;
+    }
+
+    /**
+     * Return aggregation providing the filtered (no filtered search pages) result/product count metrics.
+     *
+     * @return BucketInterface
+     */
+    protected function getFilteredResultCountMetric()
+    {
+        return $this->aggregationFactory->create(
+            BucketInterface::TYPE_METRIC,
+            [
+                'name'          => 'result_count',
+                'metricType'    => MetricInterface::TYPE_AVG,
+                'field'         => 'page.product_list.product_count',
+                'filter'        => $this->queryFactory->create(
+                    QueryInterface::TYPE_BOOL,
+                    [
+                        'must' => [
+                            $this->getIsFirstPageQuery(),
+                        ],
+                        'mustNot' => [
+                            $this->hasNavigationFiltersQuery(),
+                        ],
+                    ]
+                ),
+            ]
+        );
+    }
+
+    /**
+     * Return "only first page" query.
+     *
+     * @return QueryInterface
+     */
+    protected function getIsFirstPageQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERM,
+            [
+                'field' => 'page.product_list.current_page',
+                'value' => 1,
+            ]
+        );
+    }
+
+    /**
+     * Return query indicating there are active product list filters.
+     *
+     * @return QueryInterface
+     */
+    protected function hasNavigationFiltersQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path'  => 'page.product_list.filters',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_EXISTS,
+                    ['field' => 'page.product_list.filters']
+                ),
+            ]
+        );
     }
 }
