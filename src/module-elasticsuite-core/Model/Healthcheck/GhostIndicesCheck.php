@@ -80,18 +80,25 @@ class GhostIndicesCheck implements CheckInterface
         if ($ghostCount > 0) {
             // Description when ghost indices are found.
             // @codingStandardsIgnoreStart
-            return __(
-                'You have <strong>%1 ghost indices</strong>. Ghost indices have a footprint on your Elasticsearch cluster health. '
-                . 'You should consider removing them.<br/>'
-                . 'Click <a href="%2"><strong>here</strong></a> to go to the <strong>Elasticsuite Indices</strong> page to take appropriate actions.',
-                $ghostCount,
-                $this->getElasticsuiteIndicesUrl()
+            return implode(
+                '<br />',
+                [
+                    __(
+                        'You have <strong>%1 ghost indices</strong>. Ghost indices have a footprint on your Elasticsearch cluster health. '
+                        . 'You should consider removing them.',
+                        $ghostCount
+                    ),
+                    __(
+                        'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Indices</strong> page to take appropriate actions.',
+                        $this->getElasticsuiteIndicesUrl()
+                    )
+                ]
             );
             // @codingStandardsIgnoreEnd
         }
 
         // Description when no ghost indices are found.
-        return __('There are no ghost indexes in your Elasticsearch cluster. No action is required at this time.');
+        return __('There are no ghost indices in your Elasticsearch cluster. No action is required at this time.');
     }
 
     /**

@@ -95,14 +95,20 @@ class ReplicasConfigCheck implements CheckInterface
         if ($status === CheckInterface::WARNING_STATUS) {
             // Description when the replicas configuration is incorrect.
             // @codingStandardsIgnoreStart
-            return __(
-                'The number of replicas configured for Elasticsuite <strong>is incorrect.</strong> '
-                . 'You can\'t use <strong>%1 replicas</strong> since there is only <strong>%2 nodes</strong> in your Elasticsearch cluster.<br/>'
-                . 'Click <a href="%3"><strong>here</strong></a> to go to the <strong>Elasticsuite Basic Settings</strong> page and change your <strong>Number of Replicas per Index</strong> parameter according to our <a href="%4" target="_blank"><strong>Wiki page</strong></a>.',
-                $this->helper->getNumberOfReplicas(),
-                $this->getNumberOfNodes(),
-                $this->getElasticsuiteConfigUrl(),
-                self::ES_INDICES_SETTINGS_WIKI_PAGE
+            return implode(
+                '<br />',
+                [
+                    __(
+                'The <strong>number of replicas</strong> configured for Elasticsuite is <strong>incorrect</strong>. You cannot use <strong>%1 replicas</strong> since there is only <strong>%2 nodes</strong> in your Elasticsearch cluster.',
+                        $this->helper->getNumberOfReplicas(),
+                        $this->getNumberOfNodes()
+                    ),
+                    __(
+                'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Replicas per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
+                        $this->getElasticsuiteConfigUrl(),
+                        self::ES_INDICES_SETTINGS_WIKI_PAGE
+                    ),
+                ]
             );
             // @codingStandardsIgnoreEnd
         }
@@ -135,7 +141,7 @@ class ReplicasConfigCheck implements CheckInterface
      */
     public function getSortOrder(): int
     {
-        return 20; // Adjust as necessary.
+        return 30; // Adjust as necessary.
     }
 
     /**
