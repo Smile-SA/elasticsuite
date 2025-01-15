@@ -22,7 +22,19 @@
         <arguments>
             <argument name="messages" xsi:type="array">
                 <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\NotificationAboutVersions</item>
-                <item name="elasticsuite_cluster_replicas_misconfig_warning" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\WarningAboutClusterReplicasMisconfig</item>
+                <!-- Generic warning class -->
+                <item name="elasticsuite_generic_healthcheck_warning" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\GenericHealthcheckWarning</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Elasticsuite Health Check -->
+    <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="ghost_indices_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\GhostIndicesCheck</item>
+                <item name="primary_shards_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PrimaryShardsConfigCheck</item>
+                <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ReplicasConfigCheck</item>
             </argument>
         </arguments>
     </type>
