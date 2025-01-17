@@ -18,7 +18,7 @@ use Magento\Search\Model\Autocomplete\DataProviderInterface;
 use Magento\Search\Model\QueryFactory;
 use Smile\ElasticsuiteCatalog\Helper\Autocomplete as ConfigurationHelper;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Category\Fulltext\CollectionFactory as CategoryCollectionFactory;
-use Smile\ElasticsuiteCore\Model\Autocomplete\Terms\DataProvider as TermDataProvider;
+use Smile\ElasticsuiteCore\Model\Autocomplete\SuggestedTermsProvider;
 
 /**
  * Catalog category autocomplete data provider.
@@ -49,7 +49,7 @@ class DataProvider implements DataProviderInterface
     protected $queryFactory;
 
     /**
-     * @var TermDataProvider
+     * @var SuggestedTermsProvider
      */
     protected $termDataProvider;
 
@@ -73,7 +73,7 @@ class DataProvider implements DataProviderInterface
      *
      * @param ItemFactory               $itemFactory               Suggest item factory.
      * @param QueryFactory              $queryFactory              Search query factory.
-     * @param TermDataProvider          $termDataProvider          Search terms suggester.
+     * @param SuggestedTermsProvider    $termDataProvider          Search terms suggester.
      * @param CategoryCollectionFactory $categoryCollectionFactory Category collection factory.
      * @param ConfigurationHelper       $configurationHelper       Autocomplete configuration helper.
      * @param string                    $type                      Autocomplete provider type.
@@ -81,7 +81,7 @@ class DataProvider implements DataProviderInterface
     public function __construct(
         ItemFactory $itemFactory,
         QueryFactory $queryFactory,
-        TermDataProvider $termDataProvider,
+        SuggestedTermsProvider $termDataProvider,
         CategoryCollectionFactory $categoryCollectionFactory,
         ConfigurationHelper $configurationHelper,
         $type = self::AUTOCOMPLETE_TYPE
@@ -144,23 +144,6 @@ class DataProvider implements DataProviderInterface
     }
 
     /**
-     * List of search terms suggested by the search terms data provider.
-     *
-     * @return array
-     */
-    private function getSuggestedTerms()
-    {
-        $terms = array_map(
-            function (\Magento\Search\Model\Autocomplete\Item $termItem) {
-                return $termItem->getTitle();
-            },
-            $this->termDataProvider->getItems()
-        );
-
-        return $terms;
-    }
-
-    /**
      * Suggested categories collection.
      * Returns null if no suggested search terms.
      *
@@ -171,7 +154,7 @@ class DataProvider implements DataProviderInterface
     {
         $categoryCollection = null;
 
-        $suggestedTerms = $this->getSuggestedTerms();
+        $suggestedTerms = $this->termDataProvider->getSuggestedTerms();
         $terms          = [$this->queryFactory->get()->getQueryText()];
 
         if (!empty($suggestedTerms)) {
