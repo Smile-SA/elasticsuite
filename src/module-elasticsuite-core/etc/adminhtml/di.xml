@@ -35,6 +35,7 @@
                 <item name="ghost_indices_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\GhostIndicesCheck</item>
                 <item name="primary_shards_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PrimaryShardsConfigCheck</item>
                 <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ReplicasConfigCheck</item>
+                <item name="packages_version_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PackageVersionsMismatchCheck</item>
             </argument>
         </arguments>
     </type>
