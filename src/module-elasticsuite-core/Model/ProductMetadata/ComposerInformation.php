@@ -118,6 +118,10 @@ class ComposerInformation extends \Magento\Framework\Composer\ComposerInformatio
             return true;
         }
 
+        if (preg_match('/hyva/', $packageName) == 1) {
+            return true;
+        }
+
         return false;
     }
 
