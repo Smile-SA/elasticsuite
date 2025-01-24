@@ -146,6 +146,7 @@ class PackageVersionsMismatchCheck implements CheckInterface
     private function getPackagesErrors(): array
     {
         if (null === $this->packagesErrors) {
+            $this->packagesErrors = [];
             if (!empty($this->packagesToCheck)) {
                 $corePackageVersion = $this->productMetadata->getVersion();
                 $systemPackages = $this->composerInformationProvider->getComposerInformation()->getSystemPackages();
