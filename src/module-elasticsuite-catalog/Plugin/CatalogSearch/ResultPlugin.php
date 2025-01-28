@@ -113,6 +113,7 @@ class ResultPlugin
      * @param \Closure                                       $proceed The execute method
      *
      * @return \Magento\Framework\Controller\ResultInterface
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function aroundExecute(
         \Magento\CatalogSearch\Controller\Result\Index $subject,
