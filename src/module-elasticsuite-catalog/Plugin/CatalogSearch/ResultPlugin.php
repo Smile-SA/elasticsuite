@@ -24,7 +24,9 @@ use Magento\Framework\Event\ManagerInterface as EventManagerInterface;
 use Magento\Store\Model\ScopeInterface;
 
 /**
- * Plugin which is responsible to redirect to a product page when only one result is found.
+ * This plugin extends the search result controller of Magento and provides two functionalities:
+ * - tracks search terms with a Redirect URL and dispatches the 'smile_elasticsuite_redirect_if_search_term' event;
+ * - redirects to a product page when only one result is found and dispatches the 'smile_elasticsuite_redirect_if_one_result' event.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -75,7 +77,7 @@ class ResultPlugin
     private $response;
 
     /**
-     * RedirectIfOneResult constructor.
+     * Constructor.
      *
      * @param \Magento\Catalog\Model\Layer\Resolver              $layerResolver       Layer Resolver
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig         Scope Configuration
@@ -104,7 +106,8 @@ class ResultPlugin
     }
 
     /**
-     * Process a redirect to the product page if there is only one result for a given search.
+     * Handles search result page redirects.
+     * Adds logic for tracking search terms and performing redirections for specific scenarios.
      *
      * @param \Magento\CatalogSearch\Controller\Result\Index $subject The CatalogSearch Result Controller
      * @param \Closure                                       $proceed The execute method
@@ -116,13 +119,30 @@ class ResultPlugin
         \Closure $proceed
     ) {
         $result = $proceed();
+        $layer      = $this->layerResolver->get();
+        $layerState = $layer->getState();
+
+        if ($subject->getResponse()->isRedirect()) {
+            $redirectUrl = $subject->getResponse()->getHeader('Location')->getFieldValue();
+
+            if (count($layerState->getFilters()) === 0) {
+                $productCollection = $layer->getProductCollection();
+                if ($productCollection->getCurPage() === 1) {
+                    $this->eventManager->dispatch(
+                        'smile_elasticsuite_redirect_if_search_term',
+                        [
+                            'store_id'           => $productCollection->getStoreId(),
+                            'redirect_url'       => $redirectUrl,
+                            'product_collection' => $productCollection,
+                        ]
+                    );
+                }
+            }
+        }
 
         if (!$subject->getResponse()->isRedirect() &&
             $this->scopeConfig->isSetFlag(self::REDIRECT_SETTINGS_CONFIG_XML_FLAG, ScopeInterface::SCOPE_STORES)
         ) {
-            $layer      = $this->layerResolver->get();
-            $layerState = $layer->getState();
-
             if (count($layerState->getFilters()) === 0) {
                 $productCollection = $layer->getProductCollection();
                 if ($productCollection->getCurPage() === 1 && $productCollection->getSize() === 1) {
