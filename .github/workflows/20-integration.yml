@@ -35,6 +35,14 @@ jobs:
             matrix:
                 include:
                   - php-versions: '7.4'
+                    magento-versions: '2.4.2-p2'
+                    magento-editions: 'community'
+                    experimental: true
+                  - php-versions: '7.4'
+                    magento-versions: '2.4.2-p2'
+                    magento-editions: 'enterprise'
+                    experimental: true
+                  - php-versions: '7.4'
                     magento-versions: '2.4.3-p3'
                     magento-editions: 'community'
                     experimental: false
