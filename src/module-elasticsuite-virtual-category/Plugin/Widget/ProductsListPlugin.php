@@ -175,6 +175,11 @@ class ProductsListPlugin
                             }
                             if (!empty($filterQueries)) {
                                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $filterQueries]);
+
+                                if (substr($condition['operator'], 0, 1) === '!') {
+                                    $query = $this->applyNegation($query);
+                                }
+
                                 $collection->addQueryFilter($query);
                             }
                         }
@@ -204,5 +209,30 @@ class ProductsListPlugin
         }
 
         return $storeId;
+    }
+
+    /**
+     * Instantiate query from type and params.
+     *
+     * @param string $queryType   Query type.
+     * @param array  $queryParams Query instantiation params.
+     *
+     * @return QueryInterface
+     */
+    private function prepareQuery($queryType, $queryParams)
+    {
+        return $this->queryFactory->create($queryType, $queryParams);
+    }
+
+    /**
+     * Apply a negation to the current query.
+     *
+     * @param QueryInterface $query Negated query.
+     *
+     * @return QueryInterface
+     */
+    private function applyNegation(QueryInterface $query)
+    {
+        return $this->prepareQuery(QueryInterface::TYPE_NOT, ['query' => $query]);
     }
 }
