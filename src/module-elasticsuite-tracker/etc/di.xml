@@ -121,6 +121,18 @@
     <type name="Magento\Framework\Session\SessionStartChecker">
         <plugin name="elasticsuite_tracker_disable_session" type="Smile\ElasticsuiteTracker\Plugin\SessionStartCheckerPlugin"/>
     </type>
+    <!-- Prevent lack of session start to lead to an empty HttpContext and a removal of the Vary cookie by the FPC in h.png/pixel mode -->
+    <virtualType name="TrackerResponseContext"
+                 type="Magento\Framework\App\Action\Context">
+        <arguments>
+            <argument name="response" xsi:type="object">Smile\ElasticsuiteTracker\Model\App\Response\Http\TrackerResponse</argument>
+        </arguments>
+    </virtualType>
+    <type name="Smile\ElasticsuiteTracker\Controller\Tracker\Hit">
+        <arguments>
+            <argument name="context" xsi:type="object">TrackerResponseContext</argument>
+        </arguments>
+    </type>
 
     <!-- Example of extending the page map identifier -->
     <type name="Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier">
