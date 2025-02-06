@@ -11,7 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request;
+namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\SortOrder;
 
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\Script as ScriptSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
