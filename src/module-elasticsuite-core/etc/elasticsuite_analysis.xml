@@ -61,7 +61,8 @@
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>false</preserve_original>
         </filter>
-
+        <filter name="stemmer_before" type="trim" language="default"/>
+        <filter name="stemmer_after" type="trim" language="default"/>
         <filter name="stemmer" type="stemmer" language="ar">
             <language>arabic</language>
         </filter>
@@ -212,8 +213,10 @@
                 <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
@@ -254,8 +257,10 @@
                 <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
                 <filter ref="shingle" />
             </filters>
             <char_filters>
@@ -292,8 +297,10 @@
                 <filter ref="elision" />
                 <filter ref="word_delimiter" />
                 <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
                 <filter ref="stemmer_override" />
                 <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
                 <filter ref="edge_ngram_filter"/>
             </filters>
             <char_filters>
