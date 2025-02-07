@@ -11,7 +11,7 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\PipelineBuilder;
+namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder;
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\MovingFunction as MovingFunctionBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MovingFunction;
