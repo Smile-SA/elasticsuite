@@ -104,7 +104,7 @@ class GenericHealthcheckWarning implements MessageInterface
         $issuesCount = 0;
 
         foreach ($this->healthcheckList->getChecks() as $check) {
-            if ($check->getStatus() === CheckInterface::WARNING_STATUS) {
+            if ($check->getStatus() === CheckInterface::STATUS_FAILED) {
                 $issuesCount++;
             }
         }
