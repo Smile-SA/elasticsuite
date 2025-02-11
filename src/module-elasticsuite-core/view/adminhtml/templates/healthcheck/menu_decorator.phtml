@@ -1,0 +1,28 @@
+<?php
+/**
+ * Healthcheck menu decorator block
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+/** @var \Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck\MenuDecorator $block */
+?>
+<?php if ($block->isEnabled()): ?>
+<script type="text/javascript">
+    require(["jquery"], function ($) {
+        $('nav').on('globalnavigationcreate', function () {
+            let counter = '<span class="healthchecks-warning-counter">' + <?= (int) $block->getIssuesCount() ?>  + '</span>';
+            $('#menu-smile-elasticsuitecore-elasticsuite-menu a').first().append(counter);
+            $('#menu-smile-elasticsuitecore-elasticsuite-menu .item-healthcheck a').first().append(counter);
+        });
+    });
+</script>
+<?php endif; ?>
