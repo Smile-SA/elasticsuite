@@ -48,23 +48,31 @@ class Rule
     private $categoryRepository;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * Provider constructor.
      *
      * @param \Magento\Framework\App\CacheInterface                   $cache              Cache.
      * @param \Magento\Customer\Model\Session                         $customerSession    Customer session.
      * @param ReadHandler                                             $readHandler        Rule read handler.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
+     * @param Config                                                  $config             Virtual category configuration.
      */
     public function __construct(
         \Magento\Framework\App\CacheInterface $cache,
         \Magento\Customer\Model\Session $customerSession,
         ReadHandler $readHandler,
-        CategoryRepositoryInterfaceFactory $categoryRepository
+        CategoryRepositoryInterfaceFactory $categoryRepository,
+        Config $config
     ) {
         $this->cache = $cache;
         $this->customerSession = $customerSession;
         $this->readHandler = $readHandler;
         $this->categoryRepository = $categoryRepository;
+        $this->config = $config;
     }
 
     /**
@@ -79,7 +87,16 @@ class Rule
     public function loadUsingCache(CategoryInterface $category, $callback)
     {
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
-        $cacheKey = implode('|', [$callback, $category->getStoreId(), $category->getId(), $this->customerSession->getCustomerGroupId()]);
+        $cacheKey = implode(
+            '|',
+            [
+                $callback,
+                $category->getStoreId(),
+                $category->getId(),
+                $this->customerSession->getCustomerGroupId(),
+                (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($category->getStoreId()),
+            ]
+        );
 
         $data = $this->cache->load($cacheKey);
 
