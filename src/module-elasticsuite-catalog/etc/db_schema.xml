@@ -99,8 +99,12 @@
                 length="30"
                 default="standard"
                 comment="Default analyzer for this field"/>
-        <column name="is_used_in_autocomplete" disabled="true"/>
-        <column name="is_display_rel_no_follow" disabled="true"/>
+        <column name="is_used_in_autocomplete" 
+                xsi:type="boolean"
+                disabled="true"/>
+        <column name="is_display_rel_no_follow"
+                xsi:type="boolean"
+                disabled="true"/>
     </table>
 
     <!-- add column to search_query table -->
