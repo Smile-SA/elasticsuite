@@ -246,17 +246,22 @@ class EventQueue extends AbstractDb
         $isEventInvalid = true;
 
         if (isset($data['page']['store_id']) && is_numeric($data['page']['store_id'])) {
-            if (array_key_exists('session', $data)) {
-                if (array_key_exists('uid', $data['session']) && array_key_exists('vid', $data['session'])) {
-                    $isEventInvalid = false;
-                    $sessionUid = trim($data['session']['uid'] ?? '');
-                    $sessionVid = trim($data['session']['vid'] ?? '');
-                    if (empty($sessionUid) || ("null" === $sessionUid)) {
-                        $isEventInvalid = true;
-                    }
-                    if (empty($sessionVid) || ("null" === $sessionVid)) {
-                        $isEventInvalid = true;
-                    }
+            // Ensure $sessionData is always an array.
+            $sessionData = $data['session'] ?? [];
+
+            if (is_array($sessionData) &&
+                array_key_exists('uid', $sessionData) &&
+                array_key_exists('vid', $sessionData)) {
+                $isEventInvalid = false;
+
+                $sessionUid = trim($sessionData['uid'] ?? '');
+                $sessionVid = trim($sessionData['vid'] ?? '');
+
+                if (empty($sessionUid) || ("null" === $sessionUid)) {
+                    $isEventInvalid = true;
+                }
+                if (empty($sessionVid) || ("null" === $sessionVid)) {
+                    $isEventInvalid = true;
                 }
             }
         }
