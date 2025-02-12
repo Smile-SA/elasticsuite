@@ -37,37 +37,45 @@ jobs:
             matrix:
                 include:
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p4'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8-beta2'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.8-beta2'
                     magento-editions: 'enterprise'
-                    experimental: true
+                    experimental: true                    
 
         continue-on-error: ${{ matrix.experimental }}
 
