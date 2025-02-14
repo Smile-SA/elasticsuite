@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
+use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\ProductMetadata;
 use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
@@ -25,7 +26,7 @@ use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  */
-class PackageVersionsMismatchCheck implements CheckInterface
+class PackageVersionsMismatchCheck extends AbstractCheck
 {
     /** @var ProductMetadata */
     private $productMetadata;
@@ -44,13 +45,18 @@ class PackageVersionsMismatchCheck implements CheckInterface
      *
      * @param ProductMetadata             $productMetadata             Elasticsuite product metadata.
      * @param ComposerInformationProvider $composerInformationProvider Composer information provider.
-     * @param array                       $packagesToCheck             List of packages names to check.
+     * @param UrlInterface                $urlBuilder                  URL builder.
+     * @param array                       $packagesToCheck             List of package names to check.
+     * @param int                         $sortOrder                   Sort order (default: 50).
      */
     public function __construct(
         ProductMetadata $productMetadata,
         ComposerInformationProvider $composerInformationProvider,
-        array $packagesToCheck = []
+        UrlInterface $urlBuilder,
+        array $packagesToCheck = [],
+        int $sortOrder = 50
     ) {
+        parent::__construct($urlBuilder, $sortOrder);
         $this->productMetadata = $productMetadata;
         $this->composerInformationProvider = $composerInformationProvider;
         $this->packagesToCheck = $packagesToCheck;
@@ -69,7 +75,7 @@ class PackageVersionsMismatchCheck implements CheckInterface
      */
     public function getStatus(): string
     {
-        return ($this->hasPackagesErrors() ? 'warning' : 'success');
+        return ($this->hasPackagesErrors() ? CheckInterface::STATUS_FAILED : CheckInterface::STATUS_PASSED);
     }
 
     /**
@@ -118,14 +124,6 @@ class PackageVersionsMismatchCheck implements CheckInterface
     public function isDisplayed(): bool
     {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSortOrder(): int
-    {
-        return 40; // Adjust as necessary.
     }
 
     /**

@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
+use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
 
@@ -24,7 +25,7 @@ use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  */
-class HyvaCompatibilityCheck implements CheckInterface
+class HyvaCompatibilityCheck extends AbstractCheck
 {
     /** @var ComposerInformationProvider */
     private $composerInformationProvider;
@@ -45,14 +46,19 @@ class HyvaCompatibilityCheck implements CheckInterface
      * Constructor.
      *
      * @param ComposerInformationProvider $composerInformationProvider Composer information provider.
+     * @param UrlInterface                $urlBuilder                  URL builder.
      * @param string                      $triggerPackage              Hÿva package name triggering the check.
      * @param array                       $packagesToCheck             Required Hÿva compatibility packages.
+     * @param int                         $sortOrder                   Sort order (default: 40).
      */
     public function __construct(
         ComposerInformationProvider $composerInformationProvider,
+        UrlInterface $urlBuilder,
         string $triggerPackage = 'hyva-themes/magento2-default-theme',
-        array $packagesToCheck = []
+        array $packagesToCheck = [],
+        int $sortOrder = 40
     ) {
+        parent::__construct($urlBuilder, $sortOrder);
         $this->composerInformationProvider = $composerInformationProvider;
         $this->triggerPackage = $triggerPackage;
         $this->packagesToCheck = $packagesToCheck;
@@ -71,7 +77,7 @@ class HyvaCompatibilityCheck implements CheckInterface
      */
     public function getStatus(): string
     {
-        return ($this->hasPackagesErrors() ? 'warning' : 'success');
+        return ($this->hasPackagesErrors() ? CheckInterface::STATUS_FAILED : CheckInterface::STATUS_PASSED);
     }
 
     /**
@@ -116,14 +122,6 @@ class HyvaCompatibilityCheck implements CheckInterface
         }
 
         return $description;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSortOrder(): int
-    {
-        return 40; // Adjust as necessary.
     }
 
     /**

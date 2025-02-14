@@ -21,11 +21,11 @@ use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 
 /**
- * Class ShardsConfigCheck.
+ * Class PrimaryShardsConfigCheck.
  *
- * Checks for shard misconfigurations in the Elasticsearch cluster.
+ * Checks for primary shards misconfigurations in the Elasticsearch cluster.
  */
-class PrimaryShardsConfigCheck implements CheckInterface
+class PrimaryShardsConfigCheck extends AbstractCheck
 {
     /**
      * Route to Stores -> Configuration section.
@@ -55,31 +55,26 @@ class PrimaryShardsConfigCheck implements CheckInterface
     private $indexStatsProvider;
 
     /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
      * Constructor.
      *
      * @param IndexSettingsHelper $indexSettingsHelper Index settings helper.
      * @param IndexStatsProvider  $indexStatsProvider  Index stats provider.
      * @param UrlInterface        $urlBuilder          URL builder.
+     * @param int                 $sortOrder           Sort order (default: 20).
      */
     public function __construct(
         IndexSettingsHelper $indexSettingsHelper,
         IndexStatsProvider $indexStatsProvider,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        int $sortOrder = 20
     ) {
+        parent::__construct($urlBuilder, $sortOrder);
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexStatsProvider  = $indexStatsProvider;
-        $this->urlBuilder          = $urlBuilder;
     }
 
     /**
-     * Retrieve the unique identifier for this health check.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getIdentifier(): string
     {
@@ -87,10 +82,7 @@ class PrimaryShardsConfigCheck implements CheckInterface
     }
 
     /**
-     * Retrieve a dynamic description for this health check based on its status.
-     *
-     * @return string
-     * @throws Exception
+     * {@inheritDoc}
      */
     public function getDescription(): string
     {
@@ -98,22 +90,22 @@ class PrimaryShardsConfigCheck implements CheckInterface
         $maxIndexSize = $this->getMaxIndexSize();
         $status = $this->getStatus();
 
-        if ($status === CheckInterface::WARNING_STATUS) {
+        if ($status === CheckInterface::STATUS_FAILED) {
             // Description when the shard's configuration is incorrect.
             // @codingStandardsIgnoreStart
             return implode(
                 '<br />',
                 [
                     __(
-                    'The <strong>number of shards</strong> configured for Elasticsuite is <strong>incorrect</strong>.'
+                        'The <strong>number of shards</strong> configured for Elasticsuite is <strong>incorrect</strong>.'
                     ),
                     __(
-                    'You do not need to use <strong>%1 shards</strong> since your biggest Elasticsuite index is only <strong>%2</strong>.',
+                        'You do not need to use <strong>%1 shards</strong> since your biggest Elasticsuite index is only <strong>%2</strong>.',
                         $numberOfShards,
                         $maxIndexSize['human_size']
                     ),
                     __(
-                    'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Shards per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
+                        'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Shards per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
                         $this->getElasticsuiteConfigUrl(),
                         self::ES_INDICES_SETTINGS_WIKI_PAGE
                     )
@@ -127,10 +119,7 @@ class PrimaryShardsConfigCheck implements CheckInterface
     }
 
     /**
-     * Retrieve the status of this health check.
-     *
-     * @return string
-     * @throws Exception
+     * {@inheritDoc}
      */
     public function getStatus(): string
     {
@@ -138,20 +127,10 @@ class PrimaryShardsConfigCheck implements CheckInterface
         $maxIndexSize = $this->getMaxIndexSize();
 
         if ($numberOfShards > 1 && $maxIndexSize && $maxIndexSize['size_in_bytes'] < 10737418240) {
-            return 'warning';
+            return CheckInterface::STATUS_FAILED;
         }
 
-        return 'success';
-    }
-
-    /**
-     * Retrieve the sort order for this health check.
-     *
-     * @return int
-     */
-    public function getSortOrder(): int
-    {
-        return 20; // Adjust as necessary.
+        return CheckInterface::STATUS_PASSED;
     }
 
     /**
