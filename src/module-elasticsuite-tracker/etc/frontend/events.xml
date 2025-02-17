@@ -20,4 +20,7 @@
     <event name="smile_elasticsuite_redirect_if_one_result">
         <observer name="track_redirect_if_one_result" instance="Smile\ElasticsuiteTracker\Observer\TrackRedirectIfOneResult" />
     </event>
+    <event name="smile_elasticsuite_redirect_if_search_term">
+        <observer name="track_redirect_if_search_term" instance="Smile\ElasticsuiteTracker\Observer\TrackRedirectIfSearchTerm" />
+    </event>
 </config>

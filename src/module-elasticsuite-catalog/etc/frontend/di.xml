@@ -181,7 +181,7 @@
     </type>
 
     <type name="Magento\CatalogSearch\Controller\Result\Index">
-        <plugin name="redirect_if_one_result" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
+        <plugin name="search_term_and_single_result_redirect" type="Smile\ElasticsuiteCatalog\Plugin\CatalogSearch\ResultPlugin"/>
     </type>
 
     <type name="Smile\ElasticsuiteCatalog\Helper\Autocomplete">
