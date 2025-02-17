@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter;
 
 use Magento\Catalog\Model\Config\LayerCategoryConfig;
+use Magento\Framework\App\State;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\FilterInterface;
 use Smile\ElasticsuiteVirtualCategory\Model\Category\Filter\Provider;
@@ -43,20 +44,28 @@ class CurrentCategory implements FilterInterface
     private $filterProvider;
 
     /**
+     * @var \Magento\Framework\App\State
+     */
+    private $appState;
+
+    /**
      * Current Category filter constructor.
      *
      * @param ContextInterface    $searchContext       Current search context.
      * @param LayerCategoryConfig $layerCategoryConfig Category LayerConfig
      * @param Provider            $filterProvider      Category Filter provider.
+     * @param State               $appState            Application state.
      */
     public function __construct(
         ContextInterface $searchContext,
         LayerCategoryConfig $layerCategoryConfig,
-        Provider $filterProvider
+        Provider $filterProvider,
+        State $appState
     ) {
         $this->searchContext       = $searchContext;
         $this->layerCategoryConfig = $layerCategoryConfig;
         $this->filterProvider      = $filterProvider;
+        $this->appState            = $appState;
     }
 
     /**
@@ -65,6 +74,10 @@ class CurrentCategory implements FilterInterface
     public function getFilterQuery()
     {
         $query = null;
+
+        if ($this->isAdminArea()) {
+            return null;
+        }
 
         if (false === $this->isDisplayCategoryFilter() && $this->searchContext->getCurrentCategory()) {
             $query = $this->filterProvider->getQueryFilter($this->searchContext->getCurrentCategory());
@@ -81,5 +94,19 @@ class CurrentCategory implements FilterInterface
     private function isDisplayCategoryFilter()
     {
         return $this->layerCategoryConfig->isCategoryFilterVisibleInLayerNavigation();
+    }
+
+    /**
+     * Check if we are in the admin area
+     *
+     * @return bool
+     */
+    private function isAdminArea()
+    {
+        try {
+            return $this->appState->getAreaCode() === \Magento\Framework\App\Area::AREA_ADMINHTML;
+        } catch (\Magento\Framework\Exception\LocalizedException $exception) {
+            return false;
+        }
     }
 }
