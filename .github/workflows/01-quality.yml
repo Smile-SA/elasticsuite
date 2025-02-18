@@ -18,7 +18,7 @@ on:
 jobs:
     qualit:
         name: Code Quality
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         strategy:
             matrix:
                 php-versions: ['8.1']

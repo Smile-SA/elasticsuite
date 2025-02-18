@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Client\Client;
  *
  * Health check for replicas misconfiguration in Elasticsuite.
  */
-class ReplicasConfigCheck implements CheckInterface
+class ReplicasConfigCheck extends AbstractCheck
 {
     /**
      * Route to Stores -> Configuration section.
@@ -44,7 +44,7 @@ class ReplicasConfigCheck implements CheckInterface
     /**
      * @var IndexSettingsHelper
      */
-    protected $helper;
+    private $indexSettingsHelper;
 
     /**
      * @var Client
@@ -52,31 +52,26 @@ class ReplicasConfigCheck implements CheckInterface
     protected $client;
 
     /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
      * Constructor.
      *
-     * @param IndexSettingsHelper $indexSettingHelper Index settings helper.
-     * @param Client              $client             Elasticsearch client.
-     * @param UrlInterface        $urlBuilder         URL builder.
+     * @param IndexSettingsHelper $indexSettingsHelper Index settings helper.
+     * @param Client              $client              Elasticsearch client.
+     * @param UrlInterface        $urlBuilder          URL builder.
+     * @param int                 $sortOrder           Sort order (default: 30).
      */
     public function __construct(
-        IndexSettingsHelper $indexSettingHelper,
+        IndexSettingsHelper $indexSettingsHelper,
         Client $client,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        int $sortOrder = 30
     ) {
-        $this->helper = $indexSettingHelper;
+        parent::__construct($urlBuilder, $sortOrder);
+        $this->indexSettingsHelper = $indexSettingsHelper;
         $this->client = $client;
-        $this->urlBuilder = $urlBuilder;
     }
 
     /**
-     * Retrieve the unique identifier for this health check.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getIdentifier(): string
     {
@@ -84,27 +79,25 @@ class ReplicasConfigCheck implements CheckInterface
     }
 
     /**
-     * Retrieve a dynamic description for this health check based on its status.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getDescription(): string
     {
         $status = $this->getStatus();
 
-        if ($status === CheckInterface::WARNING_STATUS) {
+        if ($status === CheckInterface::STATUS_FAILED) {
             // Description when the replicas configuration is incorrect.
             // @codingStandardsIgnoreStart
             return implode(
                 '<br />',
                 [
                     __(
-                'The <strong>number of replicas</strong> configured for Elasticsuite is <strong>incorrect</strong>. You cannot use <strong>%1 replicas</strong> since there is only <strong>%2 nodes</strong> in your Elasticsearch cluster.',
-                        $this->helper->getNumberOfReplicas(),
+                        'The <strong>number of replicas</strong> configured for Elasticsuite is <strong>incorrect</strong>. You cannot use <strong>%1 replicas</strong> since there is only <strong>%2 nodes</strong> in your Elasticsearch cluster.',
+                        $this->indexSettingsHelper->getNumberOfReplicas(),
                         $this->getNumberOfNodes()
                     ),
                     __(
-                'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Replicas per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
+                        'Click <a href="%1"><strong>here</strong></a> to go to the <strong>Elasticsuite Config</strong> page and change your <strong>Number of Replicas per Index</strong> parameter according to our <a href="%2" target="_blank"><strong>Wiki page</strong></a>.',
                         $this->getElasticsuiteConfigUrl(),
                         self::ES_INDICES_SETTINGS_WIKI_PAGE
                     ),
@@ -118,30 +111,18 @@ class ReplicasConfigCheck implements CheckInterface
     }
 
     /**
-     * Retrieve the status of this health check.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getStatus(): string
     {
-        $numberOfReplicas = $this->helper->getNumberOfReplicas();
+        $numberOfReplicas = $this->indexSettingsHelper->getNumberOfReplicas();
         $numberOfNodes = $this->getNumberOfNodes();
 
         if ($numberOfReplicas > 0 && $numberOfReplicas > ($numberOfNodes - 1)) {
-            return 'warning';
+            return CheckInterface::STATUS_FAILED;
         }
 
-        return 'success';
-    }
-
-    /**
-     * Retrieve the sort order for this health check.
-     *
-     * @return int
-     */
-    public function getSortOrder(): int
-    {
-        return 30; // Adjust as necessary.
+        return CheckInterface::STATUS_PASSED;
     }
 
     /**

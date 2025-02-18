@@ -24,13 +24,16 @@ use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
  *
  * Health check to identify any ghost indices in the Elasticsearch cluster.
  */
-class GhostIndicesCheck implements CheckInterface
+class GhostIndicesCheck extends AbstractCheck
 {
     /**
      * Route to Elasticsuite -> Indices page.
      */
     private const ROUTE_ELASTICSUITE_INDICES = 'smile_elasticsuite_indices';
 
+    /**
+     * Status identifier for ghost indices.
+     */
     public const GHOST_STATUS = 'ghost';
 
     /**
@@ -39,28 +42,23 @@ class GhostIndicesCheck implements CheckInterface
     private $indexStatsProvider;
 
     /**
-     * @var UrlInterface
-     */
-    private $urlBuilder;
-
-    /**
      * Constructor.
      *
      * @param IndexStatsProvider $indexStatsProvider Index stats provider.
      * @param UrlInterface       $urlBuilder         URL builder.
+     * @param int                $sortOrder          Sort order (default: 10).
      */
     public function __construct(
         IndexStatsProvider $indexStatsProvider,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        int $sortOrder = 10
     ) {
+        parent::__construct($urlBuilder, $sortOrder);
         $this->indexStatsProvider = $indexStatsProvider;
-        $this->urlBuilder = $urlBuilder;
     }
 
     /**
-     * Retrieve the unique identifier for this health check.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getIdentifier(): string
     {
@@ -68,10 +66,7 @@ class GhostIndicesCheck implements CheckInterface
     }
 
     /**
-     * Retrieve a brief description of this health check.
-     *
-     * @return string
-     * @throws Exception
+     * {@inheritDoc}
      */
     public function getDescription(): string
     {
@@ -102,25 +97,11 @@ class GhostIndicesCheck implements CheckInterface
     }
 
     /**
-     * Retrieve the status of this health check.
-     * Returns 'warning' if ghost indices are found, otherwise 'success'.
-     *
-     * @return string
-     * @throws Exception
+     * {@inheritDoc}
      */
     public function getStatus(): string
     {
-        return $this->hasGhostIndices() ? 'warning' : 'success';
-    }
-
-    /**
-     * Retrieve the sort order for this health check.
-     *
-     * @return int
-     */
-    public function getSortOrder(): int
-    {
-        return 10; // Adjust as necessary.
+        return ($this->hasGhostIndices() ? CheckInterface::STATUS_FAILED : CheckInterface::STATUS_PASSED);
     }
 
     /**
@@ -135,7 +116,7 @@ class GhostIndicesCheck implements CheckInterface
     }
 
     /**
-     * Get number of ghost Elasticsuite indices.
+     * Get the number of ghost indices.
      *
      * @return int
      * @throws Exception
