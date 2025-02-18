@@ -20,9 +20,14 @@ namespace Smile\ElasticsuiteCore\Api\Healthcheck;
 interface CheckInterface
 {
     /**
-     * Warning status declaration.
+     * Status indicating that the health check has passed successfully.
      */
-    const WARNING_STATUS = 'warning';
+    const STATUS_PASSED = 'success';
+
+    /**
+     * Status indicating that the health check has detected a potential issue.
+     */
+    const STATUS_FAILED = 'warning';
 
     /**
      * Retrieve the unique identifier for the health check.
@@ -45,12 +50,4 @@ interface CheckInterface
      * @return string
      */
     public function getStatus(): string;
-
-    /**
-     * Retrieve the sort order for the health check, which determines
-     * the display order of checks in the admin panel.
-     *
-     * @return int
-     */
-    public function getSortOrder(): int;
 }
