@@ -76,7 +76,7 @@ jobs:
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
           if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
             composer self-update --1
-          elseif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
+          elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
             composer self-update --2.2
           else
             composer self-update 2.7.9
