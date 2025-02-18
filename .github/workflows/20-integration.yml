@@ -15,7 +15,7 @@ on:
 jobs:
     build:
         if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         name: 'Integration'
         services:
             mysql:
@@ -37,35 +37,43 @@ jobs:
             matrix:
                 include:
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p6'
+                    magento-versions: '2.4.6-p9'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.7-p4'
+                    magento-editions: 'community'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p4'
+                    magento-editions: 'enterprise'
+                    experimental: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8-beta2'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p1'
+                    magento-versions: '2.4.8-beta2'
                     magento-editions: 'enterprise'
                     experimental: true
 
@@ -133,8 +141,10 @@ jobs:
                 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
                 if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
                   composer self-update --1
+                elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
+                  composer self-update --2.2
                 else
-                  composer self-update 2.1.14
+                  composer self-update 2.7.9
                 fi
 
             - name: "[Init] Determine composer cache directory"
@@ -194,9 +204,16 @@ jobs:
                 composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
             - name: "[Init] Add current build of Elasticsuite"
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
               working-directory: ${{ env.magento-directory }}
               run: |
-                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                OPTS="--update-with-all-dependencies --minimal-changes"
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
+                  OPTS=""
+                fi
+                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs $OPTS
                 rm -rf vendor/smile/elasticsuite/**
                 cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 

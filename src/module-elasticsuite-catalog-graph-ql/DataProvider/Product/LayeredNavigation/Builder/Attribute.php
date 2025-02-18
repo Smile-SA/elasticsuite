@@ -107,6 +107,7 @@ class Attribute implements LayerBuilderInterface
             $label = $attributeCode;
             try {
                 $attribute      = $this->attributeRepository->get($attributeCode);
+                $label = $attribute->getDefaultFrontendLabel();
                 $frontendLabels = array_filter(
                     $attribute->getFrontendLabels(),
                     function ($frontendLabel) use ($storeId) {

@@ -7,14 +7,15 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteTracker
- * @author    Richard BAYET <richard.bayet@smile.fr>
- * @copyright 2020 Smile
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2025 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
 namespace Smile\ElasticsuiteTracker\Observer;
 
 use Magento\CatalogSearch\Helper\Data;
+use Magento\Framework\Event\ObserverInterface;
 use Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface;
 use Magento\Framework\Stdlib\CookieManagerInterface;
 use Smile\ElasticsuiteTracker\Helper\Data as TrackerHelper;
@@ -22,12 +23,15 @@ use Magento\Framework\View\Layout\PageType\Config as PageTypeConfig;
 use Smile\ElasticsuiteTracker\Model\CustomerDataTrackingManager;
 
 /**
- * Logs a search event when the Smile\ElasticsuiteCatalog plugin redirects to a product page when only one result is found.
+ * Logs a search event when the Smile\ElasticsuiteCatalog plugin redirects to a target Redirect URL.
+ *
+ * Listens to the `smile_elasticsuite_redirect_search_term` event and logs the redirect data for tracking purposes.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
+ * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
-class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInterface
+class TrackRedirectIfSearchTerm implements ObserverInterface
 {
     /**
      * @var \Magento\CatalogSearch\Helper\Data
@@ -60,13 +64,13 @@ class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInter
     private $customerData;
 
     /**
-     * TrackRedirectIfOneResult constructor.
+     * Constructor.
      *
-     * @param \Magento\CatalogSearch\Helper\Data                              $catalogSearchHelper Catalog Search Helper
-     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service             Customer Tracking Service
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager       Cookie Manager
-     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper       Tracker Helper
-     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig      The Page Type Configuration
+     * @param \Magento\CatalogSearch\Helper\Data                              $catalogSearchHelper Catalog Search Helper.
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service             Customer Tracking Service.
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager       Cookie Manager.
+     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper       Tracker Helper.
+     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig      The Page Type Configuration.
      * @param \Smile\ElasticsuiteTracker\Model\CustomerDataTrackingManager    $customerData        Customer Data for tracking.
      */
     public function __construct(
@@ -86,13 +90,13 @@ class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInter
     }
 
     /**
-     * Logs a fulltext search event before the user is redirected to the product page.
+     * Logs a fulltext search event before the user is redirected to a Redirect URL.
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @event elasticsuite_redirect_if_one_result
+     * @event smile_elasticsuite_redirect_if_search_term
      *
-     * @param \Magento\Framework\Event\Observer $observer The observer
+     * @param \Magento\Framework\Event\Observer $observer The observer.
      *
      * @return void
      */
@@ -100,21 +104,25 @@ class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInter
     {
         $productCollection = $observer->getEvent()->getData('product_collection');
         $storeId           = $observer->getEvent()->getData('store_id');
+        $redirectUrl       = $observer->getEvent()->getData('redirect_url');
 
         if (($productCollection instanceof \Magento\Catalog\Model\ResourceModel\Product\Collection) && $storeId) {
-            $this->logEvent($productCollection, $storeId);
+            $this->logEvent($productCollection, $storeId, $redirectUrl);
         }
+
+        $this->logEvent($productCollection, $storeId, $redirectUrl);
     }
 
     /**
      * Log the event.
      *
      * @param \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection Product collection.
-     * @param int                                                     $storeId           Store Id.
+     * @param int                                                     $storeId           Store ID.
+     * @param string                                                  $redirectUrl       Redirect URL.
      *
      * @return void
      */
-    private function logEvent($productCollection, int $storeId): void
+    private function logEvent($productCollection, int $storeId, string $redirectUrl): void
     {
         $sessionData = $this->getSessionData();
 
@@ -123,13 +131,15 @@ class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInter
                 'store_id'     => $storeId,
                 'type'         => $this->getPageTypeInformations(),
                 'product_list' => [
-                    'page_count'    => 1,
-                    'current_page'  => 1,
-                    'product_count' => 1,
+                    'page_count'    => $productCollection->getLastPageNumber(), // This will never work because pageSize is not initialized.
+                    'current_page'  => $productCollection->getCurPage(),
+                    'product_count' => $productCollection->getSize(),
                 ],
                 'search'       => [
                     'query'             => $this->helper->getEscapedQueryText(),
+                    'redirect_url'      => $redirectUrl,
                     'is_spellchecked'   => (int) $productCollection->isSpellchecked(),
+                    'is_redirect'       => true,
                 ],
             ];
 
@@ -140,7 +150,7 @@ class TrackRedirectIfOneResult implements \Magento\Framework\Event\ObserverInter
     }
 
     /**
-     * List of the page type data
+     * List of the page type data.
      *
      * @return array
      */

@@ -78,6 +78,8 @@
                 </field>
                 <field name="page.search.query_id" type="integer" />
                 <field name="page.search.is_spellchecked" type="boolean" />
+                <field name="page.search.is_redirect" type="boolean" />
+                <field name="page.search.redirect_url" type="keyword" />
 
                 <!-- Page data (CMS) -->
                 <field name="page.cms.identifier" type="text">
