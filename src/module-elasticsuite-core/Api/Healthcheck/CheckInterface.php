@@ -22,12 +22,12 @@ interface CheckInterface
     /**
      * Status indicating that the health check has passed successfully.
      */
-    const STATUS_PASSED = 'success';
+    const STATUS_PASSED = 'passed';
 
     /**
      * Status indicating that the health check has detected a potential issue.
      */
-    const STATUS_FAILED = 'warning';
+    const STATUS_FAILED = 'failed';
 
     /**
      * Retrieve the unique identifier for the health check.
@@ -45,7 +45,7 @@ interface CheckInterface
 
     /**
      * Retrieve the status of the health check.
-     * Expected values: 'success', 'warning'.
+     * Expected values: 'passed', 'failed'.
      *
      * @return string
      */

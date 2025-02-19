@@ -86,7 +86,7 @@ class GenericHealthcheckWarning implements MessageInterface
 
         // @codingStandardsIgnoreStart
         return __(
-            'You have <strong>%1 health checks</strong> in <strong>Warning</strong> state. '
+            'You have <strong>%1 health checks</strong> in <strong>Failed</strong> state. '
             . 'We invite you to head to the <a href="%2"><strong>Elasticsuite Healthcheck</strong></a> page to get more details and to see how to fix them.',
             $issuesCount,
             $this->getElasticsuiteHealthcheckUrl()
