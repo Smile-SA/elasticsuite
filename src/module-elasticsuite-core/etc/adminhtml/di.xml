@@ -37,6 +37,7 @@
                 <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ReplicasConfigCheck</item>
                 <item name="packages_version_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PackageVersionsMismatchCheck</item>
                 <item name="hyva_compatibility_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\HyvaCompatibilityCheck</item>
+                <item name="search_engine_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\SearchEngineConfigCheck</item>
             </argument>
         </arguments>
     </type>
