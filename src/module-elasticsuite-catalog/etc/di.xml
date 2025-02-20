@@ -347,6 +347,7 @@
                     <item name="stock" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</item>
                     <item name="searchPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</item>
                     <item name="ignoreOutOfStockPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\IgnoreOutOfStockPositionsData</item>
+                    <item name="categoryPermissions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryPermissions</item>
                 </item>
                 <item name="catalog_category" xsi:type="array">
                     <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</item>
@@ -398,6 +399,11 @@
         </arguments>
     </type>
     <type name="Smile\ElasticsuiteCatalog\Search\Request\Product\Attribute\Aggregation\Price">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions">
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>

@@ -71,6 +71,9 @@
                 <field name="search_query.position" type="integer" nestedPath="search_query" />
                 <field name="search_query.is_blacklisted" type="boolean" nestedPath="search_query" />
 
+                <!-- Static fields handled by the "categoryPermissions" datasource -->
+                <field name="category_permissions.customer_group_id" type="integer" nestedPath="category_permissions" />
+                <field name="category_permissions.permission" type="integer" nestedPath="category_permissions" />
             </mapping>
         </type>
     </index>
