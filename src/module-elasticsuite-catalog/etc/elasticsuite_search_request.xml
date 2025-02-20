@@ -23,6 +23,7 @@
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
+            <filter name="categoryPermissions">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions</filter>
         </filters>
         <aggregations>
             <provider name="filterableAttributesProvider">searchFilterableAttributesProvider</provider>
@@ -36,6 +37,7 @@
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInSearch">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInSearch</filter>
             <filter name="blacklistedProducts">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\SearchBlacklist</filter>
+            <filter name="categoryPermissions">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions</filter>
         </filters>
         <aggregations>
             <provider name="autocompleteAttributesProvider">autocompleteFilterableAttributesProvider</provider>
@@ -47,6 +49,7 @@
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
             <filter name="currentCategory">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CurrentCategory</filter>
+            <filter name="categoryPermissions">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions</filter>
         </filters>
         <aggregations>
             <provider name="filterableAttributesProvider">categoryFilterableAttributesProvider</provider>
@@ -61,6 +64,7 @@
         <filters>
             <filter name="stockFilter">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\Stock</filter>
             <filter name="visibleInCatalog">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\VisibleInCatalog</filter>
+            <filter name="categoryPermissions">Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions</filter>
         </filters>
         <aggregations>
             <aggregation xsi:type="termBucket" name="attribute_set_id" field="attribute_set_id"/>
