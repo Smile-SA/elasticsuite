@@ -38,3 +38,8 @@
 "Pending events configuration","Pending events configuration"
 "Hours before warning","Hours before warning"
 "A warning will be displayed on the search usage dashboard if there are pending events older than this number of hours still in the events queue table.","A warning will be displayed on the search usage dashboard if there are pending events older than this number of hours still in the events queue table."
+"Filters configuration","Filters configuration"
+"Show Customer Group filter","Show Customer Group filter"
+"If enabled, will allow you to filter and display search usage data for a specific customer group.","If enabled, will allow you to filter and display search usage data for a specific customer group."
+"Show Company filter","Show Company filter"
+"If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.","If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company."
