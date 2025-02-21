@@ -20,6 +20,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Module\Manager as ModuleManager;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteAnalytics\Model\Report\Context as ReportContext;
 
 /**
@@ -37,6 +38,13 @@ class CustomerCompanySelector extends Template
      * @var string
      */
     const CONFIG_IS_B2B_COMPANY_ACTIVE_XPATH = 'btob/website_configuration/company_active';
+
+    /**
+     * Configuration path for enabling or disabling the Company filter.
+     *
+     * @var string
+     */
+    const CONFIG_IS_COMPANY_FILTER_ACTIVE_XPATH = 'smile_elasticsuite_analytics/filters_configuration/company_enabled';
 
     /**
      * @var ScopeConfigInterface
@@ -107,6 +115,19 @@ class CustomerCompanySelector extends Template
         return $this->scopeConfig->isSetFlag(
             self::CONFIG_IS_B2B_COMPANY_ACTIVE_XPATH,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * Check if the Company filter should be displayed.
+     *
+     * @return bool
+     */
+    public function isCompanyFilterEnabled(): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::CONFIG_IS_COMPANY_FILTER_ACTIVE_XPATH,
+            ScopeInterface::SCOPE_STORE
         );
     }
 

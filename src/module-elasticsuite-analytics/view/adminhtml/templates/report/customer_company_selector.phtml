@@ -20,7 +20,7 @@
 $baseUrl = $block->getUrl('*/*/*', ['_current' => true, 'company_id' => '__company_id__']);
 $companyId = $block->getCustomerCompanyId();
 ?>
-<?php if ($block->isCompanyEnabled()): ?>
+<?php if ($block->isCompanyEnabled() && $block->isCompanyFilterEnabled()): ?>
     <?php $companies = $block->getCompaniesList(); ?>
     <div class="customer-company-selector">
         <label for="company_id"><?= __('Company:') ?></label>
