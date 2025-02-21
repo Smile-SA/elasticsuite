@@ -41,12 +41,14 @@
             <group id="filters_configuration" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Filters configuration</label>
                 <field id="customer_group_enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Show customer group filter</label>
+                    <label>Show Customer Group filter</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, will allow you to filter and display search usage data for a specific customer group.]]></comment>
                 </field>
                 <field id="company_enabled" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Show company filter</label>
+                    <label>Show Company filter</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.]]></comment>
                 </field>
             </group>
         </section>

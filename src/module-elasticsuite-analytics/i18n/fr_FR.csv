@@ -38,3 +38,8 @@
 "Pending events configuration","Configuration des évènements en attente"
 "Hours before warning","Heures avant avertissement"
 "A warning will be displayed on the search usage dashboard if there are pending events older than this number of hours still in the events queue table.","Un avertissement sera affiché sur le tableau de bord d'utilisation de la recherche s'il y a des évènements plus vieux que ce nombre d'heures dans la table d'attente des évènements."
+"Filters configuration","Configuration des filtres"
+"Show Customer Group filter","Afficher le filtre Groupe Client"
+"If enabled, will allow you to filter and display search usage data for a specific customer group.","Si activé, vous permettra de filtrer et d'afficher les données d'utilisation de la recherche spécifiques à un groupe client."
+"Show Company filter","Afficher le filtre Société"
+"If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.","Si activé, et si vous utilisez les fonctionnalités B2B et la fonctionnalité Company/Société, vous permettra de filtrer et d'afficher les données d'utilisation de la recherche spécifiques à une société."
