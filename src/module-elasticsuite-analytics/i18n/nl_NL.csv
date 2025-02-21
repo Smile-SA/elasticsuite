@@ -38,3 +38,8 @@
 "Pending events configuration","Afwachtende afspraken configuratie"
 "Hours before warning","Uren voor waarschuwing"
 "A warning will be displayed on the search usage dashboard if there are pending events older than this number of hours still in the events queue table.","Een waarschuwing wordt weergegeven op het dashboard van het zoek-gebruik als er gebeurtenissen in behandeling zijn die ouder zijn dan dit aantal uren dat nog steeds in de wachtrij van de events staat."
+"Filters configuration","Filterconfiguratie"
+"Show Customer Group filter","Toon Klantgroepfilter"
+"If enabled, will allow you to filter and display search usage data for a specific customer group.","Als deze optie is ingeschakeld, kunt u zoekgebruikgegevens voor een specifieke klantengroep filteren en weergeven."
+"Show Company filter","Toon Bedrijfsfilter"
+"If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.","Als deze optie is ingeschakeld en u de B2B-functies en de bedrijfsfunctie gebruikt, kunt u zoekgebruikgegevens voor een specifiek bedrijf filteren en weergeven."
