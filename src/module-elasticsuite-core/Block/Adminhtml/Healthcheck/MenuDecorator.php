@@ -74,7 +74,7 @@ class MenuDecorator extends Template
         if (null === $this->issuesCount) {
             $this->issuesCount = 0;
 
-            foreach ($this->healthcheckList->getChecks() as $check) {
+            foreach ($this->healthcheckList->getCheckResults() as $check) {
                 if ($check->getStatus() === CheckInterface::STATUS_FAILED) {
                     $this->issuesCount++;
                 }
@@ -91,5 +91,13 @@ class MenuDecorator extends Template
     {
         // Very short cache TTL until a proper cache mechanism is set up at the healthcheck list level.
         return 60;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getCacheTags()
+    {
+        return array_merge(parent::getCacheTags(), [HealthcheckList::CACHE_TAG]);
     }
 }
