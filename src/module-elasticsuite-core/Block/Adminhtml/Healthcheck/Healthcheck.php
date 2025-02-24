@@ -56,6 +56,6 @@ class Healthcheck extends Template
      */
     public function getHealthchecks(): array
     {
-        return $this->healthcheckList->getChecks();
+        return array_values($this->healthcheckList->getCheckResults());
     }
 }

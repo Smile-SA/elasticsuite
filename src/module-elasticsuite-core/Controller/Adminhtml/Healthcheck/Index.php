@@ -14,16 +14,44 @@
 
 namespace Smile\ElasticsuiteCore\Controller\Adminhtml\Healthcheck;
 
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\View\Result\Page;
-use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
+use Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList;
+use Magento\Framework\App\CacheInterface;
 
 /**
  * Class Index.
  */
-class Index extends AbstractAction implements HttpGetActionInterface
+class Index extends Action implements HttpGetActionInterface
 {
+    /**
+     * Authorization level of a basic admin session.
+     *
+     * @see _isAllowed()
+     */
+    public const ADMIN_RESOURCE = 'Smile_ElasticsuiteCore::healthcheck';
+
+    /** @var CacheInterface */
+    private $cache;
+
+    /**
+     * Constructor.
+     *
+     * @param CacheInterface $cache   App cache.
+     * @param Context        $context Context.
+     *
+     */
+    public function __construct(
+        CacheInterface $cache,
+        Context $context
+    ) {
+        parent::__construct($context);
+        $this->cache = $cache;
+    }
+
     /**
      * @inheritdoc
      *
@@ -31,6 +59,9 @@ class Index extends AbstractAction implements HttpGetActionInterface
      */
     public function execute(): Page
     {
+        // Refresh the cache so the menu decorator is refreshed if need be.
+        $this->cache->clean(HealthcheckList::CACHE_TAG);
+
         $breadMain = __('Healthcheck');
 
         /** @var Page $resultPage */

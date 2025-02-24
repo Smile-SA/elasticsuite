@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteIndices dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Elasticsuite Health Check -->
+    <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="ghost_indices_check" xsi:type="object">Smile\ElasticsuiteIndices\Model\Healthcheck\GhostIndicesCheck</item>
+                <item name="primary_shards_config_check" xsi:type="object">Smile\ElasticsuiteIndices\Model\Healthcheck\PrimaryShardsConfigCheck</item>
+                <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteIndices\Model\Healthcheck\ReplicasConfigCheck</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

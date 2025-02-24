@@ -22,8 +22,6 @@
         <arguments>
             <argument name="messages" xsi:type="array">
                 <item name="elasticsuite" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\NotificationAboutVersions</item>
-                <!-- Generic warning class -->
-                <item name="elasticsuite_generic_healthcheck_warning" xsi:type="string">Smile\ElasticsuiteCore\Model\System\Message\GenericHealthcheckWarning</item>
             </argument>
         </arguments>
     </type>
@@ -32,9 +30,6 @@
     <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
         <arguments>
             <argument name="checks" xsi:type="array">
-                <item name="ghost_indices_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\GhostIndicesCheck</item>
-                <item name="primary_shards_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PrimaryShardsConfigCheck</item>
-                <item name="replicas_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\ReplicasConfigCheck</item>
                 <item name="packages_version_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\PackageVersionsMismatchCheck</item>
                 <item name="hyva_compatibility_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\HyvaCompatibilityCheck</item>
                 <item name="search_engine_config_check" xsi:type="object">Smile\ElasticsuiteCore\Model\Healthcheck\SearchEngineConfigCheck</item>
