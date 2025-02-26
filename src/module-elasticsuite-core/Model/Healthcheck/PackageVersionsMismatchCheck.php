@@ -84,7 +84,8 @@ class PackageVersionsMismatchCheck extends AbstractCheck
     public function getDescription(): string
     {
         $description = __(
-            'All additional Elasticsuite packages are in the same version as the Elasticsuite core package (smile/elasticsuite).'
+            'All additional Elasticsuite packages are in the same version (%1) as the Elasticsuite core package (smile/elasticsuite).',
+            $this->productMetadata->getVersion()
         );
 
         if ($this->hasPackagesErrors()) {
@@ -149,7 +150,7 @@ class PackageVersionsMismatchCheck extends AbstractCheck
                 $corePackageVersion = $this->productMetadata->getVersion();
                 $systemPackages = $this->composerInformationProvider->getComposerInformation()->getSystemPackages();
                 foreach ($this->packagesToCheck as $packageName) {
-                    $packageVersion = $systemPackages[$packageName] ?? 'N/A';
+                    $packageVersion = $systemPackages[$packageName]['version'] ?? 'N/A';
                     if ($packageVersion !== $corePackageVersion) {
                         $this->packagesErrors[$packageName] = $packageVersion;
                     }
