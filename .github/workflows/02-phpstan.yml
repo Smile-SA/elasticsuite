@@ -184,7 +184,10 @@ jobs:
           vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
-        run: vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          sudo chmod u+x vendor/bin/phpunit
+          vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
 
       - name: "[End] Job failed, gathering logs"
         env:
