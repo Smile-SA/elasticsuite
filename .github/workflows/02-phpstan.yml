@@ -187,7 +187,7 @@ jobs:
         working-directory: ${{ env.magento-directory }}
         run: |
           sudo chmod u+x vendor/bin/phpunit
-          vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
+          vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
 
       - name: "[End] Job failed, gathering logs"
         env:
