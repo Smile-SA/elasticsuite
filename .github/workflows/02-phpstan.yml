@@ -184,10 +184,15 @@ jobs:
           vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
+        env:
+          PHP_VERSION: ${{ matrix.php-versions }}
         working-directory: ${{ env.magento-directory }}
         run: |
-          sudo chmod u+x vendor/bin/phpunit
-          vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $PHP_VERSION) -ge $(version "8.1") ]; then
+            sudo chmod u+x vendor/bin/phpunit
+            vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
+          fi
 
       - name: "[End] Job failed, gathering logs"
         env:
