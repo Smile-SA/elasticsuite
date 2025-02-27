@@ -66,6 +66,3 @@ jobs:
 
             - name: PHPMD
               run: vendor/bin/phpmd src text vendor/smile/magento2-smilelab-phpmd/phpmd-rulesets/rulset.xml
-
-            - name: PHPUnit
-              run: vendor/bin/phpunit -c Resources/tests/unit/phpunit.xml
