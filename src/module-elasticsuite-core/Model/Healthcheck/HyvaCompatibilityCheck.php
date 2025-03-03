@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
@@ -50,15 +51,17 @@ class HyvaCompatibilityCheck extends AbstractCheck
      * @param string                      $triggerPackage              Hÿva package name triggering the check.
      * @param array                       $packagesToCheck             Required Hÿva compatibility packages.
      * @param int                         $sortOrder                   Sort order (default: 40).
+     * @param int                         $severity                    Severity level.
      */
     public function __construct(
         ComposerInformationProvider $composerInformationProvider,
         UrlInterface $urlBuilder,
         string $triggerPackage = 'hyva-themes/magento2-default-theme',
         array $packagesToCheck = [],
-        int $sortOrder = 40
+        int $sortOrder = 40,
+        int $severity = MessageInterface::SEVERITY_MAJOR
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->composerInformationProvider = $composerInformationProvider;
         $this->triggerPackage = $triggerPackage;
         $this->packagesToCheck = $packagesToCheck;

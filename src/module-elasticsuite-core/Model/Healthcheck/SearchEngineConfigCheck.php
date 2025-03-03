@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 
@@ -57,13 +58,15 @@ class SearchEngineConfigCheck extends AbstractCheck
      * @param ScopeConfigInterface $scopeConfig Scope configuration.
      * @param UrlInterface         $urlBuilder  URL builder.
      * @param int                  $sortOrder   Sort order (default: 50).
+     * @param int                  $severity    Severity level.
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         UrlInterface $urlBuilder,
-        int $sortOrder = 50
+        int $sortOrder = 50,
+        int $severity = MessageInterface::SEVERITY_CRITICAL
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->scopeConfig = $scopeConfig;
     }
 

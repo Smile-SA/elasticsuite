@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteIndices\Model\Healthcheck;
 
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\Healthcheck\AbstractCheck;
@@ -59,14 +60,16 @@ class ReplicasConfigCheck extends AbstractCheck
      * @param Client              $client              Elasticsearch client.
      * @param UrlInterface        $urlBuilder          URL builder.
      * @param int                 $sortOrder           Sort order (default: 30).
+     * @param int                 $severity            Severity level.
      */
     public function __construct(
         IndexSettingsHelper $indexSettingsHelper,
         Client $client,
         UrlInterface $urlBuilder,
-        int $sortOrder = 30
+        int $sortOrder = 30,
+        int $severity = MessageInterface::SEVERITY_CRITICAL
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->client = $client;
     }

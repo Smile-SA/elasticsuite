@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\ProductMetadata;
@@ -48,15 +49,17 @@ class PackageVersionsMismatchCheck extends AbstractCheck
      * @param UrlInterface                $urlBuilder                  URL builder.
      * @param array                       $packagesToCheck             List of package names to check.
      * @param int                         $sortOrder                   Sort order (default: 50).
+     * @param int                         $severity                    Severity level.
      */
     public function __construct(
         ProductMetadata $productMetadata,
         ComposerInformationProvider $composerInformationProvider,
         UrlInterface $urlBuilder,
         array $packagesToCheck = [],
-        int $sortOrder = 50
+        int $sortOrder = 50,
+        int $severity = MessageInterface::SEVERITY_CRITICAL
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->productMetadata = $productMetadata;
         $this->composerInformationProvider = $composerInformationProvider;
         $this->packagesToCheck = $packagesToCheck;
