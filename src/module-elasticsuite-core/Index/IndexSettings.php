@@ -152,7 +152,7 @@ class IndexSettings implements IndexSettingsInterface
     {
         $settings = [
             'requests.cache.enable'            => true,
-            'number_of_replicas'               => 0,
+            'number_of_replicas'               => $this->helper->getNumberOfReplicas($indexIdentifier),
             'number_of_shards'                 => $this->helper->getNumberOfShards($indexIdentifier),
             'refresh_interval'                 => self::FULL_REINDEX_REFRESH_INTERVAL,
             'merge.scheduler.max_thread_count' => 1,
