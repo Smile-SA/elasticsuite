@@ -26,6 +26,7 @@ $allowedTags = ['a', 'br', 'strong', 'ul', 'li'];
         <th class="data-grid-th"><?= __('Identifier') ?></th> <!-- Column for health check identifier -->
         <th class="data-grid-th"><?= __('Description') ?></th> <!-- Column for health check description -->
         <th class="data-grid-th"><?= __('Status') ?></th> <!-- Column for health check status -->
+        <th class="data-grid-th"><?= __('Severity') ?></th> <!-- Column for severity level -->
     </tr>
     </thead>
     <tbody>
@@ -34,9 +35,16 @@ $allowedTags = ['a', 'br', 'strong', 'ul', 'li'];
             <td><?= $block->escapeHtml($check->getIdentifier()) ?></td>
             <td><?= $block->escapeHtml($check->getDescription(), $allowedTags) ?></td>
             <td>
-                <span class="<?= $check->getStatus() === CheckInterface::STATUS_PASSED ? 'grid-severity-notice' : 'grid-severity-major' ?>">
+                <span class="<?= $check->getStatus() === CheckInterface::STATUS_PASSED ? 'grid-status-passed' : 'grid-status-failed' ?>">
                     <?= $block->escapeHtml(__($check->getStatus())) ?>
                 </span>
+            </td>
+            <td>
+                <?php if ($check->getStatus() === CheckInterface::STATUS_FAILED): ?>
+                    <span class="<?= $block->escapeHtml($this->getSeverityCssClass($check->getSeverity())) ?>">
+                        <?= $block->escapeHtml($check->getSeverityLabel()) ?>
+                    </span>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>

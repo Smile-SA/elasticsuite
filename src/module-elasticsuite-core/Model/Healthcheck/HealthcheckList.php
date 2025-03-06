@@ -88,6 +88,7 @@ class HealthcheckList
                     'identifier' => $check->getIdentifier(),
                     'status' => $check->getStatus(),
                     'description' => $check->getDescription(),
+                    'severity'    => $check->getSeverity(),
                 ]);
             }
         }

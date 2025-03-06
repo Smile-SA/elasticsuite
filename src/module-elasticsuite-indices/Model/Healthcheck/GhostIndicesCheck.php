@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteIndices\Model\Healthcheck;
 
 use Exception;
 use Magento\Framework\UrlInterface;
+use Magento\Framework\Notification\MessageInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\Healthcheck\AbstractCheck;
 use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
@@ -47,13 +48,15 @@ class GhostIndicesCheck extends AbstractCheck
      * @param IndexStatsProvider $indexStatsProvider Index stats provider.
      * @param UrlInterface       $urlBuilder         URL builder.
      * @param int                $sortOrder          Sort order (default: 10).
+     * @param int                $severity           Severity level.
      */
     public function __construct(
         IndexStatsProvider $indexStatsProvider,
         UrlInterface $urlBuilder,
-        int $sortOrder = 10
+        int $sortOrder = 10,
+        int $severity = MessageInterface::SEVERITY_MINOR
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->indexStatsProvider = $indexStatsProvider;
     }
 
