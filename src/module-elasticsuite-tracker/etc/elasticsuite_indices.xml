@@ -97,6 +97,7 @@
                 <field name="page.order.payment_method" type="keyword" />
                 <field name="page.order.shipping_method" type="keyword" />
                 <field name="page.order.salesrules" type="keyword" />
+                <field name="page.order.items.date" type="date" nestedPath="page.order.items" />
                 <field name="page.order.items.sku" type="keyword" nestedPath="page.order.items" />
                 <field name="page.order.items.product_id" type="keyword" nestedPath="page.order.items" />
                 <field name="page.order.items.category_ids" type="integer" nestedPath="page.order.items" />

@@ -25,6 +25,7 @@
     <type name="Smile\ElasticsuiteTracker\Model\EventQueue">
         <arguments>
             <argument name="eventProcessors" xsi:type="array">
+                <item name="eventDate" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\EventDate</item>
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
                 <item name="searches" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Search</item>
