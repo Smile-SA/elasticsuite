@@ -51,11 +51,11 @@ jobs:
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.4-p9'
+                    magento-versions: '2.4.4-p12'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.1'
-                    magento-versions: '2.4.4-p9'
+                    magento-versions: '2.4.4-p12'
                     magento-editions: 'enterprise'
                     experimental: true
                   - php-versions: '8.1'
