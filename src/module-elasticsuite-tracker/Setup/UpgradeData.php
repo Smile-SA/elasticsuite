@@ -56,6 +56,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->trackerSetup->migrateDailyToMonthlyIndices();
         }
 
+        if (version_compare($context->getVersion(), '1.4.0', '<')) {
+            $this->trackerSetup->addOrderItemDateToEventMapping();
+        }
+
         $setup->endSetup();
     }
 }
