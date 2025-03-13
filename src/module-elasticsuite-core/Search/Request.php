@@ -61,6 +61,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $minScore;
 
     /**
+     * @var array
+     */
+    private $sourceConfig = [];
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -178,6 +183,32 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function getCollapse()
     {
         return $this->collapse;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSourceConfig($sourceConfig)
+    {
+        $this->sourceConfig = $sourceConfig;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasSourceConfig()
+    {
+        return !empty($this->sourceConfig);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceConfig()
+    {
+        return $this->sourceConfig;
     }
 
     /**

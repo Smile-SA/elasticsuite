@@ -118,7 +118,6 @@ class Builder
 
     /**
      * Create a new search request.
-     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
      * @param integer               $storeId       Search request store id.
      * @param string                $containerName Search request name.
@@ -129,8 +128,6 @@ class Builder
      * @param array                 $filters       Search request filters.
      * @param QueryInterface[]      $queryFilters  Search request filters prebuilt as QueryInterface.
      * @param array                 $facets        Search request facets.
-     * @param array                 $includeFields Document fields to specifically include in the response (defaults: all).
-     * @param array                 $excludeFields Document fields to specifically exclude in the response (defaults: none).
      *
      * @return RequestInterface
      */
@@ -143,9 +140,7 @@ class Builder
         $sortOrders = [],
         $filters = [],
         $queryFilters = [],
-        $facets = [],
-        $includeFields = [],
-        $excludeFields = []
+        $facets = []
     ) {
         $containerConfig  = $this->getRequestContainerConfiguration($storeId, $containerName);
         $containerFilters = $this->getContainerFilters($containerConfig);
@@ -181,21 +176,6 @@ class Builder
 
         if (!empty($facetFilters)) {
             $requestParams['filter'] = $this->queryBuilder->createFilterQuery($containerConfig, $facetFilters);
-        }
-
-        if (!empty($includeFields) || !empty($excludeFields)) {
-            /*
-             * Warning: will not be taken into account unless the request mapper handles it,
-             * which is _not_ the case at the moment.
-             * Or, of course, if the request does not go through the request mapper.
-             */
-            $requestParams['_source'] = [];
-            if (!empty($includeFields)) {
-                $requestParams['_source']['include'] = $includeFields;
-            }
-            if (!empty($excludeFields)) {
-                $requestParams['_source']['exclude'] = $excludeFields;
-            }
         }
 
         $request = $this->requestFactory->create($requestParams);

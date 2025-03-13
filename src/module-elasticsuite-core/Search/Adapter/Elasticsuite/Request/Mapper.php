@@ -113,6 +113,11 @@ class Mapper
             $searchRequest['collapse'] = $collapse;
         }
 
+        $source = $this->getSource($request);
+        if (!empty($source)) {
+            $searchRequest['_source'] = $source;
+        }
+
         return $searchRequest;
     }
 
@@ -198,5 +203,40 @@ class Mapper
         }
 
         return $collapse;
+    }
+
+    /**
+     * Extract the _source configuration from the search request.
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param RequestInterface $request Search request.
+     *
+     * @return array
+     */
+    private function getSource(RequestInterface $request)
+    {
+        $source = [];
+
+        if ($request->hasSourceConfig()) {
+            $sourceConfig = $request->getSourceConfig();
+            if (array_key_exists('includes', $sourceConfig) || array_key_exists('excludes', $sourceConfig)) {
+                $includes = $sourceConfig['includes'] ?? [];
+                $excludes = $sourceConfig['excludes'] ?? [];
+                if (!is_array($includes)) {
+                    $includes = [$includes];
+                }
+                if (!is_array($excludes)) {
+                    $excludes = [$excludes];
+                }
+                $source = array_filter([
+                    'includes' => array_filter($includes, 'strlen'),
+                    'excludes' => array_filter($excludes, 'strlen'),
+                ]);
+            } else {
+                $source = $sourceConfig;
+            }
+        }
+
+        return $source;
     }
 }
