@@ -884,7 +884,7 @@
             </argument>
         </field>
 
-        <field name="scale_factor" sortOrder="40" formElement="input">
+        <field name="scale_factor" sortOrder="15" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">optimizer</item>
@@ -895,7 +895,7 @@
                 </item>
             </argument>
             <settings>
-                <label translate="true">Boost value (multiply)</label>
+                <label translate="true">Attribute value pre-multiplier</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_factor</dataScope>
                 <validation>

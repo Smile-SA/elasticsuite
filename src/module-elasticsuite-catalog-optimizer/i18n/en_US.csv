@@ -65,6 +65,7 @@ Logarithmic,Logarithmic
 Linear,Linear
 "Scale function","Scale function"
 "Boost value (multiply)","Boost value (multiply)"
+"Attribute value pre-multiplier","Attribute value pre-multiplier"
 "Value the field will be multiplied by before applying the scale function","Value the field will be multiplied by before applying the scale function"
 "Value the field will be multiplied by before potentially limiting the boost impact","Value the field will be multiplied by before potentially limiting the boost impact"
 "Apply to products","Apply to products"
