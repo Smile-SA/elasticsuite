@@ -69,6 +69,7 @@ class Item
         $productItemData = [
             'id'          => (int) $this->document->getId(),
             'name'        => $this->getDocumentSource('name'),
+            'sku'         => $this->getDocumentSource('sku'),
             'price'       => $this->getProductPrice(),
             'image'       => $this->getProductImage(),
             'score'       => $this->getDocumentScore(),
