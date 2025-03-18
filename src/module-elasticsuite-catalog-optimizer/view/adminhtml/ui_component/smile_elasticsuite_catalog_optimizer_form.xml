@@ -907,6 +907,37 @@
                 </tooltip>
             </settings>
         </field>
+
+        <field name="allow_negative_boost" sortOrder="50" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
+                    </item>
+                    <item name="default" xsi:type="string">0</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Allow negative boost</label>
+                <dataType>boolean</dataType>
+                <dataScope>config.allow_negative_boost</dataScope>
+                <tooltip>
+                    <description translate="true">If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.</description>
+                </tooltip>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="string">0</map>
+                            <map name="true" xsi:type="string">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
+        </field>
     </fieldset>
 
 </form>
