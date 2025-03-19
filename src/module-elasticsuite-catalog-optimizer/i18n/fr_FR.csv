@@ -65,6 +65,7 @@ Logarithmic,Logarithmique
 Linear,Linéaire
 "Scale function","Fonction"
 "Boost value (multiply)","Valeur de boost (multiplicateur)"
+"Attribute value pre-multiplier","Pré-multiplicateur de la valeur d'attribut"
 "Value the field will be multiplied by before applying the scale function","Multiplicateur appliqué à la valeur de l'attribut avant d'appliquer la fonction"
 "Value the field will be multiplied by before potentially limiting the boost impact","Multiplicateur appliqué à la valeur de l'attribut avant de potentiellement réduire l'impact du boost"
 "Apply to products","Appliquer aux produits"

@@ -65,6 +65,7 @@
 "Linear","Linear"
 "Scale function","Skalierungsfunktion"
 "Boost value (multiply)","Boost-Wert (mehrfach)"
+"Attribute value pre-multiplier","Vormultiplikator des Attributwerts"
 "Value the field will be multiplied by before applying the scale function","Wert des Feldes wird multipliziert, bevor die Skalierungsfunktion angewendet wird"
 "Value the field will be multiplied by before potentially limiting the boost impact","Wert des Feldes wird multipliziert, bevor der Ladeeffekt reduziert werden kann"
 "Apply to products","Auf Produkte anwenden"
