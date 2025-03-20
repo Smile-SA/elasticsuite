@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck;
 use Magento\Backend\Block\Template;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
+use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList;
 
@@ -31,20 +32,25 @@ class MenuDecorator extends Template
     /** @var HealthcheckList */
     private $healthcheckList;
 
+    /** @var ClientConfigurationInterface */
+    private $clientConfiguration;
+
     /** @var integer */
     private $issuesCount;
 
     /**
      * Constructor.
      *
-     * @param HealthcheckList      $healthcheckList Healthchecks list.
-     * @param Template\Context     $context         Template context.
-     * @param array                $data            Data.
-     * @param JsonHelper|null      $jsonHelper      Json helper.
-     * @param DirectoryHelper|null $directoryHelper Directory helper.
+     * @param HealthcheckList              $healthcheckList     Healthchecks list.
+     * @param ClientConfigurationInterface $clientConfiguration Client configuration.
+     * @param Template\Context             $context             Template context.
+     * @param array                        $data                Data.
+     * @param JsonHelper|null              $jsonHelper          Json helper.
+     * @param DirectoryHelper|null         $directoryHelper     Directory helper.
      */
     public function __construct(
         HealthcheckList $healthcheckList,
+        ClientConfigurationInterface $clientConfiguration,
         Template\Context $context,
         array $data = [],
         ?JsonHelper $jsonHelper = null,
@@ -52,16 +58,22 @@ class MenuDecorator extends Template
     ) {
         parent::__construct($context, $data, $jsonHelper, $directoryHelper);
         $this->healthcheckList = $healthcheckList;
+        $this->clientConfiguration = $clientConfiguration;
     }
 
     /**
      * Returns true if the menu decoration should happen.
+     * It is disabled if the Elasticsuite debug mode is enabled.
      *
      * @return bool
      */
     public function isEnabled()
     {
-        return $this->getIssuesCount() > 0;
+        if (false === $this->clientConfiguration->isDebugModeEnabled()) {
+            return ($this->getIssuesCount() > 0);
+        }
+
+        return false;
     }
 
     /**
