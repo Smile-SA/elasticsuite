@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
+use Smile\ElasticsuiteCore\Model\Healthcheck\CachedHealthcheckFactory;
 
 /**
  * Class HealthcheckList.
@@ -23,6 +24,12 @@ use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
  */
 class HealthcheckList
 {
+    /** @var string */
+    const CACHE_TAG = 'healthcheck_list';
+
+    /** @var CachedHealthcheckFactory */
+    private $cachedChecksFactory;
+
     /**
      * Array of health checks implementing the CheckInterface.
      *
@@ -31,12 +38,23 @@ class HealthcheckList
     private $checks;
 
     /**
+     * Array of executed healthchecks.
+     *
+     * @var CheckInterface[]
+     */
+    private $checkResults;
+
+    /**
      * Constructor.
      *
-     * @param CheckInterface[] $checks Array of health checks to be managed by this list.
+     * @param CachedHealthcheckFactory $cachedChecksFactory Cached healthcheck factory.
+     * @param CheckInterface[]         $checks              Array of health checks to be managed by this list.
      */
-    public function __construct(array $checks = [])
-    {
+    public function __construct(
+        CachedHealthcheckFactory $cachedChecksFactory,
+        array $checks = []
+    ) {
+        $this->cachedChecksFactory = $cachedChecksFactory;
         $this->checks = $checks;
     }
 
@@ -55,5 +73,26 @@ class HealthcheckList
         });
 
         return $this->checks;
+    }
+
+    /**
+     * Retrieve all executed health checks, sorted by their sort order.
+     *
+     * @return CheckInterface[]
+     */
+    public function getCheckResults(): array
+    {
+        if (null === $this->checkResults) {
+            foreach ($this->getChecks() as $check) {
+                $this->checkResults[$check->getIdentifier()] = $this->cachedChecksFactory->create([
+                    'identifier' => $check->getIdentifier(),
+                    'status' => $check->getStatus(),
+                    'description' => $check->getDescription(),
+                    'severity'    => $check->getSeverity(),
+                ]);
+            }
+        }
+
+        return $this->checkResults;
     }
 }

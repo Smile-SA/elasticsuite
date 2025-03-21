@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck;
 
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
+use Magento\Framework\Notification\MessageInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 use Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList;
 
@@ -56,6 +57,24 @@ class Healthcheck extends Template
      */
     public function getHealthchecks(): array
     {
-        return $this->healthcheckList->getChecks();
+        return array_values($this->healthcheckList->getCheckResults());
+    }
+
+    /**
+     * Retrieve the appropriate CSS class for severity labels.
+     *
+     * @param int $severity Severity level.
+     * @return string
+     */
+    public function getSeverityCssClass(int $severity): string
+    {
+        $severityClasses = [
+            MessageInterface::SEVERITY_CRITICAL => 'grid-severity-critical',
+            MessageInterface::SEVERITY_MAJOR    => 'grid-severity-major',
+            MessageInterface::SEVERITY_MINOR    => 'grid-severity-minor',
+            MessageInterface::SEVERITY_NOTICE   => 'grid-severity-notice',
+        ];
+
+        return $severityClasses[$severity] ?? '';
     }
 }

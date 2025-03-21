@@ -165,7 +165,12 @@ class SortOrderBuilder
     private function getSortOrderParams(FieldInterface $field, array $sortOrderParams)
     {
         $sortOrderParams['field']   = $field->getMappingProperty(FieldInterface::ANALYZER_SORTABLE);
-        $sortOrderParams['missing'] = $field->getSortMissing($sortOrderParams['direction']);
+
+        // @codingStandardsIgnoreStart
+        if (!in_array($sortOrderParams['missing'] ?? false, [SortOrderInterface::MISSING_FIRST, SortOrderInterface::MISSING_LAST])) {
+            $sortOrderParams['missing'] = $field->getSortMissing($sortOrderParams['direction']);
+        }
+        // @codingStandardsIgnoreEnd
 
         if ($field->isNested() && !isset($sortOrderParams['nestedPath'])) {
             $sortOrderParams['nestedPath'] = $field->getNestedPath();

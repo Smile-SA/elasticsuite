@@ -65,6 +65,7 @@ Logarithmic,Logarithmique
 Linear,Linéaire
 "Scale function","Fonction"
 "Boost value (multiply)","Valeur de boost (multiplicateur)"
+"Attribute value pre-multiplier","Pré-multiplicateur de la valeur d'attribut"
 "Value the field will be multiplied by before applying the scale function","Multiplicateur appliqué à la valeur de l'attribut avant d'appliquer la fonction"
 "Value the field will be multiplied by before potentially limiting the boost impact","Multiplicateur appliqué à la valeur de l'attribut avant de potentiellement réduire l'impact du boost"
 "Apply to products","Appliquer aux produits"
@@ -93,3 +94,5 @@ Duplicate,Dupliquer
 "sqrt desc","Réduit assez agressivement l'étendue des valeurs de l'attribut de boost en leur appliquant la fonction racine carrée: un produit avec une valeur de 10 sera boosté par un facteur d'environ 3, un produit avec une valeur de 100 sera boosté par un facteur de 10, un produit avec une valeur de 1000 sera boosté par un facteur d'environ 30, un produit avec une valeur de 10000 sera boosté avec un facteur de 100."
 "none desc","Aucun changement à l'étendue des valeurs de l'attribut de boost, qui sont prises telles quelles, ainsi un produit avec une valeur d'attribut de 1000 sera boosté 200 fois plus qu'un produit avec une valeur d'attribut de 5. Cette fonction est plutôt adaptée aux attributs qui n'ont pas une grande plage de valeurs."
 "Manage Elasticsuite Search Optimizers","Gérer les Optimiseurs Elasticsuite"
+"Allow negative boost","Autoriser un boost négatif"
+"If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.","Si laissée décochée, filtrera les cas où la valeur d'attribut (multipliée par le pré-multiplicateur de valeur) serait trop basse pour générer un boost positif après l'application du modificateur d'impact du boost. Cela empêche ce produit d'être pénalisé par rapport à d'autres produits qui n'ont pas du tout de valeur pour cet attribut."

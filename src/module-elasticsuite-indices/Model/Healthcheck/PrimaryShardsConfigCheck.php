@@ -6,17 +6,19 @@
  * versions in the future.
  *
  * @category  Smile
- * @package   Smile\ElasticsuiteCore
+ * @package   Smile\ElasticsuiteIndices
  * @author    Vadym Honcharuk <vahonc@smile.fr>
  * @copyright 2024 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-namespace Smile\ElasticsuiteCore\Model\Healthcheck;
+namespace Smile\ElasticsuiteIndices\Model\Healthcheck;
 
 use Exception;
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
+use Smile\ElasticsuiteCore\Model\Healthcheck\AbstractCheck;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
 
@@ -61,14 +63,16 @@ class PrimaryShardsConfigCheck extends AbstractCheck
      * @param IndexStatsProvider  $indexStatsProvider  Index stats provider.
      * @param UrlInterface        $urlBuilder          URL builder.
      * @param int                 $sortOrder           Sort order (default: 20).
+     * @param int                 $severity            Severity level.
      */
     public function __construct(
         IndexSettingsHelper $indexSettingsHelper,
         IndexStatsProvider $indexStatsProvider,
         UrlInterface $urlBuilder,
-        int $sortOrder = 20
+        int $sortOrder = 20,
+        int $severity = MessageInterface::SEVERITY_MINOR
     ) {
-        parent::__construct($urlBuilder, $sortOrder);
+        parent::__construct($urlBuilder, $sortOrder, $severity);
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->indexStatsProvider  = $indexStatsProvider;
     }

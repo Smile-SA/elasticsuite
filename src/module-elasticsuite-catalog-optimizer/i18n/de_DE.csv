@@ -65,6 +65,7 @@
 "Linear","Linear"
 "Scale function","Skalierungsfunktion"
 "Boost value (multiply)","Boost-Wert (mehrfach)"
+"Attribute value pre-multiplier","Vormultiplikator des Attributwerts"
 "Value the field will be multiplied by before applying the scale function","Wert des Feldes wird multipliziert, bevor die Skalierungsfunktion angewendet wird"
 "Value the field will be multiplied by before potentially limiting the boost impact","Wert des Feldes wird multipliziert, bevor der Ladeeffekt reduziert werden kann"
 "Apply to products","Auf Produkte anwenden"
@@ -91,3 +92,5 @@
 "sqrt desc","sqrt desc"
 "none desc","keine desc"
 "Manage Elasticsuite Search Optimizers","Elasticsuite Suchoptimierer verwalten"
+"Allow negative boost","Negativen Boost zulassen"
+"If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.","Wenn diese Option deaktiviert ist, wird verhindert, dass der Attributwert (multipliziert mit dem Vormultiplikator) zu niedrig ist, um nach Anwendung des Boost-Impact-Modifikators einen positiven Boost zu erzeugen. Dadurch wird verhindert, dass das Produkt gegenüber anderen Produkten ohne Attributwert benachteiligt wird."

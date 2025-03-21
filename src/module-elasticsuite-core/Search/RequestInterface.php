@@ -99,4 +99,28 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return CollapseInterface|null
      */
     public function getCollapse();
+
+    /**
+     * Set the source configuration of the request.
+     *
+     * @param array $sourceConfig Source config (array of fields/patterns to include
+     *                            or an array ['includes' => [...], 'excludes' => [...]] or only one of the keys).
+     *
+     * @return RequestInterface
+     */
+    public function setSourceConfig($sourceConfig);
+
+    /**
+     * Return true if the request has specific _source configuration.
+     *
+     * @return bool
+     */
+    public function hasSourceConfig();
+
+    /**
+     * Return the specific _source configuration which might be empty.
+     *
+     * @return array
+     */
+    public function getSourceConfig();
 }

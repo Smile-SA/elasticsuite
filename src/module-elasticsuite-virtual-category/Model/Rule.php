@@ -189,6 +189,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
         $categoryId = (int) (!is_object($category) ? $category : $category->getId());
         $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
+        $storeId = $storeId ?: $this->storeManager->getStore()->getId();
         $cacheKey = implode(
             '|',
             [
@@ -196,7 +197,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 $storeId,
                 $categoryId,
                 $this->customerSession->getCustomerGroupId(),
-                $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
+                (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
             ]
         );
 
@@ -204,10 +205,14 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         // If the category is not an object, it can't be in a "draft" mode.
         if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
-            // Due to the fact we serialize/unserialize completely pre-built queries as object.
-            // We cannot use any implementation of SerializerInterface.
-            $query = $this->sharedCache->load($cacheKey);
-            $query = $query ? unserialize($query) : false;
+            // If the category virtual root is one of the excluded categories, we must recalculate the query.
+            // We can't use the cached one in order to avoid loop and very big queries.
+            if (!is_object($category) || !$this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
+                // Due to the fact we serialize/unserialize completely pre-built queries as object.
+                // We cannot use any implementation of SerializerInterface.
+                $query = $this->sharedCache->load($cacheKey);
+                $query = $query ? unserialize($query) : false;
+            }
         }
 
         if ($query === false) {
@@ -439,23 +444,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CategoryInterface $category,
         $excludedCategories = []
     ): ?QueryInterface {
-        $rootCategory = $this->getVirtualRootCategory($category);
-        // If the root category of the current virtual category has already been computed (exist in $excludedCategories)
-        // or if a parent of the root category of the current category has already been computed we don't need
-        // to compute the rule. All the product will already been present.
-        // For example, if you have the following category tree:
-        // - Category A (static)
-        // -   - Category B (static)
-        // -       - Category C (virtual with category B as root)
-        // When you compute the rule of the category A you do not need to compute the rule of the category C
-        // as all the product will be there.
-        if ($rootCategory
-            && $rootCategory->getPath()
-            && array_intersect(explode('/', (string) $rootCategory->getPath()), $excludedCategories)
-        ) {
+        if ($this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
             return null;
         }
 
+        $rootCategory = $this->getVirtualRootCategory($category);
         $query = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
         if ($query instanceof QueryInterface) {
             $queryName = sprintf('(%s) virtual category [%s]:%d', $category->getPath(), $category->getName(), $category->getId());
@@ -629,5 +622,31 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             QueryInterface::TYPE_TERMS,
             ['field' => 'entity_id', 'values' => [0]]
         );
+    }
+
+    /**
+     * If the root category of the current virtual category has already been computed (exist in $excludedCategories)
+     * or if a parent of the root category of the current category has already been computed we don't need
+     * to compute the rule. All the product will already been present.
+     * For example, if you have the following category tree:
+     * - Category A (static)
+     * -   - Category B (static)
+     * -       - Category C (virtual with category B as root)
+     * When you compute the rule of the category A you do not need to compute the rule of the category C
+     * as all the product will be there.
+     *
+     * @param CategoryInterface $category           category to check
+     * @param array             $excludedCategories list of actual excluded categories
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    private function isVirtualCategoryRootInExcludeCategories(CategoryInterface $category, array $excludedCategories): bool
+    {
+        $rootCategory = $this->getVirtualRootCategory($category);
+
+        return $category->getIsVirtualCategory()
+            && $rootCategory
+            && $rootCategory->getPath()
+            && !empty(array_intersect(explode('/', (string) $rootCategory->getPath()), $excludedCategories));
     }
 }

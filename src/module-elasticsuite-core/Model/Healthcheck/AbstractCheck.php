@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Model\Healthcheck;
 
+use Magento\Framework\Notification\MessageInterface;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
 
@@ -41,17 +42,27 @@ abstract class AbstractCheck implements CheckInterface
     protected $sortOrder;
 
     /**
+     * Severity level of the health check.
+     *
+     * @var integer
+     */
+    protected int $severity;
+
+    /**
      * Constructor.
      *
      * @param UrlInterface $urlBuilder URL builder for generating links in the admin panel.
      * @param int          $sortOrder  Sort order for the check (default: 10000).
+     * @param int          $severity   Severity level.
      */
     public function __construct(
         UrlInterface $urlBuilder,
-        int $sortOrder = 10000
+        int $sortOrder = 10000,
+        int $severity = MessageInterface::SEVERITY_NOTICE
     ) {
         $this->urlBuilder = $urlBuilder;
-        $this->sortOrder = $sortOrder;
+        $this->sortOrder  = $sortOrder;
+        $this->severity   = $severity;
     }
 
     /**
@@ -65,5 +76,21 @@ abstract class AbstractCheck implements CheckInterface
     public function getSortOrder(): int
     {
         return $this->sortOrder;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSeverity(): int
+    {
+        return $this->severity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSeverityLabel(): string
+    {
+        return __(CheckInterface::SEVERITY_LABELS[$this->severity] ?? 'N/A');
     }
 }
