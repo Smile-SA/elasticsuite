@@ -332,6 +332,10 @@ class OrderItemDate
                                 QueryInterface::TYPE_TERM,
                                 ['field' => 'page.type.identifier', 'value' => 'checkout_onepage_success']
                             ),
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_EXISTS,
+                                ['field' => 'page.order.items'],
+                            ),
                         ],
                         'mustNot' => [
                             $this->queryFactory->create(
