@@ -69,11 +69,11 @@ jobs:
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.3'
-                    magento-versions: '2.4.8-beta2'
+                    magento-versions: '2.4.8'
                     magento-editions: 'community'
                     experimental: true
                   - php-versions: '8.3'
-                    magento-versions: '2.4.8-beta2'
+                    magento-versions: '2.4.8'
                     magento-editions: 'enterprise'
                     experimental: true
 
