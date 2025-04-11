@@ -29,7 +29,11 @@ jobs:
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.1'
-            magento-versions: '2.4.5-p7'
+            magento-versions: '2.4.4-p13'
+            magento-editions: 'enterprise'
+            experimental: false
+          - php-versions: '8.1'
+            magento-versions: '2.4.5-p12'
             magento-editions: 'enterprise'
             experimental: false
 
