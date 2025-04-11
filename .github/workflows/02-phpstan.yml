@@ -35,7 +35,7 @@ jobs:
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.3'
-            magento-versions: '2.4.7-p10'
+            magento-versions: '2.4.7-p5'
             magento-editions: 'enterprise'
             experimental: true
 
