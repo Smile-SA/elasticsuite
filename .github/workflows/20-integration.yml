@@ -37,35 +37,35 @@ jobs:
             matrix:
                 include:
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p9'
+                    magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.1'
-                    magento-versions: '2.4.6-p9'
+                    magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p9'
+                    magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.6-p9'
+                    magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p4'
+                    magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.2'
-                    magento-versions: '2.4.7-p4'
+                    magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p4'
+                    magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
                     experimental: false
                   - php-versions: '8.3'
-                    magento-versions: '2.4.7-p4'
+                    magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
                     experimental: false
                   - php-versions: '8.3'
