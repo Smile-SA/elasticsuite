@@ -80,6 +80,16 @@ jobs:
                     engine: 'elasticsearch7'
                     experimental: true
                   - php-versions: '8.1'
+                    magento-versions: '2.4.4-p13'
+                    magento-editions: 'community'
+                    engine: 'opensearch2'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4-p13'
+                    magento-editions: 'enterprise'
+                    engine: 'opensearch2'
+                    experimental: true
+                  - php-versions: '8.1'
                     magento-versions: '2.4.5-p12'
                     magento-editions: 'community'
                     engine: 'elasticsearch7'
@@ -88,6 +98,16 @@ jobs:
                     magento-versions: '2.4.5-p12'
                     magento-editions: 'enterprise'
                     engine: 'elasticsearch7'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p12'
+                    magento-editions: 'community'
+                    engine: 'opensearch2'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.5-p12'
+                    magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: false
 
         continue-on-error: ${{ matrix.experimental }}
