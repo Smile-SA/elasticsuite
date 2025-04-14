@@ -328,7 +328,7 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               env:
                   SEARCH_ENGINE: ${{ matrix.engine }}
-              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ env[env.SEARCH_ENGINE] }}"
+              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ env[env.SEARCH_ENGINE] }}" -q
 
             - name: "[Test] Setup Upgrade"
               working-directory: ${{ env.magento-directory }}
