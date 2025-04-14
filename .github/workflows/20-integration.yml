@@ -12,6 +12,13 @@ on:
           - master
         types: [labeled,synchronize]
 
+env:
+# List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
+#  elasticsearch6: 7200
+#  elasticsearch7: 9200
+#  opensearch1: 10200
+  opensearch2: 19200
+
 jobs:
     build:
         if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
@@ -26,11 +33,26 @@ jobs:
                 ports:
                     - 3306:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-            elasticsearch:
+#            elasticsearch6:
+#                image: docker://magento/magento-cloud-docker-elasticsearch:6.8-1.3.0
+#                ports:
+#                    - 7200:7200
+#                options: -e="http.port=7200" -e="transport.port=7300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:7200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+#            elasticsearch7:
+#                image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
+#                ports:
+#                    - 9200:9200
+#                options: -e="http.port=9200" -e="transport.port=9300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+#            opensearch1:
+#                image: docker://magento/magento-cloud-docker-opensearch:1.3-1.4.2
+#                ports:
+#                    - 10200:10200
+#                options: -e="http.port=10200" -e="transport.port=10300" -e="discovery.type=single-node" -e="plugins.security.disabled=true" --health-cmd="curl http://localhost:10200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+            opensearch2:
                 image: docker://magento/magento-cloud-docker-opensearch:2.4-1.3.5
                 ports:
-                    - 9200:9200
-                options: -e="discovery.type=single-node" -e="plugins.security.disabled=true" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+                    - 19200:19200
+                options: -e="http.port=19200" -e="transport.port=19300" -e="discovery.type=single-node" -e="plugins.security.disabled=true" --health-cmd="curl http://localhost:19200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
         strategy:
             fail-fast: false
@@ -39,50 +61,62 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.1'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.8'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.3'
                     magento-versions: '2.4.8'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8'
                     magento-editions: 'community'
+                    engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8'
                     magento-editions: 'enterprise'
+                    engine: 'opensearch2'
                     experimental: true
 
         continue-on-error: ${{ matrix.experimental }}
@@ -238,7 +272,9 @@ jobs:
 
             - name: "[Test] Install Magento"
               working-directory: ${{ env.magento-directory }}
-              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="9200" -q
+              env:
+                  SEARCH_ENGINE: ${{ matrix.engine }}
+              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ env[env.SEARCH_ENGINE] }}" -q
 
             - name: "[Test] Setup Upgrade"
               working-directory: ${{ env.magento-directory }}
