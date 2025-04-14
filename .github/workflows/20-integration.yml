@@ -34,12 +34,12 @@ jobs:
             elasticsearch6:
                 image: docker://magento/magento-cloud-docker-elasticsearch:6.8-1.3.0
                 ports:
-                  - 7200:7200
+                    - 7200:7200
                 options: -e="http.port=7200" -e="transport.port=7300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:7200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
             elasticsearch7:
                 image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
                 ports:
-                    - 7200:7200
+                    - 9200:9200
                 options: -e="http.port=9200" -e="transport.port=9300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
             opensearch1:
                 image: docker://magento/magento-cloud-docker-opensearch:1.3-1.4.2
