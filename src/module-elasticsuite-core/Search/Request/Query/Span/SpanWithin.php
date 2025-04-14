@@ -58,7 +58,7 @@ class SpanWithin implements SpanQueryInterface
     public function __construct(
         SpanQueryInterface $big,
         SpanQueryInterface $little,
-        string             $name = null,
+        ?string            $name = null,
         int                $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->big    = $big;

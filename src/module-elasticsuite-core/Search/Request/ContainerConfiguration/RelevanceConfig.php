@@ -149,23 +149,23 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      *                                                                                   boost value) should apply
      */
     public function __construct(
-        $minimumShouldMatch,
-        $tieBreaker,
-        $phraseMatchBoost,
-        $cutOffFrequency,
-        FuzzinessConfigurationInterface $fuzziness = null,
-        $enablePhoneticSearch = false,
-        $spanMatchBoost = null,
-        $spanSize = null,
-        $minScore = null,
-        $useReferenceInExactMatchFilter = false,
-        $useDefaultAnalyzerInExactMatchFilter = false,
-        $useAllTokens = false,
-        $useReferenceAnalyzer = false,
-        $useEdgeNgramAnalyzer = false,
-        $exactMatchSingleTermBoostsCustomized = false,
-        $exactMatchSingleTermPhraseMatchBoost = null,
-        $exactMatchSingleTermSortableBoost = null
+        string $minimumShouldMatch,
+        float $tieBreaker,
+        int|null $phraseMatchBoost,
+        float $cutOffFrequency,
+        ?FuzzinessConfigurationInterface $fuzziness = null,
+        bool $enablePhoneticSearch = false,
+        ?int $spanMatchBoost = null,
+        int|null $spanSize = null,
+        int|null $minScore = null,
+        bool $useReferenceInExactMatchFilter = false,
+        bool $useDefaultAnalyzerInExactMatchFilter = false,
+        bool $useAllTokens = false,
+        bool $useReferenceAnalyzer = false,
+        bool $useEdgeNgramAnalyzer = false,
+        bool $exactMatchSingleTermBoostsCustomized = false,
+        ?int $exactMatchSingleTermPhraseMatchBoost = null,
+        ?int $exactMatchSingleTermSortableBoost = null
     ) {
         $this->minimumShouldMatch     = $minimumShouldMatch;
         $this->tieBreaker             = $tieBreaker;

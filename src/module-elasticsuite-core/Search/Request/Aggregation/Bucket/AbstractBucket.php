@@ -75,19 +75,19 @@ abstract class AbstractBucket implements BucketInterface
      * @param MetricInterface[]   $metrics      Bucket metrics.
      * @param BucketInterface[]   $childBuckets Child buckets.
      * @param PipelineInterface[] $pipelines    Bucket pipelines.
-     * @param string              $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface      $filter       Bucket filter.
-     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
+     * @param string|null         $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface|null $filter       Bucket filter.
+     * @param QueryInterface|null $nestedFilter Nested filter for the bucket.
      */
     public function __construct(
-        $name,
-        $field,
+        string $name,
+        string $field,
         array $metrics = [],
         array $childBuckets = [],
         array $pipelines = [],
-        $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null
+        ?string $nestedPath = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null
     ) {
         $this->name         = $name;
         $this->field        = $field;

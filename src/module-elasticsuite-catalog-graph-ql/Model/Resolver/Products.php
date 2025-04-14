@@ -57,7 +57,7 @@ class Products implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         $this->validateArgs($args);
         $this->contextUpdater->updateSearchContext($args);

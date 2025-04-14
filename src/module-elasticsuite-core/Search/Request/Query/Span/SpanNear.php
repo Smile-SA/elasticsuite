@@ -65,11 +65,11 @@ class SpanNear implements SpanQueryInterface
      * @param string      $boost   Query boost
      */
     public function __construct(
-        array  $clauses = [],
-        int    $slop = 12,
-        bool   $inOrder = true,
-        string $name = null,
-        string $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        array   $clauses = [],
+        int     $slop = 12,
+        bool    $inOrder = true,
+        ?string $name = null,
+        string  $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->clauses = $clauses;
         $this->slop    = $slop;

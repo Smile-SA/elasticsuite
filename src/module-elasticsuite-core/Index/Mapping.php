@@ -165,10 +165,10 @@ class Mapping implements MappingInterface
      * {@inheritDoc}
      */
     public function getWeightedSearchProperties(
-        $analyzer = null,
-        $defaultField = null,
-        $boost = 1,
-        FieldFilterInterface $fieldFilter = null
+        ?string $analyzer = null,
+        ?string $defaultField = null,
+        int $boost = 1,
+        ?FieldFilterInterface $fieldFilter = null
     ) {
         $weightedFields = [];
         $fields         = $this->getFields();

@@ -52,13 +52,13 @@ class SpanNot implements SpanQueryInterface
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $include Span Query of the "include" clause
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $exclude Span Query of the "exclude" clause
-     * @param string                                                          $name    Query Name
+     * @param string|null                                                     $name    Query Name
      * @param int                                                             $boost   Query Boost
      */
     public function __construct(
         SpanQueryInterface $include,
         SpanQueryInterface $exclude,
-        string             $name = null,
+        ?string            $name = null,
         int                $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->include = $include;

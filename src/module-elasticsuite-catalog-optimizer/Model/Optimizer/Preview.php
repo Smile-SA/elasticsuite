@@ -102,7 +102,7 @@ class Preview
      * @param Preview\ResultsBuilder          $previewResultsBuilder     Preview Results Builder.
      * @param ContextInterface                $searchContext             Search Context.
      * @param CategoryInterface|null          $category                  Category Id to preview, if any.
-     * @param string                          $queryText                 Query Text.
+     * @param string|null                     $queryText                 Query Text.
      * @param int                             $size                      Preview size.
      * @param array                           $categoryPreviewContainers Category preview compatible containers.
      */
@@ -114,10 +114,10 @@ class Preview
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
         ContextInterface $searchContext,
-        CategoryInterface $category = null,
-        $queryText = null,
-        $size = 10,
-        $categoryPreviewContainers = ['catalog_view_container']
+        ?CategoryInterface $category = null,
+        ?string $queryText = null,
+        int $size = 10,
+        array $categoryPreviewContainers = ['catalog_view_container']
     ) {
         $this->size                   = $size;
         $this->previewItemFactory     = $previewItemFactory;

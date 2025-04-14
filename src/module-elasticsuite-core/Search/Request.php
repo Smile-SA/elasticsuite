@@ -73,29 +73,29 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @param string               $name           Search request name.
      * @param string               $indexName      Index name.
      * @param QueryInterface       $query          Search query.
-     * @param QueryInterface       $filter         Search filter.
+     * @param QueryInterface|null  $filter         Search filter.
      * @param SortOrderInterface[] $sortOrders     Sort orders specification.
      * @param int|null             $from           Pagination from clause.
      * @param int|null             $size           Pagination page size clause.
      * @param Dimension[]          $dimensions     Searched store.
      * @param BucketInterface[]    $buckets        Search request aggregations definition.
-     * @param string               $spellingType   For fulltext query : the type of spellchecked applied.
-     * @param bool|int             $trackTotalHits Value of the 'track_total_hits' ES parameter.
-     * @param bool|int             $minScore       Value of the 'min_score' ES parameter.
+     * @param string|null          $spellingType   For fulltext query : the type of spellchecked applied.
+     * @param bool|int|null        $trackTotalHits Value of the 'track_total_hits' ES parameter.
+     * @param bool|int|null        $minScore       Value of the 'min_score' ES parameter.
      */
     public function __construct(
-        $name,
-        $indexName,
+        string $name,
+        string $indexName,
         QueryInterface $query,
-        QueryInterface $filter = null,
-        array $sortOrders = null,
-        $from = null,
-        $size = null,
+        ?QueryInterface $filter = null,
+        ?array $sortOrders = null,
+        ?int $from = null,
+        ?int $size = null,
         array $dimensions = [],
         array $buckets = [],
-        $spellingType = null,
-        $trackTotalHits = null,
-        $minScore = null
+        ?string $spellingType = null,
+        bool|int|null $trackTotalHits = null,
+        bool|int|null $minScore = null
     ) {
         parent::__construct($name, $indexName, $query, $from, $size, $dimensions, $buckets);
         $this->filter = $filter;

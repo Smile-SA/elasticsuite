@@ -354,8 +354,8 @@ class QueryBuilder
      * Build an array of weighted fields to be searched with the ability to apply a filter callback method and a default field.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
-     * @param string                          $analyzer        Target analyzer.
-     * @param FieldFilterInterface            $fieldFilter     Field filter.
+     * @param string|null                     $analyzer        Target analyzer.
+     * @param FieldFilterInterface|null       $fieldFilter     Field filter.
      * @param string|null                     $defaultField    Default search field.
      * @param integer                         $boost           Additional boost applied to the fields (multiplicative).
      *
@@ -363,10 +363,10 @@ class QueryBuilder
      */
     private function getWeightedFields(
         ContainerConfigurationInterface $containerConfig,
-        $analyzer = null,
-        FieldFilterInterface $fieldFilter = null,
-        $defaultField = null,
-        $boost = 1
+        ?string $analyzer = null,
+        ?FieldFilterInterface $fieldFilter = null,
+        ?string $defaultField = null,
+        int $boost = 1
     ) {
 
         $mapping = $containerConfig->getMapping();

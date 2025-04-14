@@ -58,18 +58,18 @@ class Nested implements QueryInterface
 
     /**
      *
-     * @param string                                           $path      Nested path.
-     * @param \Magento\Framework\Search\Request\QueryInterface $query     Nested query.
-     * @param string                                           $scoreMode Score mode of the nested query..
-     * @param string                                           $name      Query name.
-     * @param integer                                          $boost     Query boost.
+     * @param string                                                $path      Nested path.
+     * @param \Magento\Framework\Search\Request\QueryInterface|null $query     Nested query.
+     * @param string                                                $scoreMode Score mode of the nested query.
+     * @param string|null                                           $name      Query name.
+     * @param integer                                               $boost     Query boost.
      */
     public function __construct(
-        $path,
-        \Magento\Framework\Search\Request\QueryInterface $query = null,
-        $scoreMode = self::SCORE_MODE_NONE,
-        $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        string $path,
+        ?\Magento\Framework\Search\Request\QueryInterface $query = null,
+        string $scoreMode = self::SCORE_MODE_NONE,
+        ?string $name = null,
+        int $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->name      = $name;
         $this->boost     = $boost;

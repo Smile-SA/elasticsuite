@@ -50,9 +50,9 @@ class SpanOr implements SpanQueryInterface
      * @param string      $boost   Query boost
      */
     public function __construct(
-        array  $clauses = [],
-        string $name = null,
-        string $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        array   $clauses = [],
+        ?string $name    = null,
+        string  $boost   = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->clauses = $clauses;
         $this->name    = $name;

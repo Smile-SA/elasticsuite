@@ -73,7 +73,7 @@ class PriceData implements DatasourceInterface
         ResourceModel $resourceModel,
         AttributeResourceModel $attributeResourceModel,
         $priceReaderPool = [],
-        ScopeConfigInterface $scopeConfig = null
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         $this->resourceModel            = $resourceModel;
         $this->priceReaderPool          = $priceReaderPool;

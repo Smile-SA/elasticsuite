@@ -63,29 +63,29 @@ class Term extends AbstractBucket
      * @param MetricInterface[]   $metrics      Bucket metrics.
      * @param BucketInterface[]   $childBuckets Child buckets.
      * @param PipelineInterface[] $pipelines    Bucket pipelines.
-     * @param string              $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface      $filter       Bucket filter.
-     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
+     * @param string|null         $nestedPath   Nested path for nested bucket.
+     * @param QueryInterface|null $filter       Bucket filter.
+     * @param QueryInterface|null $nestedFilter Nested filter for the bucket.
      * @param integer             $size         Bucket size.
      * @param string              $sortOrder    Bucket sort order.
      * @param array               $include      Include bucket filter.
      * @param array               $exclude      Exclude bucket filter.
-     * @param int                 $minDocCount  Min doc count bucket filter.
+     * @param int|null            $minDocCount  Min doc count bucket filter.
      */
     public function __construct(
-        $name,
-        $field,
+        string $name,
+        string $field,
         array $metrics = [],
         array $childBuckets = [],
         array $pipelines = [],
-        $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
-        $size = 0,
-        $sortOrder = BucketInterface::SORT_ORDER_COUNT,
-        $include = [],
-        $exclude = [],
-        $minDocCount = null
+        ?string $nestedPath = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
+        int $size = 0,
+        string $sortOrder = BucketInterface::SORT_ORDER_COUNT,
+        array $include = [],
+        array $exclude = [],
+        ?int $minDocCount = null
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 

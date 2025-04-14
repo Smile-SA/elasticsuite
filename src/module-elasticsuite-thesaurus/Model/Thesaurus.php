@@ -102,16 +102,16 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param \Magento\Framework\Model\Context                        $context            Magento Context
-     * @param \Magento\Framework\Registry                             $registry           Magento Registry
-     * @param IndexerRegistry                                         $indexerRegistry    Indexers registry
-     * @param ThesaurusFactory                                        $thesaurusFactory   Thesaurus Factory
-     * @param ResourceConnection                                      $resourceConnection Resource Connection
-     * @param \Magento\Store\Model\StoreManagerInterface              $storeManager       Store Manager
-     * @param ManagerInterface                                        $messageManager     Message Manager
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource           Magento Resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection Magento Collection
-     * @param array                                                   $data               Magento Data
+     * @param \Magento\Framework\Model\Context                             $context            Magento Context.
+     * @param \Magento\Framework\Registry                                  $registry           Magento Registry.
+     * @param IndexerRegistry                                              $indexerRegistry    Indexers registry.
+     * @param ThesaurusFactory                                             $thesaurusFactory   Thesaurus Factory.
+     * @param ResourceConnection                                           $resourceConnection Resource Connection.
+     * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager       Store Manager.
+     * @param ManagerInterface                                             $messageManager     Message Manager.
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource           Magento Resource.
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null           $resourceCollection Magento Collection.
+     * @param array                                                        $data               Magento Data.
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -121,8 +121,8 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
         ResourceConnection $resourceConnection,
         StoreManagerInterface $storeManager,
         ManagerInterface $messageManager,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->indexerRegistry    = $indexerRegistry;

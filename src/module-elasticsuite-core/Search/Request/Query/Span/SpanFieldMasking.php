@@ -50,16 +50,16 @@ class SpanFieldMasking implements SpanQueryInterface
     /**
      * The SpanFieldMasking query produce an Elasticsearch span_field_masking query.
      *
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $query Span Query
-     * @param string                                                          $field Field
-     * @param string|null                                                     $name  Query Name
-     * @param                                                                 $boost Boost
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $query Span Query.
+     * @param string                                                          $field Field.
+     * @param string|null                                                     $name  Query Name.
+     * @param integer                                                         $boost Boost.
      */
     public function __construct(
         SpanQueryInterface $query,
         string $field,
-        string $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE
+        ?string $name = null,
+        int $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->query = $query;
         $this->field = $field;

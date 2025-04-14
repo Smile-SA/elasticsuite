@@ -91,22 +91,22 @@ class MultiMatch implements QueryInterface
      * @param array                                $fields             Query fields as key with their weigth as values.
      * @param string                               $minimumShouldMatch Minimum should match for the match query.
      * @param integer                              $tieBreaker         Tie breaker for the multi_match query.
-     * @param string                               $name               Query name.
+     * @param string|null                          $name               Query name.
      * @param int                                  $boost              Query boost.
-     * @param FuzzinessConfigurationInterface|null $fuzzinessConfig    The fuzziness Configuration
-     * @param float                                $cutoffFrequency    Cutoff frequency.
+     * @param FuzzinessConfigurationInterface|null $fuzzinessConfig    The fuzziness Configuration.
+     * @param float|null                           $cutoffFrequency    Cutoff frequency.
      * @param string                               $matchType          The match type.
      */
     public function __construct(
-        $queryText,
+        string $queryText,
         array $fields,
-        $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
-        $tieBreaker = self::DEFAULT_TIE_BREAKER,
-        $name = null,
-        $boost = QueryInterface::DEFAULT_BOOST_VALUE,
-        FuzzinessConfigurationInterface $fuzzinessConfig = null,
-        $cutoffFrequency = null,
-        $matchType = self::DEFAULT_MATCH_TYPE
+        string $minimumShouldMatch = self::DEFAULT_MINIMUM_SHOULD_MATCH,
+        int $tieBreaker = self::DEFAULT_TIE_BREAKER,
+        ?string $name = null,
+        int $boost = QueryInterface::DEFAULT_BOOST_VALUE,
+        ?FuzzinessConfigurationInterface $fuzzinessConfig = null,
+        ?float $cutoffFrequency = null,
+        string $matchType = self::DEFAULT_MATCH_TYPE
     ) {
         $this->name               = $name;
         $this->queryText          = $queryText;

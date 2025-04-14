@@ -53,13 +53,13 @@ class SpanContaining implements SpanQueryInterface
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $big    Span Query of the "big" clause
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface $little Span Query of the "little" clause
-     * @param string                                                          $name   Query Name
+     * @param string|null                                                     $name   Query Name
      * @param int                                                             $boost  Query Boost
      */
     public function __construct(
         SpanQueryInterface $big,
         SpanQueryInterface $little,
-        string             $name = null,
+        ?string            $name = null,
         int                $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->big    = $big;
