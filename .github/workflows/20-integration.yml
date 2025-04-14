@@ -31,6 +31,8 @@ jobs:
 #                options: -e="http.port=9000" -e="transport.port=9100" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9100/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
             elasticsearch7:
                 image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
+                env:
+                  port: 9200
                 ports:
                     - 9200:9200
                 options: -e="http.port=9200" -e="transport.port=9300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
@@ -41,8 +43,10 @@ jobs:
 #                options: -e="http.port=9400" -e="transport.port=9500" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9300/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
             opensearch2:
               image: docker://magento/magento-cloud-docker-opensearch:2.4-1.3.5
+              env:
+                  port: 9600
               ports:
-                    - 9600:9600
+                  - 9600:9600
               options: -e="http.port=9600" -e="transport.port=9700" -e="discovery.type=single-node" -e="plugins.security.disabled=true" --health-cmd="curl http://localhost:9600/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
 
         strategy:
@@ -311,7 +315,7 @@ jobs:
               working-directory: ${{ env.magento-directory }}
               env:
                   SEARCH_ENGINE: ${{ matrix.engine }}
-              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ job.services[env.SEARCH_ENGINE].ports['9200'] }}" -q
+              run: php bin/magento setup:install --db-host="0.0.0.0" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ job.services[env.SEARCH_ENGINE].env.port }}" -q
 
             - name: "[Test] Setup Upgrade"
               working-directory: ${{ env.magento-directory }}
