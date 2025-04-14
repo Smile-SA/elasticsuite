@@ -50,7 +50,7 @@ class TopHits extends AbstractBucket
      * @param string              $name         Bucket name.
      * @param array               $sourceFields Source fields to fetch from the hits.
      * @param int                 $size         Bucket size.
-     * @param string              $sortOrder    Bucket Sort Order.
+     * @param array|string        $sortOrder    Bucket Sort Order.
      * @param MetricInterface[]   $metrics      Bucket metrics.
      * @param BucketInterface[]   $childBuckets Child buckets.
      * @param PipelineInterface[] $pipelines    Bucket pipelines.
@@ -62,7 +62,7 @@ class TopHits extends AbstractBucket
         string $name,
         array $sourceFields = [],
         int $size = 1,
-        string $sortOrder = BucketInterface::SORT_ORDER_COUNT,
+        array|string $sortOrder = BucketInterface::SORT_ORDER_COUNT,
         array $metrics = [],
         array $childBuckets = [],
         array $pipelines = [],

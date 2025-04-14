@@ -67,7 +67,7 @@ class Term extends AbstractBucket
      * @param QueryInterface|null $filter       Bucket filter.
      * @param QueryInterface|null $nestedFilter Nested filter for the bucket.
      * @param integer             $size         Bucket size.
-     * @param string              $sortOrder    Bucket sort order.
+     * @param array|string        $sortOrder    Bucket sort order.
      * @param array               $include      Include bucket filter.
      * @param array               $exclude      Exclude bucket filter.
      * @param int|null            $minDocCount  Min doc count bucket filter.
@@ -82,7 +82,7 @@ class Term extends AbstractBucket
         ?QueryInterface $filter = null,
         ?QueryInterface $nestedFilter = null,
         int $size = 0,
-        string $sortOrder = BucketInterface::SORT_ORDER_COUNT,
+        array|string $sortOrder = BucketInterface::SORT_ORDER_COUNT,
         array $include = [],
         array $exclude = [],
         ?int $minDocCount = null

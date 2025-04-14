@@ -55,7 +55,7 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
 
         $attributeFactoryMock = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $attributeFactoryMock->method('create')->will(($this->returnValue($attributeMock)));

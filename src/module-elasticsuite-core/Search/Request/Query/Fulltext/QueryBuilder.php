@@ -357,7 +357,7 @@ class QueryBuilder
      * @param string|null                     $analyzer        Target analyzer.
      * @param FieldFilterInterface|null       $fieldFilter     Field filter.
      * @param string|null                     $defaultField    Default search field.
-     * @param integer                         $boost           Additional boost applied to the fields (multiplicative).
+     * @param integer|null                    $boost           Additional boost applied to the fields (multiplicative).
      *
      * @return array
      */
@@ -366,7 +366,7 @@ class QueryBuilder
         ?string $analyzer = null,
         ?FieldFilterInterface $fieldFilter = null,
         ?string $defaultField = null,
-        int $boost = 1
+        ?int $boost = 1
     ) {
 
         $mapping = $containerConfig->getMapping();

@@ -75,7 +75,7 @@ interface MappingInterface
      * @param string|NULL               $analyzer     Search analyzer.
      * @param string|NULL               $defaultField Default field added to the list of fields.
      *                                                All field weighted with 1 will be ignored if present.
-     * @param integer                   $boost        A multiplier applied to fields default weight.
+     * @param integer|null              $boost        A multiplier applied to fields default weight.
      * @param FieldFilterInterface|null $fieldFilter  A filter applied to fields.
      *
      * @return float[]
@@ -83,7 +83,7 @@ interface MappingInterface
     public function getWeightedSearchProperties(
         ?string $analyzer = null,
         ?string $defaultField = null,
-        int $boost = 1,
+        ?int $boost = 1,
         ?FieldFilterInterface $fieldFilter = null
     );
 

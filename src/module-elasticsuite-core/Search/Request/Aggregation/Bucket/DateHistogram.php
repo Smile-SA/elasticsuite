@@ -51,7 +51,7 @@ class DateHistogram extends Histogram
      * @param string|null         $nestedPath       Nested path for nested bucket.
      * @param QueryInterface|null $filter           Bucket filter.
      * @param QueryInterface|null $nestedFilter     Nested filter for the bucket.
-     * @param int                 $interval         Histogram interval.
+     * @param string|int          $interval         Histogram interval.
      * @param string|null         $calendarInterval Histogram interval.
      * @param string              $fixedInterval    Histogram interval.
      * @param integer             $minDocCount      Histogram min doc count.
@@ -66,7 +66,7 @@ class DateHistogram extends Histogram
         ?string $nestedPath = null,
         ?QueryInterface $filter = null,
         ?QueryInterface $nestedFilter = null,
-        $interval = "1d", // Deprecated.
+        string|int $interval = "1d", // Deprecated.
         ?string $calendarInterval = null,
         string $fixedInterval = "1d",
         int $minDocCount = 0,
@@ -83,7 +83,7 @@ class DateHistogram extends Histogram
             $nestedPath,
             $filter,
             $nestedFilter,
-            $interval,
+            (int) $interval,
             $minDocCount,
             $extendedBounds
         );
