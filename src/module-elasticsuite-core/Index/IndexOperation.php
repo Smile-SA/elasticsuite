@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCore\Index;
 
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
 
 /**
  * Default implementation of operation on indices (\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface).
@@ -52,6 +53,16 @@ class IndexOperation implements IndexOperationInterface
     private $client;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface
+     */
+    private $clusterInfo;
+
+    /**
+     * @var boolean
+     */
+    private $useDeprecatedBulk;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
@@ -62,18 +73,21 @@ class IndexOperation implements IndexOperationInterface
      * @param \Magento\Framework\ObjectManagerInterface                $objectManager Object manager.
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client        ES client.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings ES settings.
+     * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo   ES cluster information.
      * @param \Psr\Log\LoggerInterface                                 $logger        Logger access.
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
+        \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->objectManager        = $objectManager;
         $this->client               = $client;
         $this->indexSettings        = $indexSettings;
         $this->indicesConfiguration = $indexSettings->getIndicesConfig();
+        $this->clusterInfo          = $clusterInfo;
         $this->logger               = $logger;
     }
 
@@ -202,6 +216,10 @@ class IndexOperation implements IndexOperationInterface
      */
     public function createBulk()
     {
+        if ($this->useDeprecatedBulk()) {
+            return $this->objectManager->create(\Smile\ElasticsuiteCore\Index\Bulk\Deprecation\BulkRequest::class);
+        }
+
         return $this->objectManager->create('Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface');
     }
 
@@ -365,5 +383,25 @@ class IndexOperation implements IndexOperationInterface
         $this->indicesByIdentifier[$indexAlias] = $index;
 
         return $this->indicesByIdentifier[$indexAlias];
+    }
+
+    /**
+     * Returns true if the deprecated version of the bulk request object should be used
+     * for compatibility with Elasticsearch < 7.0
+     *
+     * @return bool
+     */
+    private function useDeprecatedBulk()
+    {
+        if ($this->useDeprecatedBulk === null) {
+            $this->useDeprecatedBulk = false;
+            if ($this->clusterInfo->getServerDistribution() === ClusterInfoInterface::DISTRO_ES) {
+                if (version_compare($this->clusterInfo->getServerVersion(), '7.0', '<')) {
+                    $this->useDeprecatedBulk = true;
+                }
+            }
+        }
+
+        return $this->useDeprecatedBulk;
     }
 }

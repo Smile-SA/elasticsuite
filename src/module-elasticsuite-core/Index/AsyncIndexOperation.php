@@ -47,6 +47,7 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface              $client              ES client.
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration ES client configuration.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface        $indexSettings       ES settings.
+     * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface        $clusterInfo         ES cluster information.
      * @param \Psr\Log\LoggerInterface                                        $logger              Logger access.
      */
     public function __construct(
@@ -54,11 +55,12 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
+        \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->client          = $client;
         $this->parallelHandles = $clientConfiguration->getMaxParallelHandles();
-        parent::__construct($objectManager, $client, $indexSettings, $logger);
+        parent::__construct($objectManager, $client, $indexSettings, $clusterInfo, $logger);
     }
 
     /**
