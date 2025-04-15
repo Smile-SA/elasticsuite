@@ -76,6 +76,26 @@ jobs:
                     magento-editions: 'enterprise'
                     engine: 'elasticsearch7'
                     experimental: false
+                  - php-versions: '7.4'
+                    magento-versions: '2.4.3-p3'
+                    magento-editions: 'community'
+                    engine: 'elasticsearch6'
+                    experimental: false
+                  - php-versions: '7.4'
+                    magento-versions: '2.4.3-p3'
+                    magento-editions: 'enterprise'
+                    engine: 'elasticsearch6'
+                    experimental: false
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4-p13'
+                    magento-editions: 'community'
+                    engine: 'elasticsearch6'
+                    experimental: true
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.4-p13'
+                    magento-editions: 'enterprise'
+                    engine: 'elasticsearch6'
+                    experimental: true
                   - php-versions: '8.1'
                     magento-versions: '2.4.4-p13'
                     magento-editions: 'community'
