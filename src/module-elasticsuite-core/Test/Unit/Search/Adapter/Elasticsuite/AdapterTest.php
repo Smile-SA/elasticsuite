@@ -112,7 +112,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     {
         $queryResponseFactoryMock = $this->getMockBuilder(QueryResponse::class . 'Factory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $queryResponseFactoryMock->method('create')->will($this->returnArgument(0));

@@ -52,7 +52,7 @@ class CheckData extends Command
      *
      * @throws LogicException When the command name is empty
      */
-    public function __construct(DataChecker $checker, StoreManagerInterface $storeManager, string $name = null)
+    public function __construct(DataChecker $checker, StoreManagerInterface $storeManager, ?string $name = null)
     {
         parent::__construct($name);
         $this->checker = $checker;

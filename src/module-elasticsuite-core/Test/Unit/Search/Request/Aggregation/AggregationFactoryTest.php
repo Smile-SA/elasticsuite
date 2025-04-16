@@ -59,7 +59,7 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
 
         $factoryName      = sprintf("%s%s", BucketInterface::class, 'Factory');
         $aggregationFactoryMock = $this->getMockBuilder($factoryName)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $aggregationFactoryMock->method('create')

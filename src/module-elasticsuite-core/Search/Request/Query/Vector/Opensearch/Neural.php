@@ -72,7 +72,7 @@ class Neural implements QueryInterface
         string $field = self::DEFAULT_EMBEDDING_FIELD,
         ?string $name = null,
         float $boost = QueryInterface::DEFAULT_BOOST_VALUE,
-        string $modelId = null
+        ?string $modelId = null
     ) {
         $this->field     = $field;
         $this->queryText = $queryText;

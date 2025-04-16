@@ -60,7 +60,7 @@ class Condition extends AbstractSimpleObject implements ConditionInterface
     /**
      * {@inheritDoc}
      */
-    public function setConditions(array $conditions = null)
+    public function setConditions(?array $conditions = null)
     {
         return $this->setData(self::KEY_CONDITIONS, $conditions);
     }

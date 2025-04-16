@@ -80,8 +80,8 @@ class Preview extends AbstractPreview
      * @param ContextInterface          $searchContext            Search Context
      * @param int                       $size                     Preview size.
      * @param string                    $search                   Preview search.
-     * @param RequestInterface          $request                  HTTP Request.
-     * @param Config                    $categoryConfig           Category config.
+     * @param RequestInterface|null     $request                  HTTP Request.
+     * @param Config|null               $categoryConfig           Category config.
      */
     public function __construct(
         CategoryInterface $category,
@@ -89,10 +89,10 @@ class Preview extends AbstractPreview
         ItemDataFactory $previewItemFactory,
         QueryFactory $queryFactory,
         ContextInterface $searchContext,
-        $size = 10,
-        $search = '',
-        RequestInterface $request = null,
-        Config $categoryConfig = null
+        int $size = 10,
+        string $search = '',
+        ?RequestInterface $request = null,
+        ?Config $categoryConfig = null
     ) {
         parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size, $search);
         $this->category      = $category;

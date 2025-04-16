@@ -52,7 +52,7 @@ class SavePlugin
      *
      * @return array
      */
-    public function afterStringToBoolConverting(Save $subject, array $result, array $data, array $stringToBoolInputs = null)
+    public function afterStringToBoolConverting(Save $subject, array $result, array $data, ?array $stringToBoolInputs = null)
     {
         return $this->stringToBoolConverting($result);
     }
@@ -63,12 +63,12 @@ class SavePlugin
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @param array $data               The data
-     * @param array $stringToBoolInputs The inputs
+     * @param array      $data               The data.
+     * @param array|null $stringToBoolInputs The inputs.
      *
-     * @return mixed
+     * @return array
      */
-    private function stringToBoolConverting($data, array $stringToBoolInputs = null)
+    private function stringToBoolConverting($data, ?array $stringToBoolInputs = null)
     {
         if (null === $stringToBoolInputs) {
             $stringToBoolInputs = $this->stringToBoolInputs;

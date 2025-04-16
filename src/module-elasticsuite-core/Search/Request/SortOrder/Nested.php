@@ -43,22 +43,22 @@ class Nested extends Standard
 
     /**
      * Constructor.
-     * @param string         $field        Sort order field.
-     * @param string         $direction    Sort order direction.
-     * @param string         $nestedPath   Nested sort path.
-     * @param QueryInterface $nestedFilter The filter applied to the nested sort.
-     * @param string         $scoreMode    Method used to aggregate the sort if there is many match for the filter.
-     * @param string         $name         Sort order name.
-     * @param string         $missing      How to treat missing values.
+     * @param string              $field        Sort order field.
+     * @param string              $direction    Sort order direction.
+     * @param string              $nestedPath   Nested sort path.
+     * @param QueryInterface|null $nestedFilter The filter applied to the nested sort.
+     * @param string              $scoreMode    Method used to aggregate the sort if there is many match for the filter.
+     * @param string|null         $name         Sort order name.
+     * @param string|null         $missing      How to treat missing values.
      */
     public function __construct(
         $field,
         $direction,
         $nestedPath,
-        QueryInterface $nestedFilter = null,
-        $scoreMode = self::SCORE_MODE_MIN,
-        $name = null,
-        $missing = null
+        ?QueryInterface $nestedFilter = null,
+        string $scoreMode = self::SCORE_MODE_MIN,
+        ?string $name = null,
+        ?string $missing = null
     ) {
         parent::__construct($field, $direction, $name, $missing);
 

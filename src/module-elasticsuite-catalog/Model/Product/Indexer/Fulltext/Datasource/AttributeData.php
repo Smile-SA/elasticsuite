@@ -72,7 +72,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         AttributeHelper $attributeHelper,
         array $indexedBackendModels = [],
         array $forbiddenChildrenAttributes = [],
-        ScopeConfigInterface $scopeConfig = null
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 

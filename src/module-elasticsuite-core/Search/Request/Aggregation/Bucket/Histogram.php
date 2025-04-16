@@ -53,25 +53,25 @@ class Histogram extends AbstractBucket
      * @param MetricInterface[]   $metrics        Bucket metrics.
      * @param BucketInterface[]   $childBuckets   Child buckets.
      * @param PipelineInterface[] $pipelines      Bucket pipelines.
-     * @param string              $nestedPath     Nested path for nested bucket.
-     * @param QueryInterface      $filter         Bucket filter.
-     * @param QueryInterface      $nestedFilter   Nested filter for the bucket.
+     * @param string|null         $nestedPath     Nested path for nested bucket.
+     * @param QueryInterface|null $filter         Bucket filter.
+     * @param QueryInterface|null $nestedFilter   Nested filter for the bucket.
      * @param integer             $interval       Histogram interval.
      * @param integer             $minDocCount    Histogram min doc count.
      * @param array               $extendedBounds Histogram extended bounds.
      */
     public function __construct(
-        $name,
-        $field,
+        string $name,
+        string $field,
         array $metrics = [],
         array $childBuckets = [],
         array $pipelines = [],
-        $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
-        $interval = 1,
-        $minDocCount = 0,
-        $extendedBounds = []
+        ?string $nestedPath = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
+        int $interval = 1,
+        int $minDocCount = 0,
+        array $extendedBounds = []
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
         $this->interval    = $interval;

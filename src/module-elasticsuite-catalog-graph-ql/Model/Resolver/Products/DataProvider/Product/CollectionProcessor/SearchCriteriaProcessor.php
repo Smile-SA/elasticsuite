@@ -20,7 +20,7 @@ use Magento\Framework\Api\SearchCriteria\CollectionProcessorInterface as SearchC
 use Magento\GraphQl\Model\Query\ContextInterface;
 
 /**
- * Dummmy Search Criteria Processor.
+ * Dummy Search Criteria Processor.
  * We do not need to filter again the product collection since the search engine is already doing it.
  *
  * @category Smile
@@ -36,7 +36,7 @@ class SearchCriteriaProcessor implements CollectionProcessorInterface
         Collection $collection,
         SearchCriteriaInterface $searchCriteria,
         array $attributeNames,
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ): Collection {
         return $collection;
     }

@@ -90,7 +90,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
      * @param \Magento\Store\Model\StoreManagerInterface                   $storeManager      Store Manager
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder               $requestBuilder    Search request builder.
      * @param \Magento\Search\Model\SearchEngine                           $searchEngine      Search engine
-     * @param \Magento\Framework\DB\Adapter\AdapterInterface               $connection        Db Connection.
+     * @param \Magento\Framework\DB\Adapter\AdapterInterface|null          $connection        Db Connection.
      * @param string                                                       $searchRequestName Search request name.
      */
     public function __construct(
@@ -106,8 +106,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        $searchRequestName = 'category_search_container'
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        string $searchRequestName = 'category_search_container'
     ) {
         parent::__construct(
             $entityFactory,

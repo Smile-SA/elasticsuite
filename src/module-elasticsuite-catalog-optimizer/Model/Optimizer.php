@@ -61,15 +61,15 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
     /**
      * Class constructor
      *
-     * @param \Magento\Framework\Model\Context                        $context                     Context.
-     * @param \Magento\Framework\Registry                             $registry                    Registry.
-     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory        $ruleFactory                 Rule factory.
-     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date          $dateFilter                  Date Filter.
-     * @param \Magento\Framework\Serialize\SerializerInterface        $serializer                  Serializer.
-     * @param Optimizer\Limitation\IdentitiesFactory                  $limitationIdentitiesFactory Limitation Identities.
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource                    Resource.
-     * @param \Magento\Framework\Data\Collection\AbstractDb           $resourceCollection          Resource collection.
-     * @param array                                                   $data                        Data.
+     * @param \Magento\Framework\Model\Context                             $context                     Context.
+     * @param \Magento\Framework\Registry                                  $registry                    Registry.
+     * @param \Smile\ElasticsuiteCatalogRule\Model\RuleFactory             $ruleFactory                 Rule factory.
+     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date               $dateFilter                  Date Filter.
+     * @param \Magento\Framework\Serialize\SerializerInterface             $serializer                  Serializer.
+     * @param Optimizer\Limitation\IdentitiesFactory                       $limitationIdentitiesFactory Limitation Identities.
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource                    Resource.
+     * @param \Magento\Framework\Data\Collection\AbstractDb|null           $resourceCollection          Resource collection.
+     * @param array                                                        $data                        Data.
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -78,8 +78,8 @@ class Optimizer extends \Magento\Framework\Model\AbstractModel implements Optimi
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
         \Magento\Framework\Serialize\SerializerInterface $serializer,
         Optimizer\Limitation\IdentitiesFactory $limitationIdentitiesFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        ?\Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        ?\Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct($context, $registry, $resource, $resourceCollection, $data);

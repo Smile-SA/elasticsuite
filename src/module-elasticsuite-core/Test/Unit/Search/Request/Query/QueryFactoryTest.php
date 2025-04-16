@@ -59,7 +59,7 @@ class QueryFactoryTest extends \PHPUnit\Framework\TestCase
 
         $factoryName      = sprintf("%s%s", QueryInterface::class, 'Factory');
         $queryFactoryMock = $this->getMockBuilder($factoryName)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $queryFactoryMock->method('create')

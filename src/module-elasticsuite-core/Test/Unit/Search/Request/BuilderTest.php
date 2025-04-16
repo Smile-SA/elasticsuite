@@ -107,7 +107,7 @@ class BuilderTest extends TestCase
     {
         $spellcheckRequestFactory = $this->getMockBuilder(SpellcheckRequestFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $spellcheckRequestFactory->method('create')->willReturnCallback(function ($args) {
@@ -127,7 +127,7 @@ class BuilderTest extends TestCase
     {
         $containerConfigurationFactory = $this->getMockBuilder(ContainerConfigurationFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $containerConfigurationFactory->method('create')->willReturnCallback(function ($args) {
@@ -199,7 +199,7 @@ class BuilderTest extends TestCase
     {
         $requestFactory = $this->getMockBuilder(RequestFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $requestFactory->method('create')->willReturn([]);
@@ -216,7 +216,7 @@ class BuilderTest extends TestCase
     {
         $dimensionFactory = $this->getMockBuilder(DimensionFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $dimensionFactory->method('create')->willReturn([]);
