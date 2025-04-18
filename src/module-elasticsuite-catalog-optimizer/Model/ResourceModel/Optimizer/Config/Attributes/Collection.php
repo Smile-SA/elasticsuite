@@ -70,8 +70,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Attribute\
         ManagerInterface $eventManager,
         Config $eavConfig,
         EavEntityFactory $eavEntityFactory,
-        AdapterInterface $connection = null,
-        AbstractDb $resource = null,
+        ?AdapterInterface $connection = null,
+        ?AbstractDb $resource = null,
         $availableBackendTypes = [],
         $nestedFieldAttributes = []
     ) {

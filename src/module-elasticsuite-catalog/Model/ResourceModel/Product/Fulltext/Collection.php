@@ -154,7 +154,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
         RequestFieldMapper $requestFieldMapper,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
     ) {
         parent::__construct(
