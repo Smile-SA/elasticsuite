@@ -95,7 +95,7 @@ class TrackingService implements \Smile\ElasticsuiteTracker\Api\CustomerTracking
     /**
      * {@inheritdoc}
      */
-    public function anonymizeCustomerData(int $customerId, \DateTime $delay = null)
+    public function anonymizeCustomerData(int $customerId, ?\DateTime $delay = null)
     {
         // If delay is not null, apply this delay to the customer data.
         if ($delay !== null) {

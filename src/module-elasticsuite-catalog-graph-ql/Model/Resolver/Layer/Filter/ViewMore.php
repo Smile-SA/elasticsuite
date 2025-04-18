@@ -65,7 +65,7 @@ class ViewMore implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
         $this->validateArgs($args);
         $this->viewMoreContext->setFilterName($args['filterName']);

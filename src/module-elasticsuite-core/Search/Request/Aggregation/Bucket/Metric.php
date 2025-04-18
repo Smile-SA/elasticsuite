@@ -49,8 +49,8 @@ class Metric extends AbstractBucket
      * @param BucketInterface[]   $childBuckets Child buckets.
      * @param PipelineInterface[] $pipelines    Bucket pipelines.
      * @param string              $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface      $filter       Bucket filter.
-     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
+     * @param QueryInterface|null $filter       Bucket filter.
+     * @param QueryInterface|null $nestedFilter Nested filter for the bucket.
      * @param string              $metricType   Metric type.
      * @param array               $config       Metric extra config.
      */
@@ -61,8 +61,8 @@ class Metric extends AbstractBucket
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
         $metricType = MetricInterface::TYPE_STATS,
         $config = []
     ) {

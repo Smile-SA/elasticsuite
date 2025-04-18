@@ -58,7 +58,7 @@ class SpanFieldMasking implements SpanQueryInterface
     public function __construct(
         SpanQueryInterface $query,
         string $field,
-        string $name = null,
+        ?string $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->query = $query;

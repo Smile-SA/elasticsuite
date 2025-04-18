@@ -168,7 +168,7 @@ class Mapping implements MappingInterface
         $analyzer = null,
         $defaultField = null,
         $boost = 1,
-        FieldFilterInterface $fieldFilter = null
+        ?FieldFilterInterface $fieldFilter = null
     ) {
         $weightedFields = [];
         $fields         = $this->getFields();
