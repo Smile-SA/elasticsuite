@@ -79,7 +79,7 @@ class Search implements ProductQueryInterface
         FieldSelection $fieldSelection,
         ProductSearch $productProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        Suggestions $suggestions = null
+        ?Suggestions $suggestions = null
     ) {
         $this->search                = $search;
         $this->searchResultFactory   = $searchResultFactory;

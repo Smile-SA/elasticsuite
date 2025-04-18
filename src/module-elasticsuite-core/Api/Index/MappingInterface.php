@@ -72,11 +72,11 @@ interface MappingInterface
     /**
      * Return array of indexed by mapping properties used in search and weight as values.
      *
-     * @param string|NULL          $analyzer     Search analyzer.
-     * @param string|NULL          $defaultField Default field added to the list of fields.
-     *                                           All field weighted with 1 will be ignored if present.
-     * @param integer              $boost        A multiplier applied to fields default weight.
-     * @param FieldFilterInterface $fieldFilter  A filter applied to fields.
+     * @param string|NULL               $analyzer     Search analyzer.
+     * @param string|NULL               $defaultField Default field added to the list of fields.
+     *                                                All field weighted with 1 will be ignored if present.
+     * @param integer                   $boost        A multiplier applied to fields default weight.
+     * @param FieldFilterInterface|null $fieldFilter  A filter applied to fields.
      *
      * @return float[]
      */
@@ -84,7 +84,7 @@ interface MappingInterface
         $analyzer = null,
         $defaultField = null,
         $boost = 1,
-        FieldFilterInterface $fieldFilter = null
+        ?FieldFilterInterface $fieldFilter = null
     );
 
     /**

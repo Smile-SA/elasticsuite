@@ -58,7 +58,7 @@ class SpanNot implements SpanQueryInterface
     public function __construct(
         SpanQueryInterface $include,
         SpanQueryInterface $exclude,
-        string             $name = null,
+        ?string             $name = null,
         int                $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->include = $include;

@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product;
 
+use Error;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error\Warning;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
@@ -67,8 +68,14 @@ class SpecialAttributeProviderTest extends TestCase
         $this->assertEquals('isUpdatedWithinLastXdays', $specialAttributesProvider->getAttribute('is_updated_within_last_x_days'));
         $this->assertEquals(StockQty::class, $specialAttributesProvider->getAttribute('stock.qty'));
 
-        $this->expectWarning();
-        $this->expectWarningMessage('Undefined array key "unknownAttribute"');
-        $specialAttributesProvider->getAttribute('unknownAttribute');
+        /*
+         * expectWarning and expectWarningMessage removed in PHPUnit 10
+         * see https://github.com/sebastianbergmann/phpunit/issues/5062#issuecomment-1416362657.
+         */
+        @$specialAttributesProvider->getAttribute('unknownAttribute');
+        $lastError = error_get_last();
+        $this->assertNotNull($lastError);
+        $this->assertArrayHasKey('message', $lastError);
+        $this->assertEquals('Undefined array key "unknownAttribute"', $lastError['message']);
     }
 }

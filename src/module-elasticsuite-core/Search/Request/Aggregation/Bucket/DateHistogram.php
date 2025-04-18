@@ -64,8 +64,8 @@ class DateHistogram extends Histogram
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
         $interval = "1d", // Deprecated.
         $calendarInterval = null,
         $fixedInterval = "1d",

@@ -75,12 +75,12 @@ class ProductMetadata
      *
      * @param ComposerInformationProvider $composerInformationProvider Composer Information provider
      * @param string                      $packageName                 Self package name
-     * @param CacheInterface              $cache                       Cache interface
+     * @param CacheInterface|null         $cache                       Cache interface
      */
     public function __construct(
         ComposerInformationProvider $composerInformationProvider,
         string $packageName = 'smile/elasticsuite',
-        CacheInterface $cache = null
+        ?CacheInterface $cache = null
     ) {
         $this->composerInformationProvider = $composerInformationProvider;
         $this->packageName = $packageName;

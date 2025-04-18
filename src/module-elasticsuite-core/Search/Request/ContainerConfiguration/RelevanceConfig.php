@@ -153,7 +153,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $tieBreaker,
         $phraseMatchBoost,
         $cutOffFrequency,
-        FuzzinessConfigurationInterface $fuzziness = null,
+        ?FuzzinessConfigurationInterface $fuzziness = null,
         $enablePhoneticSearch = false,
         $spanMatchBoost = null,
         $spanSize = null,

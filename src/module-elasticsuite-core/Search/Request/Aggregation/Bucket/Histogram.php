@@ -54,8 +54,8 @@ class Histogram extends AbstractBucket
      * @param BucketInterface[]   $childBuckets   Child buckets.
      * @param PipelineInterface[] $pipelines      Bucket pipelines.
      * @param string              $nestedPath     Nested path for nested bucket.
-     * @param QueryInterface      $filter         Bucket filter.
-     * @param QueryInterface      $nestedFilter   Nested filter for the bucket.
+     * @param QueryInterface|null $filter         Bucket filter.
+     * @param QueryInterface|null $nestedFilter   Nested filter for the bucket.
      * @param integer             $interval       Histogram interval.
      * @param integer             $minDocCount    Histogram min doc count.
      * @param array               $extendedBounds Histogram extended bounds.
@@ -67,8 +67,8 @@ class Histogram extends AbstractBucket
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
         $interval = 1,
         $minDocCount = 0,
         $extendedBounds = []

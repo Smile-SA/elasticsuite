@@ -53,8 +53,8 @@ class Filtered implements QueryInterface
      * @param integer                                          $boost  Query boost.
      */
     public function __construct(
-        \Magento\Framework\Search\Request\QueryInterface $query = null,
-        \Magento\Framework\Search\Request\QueryInterface $filter = null,
+        ?\Magento\Framework\Search\Request\QueryInterface $query = null,
+        ?\Magento\Framework\Search\Request\QueryInterface $filter = null,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {

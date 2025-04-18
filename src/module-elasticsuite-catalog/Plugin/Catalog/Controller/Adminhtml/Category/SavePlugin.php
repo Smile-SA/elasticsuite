@@ -52,7 +52,7 @@ class SavePlugin
      *
      * @return array
      */
-    public function afterStringToBoolConverting(Save $subject, array $result, array $data, array $stringToBoolInputs = null)
+    public function afterStringToBoolConverting(Save $subject, array $result, array $data, ?array $stringToBoolInputs = null)
     {
         return $this->stringToBoolConverting($result);
     }
@@ -68,7 +68,7 @@ class SavePlugin
      *
      * @return mixed
      */
-    private function stringToBoolConverting($data, array $stringToBoolInputs = null)
+    private function stringToBoolConverting($data, ?array $stringToBoolInputs = null)
     {
         if (null === $stringToBoolInputs) {
             $stringToBoolInputs = $this->stringToBoolInputs;

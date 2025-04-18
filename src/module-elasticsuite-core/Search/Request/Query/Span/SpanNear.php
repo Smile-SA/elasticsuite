@@ -68,7 +68,7 @@ class SpanNear implements SpanQueryInterface
         array  $clauses = [],
         int    $slop = 12,
         bool   $inOrder = true,
-        string $name = null,
+        ?string $name = null,
         string $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->clauses = $clauses;

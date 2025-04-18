@@ -114,7 +114,7 @@ class Preview
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
         ContextInterface $searchContext,
-        CategoryInterface $category = null,
+        ?CategoryInterface $category = null,
         $queryText = null,
         $size = 10,
         $categoryPreviewContainers = ['catalog_view_container']

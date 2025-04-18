@@ -382,7 +382,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @return CategoryInterface
      * @throws NoSuchEntityException
      */
-    private function getRootCategory(int $rootCategoryId, int $storeId = null)
+    private function getRootCategory(int $rootCategoryId, ?int $storeId = null)
     {
         $cacheKey = $storeId ?? 'all';
         if (!isset($this->instances[$rootCategoryId][$cacheKey])) {

@@ -59,12 +59,12 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     /**
      * Constructor
      *
-     * @param ResourceModel        $resourceModel               Resource model.
-     * @param FieldFactory         $fieldFactory                Mapping field factory.
-     * @param AttributeHelper      $attributeHelper             Attribute helper.
-     * @param array                $indexedBackendModels        List of indexed backend models added to the default list.
-     * @param array                $forbiddenChildrenAttributes List of the forbidden children attributes.
-     * @param ScopeConfigInterface $scopeConfig                 Scope Config.
+     * @param ResourceModel             $resourceModel               Resource model.
+     * @param FieldFactory              $fieldFactory                Mapping field factory.
+     * @param AttributeHelper           $attributeHelper             Attribute helper.
+     * @param array                     $indexedBackendModels        List of indexed backend models added to the default list.
+     * @param array                     $forbiddenChildrenAttributes List of the forbidden children attributes.
+     * @param ScopeConfigInterface|null $scopeConfig                 Scope Config.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -72,7 +72,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         AttributeHelper $attributeHelper,
         array $indexedBackendModels = [],
         array $forbiddenChildrenAttributes = [],
-        ScopeConfigInterface $scopeConfig = null
+        ?ScopeConfigInterface $scopeConfig = null
     ) {
         parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
