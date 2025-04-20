@@ -106,9 +106,32 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
          * ie when the queryBuilder calls itself once for every search terms of the provided array.
          */
         $thesaurusIndex->method('getQueryRewrites')->willReturn([]);
+        /*
+         * withConsecutive removed in PHPUnit 10 without any alternative \o/.
         $thesaurusIndex->expects($this->exactly(2))->method('getQueryRewrites')->withConsecutive(
             [$containerConfig, 'foo', 1],
             [$containerConfig, 'bar', 1],
+        );
+        */
+        $invokeCount = $this->exactly(2);
+        $numberOfInvocationsCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $numberOfInvocationsCallback = 'getInvocationCount';
+        }
+        $thesaurusIndex->expects($invokeCount)->method('getQueryRewrites')->willReturnCallback(
+            function (...$expectedInputParameters) use ($invokeCount, $containerConfig, $numberOfInvocationsCallback) {
+                if ($invokeCount->$numberOfInvocationsCallback() === 1) {
+                    $this->assertEquals($containerConfig, $expectedInputParameters[0]);
+                    $this->assertEquals('foo', $expectedInputParameters[1]);
+                    $this->assertEquals(1, $expectedInputParameters[2]);
+                }
+                if ($invokeCount->$numberOfInvocationsCallback() === 2) {
+                    $this->assertEquals($containerConfig, $expectedInputParameters[0]);
+                    $this->assertEquals('bar', $expectedInputParameters[1]);
+                    $this->assertEquals(1, $expectedInputParameters[2]);
+                }
+            }
         );
         $initialQuery = $queryBuilderInterceptor->create($containerConfig, ['foo', 'bar'], $spellingType);
         $this->assertEquals(QueryInterface::TYPE_BOOL, $initialQuery->getType());
@@ -145,16 +168,39 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
+        /*
+         * withConsecutive removed in PHPUnit 10 without any alternative \o/.
+         * ----
         $thesaurusIndex->expects($this->exactly(2))->method('getQueryRewrites')->withConsecutive(
             [$containerConfig, 'foo', 1],
             [$containerConfig, 'bar', 1],
-        )->willReturnMap(
-            [
-                [$containerConfig, 'foo', 1, ['foo bar' => 0.1]],
-                [$containerConfig, 'bar', 1, ['bar fight' => 0.1]],
-            ]
-        );
+        */
+        $invokeCount = $this->exactly(2);
+        $numberOfInvocationsCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $numberOfInvocationsCallback = 'getInvocationCount';
+        }
+        $thesaurusIndex->expects($invokeCount)->method('getQueryRewrites')->willReturnCallback(
+            function (...$expectedInputParameters) use ($invokeCount, $containerConfig, $numberOfInvocationsCallback) {
+                if ($invokeCount->$numberOfInvocationsCallback() === 1) {
+                    $this->assertEquals($containerConfig, $expectedInputParameters[0]);
+                    $this->assertEquals('foo', $expectedInputParameters[1]);
+                    $this->assertEquals(1, $expectedInputParameters[2]);
 
+                    return  ['foo bar' => 0.1];
+                }
+                if ($invokeCount->$numberOfInvocationsCallback() === 2) {
+                    $this->assertEquals($containerConfig, $expectedInputParameters[0]);
+                    $this->assertEquals('bar', $expectedInputParameters[1]);
+                    $this->assertEquals(1, $expectedInputParameters[2]);
+
+                    return ['bar fight' => 0.1];
+                }
+
+                return [];
+            }
+        );
         $query = $queryBuilderInterceptor->create($containerConfig, ['foo', 'bar'], $spellingType);
         $this->assertEquals(QueryInterface::TYPE_BOOL, $query->getType());
     }
@@ -181,14 +227,12 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        // Passing the mock Query Factory to the plugin to count the occurence of calls to 'create'.
+        // Passing the mock Query Factory to the plugin to count the occurrence of calls to 'create'.
         $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex);
         // But passing the real Query Factory (with mocked factories) to the query builder itself.
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
-        $thesaurusIndex->expects($this->exactly(1))->method('getQueryRewrites')->withConsecutive(
-            [$containerConfig, 'foo', 1]
-        )->willReturnMap(
+        $thesaurusIndex->expects($this->exactly(1))->method('getQueryRewrites')->willReturnMap(
             [
                 [$containerConfig, 'foo', 1, ['foo bar' => 0.1, 'foo light' => 0.1, 'moo' => 0.1, 'moo bar' => 0.01]],
             ]
