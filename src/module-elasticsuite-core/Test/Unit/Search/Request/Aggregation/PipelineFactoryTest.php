@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MaxBucket;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
 use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
 
@@ -55,11 +56,14 @@ class PipelineFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private function getPipelineFactory()
     {
-        $pipelineMock = $this->getMockBuilder(PipelineInterface::class)->getMock();
+        $pipelineMock = $this->getMockBuilder(MaxBucket::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $factoryName = sprintf("%s%s", PipelineInterface::class, 'Factory');
+        $factoryName = sprintf("%s%s", MaxBucket::class, 'Factory');
         $pipelineFactoryMock = $this->getMockBuilder($factoryName)
-            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
             ->getMock();
 
         $pipelineFactoryMock->method('create')

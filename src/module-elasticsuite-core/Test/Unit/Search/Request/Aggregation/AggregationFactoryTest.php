@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Term;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 
 /**
@@ -55,11 +56,14 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private function getAggregationFactory()
     {
-        $aggregationMock = $this->getMockBuilder(BucketInterface::class)->getMock();
+        $aggregationMock = $this->getMockBuilder(Term::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $factoryName      = sprintf("%s%s", BucketInterface::class, 'Factory');
+        $factoryName      = sprintf("%s%s", Term::class, 'Factory');
         $aggregationFactoryMock = $this->getMockBuilder($factoryName)
-            ->setMethods(['create'])
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
             ->getMock();
 
         $aggregationFactoryMock->method('create')

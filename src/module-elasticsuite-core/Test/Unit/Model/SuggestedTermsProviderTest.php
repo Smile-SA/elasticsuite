@@ -61,7 +61,7 @@ class SuggestedTermsProviderTest extends TestCase
         $this->termDataProviderMock           = $this->createMock(TermDataProvider::class);
         $this->queryStringProviderFactoryMock = $this->getMockBuilder(QueryStringProvider::class. 'Factory')
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $this->suggestedTermsProvider = new SuggestedTermsProvider(
