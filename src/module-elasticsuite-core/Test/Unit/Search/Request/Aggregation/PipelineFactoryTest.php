@@ -59,7 +59,7 @@ class PipelineFactoryTest extends \PHPUnit\Framework\TestCase
 
         $factoryName = sprintf("%s%s", PipelineInterface::class, 'Factory');
         $pipelineFactoryMock = $this->getMockBuilder($factoryName)
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $pipelineFactoryMock->method('create')
