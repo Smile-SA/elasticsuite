@@ -15,7 +15,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Q
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanTerm as SpanTermQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanTerm as SpanTermQuery;
-use Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\AbstractSimpleQueryBuilderTest;
+use Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\AbstractSimpleQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -25,7 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanTermTest extends AbstractSimpleQueryBuilderTest
+class SpanTermTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanContaining as SpanConta
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanContainingTest extends AbstractComplexSpanQueryBuilderTest
+class SpanContainingTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

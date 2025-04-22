@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Exi
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class ExistsTest extends AbstractSimpleQueryBuilderTest
+class ExistsTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

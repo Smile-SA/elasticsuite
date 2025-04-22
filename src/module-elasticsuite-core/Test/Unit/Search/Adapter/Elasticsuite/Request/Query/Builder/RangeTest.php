@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Ran
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class RangeTest extends AbstractSimpleQueryBuilderTest
+class RangeTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\F
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class MultiMatchTest extends AbstractSimpleQueryBuilderTest
+class MultiMatchTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

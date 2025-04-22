@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
-class MatchPhrasePrefixTest extends AbstractSimpleQueryBuilderTest
+class MatchPhrasePrefixTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

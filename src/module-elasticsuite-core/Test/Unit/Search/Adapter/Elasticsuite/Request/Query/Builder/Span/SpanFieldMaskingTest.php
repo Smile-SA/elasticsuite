@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFieldMasking as SpanFie
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanFieldMaskingTest extends AbstractComplexSpanQueryBuilderTest
+class SpanFieldMaskingTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.
