@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Reg
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class RegexpTest extends AbstractSimpleQueryBuilderTest
+class RegexpTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

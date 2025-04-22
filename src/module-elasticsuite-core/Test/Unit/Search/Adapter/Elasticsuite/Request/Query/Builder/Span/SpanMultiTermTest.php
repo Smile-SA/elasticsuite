@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanMultiTerm as SpanMultiT
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanMultiTermTest extends AbstractComplexSpanQueryBuilderTest
+class SpanMultiTermTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.
