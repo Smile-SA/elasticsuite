@@ -42,12 +42,12 @@ class Not implements QueryInterface
 
     /**
      * Constructor.
-     * @param \Magento\Framework\Search\Request\QueryInterface $query Negated query.
-     * @param string                                           $name  Query name.
-     * @param integer                                          $boost Query boost.
+     * @param \Magento\Framework\Search\Request\QueryInterface|null $query Negated query.
+     * @param string                                                $name  Query name.
+     * @param integer                                               $boost Query boost.
      */
     public function __construct(
-        \Magento\Framework\Search\Request\QueryInterface $query = null,
+        ?\Magento\Framework\Search\Request\QueryInterface $query = null,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
