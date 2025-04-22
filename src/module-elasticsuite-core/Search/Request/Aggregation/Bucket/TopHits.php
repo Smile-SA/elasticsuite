@@ -67,8 +67,8 @@ class TopHits extends AbstractBucket
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null
     ) {
         parent::__construct($name, $name, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
         $this->sourceFields = $sourceFields;

@@ -106,7 +106,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'category_search_container'
     ) {
         parent::__construct(

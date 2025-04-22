@@ -54,7 +54,7 @@ interface ConditionInterface extends \Magento\Framework\Api\ExtensibleDataInterf
      *
      * @return $this
      */
-    public function setConditions(array $conditions = null);
+    public function setConditions(?array $conditions = null);
 
     /**
      * Return the aggregator type
