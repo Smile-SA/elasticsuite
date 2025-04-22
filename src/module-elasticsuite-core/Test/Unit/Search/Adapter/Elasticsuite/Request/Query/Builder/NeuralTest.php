@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Ope
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  */
-class NeuralTest extends AbstractSimpleQueryBuilderTest
+class NeuralTest extends AbstractSimpleQueryBuilder
 {
     /**
      * @dataProvider neuralQueryAssemblerDataProvider

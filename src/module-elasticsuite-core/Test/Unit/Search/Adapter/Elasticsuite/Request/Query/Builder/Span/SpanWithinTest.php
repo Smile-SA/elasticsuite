@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanWithin as SpanWithinQue
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanWithinTest extends AbstractComplexSpanQueryBuilderTest
+class SpanWithinTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.
