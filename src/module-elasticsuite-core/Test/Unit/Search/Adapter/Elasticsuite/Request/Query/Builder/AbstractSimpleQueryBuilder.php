@@ -21,7 +21,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Q
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  * @SuppressWarnings(PHPMD.NumberOfChildren)
  */
-abstract class AbstractSimpleQueryBuilderTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractSimpleQueryBuilder extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test using the query builder with an invalid query type throws an exception.

@@ -500,7 +500,7 @@ class PreviewTest extends TestCase
         return $this
             ->getMockBuilder(Optimizer::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getSearchContainer', 'getQuickSearchContainer', 'getCatalogViewContainer'])
+            ->addMethods(['getSearchContainer', 'getQuickSearchContainer', 'getCatalogViewContainer'])
             ->getMock();
     }
 

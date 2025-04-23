@@ -20,7 +20,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Q
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-abstract class AbstractComplexQueryBuilderTest extends AbstractSimpleQueryBuilderTest
+abstract class AbstractComplexQueryBuilder extends AbstractSimpleQueryBuilder
 {
     /**
      * Return a mocked parent query builder used to build subqueries.

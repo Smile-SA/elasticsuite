@@ -49,7 +49,7 @@ interface CustomerTrackingServiceInterface
      *
      * @return void
      */
-    public function anonymizeCustomerData(int $customerId, \DateTime $delay = null);
+    public function anonymizeCustomerData(int $customerId, ?\DateTime $delay = null);
 
     /**
      * Process cleaning of all expired customer data.

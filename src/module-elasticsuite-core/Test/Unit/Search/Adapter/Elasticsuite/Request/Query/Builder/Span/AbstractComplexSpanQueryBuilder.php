@@ -13,17 +13,17 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\Span;
 
-use Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\AbstractComplexQueryBuilderTest;
+use Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\AbstractComplexQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface;
 
 /**
- * Override of AbstractComplexQueryBuilderTest for providing span query classes.
+ * Override of AbstractComplexQueryBuilder for providing span query classes.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-abstract class AbstractComplexSpanQueryBuilderTest extends AbstractComplexQueryBuilderTest
+abstract class AbstractComplexSpanQueryBuilder extends AbstractComplexQueryBuilder
 {
     /**
      * Mock a sub query.

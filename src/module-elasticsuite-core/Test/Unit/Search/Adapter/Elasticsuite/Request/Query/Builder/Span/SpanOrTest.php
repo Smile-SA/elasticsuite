@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanOrTest extends AbstractComplexSpanQueryBuilderTest
+class SpanOrTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

@@ -24,7 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFirst as SpanFirstQuery
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
-class SpanFirstTest extends AbstractComplexSpanQueryBuilderTest
+class SpanFirstTest extends AbstractComplexSpanQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.
