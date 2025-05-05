@@ -90,6 +90,7 @@ class CategoryIsAnchorConfigCheck extends AbstractCheck
     /**
      * {@inheritDoc}
      * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     public function getDescription(): string
     {
