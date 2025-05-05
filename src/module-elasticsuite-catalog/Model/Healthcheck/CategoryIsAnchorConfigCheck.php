@@ -192,9 +192,10 @@ class CategoryIsAnchorConfigCheck extends AbstractCheck
      */
     public function getStatus(): string
     {
-        return $this->isAnchorAttributeConfigValid() && $this->getNonAnchorCategoryCount() === 0
-            ? CheckInterface::STATUS_PASSED
-            : CheckInterface::STATUS_FAILED;
+        return (
+            $this->isAnchorAttributeConfigValid() &&
+            $this->getNonAnchorCategoryCount() === 0
+        ) ? CheckInterface::STATUS_PASSED : CheckInterface::STATUS_FAILED;
     }
 
     /**
