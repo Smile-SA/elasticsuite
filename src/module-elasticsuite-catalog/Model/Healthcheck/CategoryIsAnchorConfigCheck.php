@@ -94,7 +94,10 @@ class CategoryIsAnchorConfigCheck extends AbstractCheck
     public function getDescription(): string
     {
         $description = '';
-        $defaultText = __('For showing products in categories, Elasticsuite relies on making sure all categories are "anchor" categories, that is displaying both their "own" products and the products associated with their subcategories.');
+        $defaultText = __(
+            'For showing products in categories, Elasticsuite relies on making sure all categories are "anchor" categories,
+             that is displaying both their "own" products and the products associated with their subcategories.'
+        );
 
         // If the attribute configuration check failed.
         if (!$this->isAnchorAttributeConfigValid()) {
@@ -189,7 +192,7 @@ class CategoryIsAnchorConfigCheck extends AbstractCheck
      */
     public function getStatus(): string
     {
-        return ($this->isAnchorAttributeConfigValid() && $this->getNonAnchorCategoryCount() === 0)
+        return $this->isAnchorAttributeConfigValid() && $this->getNonAnchorCategoryCount() === 0
             ? CheckInterface::STATUS_PASSED
             : CheckInterface::STATUS_FAILED;
     }
