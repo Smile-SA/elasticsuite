@@ -15,8 +15,30 @@
 .smile_elasticsuite_analytics-search-usage {
 
     .dashboard-item-title {
+        position: relative;
+
         .tooltip {
             margin-top: inherit;
+        }
+
+        .admin__field-action-export {
+            position: absolute;
+            right: 0;
+
+            &:before {
+                content: '\e635';
+                display: inline-block;
+                font-size: 2.2rem;
+                font-weight: normal;
+                color: #514943;
+                font-family: 'Admin Icons';
+                line-height: 1;
+                vertical-align: middle;
+                overflow: hidden;
+                cursor: pointer;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
         }
     }
 
