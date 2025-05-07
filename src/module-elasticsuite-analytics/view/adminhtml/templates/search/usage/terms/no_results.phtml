@@ -26,7 +26,9 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
 <div class="dashboard-item" id="<?= $block->getJsId() ?>">
     <div class="dashboard-item-title">
         <span><?= $block->getTitle() ;?></span>
-        <span class="admin__field-action-export" id="<?= $block->getJsId() ?>_copy" title="<?= __('Copy table to clipboard') ?>"></span>
+        <span id="<?= $block->getJsId() ?>_copy" class="admin__field-action-export" title="<?= $block->escapeHtml(__('Copy table to clipboard')) ?>">
+            <span class="copy-feedback-text"><?= __('Copied to clipboard !') ?></span>
+        </span>
         <?php if ($block->hasHelp()) :?>
             <div class="admin__field-tooltip tooltip">
                 <a href="#<?= $block->getJsId() ?>_help"
@@ -146,11 +148,20 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
                 });
 
                 // Copy to clipboard.
+                const $copyFeedback = $("#<?= $block->getJsId() ?>_copy");
                 const blob = new Blob([output], { type: "text/plain" });
                 const item = new ClipboardItem({ "text/plain": Promise.resolve(blob) });
                 navigator.clipboard.write([item])
                     .then(() => {
                         console.log("✅ Copied to clipboard");
+
+                        // Show feedback copy text.
+                        $copyFeedback.addClass("show");
+
+                        // Hide after 3 seconds.
+                        setTimeout(() => {
+                            $copyFeedback.removeClass("show");
+                        }, 3000);
                     })
                     .catch(err => {
                         console.error("❌ Failed to copy: ", err);
