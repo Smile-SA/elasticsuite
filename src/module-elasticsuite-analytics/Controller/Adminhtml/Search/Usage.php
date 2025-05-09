@@ -15,10 +15,13 @@ namespace Smile\ElasticsuiteAnalytics\Controller\Adminhtml\Search;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Result\PageFactory;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteAnalytics\Helper\Data as AnalyticsHelper;
 use Smile\ElasticsuiteAnalytics\Model\Report\Context as ReportContext;
 use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
+use Smile\ElasticsuiteTracker\Api\EventQueueInterface;
 use Smile\ElasticsuiteTracker\Api\SessionIndexInterface;
 
 /**
@@ -36,6 +39,16 @@ class Usage extends Action
     private $indexOperation;
 
     /**
+     * @var EventQueueInterface
+     */
+    private $eventQueue;
+
+    /**
+     * @var AnalyticsHelper
+     */
+    private $config;
+
+    /**
      * @var ReportContext
      */
     private $reportContext;
@@ -50,17 +63,23 @@ class Usage extends Action
      *
      * @param Context                 $context           Context.
      * @param IndexOperationInterface $indexOperation    Index operation.
+     * @param EventQueueInterface     $eventQueue        Events queue.
+     * @param AnalyticsHelper         $config            Analytics config helper.
      * @param ReportContext           $reportContext     Report context.
      * @param PageFactory             $resultPageFactory Result page factory.
      */
     public function __construct(
         Context $context,
         IndexOperationInterface $indexOperation,
+        EventQueueInterface $eventQueue,
+        AnalyticsHelper $config,
         ReportContext $reportContext,
         PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
         $this->indexOperation           = $indexOperation;
+        $this->eventQueue               = $eventQueue;
+        $this->config                   = $config;
         $this->reportContext            = $reportContext;
         $this->resultPageFactory        = $resultPageFactory;
     }
@@ -81,6 +100,8 @@ class Usage extends Action
             }
         }
 
+        $this->addEventsWarningIfRequired();
+
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('Smile_ElasticsuiteAnalytics::search_usage');
@@ -100,5 +121,31 @@ class Usage extends Action
     private function checkIndexPresence($indexIdentifier)
     {
         return $this->indexOperation->indexExists($indexIdentifier, $this->reportContext->getStoreId());
+    }
+
+    /**
+     * Check if some events are waiting being indexed for too long and if so, display a notice message.
+     *
+     * @return void
+     */
+    private function addEventsWarningIfRequired()
+    {
+        $eventsWarningAfter = $this->config->getMaxHoursBeforeEventsWarning();
+        try {
+            $pendingEventsCount = $this->eventQueue->getPendingEventsCount($eventsWarningAfter);
+        } catch (LocalizedException $e) {
+            $pendingEventsCount = 0;
+        }
+        if ($pendingEventsCount > 0) {
+            $this->messageManager->addNoticeMessage(
+                __(
+                    'There are currently %1 events created more than %2 hours ago in the events queue table.'
+                    // phpcs:ignore Generic.Files.LineLength
+                    . ' If you think this screen is lacking some behavioral data, make sure the "elasticsuite_index_log_event" cronjob is running frequently enough.',
+                    $pendingEventsCount,
+                    $eventsWarningAfter
+                )
+            );
+        }
     }
 }

@@ -14,7 +14,9 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
+use Magento\Catalog\Model\Config;
 use Magento\Catalog\Model\Product\Visibility;
+use Magento\Framework\App\RequestInterface;
 use Smile\ElasticsuiteCatalog\Model\ProductSorter\AbstractPreview;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
@@ -34,6 +36,11 @@ use Smile\ElasticsuiteCatalog\Model\ProductSorter\ItemDataFactory;
 class Preview extends AbstractPreview
 {
     /**
+     * Default customer group id.
+     */
+    const DEFAULT_CUSTOMER_GROUP_ID = '0';
+
+    /**
      * @var CategoryInterface
      */
     private $category;
@@ -49,6 +56,21 @@ class Preview extends AbstractPreview
     private $searchContext;
 
     /**
+     * @var \Magento\Framework\App\RequestInterface|mixed
+     */
+    private $request;
+
+    /**
+     * @var \Magento\Catalog\Model\Config|mixed
+     */
+    private $categoryConfig;
+
+    /**
+     * @var string
+     */
+    private $sortBy = null;
+
+    /**
      * Constructor.
      *
      * @param CategoryInterface         $category                 Category to preview.
@@ -58,6 +80,8 @@ class Preview extends AbstractPreview
      * @param ContextInterface          $searchContext            Search Context
      * @param int                       $size                     Preview size.
      * @param string                    $search                   Preview search.
+     * @param RequestInterface|null     $request                  HTTP Request.
+     * @param Config|null               $categoryConfig           Category config.
      */
     public function __construct(
         CategoryInterface $category,
@@ -66,12 +90,16 @@ class Preview extends AbstractPreview
         QueryFactory $queryFactory,
         ContextInterface $searchContext,
         $size = 10,
-        $search = ''
+        $search = '',
+        ?RequestInterface $request = null,
+        ?Config $categoryConfig = null
     ) {
         parent::__construct($productCollectionFactory, $previewItemFactory, $queryFactory, $category->getStoreId(), $size, $search);
         $this->category      = $category;
         $this->queryFactory  = $queryFactory;
         $this->searchContext = $searchContext;
+        $this->request       = $request ?: \Magento\Framework\App\ObjectManager::getInstance()->get(RequestInterface::class);
+        $this->categoryConfig = $categoryConfig ?: \Magento\Framework\App\ObjectManager::getInstance()->get(Config::class);
     }
 
     /**
@@ -79,6 +107,7 @@ class Preview extends AbstractPreview
      */
     protected function prepareProductCollection(Collection $collection) : Collection
     {
+        $this->searchContext->setIsBlacklistingApplied(false);
         $this->searchContext->setCurrentCategory($this->category);
         $this->searchContext->setStoreId($this->category->getStoreId());
         $collection->setVisibility([Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_BOTH]);
@@ -87,6 +116,16 @@ class Preview extends AbstractPreview
         if ($queryFilter !== null) {
             $collection->addQueryFilter($queryFilter);
         }
+
+        $sortBy            = $this->getSortBy() ?? 'position';
+        $directionFallback = $sortBy !== 'position' ? Collection::SORT_ORDER_ASC : Collection::SORT_ORDER_DESC;
+
+        $direction = $this->request->getParam('sort_direction', $directionFallback);
+        if (empty($direction) || ((string) $direction === '')) {
+            $direction = $directionFallback;
+        }
+        $collection->setOrder($sortBy, $direction);
+        $collection->addPriceData(self::DEFAULT_CUSTOMER_GROUP_ID, $this->category->getStore()->getWebsiteId());
 
         return $collection;
     }
@@ -98,15 +137,35 @@ class Preview extends AbstractPreview
      */
     protected function getSortedProductIds() : array
     {
-        return $this->category->getSortedProductIds();
+        return ($this->getSortBy() === 'position') ? $this->category->getSortedProductIds() : [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function preparePreviewItems($products = []): array
+    {
+        $items = parent::preparePreviewItems($products);
+
+        if ($this->getSortBy() !== 'position') {
+            // In order to sort the product in admin category grid, we need to set the position value
+            // if the sort order is different from position because the products are sorted in js.
+            // We also disable manual sorting when sort order is not position.
+            array_walk($items, function (&$productData, $index) {
+                $productData['position']            = $index;
+                $productData['can_use_manual_sort'] = false;
+            });
+        }
+
+        return $items;
     }
 
     /**
      * Return the filter applied to the query.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      */
-    private function getQueryFilter() : QueryInterface
+    private function getQueryFilter(): ?QueryInterface
     {
         $query = null;
 
@@ -147,8 +206,30 @@ class Preview extends AbstractPreview
      *
      * @return QueryInterface
      */
-    private function getEntityIdFilterQuery($ids) : QueryInterface
+    private function getEntityIdFilterQuery($ids): QueryInterface
     {
         return $this->queryFactory->create(QueryInterface::TYPE_TERMS, ['field' => 'entity_id', 'values' => $ids]);
+    }
+
+    /**
+     * Get sort by attribute.
+     *
+     * @return string
+     */
+    private function getSortBy() : string
+    {
+        if (!$this->sortBy) {
+            $useConfig = $this->request->getParam('use_config', []);
+            $useConfig = array_key_exists('default_sort_by', $useConfig) && $useConfig['default_sort_by'] == 'true';
+            $defaultSortBy = $this->categoryConfig->getProductListDefaultSortBy();
+            $sortBy        = $this->request->getParam('default_sort_by', $defaultSortBy);
+            if (empty($sortBy) || ((string) $sortBy === '')) {
+                $sortBy = $defaultSortBy;
+            }
+
+            $this->sortBy  = $useConfig ? $defaultSortBy : $sortBy;
+        }
+
+        return $this->sortBy;
     }
 }

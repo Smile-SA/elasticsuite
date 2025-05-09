@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteTracker\Setup;
 use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Smile\ElasticsuiteTracker\Helper\Data as TrackerHelper;
+use Smile\ElasticsuiteTracker\Model\Event\Mapping\Update\OrderItemDate as OrderItemDateMappingUpdater;
 use Smile\ElasticsuiteTracker\Model\IndexManager;
 
 /**
@@ -34,6 +35,11 @@ class TrackerSetup
     protected $indexManager;
 
     /**
+     * @var OrderItemDateMappingUpdater
+     */
+    protected $orderItemDate;
+
+    /**
      * @var ScopeConfigInterface
      */
     protected $scopeConfig;
@@ -46,16 +52,19 @@ class TrackerSetup
     /**
      * Class Constructor
      *
-     * @param IndexManager         $indexManager   Index manager.
-     * @param ScopeConfigInterface $scopeConfig    Scope config.
-     * @param Config               $resourceConfig ResourceConfig
+     * @param IndexManager                $indexManager   Index manager.
+     * @param OrderItemDateMappingUpdater $orderItemDate  Order item date mapping updater.
+     * @param ScopeConfigInterface        $scopeConfig    Scope config.
+     * @param Config                      $resourceConfig ResourceConfig
      */
     public function __construct(
         IndexManager $indexManager,
+        OrderItemDateMappingUpdater $orderItemDate,
         ScopeConfigInterface $scopeConfig,
         Config $resourceConfig
     ) {
         $this->indexManager   = $indexManager;
+        $this->orderItemDate  = $orderItemDate;
         $this->scopeConfig    = $scopeConfig;
         $this->resourceConfig = $resourceConfig;
     }
@@ -73,5 +82,27 @@ class TrackerSetup
             $retentionDelay = (int) ceil($retentionDelay / 31);
             $this->resourceConfig->saveConfig(TrackerHelper::CONFIG_RETENTION_DELAY_XPATH, $retentionDelay);
         }
+    }
+
+    /**
+     * Add order item date field to existing event indices.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    public function addOrderItemDateToEventMapping(): void
+    {
+        $invalidIndices = $this->orderItemDate->checkIndices();
+        if (!empty($invalidIndices['add'] ?? []) || !empty($invalidIndices['fix'] ?? [])) {
+            if (!empty($invalidIndices['add'] ?? [])) {
+                $this->orderItemDate->addFieldToIndices($invalidIndices['add']);
+            }
+            if (!empty($invalidIndices['fix'] ?? [])) {
+                $this->orderItemDate->fixFieldTypeInIndices($invalidIndices['fix']);
+            }
+        }
+
+        // Copy the events date to the order item structure.
+        $this->orderItemDate->updateOrderItemDate();
     }
 }

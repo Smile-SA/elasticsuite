@@ -44,4 +44,12 @@ class SearchResult extends \Magento\CatalogGraphQl\Model\Resolver\Products\Searc
     {
         return (bool) $this->data['isSpellchecked'] ?? false;
     }
+
+    /**
+     * @return ?int
+     */
+    public function getQueryId()
+    {
+        return $this->data['queryId'] ?? null;
+    }
 }

@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Ran
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class RangeTest extends AbstractSimpleQueryBuilderTest
+class RangeTest extends AbstractSimpleQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.
@@ -43,22 +43,6 @@ class RangeTest extends AbstractSimpleQueryBuilderTest
         $this->assertEquals(RangeQuery::DEFAULT_BOOST_VALUE, $query['range']['field']['boost']);
 
         $this->assertArrayNotHasKey('_name', $query['range']);
-    }
-
-    /**
-     * Test the builder with mandatory + name params.
-     *
-     * @return void
-     */
-    public function testNamedRangeQueryBuilder()
-    {
-        $builder = $this->getQueryBuilder();
-
-        $rangeQuery = new RangeQuery('field', ['bounds'], 'queryName');
-        $query = $builder->buildQuery($rangeQuery);
-
-        $this->assertArrayHasKey('_name', $query['range']);
-        $this->assertEquals('queryName', $query['range']['_name']);
     }
 
     /**

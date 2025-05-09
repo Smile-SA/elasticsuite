@@ -76,6 +76,8 @@ class Cache extends AbstractHelper
             $data = serialize($data);
         }
 
+        $cacheTags[] = \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG;
+
         $this->cache->save($data, $cacheKey, $cacheTags, $lifetime);
     }
 

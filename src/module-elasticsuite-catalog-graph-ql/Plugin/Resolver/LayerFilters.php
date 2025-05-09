@@ -64,8 +64,8 @@ class LayerFilters
         Field $field,
         $context,
         ResolveInfo $info,
-        array $value = null,
-        array $args = null
+        ?array $value = null,
+        ?array $args = null
     ) {
         if (!empty($value['search_result'])) {
             /** @var \Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult $searchResult */

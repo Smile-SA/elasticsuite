@@ -49,6 +49,8 @@
         <spellchecking>
             <fuzziness>
                 <enable>1</enable>
+                <use_default_minimum_should_match>1</use_default_minimum_should_match>
+                <minimum_should_match>100%</minimum_should_match>
                 <value>AUTO</value>
                 <prefix_length>1</prefix_length>
                 <max_expansion>10</max_expansion>

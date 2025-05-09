@@ -56,7 +56,7 @@ class SearchBlacklist implements FilterInterface
     {
         $query = null;
 
-        if ($this->getSearchQueryId() !== null) {
+        if (($this->getSearchQueryId() !== null) && $this->searchContext->isBlacklistingApplied()) {
             $query = $this->getIsNotBlacklistedQuery((int) $this->getSearchQueryId());
         }
 

@@ -16,6 +16,7 @@
 <?php
 /**
  * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms $block
+ * @var \Magento\Framework\Escaper $escaper
  */
 $maxVisibleTerms    = $block->getMaxVisibleTerms();
 $termsData          = $block->getTermsData();
@@ -43,7 +44,7 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
         <table class="admin__table-primary dashboard-data terms-report">
             <thead>
             <tr>
-                <th class="data-grid-th no-link"><span><?= __('Term');?></span></th>
+                <th class="data-grid-th no-link col-search-query"><span><?= __('Term');?></span></th>
                 <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
                 <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
             </thead>
@@ -59,28 +60,32 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
                 <tbody>
                 <?php foreach ($visibleTermsData as $termData) : ?>
                     <tr>
-                        <td><?php if ($termData['url']) : ?>
-                                <a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a>
+                        <td class="col-search-query"><?php if ($termData['url']) : ?>
+                                <a href=<?= $termData['url']; ?> target="_blank">
+                                    <span title="<?= $escaper->escapeHtmlAttr($termData['term']); ?>"><?= $escaper->escapeHtml($termData['term']); ?></span>
+                                </a>
                             <?php else : ?>
-                                <?= $termData['term']; ?>
+                                <span title="<?= $escaper->escapeHtmlAttr($termData['term']); ?>"><?= $escaper->escapeHtml($termData['term']); ?></span>
                             <?php endif; ?>
                         </td>
-                        <td><?= $termData['sessions']; ?></td>
-                        <td><?= $termData['visitors']; ?></td>
+                        <td class="col-number"><?= $termData['sessions']; ?></td>
+                        <td class="col-number"><?= $termData['visitors']; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
                 <tbody class="extra" id="<?php echo $block->getJsId() ?>_extra">
                 <?php foreach ($hiddenTermsData as $termData) : ?>
                     <tr>
-                        <td><?php if ($termData['url']) : ?>
-                                <a href=<?= $termData['url']; ?> target="_blank"><?= $termData['term']; ?></a>
+                        <td class="col-search-query"><?php if ($termData['url']) : ?>
+                                <a href=<?= $termData['url']; ?> target="_blank">
+                                    <span title="<?= $escaper->escapeHtmlAttr($termData['term']); ?>"><?= $escaper->escapeHtml($termData['term']); ?></span>
+                                </a>
                             <?php else : ?>
-                                <?= $termData['term']; ?>
+                                <span title="<?= $escaper->escapeHtmlAttr($termData['term']); ?>"><?= $escaper->escapeHtml($termData['term']); ?></span>
                             <?php endif; ?>
                         </td>
-                        <td><?= $termData['sessions']; ?></td>
-                        <td><?= $termData['visitors']; ?></td>
+                        <td class="col-number"><?= $termData['sessions']; ?></td>
+                        <td class="col-number"><?= $termData['visitors']; ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

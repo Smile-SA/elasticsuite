@@ -19,8 +19,8 @@
     <media>
         <images module="Magento_Catalog">
             <image id="smile_elasticsuiteoptimizer_preview" type="small_image">
-                <width>50</width>
-                <height>50</height>
+                <width>80</width>
+                <height>80</height>
             </image>
         </images>
     </media>

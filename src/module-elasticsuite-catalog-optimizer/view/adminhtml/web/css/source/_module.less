@@ -29,6 +29,13 @@ div.optimizer-preview-fieldset {
         .admin__field-label {
             width: auto;
         }
+        ._unclickable {
+            .admin__action-multiselect-label {
+                cursor: default;
+                font-weight: normal;
+                color: #aaa;
+            }
+        }
     }
 
     .query-text {
@@ -119,7 +126,7 @@ div.optimizer-preview-fieldset {
             display:inline-block;
 
             h1 {
-                margin: 0px 0 2px 10px;
+                margin: 0px 0 2px;
                 font-size: 1em;
                 font-weight:bold;
                 margin-bottom: 5px;
@@ -129,6 +136,7 @@ div.optimizer-preview-fieldset {
             }
 
             div.product-details {
+                display: inline-block;
                 p {
                     margin: 0 0 0em;
                 }
@@ -136,14 +144,14 @@ div.optimizer-preview-fieldset {
 
             div.product-image {
                 text-align: left;
-                width: 50px;
-                height: 50px;
-                margin: 0 10px;
+                width: 80px;
+                height: 80px;
+                margin-right: 10px;
                 float: left;
 
                 img {
-                    max-width: 50px;
-                    max-height: 50px;
+                    max-width: 80px;
+                    max-height: 80px;
                 }
             }
 

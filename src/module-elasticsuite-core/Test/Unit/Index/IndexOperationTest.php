@@ -52,9 +52,16 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = $this->getObjectManagerMock();
         $indexSettings = $this->getIndexSettingsMock();
+        $clusterInfo   = $this->getClusterInfoMock();
         $logger        = $this->getLoggerMock();
 
-        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $logger);
+        $this->indexOperation = new IndexOperation(
+            $objectManager,
+            $this->clientMock,
+            $indexSettings,
+            $clusterInfo,
+            $logger
+        );
     }
 
     /**
@@ -263,6 +270,16 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $indexSettingsMock->method('getBatchIndexingSize')->will($this->returnValue(100));
 
         return $indexSettingsMock;
+    }
+
+    /**
+     * Cluster information mocking.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getClusterInfoMock()
+    {
+        return $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface::class)->getMock();
     }
 
     /**

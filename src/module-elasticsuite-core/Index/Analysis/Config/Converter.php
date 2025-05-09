@@ -36,6 +36,9 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
     const ANALYZER_TYPE_NODE         = 'analyzer';
     const NORMALIZER_TYPE_ROOT_NODE  = 'normalizers';
     const NORMALIZER_TYPE_NODE       = 'normalizer';
+    const STEMMER_TYPE_ROOT_NODE     = 'stemmers';
+    const STEMMER_GROUP_TYPE_NODE    = 'group';
+    const STEMMER_TYPE_NODE          = 'stemmer';
     const LANGUAGE_DEFAULT           = 'default';
 
     /**
@@ -70,6 +73,11 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         foreach ($this->getAllLanguages($xpath) as $language) {
             $configuration[$language] = $this->getLanguageConfiguration($xpath, $language, $defaultConfig);
         }
+
+        $configuration['default'][self::STEMMER_TYPE_ROOT_NODE] = $this->getAllStemmersOptions(
+            $xpath,
+            $this->getAllDefaultLanguageStemmers($xpath)
+        );
 
         return $configuration;
     }
@@ -338,5 +346,127 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
         }
 
         return $filters;
+    }
+
+    /**
+     * Return all default language stemmers as defined currently in config.
+     * Relieson the fact that the filter used will be of type stemmer and named stemmer.
+     *
+     * @param \DOMXPath $xpath XPath access to the document parsed.
+     *
+     * @return array
+     */
+    private function getAllDefaultLanguageStemmers(\DOMXPath $xpath)
+    {
+        $defaultStemmers = [];
+
+        $filterPath = "@type='stemmer' and @name='stemmer'";
+        $stemmerFiltersPath = sprintf(
+            "/%s/%s/%s[%s]",
+            self::ROOT_NODE_NAME,
+            self::FILTER_TYPE_ROOT_NODE,
+            self::FILTER_TYPE_NODE,
+            $filterPath
+        );
+
+        $stemmerFilterNodes = $xpath->query($stemmerFiltersPath);
+        foreach ($stemmerFilterNodes as $stemmerFilterNode) {
+            $language = $stemmerFilterNode->getAttribute('language');
+            $stemmer = false;
+            foreach ($stemmerFilterNode->childNodes as $childNode) {
+                if ($childNode instanceof \DOMElement) {
+                    if ($childNode->tagName === 'language') {
+                        $stemmer = $childNode->nodeValue;
+                        break;
+                    }
+                }
+            }
+            if (!empty($stemmer)) {
+                $defaultStemmers[$language] = $stemmer;
+            }
+        }
+
+        return $defaultStemmers;
+    }
+
+    /**
+     * Parse all stemmers options available for language that support multiple stemmers.
+     *
+     * @param \DOMXPath $xpath           XPath access to the document parsed.
+     * @param array     $defaultStemmers Default stemmers for available languages.
+     *
+     * @return array
+     */
+    private function getAllStemmersOptions(\DOMXPath $xpath, $defaultStemmers = [])
+    {
+        $stemmerOptions = [];
+
+        $searchPath = sprintf(
+            "/%s/%s/%s",
+            self::ROOT_NODE_NAME,
+            self::STEMMER_TYPE_ROOT_NODE,
+            self::STEMMER_GROUP_TYPE_NODE
+        );
+        $stemmerGroupNodes = $xpath->query($searchPath);
+        foreach ($stemmerGroupNodes as $stemmerGroupNode) {
+            $languageCode = $stemmerGroupNode->getAttribute('language');
+            $languageTitle = $stemmerGroupNode->getAttribute('title');
+            $stemmerOptions[$languageCode] = [
+                'identifier' => $languageCode,
+                'title' => $languageTitle,
+                'stemmers' => [],
+            ];
+
+            $stemmerOptions[$languageCode]['stemmers'] = $this->getLanguageStemmers(
+                $xpath,
+                $stemmerGroupNode,
+                $defaultStemmers[$languageCode] ?: null
+            );
+        }
+
+        return $stemmerOptions;
+    }
+
+    /**
+     * Parse available stemmers for a given language.
+     *
+     * @param \DOMXPath   $xpath          XPath access to the document parsed.
+     * @param \DomNode    $rootNode       Stemmers group node for a given language.
+     * @param string|null $defaultStemmer Default stemme for the given language, if defined.
+     *
+     * @return array
+     */
+    private function getLanguageStemmers(\DOMXPath $xpath, \DomNode $rootNode, $defaultStemmer = null)
+    {
+        $stemmers = [];
+
+        $searchPath = sprintf("./%s", self::STEMMER_TYPE_NODE);
+        $stemmerNodes = $xpath->query($searchPath, $rootNode);
+        foreach ($stemmerNodes as $stemmerNode) {
+            $identifier = $stemmerNode->getAttribute('identifier');
+            $stemmer    = [
+                'identifier'    => $identifier,
+                'recommended'   => $stemmerNode->getAttribute('recommended') ?: false,
+                'default'       => ($identifier === $defaultStemmer),
+            ];
+            foreach ($stemmerNode->childNodes as $childNode) {
+                if ($childNode instanceof \DOMElement) {
+                    if ($childNode->tagName === 'label') {
+                        $stemmer['label'] = $childNode->nodeValue;
+                        continue;
+                    }
+
+                    try {
+                        $stemmer[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                    } catch (\Exception $exception) {
+                        $stemmer[$childNode->tagName] = $childNode->nodeValue;
+                    }
+                }
+            }
+
+            $stemmers[$identifier] = $stemmer;
+        }
+
+        return $stemmers;
     }
 }

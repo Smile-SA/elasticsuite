@@ -15,11 +15,9 @@ namespace Smile\ElasticsuiteCore\Model;
 
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\Config;
-use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Composer\ComposerFactory;
-use \Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformation;
-use Magento\Framework\Composer\ComposerJsonFinder;
+use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformation;
+use Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider;
 
 /**
  * Composer Information model.
@@ -41,7 +39,7 @@ class ProductMetadata
     const PRODUCT_NAME  = 'Elasticsuite';
 
     /**
-     * Magento version cache key
+     * Elasticsuite version cache key
      */
     const VERSION_CACHE_KEY = 'elasticsuite-version';
 
@@ -53,14 +51,19 @@ class ProductMetadata
     protected $version;
 
     /**
-     * @var \Magento\Framework\Composer\ComposerJsonFinder
+     * @var \Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformationProvider
      */
-    protected $composerJsonFinder;
+    protected $composerInformationProvider;
 
     /**
      * @var \Smile\ElasticsuiteCore\Model\ProductMetadata\ComposerInformation
      */
     private $composerInformation;
+
+    /**
+     * @var string
+     */
+    private $packageName;
 
     /**
      * @var CacheInterface
@@ -70,15 +73,18 @@ class ProductMetadata
     /**
      * ProductMetadata constructor.
      *
-     * @param ComposerJsonFinder                    $composerJsonFinder Composer JSON finder
-     * @param \Magento\Framework\App\CacheInterface $cache              Cache interface
+     * @param ComposerInformationProvider $composerInformationProvider Composer Information provider
+     * @param string                      $packageName                 Self package name
+     * @param CacheInterface|null         $cache                       Cache interface
      */
     public function __construct(
-        ComposerJsonFinder $composerJsonFinder,
-        CacheInterface $cache = null
+        ComposerInformationProvider $composerInformationProvider,
+        string $packageName = 'smile/elasticsuite',
+        ?CacheInterface $cache = null
     ) {
-        $this->composerJsonFinder = $composerJsonFinder;
-        $this->cache              = $cache ?: ObjectManager::getInstance()->get(CacheInterface::class);
+        $this->composerInformationProvider = $composerInformationProvider;
+        $this->packageName = $packageName;
+        $this->cache       = $cache ?: ObjectManager::getInstance()->get(CacheInterface::class);
     }
 
     /**
@@ -136,8 +142,8 @@ class ProductMetadata
         $packages = $this->getComposerInformation()->getSystemPackages();
 
         foreach ($packages as $package) {
-            if (isset($package['name']) && isset($package['version'])) {
-                return $package['version'];
+            if (isset($package['name']) && ($package['name'] === $this->packageName)) {
+                return $package['version'] ?? '';
             }
         }
 
@@ -152,9 +158,7 @@ class ProductMetadata
     private function getComposerInformation()
     {
         if (!$this->composerInformation) {
-            $directoryList              = new DirectoryList(BP);
-            $composerFactory            = new ComposerFactory($directoryList, $this->composerJsonFinder);
-            $this->composerInformation  = new ComposerInformation($composerFactory);
+            $this->composerInformation = $this->composerInformationProvider->getComposerInformation();
         }
 
         return $this->composerInformation;

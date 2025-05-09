@@ -347,6 +347,7 @@
                     <item name="stock" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\InventoryData</item>
                     <item name="searchPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\SearchPositionData</item>
                     <item name="ignoreOutOfStockPositions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\IgnoreOutOfStockPositionsData</item>
+                    <item name="categoryPermissions" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Product\Indexer\Fulltext\Datasource\CategoryPermissions</item>
                 </item>
                 <item name="catalog_category" xsi:type="array">
                     <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</item>
@@ -402,6 +403,11 @@
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
+    <type name="Smile\ElasticsuiteCatalog\Model\Product\Search\Request\Container\Filter\CategoryPermissions">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 
     <!-- register new catalog EAV attributes -->
     <type name="Magento\Eav\Model\Entity\Setup\PropertyMapper\Composite">
@@ -418,5 +424,28 @@
                 <item name="elasticsuite_product_attribute" xsi:type="string">Smile_ElasticsuiteCatalog</item>
             </argument>
         </arguments>
+    </type>
+
+    <!--
+        It will remove the "created_at" and "updated_at" attributes from the list of attribute metadata.
+        As a result, these attributes will not be displayed on the product create/edit page.
+    -->
+    <type name="Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Eav">
+        <plugin name="hideProductAttributes" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Ui\DataProvider\Product\Form\Modifier\HideProductAttributesPlugin"/>
+    </type>
+
+    <!-- Attributes to hide params -->
+    <type name="Smile\ElasticsuiteCatalog\Plugin\Catalog\Ui\DataProvider\Product\Form\Modifier\HideProductAttributesPlugin">
+        <arguments>
+            <argument name="attributesToHide" xsi:type="array">
+                <item name="created_at" xsi:type="string">created_at</item>
+                <item name="updated_at" xsi:type="string">updated_at</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Inject custom sort direction per category -->
+    <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
+        <plugin name="injectSortDirectionPerCategory" type="\Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar\SortDirectionPerCategoryPlugin"/>
     </type>
 </config>

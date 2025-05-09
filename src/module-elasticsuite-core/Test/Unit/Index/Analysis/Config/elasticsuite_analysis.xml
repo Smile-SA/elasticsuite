@@ -38,6 +38,9 @@
         </filter>
         <filter name="dummy" type="dummy" language="filter_generated_language"/>
         <filter name="filter" type="filter_type_language_override" language="override_language" />
+        <filter name="stemmer" type="stemmer" language="language_with_stemmer">
+            <language>stemmed_language</language>
+        </filter>
     </filters>
 
     <analyzers>
@@ -61,5 +64,38 @@
                 <filter ref="filter_with_params" />
             </filters>
         </analyzer>
+        <analyzer name="stemmed_analyzer" tokenizer="dummy" language="language_without_stemmer">
+            <char_filters>
+                <char_filter ref="char_filter" />
+            </char_filters>
+            <filters>
+                <filter ref="filter" />
+                <filter ref="filter_with_params" />
+                <filter ref="stemmer" />
+            </filters>
+        </analyzer>
+        <analyzer name="stemmed_analyzer" tokenizer="dummy" language="language_with_stemmer">
+            <char_filters>
+                <char_filter ref="char_filter" />
+            </char_filters>
+            <filters>
+                <filter ref="filter" />
+                <filter ref="filter_with_params" />
+                <filter ref="stemmer" />
+            </filters>
+        </analyzer>
     </analyzers>
+
+    <stemmers>
+        <group language="language_with_stemmer" title="Language with Stemmer">
+            <stemmer identifier="langlight" recommended="true">
+                <label>Language Light</label>
+            </stemmer>
+            <stemmer identifier="langporter">
+                <label>Language Porter</label>
+                <extra_config_json><![CDATA[{"param1":0,"param2":2}]]></extra_config_json>
+                <extra_config_plain><![CDATA[0,2]]></extra_config_plain>
+            </stemmer>
+        </group>
+    </stemmers>
 </analysis>

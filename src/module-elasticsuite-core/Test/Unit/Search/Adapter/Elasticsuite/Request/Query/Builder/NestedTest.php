@@ -23,7 +23,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Nes
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-class NestedTest extends AbstractComplexQueryBuilderTest
+class NestedTest extends AbstractComplexQueryBuilder
 {
     /**
      * Test the builder with mandatory params only.

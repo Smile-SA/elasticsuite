@@ -26,13 +26,20 @@
                     <argument name="use_confirm" xsi:type="boolean">false</argument>
                 </arguments>
             </block>
+
+            <!-- Adding the customer group and company selector blocks at the top of the page -->
+            <container name="page-customer-actions" htmlTag="div" htmlClass="page-customer-actions">
+                <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerGroupSelector" name="report.customerGroup.selector" template="Smile_ElasticsuiteAnalytics::report/customer_group_selector.phtml" after="report.store.switcher" />
+                <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector" name="report.companyId.selector" ifconfig="btob/website_configuration/company_active" template="Smile_ElasticsuiteAnalytics::report/customer_company_selector.phtml" after="report.customerGroup.selector" />
+            </container>
+
             <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher" name="report.dateRange.switcher"/>
         </referenceContainer>
         <referenceContainer name="content">
             <container name="dashboard-container" htmlTag="div" htmlClass="dashboard-container row">
                 <block name="elasticsuite.analytics.search_usage.kpi" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi" template="Smile_ElasticsuiteAnalytics::search/usage/kpi.phtml" />
-                
-                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-5">
+
+                <container name="dashboard-left-col" htmlTag="div" htmlClass="dashboard-secondary col-m-6">
                     <block name="elasticsuite.analytics.search_usage.popular_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</argument>
@@ -60,24 +67,24 @@
                         </arguments>
                     </block>
                 </container>
-                
-                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-5">
+
+                <container name="dashboard-right-col" htmlTag="div" htmlClass="dashboard-main col-m-4 col-m-push-1">
                     <block name="elasticsuite.analytics.search_usage.sessions" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Sessions" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Sessions</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                            <argument name="chart_type" xsi:type="string">PieChart</argument>
                         </arguments>
                     </block>
                     <block name="elasticsuite.analytics.search_usage.spellcheck" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Spellcheck" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Spellcheck usage</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">PieChart</argument>
+                            <argument name="chart_type" xsi:type="string">PieChart</argument>
                         </arguments>
                     </block>
                     <block name="elasticsuite.analytics.search_usage.conversion" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ConversionRates" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
                         <arguments>
                             <argument name="title" xsi:type="string" translate="true">Conversion rate</argument>
-                            <argument name="chart_type" xsi:type="string" translate="true">BarChart</argument>
+                            <argument name="chart_type" xsi:type="string">BarChart</argument>
                         </arguments>
                     </block>
                 </container>

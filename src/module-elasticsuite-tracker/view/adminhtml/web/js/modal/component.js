@@ -1,4 +1,3 @@
-<!--
 /**
  * DISCLAIMER
  *
@@ -11,7 +10,6 @@
  * @copyright 2021 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
- -->
 define([
     'underscore',
     'jquery',

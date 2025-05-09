@@ -75,8 +75,8 @@ class SignificantTerm extends AbstractBucket
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
         $size = 0,
         $minDocCount = 5,
         $algotithm = self::ALGORITHM_GND

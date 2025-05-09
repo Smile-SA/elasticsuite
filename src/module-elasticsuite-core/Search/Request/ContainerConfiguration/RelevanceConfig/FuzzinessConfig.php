@@ -40,20 +40,28 @@ class FuzzinessConfig implements FuzzinessConfigurationInterface
     private $maxExpansion;
 
     /**
+     * @var string
+     */
+    private $minimumShouldMatch;
+
+    /**
      * RelevanceConfiguration constructor.
      *
-     * @param float $value        The value
-     * @param int   $prefixLength The prefix length
-     * @param int   $maxExpansion The max expansion
+     * @param float  $value              The value
+     * @param int    $prefixLength       The prefix length
+     * @param int    $maxExpansion       The max expansion
+     * @param string $minimumShouldMatch Minimum should match clause of the fuzzy query.
      */
     public function __construct(
         $value,
         $prefixLength,
-        $maxExpansion
+        $maxExpansion,
+        $minimumShouldMatch
     ) {
         $this->value = $value;
         $this->prefixLength = $prefixLength;
         $this->maxExpansion = $maxExpansion;
+        $this->minimumShouldMatch = $minimumShouldMatch;
     }
 
     /**
@@ -78,5 +86,13 @@ class FuzzinessConfig implements FuzzinessConfigurationInterface
     public function getMaxExpansion()
     {
         return (int) $this->maxExpansion;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMinimumShouldMatch()
+    {
+        return (string) $this->minimumShouldMatch;
     }
 }

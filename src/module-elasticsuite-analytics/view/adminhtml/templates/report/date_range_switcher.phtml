@@ -57,7 +57,7 @@
 require(['jquery', 'mage/calendar', 'mage/adminhtml/tools'], function ($) {
     $('#<?= $block->getJsId('date-range-picker'); ?>').dateRange(<?= $block->getJsConfig(); ?>);
     $('#<?= $block->getJsId('date-range-picker', 'apply'); ?>').on('click', function() {
-        var url = "<?= $block->getUrl('*/*/*', ['from' => '__from__', 'to' => '__to__']); ?>"
+        let url = "<?= $block->getUrl('*/*/*', ['_current' => true, 'from' => '__from__', 'to' => '__to__']); ?>"
             .replace('__from__', Base64.encode($("#<?= $block->getJsId('date-range-picker', 'from'); ?>")[0].value))
             .replace('__to__', Base64.encode($("#<?= $block->getJsId('date-range-picker', 'to'); ?>")[0].value));
         window.location = url;

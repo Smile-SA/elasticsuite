@@ -162,6 +162,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
             }
         }
 
+        $queryParams['name'] = $this->asStringRecursive();
         $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
 
         return $query;

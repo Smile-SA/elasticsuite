@@ -104,7 +104,7 @@ class MultiMatch implements QueryInterface
         $tieBreaker = self::DEFAULT_TIE_BREAKER,
         $name = null,
         $boost = QueryInterface::DEFAULT_BOOST_VALUE,
-        FuzzinessConfigurationInterface $fuzzinessConfig = null,
+        ?FuzzinessConfigurationInterface $fuzzinessConfig = null,
         $cutoffFrequency = null,
         $matchType = self::DEFAULT_MATCH_TYPE
     ) {
@@ -125,6 +125,16 @@ class MultiMatch implements QueryInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**

@@ -13,29 +13,29 @@ on:
 jobs:
   build:
     if: (github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test')
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: PHPStan Quality
 
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['7.4']
-        magento-versions: ['2.4.2', '2.4.2-p1', '2.4.2-p2', '2.4.3', '2.4.3-p1']
-        magento-editions: ['enterprise']
-        experimental: [false]
         include:
-          - php-versions: '8.1'
-            magento-versions: '2.4.4'
+          - php-versions: '7.4'
+            magento-versions: '2.4.2-p2'
+            magento-editions: 'enterprise'
+            experimental: true
+          - php-versions: '7.4'
+            magento-versions: '2.4.3-p3'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.1'
-            magento-versions: '2.4.5'
+            magento-versions: '2.4.4-p13'
             magento-editions: 'enterprise'
-            experimental: true
+            experimental: false
           - php-versions: '8.1'
-            magento-versions: '2.4.5-p1'
+            magento-versions: '2.4.5-p12'
             magento-editions: 'enterprise'
-            experimental: true
+            experimental: false
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: "[Init] Checkout"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
@@ -89,22 +89,20 @@ jobs:
 
       - name: "[Init] Determine composer cache directory"
         id: composer-cache-directory
-        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+        run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
 
       - name: "[Init] Cache Composer cache"
         id: composer-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.composer-cache-directory.outputs.directory }}
           key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
           restore-keys: |
             composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
-            composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-
-            composer-${{ matrix.php-versions }}-
 
       - name: "[Init] Cache Magento install"
         id: magento-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.magento-directory }}
           key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
@@ -114,10 +112,6 @@ jobs:
       - name: "[Init] Prepare credentials"
         if: ${{env.MAGENTO_USERNAME}} != 0
         run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
-
-      - name: "[Init] Unconditionally add phpstan/phpstan"
-        working-directory: ${{ env.magento-directory }}
-        run: composer require --no-update --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Prepare Magento install if needed"
         if: steps.magento-cache.outputs.cache-hit == 'true'
@@ -164,13 +158,16 @@ jobs:
           rm -rf vendor/smile/elasticsuite/**
           cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
+      - name: "[Init] Unconditionally add phpstan/phpstan"
+        working-directory: ${{ env.magento-directory }}
+        run: composer require --dev --no-update smile/magento2-smilelab-phpstan ^1.0
+
       - name: "[Init] Fix Magento directory permissions"
         env:
           MAGENTO_ROOT: ${{ env.magento-directory }}
         working-directory: ${{ env.magento-directory }}
         run: |
-          sudo find . -type f -exec chmod 644 {} \;
-          sudo find . -type d -exec chmod 755 {} \;
+          sudo chmod -R a=r,u+w,a+X .
           sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
           sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
           sudo chown -R $USER:www-data .
@@ -189,6 +186,17 @@ jobs:
         run: |
           sudo chmod u+x vendor/bin/phpstan
           vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
+
+      - name: "[Test] PHPUnit"
+        env:
+          PHP_VERSION: ${{ matrix.php-versions }}
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $PHP_VERSION) -ge $(version "8.1") ]; then
+            sudo chmod u+x vendor/bin/phpunit
+            vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
+          fi
 
       - name: "[End] Job failed, gathering logs"
         env:

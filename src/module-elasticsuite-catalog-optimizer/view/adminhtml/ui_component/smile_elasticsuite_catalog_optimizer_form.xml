@@ -674,7 +674,7 @@
                         <item name="label" xsi:type="string" translate="true">Category Preview</item>
                         <item name="componentType" xsi:type="string">field</item>
                         <item name="formElement" xsi:type="string">select</item>
-                        <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/pick-active-category</item>
                         <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
                         <item name="dataScope" xsi:type="string">category_preview</item>
                         <item name="filterOptions" xsi:type="boolean">true</item>
@@ -884,7 +884,7 @@
             </argument>
         </field>
 
-        <field name="scale_factor" sortOrder="40" formElement="input">
+        <field name="scale_factor" sortOrder="15" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">optimizer</item>
@@ -895,7 +895,7 @@
                 </item>
             </argument>
             <settings>
-                <label translate="true">Boost value (multiply)</label>
+                <label translate="true">Attribute value pre-multiplier</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_factor</dataScope>
                 <validation>
@@ -906,6 +906,37 @@
                     <description translate="true">Value the field will be multiplied by before potentially limiting the boost impact</description>
                 </tooltip>
             </settings>
+        </field>
+
+        <field name="allow_negative_boost" sortOrder="50" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
+                    </item>
+                    <item name="default" xsi:type="string">0</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Allow negative boost</label>
+                <dataType>boolean</dataType>
+                <dataScope>config.allow_negative_boost</dataScope>
+                <tooltip>
+                    <description translate="true">If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.</description>
+                </tooltip>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="string">0</map>
+                            <map name="true" xsi:type="string">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
         </field>
     </fieldset>
 

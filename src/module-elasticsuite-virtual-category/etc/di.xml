@@ -134,7 +134,7 @@
             <argument name="productCollectionFactory" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Widget\Product\CollectionFactory</argument>
             <argument name="sqlBuilder" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Condition\ElasticsearchBuilder</argument>
         </arguments>
-        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" />
+        <plugin name="smile_elasticsuite_apply_virtual_category_rule" type="Smile\ElasticsuiteVirtualCategory\Plugin\Widget\ProductsListPlugin" sortOrder="100"/>
     </type>
 
     <virtualType name="Smile\ElasticsuiteVirtualCategory\Model\Rule\WidgetCondition\CombineFactory" type="Magento\CatalogWidget\Model\Rule\Condition\CombineFactory">
@@ -226,5 +226,15 @@
         <arguments>
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteVirtualCategory\Model\Rule">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
+    <!-- Clean rule cache on category save -->
+    <type name="Magento\Catalog\Model\ResourceModel\Category">
+        <plugin name="cleanRuleCacheAfterSave" type="Smile\ElasticsuiteVirtualCategory\Plugin\CleanRuleCacheAfterSave"/>
     </type>
 </config>

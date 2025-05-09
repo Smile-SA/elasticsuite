@@ -17,6 +17,8 @@ namespace Smile\ElasticsuiteThesaurus\Plugin;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Model\Index;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -36,6 +38,11 @@ class QueryRewrite
     private $queryFactory;
 
     /**
+     * @var ThesaurusConfigFactory
+     */
+    private $thesaurusConfigFactory;
+
+    /**
      * @var Index
      */
     private $index;
@@ -48,12 +55,17 @@ class QueryRewrite
     /**
      * Constructor.
      *
-     * @param QueryFactory $queryFactory Search request query factory.
-     * @param Index        $index        Synonym index.
+     * @param QueryFactory           $queryFactory           Search request query factory.
+     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param Index                  $index                  Synonym index.
      */
-    public function __construct(QueryFactory $queryFactory, Index $index)
-    {
+    public function __construct(
+        QueryFactory $queryFactory,
+        ThesaurusConfigFactory $thesaurusConfigFactory,
+        Index $index
+    ) {
         $this->queryFactory           = $queryFactory;
+        $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->index                  = $index;
     }
 
@@ -68,6 +80,7 @@ class QueryRewrite
      * @param string                          $queryText       Current query text.
      * @param string                          $spellingType    Spelling type of the query.
      * @param float                           $boost           Original query boost.
+     * @param int                             $depth           Call depth of the create method. Can be used to avoid/prevent cycles.
      *
      * @return QueryInterface
      */
@@ -77,25 +90,35 @@ class QueryRewrite
         ContainerConfigurationInterface $containerConfig,
         $queryText,
         $spellingType,
-        $boost = 1
+        $boost = 1,
+        $depth = 0
     ) {
-
         $storeId         = $containerConfig->getStoreId();
         $requestName     = $containerConfig->getName();
-        $rewriteCacheKey = $requestName . '|' . $storeId . '|' . md5(json_encode($queryText));
+        $rewriteCacheKey = $requestName . '|' . $storeId . '|' . $depth . '|' . md5(json_encode($queryText));
 
         if (!isset($this->rewritesCache[$rewriteCacheKey])) {
-            $rewrites     = $this->getWeightedRewrites($queryText, $containerConfig, $boost);
+            $rewrites = [];
+            /*
+             * Prevents multiple and excessive rewriting when calling the fulltext query builder 'create' method
+             * with an array of query text
+             * - ALL queries will be rewritten here on the first pass in this plugin
+             * - but no longer on the consecutive "atomic" calls from the 'create' method to itself
+             * Also prevents rewriting a query text that has been provided by the rewriting process.
+             */
+            if ($depth === 0) {
+                $rewrites = $this->getWeightedRewrites($queryText, $containerConfig, $boost);
+            }
             // Set base query as SPELLING_TYPE_EXACT if synonyms/expansions are found.
             $spellingType = empty($rewrites) ? $spellingType : SpellcheckerInterface::SPELLING_TYPE_EXACT;
-            $query        = $proceed($containerConfig, $queryText, $spellingType, $boost);
+            $query        = $proceed($containerConfig, $queryText, $spellingType, $boost, $depth);
 
             if (!empty($rewrites)) {
                 $synonymQueries           = [$query];
                 $synonymQueriesSpellcheck = SpellcheckerInterface::SPELLING_TYPE_EXACT;
 
                 foreach ($rewrites as $rewrittenQuery => $weight) {
-                    $synonymQueries[] = $proceed($containerConfig, $rewrittenQuery, $synonymQueriesSpellcheck, $weight);
+                    $synonymQueries[] = $proceed($containerConfig, $rewrittenQuery, $synonymQueriesSpellcheck, $weight, $depth + 1);
                 }
 
                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $synonymQueries]);
@@ -130,6 +153,26 @@ class QueryRewrite
             $rewrites = $rewrites + $this->index->getQueryRewrites($containerConfig, $currentQueryText, $originalBoost);
         }
 
+        $maxRewrittenQueries = $this->getThesaurusConfig($containerConfig)->getMaxRewrittenQueries();
+        if ($maxRewrittenQueries > 0) {
+            $rewrites = array_slice($rewrites, 0, $maxRewrittenQueries, true);
+        }
+
         return $rewrites;
+    }
+
+    /**
+     * Return thesaurus/relevance configuration.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Container configuration.
+     *
+     * @return ThesaurusConfig
+     */
+    private function getThesaurusConfig(ContainerConfigurationInterface $containerConfig)
+    {
+        $storeId       = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
+
+        return $this->thesaurusConfigFactory->create($storeId, $containerName);
     }
 }

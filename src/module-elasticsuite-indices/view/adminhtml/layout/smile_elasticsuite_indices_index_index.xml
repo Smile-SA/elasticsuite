@@ -43,7 +43,6 @@
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Index Title</argument>
                                 <argument name="index" xsi:type="string">index_name</argument>
-                                <argument name="filter" xsi:type="string">0</argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="sortable" xsi:type="boolean">0</argument>
@@ -71,7 +70,6 @@
                             </arguments>
                         </block>
 
-
                         <block class="Magento\Backend\Block\Widget\Grid\Column" as="size">
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Size</argument>
@@ -83,11 +81,43 @@
                             </arguments>
                         </block>
 
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="number_of_shards">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Shards</argument>
+                                <argument name="index" xsi:type="string">number_of_shards</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">right</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
+                        <block class="Magento\Backend\Block\Widget\Grid\Column" as="number_of_replicas">
+                            <arguments>
+                                <argument name="header" xsi:type="string" translate="true">Replicas</argument>
+                                <argument name="index" xsi:type="string">number_of_replicas</argument>
+                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="type" xsi:type="string">text</argument>
+                                <argument name="align" xsi:type="string">right</argument>
+                                <argument name="sortable" xsi:type="boolean">0</argument>
+                            </arguments>
+                        </block>
+
                         <block class="Magento\Backend\Block\Widget\Grid\Column" as="index_status">
                             <arguments>
                                 <argument name="header" xsi:type="string" translate="true">Index Status</argument>
                                 <argument name="index" xsi:type="string">index_status</argument>
-                                <argument name="filter" xsi:type="string">0</argument>
+                                <argument name="filter" xsi:type="string">Magento\Backend\Block\Widget\Grid\Column\Filter\Select</argument>
+                                <argument name="options" xsi:type="array">
+                                    <item name="all" xsi:type="array">
+                                        <item name="value" xsi:type="string"> </item>
+                                        <item name="label" xsi:type="string" translate="true">Show all indices</item>
+                                    </item>
+                                    <item name="skip_external" xsi:type="array">
+                                        <item name="value" xsi:type="string">external</item>
+                                        <item name="label" xsi:type="string" translate="true">Hide external indices</item>
+                                    </item>
+                                </argument>
                                 <argument name="type" xsi:type="string">text</argument>
                                 <argument name="align" xsi:type="string">left</argument>
                                 <argument name="renderer" xsi:type="string">Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus</argument>

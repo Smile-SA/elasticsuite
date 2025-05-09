@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Model\Category;
+use Magento\Customer\Model\Session;
+use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory as ConditionDataFactory ;
@@ -21,6 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
+use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Magento\Catalog\Model\CategoryFactory;
@@ -76,9 +79,29 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $storeManager;
 
     /**
+     * @var Session
+     */
+    private $customerSession;
+
+    /**
+     * @var CacheInterface
+     */
+    private $sharedCache;
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @var Category[]
      */
     protected $instances = [];
+
+    /**
+     * @var array
+     */
+    protected static $localCache = [];
 
     /**
      * Constructor.
@@ -96,22 +119,28 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param CollectionFactory       $categoryCollectionFactory Virtual categories collection factory.
      * @param QueryBuilder            $queryBuilder              Search rule query builder.
      * @param StoreManagerInterface   $storeManagerInterface     Store Manager
+     * @param Session                 $customerSession           Customer session.
+     * @param CacheInterface          $cache                     Cache.
+     * @param Config                  $config                    Virtual category configuration.
      * @param array                   $data                      Additional data.
      */
     public function __construct(
         Context $context,
         Registry $registry,
-        FormFactory $formFactory,
-        TimezoneInterface $localeDate,
+        FormFactory             $formFactory,
+        TimezoneInterface       $localeDate,
         CombineConditionFactory $combineConditionsFactory,
-        ConditionDataFactory  $conditionDataFactory,
+        ConditionDataFactory    $conditionDataFactory,
         ProductConditionFactory $productConditionsFactory,
-        QueryFactory $queryFactory,
-        CategoryFactory $categoryFactory,
-        CollectionFactory $categoryCollectionFactory,
-        QueryBuilder $queryBuilder,
-        StoreManagerInterface $storeManagerInterface,
-        array $data = []
+        QueryFactory            $queryFactory,
+        CategoryFactory         $categoryFactory,
+        CollectionFactory       $categoryCollectionFactory,
+        QueryBuilder            $queryBuilder,
+        StoreManagerInterface   $storeManagerInterface,
+        Session                 $customerSession,
+        CacheInterface          $cache,
+        Config                  $config,
+        array                   $data = []
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
@@ -119,6 +148,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->queryBuilder              = $queryBuilder;
         $this->storeManager              = $storeManagerInterface;
+        $this->customerSession           = $customerSession;
+        $this->sharedCache               = $cache;
+        $this->config                    = $config;
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -136,34 +168,70 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Build search query by category.
+     * Get search query by category from cache or build it.
      *
-     * @param CategoryInterface $category           Search category.
-     * @param array             $excludedCategories Categories that should not be used into search query building.
-     *                                              Used to avoid infinite recursion while building virtual categories rules.
+     * @param CategoryInterface|int $category           Search category.
+     * @param array                 $excludedCategories Categories that should not be used into search query building.
+     *                                                  Used to avoid infinite recursion while building virtual categories rules.
+     *
+     * @codingStandardsIgnoreStart
+     * @TODO: manage cache in this file for getSearchQueriesByChildren,
+     * remove the \Smile\ElasticsuiteVirtualCategory\Helper\Rule class,
+     * do not use the $excludedCategories parameters to check if the category rule has been calculated, but use the local cache.
+     * @codingStandardsIgnoreEnd
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @return QueryInterface|null
      */
     public function getCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
-        $query         = null;
+        \Magento\Framework\Profiler::start('ES:Virtual Rule ' . __FUNCTION__);
+        $categoryId = (int) (!is_object($category) ? $category : $category->getId());
+        $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
+        $storeId = $storeId ?: $this->storeManager->getStore()->getId();
+        $cacheKey = implode(
+            '|',
+            [
+                __FUNCTION__,
+                $storeId,
+                $categoryId,
+                $this->customerSession->getCustomerGroupId(),
+                (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
+            ]
+        );
 
-        if (!is_object($category)) {
-            $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
+        $query = $this->getFromLocalCache($categoryId);
+
+        // If the category is not an object, it can't be in a "draft" mode.
+        if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
+            // If the category virtual root is one of the excluded categories, we must recalculate the query.
+            // We can't use the cached one in order to avoid loop and very big queries.
+            if (!is_object($category) || !$this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
+                // Due to the fact we serialize/unserialize completely pre-built queries as object.
+                // We cannot use any implementation of SerializerInterface.
+                $query = $this->sharedCache->load($cacheKey);
+                $query = $query ? unserialize($query) : false;
+            }
         }
 
-        if (!in_array($category->getId(), $excludedCategories)) {
-            $excludedCategories[] = $category->getId();
-
-            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
-                $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
-            } elseif ($category->getId() && $category->getIsActive()) {
-                $query = $this->getStandardCategoryQuery($category, $excludedCategories);
+        if ($query === false) {
+            if (!is_object($category)) {
+                $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
             }
-            if ($query && $category->hasChildren()) {
-                $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            $query = $this->buildCategorySearchQuery($category, $excludedCategories);
+
+            if (!$category->getHasDraftVirtualRule() && $query !== null && !in_array($categoryId, $excludedCategories)) {
+                $cacheData   = serialize($query);
+                $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
             }
         }
+
+        if (!in_array($categoryId, $excludedCategories)) {
+            $this->saveInLocalCache($categoryId, $query);
+        }
+
+        \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
 
         return $query;
     }
@@ -240,6 +308,39 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Build search query by category.
+     *
+     * @param CategoryInterface|int $category           Search category.
+     * @param array                 $excludedCategories Categories that should not be used into search query building.
+     *
+     * @return QueryInterface|null
+     */
+    private function buildCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
+    {
+        $query = null;
+
+        if (!in_array($category->getId(), $excludedCategories)) {
+            $excludedCategories[] = $category->getId();
+
+            if (!$category->getIsActive()
+                && $this->config->isForceZeroResultsForDisabledCategoriesEnabled($this->getStoreId())) {
+                return $this->getNoResultsQuery();
+            }
+
+            if ((bool) $category->getIsVirtualCategory() && $category->getIsActive()) {
+                $query = $this->getVirtualCategoryQuery($category, $excludedCategories);
+            } elseif ($category->getId() && $category->getIsActive()) {
+                $query = $this->getStandardCategoryQuery($category, $excludedCategories);
+            }
+            if ($query && $category->hasChildren()) {
+                $query = $this->addChildrenQueries($query, $category, $excludedCategories);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
      * Load the root category used for a virtual category.
      *
      * @param CategoryInterface $category Virtual category.
@@ -250,7 +351,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private function getVirtualRootCategory(CategoryInterface $category): ?CategoryInterface
     {
         $storeId      = $this->getStoreId();
-        $rootCategory = $this->categoryFactory->create()->setStoreId($storeId);
+        $rootCategory = null;
 
         if ($category->getVirtualCategoryRoot() !== null && !empty($category->getVirtualCategoryRoot())) {
             $rootCategoryId = $category->getVirtualCategoryRoot();
@@ -281,7 +382,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @return CategoryInterface
      * @throws NoSuchEntityException
      */
-    private function getRootCategory(int $rootCategoryId, int $storeId = null)
+    private function getRootCategory(int $rootCategoryId, ?int $storeId = null)
     {
         $cacheKey = $storeId ?? 'all';
         if (!isset($this->instances[$rootCategoryId][$cacheKey])) {
@@ -309,7 +410,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function getStandardCategoryQuery(CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
-        return $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
+        $query = $this->getStandardCategoriesQuery([$category->getId()], $excludedCategories);
+        $query->setName(sprintf('(%s) standard category [%s]:%d', $category->getPath(), $category->getName(), $category->getId()));
+
+        return $query;
     }
 
     /**
@@ -340,16 +444,28 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CategoryInterface $category,
         $excludedCategories = []
     ): ?QueryInterface {
-        $query        = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
-        $rootCategory = $this->getVirtualRootCategory($category);
+        if ($this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
+            return null;
+        }
 
-        if ($rootCategory && in_array($rootCategory->getId(), $excludedCategories)) {
-            $query = null;
+        $rootCategory = $this->getVirtualRootCategory($category);
+        $query = $category->getVirtualRule()->getConditions()->getSearchQuery($excludedCategories);
+        if ($query instanceof QueryInterface) {
+            $queryName = sprintf('(%s) virtual category [%s]:%d', $category->getPath(), $category->getName(), $category->getId());
+            $query->setName(($query->getName() !== '') ? $queryName . " => " . $query->getName() : $queryName);
         }
         if ($rootCategory && $rootCategory->getId()) {
             $rootQuery = $this->getCategorySearchQuery($rootCategory, $excludedCategories);
             if ($rootQuery) {
-                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => [$query, $rootQuery]]);
+                $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['must' => array_filter([$query, $rootQuery])]);
+                $query->setName(
+                    sprintf(
+                        '(%s) virtual category [%s]:%d and its virtual root',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
             }
         }
 
@@ -362,7 +478,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param QueryInterface|NULL $query              Base query.
-     * @param CategoryInterface   $category           Current cayegory.
+     * @param CategoryInterface   $category           Current category.
      * @param array               $excludedCategories Category already used into the building stack. Avoid short circuit.
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
@@ -379,6 +495,14 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
+                        $childrenQuery->setName(
+                            sprintf(
+                                '(%s) child virtual category [%s]:%d',
+                                $childrenCategory->getPath(),
+                                $childrenCategory->getName(),
+                                $childrenCategory->getId()
+                            )
+                        );
                         $queryParams['should'][] = $childrenQuery;
                     }
                 } else {
@@ -387,11 +511,29 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
 
             if (!empty($childrenCategoriesIds)) {
-                $queryParams['should'][] = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+                $standardChildrenQuery = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+                $standardChildrenQuery->setName(
+                    sprintf(
+                        '(%s) standard children of virtual category [%s]:%d',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
+
+                $queryParams['should'][] = $standardChildrenQuery;
             }
 
             if (count($queryParams['should']) > 1) {
                 $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, $queryParams);
+                $query->setName(
+                    sprintf(
+                        '(%s) category [%s]:%d and its children',
+                        $category->getPath(),
+                        $category->getName(),
+                        $category->getId()
+                    )
+                );
             }
         }
 
@@ -421,7 +563,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
         }
 
-        $categoryCollection->addAttributeToSelect(['is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
+        $categoryCollection->addAttributeToSelect(['name', 'is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
 
         return $categoryCollection;
     }
@@ -443,5 +585,68 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $rootCategoryId;
+    }
+
+    /**
+     * Get category query from local cache.
+     *
+     * @param int $categoryId In of the category.
+     * @return QueryInterface|bool|null
+     */
+    private function getFromLocalCache(int $categoryId)
+    {
+        return self::$localCache[$categoryId] ?? false;
+    }
+
+    /**
+     * Save category query in local cache.
+     *
+     * @param int                      $categoryId Id of the category.
+     * @param QueryInterface|bool|null $query      Query of the category.
+     */
+    private function saveInLocalCache(int $categoryId, $query): void
+    {
+        if ($query !== null) {
+            self::$localCache[$categoryId] = $query;
+        }
+    }
+
+    /**
+     * Build a query that return zero products.
+     *
+     * @return QueryInterface
+     */
+    private function getNoResultsQuery(): QueryInterface
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERMS,
+            ['field' => 'entity_id', 'values' => [0]]
+        );
+    }
+
+    /**
+     * If the root category of the current virtual category has already been computed (exist in $excludedCategories)
+     * or if a parent of the root category of the current category has already been computed we don't need
+     * to compute the rule. All the product will already been present.
+     * For example, if you have the following category tree:
+     * - Category A (static)
+     * -   - Category B (static)
+     * -       - Category C (virtual with category B as root)
+     * When you compute the rule of the category A you do not need to compute the rule of the category C
+     * as all the product will be there.
+     *
+     * @param CategoryInterface $category           category to check
+     * @param array             $excludedCategories list of actual excluded categories
+     * @return bool
+     * @throws NoSuchEntityException
+     */
+    private function isVirtualCategoryRootInExcludeCategories(CategoryInterface $category, array $excludedCategories): bool
+    {
+        $rootCategory = $this->getVirtualRootCategory($category);
+
+        return $category->getIsVirtualCategory()
+            && $rootCategory
+            && $rootCategory->getPath()
+            && !empty(array_intersect(explode('/', (string) $rootCategory->getPath()), $excludedCategories));
     }
 }

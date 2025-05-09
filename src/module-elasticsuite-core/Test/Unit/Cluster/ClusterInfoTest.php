@@ -31,15 +31,52 @@ class ClusterInfoTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetServerVersion()
     {
-        $clientMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $clientMock->method('info')
-            ->will($this->returnValue(['version' => ['number' => '1.0.0']]));
+        $clientMock = $this->getMockClient('1.0.0');
 
         $clusterInfo = new ClusterInfo($clientMock);
 
         $this->assertEquals('1.0.0', $clusterInfo->getServerVersion());
+    }
+
+    /**
+     * Test retrieving the server distributoin.
+     *
+     * @return void
+     */
+    public function testGetServerDistribution()
+    {
+        $clientMock = $this->getMockClient('1.0.0', 'RandomDistribution');
+
+        $clusterInfo = new ClusterInfo($clientMock);
+        $this->assertEquals('RandomDistribution', $clusterInfo->getServerDistribution());
+
+        $clientMock = $this->getMockClient('1.2.3');
+
+        $clusterInfo = new ClusterInfo($clientMock);
+        $this->assertEquals(ClusterInfo::DISTRO_ES, $clusterInfo->getServerDistribution());
+    }
+
+    /**
+     * Return a mock of the client.
+     *
+     * @param string      $versionNumber Version number.
+     * @param string|null $distribution  Distribution (Elasticsearch, OpenSearch, ...)
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getMockClient($versionNumber, $distribution = null)
+    {
+        $clientMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Api\Client\ClientInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $info = ['version' => ['number' => $versionNumber]];
+        if ($distribution) {
+            $info['version']['distribution'] = $distribution;
+        }
+
+        $clientMock->method('info')->will($this->returnValue($info));
+
+        return $clientMock;
     }
 }

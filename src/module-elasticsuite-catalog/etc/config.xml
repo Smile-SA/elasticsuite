@@ -16,6 +16,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <catalog>
+            <frontend>
+                <default_sort_direction_by>asc</default_sort_direction_by>
+            </frontend>
             <search>
                 <engine>elasticsuite</engine>
             </search>

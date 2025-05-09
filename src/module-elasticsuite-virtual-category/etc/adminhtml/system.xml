@@ -1,0 +1,34 @@
+<!--
+/**
+ * Smil_ElasticsuiteCatalog module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="smile_elasticsuite_catalogsearch_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Catalog Search</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Backend::smile_elasticsuite_catalogsearch</resource>
+
+            <group id="catalogsearch" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Catalog Search Configuration</label>
+                <field id="force_zero_results_for_disabled_categories" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Force zero results for disabled categories</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

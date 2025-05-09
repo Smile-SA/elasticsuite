@@ -222,7 +222,7 @@ define([
 
         createProduct: function (productData) {
             productData.priceFormat = this.priceFormat;
-            if (this.editPositions()[productData.id]) {
+            if (productData.can_use_manual_sort !== false && this.editPositions()[productData.id]) {
                 productData.position = this.editPositions()[productData.id];
             }
 

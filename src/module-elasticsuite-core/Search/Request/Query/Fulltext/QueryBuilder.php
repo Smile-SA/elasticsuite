@@ -23,6 +23,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 
 /**
  * Prepare a fulltext search query.
@@ -63,10 +64,11 @@ class QueryBuilder
      * @param string                          $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
      * @param float                           $boost           Boost of the created query.
+     * @param int                             $depth           Call depth of the create method. Can be used to avoid/prevent cycles.
      *
      * @return QueryInterface
      */
-    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost = 1)
+    public function create(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost = 1, $depth = 0)
     {
         $query = null;
 
@@ -75,13 +77,17 @@ class QueryBuilder
         if (is_array($queryText)) {
             $queries = [];
             foreach ($queryText as $currentQueryText) {
-                $queries[] = $this->create($containerConfig, $currentQueryText, $spellingType);
+                $queries[] = $this->create($containerConfig, $currentQueryText, $spellingType, $boost, $depth + 1);
             }
             $query = $this->queryFactory->create(QueryInterface::TYPE_BOOL, ['should' => $queries, 'boost' => $boost]);
         } elseif ($spellingType == SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS) {
             $query = $this->getPureStopwordsQuery($containerConfig, $queryText, $boost);
+            $query->setName('PURE_STOPWORDS');
         } elseif (in_array($spellingType, $fuzzySpellingTypes)) {
             $query = $this->getSpellcheckedQuery($containerConfig, $queryText, $spellingType, $boost);
+            if ($query !== null) {
+                $query->setName('SPELLCHECK');
+            }
         }
 
         if ($query === null) {
@@ -91,11 +97,13 @@ class QueryBuilder
                 'boost'  => $boost,
             ];
             $query = $this->queryFactory->create(QueryInterface::TYPE_FILTER, $queryParams);
+            $query->setName('EXACT');
 
             $relevanceConfig = $containerConfig->getRelevanceConfig();
             if ($relevanceConfig->getSpanMatchBoost()) {
                 $spanQuery = $this->getSpanQuery($containerConfig, $queryText, $relevanceConfig->getSpanMatchBoost());
                 if ($spanQuery !== null) {
+                    $spanQuery->setName('SPAN');
                     $queryParams = [
                         'must'      => [$query],
                         'should'    => [$spanQuery],
@@ -120,7 +128,7 @@ class QueryBuilder
     private function getCutoffFrequencyQuery(ContainerConfigurationInterface $containerConfig, $queryText)
     {
         $relevanceConfig = $containerConfig->getRelevanceConfig();
-        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD, 'sku'], 1);
+        $fields          = array_fill_keys([MappingInterface::DEFAULT_SEARCH_FIELD], 1);
 
         if ($containerConfig->getRelevanceConfig()->isUsingDefaultAnalyzerInExactMatchFilter()) {
             $nonStandardSearchableFieldFilter = $this->fieldFilters['nonStandardSearchableFieldFilter'];
@@ -234,7 +242,7 @@ class QueryBuilder
      * @param string                          $spellingType    The type of spellchecked applied.
      * @param float                           $boost           Boost of the created query.
      *
-     * @return QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpellcheckedQuery(ContainerConfigurationInterface $containerConfig, $queryText, $spellingType, $boost)
     {
@@ -244,11 +252,11 @@ class QueryBuilder
         $queryClauses = [];
 
         if ($relevanceConfig->isFuzzinessEnabled()) {
-            $queryClauses[] = $this->getFuzzyQuery($containerConfig, $queryText);
+            $queryClauses[] = $this->getFuzzyQuery($containerConfig, $queryText)->setName('FUZZY');
         }
 
         if ($relevanceConfig->isPhoneticSearchEnabled()) {
-            $queryClauses[] = $this->getPhoneticQuery($containerConfig, $queryText);
+            $queryClauses[] = $this->getPhoneticQuery($containerConfig, $queryText)->setName('PHONETIC');
         }
 
         if (!empty($queryClauses)) {
@@ -300,7 +308,7 @@ class QueryBuilder
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => "100%",
+            'minimumShouldMatch' => $relevanceConfig->getMinimumShouldMatch(),
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'fuzzinessConfig'    => $relevanceConfig->getFuzzinessConfiguration(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
@@ -310,7 +318,7 @@ class QueryBuilder
     }
 
     /**
-     * Phonentic query part.
+     * Phonetic query part.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
      * @param string                          $queryText       The text query.
@@ -323,13 +331,17 @@ class QueryBuilder
         $analyzer           = FieldInterface::ANALYZER_PHONETIC;
         $defaultSearchField = MappingInterface::DEFAULT_SPELLING_FIELD;
         $fuzzyFieldFilter   = $this->fieldFilters['fuzzyFieldFilter'];
+        $minimumShouldMatch = $relevanceConfig->getMinimumShouldMatch();
+        if ($relevanceConfig->getFuzzinessConfiguration() instanceof FuzzinessConfigurationInterface) {
+            $minimumShouldMatch = $relevanceConfig->getFuzzinessConfiguration()->getMinimumShouldMatch();
+        }
 
         $searchFields = $this->getWeightedFields($containerConfig, $analyzer, $fuzzyFieldFilter, $defaultSearchField);
 
         $queryParams = [
             'fields'             => $searchFields,
             'queryText'          => $queryText,
-            'minimumShouldMatch' => "100%",
+            'minimumShouldMatch' => $minimumShouldMatch,
             'tieBreaker'         => $relevanceConfig->getTieBreaker(),
             'cutoffFrequency'    => $relevanceConfig->getCutoffFrequency(),
         ];
@@ -352,7 +364,7 @@ class QueryBuilder
     private function getWeightedFields(
         ContainerConfigurationInterface $containerConfig,
         $analyzer = null,
-        FieldFilterInterface $fieldFilter = null,
+        ?FieldFilterInterface $fieldFilter = null,
         $defaultField = null,
         $boost = 1
     ) {
@@ -369,7 +381,7 @@ class QueryBuilder
      * @param string                          $queryText       The query text
      * @param int                             $boost           The boost applied to the span query
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpanQuery(ContainerConfigurationInterface $containerConfig, $queryText, $boost)
     {
@@ -400,7 +412,7 @@ class QueryBuilder
                         SpanQueryInterface::TYPE_SPAN_TERM,
                         [
                             'field' => $field->getMappingProperty(FieldInterface::ANALYZER_WHITESPACE) ?? $field->getName(),
-                            'value' => $term,
+                            'value' => strtolower($term),
                         ]
                     );
                 }

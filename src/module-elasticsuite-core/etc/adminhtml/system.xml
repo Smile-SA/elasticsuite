@@ -30,48 +30,58 @@
 
             <group id="es_client" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Elasticsearch Client</label>
-                <field id="servers" translate="label comment" type="text" sortOrder="51" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="servers" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Servers List</label>
                     <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
                 </field>
-                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_https_mode" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Use HTTPS</label>
                     <comment>Select yes if you want to connect to your Elasticsearch server over HTTPS.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_certificate_validation" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Use SSL certificate Validation</label>
+                    <comment>Select no if you are using opensearch.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="enable_http_auth" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable basic HTTP authentication</label>
                     <comment>Enable this option when your Elasticsearch server use basic HTTP authentication.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="52" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_http_auth_encoding" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Encode HTTP authorization headers</label>
                     <comment>Enable this option when you want to base64 encode the Authorization headers. (Open Distro requires this)</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="http_auth_user" translate="label comment" type="text" sortOrder="53" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="http_auth_user" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication user</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="54" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="http_auth_pwd" translate="label comment" type="text" sortOrder="61" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Basic HTTP authentication password</label>
                     <depends>
                         <field id="enable_http_auth">1</field>
                     </depends>
                 </field>
-                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="enable_error_request_logging" translate="label comment" type="select" sortOrder="70" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable logging of requests that produce errors</label>
+                    <comment><![CDATA[This is an alternative to the debug mode for production environments. If enabled, even when the debug mode is disabled, the body of search requests that produce an error will be logged. If disabled, only the error message/exception message will be logged (legacy behavior). A log rotation system on the var/log/system.log file is advised if enabled.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="enable_debug_mode" translate="label comment" type="select" sortOrder="75" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Enable Debug Mode</label>
                     <comment>When enabled the module will produce logs through Magento logging system.</comment>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="connection_timeout" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="connection_timeout" translate="label comment" type="text" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Server Connection Timeout</label>
                     <comment>In seconds.</comment>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="max_retries" translate="label comment" type="text" sortOrder="56" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="max_retries" translate="label comment" type="text" sortOrder="90" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Client Maximum Number of Retries</label>
                     <comment>Maximum number of times to retry connection when there is a connection failure</comment>
                     <frontend_class>validate-number</frontend_class>
@@ -80,22 +90,81 @@
 
             <group id="indices_settings" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Indices Settings</label>
-                <field id="alias" translate="label" type="text" sortOrder="57" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="alias" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Alias Name</label>
                 </field>
-                <field id="indices_pattern" translate="label" type="text" sortOrder="58" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                <field id="indices_pattern" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Indices Name Pattern</label>
                 </field>
-                <field id="number_of_shards" translate="label" type="text" sortOrder="59" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Shards per Index</label>
+                <field id="number_of_shards" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Default Number of Shards per Index</label>
                     <frontend_class>validate-number</frontend_class>
                 </field>
-                <field id="number_of_replicas" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
-                    <label>Number of Replicas per Index</label>
+                <field id="number_of_replicas" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Default Number of Replicas per Index</label>
                     <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="custom_number_of_shards_and_replicas_per_index" translate="label" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Custom settings per Index</label>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\Form\Field\IndicesSettings\DynamicField</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                </field>
+                <field id="ghost_timeout" translate="label comment" type="text" sortOrder="60" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Time for an index to be considered Ghost (in seconds)</label>
+                    <comment><![CDATA[Elasticsuite derelict indices resulting from a failed full reindex are considered ghost after this amount of time (in seconds) has elapsed since their creation. You can reduce this amount of time to speed up ghost indices cleanup, but take care to add a safety on top of the maximum reindexing duration of the more complex index of your platform (usually a catalog_product/product search index). Defaults to 172,800 seconds (2 days), minimum value: 3600 (1 hour).]]></comment>
+                    <validate>integer validate-greater-than-zero validate-number-range number-range-3600-172800</validate>
                 </field>
             </group>
 
+        </section>
+
+        <section id="smile_elasticsuite_core_analysis_settings" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Analyzers Settings</label>
+            <tab>smile_elasticsuite</tab>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_analysis_settings</resource>
+
+            <group id="reference_analyzer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Reference analyzer configuration</label>
+                <field id="trim_leading_zeroes" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove leading zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "VT0009", it will be as if "VT9" was indexed instead (leading to independant elements "VT", "9" and "VT9" in the search index). This will allow someone searching for "vt9" or "vt 9" to find the product with the exact "VT0009" sku.]]></comment>
+                </field>
+                <field id="trim_trailing_zeroes" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Remove trailing zeroes of numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "DC3000", it will be as if "DC3" was indexed instead (leading to independant elements "DC", "3" and "DC3" in the search index). This will allow someone searching for "dc3" or "dc 3" to find the product with the exact "DC3000" sku.]]></comment>
+                </field>
+                <field id="reduce_zeroes" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Reduce series of contiguous zeroes in numeric parts</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, when indexing a reference like "PL20004", it will be as if "PL204" was indexed instead (leading to independant elements "PL", "204" and "PL204" in the search index). This will allow someone searching for "pl204", "pl 204", "pl2004" or "pl 2004" to find the product with the exact "PL2004" sku.]]></comment>
+                </field>
+            </group>
+
+            <group id="stemmer" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Language stemmer configuration</label>
+                <field id="info" translate="label comment" type="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" >
+                    <label>Settings available at the store view scope only.</label>
+                    <comment><![CDATA[The ability to select an alternative language stemmer is only available at the store view scope.]]></comment>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\System\Config\Comment</frontend_model>
+                </field>
+                <field id="use_default" translate="label comment" type="select" sortOrder="50" showInDefault="0" showInWebsite="0" showInStore="1" canRestore="1">
+                    <label>Use default stemmer</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Use the default language stemmer as defined in 'elasticsuite_analysis.xml' file for this store language (as defined by the store locale). If set to No, you'll be able to select a different stemmer for languages that have multiple possible stemmers (Dutch, English, Finnish, French, Galician, German, Hungarian, Italian, Norwegian, Portuguese, Russian, Spanish, Swedish).]]></comment>
+                </field>
+                <field id="custom" translate="label comment" type="select" sortOrder="70" showInDefault="0" showInWebsite="0" showInStore="1">
+                    <label>Custom stemmer</label>
+                    <source_model>Smile\ElasticsuiteCore\Model\Config\Source\Stemmers</source_model>
+                    <comment><![CDATA[In the list "[default]" indicates the stemmer used by Elasticsuite by default for the language, while "[recommended]" indicates the stemmer is the one or one of those recommended for that language by Elasticsearch in its <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-stemmer-tokenfilter.html#analysis-stemmer-tokenfilter-configure-parms' target='_blank'>online documentation</a>. Those can differ, hence this configuration parameter.]]></comment>
+                    <depends>
+                        <field id="use_default">0</field>
+                    </depends>
+                    <validate>required</validate>
+                </field>
+            </group>
         </section>
 
         <section id="smile_elasticsuite_autocomplete_settings" translate="label" type="text" sortOrder="1000" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -109,6 +178,53 @@
                     <label>Max Size</label>
                     <validate>integer</validate>
                     <comment><![CDATA[Maximum number of popular search terms to display in autocomplete results.]]></comment>
+                </field>
+            </group>
+
+            <group id="advanced" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Advanced Settings</label>
+                <field id="info" translate="label comment" type="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" >
+                    <label>Using popular search terms for autocomplete search of products and categories</label>
+                    <comment><![CDATA[Historically, both for leveraging user behavioral patterns and performance purposes, Elasticsuite relies on the Popular Search Terms Autocomplete results to complete and extend the search terms submitted by the user before searching for matching products or categories.<br />For instance, if a user types "comp" in the search box and the suggested popular search terms are "computer", "peach computer", "computer for kids", then categories and products matching either one of those three search terms will be shown and the original "comp" search term is discarded.<br />On the other hand, if no popular search term is found, then Elasticsuite will try finding products and categories matching only "comp", which might not provide any results unless some attributes have built-in autocompletion capability (by using the "standard_edge_ngram" as their search analyzer).<br />The settings below provide you with the ability to have more control over that "extension" mechanism: whether to disable it entirely, limit its extend, forcing the original search term to always be requested, etc.]]></comment>
+                    <frontend_model>Smile\ElasticsuiteCore\Block\Adminhtml\System\Config\Comment</frontend_model>
+                </field>
+                <field id="extension_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Use suggested search terms to fetch results</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Default: Yes (legacy behavior). When set to "Yes", products and categories autocomplete will use the search terms suggested in the popular term autocomplete. When set to "No", products and categories autocomplete results will be based solely on the original user raw search term, which might be a partial word being typed (eg "comp" for "computer").]]></comment>
+                </field>
+                <field id="preserve_base_query" translate="label comment" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Always use the user raw input for suggestions</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="extension_enabled">1</field>
+                    </depends>
+                    <comment><![CDATA[Default: No (legacy behavior). When set to "No", the user raw search term, which might be a partial word being typed, will only be used to fetch suggestions if no matching popular terms were found. When set to "Yes", it will always be used, whether matching popular terms were found or not. Eg if set to "Yes" : when the user is typing "comp" and the popular search term "computer" is suggested, then products or categories matching either "comp" or "computer" will be shown.]]></comment>
+                </field>
+                <field id="extension_limited" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Limit the amount of suggested search terms used</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="extension_enabled">1</field>
+                    </depends>
+                    <comment><![CDATA[Default: No (legacy behavior). When set to "No", all the suggested popular search terms will be used for the products and categories autocomplete. When set to "Yes", you will be able to define the maximum number of suggested search terms to use below.]]></comment>
+                </field>
+                <field id="extension_size" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Maximum number of popular search terms to use</label>
+                    <validate>required integer validate-greater-than-zero</validate>
+                    <depends>
+                        <field id="extension_enabled">1</field>
+                        <field id="extension_limited">1</field>
+                    </depends>
+                    <comment><![CDATA[The maximum number of suggested search terms that will be used for fetching results in the products and categories autocomplete boxes. Having a value greater than the "Max Size" defined in the "Popular Term Autocomplete" section above has no effect.]]></comment>
+                </field>
+                <field id="stop_extension_on_match" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>No extension for actual popular search terms</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="extension_enabled">1</field>
+                    </depends>
+                    <comment><![CDATA[Default: No. When set to "Yes", the extension mechanism will be discarded when the search term entered by the user is amongst the popular terms suggestions. Eg : When the user has finished typing "computer", if the list of suggested search terms is ("computer", "peach computer", "computer for kids"), only "computer" will be taken into account for the products and categories autocomplete.]]></comment>
                 </field>
             </group>
         </section>

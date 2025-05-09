@@ -19,6 +19,7 @@ use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 
@@ -67,23 +68,31 @@ class Index
     private $cacheHelper;
 
     /**
+     * @var ThesaurusConfig
+     */
+    private $thesaurusCacheConfig;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface        $client                 ES client.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
      */
     public function __construct(
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
-        ThesaurusConfigFactory $thesaurusConfigFactory
+        ThesaurusConfigFactory $thesaurusConfigFactory,
+        ThesaurusCacheConfig $thesaurusCacheConfig
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
+        $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
     }
 
     /**
@@ -104,7 +113,9 @@ class Index
 
         if ($queryRewrites === false) {
             $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost);
-            $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
+            if ($this->thesaurusCacheConfig->isCacheStorageAllowed($containerConfig, count($queryRewrites))) {
+                $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
+            }
         }
 
         return $queryRewrites;
@@ -173,8 +184,9 @@ class Index
     private function getCacheTags(ContainerConfigurationInterface $containerConfig)
     {
         $storeId = $containerConfig->getStoreId();
+        $containerName = $containerConfig->getName();
 
-        return [$this->getIndexAlias($storeId)];
+        return [$this->getIndexAlias($storeId), $containerName];
     }
 
     /**
@@ -217,7 +229,7 @@ class Index
     private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
     {
         $indexName        = $this->getIndexAlias($storeId);
-        $analyzedQueries  = $this->getQueryCombinations($storeId, $queryText);
+        $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
         $synonyms         = [];
 
         foreach ($analyzedQueries as $query) {

@@ -85,6 +85,7 @@ class Load extends Term
 
         $responseData = ['products' => [], 'size' => 0];
 
+        $this->searchContext->setIsBlacklistingApplied(false);
         if ($query->getId()) {
             $this->searchContext->setCurrentSearchQuery($query);
             $productPositions = $this->getRequest()->getParam('product_position', []);

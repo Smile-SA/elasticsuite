@@ -41,11 +41,11 @@ class MatchQuery implements BuilderInterface
             'boost'                => $query->getBoost(),
         ];
 
-        $searchQuery = ['match' => [$query->getField() => $searchQueryParams]];
-
         if ($query->getName()) {
-            $searchQuery['match']['_name'] = $query->getName();
+            $searchQueryParams['_name'] = $query->getName();
         }
+
+        $searchQuery = ['match' => [$query->getField() => $searchQueryParams]];
 
         return $searchQuery;
     }

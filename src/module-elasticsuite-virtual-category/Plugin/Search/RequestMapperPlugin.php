@@ -99,15 +99,14 @@ class RequestMapperPlugin
     ) {
         $storeId  = $containerConfiguration->getStoreId();
         if ($this->isEnabled($containerConfiguration)) {
+            $result = $this->decodeCategoryUid($result);
             if (isset($result['category.category_id']) && !isset($result['category.category_uid'])) {
                 $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
 
                 unset($result['category.category_id']);
-            } elseif (isset($result['category.category_uid']) && isset($result['category.category_uid']['eq']) &&
-                !isset($result['category.category_id'])) {
-                $categoryUid[] = $this->uidEncoder->decode($result['category.category_uid']['eq']);
+            } elseif (isset($result['category.category_uid']) && !isset($result['category.category_id'])) {
+                $result[] = $this->getCategoriesQuery($result['category.category_uid'], $storeId);
 
-                $result[] = $this->getCategoriesQuery($categoryUid, $storeId);
                 unset($result['category.category_uid']);
             } elseif (isset($result['category.category_id']) && isset($result['category.category_uid'])) {
                 $result[] = $this->getCategoriesQuery($result['category.category_id'], $storeId);
@@ -180,5 +179,34 @@ class RequestMapperPlugin
         $category = $this->categoryRepository->get($categoryId, $storeId);
 
         return $this->filterProvider->getQueryFilter($category);
+    }
+
+    /**
+     * Decode category_uid params if present in the request, because they are base64 encoded.
+     *
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     *
+     * @param array $result The array containing potentially the params.
+     *
+     * @return array
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException
+     */
+    private function decodeCategoryUid(&$result)
+    {
+        if (isset($result['category.category_uid'])) {
+            $decodeCb = function (string $categoryUid) {
+                return $this->uidEncoder->decode($categoryUid);
+            };
+
+            foreach ($result['category.category_uid'] as $operator => &$categoryIds) {
+                if (!is_array($categoryIds)) {
+                    $categoryIds = [$categoryIds];
+                }
+
+                $categoryIds = array_map($decodeCb, $categoryIds);
+            }
+        }
+
+        return $result;
     }
 }

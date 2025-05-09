@@ -144,6 +144,21 @@
                     <label>Enable Fuzziness</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="use_default_minimum_should_match" translate="label" type="select" sortOrder="11" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Use default Minimum Should Match</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When set to 'yes', the fuzzy queries will use the default value for the Minimum Should Match, defined in Relevance Configuration > Fulltext Base Settings > Minimum Should Match.]]></comment>
+                    <depends>
+                        <field id="enable_fuzziness">1</field>
+                    </depends>
+                </field>
+                <field id="minimum_should_match" translate="label" type="text" sortOrder="12" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>Minimum Should Match</label>
+                    <depends>
+                        <field id="enable_fuzziness">1</field>
+                        <field id="use_default_minimum_should_match">0</field>
+                    </depends>
+                </field>
                 <field id="value" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Fuzziness Value</label>
                     <source_model>Smile\ElasticsuiteCore\Model\Config\Source\FuzzinessValue</source_model>

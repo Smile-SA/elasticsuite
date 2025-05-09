@@ -1,0 +1,44 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2024 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/**
+ * @var Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector $block
+ */
+$baseUrl = $block->getUrl('*/*/*', ['_current' => true, 'company_id' => '__company_id__']);
+$companyId = $block->getCustomerCompanyId();
+?>
+<?php if ($block->isCompanyEnabled() && $block->isCompanyFilterEnabled()): ?>
+    <?php $companies = $block->getCompaniesList(); ?>
+    <div class="customer-company-selector">
+        <label for="company_id"><?= __('Company:') ?></label>
+        <select id="company_id" name="company_id" class="admin__control-select">
+            <option value="all"><?= __('All Companies');?></option>
+            <?php foreach ($companies as $company): ?>
+                <option value="<?= $block->escapeHtmlAttr($company->getId()); ?>" <?php if ($companyId == $company->getId()): ?> selected="selected"<?php endif; ?>><?= $block->escapeHtml($company->getCompanyName()); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                 "customerCompanySelector": {
+                    "baseUrl": "<?= $block->escapeJs($block->escapeUrl($baseUrl)) ?>"
+                 }
+            }
+        }
+    </script>
+<?php endif; ?>

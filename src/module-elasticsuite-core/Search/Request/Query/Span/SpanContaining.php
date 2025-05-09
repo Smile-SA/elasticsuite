@@ -59,7 +59,7 @@ class SpanContaining implements SpanQueryInterface
     public function __construct(
         SpanQueryInterface $big,
         SpanQueryInterface $little,
-        string             $name = null,
+        ?string            $name = null,
         int                $boost = QueryInterface::DEFAULT_BOOST_VALUE
     ) {
         $this->big    = $big;
@@ -90,6 +90,16 @@ class SpanContaining implements SpanQueryInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**

@@ -154,7 +154,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Smile\ElasticsuiteCore\Search\Request\Builder $requestBuilder,
         \Magento\Search\Model\SearchEngine $searchEngine,
         RequestFieldMapper $requestFieldMapper,
-        \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
+        ?\Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
         $searchRequestName = 'catalog_view_container'
     ) {
         parent::__construct(
@@ -535,6 +535,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $docIds[] = 0;
         }
 
+        $this->getSelect()->reset(\Magento\Framework\DB\Select::WHERE);
         $this->getSelect()->where('e.entity_id IN (?)', ['in' => $docIds]);
         $orderList = join(',', $docIds);
         $this->getSelect()->reset(\Magento\Framework\DB\Select::ORDER);

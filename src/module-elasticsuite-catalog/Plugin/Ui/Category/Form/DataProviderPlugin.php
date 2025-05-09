@@ -34,6 +34,13 @@ use Magento\Catalog\Model\Category\DataProvider as CategoryDataProvider;
 class DataProviderPlugin
 {
     /**
+     * @var array
+     */
+    protected $elementsWithUseConfigSetting = [
+        'sort_direction',
+    ];
+
+    /**
      * @var AttributeCollectionFactory
      */
     private $attributeCollectionFactory;
@@ -109,6 +116,8 @@ class DataProviderPlugin
      * Append filter configuration (sort order and display mode) data.
      * Meta is added in the ui_component via XML.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param CategoryDataProvider $dataProvider Data provider.
      * @param \Closure             $proceed      Original method.
      *
@@ -122,9 +131,39 @@ class DataProviderPlugin
 
         if ($currentCategory->getId() !== null && $currentCategory->getLevel() >= 2) {
             $data[$currentCategory->getId()]['facet_config'] = $this->getFilterableAttributeList($currentCategory);
+            $categoryData = &$data[$currentCategory->getId()];
+
+            foreach ($this->elementsWithUseConfigSetting as $elementsWithUseConfigSetting) {
+                if (!isset($categoryData['use_config'][$elementsWithUseConfigSetting])) {
+                    if (!isset($categoryData[$elementsWithUseConfigSetting]) ||
+                        ($categoryData[$elementsWithUseConfigSetting] == '')
+                    ) {
+                        $categoryData['use_config'][$elementsWithUseConfigSetting] = true;
+                    } else {
+                        $categoryData['use_config'][$elementsWithUseConfigSetting] = false;
+                    }
+                }
+            }
         }
 
         return $data;
+    }
+
+    /**
+     * Modify default metadata to include 'use_config.sort_direction'.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param CategoryDataProvider $dataProvider Data provider.
+     * @param array                $result       Original data.
+     *
+     * @return array
+     */
+    public function afterGetDefaultMetaData(CategoryDataProvider $dataProvider, array $result)
+    {
+        $result['use_config.sort_direction']['default'] = true;
+
+        return $result;
     }
 
     /**

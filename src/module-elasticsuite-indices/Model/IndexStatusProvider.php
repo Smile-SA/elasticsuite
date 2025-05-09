@@ -13,7 +13,10 @@
  */
 namespace Smile\ElasticsuiteIndices\Model;
 
+use Exception;
+use Psr\Log\LoggerInterface;
 use Magento\Framework\DataObject;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
@@ -46,6 +49,16 @@ class IndexStatusProvider
     private const SECONDS_IN_DAY = 86400;
 
     /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var IndexSettingsHelper
      */
     private $indexSettingsHelper;
@@ -63,22 +76,28 @@ class IndexStatusProvider
     /**
      * Constructor.
      *
+     * @param ClientInterface                 $client                   ES client.
      * @param IndexSettingsHelper             $indexSettingsHelper      Index settings helper.
      * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
      * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
+     * @param LoggerInterface                 $logger                   Logger.
      */
     public function __construct(
+        ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         StoreIndicesCollectionFactory $storeIndicesFactory,
-        WorkingIndexerCollectionFactory $indexerCollectionFactory
+        WorkingIndexerCollectionFactory $indexerCollectionFactory,
+        LoggerInterface $logger
     ) {
+        $this->client = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
         $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
+        $this->logger = $logger;
     }
 
     /**
-     * Get a index status.
+     * Get an index status.
      *
      * @param string $indexName Index name.
      * @param string $alias     Index alias.
@@ -91,6 +110,10 @@ class IndexStatusProvider
 
         if ($this->isExternal($indexName)) {
             return IndexStatus::EXTERNAL_STATUS;
+        }
+
+        if ($this->isClosed($indexName)) {
+            return IndexStatus::CLOSED_STATUS;
         }
 
         if ($this->isRebuilding($indexName, $indexDate)) {
@@ -117,6 +140,11 @@ class IndexStatusProvider
      */
     private function isRebuilding(string $indexName, $indexDate): bool
     {
+        if ($indexDate === false) {
+            // If $indexDate is false, we cannot rebuild.
+            return false;
+        }
+
         if (!empty($this->workingIndexers)) {
             foreach (array_keys($this->workingIndexers) as $indexKey) {
                 if (strpos($indexName, $indexKey) !== false) {
@@ -147,6 +175,39 @@ class IndexStatusProvider
     }
 
     /**
+     * Returns if the index is closed.
+     *
+     * @param string $indexName Index name.
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     */
+    private function isClosed(string $indexName): bool
+    {
+        try {
+            // Ensure the index is NOT External before checking for Closed status.
+            if ($this->isExternal($indexName)) {
+                return false;
+            }
+
+            // Attempt to fetch index stats or metadata to check its status.
+            $indexStats = $this->client->indexStats($indexName);
+
+            // If we successfully retrieved index stats and no error occurs, the index is not closed.
+            return false;
+        } catch (Exception $e) {
+            // Log the error (optional for better diagnostics).
+            $this->logger->error(
+                sprintf('Error fetching index stats for "%s": %s', $indexName, $e->getMessage())
+            );
+
+            // If an error occurs, it's safer to assume the index could be closed, or the stats are unavailable.
+            // Returning true here means the index is likely closed or inaccessible.
+            return true;
+        }
+    }
+
+    /**
      * Returns if index is ghost.
      *
      * @param Zend_Date|false $indexDate Index updated date.
@@ -155,7 +216,7 @@ class IndexStatusProvider
     private function isGhost($indexDate): bool
     {
         try {
-            return (new Zend_Date())->sub($indexDate)->getTimestamp() / self::SECONDS_IN_DAY >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
+            return (new Zend_Date())->sub($indexDate)->getTimestamp() >= $this->indexSettingsHelper->getTimeBeforeGhost();
         } catch (Zend_Date_Exception $e) {
             return false;
         }

@@ -105,7 +105,7 @@ class SearchQueryTest extends TestCase
     {
         $spellcheckRequestFactory = $this->getMockBuilder(SpellcheckRequestFactory::class)
             ->disableOriginalConstructor()
-            ->setMethods(['create'])
+            ->onlyMethods(['create'])
             ->getMock();
 
         $spellcheckRequestFactory->method('create')->willReturnCallback(function ($args) {

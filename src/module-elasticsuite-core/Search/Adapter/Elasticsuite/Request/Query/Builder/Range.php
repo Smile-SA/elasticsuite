@@ -41,7 +41,7 @@ class Range implements BuilderInterface
         $searchQuery = ['range' => [$query->getField() => $queryParams]];
 
         if ($query->getName()) {
-            $searchQuery['range']['_name'] = $query->getName();
+            // Intentional omission of the '_name' management because range query does not support it.
         }
 
         return $searchQuery;

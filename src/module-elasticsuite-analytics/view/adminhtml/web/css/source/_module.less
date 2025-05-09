@@ -24,6 +24,13 @@
         display: none;
     }
 
+    .dashboard-totals-list {
+        .dashboard-totals-item {
+            width: 10%;
+            text-align: center
+        }
+    }
+
     .admin__table-primary {
         &.dashboard-data {
             &.terms-report {
@@ -41,6 +48,18 @@
                             border-bottom-color: @table-td__border-color;
                         }
                     }
+
+                    .col-search-query {
+                        text-overflow: ellipsis;
+                        overflow: clip;
+                        width: 90%;
+                        max-width: 0;
+                        white-space: nowrap;
+                    }
+
+                    .col-number {
+                        text-align: right;
+                    }
                 }
 
                 tfoot {
@@ -49,5 +68,42 @@
                 }
             }
         }
+    }
+
+    .page-main-actions {
+        display: block;
+    }
+
+    .tooltip {
+        margin-right: 4rem;
+    }
+
+    .customer-group-selector {
+        color: #41362f;
+        float: left;
+        font-size: 1.3rem;
+        margin-top: .59rem;
+        margin-right: 2rem;
+    }
+
+    .customer-group-selector label {
+        margin-right: 1rem;
+        font-weight: 700;
+    }
+
+    .customer-company-selector {
+        color: #41362f;
+        float: left;
+        font-size: 1.3rem;
+        margin-top: .59rem;
+    }
+
+    .customer-company-selector label {
+        margin-right: 1rem;
+        font-weight: 700;
+    }
+
+    .page-actions-inner {
+        margin-top: .59rem;
     }
 }

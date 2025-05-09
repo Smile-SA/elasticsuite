@@ -121,6 +121,26 @@ class Config extends \Magento\Framework\View\Element\Template
     }
 
     /**
+     * Retrieve tracker Rest endpoint URL
+     *
+     * @return string
+     */
+    public function getEndpointUrl()
+    {
+        return $this->trackerHelper->getRestBaseUrl();
+    }
+
+    /**
+     * Return true if the tracker should use the (Rest) API to push its data to Magento
+     *
+     * @return bool
+     */
+    public function isUsingAPI()
+    {
+        return $this->trackerHelper->isUsingAPI();
+    }
+
+    /**
      * Retrieve telemetry Url
      *
      * @return string
