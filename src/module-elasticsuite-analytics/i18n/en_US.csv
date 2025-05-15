@@ -43,3 +43,5 @@
 "If enabled, will allow you to filter and display search usage data for a specific customer group.","If enabled, will allow you to filter and display search usage data for a specific customer group."
 "Show Company filter","Show Company filter"
 "If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.","If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company."
+"Copy table data to clipboard","Copy table data to clipboard"
+"Copied to clipboard !","Copied to clipboard!"
