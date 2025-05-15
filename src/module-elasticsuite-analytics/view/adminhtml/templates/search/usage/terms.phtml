@@ -26,6 +26,11 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
 <div class="dashboard-item" id="<?= $block->getJsId() ?>">
     <div class="dashboard-item-title">
         <span><?= $block->getTitle() ;?></span>
+        <?php if (!empty($termsData)) : ?>
+            <span id="<?= $block->getJsId() ?>_copy" class="admin__field-action-export" title="<?= $block->escapeHtml(__('Copy table data to clipboard')) ?>">
+                <span class="copy-feedback-text"><?= __('Copied to clipboard !') ?></span>
+            </span>
+        <?php endif; ?>
         <?php if ($block->hasHelp()) :?>
             <div class="admin__field-tooltip tooltip">
                 <a href="#<?= $block->getJsId() ?>_help"
@@ -138,6 +143,48 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
                 }
                 $("#<?= $block->getJsId() ?>_extra").slideToggle();
                 return false;
+            });
+
+            // Copy table to clipboard using Clipboard API.
+            $("#<?= $block->getJsId() ?>_copy").on("click", function () {
+                const $table = $("#<?= $block->getJsId() ?> table.terms-report");
+                let output = "";
+
+                // Header row.
+                const headers = [];
+                $table.find("thead th").each(function () {
+                    headers.push($(this).text().trim());
+                });
+                output += headers.join("\t") + "\n";
+
+                // All rows (visible + hidden).
+                $table.find("tbody tr").each(function () {
+                    const row = [];
+                    $(this).find("td").each(function () {
+                        row.push($(this).text().trim());
+                    });
+                    output += row.join("\t") + "\n";
+                });
+
+                // Copy to clipboard.
+                const $copyFeedback = $("#<?= $block->getJsId() ?>_copy");
+                const blob = new Blob([output], { type: "text/plain" });
+                const item = new ClipboardItem({ "text/plain": Promise.resolve(blob) });
+                navigator.clipboard.write([item])
+                    .then(() => {
+                        console.log("✅ Copied to clipboard");
+
+                        // Show feedback copy text.
+                        $copyFeedback.addClass("show");
+
+                        // Hide after 3 seconds.
+                        setTimeout(() => {
+                            $copyFeedback.removeClass("show");
+                        }, 3000);
+                    })
+                    .catch(err => {
+                        console.error("❌ Failed to copy: ", err);
+                    });
             });
         });
     });

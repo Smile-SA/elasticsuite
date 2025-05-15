@@ -43,3 +43,5 @@
 "If enabled, will allow you to filter and display search usage data for a specific customer group.","Si activé, vous permettra de filtrer et d'afficher les données d'utilisation de la recherche spécifiques à un groupe client."
 "Show Company filter","Afficher le filtre Société"
 "If enabled, and if you are using the B2B features and the Company feature, will allow to filter and display search usage data for a specific company.","Si activé, et si vous utilisez les fonctionnalités B2B et la fonctionnalité Company/Société, vous permettra de filtrer et d'afficher les données d'utilisation de la recherche spécifiques à une société."
+"Copy table data to clipboard","Copier les données du tableau dans le presse-papiers"
+"Copied to clipboard !","Copié dans le presse-papiers !"
