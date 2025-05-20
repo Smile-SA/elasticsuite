@@ -29,7 +29,7 @@
             <length>8192</length>
         </filter>
         <filter name="lowercase" type="lowercase" language="default"/>
-        <filter name="word_delimiter" type="word_delimiter" language="default">
+        <filter name="word_delimiter" type="word_delimiter_graph" language="default">
             <generate_word_parts>true</generate_word_parts>
             <catenate_words>true</catenate_words>
             <catenate_numbers>true</catenate_numbers>
@@ -49,7 +49,7 @@
             <output_unigrams>true</output_unigrams>
             <token_separator></token_separator>
         </filter>
-        <filter name="reference_word_delimiter" type="word_delimiter" language="default">
+        <filter name="reference_word_delimiter" type="word_delimiter_graph" language="default">
             <generate_word_parts>true</generate_word_parts>
             <catenate_words>false</catenate_words>
             <catenate_numbers>false</catenate_numbers>
