@@ -31,7 +31,7 @@ class IndexStatsProvider
     /**
      * Cache Key Prefix.
      */
-    const CACHE_KEY_PREFIX = 'es_index_settings_';
+    const CACHE_KEY_PREFIX = 'es_index_shard_settings';
 
     /**
      * Cache Tag.
@@ -81,7 +81,7 @@ class IndexStatsProvider
     /**
      * @var array
      */
-    private $cachedIndexSettings = [];
+    private $cachedIndexSettings = null;
 
     /**
      * Constructor.
@@ -159,7 +159,7 @@ class IndexStatsProvider
 
         try {
             // Retrieve number of shards and replicas configuration.
-            $data['number_of_shards'] = $this->getShardsConfiguration($indexName);
+            $data['number_of_shards'] = $this->getPrimaryShardsConfiguration($indexName);
             $data['number_of_replicas'] = $this->getReplicasConfiguration($indexName);
 
             if (!isset($this->indicesStats[$indexName])) {
@@ -194,49 +194,51 @@ class IndexStatsProvider
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function getIndexSettings(string $indexName): array
+    private function getIndexSettings(string $indexName): array
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . $indexName;
-
         // Check if the settings are already in memory.
-        if (!isset($this->cachedIndexSettings[$cacheKey])) {
-            $cachedData = $this->cacheHelper->loadCache($cacheKey);
+        if (null === $this->cachedIndexSettings) {
+            $this->cachedIndexSettings = [];
+            $cachedData = $this->cacheHelper->loadCache(self::CACHE_KEY_PREFIX);
 
             if ($cachedData) {
-                $this->cachedIndexSettings[$cacheKey] = $cachedData;
+                $this->cachedIndexSettings = $cachedData;
             } else {
-                $settingsData = $this->client->getSettings($indexName);
+                $settingsData = $this->client->getSpecificSettings(
+                    '_all',
+                    ['index.number_of_shards', 'index.number_of_replicas']
+                );
 
                 // Save to cache with a tag.
                 $this->cacheHelper->saveCache(
-                    $cacheKey,
+                    self::CACHE_KEY_PREFIX,
                     $settingsData,
                     $this->getCacheTags(),
                     self::CACHE_LIFETIME
                 );
 
-                $this->cachedIndexSettings[$cacheKey] = $settingsData;
+                $this->cachedIndexSettings = $settingsData;
             }
         }
 
-        return $this->cachedIndexSettings[$cacheKey];
+        return $this->cachedIndexSettings[$indexName] ?? [];
     }
 
     /**
-     * Retrieve number of shards from index settings.
+     * Retrieve number of primary shards from index settings.
      *
      * @param string $indexName Index name.
      *
      * @return int
      */
-    public function getShardsConfiguration($indexName)
+    private function getPrimaryShardsConfiguration($indexName)
     {
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
         // Check if settings for the given index exist and retrieve number_of_shards.
-        if (isset($indexSettings[$indexName]['settings']['index']['number_of_shards'])) {
-            return (int) $indexSettings[$indexName]['settings']['index']['number_of_shards'];
+        if (isset($indexSettings['settings']['index']['number_of_shards'])) {
+            return (int) $indexSettings['settings']['index']['number_of_shards'];
         }
 
         // Return null or throw an exception if the value doesn't exist.
@@ -250,14 +252,14 @@ class IndexStatsProvider
      *
      * @return int
      */
-    public function getReplicasConfiguration($indexName)
+    private function getReplicasConfiguration($indexName)
     {
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
         // Check if settings for the given index exist and retrieve number_of_replicas.
-        if (isset($indexSettings[$indexName]['settings']['index']['number_of_replicas'])) {
-            return (int) $indexSettings[$indexName]['settings']['index']['number_of_replicas'];
+        if (isset($indexSettings['settings']['index']['number_of_replicas'])) {
+            return (int) $indexSettings['settings']['index']['number_of_replicas'];
         }
 
         // Return null or throw an exception if the value doesn't exist.
