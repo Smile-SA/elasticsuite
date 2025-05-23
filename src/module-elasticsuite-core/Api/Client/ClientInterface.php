@@ -120,6 +120,16 @@ interface ClientInterface
     public function getSettings($indexName);
 
     /**
+     * Get specific settings of an Index
+     *
+     * @param string $indexName Index name or alias or wildcard.
+     * @param array  $settings  Settings to collect.
+     *
+     * @return array
+     */
+    public function getSpecificSettings($indexName, $settings);
+
+    /**
      * Optimize an index (force segment merging).
      *
      * @param string $indexName Index name.
