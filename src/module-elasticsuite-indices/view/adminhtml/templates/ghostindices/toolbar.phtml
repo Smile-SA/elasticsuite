@@ -1,0 +1,78 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym HONCHARUK <vahonc@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/** @var \Smile\ElasticsuiteIndices\Block\Adminhtml\GhostIndices\Toolbar $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+$ghostCount = $block->getGhostIndicesCount();
+
+if ($ghostCount === 1) {
+    $ghostMessage = __('1 ghost index found');
+} else {
+    $ghostMessage = __('%1 ghost indices found', $ghostCount);
+}
+
+$confirmationTitle = $block->escapeJs($block->escapeHtml(__('Are you sure?')));
+$confirmationMessage = $block->escapeJs($block->escapeHtml(__('This will delete all Ghost indices. Continue?')));
+?>
+
+<?php if ($block->canShow()) : ?>
+    <div class="page-main-actions">
+        <div class="admin__field admin__field-wide ghost-indices-toolbar">
+            <div class="ghost-indices-message-text">
+                <?= $ghostMessage ?>
+            </div>
+            <div class="toolbar-actions">
+                <button id="delete-ghost-indices" type="button" class="action-primary scalable delete-ghost-indices-button">
+                    <span><?= $block->escapeHtml(__('Remove All')) ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <?php $scriptString = <<<script
+        require([
+            'jquery',
+            'Magento_Ui/js/modal/confirm'
+        ], function ($, confirm) {
+            $('#delete-ghost-indices').on('click', function () {
+                confirm({
+                    title: '{$confirmationTitle}',
+                    content: '{$confirmationMessage}',
+                    actions: {
+                        confirm: function () {
+                            const form = $('<form>', {
+                                method: 'POST',
+                                action: '{$block->getRemoveGhostIndicesUrl()}'
+                            });
+
+                            form.append($('<input>', {
+                                type: 'hidden',
+                                name: 'form_key',
+                                value: window.FORM_KEY
+                            }));
+
+                            $('body').append(form);
+                            form.submit();
+                        }
+                    }
+                });
+            });
+        });
+    script;
+    ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>
+<?php endif; ?>
