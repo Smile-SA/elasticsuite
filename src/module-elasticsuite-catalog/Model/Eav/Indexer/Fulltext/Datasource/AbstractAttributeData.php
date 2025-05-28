@@ -70,6 +70,7 @@ abstract class AbstractAttributeData
         \Magento\Eav\Model\Entity\Attribute\Backend\DefaultBackend::class,
         \Magento\Catalog\Model\Product\Attribute\Backend\Weight::class,
         \Magento\Catalog\Model\Product\Attribute\Backend\Price::class,
+        \Magento\Catalog\Model\Product\Attribute\Backend\Url::class,
     ];
 
     /**
