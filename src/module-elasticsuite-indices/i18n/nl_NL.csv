@@ -45,4 +45,10 @@
 "You have <strong>%1 ghost indices</strong>. Ghost indices have a footprint on your Elasticsearch cluster health. You should consider removing them.","Je hebt <strong>%1 spookindexen</strong>. Spook indices hebben een voetafdruk op je Elasticsearch cluster gezondheid. Je zou moeten overwegen om ze te verwijderen."
 "Click here to go to the <a href=""%1""><strong>Elasticsuite Indices</strong></a> page to take appropriate actions.","Klik hier om naar de <a href=""%1""><strong>Elasticsuite Indices</strong></a> pagina te gaan om de juiste acties te ondernemen."
 "Click <a href=""%1""><strong>here</strong></a> to go to the <strong>Elasticsuite Indices</strong> page to take appropriate actions.","Klik <a href=""%1""><strong>hier</strong></a> om naar de <strong>Elasticsuite Indices</strong> pagina te gaan om de juiste acties te ondernemen."
-
+"1 ghost index found","1 spookindex gevonden"
+"%1 ghost indices found","%1 spookindexen gevonden"
+"Remove All","Verwijder alles"
+"Are you sure?","Weet je het zeker?"
+"This will delete all Ghost indices. Continue?","Hierdoor worden alle spookindexen verwijderd. Doorgaan?"
+"%1 ghost indices were deleted.","%1 spookindexen zijn verwijderd."
+"No ghost indices were deleted.","Er zijn geen spookindexen verwijderd."

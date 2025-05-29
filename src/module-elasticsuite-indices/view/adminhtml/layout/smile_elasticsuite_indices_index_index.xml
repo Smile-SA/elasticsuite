@@ -18,6 +18,10 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="content">
+            <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\GhostIndices\Toolbar"
+                   name="smile_elasticsuite_indices.ghostindices.toolbar"
+                   template="Smile_ElasticsuiteIndices::ghostindices/toolbar.phtml"
+                   before="-" />
             <block class="Smile\ElasticsuiteIndices\Block\Widget\Grid\Container" name="smile_elasticsuite_indices.grid.container">
                 <block class="Magento\Backend\Block\Widget\Grid" name="smile_elasticsuite_indices.grid" as="grid">
                     <arguments>

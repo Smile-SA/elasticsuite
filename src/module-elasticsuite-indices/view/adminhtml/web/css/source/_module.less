@@ -31,6 +31,45 @@
 }
 
 .smile_elasticsuite_indices-index-index {
+    .ghost-indices-toolbar {
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        .ghost-indices-message-text {
+            position: relative;
+            font-size: 1.4rem;
+            line-height: 1.36;
+            padding: 0 20px 0 30px;
+
+            &:before {
+                background: none;
+                border: 0;
+                color: #eb5202;
+                content: '\e623';
+                font-family: 'Admin Icons';
+                font-size: 1.9rem;
+                font-style: normal;
+                font-weight: 400;
+                height: auto;
+                left: 0;
+                line-height: inherit;
+                position: absolute;
+                speak: none;
+                text-shadow: none;
+                top: 50%;
+                margin-top: -1.25rem;
+                width: auto;
+            }
+        }
+
+        .delete-ghost-indices-button {
+            height: 45px;
+            font-size: 1.6rem;
+            line-height: 1.36;
+        }
+    }
     .data-grid {
         .col-index_status {
             max-width: 13rem;
