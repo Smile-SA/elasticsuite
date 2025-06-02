@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report;
 
 use Magento\Framework\Api\SearchCriteriaBuilder;
+use Magento\Framework\Api\SortOrder;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
@@ -52,6 +54,11 @@ class CustomerCompanySelector extends Template
     protected $scopeConfig;
 
     /**
+     * @var SortOrderBuilder
+     */
+    protected $sortOrderBuilder;
+
+    /**
      * @var SearchCriteriaBuilder
      */
     protected $searchCriteriaBuilder;
@@ -71,10 +78,11 @@ class CustomerCompanySelector extends Template
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @param Context               $context               The template context.
+     * @param Context               $context               Template context.
      * @param ModuleManager         $moduleManager         Module manager.
      * @param ScopeConfigInterface  $scopeConfig           Scope configuration.
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder The search criteria builder.
+     * @param SortOrderBuilder      $sortOrderBuilder      Sort order builder.
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder Search criteria builder.
      * @param ReportContext         $reportContext         Report context.
      * @param array                 $data                  Additional block data.
      * @throws LocalizedException
@@ -83,11 +91,13 @@ class CustomerCompanySelector extends Template
         Context $context,
         ModuleManager $moduleManager,
         ScopeConfigInterface $scopeConfig,
+        SortOrderBuilder $sortOrderBuilder,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         ReportContext $reportContext,
         array $data = []
     ) {
         $this->scopeConfig = $scopeConfig;
+        $this->sortOrderBuilder = $sortOrderBuilder;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->reportContext = $reportContext;
 
@@ -140,7 +150,14 @@ class CustomerCompanySelector extends Template
     public function getCompaniesList()
     {
         if ($this->isCompanyEnabled() && ($this->companyRepository !== null)) {
-            $searchCriteria = $this->searchCriteriaBuilder->create();
+            $sortOrder = $this->sortOrderBuilder
+                ->setField('company_name')
+                ->setDirection(SortOrder::SORT_ASC)
+                ->create();
+
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addSortOrder($sortOrder)
+                ->create();
 
             return $this->companyRepository->getList($searchCriteria)->getItems(); // Fetch company list.
         }
