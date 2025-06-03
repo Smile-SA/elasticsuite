@@ -46,10 +46,66 @@ class WithoutSearchResults implements FilterInterface
     public function getFilterQuery()
     {
         $query = $this->queryFactory->create(
-            QueryInterface::TYPE_TERM,
-            ['field' => 'page.product_list.product_count', 'value' => 0]
+            QueryInterface::TYPE_BOOL,
+            [
+                'must' => [
+                    $this->getNoResultsQuery(),
+                    $this->getIsFirstPageQuery(),
+                ],
+                'mustNot' => [
+                    $this->hasNavigationFiltersQuery(),
+                ],
+            ]
         );
 
         return $query;
+    }
+
+    /**
+     * Return "no products" query.
+     *
+     * @return QueryInterface
+     */
+    protected function getNoResultsQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERM,
+            ['field' => 'page.product_list.product_count', 'value' => 0]
+        );
+    }
+
+    /**
+     * Return "only first page" query.
+     *
+     * @return QueryInterface
+     */
+    protected function getIsFirstPageQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_TERM,
+            [
+                'field' => 'page.product_list.current_page',
+                'value' => 1,
+            ]
+        );
+    }
+
+    /**
+     * Return query indicating there are active product list filters.
+     *
+     * @return QueryInterface
+     */
+    protected function hasNavigationFiltersQuery()
+    {
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path'  => 'page.product_list.filters',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_EXISTS,
+                    ['field' => 'page.product_list.filters']
+                ),
+            ]
+        );
     }
 }
