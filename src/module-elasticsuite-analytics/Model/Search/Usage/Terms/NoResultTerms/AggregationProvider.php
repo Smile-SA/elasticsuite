@@ -35,7 +35,6 @@ class AggregationProvider extends TermsAggregationProvider
         $aggParams = [
             'field'     => 'search_query_void.sortable',
             'name'      => 'search_terms',
-            'filter'    => $this->getIsFirstPageQuery(),
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
             'sortOrder' => ['unique_sessions' => 'desc'],

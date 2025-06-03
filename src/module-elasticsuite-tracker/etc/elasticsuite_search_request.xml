@@ -42,7 +42,7 @@
                     <!-- search terms which return 0 results -->
                     <aggregation xsi:type="termBucket" name="search_query_void" field="page.search.query.sortable">
                         <filters>
-                            <filter name="with_results">Smile\ElasticsuiteTracker\Model\Event\Search\Request\Container\AggregationFilter\WithoutSearchResults</filter>
+                            <filter name="without_results">Smile\ElasticsuiteTracker\Model\Event\Search\Request\Container\AggregationFilter\WithoutSearchResults</filter>
                         </filters>
                     </aggregation>
                     <aggregation xsi:type="termBucket" name="product_cart" field="page.cart.product_id" />
