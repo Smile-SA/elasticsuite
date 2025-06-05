@@ -1,5 +1,6 @@
 parameters:
     level: 6
+    reportUnmatchedIgnoredErrors: false
     checkMissingIterableValueType: false
     paths:
         - src
