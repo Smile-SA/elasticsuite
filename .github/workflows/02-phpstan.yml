@@ -184,8 +184,10 @@ jobs:
       - name: "[Test] PHPStan"
         working-directory: ${{ env.magento-directory }}
         run: |
-          sudo chmod u+x vendor/bin/phpstan
-          vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
+          vendor/bin/phpstan -V
+          vendor/bin/phpstan clear-result-cache
+          cp -a vendor/smile/elasticsuite/phpstan.neon.dist elastan.neon.dist
+          vendor/bin/phpstan analyze -c elastan.neon.dist --level=0 vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
         env:
