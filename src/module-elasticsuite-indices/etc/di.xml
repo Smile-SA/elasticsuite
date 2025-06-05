@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteIndices dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteIndices
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elasticsuiteIndicesPurgeGhostIndices" xsi:type="object">Smile\ElasticsuiteIndices\Console\Command\PurgeGhostIndices</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteIndices\Console\Command\PurgeGhostIndices">
+        <arguments>
+            <argument name="ghostIndexPurger" xsi:type="object">Smile\ElasticsuiteIndices\Model\GhostIndexPurger\Proxy</argument>
+        </arguments>
+    </type>
+</config>
