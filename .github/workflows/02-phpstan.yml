@@ -160,7 +160,9 @@ jobs:
 
       - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
-        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+        run: |
+          composer require --dev --no-update phpstan/phpstan >=1.8.0
+          composer require --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Fix Magento directory permissions"
         env:
