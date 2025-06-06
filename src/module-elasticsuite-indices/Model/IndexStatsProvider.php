@@ -16,7 +16,6 @@ namespace Smile\ElasticsuiteIndices\Model;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
-use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 
 /**
@@ -31,7 +30,7 @@ class IndexStatsProvider
     /**
      * Cache Key Prefix.
      */
-    const CACHE_KEY_PREFIX = 'es_index_settings_';
+    const CACHE_KEY_PREFIX = 'es_index_shard_settings';
 
     /**
      * Cache Tag.
@@ -42,11 +41,6 @@ class IndexStatsProvider
      * @var int Cache lifetime.
      */
     const CACHE_LIFETIME = 7200;
-
-    /**
-     * @var CacheHelper
-     */
-    private $cacheHelper;
 
     /**
      * @var ClientInterface
@@ -81,25 +75,22 @@ class IndexStatsProvider
     /**
      * @var array
      */
-    private $cachedIndexSettings = [];
+    private $cachedIndexSettings = null;
 
     /**
      * Constructor.
      *
-     * @param CacheHelper         $cacheHelper         ES cache helper.
      * @param ClientInterface     $client              ES client.
      * @param IndicesList         $indicesList         Index list.
      * @param IndexStatusProvider $indexStatusProvider Index Status Provider.
      * @param LoggerInterface     $logger              Logger.
      */
     public function __construct(
-        CacheHelper  $cacheHelper,
         ClientInterface $client,
         IndicesList $indicesList,
         IndexStatusProvider $indexStatusProvider,
         LoggerInterface $logger
     ) {
-        $this->cacheHelper = $cacheHelper;
         $this->client = $client;
         $this->indicesList = $indicesList;
         $this->indexStatusProvider = $indexStatusProvider;
@@ -159,8 +150,8 @@ class IndexStatsProvider
 
         try {
             // Retrieve number of shards and replicas configuration.
-            $data['number_of_shards'] = $this->getShardsConfiguration($indexName);
-            $data['number_of_replicas'] = $this->getReplicasConfiguration($indexName);
+            $data['number_of_shards'] = $this->getPrimaryShardsConfiguration($indexName) ?? 'N/A';
+            $data['number_of_replicas'] = $this->getReplicasConfiguration($indexName) ?? 'N/A';
 
             if (!isset($this->indicesStats[$indexName])) {
                 $indexStatsResponse             = $this->client->indexStats($indexName);
@@ -194,53 +185,24 @@ class IndexStatsProvider
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
-    public function getIndexSettings(string $indexName): array
+    private function getIndexSettings(string $indexName): array
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . $indexName;
-
-        // Check if the settings are already in memory.
-        if (!isset($this->cachedIndexSettings[$cacheKey])) {
-            $cachedData = $this->cacheHelper->loadCache($cacheKey);
-
-            if ($cachedData) {
-                $this->cachedIndexSettings[$cacheKey] = $cachedData;
-            } else {
-                $settingsData = $this->client->getSettings($indexName);
-
-                // Save to cache with a tag.
-                $this->cacheHelper->saveCache(
-                    $cacheKey,
-                    $settingsData,
-                    $this->getCacheTags(),
-                    self::CACHE_LIFETIME
-                );
-
-                $this->cachedIndexSettings[$cacheKey] = $settingsData;
-            }
-        }
-
-        return $this->cachedIndexSettings[$cacheKey];
+        return $this->cachedIndexSettings[$indexName] ?? [];
     }
 
     /**
-     * Retrieve number of shards from index settings.
+     * Retrieve number of primary shards from index settings.
      *
      * @param string $indexName Index name.
      *
-     * @return int
+     * @return int|null
      */
-    public function getShardsConfiguration($indexName)
+    private function getPrimaryShardsConfiguration($indexName): ?int
     {
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
-        // Check if settings for the given index exist and retrieve number_of_shards.
-        if (isset($indexSettings[$indexName]['settings']['index']['number_of_shards'])) {
-            return (int) $indexSettings[$indexName]['settings']['index']['number_of_shards'];
-        }
-
-        // Return null or throw an exception if the value doesn't exist.
-        throw new \RuntimeException("number_of_shards setting not found for index: $indexName");
+        return (int) $indexSettings['settings']['index']['number_of_shards'] ?? null;
     }
 
     /**
@@ -248,20 +210,14 @@ class IndexStatsProvider
      *
      * @param string $indexName Index name.
      *
-     * @return int
+     * @return int|null
      */
-    public function getReplicasConfiguration($indexName)
+    private function getReplicasConfiguration($indexName): ?int
     {
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
-        // Check if settings for the given index exist and retrieve number_of_replicas.
-        if (isset($indexSettings[$indexName]['settings']['index']['number_of_replicas'])) {
-            return (int) $indexSettings[$indexName]['settings']['index']['number_of_replicas'];
-        }
-
-        // Return null or throw an exception if the value doesn't exist.
-        throw new \RuntimeException("number_of_replicas setting not found for index: $indexName");
+        return (int) $indexSettings['settings']['index']['number_of_replicas'] ?? null;
     }
 
     /**
@@ -318,18 +274,18 @@ class IndexStatsProvider
                 $this->indicesStats = [];
             }
         }
-    }
 
-    /**
-     * Get cache tags.
-     *
-     * @return array
-     */
-    private function getCacheTags()
-    {
-        return [
-            \Smile\ElasticsuiteCore\Cache\Type\Elasticsuite::CACHE_TAG,
-            self::CACHE_TAG,
-        ];
+        if (null === $this->cachedIndexSettings) {
+            try {
+                $indicesShardSettings = $this->client->getSpecificSettings(
+                    '_all',
+                    ['index.number_of_shards', 'index.number_of_replicas']
+                );
+                $this->cachedIndexSettings = $indicesShardSettings;
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices shard settings', ['exception' => $e]);
+                $this->cachedIndexSettings = [];
+            }
+        }
     }
 }

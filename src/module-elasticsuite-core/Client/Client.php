@@ -158,6 +158,14 @@ class Client implements ClientInterface
     /**
      * {@inheritDoc}
      */
+    public function getSpecificSettings($indexName, $settings)
+    {
+        return $this->getEsClient()->indices()->getSettings(['index' => $indexName, 'name' => $settings]);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function forceMerge($indexName)
     {
         $this->getEsClient()->indices()->forceMerge(['index' => $indexName]);

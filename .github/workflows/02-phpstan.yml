@@ -108,9 +108,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.magento-directory }}
-          key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+          key: phpstan-magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
           restore-keys: |
-            magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+            phpstan-magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
       - name: "[Init] Prepare credentials"
         if: ${{env.MAGENTO_USERNAME}} != 0
@@ -159,7 +159,7 @@ jobs:
 
       - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
-        run: composer require --dev --no-update smile/magento2-smilelab-phpstan ^1.0
+        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Fix Magento directory permissions"
         env:
@@ -184,7 +184,10 @@ jobs:
         working-directory: ${{ env.magento-directory }}
         run: |
           sudo chmod u+x vendor/bin/phpstan
-          vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
+          vendor/bin/phpstan -V
+          vendor/bin/phpstan clear-result-cache
+          cp -a vendor/smile/elasticsuite/phpstan.neon.dist elastan.neon.dist
+          vendor/bin/phpstan analyze -c elastan.neon.dist --level=0 vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
         env:

@@ -15,8 +15,46 @@
 .smile_elasticsuite_analytics-search-usage {
 
     .dashboard-item-title {
+        position: relative;
+
         .tooltip {
             margin-top: inherit;
+        }
+
+        .admin__field-action-export {
+            position: absolute;
+            right: 0;
+
+            .copy-feedback-text {
+                font-size: 0.9em;
+                color: #79a22e;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            &.show .copy-feedback-text {
+                opacity: 1;
+            }
+
+            &:after {
+                content: '\e635';
+                display: inline-block;
+                font-size: 2.2rem;
+                font-weight: normal;
+                color: #514943;
+                font-family: 'Admin Icons';
+                line-height: 1;
+                vertical-align: middle;
+                margin-left: 5px;
+                overflow: hidden;
+                cursor: pointer;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            &:hover {
+                text-decoration: none;
+            }
         }
     }
 

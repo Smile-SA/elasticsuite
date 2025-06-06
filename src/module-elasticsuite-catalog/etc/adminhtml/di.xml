@@ -88,4 +88,13 @@
     <type name="Magento\Catalog\Controller\Adminhtml\Category\Save">
         <plugin name="handle_additional_use_config" type="Smile\ElasticsuiteCatalog\Plugin\Catalog\Controller\Adminhtml\Category\SavePlugin" />
     </type>
+
+    <!-- Elasticsuite Health Check -->
+    <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="category_is_anchor_config_check" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Healthcheck\CategoryIsAnchorConfigCheck</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

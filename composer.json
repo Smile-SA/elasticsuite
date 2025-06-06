@@ -41,11 +41,8 @@
         "magento/module-catalog": ">=104.0.6",
         "magento/module-catalog-search": ">=102.0.6",
         "magento/module-catalog-graph-ql": ">=100.4.6",
-        "magento/module-inventory-sales-api": ">=1.1.0",
-        "magento/module-inventory-sales": ">=1.1.0",
-        "magento/module-inventory-indexer": ">=2.0.0",
         "magento/magento-composer-installer": "*",
-        "opensearch-project/opensearch-php": "^1.0 || ^2.0, <2.4.0"
+        "opensearch-project/opensearch-php": "^1.0 || ^2.0 <2.4.0 || >=2.4.3 <2.5.0"
     },
     "replace": {
         "smile/module-elasticsuite-core": "self.version",
