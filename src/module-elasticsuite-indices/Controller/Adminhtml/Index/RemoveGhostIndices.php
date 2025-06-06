@@ -15,13 +15,11 @@ namespace Smile\ElasticsuiteIndices\Controller\Adminhtml\Index;
 
 use Exception;
 use Magento\Backend\App\Action\Context;
-use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Controller\Adminhtml\AbstractAction;
-use Smile\ElasticsuiteIndices\Model\IndexStatsProvider;
-use Smile\ElasticsuiteIndices\Model\IndexStatusProvider;
+use Smile\ElasticsuiteIndices\Model\GhostIndexPurger;
 
 /**
- * Controller for removing all ghost indices.
+ * Controller for removing ghost indices.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteIndices
@@ -35,35 +33,28 @@ class RemoveGhostIndices extends AbstractAction
     public const ADMIN_RESOURCE = 'Smile_ElasticsuiteIndices::remove';
 
     /**
-     * @var IndexStatsProvider
+     * @var GhostIndexPurger
      */
-    private IndexStatsProvider $indexStatsProvider;
-
-    /**
-     * @var IndexStatusProvider
-     */
-    private IndexStatusProvider $indexStatusProvider;
+    private GhostIndexPurger $ghostIndexPurger;
 
     /**
      * Constructor.
      *
-     * @param Context             $context             The current context.
-     * @param IndexStatsProvider  $indexStatsProvider  Index stats provider.
-     * @param IndexStatusProvider $indexStatusProvider Index status provider.
+     * @param Context          $context          The current context.
+     * @param GhostIndexPurger $ghostIndexPurger Ghost index purging service.
      */
     public function __construct(
         Context $context,
-        IndexStatsProvider $indexStatsProvider,
-        IndexStatusProvider $indexStatusProvider
+        GhostIndexPurger $ghostIndexPurger
     ) {
         parent::__construct($context);
-        $this->indexStatsProvider = $indexStatsProvider;
-        $this->indexStatusProvider = $indexStatusProvider;
+        $this->ghostIndexPurger = $ghostIndexPurger;
     }
 
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @throws Exception
      */
     public function execute()
     {
@@ -73,41 +64,14 @@ class RemoveGhostIndices extends AbstractAction
             return $this->_redirect($this->_redirect->getRefererUrl());
         }
 
-        $deleted = [];
+        $deletedCount = $this->ghostIndexPurger->purge();
 
-        $indices = $this->indexStatsProvider->getElasticSuiteIndices();
-
-        foreach ($indices as $indexName => $alias) {
-            if ($this->indexCanBeRemoved($indexName, $alias)) {
-                try {
-                    $this->indexStatsProvider->deleteIndex($indexName);
-                    $deleted[] = $indexName;
-                } catch (Exception $e) {
-                    // Optional: Log the exception if needed.
-                }
-            }
-        }
-
-        if (!empty($deleted)) {
-            $count = count($deleted);
-            $this->messageManager->addSuccessMessage(__('%1 ghost indices were deleted.', $count));
+        if ($deletedCount > 0) {
+            $this->messageManager->addSuccessMessage(__('%1 ghost indices were deleted.', $deletedCount));
         } else {
             $this->messageManager->addNoticeMessage(__('No ghost indices were deleted.'));
         }
 
         return $this->_redirect($this->_redirect->getRefererUrl());
-    }
-
-    /**
-     * Determines if the index can be safely removed (is ghost).
-     *
-     * @param string      $indexName Index name.
-     * @param string|null $alias     Index alias.
-     * @return bool
-     */
-    private function indexCanBeRemoved(string $indexName, ?string $alias): bool
-    {
-        return $this->_isAllowed()
-            && $this->indexStatusProvider->getIndexStatus($indexName, $alias) === IndexStatus::GHOST_STATUS;
     }
 }
