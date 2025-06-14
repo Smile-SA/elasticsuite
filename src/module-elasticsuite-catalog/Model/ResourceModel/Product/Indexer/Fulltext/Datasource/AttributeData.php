@@ -15,9 +15,12 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\CatalogInventory\Model\Configuration;
 use Magento\Eav\Model\Config;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -55,6 +58,7 @@ class AttributeData extends AbstractAttributeData
      * @var Config
      */
     private $eavConfig;
+    private ScopeConfigInterface $scopeConfig;
 
     /**
      * Constructor.
@@ -72,11 +76,13 @@ class AttributeData extends AbstractAttributeData
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
         Config $eavConfig,
+        ScopeConfigInterface $scopeConfig,
         $entityType = ProductInterface::class
     ) {
         parent::__construct($resource, $storeManager, $metadataPool, $entityType);
         $this->catalogProductType = $catalogProductType;
         $this->eavConfig = $eavConfig;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -228,6 +234,15 @@ class AttributeData extends AbstractAttributeData
                 ['child_id' => $entityIdField, 'sku' => 'sku']
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
+
+        if (!$this->scopeConfig->getValue(Configuration::XML_PATH_SHOW_OUT_OF_STOCK, ScopeInterface::SCOPE_STORE)) {
+            // Added Only InStock Products.
+            $select->joinInner(
+                ['stock' => $this->getTable('cataloginventory_stock_item')],
+                new \Zend_Db_Expr("child.{$entityIdField} = stock.product_id AND stock.is_in_stock = 1"),
+                []
+            );
+        }
 
         if ($relation->getWhere() !== null) {
             $select->where($relation->getWhere());
