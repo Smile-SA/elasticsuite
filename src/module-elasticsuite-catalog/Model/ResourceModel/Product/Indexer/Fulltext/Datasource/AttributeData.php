@@ -225,6 +225,7 @@ class AttributeData extends AbstractAttributeData
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
         $entityTable     = $this->getTable($this->getEntityMetaData($this->getEntityTypeId())->getEntityTable());
         $relationTable   = $this->getTable($relation->getTable());
+        $inventoryTable  = $this->getTable('cataloginventory_stock_item');
         $parentFieldName = $relation->getParentFieldName();
         $childFieldName  = $relation->getChildFieldName();
 
@@ -242,10 +243,13 @@ class AttributeData extends AbstractAttributeData
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
 
-        if (!$this->scopeConfig->getValue(Configuration::XML_PATH_SHOW_OUT_OF_STOCK, ScopeInterface::SCOPE_STORE)) {
-            // Added Only InStock Products.
+        /**
+         * If Catalog - Inventory - Stock Options - Display of Stock Products is set to NO,
+         * then exclude this children from the query results.
+         */
+        if (!$this->scopeConfig->getValue(Configuration::XML_PATH_SHOW_OUT_OF_STOCK)) {
             $select->joinInner(
-                ['stock' => $this->getTable('cataloginventory_stock_item')],
+                ['stock' => $inventoryTable],
                 new \Zend_Db_Expr("child.{$entityIdField} = stock.product_id AND stock.is_in_stock = 1"),
                 []
             );
