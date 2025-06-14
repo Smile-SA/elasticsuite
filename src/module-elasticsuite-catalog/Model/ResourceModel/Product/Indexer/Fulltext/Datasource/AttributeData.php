@@ -58,16 +58,23 @@ class AttributeData extends AbstractAttributeData
      * @var Config
      */
     private $eavConfig;
+
+    /**
+     * Scope Config
+     *
+     * @var ScopeConfigInterface
+     */
     private ScopeConfigInterface $scopeConfig;
 
     /**
      * Constructor.
      *
-     * @param ResourceConnection    $resource           Database adpater.
+     * @param ResourceConnection    $resource           Database adapter.
      * @param StoreManagerInterface $storeManager       Store manager.
      * @param MetadataPool          $metadataPool       Metadata Pool.
      * @param ProductType           $catalogProductType Product type.
      * @param Config                $eavConfig          Eav config.
+     * @param ScopeConfigInterface  $scopeConfig        Scope Config.
      * @param string                $entityType         Product entity type.
      */
     public function __construct(
