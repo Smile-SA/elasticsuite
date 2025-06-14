@@ -32,6 +32,8 @@ use Magento\Catalog\Model\Product\Type as ProductType;
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AttributeData extends AbstractAttributeData
 {
