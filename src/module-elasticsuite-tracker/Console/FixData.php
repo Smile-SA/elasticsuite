@@ -74,7 +74,7 @@ class FixData extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $progressIndicator = new ProgressIndicator($output, 'verbose', 100, ['⠏', '⠛', '⠹', '⢸', '⣰', '⣤', '⣆', '⡇']);
+        $progressIndicator = new ProgressIndicator($output, 'verbose', 500, ['⠏', '⠛', '⠹', '⢸', '⣰', '⣤', '⣆', '⡇']);
         $progressIndicator->start('Processing...');
 
         $table = new Table($output);
@@ -86,7 +86,7 @@ class FixData extends Command
                 continue;
             }
             $issuesInfo = '<info>Nothing to fix.</info>';
-            $issues = $this->checker->checkAndFixData((int) $store->getId());
+            $issues = $this->checker->checkAndFixData((int) $store->getId(), $progressIndicator, $output);
             if (!empty($issues)) {
                 $issuesInfo = sprintf("<info>%s</info>", join("\n", $issues));
             }

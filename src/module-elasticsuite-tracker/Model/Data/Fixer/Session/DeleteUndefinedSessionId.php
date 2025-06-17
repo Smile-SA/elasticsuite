@@ -76,9 +76,9 @@ class DeleteUndefinedSessionId implements DataFixerInterface
     /**
      * {@inheritDoc}
      */
-    public function fixInvalidData(int $storeId): bool
+    public function fixInvalidData(int $storeId): int
     {
-        $success = true;
+        $result = DataFixerInterface::FIX_COMPLETE;
 
         try {
             $indexAlias = $this->indexSettings->getIndexAliasFromIdentifier(
@@ -99,9 +99,9 @@ class DeleteUndefinedSessionId implements DataFixerInterface
                 ]);
             }
         } catch (\Exception $e) {
-            $success = false;
+            $result = DataFixerInterface::FIX_FAILURE;
         }
 
-        return $success;
+        return $result;
     }
 }
