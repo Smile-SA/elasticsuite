@@ -24,6 +24,9 @@ use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
  */
 class Integer extends AbstractTypeEnforcer
 {
+    /** @var string */
+    const PURE_INTEGER_PATTERN = '#^[0-9]+$#';
+
     /**
      * {@inheritDoc}
      */
@@ -41,6 +44,26 @@ class Integer extends AbstractTypeEnforcer
      */
     protected function enforceField(&$fieldValue)
     {
-        $fieldValue = (int) $fieldValue;
+        $fieldValue = (int) $this->decodeIfNeeded($fieldValue);
+    }
+
+    /**
+     * Checks if the provided value looks like a base64 encoded integer and if so, returns it decoded.
+     * Otherwise, returns the value as is.
+     *
+     * @param mixed $content Content to decode if needed.
+     *
+     * @return mixed
+     */
+    protected function decodeIfNeeded($content)
+    {
+        if (0 === (int) trim($content)) {
+            $decodedContent = base64_decode(trim($content), true);
+            if ((false !== $decodedContent) && preg_match(self::PURE_INTEGER_PATTERN, $decodedContent)) {
+                $content = $decodedContent;
+            }
+        }
+
+        return $content;
     }
 }
