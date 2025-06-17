@@ -21,8 +21,8 @@ use Smile\ElasticsuiteCore\Search\RequestInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteTracker\Api\EventIndexInterface;
+use Smile\ElasticsuiteTracker\Model\Data\Checker\AbstractDataChecker;
 use Smile\ElasticsuiteTracker\Model\Data\Checker\DataCheckerInterface;
-use Smile\ElasticsuiteTracker\Model\Data\Checker\DataCheckResult;
 use Smile\ElasticsuiteTracker\Model\Data\Checker\DataCheckResultFactory;
 use Smile\ElasticsuiteTracker\Model\Data\Fixer\DataFixerInterface;
 
@@ -33,32 +33,12 @@ use Smile\ElasticsuiteTracker\Model\Data\Fixer\DataFixerInterface;
  * @package  Smile\ElasticsuiteTracker
  * @author   Richard Bayet <richard.bayet@smile.fr>
  */
-class UndefinedSessionId implements DataCheckerInterface
+class UndefinedSessionId extends AbstractDataChecker implements DataCheckerInterface
 {
-    /**
-     * @var DataCheckResultFactory
-     */
-    private $checkResultFactory;
-
-    /**
-     * @var Builder
-     */
-    private $searchRequestBuilder;
-
     /**
      * @var QueryFactory
      */
     private $queryFactory;
-
-    /**
-     * @var SearchEngineInterface
-     */
-    private $searchEngine;
-
-    /**
-     * @var ?DataFixerInterface
-     */
-    private $dataFixer;
 
     /**
      * Constructor.
@@ -76,63 +56,26 @@ class UndefinedSessionId implements DataCheckerInterface
         SearchEngineInterface $searchEngine,
         ?DataFixerInterface $dataFixer = null
     ) {
-        $this->checkResultFactory   = $checkResultFactory;
-        $this->searchRequestBuilder = $searchRequestBuilder;
         $this->queryFactory         = $queryFactory;
-        $this->searchEngine         = $searchEngine;
-        $this->dataFixer            = $dataFixer;
-    }
-
-    /**
-     * Check that no event has the field session.id missing.
-     *
-     * @param int $storeId Store id.
-     *
-     * @return DataCheckResult
-     */
-    public function check($storeId): DataCheckResult
-    {
-        /** @var DataCheckResult $checkResult */
-        $checkResult = $this->checkResultFactory->create([]);
-
-        try {
-            $request = $this->getSearchRequest($storeId);
-            $response = $this->searchEngine->search($request);
-            if ($response->count() > 0) {
-                $checkResult->setInvalidData(true);
-                $checkResult->setDescription(sprintf("%d events without any defined session id.", $response->count()));
-            }
-        } catch (\LogicException $e) {
-            ;
-        }
-
-        return $checkResult;
+        parent::__construct($checkResultFactory, $searchRequestBuilder, $searchEngine, $dataFixer);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function hasDataFixer(): bool
+    protected function getInvalidDocsDescription(int $docCount): string
     {
-        return $this->dataFixer instanceof DataFixerInterface;
+        return sprintf("%d events without any defined session id.", $docCount);
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function getDataFixer(): ?DataFixerInterface
-    {
-        return $this->dataFixer;
-    }
-
-    /**
-     * Build search request used to check invalid event data.
+     * Build search request used to find event docs with a non-defined or invalid session identifier.
      *
      * @param int $storeId Store id.
      *
      * @return RequestInterface
      */
-    private function getSearchRequest($storeId): RequestInterface
+    protected function getSearchRequest($storeId): RequestInterface
     {
         $queryFilters = [
             $this->queryFactory->create(
