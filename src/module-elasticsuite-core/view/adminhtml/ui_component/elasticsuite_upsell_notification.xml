@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Pierre Gauthier <pierre.gauthier@smile.fr>
+ * @copyright 2021 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">elasticsuite_upsell_notification.elasticsuite_upsell_notification_data_source</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/notification</item>
+    </argument>
+    <settings>
+        <namespace>elasticsuite_upsell_notification</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>elasticsuite_upsell_notification.elasticsuite_upsell_notification_data_source</dep>
+        </deps>
+    </settings>
+
+    <dataSource name="elasticsuite_upsell_notification_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="data" xsi:type="array">
+                        <item name="validateNotificationAction" xsi:type="url" path="smile_elasticsuite/system/validateNotification/notification_code/elasticsuite_upsell"/>
+                    </item>
+                </item>
+            </argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/upsell-notification-provider</item>
+            </item>
+        </argument>
+        <dataProvider class="Smile\ElasticsuiteCore\Ui\DataProvider\UpsellNotificationDataProvider" name="elasticsuite_upsell_notification_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <fieldset name="elasticsuite_upsell_container_fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string"/>
+                <item name="sortOrder" xsi:type="number">1</item>
+                <item name="dataType" xsi:type="string">text</item>
+                <item name="formElement" xsi:type="string">text</item>
+                <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/upsell-notification</item>
+                <item name="template" xsi:type="string">Smile_ElasticsuiteCore/system/upsell-notification</item>
+            </item>
+        </argument>
+    </fieldset>
+
+</form>
