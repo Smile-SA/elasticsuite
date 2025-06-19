@@ -6,7 +6,13 @@
             style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 18px; cursor: pointer;"
             aria-label="Close">
     </button>
-    <p><em>You’re currently using the ElasticSuite Open Source Edition.</em></p>
-    <p>Unlock AI-powered, advanced features like <strong>bestseller boosting, behavioral merchandising, automated recommendations, A/B testing...</strong> with the ElasticSuite Premium Edition.</p>
-    <p><strong><a href="https://elasticsuite.io/elastic-suite-features/">➜ Explore the full feature list</a></strong></p>
+    <p><em data-bind="i18n: 'You’re currently using the ElasticSuite Open Source Edition.'"></em></p>
+
+    <p data-bind="html: $t('Unlock AI-powered, advanced features like <strong>bestseller boosting, behavioral merchandising, automated recommendations, A/B testing...</strong> with the ElasticSuite Premium Edition.')"></p>
+
+    <p>
+        <strong>
+            <a href="https://elasticsuite.io/elastic-suite-features/" data-bind="i18n: '➜ Explore the full feature list and reach out to us on our website.'"></a>
+        </strong>
+    </p>
 </div>
