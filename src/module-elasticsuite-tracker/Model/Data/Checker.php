@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Smile\ElasticsuiteTracker\Model\Data;
 
 use Smile\ElasticsuiteTracker\Model\Data\Checker\DataCheckerInterface;
+use Smile\ElasticsuiteTracker\Model\Data\Fixer\DataFixerInterface;
 
 /**
  * Behavioral data checker.
@@ -77,13 +78,20 @@ class Checker
         foreach ($this->checkers as &$checker) {
             $checkResult = $checker->check($storeId);
             if ($checkResult->hasInvalidData()) {
-                $status = sprintf("Unfixed: %s", $checkResult->getDescription());
+                $checkDescription = $checkResult->getDescription();
+                $report = sprintf('Unfixed: %s', $checkDescription);
                 if ($checker->hasDataFixer()) {
-                    if ($checker->getDataFixer()->fixInvalidData($storeId)) {
-                        $status = sprintf("Fixed %s", $checkResult->getDescription());
+                    $fixerResult = $checker->getDataFixer()->fixInvalidData($storeId);
+                    $status = 'Failure to fix';
+                    if ($fixerResult === DataFixerInterface::FIX_COMPLETE) {
+                        $status = 'Fixed';
                     }
+                    if ($fixerResult === DataFixerInterface::FIX_PARTIAL) {
+                        $status = 'Partial fix';
+                    }
+                    $report = sprintf('[%s] %s', $status, $checkDescription);
                 }
-                $data[] = $status;
+                $data[] = $report;
             }
         }
 
