@@ -19,6 +19,7 @@
         <script src="https://www.gstatic.com/charts/loader.js" src_type="url" />
     </head>
     <update handle="styles" />
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <body>
         <referenceContainer name="page.main.actions">
             <block class="Magento\Backend\Block\Store\Switcher" name="report.store.switcher">

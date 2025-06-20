@@ -18,6 +18,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
     <update handle="editor"/>
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <body>
         <referenceContainer name="content">
             <uiComponent name="smile_elasticsuite_catalog_optimizer_form"/>

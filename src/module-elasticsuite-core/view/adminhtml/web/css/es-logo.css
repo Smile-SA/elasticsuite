@@ -41,3 +41,12 @@ fieldset.es-esfeature__logo legend span:first-child:after { /* Legacy form field
     top: 50%;
     left: -40px;
 }
+
+/* Upsell message */
+div.elasticsuite-upsell-content:before {
+    background: url('../images/es-logo.svg') no-repeat 0 0;
+    background-size: contain;
+    content: "";
+    width: 30px;
+    height: 30px;
+}

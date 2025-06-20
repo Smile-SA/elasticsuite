@@ -18,6 +18,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" layout="admin-1column">
     <update handle="styles"/>
     <update handle="editor"/>
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <body>
         <referenceBlock name="page.title">
             <action method="setTitleClass">

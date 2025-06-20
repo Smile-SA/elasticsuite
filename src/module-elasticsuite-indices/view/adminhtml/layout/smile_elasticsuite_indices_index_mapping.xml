@@ -16,6 +16,7 @@
  */
  -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <head>
         <css src="Smile_ElasticsuiteIndices::css/jquery.json-viewer.css"/>
     </head>

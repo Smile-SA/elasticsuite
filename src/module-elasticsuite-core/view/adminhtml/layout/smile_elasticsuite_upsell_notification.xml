@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Relevance configuration edition layout
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Romain Ruaud <romain.ruaud@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="notifications">
+            <uiComponent name="elasticsuite_upsell_notification">
+                <visibilityCondition name="can_view_elasticsuite_upsell_notification" className="Smile\ElasticsuiteCore\Model\System\Condition\CanViewUpsellNotification">
+                    <arguments>
+                        <argument name="notification_code" xsi:type="string">elasticsuite_upsell</argument>
+                    </arguments>
+                </visibilityCondition>
+            </uiComponent>
+        </referenceContainer>
+    </body>
+</page>
