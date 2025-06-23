@@ -13,9 +13,13 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
+use Magento\Customer\Model\Group as CustomerGroup;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
+use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\AbstractBucket;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
 
@@ -29,6 +33,9 @@ use Smile\ElasticsuiteCore\Search\RequestInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.CamelCasePropertyName)
+ * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -100,6 +107,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var RequestFieldMapper
      */
     private $requestFieldMapper;
+
+    /**
+     * @var QueryFactory|null
+     */
+    private ?QueryFactory $queryFactory = null;
 
     /**
      * Constructor.
@@ -613,6 +625,82 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         return parent::_afterLoad();
+    }
+
+    /**
+     * Lazily get the QueryFactory instance.
+     *
+     * @return QueryFactory
+     */
+    protected function getQueryFactory()
+    {
+        if ($this->queryFactory === null) {
+            $this->queryFactory = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(QueryFactory::class);
+        }
+
+        return $this->queryFactory;
+    }
+
+
+    /**
+     * Prepares min and max price using Elasticsearch metric aggregation.
+     * Ensures compatibility with Magento Core's getMinPrice()/getMaxPrice().
+     *
+     * @return $this
+     */
+    protected function _prepareStatisticsData()
+    {
+        $storeId = $this->getStoreId();
+        $requestName = $this->searchRequestName;
+        $customerGroupId = (int) ($this->_productLimitationFilters['customer_group_id'] ?? CustomerGroup::NOT_LOGGED_IN_ID);
+        $aggregationName = 'price_stats';
+
+        // Clone existing filters and add customer group filter.
+        $filters = $this->filters ?: [];
+
+        $filters[] = $this->getQueryFactory()->create(
+            QueryInterface::TYPE_TERM,
+            ['field' => 'customer_group_id', 'value' => $customerGroupId]
+        );
+
+        $facets = [
+            [
+                'name'       => $aggregationName,
+                'type'       => BucketInterface::TYPE_METRIC,
+                'field'      => 'price.price',
+                'metricType' => MetricInterface::TYPE_STATS,
+            ],
+        ];
+
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $requestName,
+            0,
+            0,
+            $this->query,
+            [],
+            $filters,
+            $this->queryFilters,
+            $facets,
+            true
+        );
+
+        $response     = $this->searchEngine->search($searchRequest);
+        $aggregations = $response->getAggregations();
+
+        /** @var AbstractBucket|null $bucket */
+        $bucket = $aggregations->getBucket($aggregationName);
+        $metrics = $bucket ? $bucket->getMetrics() : [];
+
+        $rate = $this->getCurrencyRate();
+
+        $this->_pricesCount            = (int) ($metrics['count'] ?? 0);
+        $this->_minPrice               = round(((float) ($metrics['min'] ?? 0)) * $rate, 2);
+        $this->_maxPrice               = round(((float) ($metrics['max'] ?? 0)) * $rate, 2);
+        $this->_priceStandardDeviation = round(((float) ($metrics['std_deviation'] ?? 0)) * $rate, 2);
+
+        return $this;
     }
 
     /**
