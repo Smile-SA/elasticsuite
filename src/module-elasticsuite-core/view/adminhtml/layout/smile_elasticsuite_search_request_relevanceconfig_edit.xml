@@ -16,6 +16,7 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <body>
         <referenceContainer name="page.main.actions">
             <block class="Smile\ElasticsuiteCore\Block\Adminhtml\Search\Request\RelevanceConfig\Scope\Switcher" name="smile.elasticsuite.relevance.config.switcher" template="Smile_ElasticsuiteCore::relevance/configuration/scope/switcher.phtml">

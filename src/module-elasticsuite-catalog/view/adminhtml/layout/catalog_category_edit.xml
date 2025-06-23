@@ -9,17 +9,10 @@
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2020 Smile
+ * @copyright 2025 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
  -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="smile_elasticsuite_upsell_notification"/>
-    <body>
-        <referenceBlock name="attribute_edit_js">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">Smile_ElasticsuiteCatalog::catalog/product/attribute/js.phtml</argument>
-            </action>
-        </referenceBlock>
-    </body>
 </page>
