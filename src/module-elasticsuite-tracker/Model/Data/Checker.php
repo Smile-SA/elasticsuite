@@ -17,6 +17,10 @@ namespace Smile\ElasticsuiteTracker\Model\Data;
 
 use Smile\ElasticsuiteTracker\Model\Data\Checker\DataCheckerInterface;
 use Smile\ElasticsuiteTracker\Model\Data\Fixer\DataFixerInterface;
+use Smile\ElasticsuiteTracker\Model\Data\Fixer\OutputAwareInterface;
+use Smile\ElasticsuiteTracker\Model\Data\Fixer\ProgressIndicatorAwareInterface;
+use Symfony\Component\Console\Helper\ProgressIndicator;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Behavioral data checker.
@@ -67,11 +71,14 @@ class Checker
     /**
      * Check and fix behavioral data when possible.
      *
-     * @param int $storeId Store id.
+     * @param int                    $storeId           Store id.
+     * @param ProgressIndicator|null $progressIndicator Global progress indicator.
+     * @param OutputInterface|null   $output            Output interface.
      *
      * @return string[]
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function checkAndFixData(int $storeId): array
+    public function checkAndFixData(int $storeId, ?ProgressIndicator $progressIndicator = null, ?OutputInterface $output = null): array
     {
         $data = [];
 
@@ -81,6 +88,13 @@ class Checker
                 $checkDescription = $checkResult->getDescription();
                 $report = sprintf('Unfixed: %s', $checkDescription);
                 if ($checker->hasDataFixer()) {
+                    $dataFixer = $checker->getDataFixer();
+                    if ($progressIndicator && ($dataFixer instanceof ProgressIndicatorAwareInterface)) {
+                        $dataFixer->setProgressIndicator($progressIndicator);
+                    }
+                    if ($output && ($dataFixer instanceof OutputAwareInterface)) {
+                        $dataFixer->setOutput($output);
+                    }
                     $fixerResult = $checker->getDataFixer()->fixInvalidData($storeId);
                     $status = 'Failure to fix';
                     if ($fixerResult === DataFixerInterface::FIX_COMPLETE) {
