@@ -102,6 +102,7 @@
         <arguments>
             <argument name="checkers" xsi:type="array">
                 <item name="undefinedSessionIdInEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId</item>
+                <item name="invalidViewedProductIdEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\ViewedProductId</item>
                 <item name="undefinedSessionIdInSessions" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId</item>
             </argument>
         </arguments>
@@ -110,6 +111,18 @@
     <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId">
         <arguments>
             <argument name="dataFixer" xsi:type="object">\Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Event\ViewedProductId">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\ViewedProductId</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\ViewedProductId">
+        <arguments>
+            <argument name="logger" xsi:type="object">Elasticsearch\Common\EmptyLogger</argument>
         </arguments>
     </type>
 
