@@ -48,8 +48,8 @@ class HyvaCompatibilityCheck extends AbstractCheck
      *
      * @param ComposerInformationProvider $composerInformationProvider Composer information provider.
      * @param UrlInterface                $urlBuilder                  URL builder.
-     * @param string                      $triggerPackage              Hÿva package name triggering the check.
-     * @param array                       $packagesToCheck             Required Hÿva compatibility packages.
+     * @param string                      $triggerPackage              Hyvä package name triggering the check.
+     * @param array                       $packagesToCheck             Required Hyvä compatibility packages.
      * @param int                         $sortOrder                   Sort order (default: 40).
      * @param int                         $severity                    Severity level.
      */
@@ -89,12 +89,12 @@ class HyvaCompatibilityCheck extends AbstractCheck
     public function getDescription(): string
     {
         $description = __(
-            'All the required Hÿva/Elasticsuite compatibility modules (%1) are correctly installed.',
+            'All the required Hyvä/Elasticsuite compatibility modules (%1) are correctly installed.',
             implode(', ', $this->packagesToCheck)
         );
         if (!$this->isHyvaInstalled()) {
             $description = __(
-                'Your site is not using the Hÿva theme, there are no specific requirements to fulfill.'
+                'Your site is not using the Hyvä theme, there are no specific requirements to fulfill.'
             );
         }
 
@@ -105,7 +105,7 @@ class HyvaCompatibilityCheck extends AbstractCheck
                 '<br />',
                 [
                     __(
-                        'Your site uses the Hÿva theme through package <strong>%1</strong>. To work properly with Hÿva, Elasticsuite requires the installation of additional <strong>compatibility modules (%2)</strong>.',
+                        'Your site uses the Hyvä theme through package <strong>%1</strong>. To work properly with Hyvä, Elasticsuite requires the installation of additional <strong>compatibility modules (%2)</strong>.',
                         $this->triggerPackage,
                         implode(', ', $this->packagesToCheck)
                     ),
@@ -128,7 +128,7 @@ class HyvaCompatibilityCheck extends AbstractCheck
     }
 
     /**
-     * Returns true if the Hÿva theme package is installed.
+     * Returns true if the Hyvä theme package is installed.
      *
      * @return bool
      */
