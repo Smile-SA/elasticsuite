@@ -17,7 +17,7 @@ use Symfony\Component\Console\Helper\ProgressIndicator;
 
 /**
  * Interface to be implemented by fixer models that have long running step-based processes
- * and which might need to report that they are doing something..
+ * and which might need to report that they are doing something.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteTracker
@@ -31,7 +31,7 @@ interface ProgressIndicatorAwareInterface
      *
      * @return self
      */
-    public function setProgressIndicator(ProgressIndicator $progressIndicator): ProgressIndicatorAwareInterface;
+    public function setProgressIndicator(ProgressIndicator $progressIndicator): self;
 
     /**
      * Returns the progress indicator, if set.
