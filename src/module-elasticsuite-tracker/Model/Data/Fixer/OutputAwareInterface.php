@@ -31,7 +31,7 @@ interface OutputAwareInterface
      *
      * @return self
      */
-    public function setOutput(OutputInterface $output): OutputAwareInterface;
+    public function setOutput(OutputInterface $output);
 
     /**
      * Returns the output interface.
