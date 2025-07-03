@@ -31,7 +31,7 @@ interface ProgressIndicatorAwareInterface
      *
      * @return self
      */
-    public function setProgressIndicator(ProgressIndicator $progressIndicator): self;
+    public function setProgressIndicator(ProgressIndicator $progressIndicator);
 
     /**
      * Returns the progress indicator, if set.
