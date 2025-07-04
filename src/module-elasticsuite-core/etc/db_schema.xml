@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Pierre Gauthier <pierre.gauthier@smile.fr>
+ * @copyright 2025 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="smile_elasticsuite_index_bulk_error" resource="default" engine="innodb" comment="Elasticsuite Index Bulk Errors">
+        <column xsi:type="bigint" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+        <column xsi:type="varchar" name="store_code" nullable="false" length="255" comment="Store code"/>
+        <column xsi:type="varchar" name="error_type" nullable="false" length="255" comment="Error type"/>
+        <column xsi:type="varchar" name="index_identifier" nullable="false" length="255" comment="Index identifier"/>
+        <column xsi:type="varchar" name="operation" nullable="false" length="255" comment="Operation type" />
+        <column xsi:type="varchar" name="reason_simple" nullable="false" length="255" comment="Error reason simplified"/>
+        <column xsi:type="text" name="reason" nullable="false" comment="Error reason"/>
+        <column xsi:type="text" name="sample_ids" nullable="false" comment="Sample IDs"/>
+        <column xsi:type="int" name="count" unsigned="true" nullable="false" default="1" comment="Error count"/>
+        <column xsi:type="timestamp" name="created_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="false" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="false" default="CURRENT_TIMESTAMP" on_update="true" comment="Updated At"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+
+        <constraint xsi:type="unique" referenceId="UNQ_STORE_ID_INDEX_IDENTIFIER_REASON_SIMPLE">
+            <column name="store_code"/>
+            <column name="index_identifier"/>
+            <column name="operation" />
+            <column name="reason_simple"/>
+        </constraint>
+
+        <index referenceId="BLK_ERROR_STORE_CODE" indexType="btree">
+            <column name="store_code"/>
+        </index>
+        <index referenceId="BLK_ERROR_ERROR_TYPE" indexType="btree">
+            <column name="error_type"/>
+        </index>
+        <index referenceId="BLK_ERROR_REASON" indexType="fulltext">
+            <column name="reason"/>
+        </index>
+        <index referenceId="BLK_ERROR_SAMPLE_IDS" indexType="fulltext">
+            <column name="sample_ids"/>
+        </index>
+        <index referenceId="BLK_ERROR_COUNT" indexType="btree">
+            <column name="count"/>
+        </index>
+        <index referenceId="BLK_ERROR_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+        <index referenceId="BLK_ERROR_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+    </table>
+</schema>
