@@ -74,6 +74,11 @@ class IndexStatusProvider
     protected $workingIndexers;
 
     /**
+     * @var array|null
+     */
+    private $indicesStats = null;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface                 $client                   ES client.
@@ -94,6 +99,7 @@ class IndexStatusProvider
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
         $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
         $this->logger = $logger;
+        $this->initStats();
     }
 
     /**
@@ -180,31 +186,20 @@ class IndexStatusProvider
      * @param string $indexName Index name.
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function isClosed(string $indexName): bool
     {
-        try {
-            // Ensure the index is NOT External before checking for Closed status.
-            if ($this->isExternal($indexName)) {
-                return false;
-            }
-
-            // Attempt to fetch index stats or metadata to check its status.
-            $indexStats = $this->client->indexStats($indexName);
-
-            // If we successfully retrieved index stats and no error occurs, the index is not closed.
+        // Ensure the index is NOT External before checking for Closed status.
+        if ($this->isExternal($indexName)) {
             return false;
-        } catch (Exception $e) {
-            // Log the error (optional for better diagnostics).
-            $this->logger->error(
-                sprintf('Error fetching index stats for "%s": %s', $indexName, $e->getMessage())
-            );
+        }
 
-            // If an error occurs, it's safer to assume the index could be closed, or the stats are unavailable.
-            // Returning true here means the index is likely closed or inaccessible.
+        // If the index name does not exist in the global response, it is probably closed.
+        if (!array_key_exists($indexName, $this->indicesStats)) {
             return true;
         }
+
+        return false;
     }
 
     /**
@@ -270,6 +265,24 @@ class IndexStatusProvider
             return new Zend_Date($date, $format);
         } catch (Zend_Date_Exception $e) {
             return false;
+        }
+    }
+
+    /**
+     * Init indices stats by calling once and for all.
+     *
+     * @return void
+     */
+    private function initStats()
+    {
+        if ($this->indicesStats === null) {
+            try {
+                $indexStatsResponse = $this->client->indexStats('_all');
+                $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices statistics', ['exception' => $e]);
+                $this->indicesStats = [];
+            }
         }
     }
 }
