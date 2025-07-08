@@ -202,7 +202,12 @@ class IndexStatsProvider
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
-        return (int) $indexSettings['settings']['index']['number_of_shards'] ?? null;
+        $shards = null;
+        if (isset($indexSettings['settings']['index']['number_of_shards'])) {
+            $shards = (int) $indexSettings['settings']['index']['number_of_shards'];
+        }
+
+        return $shards;
     }
 
     /**
@@ -217,7 +222,12 @@ class IndexStatsProvider
         // Retrieve the index settings.
         $indexSettings = $this->getIndexSettings($indexName);
 
-        return (int) $indexSettings['settings']['index']['number_of_replicas'] ?? null;
+        $replicas = null;
+        if (isset($indexSettings['settings']['index']['number_of_replicas'])) {
+            $replicas = (int) $indexSettings['settings']['index']['number_of_replicas'];
+        }
+
+        return $replicas;
     }
 
     /**
