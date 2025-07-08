@@ -78,7 +78,7 @@ class CustomerDataTrackingManager
         }
 
         $customer = $this->customerSession->getCustomer();
-        $variables['group_id'] = (int) $customer->getGroupId() ?? \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID;
+        $variables['group_id'] = (int) ($customer->getGroupId() ?? \Magento\Customer\Model\Group::NOT_LOGGED_IN_ID);
         $variables['id']       = (int) $customer->getId();
 
         if ($this->customerSession->isLoggedIn() && (null !== $this->companyManagement)) {

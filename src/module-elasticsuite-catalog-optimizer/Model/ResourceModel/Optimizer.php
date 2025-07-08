@@ -159,7 +159,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                     $searchContainerName = 'quick_search_container';
                 }
                 $searchContainerData = $object->getData($searchContainerName);
-                $applyTo = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
+                $applyTo = is_array($searchContainerData) ? ((bool) ($searchContainerData['apply_to'] ?? false)) : false;
                 $searchContainerLinks[(string) $searchContainer] = [
                     OptimizerInterface::OPTIMIZER_ID     => (int) $object->getId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,
