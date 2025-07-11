@@ -54,7 +54,9 @@ Cancel,Annuler
 "Category Product View","Navigation Catalogue"
 "All Categories","Toutes les catégories"
 "Selected categories","Catégories sélectionnées"
+"All except selected categories","Toutes les catégories sauf celles sélectionnées"
 "Apply to categories","Appliquer aux catégories"
+"Categories","Catégories"
 Configuration,Configuration
 "Boost value (%)","Valeur du boost (%)"
 "From -99 to 10000","Entre -99 et 10000"

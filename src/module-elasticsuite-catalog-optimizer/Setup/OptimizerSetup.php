@@ -154,7 +154,7 @@ class OptimizerSetup
                 )
                 ->addColumn(
                     'apply_to',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                     null,
                     ['nullable' => false, 'default' => 0],
                     'If this optimizer applies to specific entities or not.'
@@ -194,6 +194,28 @@ class OptimizerSetup
                 'apply_to',
                 [
                     'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_BOOLEAN,
+                    'nullable' => false,
+                    'default'  => '0',
+                    'comment'  => 'If this optimizer applies to specific entities or not.',
+                ]
+            );
+    }
+
+    /**
+     * Change the DDL type of "apply_to" column from smile_elasticsuite_optimizer_search_container table
+     * from boolean to smallint.
+     * This is just in case some day, the DDL boolean type becomes mapped to a real boolean (0, 1) DB column.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Setup instance
+     */
+    public function updateApplyToIntegerSearchContainerTable(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()
+            ->modifyColumn(
+                $setup->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER),
+                'apply_to',
+                [
+                    'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                     'nullable' => false,
                     'default'  => '0',
                     'comment'  => 'If this optimizer applies to specific entities or not.',

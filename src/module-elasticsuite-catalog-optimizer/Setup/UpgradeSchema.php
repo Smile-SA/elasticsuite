@@ -51,6 +51,9 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->optimizerSetup->createOptimizerLimitationTable($setup);
             $this->optimizerSetup->updateOptimizerSearchContainerTable($setup);
         }
+        if (version_compare($context->getVersion(), "1.2.1") < 0) {
+            $this->optimizerSetup->updateApplyToIntegerSearchContainerTable($setup);
+        }
         $setup->endSetup();
     }
 }
