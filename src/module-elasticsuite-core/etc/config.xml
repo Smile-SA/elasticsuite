@@ -30,7 +30,7 @@
             </es_client>
             <indices_settings>
                 <alias>magento2</alias>
-                <indices_pattern>{{YYYYMMdd}}_{{HHmmss}}</indices_pattern>
+                <indices_pattern>{{Ymd}}_{{His}}</indices_pattern>
                 <number_of_shards>1</number_of_shards>
                 <number_of_replicas>0</number_of_replicas>
                 <batch_indexing_size>1000</batch_indexing_size>
