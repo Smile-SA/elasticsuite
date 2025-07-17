@@ -13,6 +13,9 @@
  */
 namespace Smile\ElasticsuiteIndices\Model\ResourceModel\WorkingIndexer;
 
+use DateTime;
+use DateTimeInterface;
+use Exception;
 use Magento\Framework\Data\Collection as DataCollection;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DataObject;
@@ -22,7 +25,6 @@ use Magento\Indexer\Model\Indexer\Collection as IndexerCollection;
 use Magento\Indexer\Model\Indexer\CollectionFactory as IndexerCollectionFactory;
 use Smile\ElasticsuiteCore\Helper\IndexSettings;
 use Smile\ElasticsuiteIndices\Helper\Settings;
-use Zend_Date;
 
 /**
  * Class Resource Model: Indexer Collection
@@ -73,6 +75,8 @@ class Collection extends DataCollection
      * @return Collection
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws Exception
      */
     public function loadData($printQuery = false, $logQuery = false): Collection
     {
@@ -86,7 +90,10 @@ class Collection extends DataCollection
             if ($indexer->getStatus() === StateInterface::STATUS_WORKING) {
                 $item = $this->prepareItem($indexer);
                 if (array_key_exists($item['indexer_id'], $indicesMapping)) {
-                    $indexUpdateDate = new Zend_Date($item['indexer_updated'], Zend_Date::ISO_8601);
+                    $indexUpdateDate = DateTime::createFromFormat(
+                        \Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT,
+                        $item['indexer_updated']
+                    );
                     $indexNameSuffix = $this->indexSettings->getIndexNameSuffix($indexUpdateDate);
 
                     foreach ($indicesMapping[$item['indexer_id']] as $index) {

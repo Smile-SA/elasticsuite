@@ -14,11 +14,11 @@
 
 namespace Smile\ElasticsuiteCore\Helper;
 
+use DateTime;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
-use Zend_Date;
 
 /**
  * Indices related configuration helper.
@@ -66,6 +66,16 @@ class IndexSettings extends AbstractConfiguration
     /**
      * @var string
      */
+    const OLD_DEFAULT_INDICES_PATTERN = '{{YYYYMMdd}}_{{HHmmss}}';
+
+    /**
+     * @var string
+     */
+    const DEFAULT_INDICES_PATTERN = '{{Ymd}}_{{His}}';
+
+    /**
+     * @var string
+     */
     const LOCALE_CODE_CONFIG_XML_PATH = 'general/locale/code';
 
     /**
@@ -94,9 +104,9 @@ class IndexSettings extends AbstractConfiguration
     const MAX_NGRAM_SIZE_DEFAULT = 2;
 
     /**
-     * Return the locale code (eg.: "en_US") for a store.
+     * Return the locale code (e.g.: "en_US") for a store.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
+     * @param integer|string|StoreInterface $store The store.
      *
      * @return string
      */
@@ -110,9 +120,9 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
-     * Return the locale code (eg.: "en") for a store.
+     * Return the locale code (e.g.: "en") for a store.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store.
+     * @param integer|string|StoreInterface $store The store.
      *
      * @return string
      */
@@ -125,16 +135,16 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
-     * Create a new index for an identifier (eg. catalog_product) by store including current date.
+     * Create a new index for an identifier (e.g. catalog_product) by store including current date.
      *
-     * @param string                                                $indexIdentifier Index identifier.
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
+     * @param string                        $indexIdentifier Index identifier.
+     * @param integer|string|StoreInterface $store           The store.
      *
      * @return string
      */
     public function createIndexNameFromIdentifier($indexIdentifier, $store): string
     {
-        $indexNameSuffix = $this->getIndexNameSuffix(new Zend_Date());
+        $indexNameSuffix = $this->getIndexNameSuffix(new DateTime());
 
         return sprintf('%s_%s', $this->getIndexAliasFromIdentifier($indexIdentifier, $store), $indexNameSuffix);
     }
@@ -142,16 +152,19 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Get index name suffix.
      *
-     * @param Zend_Date $date Date
+     * @param DateTime $date Date
      * @return string
      */
-    public function getIndexNameSuffix(Zend_Date $date): string
+    public function getIndexNameSuffix(DateTime $date): string
     {
         /*
         * Generate the suffix of the index name from the current date.
-        * e.g : Default pattern "{{YYYYMMdd}}_{{HHmmss}}" is converted to "20160221_123421".
+        * e.g : Default pattern "{{Ymd}}_{{His}}" is converted to "20160221_123421".
         */
         $indexNameSuffix = $this->getIndicesSettingsConfigParam('indices_pattern');
+        if ($indexNameSuffix === self::OLD_DEFAULT_INDICES_PATTERN) {
+            $indexNameSuffix = self::DEFAULT_INDICES_PATTERN;
+        }
 
         // Parse pattern to extract datetime tokens.
         $matches = [];
@@ -159,7 +172,7 @@ class IndexSettings extends AbstractConfiguration
 
         foreach (array_combine($matches[0], $matches[1]) as $k => $v) {
             // Replace tokens (UTC date used).
-            $indexNameSuffix = str_replace($k, $date->toString($v), $indexNameSuffix);
+            $indexNameSuffix = str_replace($k, $date->format($v), $indexNameSuffix);
         }
 
         return $indexNameSuffix;
@@ -168,8 +181,8 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Returns the index alias for an identifier (eg. catalog_product) by store.
      *
-     * @param string                                                $indexIdentifier An index identifier.
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store           The store.
+     * @param string                        $indexIdentifier An index identifier.
+     * @param integer|string|StoreInterface $store           The store.
      *
      * @return string
      */
@@ -492,7 +505,7 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Retrieve the store code from object or store id.
      *
-     * @param \Magento\Store\Api\Data\StoreInterface|integer $store The store or it's id.
+     * @param StoreInterface|integer $store The store or it's id.
      *
      * @return string
      */
@@ -504,9 +517,9 @@ class IndexSettings extends AbstractConfiguration
     /**
      * Ensure store is an object or load it from it's id / identifier.
      *
-     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store The store identifier or id.
+     * @param integer|string|StoreInterface $store The store identifier or id.
      *
-     * @return \Magento\Store\Api\Data\StoreInterface
+     * @return StoreInterface
      */
     private function getStore($store)
     {
