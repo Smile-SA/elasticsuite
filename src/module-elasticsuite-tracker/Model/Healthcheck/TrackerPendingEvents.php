@@ -100,7 +100,7 @@ class TrackerPendingEvents extends AbstractCheck
                     ),
                     __(
                         'If you think the Elasticsuite <a href="%1"><strong>Search Usage screen</strong></a> ' .
-                        'is lacking some behavioral data, make sure the "elasticsuite_index_log_event" ' .
+                        'is lacking some behavioral data, make sure the "<strong>elasticsuite_index_log_event</strong>" ' .
                         'cronjob is running regularly enough.',
                         $this->getSearchUsageScreenUrl()
                     ),
