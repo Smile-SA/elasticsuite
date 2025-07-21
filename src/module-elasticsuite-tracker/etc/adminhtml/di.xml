@@ -26,4 +26,13 @@
         </arguments>
     </type>
 
+    <!-- Elasticsuite Health Check -->
+    <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="tracker_pending_events" xsi:type="object">Smile\ElasticsuiteTracker\Model\Healthcheck\TrackerPendingEvents</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

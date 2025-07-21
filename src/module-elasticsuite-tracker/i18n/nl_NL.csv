@@ -36,3 +36,6 @@
 "Bot Handling","Robotbediening"
 "Filter bot hits","Filter robottreffers"
 "If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.","Indien ingeschakeld, voorkomt het dat door IA of zoekmachines gegenereerde tracker-hits worden geregistreerd om te voorkomen dat uw gedragsgegevens worden vervuild door soms totaal onsamenhangende paginering of gegevens over het aantal resultaten."
+"The tracker events seem to be regularly indexed as expected.","De tracker-gebeurtenissen lijken regelmatig zoals verwacht te worden geïndexeerd."
+"There are currently %1 tracker events created more than %2 hours ago in the events queue table.","Er zijn momenteel %1 tracker-gebeurtenissen die meer dan %2 uur geleden zijn aangemaakt in de evenementen wachtrij tabel."
+"If you think the Elasticsuite <a href=""%1""><strong>Search Usage screen</strong></a> is lacking some behavioral data, make sure the ""<strong>elasticsuite_index_log_event</strong>"" cronjob is running regularly enough.","Als u denkt dat het scherm <a href=""%1""><strong>Zoekgebruik</strong></a> een aantal gedragsgegevens ontbeert, zorg er dan voor dat de cronjob ""<strong>elasticsuite_index_log_event</strong>"" vaak genoeg wordt uitgevoerd."

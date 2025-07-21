@@ -65,8 +65,8 @@
                 nullable="false"
                 comment="Search Container"/>
         <column name="apply_to"
-                xsi:type="boolean"
-                default="false"
+                xsi:type="smallint"
+                default="0"
                 nullable="false"
                 comment="If this optimizer applies to specific entities or not."/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

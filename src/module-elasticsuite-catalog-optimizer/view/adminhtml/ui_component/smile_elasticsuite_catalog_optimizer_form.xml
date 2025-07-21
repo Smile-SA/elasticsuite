@@ -568,6 +568,10 @@
                         <item name="value" xsi:type="number">1</item>
                         <item name="label" xsi:type="string" translate="true">Selected categories</item>
                     </item>
+                    <item name="2" xsi:type="array">
+                        <item name="value" xsi:type="number">2</item>
+                        <item name="label" xsi:type="string" translate="true">All except selected categories</item>
+                    </item>
                 </item>
                 <item name="config" xsi:type="array">
                     <item name="dataType" xsi:type="string">text</item>
@@ -599,6 +603,15 @@
                                 </action>
                             </actions>
                         </rule>
+                        <rule name="2">
+                            <value>2</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
+                                    <callback>show</callback>
+                                </action>
+                            </actions>
+                        </rule>
                     </rules>
                     <enabled>true</enabled>
                 </switcherConfig>
@@ -609,7 +622,7 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string" translate="true">Apply to categories</item>
+                    <item name="label" xsi:type="string" translate="true">Categories</item>
                     <item name="componentType" xsi:type="string">field</item>
                     <item name="formElement" xsi:type="string">select</item>
                     <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>

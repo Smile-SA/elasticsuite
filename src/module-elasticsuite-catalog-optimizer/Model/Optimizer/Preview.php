@@ -212,9 +212,14 @@ class Preview
             }
         } elseif ($canApply && in_array($this->containerConfiguration->getName(), $this->categoryPreviewContainers)) {
             $config = $this->optimizer->getCatalogViewContainer();
-            if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['category_ids'])) {
+            $applyTo = (int) ($config['apply_to'] ?? 0);
+            if (($applyTo > 0) && !empty($config['category_ids'])) {
                 $categoryIds = array_filter($config['category_ids']);
                 $canApply = in_array($this->category->getId(), $categoryIds, true);
+
+                if ($applyTo > 1) {
+                    $canApply = !$canApply;
+                }
             }
         }
 

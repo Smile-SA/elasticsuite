@@ -178,7 +178,7 @@ class Optimizer extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
                 $searchContainerName = (string) $searchContainer;
                 $searchContainerName = $this->containerToLimitationDataMapping[$searchContainerName] ?? $searchContainerName;
                 $searchContainerData = $object->getData($searchContainerName);
-                $applyTo = is_array($searchContainerData) ? ((bool) ($searchContainerData['apply_to'] ?? false)) : false;
+                $applyTo = is_array($searchContainerData) ? ($searchContainerData['apply_to'] ?? 0) : 0;
                 $searchContainerLinks[(string) $searchContainer] = [
                     OptimizerInterface::OPTIMIZER_ID     => (int) $object->getId(),
                     OptimizerInterface::SEARCH_CONTAINER => (string) $searchContainer,

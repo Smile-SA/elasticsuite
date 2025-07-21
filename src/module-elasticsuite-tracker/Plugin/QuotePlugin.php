@@ -14,7 +14,6 @@
 
 namespace Smile\ElasticsuiteTracker\Plugin;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Layout\PageType\Config as PageTypeConfig;
 use Magento\Quote\Model\Quote;
@@ -51,14 +50,9 @@ class QuotePlugin
     private $pageTypeConfig;
 
     /**
-     * @var \Magento\Customer\Model\Session
+     * @var \Smile\ElasticsuiteTracker\Helper\Company
      */
-    private $customerSession;
-
-    /**
-     * @var \Magento\Company\Api\CompanyManagementInterface|null
-     */
-    private $companyManagement = null;
+    private $companyHelper;
 
     /**
      * @var \Psr\Log\LoggerInterface
@@ -70,13 +64,12 @@ class QuotePlugin
      *
      * @SuppressWarnings(PHPMD.ElseExpression)
      *
-     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service         Tracker service.
-     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager   Cookie manager.
-     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper   Tracker helper.
-     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig  Page type configuration.
-     * @param \Magento\Customer\Model\Session                                 $customerSession Customer session.
-     * @param \Psr\Log\LoggerInterface                                        $logger          Logger.
-     * @param \Magento\Framework\Module\Manager                               $moduleManager   Module manager.
+     * @param \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface $service        Tracker service.
+     * @param \Magento\Framework\Stdlib\CookieManagerInterface                $cookieManager  Cookie manager.
+     * @param \Smile\ElasticsuiteTracker\Helper\Data                          $trackerHelper  Tracker helper.
+     * @param \Magento\Framework\View\Layout\PageType\Config                  $pageTypeConfig Page type configuration.
+     * @param \Smile\ElasticsuiteTracker\Helper\Company                       $companyHelper  Company helper.
+     * @param \Psr\Log\LoggerInterface                                        $logger         Logger.
      *
      * @throws LocalizedException
      */
@@ -85,27 +78,15 @@ class QuotePlugin
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Smile\ElasticsuiteTracker\Helper\Data $trackerHelper,
         \Magento\Framework\View\Layout\PageType\Config $pageTypeConfig,
-        \Magento\Customer\Model\Session $customerSession,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Module\Manager $moduleManager
+        \Smile\ElasticsuiteTracker\Helper\Company $companyHelper,
+        \Psr\Log\LoggerInterface $logger
     ) {
         $this->service       = $service;
         $this->cookieManager = $cookieManager;
         $this->trackerHelper = $trackerHelper;
         $this->pageTypeConfig = $pageTypeConfig;
-        $this->customerSession = $customerSession;
+        $this->companyHelper = $companyHelper;
         $this->logger        = $logger;
-
-        // Check if Magento_Company module is enabled before attempting to load the repository.
-        if ($moduleManager->isEnabled('Magento_Company')) {
-            if (interface_exists('\Magento\Company\Api\CompanyManagementInterface')) {
-                $this->companyManagement = ObjectManager::getInstance()->get(
-                    \Magento\Company\Api\CompanyManagementInterface::class
-                );
-            } else {
-                throw new LocalizedException(__('CompanyManagementInterface is not available.'));
-            }
-        }
     }
 
     /**
@@ -132,7 +113,7 @@ class QuotePlugin
                         $customerGroupId = $product->getCustomerGroupId();
 
                         // Retrieve the customer company ID rom the customer session.
-                        $companyId = $this->getCompanyId();
+                        $companyId = $this->companyHelper->getCompanyId();
 
                         // Log event with product, store, customer group and company ids.
                         $this->logEvent($product->getId(), $product->getStoreId(), $customerGroupId, $companyId);
@@ -182,30 +163,6 @@ class QuotePlugin
         ];
 
         $this->service->addEvent($eventData);
-    }
-
-    /**
-     * Retrieve the company ID from the customer session.
-     *
-     * If the customer has an associated company, return the company ID, otherwise return null if no company is assigned.
-     *
-     * @return int|null
-     */
-    private function getCompanyId(): ?int
-    {
-        if ($this->customerSession->isLoggedIn() && (null !== $this->companyManagement)) {
-            try {
-                $customer = $this->customerSession->getCustomer();
-                $company = $this->companyManagement->getByCustomerId($customer->getId());
-
-                return $company ? $company->getId() : null;
-            } catch (\Exception $e) {
-                return null;
-            }
-        }
-
-        // Return null if the user is non-logged-in or companyManagement is not available.
-        return null;
     }
 
     /**
