@@ -99,14 +99,14 @@ class BulkResponse implements BulkResponseInterface
             $operationType = current(array_keys($item));
             $itemData      = $item[$operationType];
             $index         = $itemData['_index'];
-            $documentType  = $itemData['_type'];
+            $documentType  = $itemData['_type'] ?? '_doc';
             $errorData     = $itemData['error'];
             $errorKey      = $operationType . $errorData['type'] . $errorData['reason'] . $index . $documentType;
 
             if (!isset($errorByReason[$errorKey])) {
                 $errorByReason[$errorKey] = [
                     'index'         => $itemData['_index'],
-                    'document_type' => $itemData['_type'],
+                    'document_type' => $itemData['_type'] ?? '_doc',
                     'operation'     => $operationType,
                     'error'         => ['type' => $errorData['type'], 'reason' => $errorData['reason']],
                     'count'         => 0,
