@@ -15,9 +15,10 @@ namespace Smile\ElasticsuiteIndices\Model;
 
 use DateTime;
 use Exception;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\DataObject;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
@@ -53,6 +54,11 @@ class IndexStatusProvider
     private $logger;
 
     /**
+     * @var IndexSettingsInterface
+     */
+    private $indexSettings;
+
+    /**
      * @var IndexSettingsHelper
      */
     private $indexSettingsHelper;
@@ -76,6 +82,7 @@ class IndexStatusProvider
      * Constructor.
      *
      * @param ClientInterface                 $client                   ES client.
+     * @param IndexSettingsInterface          $indexSettings            Index settings.
      * @param IndexSettingsHelper             $indexSettingsHelper      Index settings helper.
      * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
      * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
@@ -83,12 +90,14 @@ class IndexStatusProvider
      */
     public function __construct(
         ClientInterface $client,
+        IndexSettingsInterface $indexSettings,
         IndexSettingsHelper $indexSettingsHelper,
         StoreIndicesCollectionFactory $storeIndicesFactory,
         WorkingIndexerCollectionFactory $indexerCollectionFactory,
         LoggerInterface $logger
     ) {
         $this->client = $client;
+        $this->indexSettings = $indexSettings;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
         $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
@@ -106,7 +115,8 @@ class IndexStatusProvider
      */
     public function getIndexStatus($indexName, $alias): string
     {
-        $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName, $alias);
+        $indexData = $this->indexSettingsHelper->parseIndexName($indexName);
+        $indexDate = $indexData ? $indexData['datetime'] : false;
 
         if ($this->isExternal($indexName)) {
             return IndexStatus::EXTERNAL_STATUS;
@@ -227,40 +237,6 @@ class IndexStatusProvider
     private function isLive($alias): bool
     {
         return !empty($alias);
-    }
-
-    /**
-     * Get index updated date from index name.
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     *
-     * @param string $indexName Index name.
-     * @param string $alias     Index alias.
-     *
-     * @return DateTime|false
-     */
-    private function getIndexUpdatedDateFromIndexName($indexName, $alias)
-    {
-        $matches = [];
-        preg_match_all('/{{([\w]*)}}/', $this->indexSettingsHelper->getIndicesPattern(), $matches);
-
-        if (empty($matches[1])) {
-            return false;
-        }
-
-        $format = '';
-        foreach ($matches[1] as $value) {
-            $format .= $value;
-        }
-
-        try {
-            // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
-            $indexName = str_replace($alias ?? $this->indexSettingsHelper->getIndexAlias(), '', $indexName);
-            $date      = preg_replace('/[^0-9]|(?<=[a-zA-Z])[0-9]/', '', $indexName);
-
-            return DateTime::createFromFormat($format, $date);
-        } catch (Exception $e) {
-            return false;
-        }
     }
 
     /**

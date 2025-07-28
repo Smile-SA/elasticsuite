@@ -116,6 +116,14 @@
                 </field>
             </group>
 
+            <group id="bulk_error_logging" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Indexing / Bulk errors logging</label>
+                <field id="enable" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Enable logging of bulk indexing errors</label>
+                    <comment><![CDATA[When enabled, errors related to bulk "index" operations (indexing products for instance) will be saved to the database and be available in the "Elasticsuite > System > Indexing / Bulk Errors" dashboard. This can be helpful to detect, for instance, products not being indexed due to an incorrectly created product attribute or a faulty custom data source.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
         </section>
 
         <section id="smile_elasticsuite_core_analysis_settings" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">

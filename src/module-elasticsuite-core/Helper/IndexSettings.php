@@ -15,13 +15,18 @@
 namespace Smile\ElasticsuiteCore\Helper;
 
 use DateTime;
+use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
 
 /**
  * Indices related configuration helper.
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -102,6 +107,32 @@ class IndexSettings extends AbstractConfiguration
      * @var integer
      */
     const MAX_NGRAM_SIZE_DEFAULT = 2;
+
+    /**
+     * @var IndicesConfig
+     */
+    protected $indicesConfig;
+
+    /**
+     * @var array
+     */
+    protected $indexNameParsingCache = [];
+
+    /**
+     * Constructor.
+     *
+     * @param Context               $context       Helper context.
+     * @param StoreManagerInterface $storeManager  Store manager.
+     * @param IndicesConfig         $indicesConfig Indices configuration.
+     */
+    public function __construct(
+        Context $context,
+        StoreManagerInterface $storeManager,
+        IndicesConfig $indicesConfig
+    ) {
+        parent::__construct($context, $storeManager);
+        $this->indicesConfig  = $indicesConfig;
+    }
 
     /**
      * Return the locale code (e.g.: "en_US") for a store.
@@ -354,6 +385,77 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Retrieve index context from its name.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @param string $indexName Index name.
+     *
+     * @return array|false
+     */
+    public function parseIndexName(string $indexName)
+    {
+        if (array_key_exists($indexName, $this->indexNameParsingCache)) {
+            return $this->indexNameParsingCache[$indexName];
+        }
+
+        $fullIndexName = $indexName;
+
+        // 1. Remove prefix
+        // magento2_default_catalog_product_20250716_153832 => default_catalog_product_20250716_153832
+        $alias = $this->getIndexAlias();
+        if (!str_starts_with($indexName, "${alias}_")) {
+            return false;
+        }
+        $indexName = str_replace("${alias}_", '', $indexName);
+
+        // 2. Get date and remove suffix
+        // default_catalog_product_20250716_153832 => default_catalog_product
+        $isTrackingIndex = str_contains($indexName, 'tracking');
+        $today = new \DateTime();
+        $format = str_replace(['{{', '}}'], '', $this->getIndicesPattern());
+        // Get suffix length from pattern, tracking index have a special suffix.
+        $suffixLength = strlen($isTrackingIndex ? $today->format('Ym') : $this->getIndexNameSuffix($today));
+        // Extract timestamp from indexName.
+        $dateString = substr($indexName, -$suffixLength);
+        // Remove timestamp from indexName.
+        $indexName = substr($indexName, 0, -$suffixLength - 1);
+        try {
+            // Tracking indices are built monthly and does not fit with standard pattern containing datetime with hours.
+            $datetime = $isTrackingIndex ? false : DateTime::createFromFormat($format, $dateString);
+        } catch (\Exception $e) {
+            $datetime = false;
+        }
+
+        // 3. Find entity type and store code
+        // default_catalog_product => (default, catalog_product)
+        $availableTypes = array_keys($this->indicesConfig->get());
+        $indexIdentifier = null;
+        $storeCode = null;
+        // Sort store codes by descending number of underscores to avoid incorrect replacements,
+        // especially when one store code is a prefix of another (e.g., 'default' vs 'default_fr').
+        usort($availableTypes, function ($itemA, $itemB) {
+            return substr_count($itemB, '_') <=> substr_count($itemA, '_');
+        });
+        foreach ($availableTypes as $type) {
+            if (str_ends_with($indexName, $type)) {
+                $indexIdentifier = $type;
+                $storeCode = preg_replace("/_$type$/", '', $indexName);
+                break;
+            }
+        }
+
+        $this->indexNameParsingCache[$fullIndexName] = [
+            'prefix' => $alias,
+            'store_code' => $storeCode,
+            'index_identifier' => $indexIdentifier,
+            'datetime' => $datetime,
+        ];
+
+        return $this->indexNameParsingCache[$fullIndexName];
+    }
+
+    /**
      * Max number of results per query.
      *
      * @param string $indexIdentifier Index identifier.
@@ -438,7 +540,6 @@ class IndexSettings extends AbstractConfiguration
 
         return $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store);
     }
-
 
     /**
      * Returns true if the given store used a non-default language stemmer.

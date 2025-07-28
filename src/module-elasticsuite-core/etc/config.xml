@@ -36,6 +36,9 @@
                 <batch_indexing_size>1000</batch_indexing_size>
                 <ghost_timeout>172800</ghost_timeout>
             </indices_settings>
+            <bulk_error_logging>
+                <enable>1</enable>
+            </bulk_error_logging>
         </smile_elasticsuite_core_base_settings>
 
         <smile_elasticsuite_core_analysis_settings>

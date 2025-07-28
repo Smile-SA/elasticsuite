@@ -628,4 +628,9 @@
         <plugin name="addElasticsuiteToAuthorizedSearchEngines" type="Smile\ElasticsuiteCore\Plugin\Setup\SearchConfigOptionsListPlugin"/>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Helper\IndexSettings">
+        <arguments>
+            <argument name="indicesConfig" xsi:type="object">Smile\ElasticsuiteCore\Index\Indices\Config\Proxy</argument>
+        </arguments>
+    </type>
 </config>
