@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Index;
 
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
@@ -63,12 +64,18 @@ class IndexOperation implements IndexOperationInterface
     private $logger;
 
     /**
-     * Instanciate the index operation manager.
+     * @var \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager
+     */
+    private $bulkErrorManager;
+
+    /**
+     * Instantiate the index operation manager.
      *
      * @param \Magento\Framework\ObjectManagerInterface                $objectManager   Object manager.
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client          ES client.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings   ES settings.
      * @param PipelineManagerInterface                                 $pipelineManager Ingest Pipeline Manager.
+     * @param \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager    $bulkErrorManager Bulk error manager.
      * @param \Psr\Log\LoggerInterface                                 $logger          Logger access.
      */
     public function __construct(
@@ -76,6 +83,7 @@ class IndexOperation implements IndexOperationInterface
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
         PipelineManagerInterface $pipelineManager,
+        \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager $bulkErrorManager,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->objectManager        = $objectManager;
@@ -84,6 +92,7 @@ class IndexOperation implements IndexOperationInterface
         $this->indicesConfiguration = $indexSettings->getIndicesConfig();
         $this->pipelineManager      = $pipelineManager;
         $this->logger               = $logger;
+        $this->bulkErrorManager     = $bulkErrorManager;
     }
 
     /**
@@ -160,6 +169,8 @@ class IndexOperation implements IndexOperationInterface
         $this->client->createIndex($index->getName(), $indexSettings);
 
         $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
+
+        $this->bulkErrorManager->cleanBulkErrors($store, $indexIdentifier);
 
         return $index;
     }
@@ -342,6 +353,17 @@ class IndexOperation implements IndexOperationInterface
                     ),
                 ];
                 $this->logger->error(implode(" ", $errorMessages));
+                if ($error['operation'] === BulkRequestInterface::ACTION_INDEX) {
+                    $this->bulkErrorManager->recordError(
+                        $error['index'],
+                        $error['operation'],
+                        $error['error']['type'],
+                        $error['error']['simple_reason'],
+                        $error['error']['reason'],
+                        (int) $error['count'] ?? 1,
+                        implode(', ', $error['document_ids']),
+                    );
+                }
             }
         }
 
