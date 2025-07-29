@@ -98,3 +98,5 @@ Duplicate,Dupliquer
 "Manage Elasticsuite Search Optimizers","Gérer les Optimiseurs Elasticsuite"
 "Allow negative boost","Autoriser un boost négatif"
 "If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.","Si laissée décochée, filtrera les cas où la valeur d'attribut (multipliée par le pré-multiplicateur de valeur) serait trop basse pour générer un boost positif après l'application du modificateur d'impact du boost. Cela empêche ce produit d'être pénalisé par rapport à d'autres produits qui n'ont pas du tout de valeur pour cet attribut."
+"Results","Résultats"
+"Uses","Utilisations"
