@@ -71,12 +71,12 @@ class IndexOperation implements IndexOperationInterface
     /**
      * Instantiate the index operation manager.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                $objectManager   Object manager.
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client          ES client.
-     * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings   ES settings.
-     * @param PipelineManagerInterface                                 $pipelineManager Ingest Pipeline Manager.
+     * @param \Magento\Framework\ObjectManagerInterface                $objectManager    Object manager.
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client           ES client.
+     * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings    ES settings.
+     * @param PipelineManagerInterface                                 $pipelineManager  Ingest Pipeline Manager.
      * @param \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager    $bulkErrorManager Bulk error manager.
-     * @param \Psr\Log\LoggerInterface                                 $logger          Logger access.
+     * @param \Psr\Log\LoggerInterface                                 $logger           Logger access.
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
