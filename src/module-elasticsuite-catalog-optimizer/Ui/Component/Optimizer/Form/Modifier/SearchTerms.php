@@ -102,10 +102,13 @@ class SearchTerms implements \Magento\Ui\DataProvider\Modifier\ModifierInterface
         $yesNoValues = $this->yesNo->toArray();
 
         foreach ($collection as $query) {
+            /** @var \Magento\Search\Model\Query $query */
             $data[] = [
                 'id'              => $query->getId(),
                 'query_text'      => $query->getQueryText(),
                 'is_spellchecked' => $yesNoValues[(int) $query->getIsSpellchecked()],
+                'popularity'      => $query->getPopularity(),
+                'num_results'     => $query->getNumResults(),
             ];
         }
 

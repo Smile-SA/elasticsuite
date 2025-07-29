@@ -96,3 +96,5 @@ Duplicate,Duplicate
 "Manage Elasticsuite Search Optimizers","Manage Elasticsuite Search Optimizers"
 "Allow negative boost","Allow negative boost"
 "If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.","If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute."
+"Results","Results"
+"Uses","Uses"

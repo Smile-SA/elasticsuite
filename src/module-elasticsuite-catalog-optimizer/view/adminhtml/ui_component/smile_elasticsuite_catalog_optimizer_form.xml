@@ -323,6 +323,8 @@
                             <item name="id" xsi:type="string">query_id</item>
                             <item name="query_text" xsi:type="string">query_text</item>
                             <item name="is_spellchecked" xsi:type="string">is_spellchecked</item>
+                            <item name="popularity" xsi:type="string">popularity</item>
+                            <item name="num_results" xsi:type="string">results</item>
                         </item>
                     </item>
                 </argument>
@@ -374,6 +376,20 @@
                                 <item name="fit" xsi:type="boolean">true</item>
                             </item>
                         </argument>
+                    </field>
+                    <field name="popularity" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Uses</label>
+                            <visible>true</visible>
+                        </settings>
+                    </field>
+                    <field name="num_results" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Results</label>
+                            <visible>true</visible>
+                        </settings>
                     </field>
                     <actionDelete name="delete">
                         <settings>
