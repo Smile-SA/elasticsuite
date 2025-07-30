@@ -57,8 +57,16 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
                                 ->disableOriginalConstructor()
                                 ->getMock();
         $logger        = $this->getLoggerMock();
+        $bulkErrorManager = $this->getBulkErrorManagerMock();
 
-        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $pipelineManager, $logger);
+        $this->indexOperation = new IndexOperation(
+            $objectManager,
+            $this->clientMock,
+            $indexSettings,
+            $pipelineManager,
+            $bulkErrorManager,
+            $logger
+        );
     }
 
     /**
@@ -289,5 +297,17 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $loggerMock->method('error')->will($this->returnCallback($errorLoggerStub));
 
         return $loggerMock;
+    }
+
+    /**
+     * Get bulk error manager mock.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getBulkErrorManagerMock()
+    {
+        return $this->getMockBuilder(\Smile\ElasticsuiteCore\Model\Index\BulkError\Manager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

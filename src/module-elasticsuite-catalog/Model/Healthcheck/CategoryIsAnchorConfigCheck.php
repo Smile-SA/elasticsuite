@@ -94,26 +94,29 @@ class CategoryIsAnchorConfigCheck extends AbstractCheck
      */
     public function getDescription(): string
     {
+        // @codingStandardsIgnoreStart
         $defaultText = __(
-            'For showing products in categories, Elasticsuite relies on making sure all categories are "anchor" categories,
-             that is displaying both their "own" products and the products associated with their subcategories.'
+            'For showing products in categories, Elasticsuite relies on making sure all categories are "anchor" categories, that is displaying both their "own" products and the products associated with their subcategories.'
         );
+        // @codingStandardsIgnoreEnd
         $description = [$defaultText];
 
         // If the attribute configuration check failed.
         if (!$this->isAnchorAttributeConfigValid()) {
             if (!$this->isAnchorDefaultValueValid()) {
+                // @codingStandardsIgnoreStart
                 $description[] = __(
-                    'The default value of the category attribute "Is Anchor (is_anchor)" is no longer set to 1 / Yes.
-                     This means all future categories created on the site will no longer automatically be "anchor" categories.'
+                    'The default value of the category attribute "Is Anchor (is_anchor)" is no longer set to 1 / Yes. This means all future categories created on the site will no longer automatically be "anchor" categories.'
                 );
+                // @codingStandardsIgnoreEnd
             }
 
             if (!$this->isAnchorFrontendInputValid()) {
+                // @codingStandardsIgnoreStart
                 $description[] = __(
-                    'The category attribute "Is Anchor (is_anchor)" is no longer hidden on the Admin category edit page.
-                     This means the admin users can change categories to no longer being "anchor" categories.'
+                    'The category attribute "Is Anchor (is_anchor)" is no longer hidden on the Admin category edit page. This means the admin users can change categories to no longer being "anchor" categories.'
                 );
+                // @codingStandardsIgnoreEnd
             }
 
             $description[] = __(

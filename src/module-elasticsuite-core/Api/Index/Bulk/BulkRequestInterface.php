@@ -26,6 +26,18 @@ use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
  */
 interface BulkRequestInterface
 {
+    /** @var string */
+    const ACTION_CREATION = 'create';
+
+    /** @var string */
+    const ACTION_UPDATE = 'update';
+
+    /** @var string */
+    const ACTION_DELETE = 'delete';
+
+    /** @var string */
+    const ACTION_INDEX = 'index';
+
     /**
      * Indicates if the current bulk contains operation.
      *

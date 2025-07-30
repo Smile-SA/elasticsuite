@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\BuilderInterface;
 
@@ -27,6 +28,21 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Build
 class SignificantTerm implements BuilderInterface
 {
     /**
+     * @var QueryBuilder
+     */
+    private $queryBuilder;
+
+    /**
+     * Constructor.
+     *
+     * @param QueryBuilder $queryBuilder Search query builder.
+     */
+    public function __construct(QueryBuilder $queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    /**
      * Build the aggregation.
      *
      * @param BucketInterface $bucket Term bucket.
@@ -38,13 +54,18 @@ class SignificantTerm implements BuilderInterface
         if ($bucket->getType() !== BucketInterface::TYPE_SIGNIFICANT_TERM) {
             throw new \InvalidArgumentException("Query builder : invalid aggregation type {$bucket->getType()}.");
         }
-        $aggrepationParams = [
+
+        $aggregationParams = [
             'field'                 => $bucket->getField(),
             'size'                  => $bucket->getSize(),
             'min_doc_count'         => $bucket->getMinDocCount(),
             $bucket->getAlgorithm() => new \stdClass(),
         ];
 
-        return ['significant_terms' => $aggrepationParams];
+        if ($bucket->getBackgroundFilter()) {
+            $aggregationParams['background_filter'] = $this->queryBuilder->buildQuery($bucket->getBackgroundFilter());
+        }
+
+        return ['significant_terms' => $aggregationParams];
     }
 }

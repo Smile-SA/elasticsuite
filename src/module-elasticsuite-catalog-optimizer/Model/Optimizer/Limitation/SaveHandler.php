@@ -73,7 +73,7 @@ class SaveHandler implements \Magento\Framework\EntityManager\Operation\Extensio
     private function getCategoryIdsLimitation($entity)
     {
         $searchContainerData = $entity->getData('catalog_view_container');
-        $applyTo     = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
+        $applyTo     = is_array($searchContainerData) ? ((bool) ($searchContainerData['apply_to'] ?? false)) : false;
         $categoryIds = ($applyTo === false) ? [] : $searchContainerData['category_ids'] ?? [];
 
         return $categoryIds;
@@ -89,7 +89,7 @@ class SaveHandler implements \Magento\Framework\EntityManager\Operation\Extensio
     private function getQueryIdsLimitation($entity)
     {
         $searchContainerData = $entity->getData('quick_search_container');
-        $applyTo  = is_array($searchContainerData) ? ((bool) $searchContainerData['apply_to'] ?? false) : false;
+        $applyTo  = is_array($searchContainerData) ? ((bool) ($searchContainerData['apply_to'] ?? false)) : false;
         $queryIds = [];
 
         if (($applyTo !== false) && (isset($searchContainerData['query_ids']) && !empty($searchContainerData['query_ids']))) {

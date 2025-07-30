@@ -34,6 +34,21 @@ class Document extends \Magento\Framework\Api\Search\Document
     const SOURCE_DOC_FIELD_NAME = "_source";
 
     /**
+     * @var string
+     */
+    const INDEX_DOC_FIELD_NAME = "_index";
+
+    /**
+     * Return the exact index name containing the document.
+     *
+     * @return string
+     */
+    public function getIndex()
+    {
+        return $this->_get(self::INDEX_DOC_FIELD_NAME);
+    }
+
+    /**
      * Return search document score.
      *
      * @return float

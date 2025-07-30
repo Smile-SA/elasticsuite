@@ -41,3 +41,36 @@ fieldset.es-esfeature__logo legend span:first-child:after { /* Legacy form field
     top: 50%;
     left: -40px;
 }
+
+/* Upsell message */
+div.elasticsuite-upsell-content:before {
+    background: url('../images/es-logo.svg') no-repeat 0 0;
+    background-size: contain;
+    content: "";
+    width: 30px;
+    height: 30px;
+}
+
+/* Category trees decoration */
+.x-tree-node-el.es-esfeature__logo > a:after,                   /* Category tree block, generic (rules, widget) category picker */
+.jstree-node.es-esfeature__logo > a.jstree-anchor:after {       /* Category picker in URL rewrites edition  */
+    position: absolute;
+    content: "";
+    background: url('../images/es-logo.svg') no-repeat bottom;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    margin-top: -2px;
+}
+
+.jstree-node.es-esfeature__logo > a.jstree-anchor:after {       /* Category picker in URL rewrites edition */
+    width: 24px;
+    height: 24px;
+    margin-top: 0;
+    margin-left: 10px;
+}
+
+.admin__field-control .rule-tree .x-tree-node-el.es-esfeature__logo > a:after {  /* Category picker in non-full page forms */
+    margin-top: 7px;
+}

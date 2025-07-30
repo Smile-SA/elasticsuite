@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Index\Bulk;
 
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 
 /**
@@ -100,14 +101,24 @@ class BulkResponse implements BulkResponseInterface
             $itemData      = $item[$operationType];
             $index         = $itemData['_index'];
             $errorData     = $itemData['error'];
-            $errorKey      = $operationType . $errorData['type'] . $errorData['reason'] . $index;
+            $simpleReason  = $errorData['reason'];
+            if ($operationType === BulkRequestInterface::ACTION_INDEX) {
+                $simpleReason  = preg_replace("#^\[[0-9]+:[0-9]+\]#", "", $simpleReason, 1);
+                $simpleReason  = preg_replace("#in document with id '[^']+'#", "in document", $simpleReason, 1);
+                $simpleReason  = preg_replace("#Preview of field's value: '[^']+'#", "", $simpleReason, 1);
+            }
+            $errorKey      = $operationType . $errorData['type'] . $simpleReason . $index;
 
             if (!isset($errorByReason[$errorKey])) {
                 $errorByReason[$errorKey] = [
                     'index'         => $itemData['_index'],
                     'operation'     => $operationType,
-                    'error'         => ['type' => $errorData['type'], 'reason' => $errorData['reason']],
                     'count'         => 0,
+                    'error'         => [
+                        'type' => $errorData['type'],
+                        'simple_reason' => $simpleReason,
+                        'reason' => $errorData['reason'],
+                    ],
                 ];
             }
 

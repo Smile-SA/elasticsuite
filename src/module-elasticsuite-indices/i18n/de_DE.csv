@@ -44,7 +44,7 @@
 "There are no ghost indices in your Elasticsearch cluster. No action is required at this time.","In Ihrem Elasticsearch-Cluster gibt es keine Geisterindizes. Derzeit sind keine Maßnahmen erforderlich."
 "You have <strong>%1 ghost indices</strong>. Ghost indices have a footprint on your Elasticsearch cluster health. You should consider removing them.","Sie haben <strong>%1 Geister-Indizes</strong>. Geister-Indizes haben einen Fußabdruck auf Ihrer Elasticsearch Cluster-Gesundheit. Sie sollten in Erwägung ziehen, sie zu entfernen."
 "Click here to go to the <a href=""%1""><strong>Elasticsuite Indices</strong></a> page to take appropriate actions.","Klicken Sie hier, um zu den <a href=""%1""><strong>Elasticsuite Indizes</strong></a> Seite zu gelangen, um entsprechende Aktionen durchzuführen."
-"Click <a href=""%1""><strong>here</strong></a> to go to the <strong>Elasticsuite Indices</strong> page to take appropriate actions.","Klicken Sie <a href=""%1""><strong>hier</<strong></a>, um zu den <strong>Elasticsuite Indizes</strong> Seite zu gelangen, um entsprechende Aktionen durchzuführen."
+"Click <a href=""%1""><strong>here</strong></a> to go to the <strong>Elasticsuite Indices</strong> page to take appropriate actions.","Klicken Sie <a href=""%1""><strong>hier</strong></a>, um zu den <strong>Elasticsuite Indizes</strong> Seite zu gelangen, um entsprechende Aktionen durchzuführen."
 "1 ghost index found","1 Geister-Index gefunden"
 "%1 ghost indices found","%1 Geister-Indizes gefunden"
 "Remove All","Alles entfernen"
