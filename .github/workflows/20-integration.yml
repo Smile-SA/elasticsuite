@@ -19,8 +19,8 @@ env:
 #  opensearch1: 10200
   opensearch2: 19200
 # List of DB port for each server version. Must be consistent with jobs.build.services definitions.
-  mysql57: 3306
-  mysql80: 3308
+  mysql80: 3380
+  mysql84: 3384
 
 jobs:
     build:
@@ -30,21 +30,21 @@ jobs:
         runs-on: ubuntu-22.04
         name: 'Integration'
         services:
-            mysql57:
-                image: docker://mysql:5.7
-                env:
-                    MYSQL_ROOT_PASSWORD: magento2
-                    MYSQL_DATABASE: magento2
-                ports:
-                    - 3306:3306
-                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
             mysql80:
-                image: docker://mysql:8.0.28
+                image: docker://mysql:8.0
                 env:
                     MYSQL_ROOT_PASSWORD: magento2
                     MYSQL_DATABASE: magento2
                 ports:
-                    - 3308:3306
+                    - 3380:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+            mysql84:
+                image: docker://mysql:8.4
+                env:
+                    MYSQL_ROOT_PASSWORD: magento2
+                    MYSQL_DATABASE: magento2
+                ports:
+                    - 3384:3306
                 options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 #            elasticsearch6:
 #                image: docker://magento/magento-cloud-docker-elasticsearch:6.8-1.3.0
@@ -74,73 +74,85 @@ jobs:
                   - php-versions: '8.1'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.1'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.6-p10'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.7-p5'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.8'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.3'
                     magento-versions: '2.4.8'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: true
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
                     engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8'
                     magento-editions: 'community'
-                    db: 'mysql57'
+                    db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8'
                     magento-editions: 'enterprise'
-                    db: 'mysql57'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: true
+                  - php-versions: '8.4'
+                    magento-versions: '2.4.8'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
                     engine: 'opensearch2'
                     experimental: true
 
