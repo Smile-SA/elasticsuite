@@ -54,10 +54,10 @@
 
     <table name="smile_elasticsuite_index_bulk_error" resource="default" engine="innodb" comment="Elasticsuite Index Bulk Errors">
         <column xsi:type="bigint" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
-        <column xsi:type="varchar" name="store_code" nullable="false" length="255" comment="Store code"/>
-        <column xsi:type="varchar" name="error_type" nullable="false" length="255" comment="Error type"/>
+        <column xsi:type="varchar" name="store_code" nullable="false" length="32" comment="Store code"/>
+        <column xsi:type="varchar" name="error_type" nullable="false" length="128" comment="Error type"/>
         <column xsi:type="varchar" name="index_identifier" nullable="false" length="255" comment="Index identifier"/>
-        <column xsi:type="varchar" name="operation" nullable="false" length="255" comment="Operation type" />
+        <column xsi:type="varchar" name="operation" nullable="false" length="6" comment="Operation type" />
         <column xsi:type="varchar" name="reason_simple" nullable="false" length="255" comment="Error reason simplified"/>
         <column xsi:type="text" name="reason" nullable="false" comment="Error reason"/>
         <column xsi:type="text" name="sample_ids" nullable="false" comment="Sample IDs"/>
@@ -69,8 +69,9 @@
             <column name="entity_id"/>
         </constraint>
 
-        <constraint xsi:type="unique" referenceId="UNQ_STORE_ID_INDEX_IDENTIFIER_REASON_SIMPLE">
+        <constraint xsi:type="unique" referenceId="UNQ_STORE_ERROR_INDEX_OPERATION_REASON">
             <column name="store_code"/>
+            <column name="error_type" />
             <column name="index_identifier"/>
             <column name="operation" />
             <column name="reason_simple"/>
@@ -78,6 +79,9 @@
 
         <index referenceId="BLK_ERROR_STORE_CODE" indexType="btree">
             <column name="store_code"/>
+        </index>
+        <index referenceId="BLK_ERROR_INDEX_IDENTIFIER" indexType="btree">
+            <column name="index_identifier"/>
         </index>
         <index referenceId="BLK_ERROR_ERROR_TYPE" indexType="btree">
             <column name="error_type"/>
