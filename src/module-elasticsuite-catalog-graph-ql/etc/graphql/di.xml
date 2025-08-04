@@ -182,4 +182,9 @@
         <plugin name="layered_nav_attributes_replace_filter_field"
                 type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
     </type>
+
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products\Query\CategoryUrlPathArgsProcessor">
+        <plugin name="CategoryUrlPathArgProcessorMasqueradeQueries"
+                type="Smile\ElasticsuiteCatalogGraphQl\Plugin\Resolver\Products\Query\CategoryUrlPathArgsProcessorPlugin"/>
+    </type>
 </config>

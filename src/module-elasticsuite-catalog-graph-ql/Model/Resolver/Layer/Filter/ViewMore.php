@@ -16,8 +16,10 @@ namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Layer\Filter;
 
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater;
@@ -48,18 +50,26 @@ class ViewMore implements ResolverInterface
     private $viewMoreContext;
 
     /**
-     * @param ProductQueryInterface $searchQuery     Search Query
-     * @param ContextUpdater        $contextUpdater  Context Updater
-     * @param ViewMoreContext       $viewMoreContext View More Context
+     * @var ArgumentsProcessorInterface
+     */
+    private $argsProcessor;
+
+    /**
+     * @param ProductQueryInterface            $searchQuery        Search Query
+     * @param ContextUpdater                   $contextUpdater     Context Updater
+     * @param ViewMoreContext                  $viewMoreContext    View More Context
+     * @param ArgumentsProcessorInterface|null $argumentsProcessor Args Processor
      */
     public function __construct(
         ProductQueryInterface $searchQuery,
         ContextUpdater $contextUpdater,
-        ViewMoreContext $viewMoreContext
+        ViewMoreContext $viewMoreContext,
+        ?ArgumentsProcessorInterface $argumentsProcessor = null
     ) {
         $this->searchQuery     = $searchQuery;
         $this->contextUpdater  = $contextUpdater;
         $this->viewMoreContext = $viewMoreContext;
+        $this->argsProcessor   = $argumentsProcessor ?: ObjectManager::getInstance()->get(ArgumentsProcessorInterface::class);
     }
 
     /**
@@ -67,6 +77,7 @@ class ViewMore implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
+        $args = $this->getProcessedArgs($info, $args);
         $this->validateArgs($args);
         $this->viewMoreContext->setFilterName($args['filterName']);
 
@@ -109,5 +120,23 @@ class ViewMore implements ResolverInterface
                 __("'filterName' input argument is required.")
             );
         }
+    }
+
+    /**
+     * Process and return query arguments.
+     *
+     * @param ResolveInfo $info Resolve Info.
+     * @param array|null  $args Unprocessed arguments.
+     *
+     * @return array
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException
+     */
+    private function getProcessedArgs(ResolveInfo $info, ?array $args = null): array
+    {
+        if (null === $args) {
+            return [];
+        }
+
+        return $this->argsProcessor->process((string) ($info->fieldName ?? ""), $args);
     }
 }
