@@ -324,7 +324,7 @@
                             <item name="query_text" xsi:type="string">query_text</item>
                             <item name="is_spellchecked" xsi:type="string">is_spellchecked</item>
                             <item name="popularity" xsi:type="string">popularity</item>
-                            <item name="num_results" xsi:type="string">results</item>
+                            <item name="num_results" xsi:type="string">num_results</item>
                         </item>
                     </item>
                 </argument>
