@@ -133,6 +133,8 @@
                 <field name="end_date" type="date"/>
                 <field name="visitor_id" type="keyword"/>
                 <field name="product_view" type="integer" />
+                <field name="product_view_with_source.name" type="keyword" />
+                <field name="product_display.product_list" type="integer" />
                 <field name="product_cart" type="integer" />
                 <field name="category_view" type="integer" />
                 <field name="search_query" type="text">

@@ -50,6 +50,12 @@
                     <aggregation xsi:type="termBucket" name="product_cart" field="page.cart.product_id" />
                     <aggregation xsi:type="termBucket" name="product_sale" field="page.order.items.product_id" />
                     <aggregation xsi:type="termBucket" name="category_sale" field="page.order.items.category_ids" />
+
+                    <aggregation xsi:type="termBucket" name="product_display" field="page.type.identifier">
+                        <aggregations>
+                            <aggregation xsi:type="termBucket" name="product_list" field="page.product_display.id"/>
+                        </aggregations>
+                    </aggregation>
                 </aggregations>
                 <metrics>
                     <metric name="start_date" type="min" field="date" />

@@ -73,7 +73,7 @@ class SessionIndex
         $searchResponse = $this->searchEngine->search($searchRequest);
         if ($searchResponse->getAggregations()->getBucket('session_id') !== null) {
             foreach ($searchResponse->getAggregations()->getBucket('session_id')->getValues() as $sessionValue) {
-                $sessionData = $this->processSessionData($sessionValue);
+                $sessionData = $this->processSessionData($sessionValue, 'session_id');
                 $sessionData['store_id'] = $storeId;
                 unset($sessionData['count']);
 
@@ -106,9 +106,9 @@ class SessionIndex
      *
      * @return array
      */
-    private function processSessionData(AggregationValueInterface $value): array
+    private function processSessionData(AggregationValueInterface $value, string $aggregationName): array
     {
-        $data = ['session_id' => $value->getValue()];
+        $data = [$aggregationName => $value->getValue()];
 
         /** @var Value $value */
         foreach ($value->getAggregations()->getBuckets() as $bucket) {
@@ -116,7 +116,21 @@ class SessionIndex
             $bucketValues = [];
 
             foreach ($bucket->getValues() as $bucketValue) {
-                $bucketValues[] = $bucketValue->getValue();
+                if ($bucketValue->getAggregations()->getBuckets()) {
+                    // Handle nested aggregations here.
+                    foreach ($bucketValue->getAggregations()->getBuckets() as $subBucket) {
+                        $subBucketValues = [];
+                        foreach ($subBucket->getValues() as $subBucketValue) {
+                            $subBucketValues[] = $subBucketValue->getValue();
+                        }
+                        $bucketValues[] = [
+                            'name' => $bucketValue->getValue(),
+                            $subBucket->getName() => $subBucketValues,
+                        ];
+                    }
+                } else {
+                    $bucketValues[] = $bucketValue->getValue();
+                }
             }
 
             $data[$bucketName] = $bucketValues;

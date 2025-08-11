@@ -127,6 +127,20 @@ class Catalog extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBl
             $variables['product.sku'] = $product->getSku();
         }
 
+        $productListBlock = $this->getProductListBlock();
+        $index = 0;
+
+        if ($productListBlock !== null && $productListBlock->getCollection()) {
+            foreach ($productListBlock->getCollection() as $product) {
+                $prefix = 'product_display.' . $index;
+                $variables[$prefix . '.id']    = $product->getId();
+                $variables[$prefix . '.sku']   = $product->getSku();
+                $variables[$prefix . '.price'] = $product->getFinalPrice();
+                $variables[$prefix . '.label'] = $product->getName();
+                $index++;
+            }
+        }
+
         return $variables;
     }
 
