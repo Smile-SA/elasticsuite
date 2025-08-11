@@ -11,9 +11,10 @@
 
 define([
     'jquery',
+    'mage/translate',
     'jquery-ui-modules/core',
     'jquery-ui-modules/mouse'
-], function ($, undefined) {
+], function ($, $t, undefined) {
 
 // number of pages in a slider
 // (how many times can you page up/down to go through the whole range)
@@ -93,6 +94,7 @@ define([
 
             this.handles.each(function (i) {
                 $(this).data("ui-slider-handle-index", i);
+                $(this).attr('title', handleCount === 1 ? $t('Range') : i === 0 ? $t('Minimum') : $t('Maximum'));
             });
         },
 
