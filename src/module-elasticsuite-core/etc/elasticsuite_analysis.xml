@@ -20,6 +20,14 @@
 
     <char_filters>
         <char_filter name="html_strip" type="html_strip" language="default"/>
+        <char_filter name="inch_detector" type="pattern_replace" language="default">
+            <pattern>(\d+)("|in\.?)</pattern>
+            <replacement>$1 inches</replacement>
+        </char_filter>
+        <char_filter name="foot_detector" type="pattern_replace" language="default">
+            <pattern>(\d+)('|ft\.?)</pattern>
+            <replacement>$1 feet</replacement>
+        </char_filter>
     </char_filters>
 
     <filters>
@@ -37,6 +45,7 @@
             <split_on_case_change>true</split_on_case_change>
             <split_on_numerics>true</split_on_numerics>
             <preserve_original>true</preserve_original>
+            <type_table>" => ALPHANUM,/ => ALPHANUM,# => ALPHANUM</type_table>
         </filter>
         <filter name="shingle" type="shingle" language="default">
             <min_shingle_size>2</min_shingle_size>
@@ -57,6 +66,7 @@
             <split_on_case_change>true</split_on_case_change>
             <split_on_numerics>true</split_on_numerics>
             <preserve_original>false</preserve_original>
+            <type_table>" => ALPHANUM,/ => ALPHANUM,# => ALPHANUM</type_table>
         </filter>
         <filter name="ascii_folding" type="asciifolding" language="default">
             <preserve_original>false</preserve_original>
@@ -222,6 +232,40 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
+        <analyzer name="standard_hash" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="standard_hash_inches" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+                <char_filter ref="inch_detector" />
+                <char_filter ref="foot_detector" />
+            </char_filters>
+        </analyzer>
         <analyzer name="whitespace" tokenizer="standard" language="default">
             <filters>
                 <filter ref="ascii_folding" />
@@ -232,6 +276,44 @@
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="whitespace_hash" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="whitespace_inches" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+                <char_filter ref="inch_detector" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="whitespace_hash_inches" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+                <char_filter ref="inch_detector" />
             </char_filters>
         </analyzer>
         <analyzer name="reference" tokenizer="standard" language="default">
@@ -248,6 +330,39 @@
             </filters>
             <char_filters>
                 <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="reference_hash" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="reference_word_delimiter" />
+                <filter ref="trim_leading_zeroes" />
+                <filter ref="trim_trailing_zeroes" />
+                <filter ref="reduce_zeroes" />
+                <filter ref="lowercase" />
+                <filter ref="reference_shingle" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="reference_hash_inches" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="reference_word_delimiter" />
+                <filter ref="trim_leading_zeroes" />
+                <filter ref="trim_trailing_zeroes" />
+                <filter ref="reduce_zeroes" />
+                <filter ref="lowercase" />
+                <filter ref="reference_shingle" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+                <char_filter ref="inch_detector" />
             </char_filters>
         </analyzer>
         <analyzer name="shingle" tokenizer="whitespace" language="default">
@@ -267,6 +382,24 @@
                 <char_filter ref="html_strip" />
             </char_filters>
         </analyzer>
+        <analyzer name="shingle_inches" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
+                <filter ref="shingle" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+                <char_filter ref="inch_detector" />
+            </char_filters>
+        </analyzer>
         <analyzer name="sortable" tokenizer="keyword" language="default">
             <filters>
                 <filter ref="ascii_folding" />
@@ -278,6 +411,19 @@
             </char_filters>
         </analyzer>
         <analyzer name="phonetic" tokenizer="standard" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="phonetic" />
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip" />
+            </char_filters>
+        </analyzer>
+        <analyzer name="phonetic_hash" tokenizer="whitespace" language="default">
             <filters>
                 <filter ref="ascii_folding" />
                 <filter ref="trim" />
@@ -305,6 +451,41 @@
             </filters>
             <char_filters>
                 <char_filter ref="html_strip"/>
+            </char_filters>
+        </analyzer>
+        <analyzer name="standard_edge_ngram_hash" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
+                <filter ref="edge_ngram_filter"/>
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip"/>
+            </char_filters>
+        </analyzer>
+        <analyzer name="standard_edge_ngram_hash_inches" tokenizer="whitespace" language="default">
+            <filters>
+                <filter ref="ascii_folding" />
+                <filter ref="trim" />
+                <filter ref="elision" />
+                <filter ref="word_delimiter" />
+                <filter ref="lowercase" />
+                <filter ref="stemmer_before" />
+                <filter ref="stemmer_override" />
+                <filter ref="stemmer" />
+                <filter ref="stemmer_after" />
+                <filter ref="edge_ngram_filter"/>
+            </filters>
+            <char_filters>
+                <char_filter ref="html_strip"/>
+                <char_filter ref="inch_detector" />
             </char_filters>
         </analyzer>
     </analyzers>
