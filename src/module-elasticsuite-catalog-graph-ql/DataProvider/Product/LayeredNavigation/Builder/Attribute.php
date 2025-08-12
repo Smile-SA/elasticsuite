@@ -132,7 +132,7 @@ class Attribute implements LayerBuilderInterface
                 }
                 $metrics = $value->getMetrics();
                 if ($value->getValue() === '__other_docs') {
-                    $count += ((int) $metrics['count'] ?? 0) - 1; // -1 because '__other_docs' is counted in.
+                    $count += ((int) ($metrics['count'] ?? 0)) - 1; // -1 because '__other_docs' is counted in.
                     $hasMore = true;
                     continue;
                 }

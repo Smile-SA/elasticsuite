@@ -651,4 +651,10 @@
             <argument name="dataFactory" xsi:type="object">relevanceConfigDataFactory</argument>
         </arguments>
     </type>
+
+    <type name="Smile\ElasticsuiteCore\Helper\IndexSettings">
+        <arguments>
+            <argument name="indicesConfig" xsi:type="object">Smile\ElasticsuiteCore\Index\Indices\Config\Proxy</argument>
+        </arguments>
+    </type>
 </config>

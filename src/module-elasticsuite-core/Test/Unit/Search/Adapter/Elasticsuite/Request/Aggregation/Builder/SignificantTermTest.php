@@ -14,8 +14,11 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm as SignificantTermBuilder;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTerm;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\Query\Term;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Search adapter significant term aggregation builder test case.
@@ -31,7 +34,8 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
      */
     public function testBasicAggregationBuild(): void
     {
-        $aggBuilder = new SignificantTermBuilder();
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $aggBuilder = new SignificantTermBuilder($queryBuilder);
         $bucket = new SignificantTerm('aggregationName', 'fieldName');
 
         $aggregation = $aggBuilder->buildBucket($bucket);
@@ -48,7 +52,10 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
      */
     public function testComplexAggregationBuild(): void
     {
-        $aggBuilder = new SignificantTermBuilder();
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $queryBuilder->method('buildQuery')->willReturn(['test_background_filter' => 'value']);
+        $aggBuilder = new SignificantTermBuilder($queryBuilder);
+        $backgroundFilter = new Term('value', 'test_background_filter');
         $bucket = new SignificantTerm(
             'aggregationName',
             'fieldName',
@@ -61,6 +68,7 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
             12,
             10,
             SignificantTerm::ALGORITHM_PERCENTAGE,
+            $backgroundFilter
         );
 
         $aggregation = $aggBuilder->buildBucket($bucket);
@@ -69,6 +77,7 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('fieldName', $aggregation['significant_terms']['field']);
         $this->assertEquals(12, $aggregation['significant_terms']['size']);
         $this->assertEquals(10, $aggregation['significant_terms']['min_doc_count']);
+        $this->assertEquals(['test_background_filter' => 'value'], $aggregation['significant_terms']['background_filter']);
         $this->assertArrayNotHasKey('gnd', $aggregation['significant_terms']);
         $this->assertArrayHasKey('percentage', $aggregation['significant_terms']);
     }
@@ -78,7 +87,8 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
      */
     public function testInvalidBucketAggregationBuild(): void
     {
-        $aggBuilder = new SignificantTermBuilder();
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $aggBuilder = new SignificantTermBuilder($queryBuilder);
         $this->expectExceptionMessage('Query builder : invalid aggregation type invalidType.');
         $this->expectException(\InvalidArgumentException::class);
         $termsBucket = $this->getMockBuilder(BucketInterface::class)->getMock();

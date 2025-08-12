@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Index;
 
+use DateTime;
+use Exception;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Index\Analysis\Config as AnalysisConfig;

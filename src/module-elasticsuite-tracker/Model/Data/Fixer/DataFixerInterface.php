@@ -24,13 +24,22 @@ namespace Smile\ElasticsuiteTracker\Model\Data\Fixer;
  */
 interface DataFixerInterface
 {
+    /** @var int */
+    const FIX_FAILURE   = 0;
+
+    /** @var int */
+    const FIX_COMPLETE  = 1;
+
+    /** @var int */
+    const FIX_PARTIAL   = 2;
+
     /**
      * Fix invalid data in a given behavioral index for a given store.
-     * Returns true if the data was fixed.
+     * Returns a code defining if all data was fixed, if some partial was fixed or if an error occurred.
      *
      * @param int $storeId Store id.
      *
-     * @return bool
+     * @return int
      */
-    public function fixInvalidData(int $storeId): bool;
+    public function fixInvalidData(int $storeId): int;
 }

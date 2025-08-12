@@ -38,4 +38,19 @@
     <type name="\Magento\VisualMerchandiser\Block\Adminhtml\Category\Merchandiser\Grid">
         <plugin name="remove_position_column" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\RemovePosition"/>
     </type>
+
+    <!-- Decorating virtual categories with the ES logo in the main category tree -->
+    <type name="Magento\Catalog\Block\Adminhtml\Category\Tree">
+        <plugin name="decorate_category_tree_virtual_categories" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\TreePlugin" />
+    </type>
+
+    <!-- Decorating virtual categories with the ES logo in the categories widgets' category chooser -->
+    <type name="Magento\Catalog\Block\Adminhtml\Category\Checkboxes\Tree">
+        <plugin name="decorate_category_tree_virtual_categories" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\TreePlugin" />
+    </type>
+
+    <!-- Decorating category picker in URL rewrite edit block -->
+    <type name="Magento\UrlRewrite\Block\Catalog\Category\Tree">
+        <plugin name="decorate_category_tree_virtual_categories" type="Smile\ElasticsuiteVirtualCategory\Plugin\Block\Category\TreePlugin" />
+    </type>
 </config>

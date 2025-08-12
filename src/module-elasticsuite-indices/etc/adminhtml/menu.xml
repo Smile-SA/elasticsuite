@@ -20,7 +20,7 @@
         <add id="Smile_ElasticsuiteIndices::system"
              title="System"
              module="Smile_ElasticsuiteIndices"
-             sortOrder="90"
+             sortOrder="1000"
              parent="Smile_ElasticsuiteCore::elasticsuite_menu"
              resource="Smile_ElasticsuiteIndices::system"
         />

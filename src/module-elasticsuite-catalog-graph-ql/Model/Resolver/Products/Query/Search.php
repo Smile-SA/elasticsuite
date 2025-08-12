@@ -20,6 +20,7 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Suggestions;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
@@ -146,10 +147,11 @@ class Search implements ProductQueryInterface
     /**
      * Build search criteria from query input args
      *
-     * @param array       $args Query Arguments
+     * @param array       $args Already processed query Arguments
      * @param ResolveInfo $info Resolve Info
      *
      * @return SearchCriteriaInterface
+     * @throws LocalizedException
      */
     private function buildSearchCriteria(array $args, ResolveInfo $info): SearchCriteriaInterface
     {

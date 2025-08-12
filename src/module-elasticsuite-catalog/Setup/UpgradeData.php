@@ -92,6 +92,10 @@ class UpgradeData implements UpgradeDataInterface
             $this->catalogSetup->updateDateAttributes($eavSetup);
         }
 
+        if (version_compare($context->getVersion(), '1.7.2', '<')) {
+            $this->catalogSetup->clearSearchTermListingUiBookmarks($setup);
+        }
+
         $setup->endSetup();
     }
 }

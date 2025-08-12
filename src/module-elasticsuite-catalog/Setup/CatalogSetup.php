@@ -19,6 +19,7 @@ use Magento\Eav\Model\Config;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\IndexerRegistry;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
@@ -373,6 +374,23 @@ class CatalogSetup
         }
     }
 
+
+    /**
+     * Clear the search terms listing ui component stored settings to allow new columns/new positions to be taken
+     * into account correctly.
+     *
+     * @param ModuleDataSetupInterface $setup Data setup.
+     *
+     * @return void
+     */
+    public function clearSearchTermListingUiBookmarks(ModuleDataSetupInterface $setup): void
+    {
+        $select = $setup->getConnection()->select()
+            ->from($setup->getTable('ui_bookmark'))
+            ->where('namespace = ?', 'search_term_listing');
+
+        $setup->getConnection()->deleteFromSelect($select, $setup->getTable('ui_bookmark'));
+    }
 
     /**
      * Update attribute value for an entity with a default value.

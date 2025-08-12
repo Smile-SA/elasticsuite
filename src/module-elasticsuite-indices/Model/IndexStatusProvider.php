@@ -15,9 +15,10 @@ namespace Smile\ElasticsuiteIndices\Model;
 
 use DateTime;
 use Exception;
-use Psr\Log\LoggerInterface;
 use Magento\Framework\DataObject;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
@@ -53,6 +54,11 @@ class IndexStatusProvider
     private $logger;
 
     /**
+     * @var IndexSettingsInterface
+     */
+    private $indexSettings;
+
+    /**
      * @var IndexSettingsHelper
      */
     private $indexSettingsHelper;
@@ -68,9 +74,15 @@ class IndexStatusProvider
     protected $workingIndexers;
 
     /**
+     * @var array|null
+     */
+    private $indicesStats = null;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface                 $client                   ES client.
+     * @param IndexSettingsInterface          $indexSettings            Index settings.
      * @param IndexSettingsHelper             $indexSettingsHelper      Index settings helper.
      * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
      * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
@@ -78,16 +90,19 @@ class IndexStatusProvider
      */
     public function __construct(
         ClientInterface $client,
+        IndexSettingsInterface $indexSettings,
         IndexSettingsHelper $indexSettingsHelper,
         StoreIndicesCollectionFactory $storeIndicesFactory,
         WorkingIndexerCollectionFactory $indexerCollectionFactory,
         LoggerInterface $logger
     ) {
         $this->client = $client;
+        $this->indexSettings = $indexSettings;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
         $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
         $this->logger = $logger;
+        $this->initStats();
     }
 
     /**
@@ -100,7 +115,8 @@ class IndexStatusProvider
      */
     public function getIndexStatus($indexName, $alias): string
     {
-        $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName, $alias);
+        $indexData = $this->indexSettingsHelper->parseIndexName($indexName);
+        $indexDate = $indexData ? $indexData['datetime'] : false;
 
         if ($this->isExternal($indexName)) {
             return IndexStatus::EXTERNAL_STATUS;
@@ -177,31 +193,20 @@ class IndexStatusProvider
      * @param string $indexName Index name.
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function isClosed(string $indexName): bool
     {
-        try {
-            // Ensure the index is NOT External before checking for Closed status.
-            if ($this->isExternal($indexName)) {
-                return false;
-            }
-
-            // Attempt to fetch index stats or metadata to check its status.
-            $indexStats = $this->client->indexStats($indexName);
-
-            // If we successfully retrieved index stats and no error occurs, the index is not closed.
+        // Ensure the index is NOT External before checking for Closed status.
+        if ($this->isExternal($indexName)) {
             return false;
-        } catch (Exception $e) {
-            // Log the error (optional for better diagnostics).
-            $this->logger->error(
-                sprintf('Error fetching index stats for "%s": %s', $indexName, $e->getMessage())
-            );
+        }
 
-            // If an error occurs, it's safer to assume the index could be closed, or the stats are unavailable.
-            // Returning true here means the index is likely closed or inaccessible.
+        // If the index name does not exist in the global response, it is probably closed.
+        if (!array_key_exists($indexName, $this->indicesStats)) {
             return true;
         }
+
+        return false;
     }
 
     /**
@@ -235,36 +240,20 @@ class IndexStatusProvider
     }
 
     /**
-     * Get index updated date from index name.
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * Init indices stats by calling once and for all.
      *
-     * @param string $indexName Index name.
-     * @param string $alias     Index alias.
-     *
-     * @return DateTime|false
+     * @return void
      */
-    private function getIndexUpdatedDateFromIndexName($indexName, $alias)
+    private function initStats()
     {
-        $matches = [];
-        preg_match_all('/{{([\w]*)}}/', $this->indexSettingsHelper->getIndicesPattern(), $matches);
-
-        if (empty($matches[1])) {
-            return false;
-        }
-
-        $format = '';
-        foreach ($matches[1] as $value) {
-            $format .= $value;
-        }
-
-        try {
-            // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
-            $indexName = str_replace($alias ?? $this->indexSettingsHelper->getIndexAlias(), '', $indexName);
-            $date      = preg_replace('/[^0-9]|(?<=[a-zA-Z])[0-9]/', '', $indexName);
-
-            return DateTime::createFromFormat($format, $date);
-        } catch (Exception $e) {
-            return false;
+        if ($this->indicesStats === null) {
+            try {
+                $indexStatsResponse = $this->client->indexStats('_all');
+                $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices statistics', ['exception' => $e]);
+                $this->indicesStats = [];
+            }
         }
     }
 }
