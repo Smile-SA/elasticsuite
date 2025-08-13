@@ -23,11 +23,13 @@
 <?php
 $jsonHelper = $block->getJsonHelper();
 if ($block->isEnabled()) {
-    $beaconUrl        = $this->escapeJsQuote($block->getBeaconUrl());
-    $telemetryUrl     = $this->escapeJsQuote($block->getTelemetryUrl());
-    $telemetryEnabled = $this->escapeJsQuote($block->isTelemetryEnabled());
-    $sessionConfig    = $jsonHelper->jsonEncode($block->getCookieConfig());
-    $trackerApiConfig = "";
+    $beaconUrl         = $this->escapeJsQuote($block->getBeaconUrl());
+    $telemetryUrl      = $this->escapeJsQuote($block->getTelemetryUrl());
+    $telemetryEnabled  = $this->escapeJsQuote($block->isTelemetryEnabled());
+    $sessionConfig     = $jsonHelper->jsonEncode($block->getCookieConfig());
+    $trackerApiConfig  = "";
+    $historyStorageKey = "smile_tracker_page_history";
+    $historyMaxLength  = 5;
 
     if ($block->isUsingAPI()) {
         $endpointUrl = $this->escapeJsQuote($block->getEndpointUrl());
@@ -45,6 +47,8 @@ if ($block->isEnabled()) {
     $scriptString .= "telemetryUrl:'{$telemetryUrl}',";
     $scriptString .= "telemetryEnabled:'{$telemetryEnabled}',";
     $scriptString .= "sessionConfig:{$sessionConfig},";
+    $scriptString .= "historyStorageKey:'{$historyStorageKey}',";
+    $scriptString .= "historyMaxLength:{$historyMaxLength},";
     $scriptString .= "{$trackerApiConfig}";
     $scriptString .= "});";
     $scriptString .= "smileTracker.addPageVar('store_id','{$storeId}');";

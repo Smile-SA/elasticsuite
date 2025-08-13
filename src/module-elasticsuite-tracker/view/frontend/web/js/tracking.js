@@ -187,6 +187,7 @@ const smileTracker = (function () {
     function sendTag(forceCollect = false) {
         initSession.bind(this)();
         initCustomerData.bind(this)();
+        handlePageHistory.bind(this)();
 
         if (this.config && this.config.hasOwnProperty('storeId')) {
             addPageVar.bind(this)('store_id', this.config.storeId);
@@ -275,6 +276,10 @@ const smileTracker = (function () {
         addVariable.bind(this)(transformVarName.bind(this)(varName , 'page'), value);
     }
 
+    function addPreviousPageVar(varName, value) {
+        addVariable.bind(this)(transformVarName.bind(this)(varName , 'previous_page'), value);
+    }
+
     function addCustomerVar(varName, value) {
         addVariable.bind(this)(transformVarName.bind(this)(varName , 'customer'), value);
     }
@@ -324,6 +329,104 @@ const smileTracker = (function () {
         }
     }
 
+    function handlePageHistory() {
+        const currentPageData = {
+            url: window.location.pathname,
+            type: {
+                identifier: this.vars['page[type][identifier]'],
+                label: this.vars['page[type][label]']
+            }
+        };
+
+        // Add previous page data to tracker if exists
+        const previousPage = getLastPageDataFromHistory.bind(this)();
+        if (previousPage) {
+            addPreviousPageVar.bind(this)('url', previousPage.url);
+            addPreviousPageVar.bind(this)('type.identifier', previousPage.type.identifier);
+            addPreviousPageVar.bind(this)('type.label', previousPage.type.label);
+        }
+
+        // Add current page data to history
+        addPageDataToHistory.bind(this)(currentPageData);
+    }
+
+    function fetchPageHistory() {
+        // Get existing history
+        let pageHistory = [];
+        try {
+            const historyData = localStorage.getItem(this.historyStorageKey);
+            pageHistory = historyData ? JSON.parse(historyData) : [];
+        } catch (e) {
+            console.warn('Elasticsuite tracker: Error retrieving page history:', e);
+        }
+
+        console.info("Page history:", pageHistory);
+        return pageHistory;
+    }
+
+    function persistPageHistory(pageHistory) {
+        // Limit history size
+        if (pageHistory.length > this.historyMaxLength) {
+            pageHistory = pageHistory.slice(0, this.historyMaxLength);
+        }
+
+        // Save updated history
+        try {
+            localStorage.setItem(this.historyStorageKey, JSON.stringify(pageHistory));
+        } catch (e) {
+            console.warn('Error saving page history:', e);
+        }
+    }
+
+    function getLastPageDataFromHistory() {
+        const comeFromExternalPage = !document.referrer
+            || (document.referrer && !document.referrer.includes(window.location.hostname));
+
+        if (comeFromExternalPage) {
+            persistPageHistory.bind(this)([]);
+            return {
+                url: document.referrer,
+                type: {
+                    identifier: 'external',
+                    label: 'external'
+                }
+            };
+        }
+
+        let pageHistory = fetchPageHistory.bind(this)();
+        if (pageHistory.length > 0) {
+            return pageHistory[0];
+        }
+
+        return null;
+    }
+
+    function addPageDataToHistory(pageData) {
+        let pageHistory = fetchPageHistory.bind(this)();
+
+        // How to manage event without url ? TODO here
+        if (!page.url) {
+            console.warn('Elasticsuite tracker: Dont add event in history event');
+            return;
+        }
+
+        // Check if user navigated back to a previous page
+        const pageIndex = pageHistory.findIndex(page => page.url === pageData.url);
+
+        if (pageIndex > 0) {
+            // If the page exist in the history,
+            // we consider that the user went back:
+            // remove pages after this one
+            pageHistory = pageHistory.slice(pageIndex);
+            persistPageHistory.bind(this)(pageHistory);
+        } else if (pageIndex === -1) {
+            // If not, we add it
+            pageHistory.unshift(pageData);
+            persistPageHistory.bind(this)(pageHistory);
+        }
+        // If the page is the same as the last one, do nothing
+    }
+
     // Implementation of the tracker
     const SmileTrackerImpl = function() {
         this.vars = {};
@@ -353,10 +456,10 @@ const smileTracker = (function () {
         if (config.hasOwnProperty('endpointUrl') && (config.endpointUrl.length !== 0)) {
             this.endpointUrl = config.endpointUrl;
         }
-        this.telemetryEnabled = config.telemetryEnabled;
-        this.telemetryUrl     = config.telemetryUrl;
-
-
+        this.telemetryEnabled  = config.telemetryEnabled;
+        this.telemetryUrl      = config.telemetryUrl;
+        this.historyStorageKey = config.historyStorageKey;
+        this.historyMaxLength  = config.historyMaxLength;
     };
 
     SmileTrackerImpl.prototype.addPageVar = function (varName, value) {
