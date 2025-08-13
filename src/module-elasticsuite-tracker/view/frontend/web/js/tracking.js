@@ -159,6 +159,7 @@ const smileTracker = (function () {
             addCampaignVars.bind(this)();
             addMetaPageVars.bind(this)();
             addResolutionVars.bind(this)();
+            handlePageHistory.bind(this)();
             this.trackerVarsAdded = true;
         }
 
@@ -275,6 +276,10 @@ const smileTracker = (function () {
         addVariable.bind(this)(transformVarName.bind(this)(varName , 'page'), value);
     }
 
+    function addPreviousPageVar(varName, value) {
+        addVariable.bind(this)(transformVarName.bind(this)(varName , 'previous_page'), value);
+    }
+
     function addCustomerVar(varName, value) {
         addVariable.bind(this)(transformVarName.bind(this)(varName , 'customer'), value);
     }
@@ -324,6 +329,88 @@ const smileTracker = (function () {
         }
     }
 
+    function handlePageHistory() {
+        const currentPageData = {
+            url: this.vars['page[url]'],
+            type: {
+                identifier: this.vars['page[type][identifier]'],
+                label: this.vars['page[type][label]']
+            }
+        };
+
+        addPageDataToHistory.bind(this)(currentPageData);
+
+        const previousPage = getPreviousPageDataFromHistory.bind(this)();
+        if (previousPage) {
+            addPreviousPageVar.bind(this)('url', previousPage.url);
+            addPreviousPageVar.bind(this)('type.identifier', previousPage.type.identifier);
+            addPreviousPageVar.bind(this)('type.label', previousPage.type.label);
+        }
+    }
+
+    function fetchPageHistory() {
+        // Get existing history
+        let pageHistory = [];
+        try {
+            const historyData = localStorage.getItem(this.historyStorageKey);
+            pageHistory = historyData ? JSON.parse(historyData) : [];
+        } catch (e) {
+            console.warn('Elasticsuite tracker: Error retrieving page history:', e);
+        }
+
+        return pageHistory;
+    }
+
+    function persistPageHistory(pageHistory) {
+        // Limit history size
+        if (pageHistory.length > this.historyMaxLength) {
+            pageHistory = pageHistory.slice(0, this.historyMaxLength);
+        }
+
+        // Save updated history
+        try {
+            localStorage.setItem(this.historyStorageKey, JSON.stringify(pageHistory));
+        } catch (e) {
+            console.warn('Error saving page history:', e);
+        }
+    }
+
+    function getPreviousPageDataFromHistory() {
+        const comeFromExternalPage = !document.referrer
+            || (document.referrer && !document.referrer.includes(window.location.hostname));
+
+        if (comeFromExternalPage) {
+            return {
+                url: document.referrer,
+                type: {
+                    identifier: 'external',
+                    label: 'external'
+                }
+            };
+        }
+
+        let pageHistory = fetchPageHistory.bind(this)();
+        if (pageHistory.length > 1) {
+            return pageHistory[1]; // Current page is at index 0, previous page at index 1
+        }
+
+        return null;
+    }
+
+    function addPageDataToHistory(pageData) {
+        let pageHistory = fetchPageHistory.bind(this)();
+
+        // Check if user navigated back to a previous page
+        const pageIndex = pageHistory.findIndex(page => page.url === pageData.url);
+
+        // If the page is the same as the last one, do nothing
+        // If not, we add it
+        if (pageIndex !== 0) {
+            pageHistory.unshift(pageData);
+            persistPageHistory.bind(this)(pageHistory);
+        }
+    }
+
     // Implementation of the tracker
     const SmileTrackerImpl = function() {
         this.vars = {};
@@ -353,10 +440,10 @@ const smileTracker = (function () {
         if (config.hasOwnProperty('endpointUrl') && (config.endpointUrl.length !== 0)) {
             this.endpointUrl = config.endpointUrl;
         }
-        this.telemetryEnabled = config.telemetryEnabled;
-        this.telemetryUrl     = config.telemetryUrl;
-
-
+        this.telemetryEnabled  = config.telemetryEnabled;
+        this.telemetryUrl      = config.telemetryUrl;
+        this.historyStorageKey = 'smile_tracker_page_history';
+        this.historyMaxLength  = 5;
     };
 
     SmileTrackerImpl.prototype.addPageVar = function (varName, value) {

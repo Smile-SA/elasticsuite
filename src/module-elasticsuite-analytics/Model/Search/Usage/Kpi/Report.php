@@ -42,6 +42,26 @@ class Report extends AbstractReport
     ];
 
     /**
+     * Get data label.
+     *
+     * @param string $origin Origin code.
+     * @return string
+     */
+    public function getLabel(string $origin): string
+    {
+        switch ($origin) {
+            case 'product_views_catalog_category_view_count':
+                return __('Category');
+            case 'product_views_catalogsearch_result_index_count':
+                return __('Search');
+            case 'product_views_catalog_product_view_count':
+                return __('Recommender');
+            default:
+                return __('Other');
+        }
+    }
+
+    /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ElseExpression)
      */
@@ -62,6 +82,15 @@ class Report extends AbstractReport
             } elseif (in_array($value->getValue(), ['product_views', 'category_views', 'add_to_cart', 'sales'])) {
                 $key = sprintf("%s_count", $value->getValue());
                 $data[$key] = (int) $value->getMetrics()['count'];
+                if ($value->getAggregations()->getBucket('origin')->getValues()) {
+                    $originDetails = '';
+                    foreach ($value->getAggregations()->getBucket('origin')->getValues() ?? [] as $originData) {
+                        $key = sprintf("%s_%s_count", $value->getValue(), $originData->getValue());
+                        $data[$key] = (int) $originData->getMetrics()['count'];
+                        $originDetails .= "• {$this->getLabel($key)}: {$originData->getMetrics()['count']}\n";
+                    }
+                    $data[$value->getValue() . '_origin_details'] = $originDetails;
+                }
             }
         }
 
