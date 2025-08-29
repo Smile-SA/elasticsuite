@@ -41,6 +41,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Vadym Honcharuk <vahonc@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CategoryPositionMigrate extends Command
 {
@@ -142,6 +144,8 @@ class CategoryPositionMigrate extends Command
     /**
      * Execute the command.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param InputInterface  $input  CLI input.
      * @param OutputInterface $output CLI output.
      *
@@ -223,6 +227,13 @@ class CategoryPositionMigrate extends Command
      * @param string|null     $conflictStrategy Conflict strategy (reorder|delete) (null = ask interactively).
      * @param bool            $silentMode       If true, limit preview (for catalog mode).
      * @param bool            $dryRun           If true, preview only (no DB updates).
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ShortVariable)
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     private function processCategory(
         int $categoryId,
