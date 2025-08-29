@@ -176,6 +176,7 @@ class CategoryPositionMigrate extends Command
                 );
             } catch (\Exception $e) {
                 $output->writeln("<error>{$e->getMessage()}</error>");
+
                 return Cli::RETURN_FAILURE;
             }
         } else {
@@ -189,7 +190,7 @@ class CategoryPositionMigrate extends Command
 
             foreach ($categories as $category) {
                 if ((int) $category->getId() === 1) {
-                    continue; // skip root category.
+                    continue; // Skip root category.
                 }
                 $output->writeln("<comment>Processing category ID {$category->getId()} ({$category->getName()})</comment>");
 
@@ -213,15 +214,15 @@ class CategoryPositionMigrate extends Command
     /**
      * Process migration for a single category.
      *
-     * @param int             $categoryId      Category ID.
-     * @param OutputInterface $output          CLI output.
-     * @param InputInterface  $input           CLI input.
-     * @param bool|null       $migrateNegative Handle negative positions (null = ask interactively).
-     * @param bool|null       $migrateZero     Handle zero positions (null = ask interactively).
-     * @param bool|null       $migratePositive Handle positive positions (null = ask interactively).
+     * @param int             $categoryId       Category ID.
+     * @param OutputInterface $output           CLI output.
+     * @param InputInterface  $input            CLI input.
+     * @param bool|null       $migrateNegative  Handle negative positions (null = ask interactively).
+     * @param bool|null       $migrateZero      Handle zero positions (null = ask interactively).
+     * @param bool|null       $migratePositive  Handle positive positions (null = ask interactively).
      * @param string|null     $conflictStrategy Conflict strategy (reorder|delete) (null = ask interactively).
-     * @param bool            $silentMode      If true, limit preview (for catalog mode).
-     * @param bool            $dryRun          If true, preview only (no DB updates).
+     * @param bool            $silentMode       If true, limit preview (for catalog mode).
+     * @param bool            $dryRun           If true, preview only (no DB updates).
      */
     private function processCategory(
         int $categoryId,
@@ -246,6 +247,7 @@ class CategoryPositionMigrate extends Command
 
         if (!$rows) {
             $output->writeln("<comment>No products found for category {$categoryId}</comment>");
+
             return;
         }
 
@@ -315,6 +317,7 @@ class CategoryPositionMigrate extends Command
             if (!empty($toDelete)) {
                 $output->writeln("<comment>[Dry-Run]</comment> Would delete " . count($toDelete) . " products due to conflicts.");
             }
+
             return;
         }
 
