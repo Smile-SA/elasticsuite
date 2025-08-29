@@ -454,4 +454,20 @@
     <!-- Aggregation provider for the product collection's _prepareStatisticsData method -->
     <preference for="Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface"
                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection\PriceStatsAggregationProvider" />
+
+    <!-- CLI command to migrate product positions in categories form legacy table to ElasticSuite -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elasticsuiteCategoryPositionMigrate" xsi:type="object">Smile\ElasticsuiteCatalog\Console\Command\CategoryPositionMigrate</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Inject CategoryPositionMigrator as a Proxy -->
+    <type name="Smile\ElasticsuiteCatalog\Console\Command\CategoryPositionMigrate">
+        <arguments>
+            <argument name="elasticsuiteCategoryPositionMigrator" xsi:type="object">Smile\ElasticsuiteCatalog\Model\CategoryPositionMigrator\Proxy</argument>
+        </arguments>
+    </type>
 </config>
