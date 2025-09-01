@@ -21,6 +21,6 @@
     </event>
 
     <event name="catalog_controller_category_init_after">
-        <observer name="fix-category-subtree-display-mode" instance="Smile\ElasticsuiteVirtualCategory\Observer\DisplaySubtreeCategoryAsProductOnly"/>
+        <observer name="fix-category-subtree" instance="Smile\ElasticsuiteVirtualCategory\Observer\ManageVirtualCategoryWithSubtree"/>
     </event>
 </config>

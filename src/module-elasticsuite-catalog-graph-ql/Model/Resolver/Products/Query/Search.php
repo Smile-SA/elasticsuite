@@ -20,7 +20,7 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Suggestions;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
@@ -29,8 +29,6 @@ use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 
 /**
  * Elasticsuite GraphQL Products Query Resolver.
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogGraphQl
@@ -64,23 +62,17 @@ class Search implements ProductQueryInterface
     private $searchCriteriaBuilder;
 
     /**
-     * @var ArgumentsProcessorInterface
-     */
-    private $argsSelection;
-
-    /**
      * @var Suggestions
      */
     private $suggestions;
 
     /**
-     * @param SearchInterface                  $search                Search Engine.
-     * @param SearchResultFactory              $searchResultFactory   Search Results Factory.
-     * @param FieldSelection                   $fieldSelection        Field Selection.
-     * @param ProductSearch                    $productProvider       Product Provider.
-     * @param SearchCriteriaBuilder            $searchCriteriaBuilder Search Criteria Builder.
-     * @param ArgumentsProcessorInterface|null $argsSelection         Args Selection.
-     * @param Suggestions|null                 $suggestions           Search Suggestions.
+     * @param SearchInterface       $search                Search Engine
+     * @param SearchResultFactory   $searchResultFactory   Search Results Factory
+     * @param FieldSelection        $fieldSelection        Field Selection
+     * @param ProductSearch         $productProvider       Product Provider
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria Builder
+     * @param Suggestions|null      $suggestions           Search Suggestions
      */
     public function __construct(
         SearchInterface $search,
@@ -88,7 +80,6 @@ class Search implements ProductQueryInterface
         FieldSelection $fieldSelection,
         ProductSearch $productProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder,
-        ?ArgumentsProcessorInterface $argsSelection = null,
         ?Suggestions $suggestions = null
     ) {
         $this->search                = $search;
@@ -96,7 +87,6 @@ class Search implements ProductQueryInterface
         $this->fieldSelection        = $fieldSelection;
         $this->productProvider       = $productProvider;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->argsSelection         = $argsSelection ?: ObjectManager::getInstance()->get(ArgumentsProcessorInterface::class);
         $this->suggestions           = $suggestions ?: ObjectManager::getInstance()->get(Suggestions::class);
     }
 
@@ -157,20 +147,17 @@ class Search implements ProductQueryInterface
     /**
      * Build search criteria from query input args
      *
-     * @param array       $args Query Arguments
+     * @param array       $args Already processed query Arguments
      * @param ResolveInfo $info Resolve Info
      *
      * @return SearchCriteriaInterface
-     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException|\Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     private function buildSearchCriteria(array $args, ResolveInfo $info): SearchCriteriaInterface
     {
         $productFields       = (array) $info->getFieldSelection(1);
         $includeAggregations = isset($productFields['filters']) || isset($productFields['aggregations']);
-        $fieldName = $info->fieldName ?? "";
-        $processedArgs = $this->argsSelection->process((string) $fieldName, $args);
-        $searchCriteria = $this->searchCriteriaBuilder->build($processedArgs, $includeAggregations);
 
-        return $searchCriteria;
+        return $this->searchCriteriaBuilder->build($args, $includeAggregations);
     }
 }
