@@ -41,11 +41,11 @@ jobs:
             magento-editions: 'enterprise'
             experimental: true
           - php-versions: '8.3'
-            magento-versions: '2.4.8'
+            magento-versions: '2.4.8-p2'
             magento-editions: 'enterprise'
             experimental: true
           - php-versions: '8.4'
-            magento-versions: '2.4.8'
+            magento-versions: '2.4.8-p2'
             magento-editions: 'enterprise'
             experimental: true
 
