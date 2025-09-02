@@ -16,10 +16,8 @@ namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 use Magento\Customer\Model\Group as CustomerGroup;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
-use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\AbstractBucket;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
 use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
 
@@ -33,9 +31,6 @@ use Smile\ElasticsuiteCore\Search\RequestInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.TooManyFields)
- * @SuppressWarnings(PHPMD.CamelCasePropertyName)
- * @SuppressWarnings(PHPMD.CamelCaseMethodName)
  */
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -107,11 +102,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      * @var RequestFieldMapper
      */
     private $requestFieldMapper;
-
-    /**
-     * @var QueryFactory|null
-     */
-    private ?QueryFactory $queryFactory = null;
 
     /**
      * Constructor.
@@ -628,26 +618,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
-     * Lazily get the QueryFactory instance.
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
-     * @return QueryFactory
-     */
-    protected function getQueryFactory()
-    {
-        if ($this->queryFactory === null) {
-            $this->queryFactory = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(QueryFactory::class);
-        }
-
-        return $this->queryFactory;
-    }
-
-
-    /**
      * Prepares min and max price using Elasticsearch metric aggregation.
      * Ensures compatibility with Magento Core's getMinPrice()/getMaxPrice().
      *
-     * @return $this
+     * @return self
      */
     protected function _prepareStatisticsData()
     {
