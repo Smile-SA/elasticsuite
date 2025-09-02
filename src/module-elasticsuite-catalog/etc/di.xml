@@ -448,4 +448,12 @@
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
         <plugin name="injectSortDirectionPerCategory" type="\Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar\SortDirectionPerCategoryPlugin"/>
     </type>
+
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elasticsuiteCategoryPositionMigrate" xsi:type="object">Smile\ElasticsuiteCatalog\Console\Command\CategoryPositionMigrate</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
