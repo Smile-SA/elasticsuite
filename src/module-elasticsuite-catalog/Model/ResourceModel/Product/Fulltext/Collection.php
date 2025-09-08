@@ -647,8 +647,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             0,
             $this->query,
             [],
-            [],
-            array_merge($this->queryFilters, $this->filters ?: []),
+            $this->filters,
+            $this->queryFilters,
             [$facets],
         );
 
