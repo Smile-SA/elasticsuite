@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
 use Magento\Customer\Model\Group as CustomerGroup;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
@@ -104,6 +106,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $requestFieldMapper;
 
     /**
+     * @var PriceStatsAggregationProviderInterface
+     */
+    private $priceStatsAggProvider;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -186,6 +193,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->searchEngine       = $searchEngine;
         $this->requestFieldMapper = $requestFieldMapper;
         $this->searchRequestName  = $searchRequestName;
+        $this->priceStatsAggProvider = ObjectManager::getInstance()->get(PriceStatsAggregationProviderInterface::class);
     }
 
     /**
@@ -632,13 +640,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $customerGroupId = (int) ($this->_productLimitationFilters['customer_group_id'] ?? CustomerGroup::NOT_LOGGED_IN_ID);
         $aggregationName = 'collection_price_stats';
 
-        $facets = [
-            'name'       => $aggregationName,
-            'type'       => BucketInterface::TYPE_METRIC,
-            'field'      => 'price.price',
-            'metricType' => MetricInterface::TYPE_STATS,
-            'nestedFilter' => ['price.customer_group_id' => $customerGroupId],
-        ];
+        $priceStatsAgg = $this->priceStatsAggProvider->getAggregationData(
+            $this,
+            $aggregationName,
+            $customerGroupId
+        );
 
         $searchRequest = $this->requestBuilder->create(
             $storeId,
@@ -649,14 +655,17 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             [],
             $this->filters,
             $this->queryFilters,
-            [$facets],
+            [$priceStatsAgg],
         );
 
         $response     = $this->searchEngine->search($searchRequest);
         $aggregations = $response->getAggregations();
 
+        $metrics = [];
         $bucket = $aggregations->getBucket($aggregationName);
-        $metrics = current($bucket->getValues())->getMetrics();
+        if (null !== $bucket) {
+            $metrics = current($bucket->getValues())->getMetrics();
+        }
 
         $rate = $this->getCurrencyRate();
 
