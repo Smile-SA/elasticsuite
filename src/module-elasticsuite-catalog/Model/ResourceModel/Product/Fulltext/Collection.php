@@ -13,9 +13,13 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
+use Magento\Customer\Model\Group as CustomerGroup;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
 
@@ -102,6 +106,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $requestFieldMapper;
 
     /**
+     * @var PriceStatsAggregationProviderInterface
+     */
+    private $priceStatsAggProvider;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -184,6 +193,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->searchEngine       = $searchEngine;
         $this->requestFieldMapper = $requestFieldMapper;
         $this->searchRequestName  = $searchRequestName;
+        $this->priceStatsAggProvider = ObjectManager::getInstance()->get(PriceStatsAggregationProviderInterface::class);
     }
 
     /**
@@ -613,6 +623,58 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         return parent::_afterLoad();
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * Prepares min and max price using Elasticsearch metric aggregation.
+     * Ensures compatibility with Magento Core's getMinPrice()/getMaxPrice().
+     *
+     * @return self
+     */
+    protected function _prepareStatisticsData()
+    {
+        $storeId = $this->getStoreId();
+        $requestName = $this->searchRequestName;
+        $customerGroupId = (int) ($this->_productLimitationFilters['customer_group_id'] ?? CustomerGroup::NOT_LOGGED_IN_ID);
+        $aggregationName = 'collection_price_stats';
+
+        $priceStatsAgg = $this->priceStatsAggProvider->getAggregationData(
+            $this,
+            $aggregationName,
+            $customerGroupId
+        );
+
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $requestName,
+            0,
+            0,
+            $this->query,
+            [],
+            $this->filters,
+            $this->queryFilters,
+            [$priceStatsAgg],
+        );
+
+        $response     = $this->searchEngine->search($searchRequest);
+        $aggregations = $response->getAggregations();
+
+        $metrics = [];
+        $bucket = $aggregations->getBucket($aggregationName);
+        if (null !== $bucket) {
+            $metrics = current($bucket->getValues())->getMetrics();
+        }
+
+        $rate = $this->getCurrencyRate();
+
+        $this->_pricesCount            = (int) ($metrics['count'] ?? 0);
+        $this->_minPrice               = round(((float) ($metrics['min'] ?? 0)) * $rate, 2);
+        $this->_maxPrice               = round(((float) ($metrics['max'] ?? 0)) * $rate, 2);
+        $this->_priceStandardDeviation = round(((float) ($metrics['std_deviation'] ?? 0)) * $rate, 2);
+
+        return $this;
     }
 
     /**

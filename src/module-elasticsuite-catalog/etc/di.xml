@@ -448,4 +448,8 @@
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
         <plugin name="injectSortDirectionPerCategory" type="\Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar\SortDirectionPerCategoryPlugin"/>
     </type>
+
+    <!-- Aggregation provider for the product collection's _prepareStatisticsData method -->
+    <preference for="Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface"
+                type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection\PriceStatsAggregationProvider" />
 </config>
