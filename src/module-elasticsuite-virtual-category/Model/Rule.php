@@ -37,7 +37,7 @@ use Magento\Framework\Model\Context;
 
 /**
  * Virtual category rule.
- *
+ * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -485,15 +485,31 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function addChildrenQueries($query, CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
-        $childrenCategories    = $this->getChildrenCategories($category, $excludedCategories);
-        $childrenCategoriesIds = [];
+        $isStandardCategory = ! $category->getIsVirtualCategory();
+        $childrenStandardCategoriesIds = [];
+        $childrenCategories = $this->getChildrenCategories($category, $excludedCategories);
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
 
+            $childrenCategoriesIds = [];
             foreach ($childrenCategories as $childrenCategory) {
-                if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
-                    $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+                $childrenCategoriesIds[] = $childrenCategory->getId();
+            }
+
+            foreach ($childrenCategories as $childrenCategory) {
+                $isChildrenVirtual = (bool) $childrenCategory->getIsVirtualCategory();
+                if ($isChildrenVirtual) {
+                    $childrenQuery = null;
+                    $virtualRootCategory = $childrenCategory->getVirtualCategoryRoot();
+                    if (!$virtualRootCategory
+                        || (
+                            !in_array($virtualRootCategory, $childrenCategoriesIds)
+                            && $virtualRootCategory != $category->getId()
+                        )
+                    ) {
+                        $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
+                    }
                     if ($childrenQuery !== null) {
                         $childrenQuery->setName(
                             sprintf(
@@ -505,13 +521,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                         );
                         $queryParams['should'][] = $childrenQuery;
                     }
-                } else {
-                    $childrenCategoriesIds[] = $childrenCategory->getId();
+                } elseif (!$isStandardCategory) {
+                    $childrenStandardCategoriesIds[] = $childrenCategory->getId();
                 }
             }
 
-            if (!empty($childrenCategoriesIds)) {
-                $standardChildrenQuery = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
+            if (!empty($childrenStandardCategoriesIds)) {
+                $standardChildrenQuery = $this->getStandardCategoriesQuery($childrenStandardCategoriesIds, $excludedCategories);
                 $standardChildrenQuery->setName(
                     sprintf(
                         '(%s) standard children of virtual category [%s]:%d',
@@ -554,10 +570,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
         $categoryCollection->addIsActiveFilter()->addPathFilter(sprintf('%s/.*', $category->getPath()));
-
-        if (((bool) $category->getIsVirtualCategory()) === false) {
-            $categoryCollection->addFieldToFilter('is_virtual_category', '1');
-        }
 
         if (!empty($excludedCategories)) {
             $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
