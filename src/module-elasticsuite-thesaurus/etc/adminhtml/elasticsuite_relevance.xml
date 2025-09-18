@@ -29,7 +29,7 @@
                 </field>
                 <field id="max_rewritten_queries" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInContainer="1" showInStore="1">
                     <label>Max Alternative Search Queries</label>
-                    <comment><![CDATA[Maximum number of alternative search queries taken into account. Use this setting if you have performance issues arising on your cluster related to a huge volume of thesaurus rules. Defaults to 0 (no limitation).]]></comment>
+                    <comment><![CDATA[Maximum number of alternative search queries taken into account. Lower its value if you have "max boolean clauses" errors or performance issues arising on your cluster related to a huge volume of thesaurus rules and/or having the stemming enabled for the thesaurus. Defaults to 50. (Used to default to 0 - no limitation).]]></comment>
                     <validate>integer validate-number validate-zero-or-greater</validate>
                 </field>
             </group>
