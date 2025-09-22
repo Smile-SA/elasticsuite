@@ -27,7 +27,7 @@ use Smile\ElasticsuiteCatalog\Model\Attribute\Source\TextScoringAlgorithm;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Plugin that happend custom fields dedicated to search configuration
+ * Plugin that append custom fields dedicated to search configuration
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
@@ -659,6 +659,18 @@ class FrontPlugin
      */
     private function addScoringAlgorithmField(Fieldset $fieldset)
     {
+        $link = sprintf(
+            '<a href="%s" target="_blank">%s</a>',
+            $this->urlBuilder->getUrl(
+                'adminhtml/system_config/edit',
+                [
+                    'section' => 'smile_elasticsuite_catalogsearch_settings',
+                    '_fragment' => 'smile_elasticsuite_catalogsearch_settings_catalogsearch-link',
+                ]
+            ),
+            implode(' &gt; ', [__('ElasticSuite'), __('Catalog Search'), __('Catalog Search Configuration')])
+        );
+
         // @codingStandardsIgnoreStart
         $scoringAlgorithmNote = __(
             'The text scoring algorithm (or "similarity") determines how the relevance score is computed for a field during search.'
@@ -666,7 +678,13 @@ class FrontPlugin
             . ' Eg: a product with "dress" 3 times in its description should be scored higher than a product with "dress" only 1 time.'
             . '<br/> You can opt for a "Boolean" scoring model that produces at most a score of 1 (before the "Search weight" is applied) for the whole field whatever the number of matches.'
             . ' Eg: the product with "dress" 3 times in its description would be scored the same as the product with "dress" only 1 time in its description.'
-        );
+        )
+            . '<br />'
+            . __(
+                '<strong>Warning</strong>: a searchable attribute data is always copied to some searchable "collector fields" whose behavior will not be impacted by the change you do here.'
+                . '<br />So you might want to also look at the specific "<strong>Text scoring algorithm for collector fields</strong>" setting in the Stores Configuration section %1.',
+                $link
+            );
         // @codingStandardsIgnoreEnd
         $fieldset->addField(
             'scoring_algorithm',
