@@ -287,7 +287,7 @@ class IndexHandler
 
         if (!empty($values)) {
             $values = $this->prepareSynonymFilterData($values);
-            $settings['analysis']['filter'][$type] = ['type' => 'synonym', 'synonyms' => $values];
+            $settings['analysis']['filter'][$type] = ['type' => 'synonym', 'synonyms' => $values, 'lenient' => true];
             $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
 
