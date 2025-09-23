@@ -83,6 +83,9 @@ class InstallSchema implements InstallSchemaInterface
         $this->catalogSetup->addNormsDisabledAttributeProperty($setup);
         $this->catalogSetup->addDefaultAnalyzer($setup);
 
+        // Introduced in version 1.8.0.
+        $this->catalogSetup->addScoringAlgorithm($setup);
+
         $setup->endSetup();
     }
 }

@@ -23,10 +23,11 @@ use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterSortOrder;
 use Magento\Framework\Data\Form\Element\Fieldset;
 use Magento\Catalog\Api\Data\EavAttributeInterface;
+use Smile\ElasticsuiteCatalog\Model\Attribute\Source\TextScoringAlgorithm;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
 /**
- * Plugin that happend custom fields dedicated to search configuration
+ * Plugin that append custom fields dedicated to search configuration
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
@@ -75,6 +76,11 @@ class FrontPlugin
     private $filterBooleanLogic;
 
     /**
+     * @var TextScoringAlgorithm
+     */
+    private $textScoringAlgorithm;
+
+    /**
      * @var UrlInterface
      */
     private $urlBuilder;
@@ -82,12 +88,13 @@ class FrontPlugin
     /**
      * Class constructor
      *
-     * @param Yesno              $booleanSource      The YesNo source.
-     * @param Weight             $weightSource       Weight source.
-     * @param Registry           $registry           Core registry.
-     * @param FilterSortOrder    $filterSortOrder    Filter Sort Order.
-     * @param FilterBooleanLogic $filterBooleanLogic Filter boolean logic source model.
-     * @param UrlInterface       $urlBuilder         Url Builder.
+     * @param Yesno                $booleanSource        The YesNo source.
+     * @param Weight               $weightSource         Weight source.
+     * @param Registry             $registry             Core registry.
+     * @param FilterSortOrder      $filterSortOrder      Filter Sort Order.
+     * @param FilterBooleanLogic   $filterBooleanLogic   Filter boolean logic source model.
+     * @param TextScoringAlgorithm $textScoringAlgorithm Text scoring algorithm source model.
+     * @param UrlInterface         $urlBuilder           Url Builder.
      */
     public function __construct(
         Yesno $booleanSource,
@@ -95,14 +102,16 @@ class FrontPlugin
         Registry $registry,
         FilterSortOrder $filterSortOrder,
         FilterBooleanLogic $filterBooleanLogic,
+        TextScoringAlgorithm $textScoringAlgorithm,
         UrlInterface $urlBuilder
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
         $this->coreRegistry    = $registry;
         $this->filterSortOrder = $filterSortOrder;
-        $this->filterBooleanLogic = $filterBooleanLogic;
-        $this->urlBuilder         = $urlBuilder;
+        $this->filterBooleanLogic   = $filterBooleanLogic;
+        $this->textScoringAlgorithm = $textScoringAlgorithm;
+        $this->urlBuilder       = $urlBuilder;
     }
 
     /**
@@ -151,6 +160,12 @@ class FrontPlugin
         ) {
             $this->addIsSpannableField($advancedFieldset);
             $this->addDisableNormsField($advancedFieldset);
+        }
+
+        if (in_array($this->getAttribute()->getBackendType(), ['varchar', 'text'])
+            || in_array($this->getAttribute()->getFrontendInput(), ['select', 'multiselect'])
+        ) {
+            $this->addScoringAlgorithmField($advancedFieldset);
         }
 
         $this->appendFieldsDependency($subject);
@@ -636,6 +651,57 @@ class FrontPlugin
     }
 
     /**
+     * Add field allowing to configure a non-default similarity/text scoring model.
+     *
+     * @param Fieldset $fieldset Target fieldset
+     *
+     * @return FrontPlugin
+     */
+    private function addScoringAlgorithmField(Fieldset $fieldset)
+    {
+        $link = sprintf(
+            '<a href="%s" target="_blank">%s</a>',
+            $this->urlBuilder->getUrl(
+                'adminhtml/system_config/edit',
+                [
+                    'section' => 'smile_elasticsuite_catalogsearch_settings',
+                    '_fragment' => 'smile_elasticsuite_catalogsearch_settings_catalogsearch-link',
+                ]
+            ),
+            implode(' &gt; ', [__('ElasticSuite'), __('Catalog Search'), __('Catalog Search Configuration')])
+        );
+
+        // @codingStandardsIgnoreStart
+        $scoringAlgorithmNote = __(
+            'The text scoring algorithm (or "similarity") determines how the relevance score is computed for a field during search.'
+            . '<br/> Selecting "Default" will let your server apply the default scoring algorithm which takes into account every occurence of a search term in a field.'
+            . ' Eg: a product with "dress" 3 times in its description should be scored higher than a product with "dress" only 1 time.'
+            . '<br/> You can opt for a "Boolean" scoring model that produces at most a score of 1 (before the "Search weight" is applied) for the whole field whatever the number of matches.'
+            . ' Eg: the product with "dress" 3 times in its description would be scored the same as the product with "dress" only 1 time in its description.'
+        )
+            . '<br />'
+            . __(
+                '<strong>Warning</strong>: a searchable attribute data is always copied to some searchable "collector fields" whose behavior will not be impacted by the change you do here.'
+                . '<br />So you might want to also look at the specific "<strong>Text scoring algorithm for collector fields</strong>" setting in the Stores Configuration section %1.',
+                $link
+            );
+        // @codingStandardsIgnoreEnd
+        $fieldset->addField(
+            'scoring_algorithm',
+            'select',
+            [
+                'name'   => 'scoring_algorithm',
+                'label'  => __('Text scoring algorithm'),
+                'values' => $this->textScoringAlgorithm->toOptionArray(),
+                'note'   => $scoringAlgorithmNote,
+            ],
+            'norms_disabled'
+        );
+
+        return $this;
+    }
+
+    /**
      * Add field allowing to configure if a field can be used for span queries.
      *
      * @param Fieldset $fieldset Target fieldset
@@ -709,6 +775,7 @@ class FrontPlugin
                 ->addFieldMap('is_spannable', 'is_spannable')
                 ->addFieldMap('norms_disabled', 'norms_disabled')
                 ->addFieldMap('default_analyzer', 'default_analyzer')
+                ->addFieldMap('scoring_algorithm', 'scoring_algorithm')
                 ->addFieldMap('search_weight', 'search_weight')
                 ->addFieldDependence('is_displayed_in_autocomplete', 'is_filterable_in_search', '1')
                 ->addFieldDependence('is_used_in_spellcheck', 'is_searchable', '1')
@@ -716,6 +783,7 @@ class FrontPlugin
                 ->addFieldDependence('norms_disabled', 'is_searchable', '1')
                 ->addFieldDependence('search_weight', 'is_searchable', '1')
                 ->addFieldDependence('default_analyzer', 'is_searchable', '1')
+                ->addFieldDependence('scoring_algorithm', 'is_searchable', '1')
                 ->addFieldDependence('sort_order_asc_missing', 'used_for_sort_by', '1')
                 ->addFieldDependence('sort_order_desc_missing', 'used_for_sort_by', '1')
                 ->addFieldDependence('is_display_rel_nofollow', 'is_filterable', '1');

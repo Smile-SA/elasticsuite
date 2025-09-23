@@ -380,6 +380,7 @@
     </type>
     <type name="Smile\ElasticsuiteCore\Api\Index\MappingInterface">
         <plugin name="copyCategoryName" type="\Smile\ElasticsuiteCatalog\Plugin\Index\MappingPlugin"/>
+        <plugin name="defaultFiedsSimilarity" type="Smile\ElasticsuiteCatalog\Plugin\Index\Indices\Mapping\DefaultFieldsSimilarityPlugin" />
     </type>
 
     <!-- Session proxies -->

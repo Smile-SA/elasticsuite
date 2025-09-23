@@ -100,6 +100,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->catalogSetup->addDefaultAnalyzer($setup);
         }
 
+        if (version_compare($context->getVersion(), '1.8.0', '<')) {
+            $this->catalogSetup->addScoringAlgorithm($setup);
+        }
+
         $setup->endSetup();
     }
 }
