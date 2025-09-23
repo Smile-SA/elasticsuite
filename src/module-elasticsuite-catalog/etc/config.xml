@@ -43,6 +43,7 @@
                 <adaptive_slider_enabled>0</adaptive_slider_enabled>
                 <index_child_product_sku>0</index_child_product_sku>
                 <compute_child_product_discount>0</compute_child_product_discount>
+                <collector_fields_scoring_algorithm>default</collector_fields_scoring_algorithm>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
     </default>

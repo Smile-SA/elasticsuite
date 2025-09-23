@@ -380,6 +380,7 @@
     </type>
     <type name="Smile\ElasticsuiteCore\Api\Index\MappingInterface">
         <plugin name="copyCategoryName" type="\Smile\ElasticsuiteCatalog\Plugin\Index\MappingPlugin"/>
+        <plugin name="defaultFiedsSimilarity" type="Smile\ElasticsuiteCatalog\Plugin\Index\Indices\Mapping\DefaultFieldsSimilarityPlugin" />
     </type>
 
     <!-- Session proxies -->
@@ -455,4 +456,8 @@
     <type name="Magento\Catalog\Block\Product\ProductList\Toolbar">
         <plugin name="injectSortDirectionPerCategory" type="\Smile\ElasticsuiteCatalog\Plugin\Category\Toolbar\SortDirectionPerCategoryPlugin"/>
     </type>
+
+    <!-- Aggregation provider for the product collection's _prepareStatisticsData method -->
+    <preference for="Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface"
+                type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext\Collection\PriceStatsAggregationProvider" />
 </config>

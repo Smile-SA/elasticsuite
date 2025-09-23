@@ -60,6 +60,13 @@ interface FieldInterface
     const FILTER_LOGICAL_OPERATOR_AND  = 1;
 
     /**
+     * Similarities / Text scoring models.
+     */
+    const SIMILARITY_DEFAULT = 'default';
+    const SIMILARITY_BM25    = 'BM25';
+    const SIMILARITY_BOOLEAN = 'boolean';
+
+    /**
      * Field name.
      *
      * @return string
@@ -186,6 +193,20 @@ interface FieldInterface
      * @return int
      */
     public function getFilterLogicalOperator();
+
+    /**
+     * Returns true if the field as a non-default scoring model/similarity.
+     *
+     * @return bool
+     */
+    public function hasSpecificSimilarity();
+
+    /**
+     * Retrieve the field scoring model/similarity.
+     *
+     * @return string
+     */
+    public function getSimilarity();
 
     /**
      * @return array

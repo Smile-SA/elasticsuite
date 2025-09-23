@@ -16,6 +16,7 @@
             "is_spannable": true,
             "norms_disabled": true,
             "default_analyzer": true,
+            "scoring_algorithm": true,
             "is_used_in_autocomplete": true,
             "is_display_rel_no_follow": true
         }

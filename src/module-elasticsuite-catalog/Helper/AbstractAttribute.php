@@ -155,6 +155,10 @@ abstract class AbstractAttribute extends Mapping
             $options['default_search_analyzer'] = $attribute->getDefaultAnalyzer();
         }
 
+        if ($attribute->getScoringAlgorithm()) {
+            $options['similarity'] = $attribute->getScoringAlgorithm();
+        }
+
         return $options;
     }
 
