@@ -121,10 +121,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
-        // Load store translation for static attribute options
+        // Load store translation for static attribute options.
         $this->localeResolver->emulate($storeId);
         $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
-        // Translate area part may not be loaded
+        // Translate area part may not be loaded.
         $area = $this->areaList->getArea($this->appState->getAreaCode());
         $area->load(\Magento\Framework\App\Area::PART_TRANSLATE);
 
@@ -157,7 +157,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             }
         }
 
-        // Reinitialize translation
+        // Reinitialize translation.
         $this->localeResolver->revert();
         $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
 
