@@ -16,8 +16,11 @@ namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\ProductSearch;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\FieldSelection;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Suggestions;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
@@ -59,24 +62,32 @@ class Search implements ProductQueryInterface
     private $searchCriteriaBuilder;
 
     /**
+     * @var Suggestions
+     */
+    private $suggestions;
+
+    /**
      * @param SearchInterface       $search                Search Engine
      * @param SearchResultFactory   $searchResultFactory   Search Results Factory
      * @param FieldSelection        $fieldSelection        Field Selection
      * @param ProductSearch         $productProvider       Product Provider
      * @param SearchCriteriaBuilder $searchCriteriaBuilder Search Criteria Builder
+     * @param Suggestions|null      $suggestions           Search Suggestions
      */
     public function __construct(
         SearchInterface $search,
         SearchResultFactory $searchResultFactory,
         FieldSelection $fieldSelection,
         ProductSearch $productProvider,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        ?Suggestions $suggestions = null
     ) {
         $this->search                = $search;
         $this->searchResultFactory   = $searchResultFactory;
         $this->fieldSelection        = $fieldSelection;
         $this->productProvider       = $productProvider;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->suggestions           = $suggestions ?: ObjectManager::getInstance()->get(Suggestions::class);
     }
 
     /**
@@ -114,6 +125,12 @@ class Search implements ProductQueryInterface
             $maxPages = (int) ceil($countResults->getTotalCount() / $searchCriteria->getPageSize());
         }
 
+        $suggestions = [];
+        $totalCount = (int) $searchResults->getTotalCount();
+        if ($totalCount === 0 && !empty($args['search'])) {
+            $suggestions = $this->suggestions->execute($context, $args['search']);
+        }
+
         return $this->searchResultFactory->create([
             'totalCount'           => $countResults->getTotalCount(),
             'productsSearchResult' => $productArray,
@@ -122,16 +139,19 @@ class Search implements ProductQueryInterface
             'currentPage'          => $searchCriteria->getCurrentPage(),
             'totalPages'           => $maxPages,
             'isSpellchecked'       => $searchResults->__toArray()['is_spellchecked'] ?? false,
+            'queryId'              => $searchResults->__toArray()['query_id'] ?? null,
+            'suggestions'          => $suggestions,
         ]);
     }
 
     /**
      * Build search criteria from query input args
      *
-     * @param array       $args Query Arguments
+     * @param array       $args Already processed query Arguments
      * @param ResolveInfo $info Resolve Info
      *
      * @return SearchCriteriaInterface
+     * @throws LocalizedException
      */
     private function buildSearchCriteria(array $args, ResolveInfo $info): SearchCriteriaInterface
     {

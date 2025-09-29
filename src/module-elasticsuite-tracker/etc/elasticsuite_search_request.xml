@@ -22,6 +22,8 @@
             <aggregation xsi:type="termBucket" name="session_id" field="session.uid">
                 <aggregations>
                     <aggregation xsi:type="termBucket" name="visitor_id" field="session.vid" />
+                    <aggregation xsi:type="termBucket" name="customer_group_id" field="customer.group_id" />
+                    <aggregation xsi:type="termBucket" name="customer_company_id" field="customer.company_id" />
                     <aggregation xsi:type="termBucket" name="product_view" field="page.product.id"/>
                     <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
                     <aggregation xsi:type="termBucket" name="category_view" field="page.category.id" />
@@ -42,7 +44,7 @@
                     <!-- search terms which return 0 results -->
                     <aggregation xsi:type="termBucket" name="search_query_void" field="page.search.query.sortable">
                         <filters>
-                            <filter name="with_results">Smile\ElasticsuiteTracker\Model\Event\Search\Request\Container\AggregationFilter\WithoutSearchResults</filter>
+                            <filter name="without_results">Smile\ElasticsuiteTracker\Model\Event\Search\Request\Container\AggregationFilter\WithoutSearchResults</filter>
                         </filters>
                     </aggregation>
                     <aggregation xsi:type="termBucket" name="product_cart" field="page.cart.product_id" />

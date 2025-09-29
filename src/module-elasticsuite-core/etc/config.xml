@@ -19,6 +19,7 @@
     <default>
         <smile_elasticsuite_core_base_settings>
             <es_client>
+                <enable_error_request_logging>0</enable_error_request_logging>
                 <enable_debug_mode>0</enable_debug_mode>
                 <servers>localhost:9200</servers>
                 <connection_timeout>1</connection_timeout>
@@ -33,13 +34,35 @@
                 <number_of_shards>1</number_of_shards>
                 <number_of_replicas>0</number_of_replicas>
                 <batch_indexing_size>1000</batch_indexing_size>
+                <ghost_timeout>172800</ghost_timeout>
             </indices_settings>
+            <bulk_error_logging>
+                <enable>1</enable>
+            </bulk_error_logging>
         </smile_elasticsuite_core_base_settings>
+
+        <smile_elasticsuite_core_analysis_settings>
+            <reference_analyzer>
+                <trim_leading_zeroes>0</trim_leading_zeroes>
+                <trim_trailing_zeroes>0</trim_trailing_zeroes>
+                <reduce_zeroes>0</reduce_zeroes>
+            </reference_analyzer>
+            <stemmer>
+                <use_default>1</use_default>
+            </stemmer>
+        </smile_elasticsuite_core_analysis_settings>
 
         <smile_elasticsuite_autocomplete_settings>
             <term_autocomplete>
                 <max_size>3</max_size>
             </term_autocomplete>
+            <advanced>
+                <extension_enabled>1</extension_enabled>
+                <preserve_base_query>0</preserve_base_query>
+                <extension_limited>0</extension_limited>
+                <extension_size>5</extension_size>
+                <stop_extension_on_match>0</stop_extension_on_match>
+            </advanced>
         </smile_elasticsuite_autocomplete_settings>
 
         <catalog>

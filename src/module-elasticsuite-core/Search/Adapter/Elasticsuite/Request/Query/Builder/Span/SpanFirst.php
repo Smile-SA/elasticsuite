@@ -37,12 +37,18 @@ class SpanFirst extends AbstractComplexBuilder implements BuilderInterface
             throw new \InvalidArgumentException("Query builder : invalid query type {$query->getType()}");
         }
 
-        return [
+        $searchQuery = [
             'span_first' => [
                 'boost' => $query->getBoost(),
                 'match' => $this->parentBuilder->buildQuery($query->getMatch()),
                 'end'   => $query->getEnd(),
             ],
         ];
+
+        if ($query->getName()) {
+            $searchQuery['span_first']['_name'] = $query->getName();
+        }
+
+        return $searchQuery;
     }
 }

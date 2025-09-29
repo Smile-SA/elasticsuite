@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 use Smile\ElasticsuiteCore\Index\IndexOperation;
 
 /**
@@ -32,7 +33,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     private $indexOperation;
 
     /**
-     * @var \Elasticsearch\Client|\\PHPUnit\Framework\MockObject\MockObject
+     * @var \OpenSearch\Client|\\PHPUnit\Framework\MockObject\MockObject
      */
     private $clientMock;
 
@@ -52,9 +53,20 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
         $objectManager = $this->getObjectManagerMock();
         $indexSettings = $this->getIndexSettingsMock();
+        $pipelineManager = $this->getMockBuilder(PipelineManagerInterface::class)
+                                ->disableOriginalConstructor()
+                                ->getMock();
         $logger        = $this->getLoggerMock();
+        $bulkErrorManager = $this->getBulkErrorManagerMock();
 
-        $this->indexOperation = new IndexOperation($objectManager, $this->clientMock, $indexSettings, $logger);
+        $this->indexOperation = new IndexOperation(
+            $objectManager,
+            $this->clientMock,
+            $indexSettings,
+            $pipelineManager,
+            $bulkErrorManager,
+            $logger
+        );
     }
 
     /**
@@ -124,8 +136,8 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $this->clientMock->method('bulk')->will($this->returnValue([
             'errors' => true,
             'items'  => [
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc1']],
-                ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc2']],
+                ['index' => ['_index' => 'index', '_id' => 'doc1']],
+                ['index' => ['_index' => 'index', '_id' => 'doc2']],
             ],
         ]));
 
@@ -285,5 +297,17 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $loggerMock->method('error')->will($this->returnCallback($errorLoggerStub));
 
         return $loggerMock;
+    }
+
+    /**
+     * Get bulk error manager mock.
+     *
+     * @return \PHPUnit\Framework\MockObject\MockObject
+     */
+    private function getBulkErrorManagerMock()
+    {
+        return $this->getMockBuilder(\Smile\ElasticsuiteCore\Model\Index\BulkError\Manager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

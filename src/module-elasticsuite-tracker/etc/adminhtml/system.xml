@@ -42,6 +42,19 @@
                         <field id="enabled">1</field>
                     </depends>
                 </field>
+                <field id="is_headless_mode" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Headless mode</label>
+                    <comment><![CDATA[If set to Yes, magento will assume that all the events are managed by the front app. No event will be added from php directly.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+                <field id="filter_bot_hits" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Filter bot hits</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, it will prevent known IA or search engines crawler bots generated tracker hits from being recorded to prevent your behavioral data from being polluted by sometimes totally incoherent pagination or results count data.]]></comment>
+                </field>
             </group>
             <group id="session" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Session Configuration</label>
@@ -75,6 +88,19 @@
                     <depends>
                         <field id="enabled">1</field>
                     </depends>
+                </field>
+            </group>
+            <group id="queue_cleanup" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Queue cleanup configuration</label>
+                <field id="delay" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Delay</label>
+                    <validate>integer validate-greater-than-zero</validate>
+                    <comment><![CDATA[In days. (Default is 7 days.)<br />Invalid tracker events older than this delay are periodically removed from the events indexing queue.]]></comment>
+                </field>
+                <field id="purge_now" translate="button_label" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="0">
+                    <label/>
+                    <frontend_model>Smile\ElasticsuiteTracker\Block\Adminhtml\System\Config\PurgeQueue</frontend_model>
+                    <comment><![CDATA[You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.]]></comment>
                 </field>
             </group>
         </section>

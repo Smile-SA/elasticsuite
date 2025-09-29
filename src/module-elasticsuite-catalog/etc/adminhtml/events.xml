@@ -25,4 +25,12 @@
         <!-- Adds an export button to the header of the product attribute grid -->
         <observer name="smile_elasticsuite_product_attribute_grid_export" instance="Smile\ElasticsuiteCatalog\Observer\Grid\ProductAttributeGridExportObserver" />
     </event>
+
+    <event name="adminhtml_catalog_product_attribute_edit_frontend_prepare_field_dependencies">
+        <!--
+            Circumventing the strange logic of ACP2E-1854. The specific class in addition of the disabled is to avoid
+            a warning/an error on 2.4.6 where the observer class does not exist.
+        -->
+        <observer disabled="true" name="layeredNavigation" instance="Smile\ElasticsuiteCatalog\Observer\Edit\Tab\Front\ProductAttributeFormBuildFormFieldDependenciesObserver" />
+    </event>
 </config>

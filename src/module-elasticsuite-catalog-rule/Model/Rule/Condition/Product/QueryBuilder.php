@@ -72,7 +72,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getSearchQuery(ProductCondition $productCondition)
@@ -83,20 +83,23 @@ class QueryBuilder
 
         $conditionValue = $productCondition->getValue();
         $conditionValue = array_filter(is_array($conditionValue) ? $conditionValue : [$conditionValue], 'strlen');
-        if ($query === null && !empty($conditionValue)) {
+        if ($query === null && (!empty($conditionValue) || $productCondition->getOperator() === '<=>')) {
             $this->prepareFieldValue($productCondition);
             $queryType   = QueryInterface::TYPE_TERMS;
             $queryParams = $this->getTermsQueryParams($productCondition);
 
-            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()'])) {
+            if ($productCondition->getInputType() === 'string' && !in_array($productCondition->getOperator(), ['()', '!()', '<=>'])) {
                 $queryType   = QueryInterface::TYPE_MATCH;
                 $queryParams = $this->getMatchQueryParams($productCondition);
             } elseif (in_array($productCondition->getOperator(), ['>=', '>', '<=', '<'])) {
                 $queryType   = QueryInterface::TYPE_RANGE;
                 $queryParams = $this->getRangeQueryParams($productCondition);
+            } elseif ($productCondition->getOperator() === '<=>') {
+                $queryType  = QueryInterface::TYPE_MISSING;
+                $queryParams = ['field' => $this->getSearchFieldName($productCondition)];
             }
 
-            $query = $this->prepareQuery($queryType, $queryParams);
+            $query = $this->prepareQuery($queryType, $queryParams)->setName($productCondition->asString());
 
             if (substr($productCondition->getOperator(), 0, 1) === '!') {
                 $query = $this->applyNegation($query);
@@ -119,6 +122,7 @@ class QueryBuilder
                 }
 
                 $query = $this->queryFactory->create(QueryInterface::TYPE_NESTED, $nestedQueryParams);
+                $query->setName($productCondition->asString());
             }
         }
 
@@ -130,7 +134,7 @@ class QueryBuilder
      *
      * @param ProductCondition $productCondition Product condition.
      *
-     * @return NULL|\Smile\ElasticsuiteCore\Search\Request\QueryInterface
+     * @return QueryInterface|null
      */
     private function getSpecialAttributesSearchQuery(ProductCondition $productCondition)
     {
@@ -176,7 +180,11 @@ class QueryBuilder
         $queryText          = $productCondition->getValue();
         $minimumShouldMatch = "100%";
 
-        return ['field' => $fieldName, 'queryText' => $queryText, 'minimumShouldMatch' => $minimumShouldMatch];
+        return [
+            'field'              => $fieldName,
+            'queryText'          => $queryText,
+            'minimumShouldMatch' => $minimumShouldMatch,
+        ];
     }
 
     /**
@@ -189,8 +197,9 @@ class QueryBuilder
     private function getRangeQueryParams(ProductCondition $productCondition)
     {
         $fieldName = $this->getSearchFieldName($productCondition);
+        $inputType = $productCondition->getInputType();
         $operator  = $productCondition->getOperator();
-        $value     = $productCondition->getValue();
+        $value     = ($inputType == 'date') ? $productCondition->getValue() : (float) $productCondition->getValue();
 
         switch ($operator) {
             case '>':
@@ -207,7 +216,7 @@ class QueryBuilder
                 break;
         }
 
-        return ['bounds' => [$operator => (float) $value], 'field' => $fieldName];
+        return ['bounds' => [$operator => $value], 'field' => $fieldName];
     }
 
     /**

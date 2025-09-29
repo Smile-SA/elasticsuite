@@ -137,6 +137,12 @@ class Preview extends Action
      */
     private function addVirtualCategoryData(CategoryInterface $category)
     {
+        $originalData = [
+            'is_virtual_category' => (bool) $category->getOrigData('is_virtual_category'),
+            'virtual_rule' => "{$category->getOrigData('virtual_rule')}",
+            'virtual_category_root' => $category->getOrigData('virtual_category_root'),
+        ];
+
         $isVirtualCategory = (bool) $this->getRequest()->getParam('is_virtual_category');
         $category->setIsVirtualCategory($isVirtualCategory);
 
@@ -144,6 +150,14 @@ class Preview extends Action
             $category->getVirtualRule()->loadPost($this->getRequest()->getParam('virtual_rule', []));
             $category->setVirtualCategoryRoot($this->getRequest()->getParam('virtual_category_root', null));
         }
+
+        $newData = [
+            'is_virtual_category' => $category->getData('is_virtual_category'),
+            'virtual_rule' => "{$category->getData('virtual_rule')}",
+            'virtual_category_root' => $category->getData('virtual_category_root'),
+        ];
+
+        $category->setData('has_draft_virtual_rule', !empty(array_diff($originalData, $newData)));
 
         return $this;
     }

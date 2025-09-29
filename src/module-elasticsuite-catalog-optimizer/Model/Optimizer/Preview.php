@@ -85,20 +85,26 @@ class Preview
     private $size;
 
     /**
+     * @var array
+     */
+    private $categoryPreviewContainers;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param OptimizerInterface              $optimizer             The optimizer to preview.
-     * @param Preview\ItemFactory             $previewItemFactory    Preview item factory.
-     * @param ApplierListFactory              $applierListFactory    Preview Applier.
-     * @param Functions\ProviderFactory       $providerFactory       Optimizer Functions Provider Factory.
-     * @param ContainerConfigurationInterface $containerConfig       Container Configuration.
-     * @param Preview\ResultsBuilder          $previewResultsBuilder Preview Results Builder.
-     * @param ContextInterface                $searchContext         Search Context.
-     * @param CategoryInterface|null          $category              Category Id to preview, if any.
-     * @param string                          $queryText             Query Text.
-     * @param int                             $size                  Preview size.
+     * @param OptimizerInterface              $optimizer                 The optimizer to preview.
+     * @param Preview\ItemFactory             $previewItemFactory        Preview item factory.
+     * @param ApplierListFactory              $applierListFactory        Preview Applier.
+     * @param Functions\ProviderFactory       $providerFactory           Optimizer Functions Provider Factory.
+     * @param ContainerConfigurationInterface $containerConfig           Container Configuration.
+     * @param Preview\ResultsBuilder          $previewResultsBuilder     Preview Results Builder.
+     * @param ContextInterface                $searchContext             Search Context.
+     * @param CategoryInterface|null          $category                  Category Id to preview, if any.
+     * @param string                          $queryText                 Query Text.
+     * @param int                             $size                      Preview size.
+     * @param array                           $categoryPreviewContainers Category preview compatible containers.
      */
     public function __construct(
         OptimizerInterface $optimizer,
@@ -108,9 +114,10 @@ class Preview
         ContainerConfigurationInterface $containerConfig,
         Preview\ResultsBuilder $previewResultsBuilder,
         ContextInterface $searchContext,
-        CategoryInterface $category = null,
+        ?CategoryInterface $category = null,
         $queryText = null,
-        $size = 10
+        $size = 10,
+        $categoryPreviewContainers = ['catalog_view_container']
     ) {
         $this->size                   = $size;
         $this->previewItemFactory     = $previewItemFactory;
@@ -122,6 +129,7 @@ class Preview
         $this->previewResultsBuilder  = $previewResultsBuilder;
         $this->category               = $category;
         $this->searchContext          = $searchContext;
+        $this->categoryPreviewContainers = $categoryPreviewContainers;
     }
 
     /**
@@ -202,11 +210,16 @@ class Preview
                 $canApply = ($this->searchContext->getCurrentSearchQuery() !== null) &&
                     in_array($this->searchContext->getCurrentSearchQuery()->getId(), $queryIds, true);
             }
-        } elseif ($canApply && $this->containerConfiguration->getName() === 'catalog_view_container') {
+        } elseif ($canApply && in_array($this->containerConfiguration->getName(), $this->categoryPreviewContainers)) {
             $config = $this->optimizer->getCatalogViewContainer();
-            if ((int) ($config['apply_to'] ?? 0) === 1 && !empty($config['category_ids'])) {
+            $applyTo = (int) ($config['apply_to'] ?? 0);
+            if (($applyTo > 0) && !empty($config['category_ids'])) {
                 $categoryIds = array_filter($config['category_ids']);
                 $canApply = in_array($this->category->getId(), $categoryIds, true);
+
+                if ($applyTo > 1) {
+                    $canApply = !$canApply;
+                }
             }
         }
 

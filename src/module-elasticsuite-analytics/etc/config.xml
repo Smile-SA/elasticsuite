@@ -20,6 +20,13 @@
             <search_terms>
                 <max_size>100</max_size>
             </search_terms>
+            <pending_events>
+                <warn_after_hours>6</warn_after_hours>
+            </pending_events>
+            <filters_configuration>
+                <customer_group_enabled>1</customer_group_enabled>
+                <company_enabled>1</company_enabled>
+            </filters_configuration>
         </smile_elasticsuite_analytics>
     </default>
 </config>

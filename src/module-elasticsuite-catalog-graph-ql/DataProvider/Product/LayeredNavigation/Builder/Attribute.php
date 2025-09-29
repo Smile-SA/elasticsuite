@@ -107,6 +107,7 @@ class Attribute implements LayerBuilderInterface
             $label = $attributeCode;
             try {
                 $attribute      = $this->attributeRepository->get($attributeCode);
+                $label = $attribute->getDefaultFrontendLabel();
                 $frontendLabels = array_filter(
                     $attribute->getFrontendLabels(),
                     function ($frontendLabel) use ($storeId) {
@@ -131,14 +132,14 @@ class Attribute implements LayerBuilderInterface
                 }
                 $metrics = $value->getMetrics();
                 if ($value->getValue() === '__other_docs') {
-                    $count += ((int) $metrics['count'] ?? 0) - 1; // -1 because '__other_docs' is counted in.
+                    $count += ((int) ($metrics['count'] ?? 0)) - 1; // -1 because '__other_docs' is counted in.
                     $hasMore = true;
                     continue;
                 }
 
                 $optionLabel = $value->getValue();
                 if ($attribute && $attribute->getFrontendInput() == 'boolean') {
-                    $optionLabel = $attribute->getSource()->getOptionText($value->getValue());
+                    $optionLabel = (string) $attribute->getSource()->getOptionText($value->getValue());
                 }
 
                 $options[] = $this->layerFormatter->buildItem($optionLabel, $value->getValue(), $metrics['count']);

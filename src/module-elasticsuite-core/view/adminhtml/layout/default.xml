@@ -26,6 +26,9 @@
                     <block class="Smile\ElasticsuiteCore\Block\Adminhtml\System\Version" after="version" name="es-version" as="es-version" />
                 </referenceContainer>
             </referenceContainer>
+            <block class="Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck\MenuDecorator"
+                   name="healthcheck.menu_decorator"
+                   template="Smile_ElasticsuiteCore::healthcheck/menu_decorator.phtml" />
         </referenceContainer>
     </body>
 </page>

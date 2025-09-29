@@ -18,6 +18,7 @@
         <thesaurus>
             <general>
                 <max_rewrites>2</max_rewrites>
+                <max_rewritten_queries>50</max_rewritten_queries>
             </general>
             <synonyms>
                 <enable>1</enable>

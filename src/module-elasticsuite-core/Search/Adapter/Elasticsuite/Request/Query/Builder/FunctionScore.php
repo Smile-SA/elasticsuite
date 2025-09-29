@@ -55,6 +55,10 @@ class FunctionScore extends AbstractComplexBuilder implements BuilderInterface
             $searchQueryParams['_name'] = $query->getName();
         }
 
+        if ($query->getMinScore() > 0) {
+            $searchQueryParams['min_score'] = $query->getMinScore();
+        }
+
         return ['function_score' => $searchQueryParams];
     }
 }

@@ -15,13 +15,58 @@
 .smile_elasticsuite_analytics-search-usage {
 
     .dashboard-item-title {
+        position: relative;
+
         .tooltip {
             margin-top: inherit;
+        }
+
+        .admin__field-action-export {
+            position: absolute;
+            right: 0;
+
+            .copy-feedback-text {
+                font-size: 0.9em;
+                color: #79a22e;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            &.show .copy-feedback-text {
+                opacity: 1;
+            }
+
+            &:after {
+                content: '\e635';
+                display: inline-block;
+                font-size: 2.2rem;
+                font-weight: normal;
+                color: #514943;
+                font-family: 'Admin Icons';
+                line-height: 1;
+                vertical-align: middle;
+                margin-left: 5px;
+                overflow: hidden;
+                cursor: pointer;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+
+            &:hover {
+                text-decoration: none;
+            }
         }
     }
 
     .dashboard-item-help {
         display: none;
+    }
+
+    .dashboard-totals-list {
+        .dashboard-totals-item {
+            width: 10%;
+            text-align: center
+        }
     }
 
     .admin__table-primary {
@@ -41,6 +86,18 @@
                             border-bottom-color: @table-td__border-color;
                         }
                     }
+
+                    .col-search-query {
+                        text-overflow: ellipsis;
+                        overflow: clip;
+                        width: 90%;
+                        max-width: 0;
+                        white-space: nowrap;
+                    }
+
+                    .col-number {
+                        text-align: right;
+                    }
                 }
 
                 tfoot {
@@ -49,5 +106,42 @@
                 }
             }
         }
+    }
+
+    .page-main-actions {
+        display: block;
+    }
+
+    .tooltip {
+        margin-right: 4rem;
+    }
+
+    .customer-group-selector {
+        color: #41362f;
+        float: left;
+        font-size: 1.3rem;
+        margin-top: .59rem;
+        margin-right: 2rem;
+    }
+
+    .customer-group-selector label {
+        margin-right: 1rem;
+        font-weight: 700;
+    }
+
+    .customer-company-selector {
+        color: #41362f;
+        float: left;
+        font-size: 1.3rem;
+        margin-top: .59rem;
+    }
+
+    .customer-company-selector label {
+        margin-right: 1rem;
+        font-weight: 700;
+    }
+
+    .page-actions-inner {
+        margin-top: .59rem;
     }
 }

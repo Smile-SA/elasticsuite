@@ -46,6 +46,11 @@ class QueryResponse implements ResponseInterface
     protected $aggregations;
 
     /**
+     * @var array
+     */
+    protected $totalHits = [];
+
+    /**
      * Constructor
      *
      * @param DocumentFactory    $documentFactory    Document factory.
@@ -83,6 +88,39 @@ class QueryResponse implements ResponseInterface
     public function getAggregations()
     {
         return $this->aggregations;
+    }
+
+    /**
+     * Get total hits as given by the Elasticsearch server.
+     * Can be useful to check if there's been real hits, eg when querying with size:0 and track_total_hits:true
+     * we can receive response like :
+     *
+     * "total": {
+     *     "value": 0,
+     *     "relation": "gte"
+     * }
+     *
+     * @return array
+     */
+    public function getTotalHits()
+    {
+        return $this->totalHits;
+    }
+
+    /**
+     * Return true if the responses has results.
+     * We cannot trust only count() for this.
+     *
+     * @return bool
+     */
+    public function hasResults()
+    {
+        if (isset($this->totalHits['relation']) && (isset($this->totalHits['value']))) {
+            return ($this->totalHits['relation'] === 'gte' && $this->totalHits['value'] >= 0)
+                || ($this->totalHits['relation'] === 'eq' && $this->totalHits['value'] > 0);
+        }
+
+        return $this->count > 0;
     }
 
     /**
@@ -128,6 +166,8 @@ class QueryResponse implements ResponseInterface
                 ? $searchResponse['hits']['total']['value']
                 : $searchResponse['hits']['total'];
             // @codingStandardsIgnoreEnd
+
+            $this->totalHits = $searchResponse['hits']['total'];
         }
     }
 }

@@ -14,18 +14,25 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 ?>
-<?php /** @var $block Smile\ElasticsuiteTracker\Block\Variables\AbstractBlock **/ ?>
-<?php $variables = $block->getVariables(); ?>
-<?php if (!empty($variables)) : ?>
-    <script>
-    <!--
-    try {
-    <?php foreach ($variables as $varName => $value) : ?>
-        smileTracker.addPageVar('<?php /* @noEscape */ echo $this->escapeJsQuote($varName)?>', '<?php /* @noEscape */ echo $block->stripTags($this->escapeJsQuote($value), null, true) ?>')
-    <?php endforeach; ?>
-    } catch (err) {
-        ;
+<?php
+/**
+ * @var $block Smile\ElasticsuiteTracker\Block\Variables\AbstractBlock
+ * @var $secureRenderer Magento\Framework\View\Helper\SecureHtmlRenderer
+ */
+?>
+<?php
+$variables = $block->getVariables();
+if (!empty($variables)) {
+    $scriptString = "try {\n";
+
+    foreach ($variables as $varName => $value) {
+        $escapedVarName = $this->escapeJsQuote($varName);
+        $escapedValue = $block->stripTags($this->escapeJsQuote($value), null, true);
+        $scriptString .= "smileTracker.addPageVar('{$escapedVarName}', '{$escapedValue}');\n";
     }
-    //-->
-    </script>
-<?php endif; ?>
+
+    $scriptString .= "} catch (err) { ; }";
+
+    echo /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false);
+}
+?>

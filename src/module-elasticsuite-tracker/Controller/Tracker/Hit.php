@@ -26,7 +26,7 @@ class Hit extends \Magento\Framework\App\Action\Action
     /**
      * @var string
      */
-    const PIXEL = '6wzwc+flkuJiYGDg9fRwCQLSjCDMwQQkJ5QH3wNSbCVBfsEMYJC3jH0ikOLxdHEMqZiTnJCQAOSxMDB+E7cIBcl7uvq5rHNKaAIA';
+    const PIXEL = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
     /**
      * @var \Smile\ElasticsuiteTracker\Api\CustomerTrackingServiceInterface

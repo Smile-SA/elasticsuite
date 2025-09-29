@@ -21,7 +21,9 @@
             <general>
                 <enabled>1</enabled>
                 <retention_delay>12</retention_delay>
-                <use_api>0</use_api>
+                <use_api>1</use_api>
+                <is_headless_mode>0</is_headless_mode>
+                <filter_bot_hits>1</filter_bot_hits>
             </general>
             <session>
                 <visit_cookie_name>STUID</visit_cookie_name>
@@ -33,6 +35,9 @@
                 <enabled>0</enabled>
                 <delay>365</delay>
             </anonymization>
+            <queue_cleanup>
+                <delay>7</delay>
+            </queue_cleanup>
         </smile_elasticsuite_tracker>
         <smile_elasticsuite_telemetry>
             <telemetry>

@@ -25,6 +25,7 @@
                 <xs:element name="analyzers" type="analyzersDefinition"/>
                 <xs:element name="normalizers" type="normalizersDefinition"/>
                 <xs:element name="tokenizers" type="tokenizersDefinition"/>
+                <xs:element name="stemmers" type="stemmersDefinition" />
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -171,6 +172,46 @@
                 </xs:complexType>
             </xs:element>
         </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="stemmersDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                Stemmers declaration root node
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="group" type="stemmerGroupDefinition" />
+            </xs:choice>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="stemmerGroupDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                List of stemmers for a given language
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="stemmer" type="stemmerDefinition" />
+        </xs:choice>
+        <xs:attribute name="language" type="xs:string" use="required" />
+        <xs:attribute name="title" type="xs:string" use="required" />
+        <xs:attribute name="translate" type="xs:string" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="stemmerDefinition">
+        <xs:annotation>
+            <xs:documentation>
+                A specific stemmer for a given language
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="label" type="xs:string" />
+        </xs:choice>
+        <xs:attribute name="identifier" type="xs:string" use="required" />
+        <xs:attribute name="recommended" type="xs:boolean" use="optional" />
     </xs:complexType>
 
 </xs:schema>

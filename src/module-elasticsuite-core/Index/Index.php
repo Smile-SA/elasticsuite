@@ -132,4 +132,12 @@ class Index implements IndexInterface
     {
         return $this->getMapping()->getIdField();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function useKnn(): bool
+    {
+        return $this->getMapping()->hasKnnFields();
+    }
 }

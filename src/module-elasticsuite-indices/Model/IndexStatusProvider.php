@@ -13,10 +13,12 @@
  */
 namespace Smile\ElasticsuiteIndices\Model;
 
-use DateInterval;
 use DateTime;
 use Exception;
 use Magento\Framework\DataObject;
+use Psr\Log\LoggerInterface;
+use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 use Smile\ElasticsuiteIndices\Model\ResourceModel\StoreIndices\CollectionFactory as StoreIndicesCollectionFactory;
@@ -42,6 +44,21 @@ class IndexStatusProvider
     private const SECONDS_IN_DAY = 86400;
 
     /**
+     * @var ClientInterface
+     */
+    private $client;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var IndexSettingsInterface
+     */
+    private $indexSettings;
+
+    /**
      * @var IndexSettingsHelper
      */
     private $indexSettingsHelper;
@@ -57,20 +74,35 @@ class IndexStatusProvider
     protected $workingIndexers;
 
     /**
+     * @var array|null
+     */
+    private $indicesStats = null;
+
+    /**
      * Constructor.
      *
+     * @param ClientInterface                 $client                   ES client.
+     * @param IndexSettingsInterface          $indexSettings            Index settings.
      * @param IndexSettingsHelper             $indexSettingsHelper      Index settings helper.
      * @param StoreIndicesCollectionFactory   $storeIndicesFactory      Store indices collection.
      * @param WorkingIndexerCollectionFactory $indexerCollectionFactory Working indexers collection.
+     * @param LoggerInterface                 $logger                   Logger.
      */
     public function __construct(
+        ClientInterface $client,
+        IndexSettingsInterface $indexSettings,
         IndexSettingsHelper $indexSettingsHelper,
         StoreIndicesCollectionFactory $storeIndicesFactory,
-        WorkingIndexerCollectionFactory $indexerCollectionFactory
+        WorkingIndexerCollectionFactory $indexerCollectionFactory,
+        LoggerInterface $logger
     ) {
+        $this->client = $client;
+        $this->indexSettings = $indexSettings;
         $this->indexSettingsHelper = $indexSettingsHelper;
         $this->storeIndices = $storeIndicesFactory->create()->getItems();
         $this->workingIndexers = $indexerCollectionFactory->create()->getItems();
+        $this->logger = $logger;
+        $this->initStats();
     }
 
     /**
@@ -83,10 +115,15 @@ class IndexStatusProvider
      */
     public function getIndexStatus($indexName, $alias): string
     {
-        $indexDate = $this->getIndexUpdatedDateFromIndexName($indexName, $alias);
+        $indexData = $this->indexSettingsHelper->parseIndexName($indexName);
+        $indexDate = $indexData ? $indexData['datetime'] : false;
 
         if ($this->isExternal($indexName)) {
             return IndexStatus::EXTERNAL_STATUS;
+        }
+
+        if ($this->isClosed($indexName)) {
+            return IndexStatus::CLOSED_STATUS;
         }
 
         if ($this->isRebuilding($indexName, $indexDate)) {
@@ -114,13 +151,17 @@ class IndexStatusProvider
      */
     private function isRebuilding(string $indexName, $indexDate): bool
     {
+        if ($indexDate === false) {
+            // If $indexDate is false, we cannot rebuild.
+            return false;
+        }
+
         if (!empty($this->workingIndexers)) {
             foreach (array_keys($this->workingIndexers) as $indexKey) {
                 if (strpos((string) $indexName, $indexKey) !== false) {
-                    $today = new DateTime('Ymd');
-                    $day   = new DateTime($indexDate);
+                    $today = new DateTime('now');
 
-                    return ($today == $day);
+                    return ($today->format('Y-m-d') === $indexDate->format('Y-m-d'));
                 }
             }
         }
@@ -147,6 +188,28 @@ class IndexStatusProvider
     }
 
     /**
+     * Returns if the index is closed.
+     *
+     * @param string $indexName Index name.
+     *
+     * @return bool
+     */
+    private function isClosed(string $indexName): bool
+    {
+        // Ensure the index is NOT External before checking for Closed status.
+        if ($this->isExternal($indexName)) {
+            return false;
+        }
+
+        // If the index name does not exist in the global response, it is probably closed.
+        if (!array_key_exists($indexName, $this->indicesStats)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns if index is ghost.
      *
      * @param DateTime $indexDate Index updated date.
@@ -157,8 +220,9 @@ class IndexStatusProvider
     {
         try {
             $indexDate = ($indexDate instanceof DateTime) ? $indexDate : new DateTime();
+            $indexTimestamp = $indexDate->getTimestamp();
 
-            return (new DateTime())->diff($indexDate)->days >= self::NUMBER_DAYS_AFTER_INDEX_IS_GHOST;
+            return ((new DateTime())->getTimestamp() - $indexTimestamp) >= $this->indexSettingsHelper->getTimeBeforeGhost();
         } catch (Exception $e) {
             return false;
         }
@@ -176,36 +240,20 @@ class IndexStatusProvider
     }
 
     /**
-     * Get index updated date from index name.
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * Init indices stats by calling once and for all.
      *
-     * @param string $indexName Index name.
-     * @param string $alias     Index alias.
-     *
-     * @return DateTime|false
+     * @return void
      */
-    private function getIndexUpdatedDateFromIndexName($indexName, $alias)
+    private function initStats()
     {
-        $matches = [];
-        preg_match_all('/{{([\w]*)}}/', $this->indexSettingsHelper->getIndicesPattern(), $matches);
-
-        if (empty($matches[1])) {
-            return false;
-        }
-
-        $format = '';
-        foreach ($matches[1] as $value) {
-            $format .= $value;
-        }
-
-        try {
-            // Remove alias from index name since next preg_replace would fail if alias is containing numbers.
-            $indexName = str_replace($alias ?? $this->indexSettingsHelper->getIndexAlias(), '', $indexName);
-            $date      = preg_replace('/[^0-9]|(?<=[a-zA-Z])[0-9]/', '', $indexName);
-
-            return DateTime::createFromFormat($format, $date);
-        } catch (Exception $e) {
-            return false;
+        if ($this->indicesStats === null) {
+            try {
+                $indexStatsResponse = $this->client->indexStats('_all');
+                $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices statistics', ['exception' => $e]);
+                $this->indicesStats = [];
+            }
         }
     }
 }

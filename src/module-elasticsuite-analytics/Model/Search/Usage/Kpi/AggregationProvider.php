@@ -112,6 +112,33 @@ class AggregationProvider implements AggregationProviderInterface
                     'value' => 'catalogsearch_result_index',
                 ]
             ),
+            'product_views' => $this->queryFactory->create(
+                QueryInterface::TYPE_TERM,
+                [
+                    'field' => 'page.type.identifier',
+                    'value' => 'catalog_product_view',
+                ]
+            ),
+            'category_views' => $this->queryFactory->create(
+                QueryInterface::TYPE_TERM,
+                [
+                    'field' => 'page.type.identifier',
+                    'value' => 'catalog_category_view',
+                ]
+            ),
+            'add_to_cart' => $this->queryFactory->create(
+                QueryInterface::TYPE_EXISTS,
+                [
+                    'field' => 'page.cart.product_id',
+                ]
+            ),
+            'sales' => $this->queryFactory->create(
+                QueryInterface::TYPE_TERM,
+                [
+                    'field' => 'page.type.identifier',
+                    'value' => 'checkout_onepage_success',
+                ]
+            ),
         ];
 
         return $queries;

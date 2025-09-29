@@ -193,6 +193,10 @@ class RequestMapperPlugin
             }
         }
 
+        // Discard Category Permissions fields in all cases. They don't exist in the mapping and cannot be handled like this.
+        unset($result['category_permissions_field']);
+        unset($result['category_permissions_value']);
+
         return $result;
     }
 

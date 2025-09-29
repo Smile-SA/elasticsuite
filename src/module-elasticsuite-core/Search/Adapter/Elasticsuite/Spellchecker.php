@@ -163,6 +163,7 @@ class Spellchecker implements SpellcheckerInterface
                 MappingInterface::DEFAULT_SPELLING_FIELD => $request->getQueryText(),
             ],
         ];
+        $perFieldAnalyzer = [];
 
         if ($request->isUsingReference()) {
             $doc['fields'][] = MappingInterface::DEFAULT_REFERENCE_FIELD . "." . FieldInterface::ANALYZER_REFERENCE;
@@ -171,15 +172,25 @@ class Spellchecker implements SpellcheckerInterface
 
         if ($request->isUsingEdgeNgram()) {
             $doc['fields'][] = MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM;
+            $perFieldAnalyzer[MappingInterface::DEFAULT_EDGE_NGRAM_FIELD . "." . FieldInterface::ANALYZER_EDGE_NGRAM]
+                = FieldInterface::ANALYZER_STANDARD;
             $doc['doc'][MappingInterface::DEFAULT_EDGE_NGRAM_FIELD] = $request->getQueryText();
+        }
+
+        if (!empty($perFieldAnalyzer)) {
+            $doc['per_field_analyzer'] = $perFieldAnalyzer;
         }
 
         $docs = [];
 
-        // Compute the mtermvector query on all shards to ensure exhaustive results.
-        foreach (range(0, $shards - 1) as $shard) {
-            $doc['routing'] = sprintf("[%s][%s]", $request->getIndex(), $shard);
-            $docs[] = $doc;
+        // Compute the mtermvector query on all indices.
+        foreach (array_keys($stats['indices']) as $indexName) {
+            // Compute the mtermvector query on all shards to ensure exhaustive results.
+            foreach (range(0, $shards - 1) as $shard) {
+                $doc['_index'] = $indexName;
+                $doc['routing'] = sprintf("[%s][%s]", $indexName, $shard);
+                $docs[] = $doc;
+            }
         }
 
         $mtermVectorsQuery['body'] = ['docs' => $docs];

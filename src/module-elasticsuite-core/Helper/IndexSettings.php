@@ -15,11 +15,18 @@
 namespace Smile\ElasticsuiteCore\Helper;
 
 use DateTime;
+use Magento\Framework\App\Helper\Context;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
 
 /**
  * Indices related configuration helper.
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -28,9 +35,38 @@ use Magento\Store\Model\ScopeInterface;
 class IndexSettings extends AbstractConfiguration
 {
     /**
+     * Location of ElasticSuite base settings configuration.
+     *
+     * @var string
+     */
+    const BASE_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_base_settings';
+
+    /**
      * @var string
      */
     const INDICES_SETTINGS_CONFIG_XML_PREFIX = 'indices_settings';
+
+    /**
+     * Location of Elasticsuite analysis settings configuration.
+     *
+     * @var string
+     */
+    const ANALYSIS_CONFIG_XML_PREFIX = 'smile_elasticsuite_core_analysis_settings';
+
+    /**
+     * @var string
+     */
+    const REFERENCE_ANALYZER_CONFIG_XML_PREFIX = 'reference_analyzer';
+
+    /**
+     * @var string
+     */
+    const STEMMER_USE_DEFAULT_CONFIG_XML_PATH = 'stemmer/use_default';
+
+    /**
+     * @var string
+     */
+    const STEMMER_CUSTOM_STEMMER_CONFIG_XML_PATH = 'stemmer/custom';
 
     /**
      * @var string
@@ -71,6 +107,32 @@ class IndexSettings extends AbstractConfiguration
      * @var integer
      */
     const MAX_NGRAM_SIZE_DEFAULT = 2;
+
+    /**
+     * @var IndicesConfig
+     */
+    protected $indicesConfig;
+
+    /**
+     * @var array
+     */
+    protected $indexNameParsingCache = [];
+
+    /**
+     * Constructor.
+     *
+     * @param Context               $context       Helper context.
+     * @param StoreManagerInterface $storeManager  Store manager.
+     * @param IndicesConfig         $indicesConfig Indices configuration.
+     */
+    public function __construct(
+        Context $context,
+        StoreManagerInterface $storeManager,
+        IndicesConfig $indicesConfig
+    ) {
+        parent::__construct($context, $storeManager);
+        $this->indicesConfig  = $indicesConfig;
+    }
 
     /**
      * Return the locale code (e.g.: "en_US") for a store.
@@ -163,23 +225,133 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
-     * Get number of shards from the configuration.
+     * Returns custom indices settings.
      *
-     * @return integer
+     * @return array
      */
-    public function getNumberOfShards()
+    public function getCustomIndicesSettings(): array
     {
+        $serializedConfigValue = $this->getSerializedConfigValue('indices_settings/custom_number_of_shards_and_replicas_per_index');
+
+        if ($serializedConfigValue !== null) {
+            return $this->normalize($serializedConfigValue);
+        }
+
+        return [];
+    }
+
+    /**
+     * Get serialized config value.
+     *
+     * @param string $indexType Index type.
+     *
+     * @return mixed|null
+     */
+    public function getSerializedConfigValue(string $indexType)
+    {
+        $configValue = $this->getConfigValue($indexType);
+
+        if ($configValue !== null) {
+            $json = ObjectManager::getInstance()->get(Json::class);
+
+            return $json->unserialize($configValue);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the number of shards based on the provided index identifier.
+     *
+     * @param string|null $indexIdentifier If provided, the index identifier; otherwise, null.
+     *
+     * @return int
+     */
+    public function getNumberOfShards(?string $indexIdentifier = null): int
+    {
+        // If $indexIdentifier is null, return the default number of shards from the configuration.
+        if ($indexIdentifier === null) {
+            return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
+        }
+
+        // Otherwise, retrieve custom number of shards per index type.
+        return $this->getNumberOfShardsPerIndex($indexIdentifier);
+    }
+
+    /**
+     * Get custom number of shards per index type.
+     *
+     * @param string $indexIdentifier Index type identifier
+     *
+     * @return int
+     */
+    public function getNumberOfShardsPerIndex(string $indexIdentifier): int
+    {
+        // Retrieve custom indices settings from the database.
+        $customSettings = $this->getCustomIndicesSettings();
+
+        if ($customSettings) {
+            foreach ($customSettings as $data) {
+                if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_shards'])) {
+                    return (int) $data['custom_number_shards'];
+                }
+            }
+        }
+
+        // If the custom setting doesn't exist in the database, return the default value from the configuration.
         return (int) $this->getIndicesSettingsConfigParam('number_of_shards');
     }
 
     /**
-     * Get number of replicas from the configuration.
-
-     * @return integer
+     * Get the number of replicas based on the provided index identifier.
+     *
+     * @param string|null $indexIdentifier If provided, the index identifier; otherwise, null.
+     *
+     * @return int
      */
-    public function getNumberOfReplicas()
+    public function getNumberOfReplicas(?string $indexIdentifier = null): int
     {
+        // If $indexIdentifier is null, return the default number of replicas from the configuration.
+        if ($indexIdentifier === null) {
+            return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
+        }
+
+        // Otherwise, retrieve custom number of replicas per index type.
+        return $this->getNumberOfReplicasPerIndex($indexIdentifier);
+    }
+
+    /**
+     * Get custom number of replicas per index type.
+     *
+     * @param string $indexIdentifier Index type identifier
+     *
+     * @return int
+     */
+    public function getNumberOfReplicasPerIndex(string $indexIdentifier): int
+    {
+        // Retrieve specific indices settings from the database.
+        $customSettings = $this->getCustomIndicesSettings();
+
+        if ($customSettings) {
+            foreach ($customSettings as $data) {
+                if ($data['index_type'] === $indexIdentifier && isset($data['custom_number_replicas'])) {
+                    return (int) $data['custom_number_replicas'];
+                }
+            }
+        }
+
+        // If the custom setting doesn't exist in the database, return the default value from the configuration.
         return (int) $this->getIndicesSettingsConfigParam('number_of_replicas');
+    }
+
+    /**
+     * Returns the time elapsed (in seconds) since its creation after which a non-live index is to be considered ghost.
+     *
+     * @return int
+     */
+    public function getTimeBeforeGhost(): int
+    {
+        return (int) $this->getIndicesSettingsConfigParam('ghost_timeout');
     }
 
     /**
@@ -213,13 +385,86 @@ class IndexSettings extends AbstractConfiguration
     }
 
     /**
+     * Retrieve index context from its name.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     *
+     * @param string $indexName Index name.
+     *
+     * @return array|false
+     */
+    public function parseIndexName(string $indexName)
+    {
+        if (array_key_exists($indexName, $this->indexNameParsingCache)) {
+            return $this->indexNameParsingCache[$indexName];
+        }
+
+        $fullIndexName = $indexName;
+
+        // 1. Remove prefix
+        // magento2_default_catalog_product_20250716_153832 => default_catalog_product_20250716_153832
+        $alias = $this->getIndexAlias();
+        if (!str_starts_with($indexName, "{$alias}_")) {
+            return false;
+        }
+        $indexName = str_replace("{$alias}_", '', $indexName);
+
+        // 2. Get date and remove suffix
+        // default_catalog_product_20250716_153832 => default_catalog_product
+        $isTrackingIndex = str_contains($indexName, 'tracking');
+        $today = new \DateTime();
+        $format = str_replace(['{{', '}}'], '', $this->getIndicesPattern());
+        // Get suffix length from pattern, tracking index have a special suffix.
+        $suffixLength = strlen($isTrackingIndex ? $today->format('Ym') : $this->getIndexNameSuffix($today));
+        // Extract timestamp from indexName.
+        $dateString = substr($indexName, -$suffixLength);
+        // Remove timestamp from indexName.
+        $indexName = substr($indexName, 0, -$suffixLength - 1);
+        try {
+            // Tracking indices are built monthly and does not fit with standard pattern containing datetime with hours.
+            $datetime = $isTrackingIndex ? false : DateTime::createFromFormat($format, $dateString);
+        } catch (\Exception $e) {
+            $datetime = false;
+        }
+
+        // 3. Find entity type and store code
+        // default_catalog_product => (default, catalog_product)
+        $availableTypes = array_keys($this->indicesConfig->get());
+        $indexIdentifier = null;
+        $storeCode = null;
+        // Sort store codes by descending number of underscores to avoid incorrect replacements,
+        // especially when one store code is a prefix of another (e.g., 'default' vs 'default_fr').
+        usort($availableTypes, function ($itemA, $itemB) {
+            return substr_count($itemB, '_') <=> substr_count($itemA, '_');
+        });
+        foreach ($availableTypes as $type) {
+            if (str_ends_with($indexName, $type)) {
+                $indexIdentifier = $type;
+                $storeCode = preg_replace("/_$type$/", '', $indexName);
+                break;
+            }
+        }
+
+        $this->indexNameParsingCache[$fullIndexName] = [
+            'prefix' => $alias,
+            'store_code' => $storeCode,
+            'index_identifier' => $indexIdentifier,
+            'datetime' => $datetime,
+        ];
+
+        return $this->indexNameParsingCache[$fullIndexName];
+    }
+
+    /**
      * Max number of results per query.
+     *
+     * @param string $indexIdentifier Index identifier.
      *
      * @return integer
      */
-    public function getMaxResultWindow()
+    public function getMaxResultWindow($indexIdentifier)
     {
-        return (int) $this->getNumberOfShards() * self::PER_SHARD_MAX_RESULT_WINDOW;
+        return (int) $this->getNumberOfShards($indexIdentifier) * self::PER_SHARD_MAX_RESULT_WINDOW;
     }
 
     /**
@@ -279,6 +524,83 @@ class IndexSettings extends AbstractConfiguration
         $path = self::INDICES_SETTINGS_CONFIG_XML_PREFIX . '/' . $configField;
 
         return $this->getElasticSuiteConfigParam($path);
+    }
+
+    /**
+     * Read config flag under the path smile_elasticsuite_core_analysis_settings/reference_analyzer.
+     *
+     * @param string                        $configFlag Config flag name.
+     * @param integer|string|StoreInterface $store      Store.
+     *
+     * @return mixed
+     */
+    public function getReferenceAnalyzerConfigFlag($configFlag, $store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::REFERENCE_ANALYZER_CONFIG_XML_PREFIX . '/' . $configFlag;
+
+        return $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+    /**
+     * Returns true if the given store used a non-default language stemmer.
+     *
+     * @param integer|string|StoreInterface $store Store.
+     *
+     * @return bool
+     */
+    public function hasCustomLanguageStemmer($store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::STEMMER_USE_DEFAULT_CONFIG_XML_PATH;
+
+        return (false === $this->scopeConfig->isSetFlag($path, ScopeInterface::SCOPE_STORE, $store));
+    }
+
+    /**
+     * Returns the custom stemmer to use for the given store.
+     *
+     * @param integer|string|StoreInterface $store Store.
+     *
+     * @return mixed
+     */
+    public function getCustomLanguageStemmer($store)
+    {
+        $path = self::ANALYSIS_CONFIG_XML_PREFIX . '/' . self::STEMMER_CUSTOM_STEMMER_CONFIG_XML_PATH;
+
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $store);
+    }
+
+    /**
+     * Retrieve a configuration value by its key.
+     *
+     * @param string $indexType The configuration key
+     *
+     * @return mixed
+     */
+    protected function getConfigValue(string $indexType)
+    {
+        return $this->scopeConfig->getValue(self::BASE_CONFIG_XML_PREFIX . "/" . $indexType);
+    }
+
+    /**
+     * Normalize config data.
+     *
+     * @param array $data Data.
+     *
+     * @return array
+     */
+    private function normalize(array $data): array
+    {
+        $result = [];
+        foreach ($data as $item) {
+
+            $result[] = [
+                'index_type' => $item['index_type'],
+                'custom_number_shards' => $item['custom_number_shards'],
+                'custom_number_replicas' => $item['custom_number_replicas'],
+            ];
+        }
+
+        return $result;
     }
 
     /**

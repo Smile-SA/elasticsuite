@@ -51,6 +51,11 @@ class FunctionScore implements QueryInterface
     private $functions;
 
     /**
+     * @var integer
+     */
+    private $minScore = 0;
+
+    /**
      * Score mode functions.
      */
     const SCORE_MODE_MULTIPLY = 'multiply';
@@ -85,19 +90,22 @@ class FunctionScore implements QueryInterface
      * @param string                                           $name      Query name.
      * @param string                                           $scoreMode Score mode.
      * @param string                                           $boostMode Boost mode.
+     * @param int                                              $minScore  Min Score.
      */
     public function __construct(
         \Magento\Framework\Search\Request\QueryInterface $query,
         $functions = [],
         $name = null,
         $scoreMode = self::SCORE_MODE_SUM,
-        $boostMode = self::BOOST_MODE_SUM
+        $boostMode = self::BOOST_MODE_SUM,
+        $minScore = 0
     ) {
         $this->name      = $name;
         $this->query     = $query;
         $this->scoreMode = $scoreMode;
         $this->boostMode = $boostMode;
         $this->functions = $functions;
+        $this->minScore  = $minScore;
     }
 
     /**
@@ -106,6 +114,16 @@ class FunctionScore implements QueryInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -162,5 +180,15 @@ class FunctionScore implements QueryInterface
     public function getFunctions()
     {
         return $this->functions;
+    }
+
+    /**
+     * Returns min score
+     *
+     * @return int
+     */
+    public function getMinScore()
+    {
+        return (int) $this->minScore;
     }
 }

@@ -90,6 +90,21 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If you show out of stock products in the frontend (through the "Catalog / Inventory / Stock Options / Display Out of Stock Products" stores configuration setting), switch this setting to Yes to make sure that a manually positionned product (in categories or in search queries) is no longer shown in the configured manual positions when it becomes out of stock.]]></comment>
                 </field>
+                <field id="collector_fields_scoring_algorithm" translate="label comment" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Text scoring algorithm for collector fields</label>
+                    <source_model>Smile\ElasticsuiteCatalog\Model\Attribute\Source\TextScoringAlgorithm</source_model>
+                    <comment><![CDATA[When performing a search, Elasticsuite will look both into fields related to searchable attributes with a search weight greater than 1 and into special collector fields ("search", "spelling", etc.) where searchable attributes data can be copied to.<br />The text scoring algorithm (or "similarity") determines how the relevance score is computed for a field during search. While you can change it for every searchable attribute (in its advanced properties), you might want to also change it for those collector fields.<br />Selecting "Default" will let your server apply the default scoring algorithm which takes into account every occurence of a search term in a field. Eg: a product with "dress" 3 times in its "search" field should be scored higher than a product with "dress" only 1 time in its own "search" field.<br/> You can opt for a "Boolean" scoring model that produces at most a score of 1 for the whole field whatever the number of matches. Eg: the product with "dress" 3 times in its "spelling" field would be scored the same as the product with "dress" only 1 time in its own "spelling" field.]]></comment>
+                </field>
+            </group>
+        </section>
+
+        <section id="catalog">
+            <group id="frontend">
+                <field id="default_sort_direction_by" translate="label comment" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Product Listing Sort Direction by</label>
+                    <source_model>Smile\ElasticsuiteCatalog\Model\Config\Source\SortDirectionConfig</source_model>
+                    <comment><![CDATA[Set the default sort direction for product listing.]]></comment>
+                </field>
             </group>
         </section>
     </system>

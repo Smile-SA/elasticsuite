@@ -1,0 +1,52 @@
+<?php
+/**
+ * Healthcheck Table
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCore
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2024 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
+
+$allowedTags = ['a', 'br', 'strong', 'ul', 'li'];
+/** @var \Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck\Healthcheck $block */
+?>
+
+<table class="data-grid">
+    <thead>
+    <tr>
+        <th class="data-grid-th"><?= __('Identifier') ?></th> <!-- Column for health check identifier -->
+        <th class="data-grid-th"><?= __('Description') ?></th> <!-- Column for health check description -->
+        <th class="data-grid-th"><?= __('Status') ?></th> <!-- Column for health check status -->
+        <th class="data-grid-th"><?= __('Severity') ?></th> <!-- Column for severity level -->
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($block->getHealthchecks() as $index => $check): ?>
+        <tr class="<?= $index % 2 === 0 ? 'even' : 'odd' ?>">
+            <td><?= $block->escapeHtml($check->getIdentifier()) ?></td>
+            <td><?= $block->escapeHtml($check->getDescription(), $allowedTags) ?></td>
+            <td>
+                <span class="<?= $check->getStatus() === CheckInterface::STATUS_PASSED ? 'grid-status-passed' : 'grid-status-failed' ?>">
+                    <?= $block->escapeHtml(__($check->getStatus())) ?>
+                </span>
+            </td>
+            <td>
+                <?php if ($check->getStatus() === CheckInterface::STATUS_FAILED): ?>
+                    <span class="<?= $block->escapeHtml($this->getSeverityCssClass($check->getSeverity())) ?>">
+                        <?= $block->escapeHtml($check->getSeverityLabel()) ?>
+                    </span>
+                <?php endif; ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

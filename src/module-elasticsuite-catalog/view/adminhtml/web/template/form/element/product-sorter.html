@@ -44,9 +44,9 @@
             <ul data-bind="foreach: products, afterRender: enableSortableList" class="product-list">
                 <li class="product-list-item" data-bind="
                     attr: {'data-product-id': getId()},
-                    css: {'manual-sorting': hasPosition(), 'automatic-sorting': !hasPosition(), 'blacklisted': isBlacklisted() }
+                    css: {'manual-sorting': hasPosition() && canUseManualSort(), 'automatic-sorting': !canUseManualSort() || !hasPosition(), 'blacklisted': isBlacklisted() }
                 ">
-                    <div class="draggable-handle" data-bind="if: hasPosition()"></div>
+                    <div class="draggable-handle" data-bind="if: hasPosition() && canUseManualSort()"></div>
                     <div class="blacklist-handle" data-bind="if: $parent.allowBlacklist">
                         <a data-bind="click: $parent.toggleBlackListed.bind($parent), attr: { title: isBlacklisted() ? $t('Blacklisted') : $t('Visible') }"></a>
                     </div>
@@ -61,7 +61,7 @@
                             <p class="stock" data-bind="text: getStockLabel()"></p>
                         </div>
 
-                        <div class="admin__actions-switch" data-role="switcher" data-bind="click: $parent.toggleSortType.bind($parent)">
+                        <div class="admin__actions-switch" data-role="switcher" data-bind="visible: canUseManualSort(), click: $parent.toggleSortType.bind($parent)">
                             <input type="checkbox" class="admin__actions-switch-checkbox" simple-checked="hasPosition()" ko-value="hasPosition()" />
                             <label class="admin__actions-switch-label">
                                 <span class="admin__actions-switch-text"

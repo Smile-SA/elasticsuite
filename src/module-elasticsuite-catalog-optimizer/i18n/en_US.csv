@@ -52,9 +52,11 @@ Actions,Actions
 Cancel,Cancel
 "Add Selected Terms","Add Selected Terms"
 "Category Product View","Category Product View"
-"All Categories","All Categories"
+"All Categories","All categories"
 "Selected categories","Selected categories"
+"All except selected categories","All except selected categories"
 "Apply to categories","Apply to categories"
+"Categories","Categories"
 Configuration,Configuration
 "Boost value (%)","Boost value (%)"
 "From -99 to 10000","From -99 to 10000"
@@ -65,6 +67,7 @@ Logarithmic,Logarithmic
 Linear,Linear
 "Scale function","Scale function"
 "Boost value (multiply)","Boost value (multiply)"
+"Attribute value pre-multiplier","Attribute value pre-multiplier"
 "Value the field will be multiplied by before applying the scale function","Value the field will be multiplied by before applying the scale function"
 "Value the field will be multiplied by before potentially limiting the boost impact","Value the field will be multiplied by before potentially limiting the boost impact"
 "Apply to products","Apply to products"
@@ -91,3 +94,7 @@ Duplicate,Duplicate
 "sqrt desc","Aggressively reduces the spread of the boost attribute values by applying the square root function : a product with a value of 10 will be boosted by a factor of around 3, a product with a value of 100 will be boosted by a factor of 10, a product with a value of 1000 will be boosted by a factor of around 30, a product with a value of 10000 will be boosted by a factor of 100."
 "none desc","No change to the spread of boost attributes values which are taken as is, so a product with an attribute value of 1000 will be boosted 200 times more than a product with an attribute value of 5. This function is best suited for values that do not have a very wide range."
 "Manage Elasticsuite Search Optimizers","Manage Elasticsuite Search Optimizers"
+"Allow negative boost","Allow negative boost"
+"If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.","If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute."
+"Results","Results"
+"Uses","Uses"

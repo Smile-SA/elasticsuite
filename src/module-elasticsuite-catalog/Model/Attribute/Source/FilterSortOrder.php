@@ -35,7 +35,7 @@ class FilterSortOrder implements OptionSourceInterface
         return [
             ['value' => BucketInterface::SORT_ORDER_COUNT, 'label' => __('Result count')],
             ['value' => BucketInterface::SORT_ORDER_MANUAL, 'label' => __('Admin sort')],
-            ['value' => BucketInterface::SORT_ORDER_TERM, 'label' => __('Name')],
+            ['value' => BucketInterface::SORT_ORDER_TERM_DEPRECATED, 'label' => __('Name')],
             ['value' => BucketInterface::SORT_ORDER_RELEVANCE, 'label' => __('Relevance')],
         ];
     }

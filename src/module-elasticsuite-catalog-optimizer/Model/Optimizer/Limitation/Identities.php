@@ -153,7 +153,11 @@ class Identities
 
         $wasAppliedToAllCategories = empty($origData['catalog_view_container']['category_ids']);
 
-        if ($isAppliedToAllCategories || $wasAppliedToAllCategories) {
+        // If the optimizer is or was previously assigned to all but some categories.
+        $appliedToAllCategoriesButSome = ((int) ($data['catalog_view_container']['apply_to'] ?? 0) === 2)
+            || ((int) ($origData['catalog_view_container']['apply_to'] ?? 0) === 2);
+
+        if ($isAppliedToAllCategories || $wasAppliedToAllCategories || $appliedToAllCategoriesButSome) {
             $identities[] = \Magento\Catalog\Model\Category::CACHE_TAG;
         }
 

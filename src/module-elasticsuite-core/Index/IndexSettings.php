@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Index;
 
+use DateTime;
+use Exception;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Index\Analysis\Config as AnalysisConfig;
@@ -120,24 +122,45 @@ class IndexSettings implements IndexSettingsInterface
     public function getAnalysisSettings($store)
     {
         $language = $this->helper->getLanguageCode($store);
+        $settings = $this->analysisConfig->get($language);
 
-        return $this->analysisConfig->get($language);
+        if (is_array($settings)
+            && array_key_exists('analyzer', $settings)
+            && array_key_exists('reference', $settings['analyzer'])
+            && array_key_exists('filter', $settings['analyzer']['reference'])
+        ) {
+            $referenceFilters = array_values($settings['analyzer']['reference']['filter'] ?? []);
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('trim_leading_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['trim_leading_zeroes']);
+            }
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('trim_trailing_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['trim_trailing_zeroes']);
+            }
+            if (!$this->helper->getReferenceAnalyzerConfigFlag('reduce_zeroes', $store)) {
+                $referenceFilters = array_diff($referenceFilters, ['reduce_zeroes']);
+            }
+            $settings['analyzer']['reference']['filter'] = array_values($referenceFilters);
+        }
+
+        $settings = $this->applyCustomLanguageStemmer($settings, $store);
+
+        return $settings;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getCreateIndexSettings()
+    public function getCreateIndexSettings($indexIdentifier)
     {
         $settings = [
             'requests.cache.enable'            => true,
             'number_of_replicas'               => 0,
-            'number_of_shards'                 => $this->helper->getNumberOfShards(),
+            'number_of_shards'                 => $this->helper->getNumberOfShards($indexIdentifier),
             'refresh_interval'                 => self::FULL_REINDEX_REFRESH_INTERVAL,
             'merge.scheduler.max_thread_count' => 1,
             'translog.durability'              => self::FULL_REINDEX_TRANSLOG_DURABILITY,
             'codec'                            => self::CODEC,
-            'max_result_window'                => $this->helper->getMaxResultWindow(),
+            'max_result_window'                => $this->helper->getMaxResultWindow($indexIdentifier),
             'mapping.total_fields.limit'       => self::TOTAL_FIELD_LIMIT,
         ];
 
@@ -147,10 +170,10 @@ class IndexSettings implements IndexSettingsInterface
     /**
      * {@inheritDoc}
      */
-    public function getInstallIndexSettings()
+    public function getInstallIndexSettings($indexIdentifier)
     {
         $settings = [
-            'number_of_replicas'     => $this->helper->getNumberOfReplicas(),
+            'number_of_replicas'     => $this->helper->getNumberOfReplicas($indexIdentifier),
             'refresh_interval'       => self::DIFF_REINDEX_REFRESH_INTERVAL,
             'translog.durability'    => self::DIFF_REINDEX_TRANSLOG_DURABILITY,
         ];
@@ -203,5 +226,30 @@ class IndexSettings implements IndexSettingsInterface
         $settings += $ngramDiff ? ['max_ngram_diff' => (int) $ngramDiff] : [];
 
         return $settings;
+    }
+
+    /**
+     * Alter analysis settings to apply possible custom language stemmer.
+     *
+     * @param array                                                 $analysisSettings Analysis settings.
+     * @param integer|string|\Magento\Store\Api\Data\StoreInterface $store            Store.
+     *
+     * @return array
+     */
+    protected function applyCustomLanguageStemmer($analysisSettings, $store)
+    {
+        if ($this->helper->hasCustomLanguageStemmer($store)
+            && is_array($analysisSettings)
+            && array_key_exists('filter', $analysisSettings)
+            && array_key_exists('stemmer', $analysisSettings['filter'])
+            && array_key_exists('language', $analysisSettings['filter']['stemmer'])
+        ) {
+            $customStemmer = $this->helper->getCustomLanguageStemmer($store) ?? false;
+            if (!empty($customStemmer)) {
+                $analysisSettings['filter']['stemmer']['language'] = $customStemmer;
+            }
+        }
+
+        return $analysisSettings;
     }
 }

@@ -25,9 +25,12 @@
     <type name="Smile\ElasticsuiteTracker\Model\EventQueue">
         <arguments>
             <argument name="eventProcessors" xsi:type="array">
+                <item name="eventDate" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\EventDate</item>
                 <item name="orderItems" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\OrderItems</item>
                 <item name="productListFilters" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\ProductListFilters</item>
                 <item name="searches" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Search</item>
+                <item name="mapPageIdentifier" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier</item>
+                <item name="image" xsi:type="object">Smile\ElasticsuiteTracker\Model\Event\Processor\Image</item>
             </argument>
         </arguments>
     </type>
@@ -74,5 +77,100 @@
         </arguments>
     </type>
 
-    
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="elasticsuiteTrackerCheckIndexedData" xsi:type="object">Smile\ElasticsuiteTracker\Console\CheckData</item>
+                <item name="elasticsuiteTrackerFixIndexedData" xsi:type="object">Smile\ElasticsuiteTracker\Console\FixData</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Console\CheckData">
+        <arguments>
+            <argument name="checker" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Console\FixData">
+        <arguments>
+            <argument name="checker" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Proxy</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker">
+        <arguments>
+            <argument name="checkers" xsi:type="array">
+                <item name="undefinedSessionIdInEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId</item>
+                <item name="undefinedSessionIdInSessions" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">\Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Fixer\Session\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
+    <!-- Prevent session start for tracking urls -->
+    <type name="Magento\Framework\Session\SessionStartChecker">
+        <plugin name="elasticsuite_tracker_disable_session" type="Smile\ElasticsuiteTracker\Plugin\SessionStartCheckerPlugin"/>
+    </type>
+    <!-- Prevent lack of session start to lead to an empty HttpContext and a removal of the Vary cookie by the FPC in h.png/pixel mode -->
+    <virtualType name="TrackerResponseContext"
+                 type="Magento\Framework\App\Action\Context">
+        <arguments>
+            <argument name="response" xsi:type="object">Smile\ElasticsuiteTracker\Model\App\Response\Http\TrackerResponse</argument>
+        </arguments>
+    </virtualType>
+    <type name="Smile\ElasticsuiteTracker\Controller\Tracker\Hit">
+        <arguments>
+            <argument name="context" xsi:type="object">TrackerResponseContext</argument>
+        </arguments>
+    </type>
+
+    <!-- Example of extending the page map identifier -->
+    <type name="Smile\ElasticsuiteTracker\Model\Event\Processor\MapPageIdentifier">
+        <arguments>
+            <argument name="mapping" xsi:type="array">
+                <item name="checkout_klarna_success" xsi:type="string">checkout_onepage_success</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Helper\BotDetector">
+        <arguments>
+            <argument name="botUserAgents" xsi:type="array">
+                <item name="Googlebot" xsi:type="string">googlebot</item>
+                <item name="Adsbot-Google" xsi:type="string">adsbot-google</item>
+                <item name="Feedfetcher-Google" xsi:type="string">feedfetcher-google</item>
+                <item name="Mediapartners-Google" xsi:type="string">mediapartners-google</item>
+                <item name="MediapartnersGoogle" xsi:type="string">mediapartners (googlebot)</item>
+                <item name="APIs-Google" xsi:type="string">apis-google</item>
+                <item name="Google-InspectionTool" xsi:type="string">google-inspectiontool</item>
+                <item name="Storebot-Google" xsi:type="string">storebot-google</item>
+                <item name="GoogleOther" xsi:type="string">googleother</item>
+                <item name="bingbot" xsi:type="string">bingbot</item>
+                <item name="YahooSlurp" xsi:type="string">slurp</item>
+                <item name="LinkedIn" xsi:type="string">linkedinbot</item>
+                <item name="Yandex" xsi:type="string">yandex</item>
+                <item name="Baiduspider" xsi:type="string">baiduspider</item>
+                <item name="openai" xsi:type="string">openai</item>
+                <item name="duckduckbot" xsi:type="string">duckduckbot</item>
+                <item name="FacebookBot" xsi:type="string">facebot</item>
+                <item name="FacebookExternalHit" xsi:type="string">facebookexternalhit</item>
+                <item name="FacebookCatalog" xsi:type="string">facebookcatalog</item>
+                <item name="twitterbot" xsi:type="string">twitterbot</item>
+                <item name="AlexaIaArchiver" xsi:type="string">ia_archiver</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

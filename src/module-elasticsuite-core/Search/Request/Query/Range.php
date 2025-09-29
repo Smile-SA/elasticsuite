@@ -86,6 +86,16 @@ class Range implements QueryInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setName($name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
      * Query field.
      *
      * @return string

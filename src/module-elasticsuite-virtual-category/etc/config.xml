@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smil_ElasticsuiteCatalog module configuration
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalog
+ * @author    Romain RUAUD <romain.ruaud@smile.fr>
+ * @copyright 2020 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <smile_elasticsuite_catalogsearch_settings>
+            <catalogsearch>
+                <force_zero_results_for_disabled_categories>1</force_zero_results_for_disabled_categories>
+            </catalogsearch>
+        </smile_elasticsuite_catalogsearch_settings>
+    </default>
+</config>

@@ -3,14 +3,8 @@
     <menu>
         <add id="Smile_ElasticsuiteCore::elasticsuite_menu" title="ElasticSuite" translate="title" module="Smile_ElasticsuiteCore" sortOrder="50" resource="Smile_ElasticsuiteCore::menu"/>
         <add id="Smile_ElasticsuiteCore::manage_search" title="Search Engine" translate="title" module="Smile_ElasticsuiteCore" sortOrder="15" parent="Smile_ElasticsuiteCore::elasticsuite_menu" resource="Smile_ElasticsuiteCore::manage_search"/>
-        <add
-                id="Smile_ElasticsuiteCore::manage_relevance"
-                title="Search Relevance"
-                translate="title"
-                module="Smile_ElasticsuiteCore"
-                sortOrder="10"
-                parent="Smile_ElasticsuiteCore::manage_search"
-                action="smile_elasticsuite/search_request_relevanceconfig/index"
-                resource="Smile_ElasticsuiteCore::manage_relevance"/>
+        <add id="Smile_ElasticsuiteCore::manage_relevance" title="Search Relevance" translate="title" module="Smile_ElasticsuiteCore" sortOrder="10" parent="Smile_ElasticsuiteCore::manage_search" action="smile_elasticsuite/search_request_relevanceconfig/index" resource="Smile_ElasticsuiteCore::manage_relevance"/>
+        <add id="Smile_ElasticsuiteCore::healthcheck" title="Healthcheck" module="Smile_ElasticsuiteCore" sortOrder="20" parent="Smile_ElasticsuiteIndices::system" action="smile_elasticsuite/healthcheck/index" resource="Smile_ElasticsuiteCore::healthcheck"/>
+        <add id="Smile_ElasticsuiteCore::index_bulk_error" title="Indexing / Bulk Errors" translate="title" module="Smile_ElasticsuiteCore"  sortOrder="30"  parent="Smile_ElasticsuiteIndices::system" action="smile_elasticsuite/index_bulkerror/index"  resource="Smile_ElasticsuiteCore::index_bulk_error"/>
     </menu>
 </config>

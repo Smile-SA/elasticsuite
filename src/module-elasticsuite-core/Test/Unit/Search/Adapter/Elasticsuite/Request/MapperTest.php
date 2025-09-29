@@ -17,8 +17,10 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder as AggregationBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\SortOrder\Builder as SortOrderBuilder;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Collapse\Builder as CollapseBuilder;
 use Smile\ElasticsuiteCore\Search\Request;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
 
 /**
  * Search adapter query mapper test case.
@@ -100,6 +102,44 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test request mapping in the absence of a collapse section.
+     *
+     * @return void
+     */
+    public function testNoCollapseMapping()
+    {
+        $mapper  = $this->getMapper();
+        $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
+
+        $searchRequest = new Request('requestName', 'indexName', $query, null, ['sort' => 'sort'], 0, 10);
+
+        $mappedRequest = $mapper->buildSearchRequest($searchRequest);
+
+        $this->assertNotContains('collapse', $mappedRequest);
+    }
+
+    /**
+     * Test request mapping in the presence of a collapse section.
+     *
+     * @return void
+     */
+    public function testCollapseMapping()
+    {
+        $mapper  = $this->getMapper();
+        $query   = $this->getMockBuilder(QueryInterface::class)->getMock();
+
+        $searchRequest = new Request('requestName', 'indexName', $query, null, ['sort' => 'sort'], 0, 10);
+
+        $collapse = $this->getMockBuilder(CollapseInterface::class)->getMock();
+        $searchRequest->setCollapse($collapse);
+
+        $mappedRequest = $mapper->buildSearchRequest($searchRequest);
+
+        $this->assertContains('collapse', $mappedRequest);
+        $this->assertEquals('collapse', $mappedRequest['collapse']);
+    }
+
+    /**
      * Prepare the search request mapper used during tests.
      *
      * @return \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper
@@ -115,6 +155,9 @@ class MapperTest extends \PHPUnit\Framework\TestCase
         $aggregationBuilderMock = $this->getMockBuilder(AggregationBuilder::class)->disableOriginalConstructor()->getMock();
         $aggregationBuilderMock->method('buildAggregations')->will($this->returnValue('aggregations'));
 
-        return new Mapper($queryBuilderMock, $sortOrderBuilderMock, $aggregationBuilderMock);
+        $collapseBuilderMock = $this->getMockBuilder(CollapseBuilder::class)->disableOriginalConstructor()->getMock();
+        $collapseBuilderMock->method('buildCollapse')->will($this->returnValue('collapse'));
+
+        return new Mapper($queryBuilderMock, $sortOrderBuilderMock, $aggregationBuilderMock, $collapseBuilderMock);
     }
 }

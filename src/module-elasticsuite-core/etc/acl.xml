@@ -31,6 +31,10 @@
                     <resource id="Smile_ElasticsuiteCore::manage_search" title="Search Engine configuration">
                         <resource id="Smile_ElasticsuiteCore::manage_relevance" title="Search Relevance" />
                     </resource>
+                    <resource id="Smile_ElasticsuiteCore::system" title="System">
+                        <resource id="Smile_ElasticsuiteCore::healthcheck" title="Healthcheck" />
+                        <resource id="Smile_ElasticsuiteCore::index_bulk_error" title="Indexing / Bulk Errors" />
+                    </resource>
                 </resource>
             </resource>
         </resources>

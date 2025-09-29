@@ -15,8 +15,10 @@ namespace Smile\ElasticsuiteCatalogGraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\Layer\Resolver;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\ProductQueryInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Query\Resolver\ArgumentsProcessorInterface;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
@@ -43,22 +45,31 @@ class Products implements ResolverInterface
     private $contextUpdater;
 
     /**
-     * @param ProductQueryInterface $searchQuery    Search Query
-     * @param ContextUpdater        $contextUpdater Context Updater
+     * @var ArgumentsProcessorInterface
+     */
+    private $argsProcessor;
+
+    /**
+     * @param ProductQueryInterface            $searchQuery       Search Query
+     * @param ContextUpdater                   $contextUpdater    Context Updater
+     * @param ArgumentsProcessorInterface|null $argumentProcessor Args Processor
      */
     public function __construct(
         ProductQueryInterface $searchQuery,
-        ContextUpdater $contextUpdater
+        ContextUpdater $contextUpdater,
+        ?ArgumentsProcessorInterface $argumentProcessor = null
     ) {
         $this->searchQuery    = $searchQuery;
         $this->contextUpdater = $contextUpdater;
+        $this->argsProcessor  = $argumentProcessor ?: ObjectManager::getInstance()->get(ArgumentsProcessorInterface::class);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
+    public function resolve(Field $field, $context, ResolveInfo $info, ?array $value = null, ?array $args = null)
     {
+        $args = $this->getProcessedArgs($info, $args);
         $this->validateArgs($args);
         $this->contextUpdater->updateSearchContext($args);
 
@@ -72,11 +83,13 @@ class Products implements ResolverInterface
         return [
             'total_count'   => $searchResult->getTotalCount(),
             'items'         => $searchResult->getProductsSearchResult(),
+            'suggestions'   => $searchResult->getSuggestions(),
             'page_info'     => [
                 'page_size'    => $searchResult->getPageSize(),
                 'current_page' => $searchResult->getCurrentPage(),
                 'total_pages'  => $searchResult->getTotalPages(),
                 'is_spellchecked' => $searchResult->isSpellchecked(),
+                'query_id'     => $searchResult->getQueryId(),
             ],
             'search_result' => $searchResult,
             'layer_type'    => $layerType,
@@ -97,5 +110,23 @@ class Products implements ResolverInterface
                 __("'search' or 'filter' input argument is required.")
             );
         }
+    }
+
+    /**
+     * Process and return query arguments.
+     *
+     * @param ResolveInfo $info Resolve Info.
+     * @param array|null  $args Unprocessed arguments.
+     *
+     * @return array
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlInputException
+     */
+    private function getProcessedArgs(ResolveInfo $info, ?array $args = null): array
+    {
+        if (null === $args) {
+            return [];
+        }
+
+        return $this->argsProcessor->process((string) ($info->fieldName ?? ""), $args);
     }
 }

@@ -18,7 +18,8 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <css src="Smile_ElasticsuiteIndices::css/es-analysis.css"/>
-    </head>>
+    </head>
+    <update handle="smile_elasticsuite_upsell_notification"/>
     <body>
         <referenceContainer name="content">
             <block class="Smile\ElasticsuiteIndices\Block\Adminhtml\Analysis\Analyzer" name="analysis_by_analyzer" template="Smile_ElasticsuiteIndices::analysis/analyzer.phtml" />

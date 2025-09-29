@@ -93,4 +93,11 @@ interface ContainerConfigurationInterface
      * @return int|bool
      */
     public function getTrackTotalHits();
+
+    /**
+     * Returns if the current request is a fulltext request.
+     *
+     * @return bool
+     */
+    public function isFulltext() : bool;
 }

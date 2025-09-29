@@ -323,6 +323,8 @@
                             <item name="id" xsi:type="string">query_id</item>
                             <item name="query_text" xsi:type="string">query_text</item>
                             <item name="is_spellchecked" xsi:type="string">is_spellchecked</item>
+                            <item name="popularity" xsi:type="string">popularity</item>
+                            <item name="num_results" xsi:type="string">num_results</item>
                         </item>
                     </item>
                 </argument>
@@ -374,6 +376,20 @@
                                 <item name="fit" xsi:type="boolean">true</item>
                             </item>
                         </argument>
+                    </field>
+                    <field name="popularity" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Uses</label>
+                            <visible>true</visible>
+                        </settings>
+                    </field>
+                    <field name="num_results" formElement="input" template="ui/dynamic-rows/cells/text">
+                        <settings>
+                            <dataType>text</dataType>
+                            <label translate="true">Results</label>
+                            <visible>true</visible>
+                        </settings>
                     </field>
                     <actionDelete name="delete">
                         <settings>
@@ -551,6 +567,9 @@
                 <item name="listens" xsi:type="array">
                     <item name="${ $.provider }:data.search_container" xsi:type="string">onChange</item>
                 </item>
+                <item name="displayedForValues" xsi:type="array">
+                    <item name="catalog_view_container" xsi:type="string">catalog_view_container</item>
+                </item>
             </item>
         </argument>
 
@@ -564,6 +583,10 @@
                     <item name="1" xsi:type="array">
                         <item name="value" xsi:type="number">1</item>
                         <item name="label" xsi:type="string" translate="true">Selected categories</item>
+                    </item>
+                    <item name="2" xsi:type="array">
+                        <item name="value" xsi:type="number">2</item>
+                        <item name="label" xsi:type="string" translate="true">All except selected categories</item>
                     </item>
                 </item>
                 <item name="config" xsi:type="array">
@@ -596,6 +619,15 @@
                                 </action>
                             </actions>
                         </rule>
+                        <rule name="2">
+                            <value>2</value>
+                            <actions>
+                                <action name="0">
+                                    <target>smile_elasticsuite_catalog_optimizer_form.smile_elasticsuite_catalog_optimizer_form.catalog_view_container.category_ids</target>
+                                    <callback>show</callback>
+                                </action>
+                            </actions>
+                        </rule>
                     </rules>
                     <enabled>true</enabled>
                 </switcherConfig>
@@ -606,7 +638,7 @@
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Magento\Catalog\Ui\Component\Product\Form\Categories\Options</item>
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string" translate="true">Apply to categories</item>
+                    <item name="label" xsi:type="string" translate="true">Categories</item>
                     <item name="componentType" xsi:type="string">field</item>
                     <item name="formElement" xsi:type="string">select</item>
                     <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
@@ -674,7 +706,7 @@
                         <item name="label" xsi:type="string" translate="true">Category Preview</item>
                         <item name="componentType" xsi:type="string">field</item>
                         <item name="formElement" xsi:type="string">select</item>
-                        <item name="component" xsi:type="string">Magento_Catalog/js/components/new-category</item>
+                        <item name="component" xsi:type="string">Smile_ElasticsuiteCore/js/components/pick-active-category</item>
                         <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
                         <item name="dataScope" xsi:type="string">category_preview</item>
                         <item name="filterOptions" xsi:type="boolean">true</item>
@@ -884,7 +916,7 @@
             </argument>
         </field>
 
-        <field name="scale_factor" sortOrder="40" formElement="input">
+        <field name="scale_factor" sortOrder="15" formElement="input">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="source" xsi:type="string">optimizer</item>
@@ -895,7 +927,7 @@
                 </item>
             </argument>
             <settings>
-                <label translate="true">Boost value (multiply)</label>
+                <label translate="true">Attribute value pre-multiplier</label>
                 <dataType>string</dataType>
                 <dataScope>config.scale_factor</dataScope>
                 <validation>
@@ -906,6 +938,37 @@
                     <description translate="true">Value the field will be multiplied by before potentially limiting the boost impact</description>
                 </tooltip>
             </settings>
+        </field>
+
+        <field name="allow_negative_boost" sortOrder="50" formElement="checkbox">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="source" xsi:type="string">optimizer</item>
+                    <item name="imports" xsi:type="array">
+                        <item name="disabled" xsi:type="string">${ $.parentName}:disableChildren</item>
+                    </item>
+                    <item name="default" xsi:type="string">0</item>
+                </item>
+            </argument>
+            <settings>
+                <label translate="true">Allow negative boost</label>
+                <dataType>boolean</dataType>
+                <dataScope>config.allow_negative_boost</dataScope>
+                <tooltip>
+                    <description translate="true">If left unchecked, will prevent cases where the attribute value (multiplied by the value pre-multiplier) would be too low to generate a positive boost once the boost impact modifier is applied. This prevents penalizing the product compared to other products not having any value for the attribute.</description>
+                </tooltip>
+            </settings>
+            <formElements>
+                <checkbox>
+                    <settings>
+                        <valueMap>
+                            <map name="false" xsi:type="string">0</map>
+                            <map name="true" xsi:type="string">1</map>
+                        </valueMap>
+                        <prefer>toggle</prefer>
+                    </settings>
+                </checkbox>
+            </formElements>
         </field>
     </fieldset>
 

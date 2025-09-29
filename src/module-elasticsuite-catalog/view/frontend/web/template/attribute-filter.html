@@ -3,7 +3,7 @@
         <input class="filter-search"
                type="text"
                autocomplete="off"
-               data-bind="attr: {placeholder: searchPlaceholder}, event: {keyup: onSearchChange.bind(this), focusout: onSearchFocusOut}" />
+               data-bind="attr: {placeholder: searchPlaceholder, 'aria-label': searchPlaceholder}, event: {keyup: onSearchChange.bind(this), focusout: onSearchFocusOut}" />
     </div>
 </div>
 
@@ -11,8 +11,7 @@
     <li class="item">
         <a data-bind="attr: {href:url, rel:$parent.displayRelNofollow}, visible: count >= 1">
             <input type="checkbox"
-                   data-bind="checked: is_selected, attr: {id: id}"
-                   onclick="this.parentNode.click();" />
+                   data-bind="checked: is_selected, attr: {id: id}, click: function(data, event) { event.target.parentNode.click(); return true; }" />
             <label data-bind="attr: {for: id}">
                 <span data-bind="text: label"></span>
                 <span class="count" data-bind="text: count, visible: $parent.displayProductCount"></span>
@@ -27,12 +26,12 @@
 </ol>
 
 <div class="no-results-message empty" data-bind="if: fulltextSearch() && !hasSearchResult()">
-    <p data-bind="html: getSearchResultMessage()"></p>
+    <p data-bind="html: getSearchResultMessage()" aria-atomic="true"></p>
 </div>
 
 <div class="actions" data-bind="visible: enableExpansion()">
     <div class="secondary">
-        <a class="action show-more" data-bind="visible: displayShowMore(), event: {click: onShowMore}"><span data-bind="text: showMoreLabel"></span></a>
-        <a class="action show-less" data-bind="visible: displayShowLess(), event: {click: onShowLess}"><span data-bind="text: showLessLabel"></span></a>
+        <a class="action show-more" href="#" data-bind="visible: displayShowMore(), event: {click: onShowMore}"><span data-bind="text: showMoreLabel"></span></a>
+        <a class="action show-less" href="#" data-bind="visible: displayShowLess(), event: {click: onShowLess}"><span data-bind="text: showLessLabel"></span></a>
     </div>
 </div>

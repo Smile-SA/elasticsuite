@@ -107,6 +107,56 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     }
 
     /**
+     * Retrieve applicable optimizer ids for a given entity_id (could be a category_id or query_id).
+     *
+     * @param string $container The search container to filter on (quick_search_container or catalog_view_container).
+     * @param string $column    The column to filter on (category_id or query_id).
+     * @param int    $idValue   The id of entity to filter
+     *
+     * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getApplicationData($container, $column, $idValue)
+    {
+        $select = $this->getConnection()
+            ->select()
+            ->from(['o' => $this->getTable(OptimizerInterface::TABLE_NAME)], [OptimizerInterface::OPTIMIZER_ID])
+            ->joinInner(
+                ['osc' => $this->getTable(OptimizerInterface::TABLE_NAME_SEARCH_CONTAINER)],
+                "o.optimizer_id = osc.optimizer_id",
+                []
+            )
+            ->joinLeft(
+                ['main_table' => $this->getMainTable()],
+                "o.optimizer_id = main_table.optimizer_id",
+                []
+            )
+            ->where($this->getConnection()->quoteInto("osc.search_container = ?", (string) $container))
+            ->group(OptimizerInterface::OPTIMIZER_ID);
+
+        $limitationConditions = [
+            $this->getConnection()->quoteInto(
+                "osc.apply_to = 0 OR (osc.apply_to = 1 AND main_table.{$column} = ?)",
+                (int) $idValue
+            ),
+        ];
+        $exclusionCondition = "osc.apply_to = 2";
+        $excluded = $this->getExclusionData($container, $column, $idValue);
+        if (!empty($excluded)) {
+            $exclusionCondition = $this->getConnection()->quoteInto(
+                "(osc.apply_to = 2 AND main_table.optimizer_id NOT IN (?))",
+                $excluded,
+                null,
+                count($excluded)
+            );
+        }
+        $limitationConditions[] = $exclusionCondition;
+        $select->where(implode(' OR ', $limitationConditions));
+
+        return $this->getConnection()->fetchCol($select);
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
      * {@inheritDoc}
@@ -127,15 +177,15 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     private function getLimitationData(OptimizerInterface $optimizer, $column)
     {
         $select = $this->getConnection()
-            ->select()
-            ->from($this->getMainTable(), $column)
-            ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
+                       ->select()
+                       ->from($this->getMainTable(), $column)
+                       ->where($this->getConnection()->quoteInto(OptimizerInterface::OPTIMIZER_ID . " = ?", (int) $optimizer->getId()));
 
         return $this->getConnection()->fetchCol($select);
     }
 
     /**
-     * Retrieve applicable optimizer ids for a given entity_id (could be a category_id or query_id).
+     * Retrieve non-applicable optimizer ids for a given entity_id (could be a category_id or query_id).
      *
      * @param string $container The search container to filter on (quick_search_container or catalog_view_container).
      * @param string $column    The column to filter on (category_id or query_id).
@@ -144,7 +194,7 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    private function getApplicationData($container, $column, $idValue)
+    private function getExclusionData($container, $column, $idValue)
     {
         $select = $this->getConnection()
             ->select()
@@ -162,7 +212,7 @@ class Limitation extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
             ->where($this->getConnection()->quoteInto("osc.search_container = ?", (string) $container))
             ->where(
                 $this->getConnection()->quoteInto(
-                    "osc.apply_to = 0 OR (osc.apply_to = 1 AND main_table.{$column} = ?)",
+                    "(osc.apply_to = 2 AND main_table.{$column} = ?)",
                     (int) $idValue
                 )
             )

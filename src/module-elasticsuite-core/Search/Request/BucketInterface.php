@@ -35,9 +35,10 @@ interface BucketInterface extends \Magento\Framework\Search\Request\BucketInterf
     const TYPE_METRIC           = 'metricBucket';
 
     const SORT_ORDER_COUNT     = '_count';
-    const SORT_ORDER_TERM      = '_term';
+    const SORT_ORDER_TERM      = '_key';
     const SORT_ORDER_RELEVANCE = "_score";
     const SORT_ORDER_MANUAL    = "_manual";
+    const SORT_ORDER_TERM_DEPRECATED = '_term';
 
     /**
      * @var integer

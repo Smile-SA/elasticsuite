@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Index;
 
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Index\AsyncIndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 
 /**
  * Asynchronous Index Operations interface
@@ -47,6 +48,8 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface              $client              ES client.
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration ES client configuration.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface        $indexSettings       ES settings.
+     * @param PipelineManagerInterface                                        $pipelineManager     Ingest Pipeline Manager.
+     * @param \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager           $bulkErrorManager    Bulk error manager.
      * @param \Psr\Log\LoggerInterface                                        $logger              Logger access.
      */
     public function __construct(
@@ -54,11 +57,13 @@ class AsyncIndexOperation extends IndexOperation implements AsyncIndexOperationI
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface $clientConfiguration,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
+        PipelineManagerInterface $pipelineManager,
+        \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager $bulkErrorManager,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->client          = $client;
         $this->parallelHandles = $clientConfiguration->getMaxParallelHandles();
-        parent::__construct($objectManager, $client, $indexSettings, $logger);
+        parent::__construct($objectManager, $client, $indexSettings, $pipelineManager, $bulkErrorManager, $logger);
     }
 
     /**

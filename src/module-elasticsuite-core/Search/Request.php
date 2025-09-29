@@ -18,6 +18,7 @@ use Magento\Framework\Search\Request\Dimension;
 use Magento\Framework\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
@@ -40,6 +41,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $filter;
 
     /**
+     * @var CollapseInterface
+     */
+    private $collapse;
+
+    /**
      * @var integer
      */
     private $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
@@ -53,6 +59,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
      * @var boolean|integer
      */
     private $minScore;
+
+    /**
+     * @var array
+     */
+    private $sourceConfig = [];
 
     /**
      * Constructor.
@@ -76,8 +87,8 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         $name,
         $indexName,
         QueryInterface $query,
-        QueryInterface $filter = null,
-        array $sortOrders = null,
+        ?QueryInterface $filter = null,
+        ?array $sortOrders = null,
         $from = null,
         $size = null,
         array $dimensions = [],
@@ -146,6 +157,66 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
         ];
 
         return in_array($this->spellingType, $fuzzySpellingTypes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSpellingType()
+    {
+        return $this->spellingType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCollapse(CollapseInterface $collapse)
+    {
+        $this->collapse = $collapse;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasCollapse()
+    {
+        return ($this->collapse instanceof CollapseInterface);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getCollapse()
+    {
+        return $this->collapse;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSourceConfig($sourceConfig)
+    {
+        $this->sourceConfig = $sourceConfig;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasSourceConfig()
+    {
+        return !empty($this->sourceConfig);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceConfig()
+    {
+        return $this->sourceConfig;
     }
 
     /**

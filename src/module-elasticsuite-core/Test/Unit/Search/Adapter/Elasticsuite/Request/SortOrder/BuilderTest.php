@@ -17,6 +17,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\SortOrder\Builder
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\Standard as StandardSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\Nested as NestedSortOrder;
+use Smile\ElasticsuiteCore\Search\Request\SortOrder\Script as ScriptSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 
@@ -136,6 +137,50 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('parent', $currentSortOrder['parent.child']['nested']['path']);
         $this->assertEquals(NestedSortOrder::SCORE_MODE_MIN, $currentSortOrder['parent.child']['mode']);
         $this->assertEquals('query', $currentSortOrder['parent.child']['nested']['filter']);
+    }
+
+    /**
+     * Test building a script sort order (without support for direction yet).
+     *
+     * @return void
+     */
+    public function testScriptSortOrder()
+    {
+        $scriptType = 'number';
+        $scriptLang = 'painless';
+        $scriptSource = "doc['sortField'].value * params.factor";
+        $scriptParams = ['factor' => 1.1];
+        $scriptSorOrder = new ScriptSortOrder(
+            $scriptType,
+            $scriptLang,
+            $scriptSource,
+            $scriptParams
+        );
+        $this->assertEquals(ScriptSortOrder::SCRIPT_FIELD, $scriptSorOrder->getField());
+        $this->assertEquals(
+            [
+                'lang' => $scriptLang,
+                'source' => $scriptSource,
+                'params' => $scriptParams,
+            ],
+            $scriptSorOrder->getScript()
+        );
+
+        $sortOrders = $this->getSortOrderBuilder()->buildSortOrders([$scriptSorOrder]);
+
+        $currentSortOrder = current($sortOrders);
+        $this->assertIsArray($currentSortOrder);
+        $this->assertArrayHasKey($scriptSorOrder->getField(), $currentSortOrder);
+        $this->assertArrayHasKey('type', $currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]);
+        $this->assertEquals($scriptSorOrder->getScriptType(), $currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]['type']);
+        $this->assertArrayHasKey('script', $currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]);
+        $this->assertIsArray($currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]['script']);
+        $this->assertEquals(
+            $scriptSorOrder->getScript(),
+            $currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]['script']
+        );
+        // 'order' not supported yet.
+        $this->assertArrayNotHasKey('order', $currentSortOrder[ScriptSortOrder::SCRIPT_FIELD]);
     }
 
     /**

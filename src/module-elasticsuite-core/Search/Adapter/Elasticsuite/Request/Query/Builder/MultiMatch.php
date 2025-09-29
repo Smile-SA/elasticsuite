@@ -59,6 +59,7 @@ class MultiMatch implements BuilderInterface
             $searchQueryParams['fuzziness'] = $query->getFuzzinessConfiguration()->getValue();
             $searchQueryParams['prefix_length'] = $query->getFuzzinessConfiguration()->getPrefixLength();
             $searchQueryParams['max_expansions'] = $query->getFuzzinessConfiguration()->getMaxExpansion();
+            $searchQueryParams['minimum_should_match'] = $query->getFuzzinessConfiguration()->getMinimumShouldMatch();
         }
 
         if ($query->getName()) {

@@ -37,6 +37,8 @@ interface FieldInterface
     const FIELD_TYPE_BOOLEAN = 'boolean';
     const FIELD_TYPE_NESTED  = 'nested';
     const FIELD_TYPE_OBJECT  = 'object';
+    const FIELD_TYPE_KNN_VECTOR = 'knn_vector';
+    const FIELD_TYPE_TOKEN_COUNT = 'token_count';
 
     /**
      * Analyzers declarations.
@@ -56,6 +58,13 @@ interface FieldInterface
      */
     const FILTER_LOGICAL_OPERATOR_OR   = 0;
     const FILTER_LOGICAL_OPERATOR_AND  = 1;
+
+    /**
+     * Similarities / Text scoring models.
+     */
+    const SIMILARITY_DEFAULT = 'default';
+    const SIMILARITY_BM25    = 'BM25';
+    const SIMILARITY_BOOLEAN = 'boolean';
 
     /**
      * Field name.
@@ -184,6 +193,20 @@ interface FieldInterface
      * @return int
      */
     public function getFilterLogicalOperator();
+
+    /**
+     * Returns true if the field as a non-default scoring model/similarity.
+     *
+     * @return bool
+     */
+    public function hasSpecificSimilarity();
+
+    /**
+     * Retrieve the field scoring model/similarity.
+     *
+     * @return string
+     */
+    public function getSimilarity();
 
     /**
      * @return array

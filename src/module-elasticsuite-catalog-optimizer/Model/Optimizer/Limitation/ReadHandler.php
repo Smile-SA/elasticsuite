@@ -64,10 +64,10 @@ class ReadHandler implements \Magento\Framework\EntityManager\Operation\Extensio
      */
     private function setCategoryLimitation($entity, $searchContainers)
     {
-        $applyTo = (bool) ($searchContainers['catalog_view_container'] ?? false);
+        $applyTo = (int) ($searchContainers['catalog_view_container'] ?? 0);
 
         if ($applyTo) {
-            $containerData = ['apply_to' => (int) true];
+            $containerData = ['apply_to' => $applyTo];
             $categoryIds   = $this->resource->getCategoryIdsByOptimizer($entity);
             if (!empty($categoryIds)) {
                 $containerData['category_ids'] = $categoryIds;

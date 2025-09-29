@@ -21,7 +21,7 @@
              title="Analytics"
              translate="title"
              module="Smile_ElasticsuiteAnalytics"
-             sortOrder="30"
+             sortOrder="50"
              parent="Smile_ElasticsuiteCore::elasticsuite_menu"
              resource="Smile_ElasticsuiteAnalytics::analytics"
          />

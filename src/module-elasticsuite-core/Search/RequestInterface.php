@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Search;
 
+use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
@@ -56,6 +57,13 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
     public function isSpellchecked();
 
     /**
+     * Get the request spelling type.
+     *
+     * @return string
+     */
+    public function getSpellingType();
+
+    /**
      * Get the value of the track_total_hits parameter, if any.
      *
      * @return int|bool
@@ -68,4 +76,51 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return int|bool
      */
     public function getMinScore();
+
+    /**
+     * Set the collapse configuration of the request.
+     *
+     * @param CollapseInterface $collapse Collapse configuration.
+     *
+     * @return RequestInterface
+     */
+    public function setCollapse(CollapseInterface $collapse);
+
+    /**
+     * Return true if the request has a collapse configuration.
+     *
+     * @return bool
+     */
+    public function hasCollapse();
+
+    /**
+     * Get the collapse configuration of the request.
+     *
+     * @return CollapseInterface|null
+     */
+    public function getCollapse();
+
+    /**
+     * Set the source configuration of the request.
+     *
+     * @param array $sourceConfig Source config (array of fields/patterns to include
+     *                            or an array ['includes' => [...], 'excludes' => [...]] or only one of the keys).
+     *
+     * @return RequestInterface
+     */
+    public function setSourceConfig($sourceConfig);
+
+    /**
+     * Return true if the request has specific _source configuration.
+     *
+     * @return bool
+     */
+    public function hasSourceConfig();
+
+    /**
+     * Return the specific _source configuration which might be empty.
+     *
+     * @return array
+     */
+    public function getSourceConfig();
 }

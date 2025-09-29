@@ -20,6 +20,10 @@
         <subscriptions>
             <!-- This subscription aims to reindex products after their category is modified -->
             <table name="catalog_category_product" entity_column="product_id" />
+            <!-- This subscription aims to reindex products modified in the search terms merchandiser -->
+            <table name="smile_elasticsuitecatalog_search_query_product_position" entity_column="product_id" />
+            <!-- Forcefully re-adding what was (or will depending on the version) removed in https://github.com/magento/magento2/commit/b3969936251e1a03427cd24c209abb6af3a0ce1b -->
+            <table name="cataloginventory_stock_item" entity_column="product_id" />
         </subscriptions>
     </view>
     <view id="elasticsuite_categories_fulltext" class="Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext" group="indexer">

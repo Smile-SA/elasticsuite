@@ -52,21 +52,27 @@ class SignificantTerm extends AbstractBucket
     private $algorithm;
 
     /**
+     * @var ?QueryInterface
+     */
+    private $backgroundFilter;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string              $name         Bucket name.
-     * @param string              $field        Bucket field.
-     * @param MetricInterface[]   $metrics      Bucket metrics.
-     * @param BucketInterface[]   $childBuckets Child buckets.
-     * @param PipelineInterface[] $pipelines    Bucket pipelines.
-     * @param string              $nestedPath   Nested path for nested bucket.
-     * @param QueryInterface      $filter       Bucket filter.
-     * @param QueryInterface      $nestedFilter Nested filter for the bucket.
-     * @param integer             $size         Bucket size.
-     * @param integer             $minDocCount  Min doc count.
-     * @param string              $algotithm    Algorithm used
+     * @param string              $name             Bucket name.
+     * @param string              $field            Bucket field.
+     * @param MetricInterface[]   $metrics          Bucket metrics.
+     * @param BucketInterface[]   $childBuckets     Child buckets.
+     * @param PipelineInterface[] $pipelines        Bucket pipelines.
+     * @param string              $nestedPath       Nested path for nested bucket.
+     * @param QueryInterface|null $filter           Bucket filter.
+     * @param QueryInterface|null $nestedFilter     Nested filter for the bucket.
+     * @param integer             $size             Bucket size.
+     * @param integer             $minDocCount      Min doc count.
+     * @param string              $algotithm        Algorithm used
+     * @param QueryInterface|null $backgroundFilter Background filter.
      */
     public function __construct(
         $name,
@@ -75,17 +81,19 @@ class SignificantTerm extends AbstractBucket
         array $childBuckets = [],
         array $pipelines = [],
         $nestedPath = null,
-        QueryInterface $filter = null,
-        QueryInterface $nestedFilter = null,
+        ?QueryInterface $filter = null,
+        ?QueryInterface $nestedFilter = null,
         $size = 0,
         $minDocCount = 5,
-        $algotithm = self::ALGORITHM_GND
+        $algotithm = self::ALGORITHM_GND,
+        ?QueryInterface $backgroundFilter = null
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 
         $this->minDocCount = $minDocCount;
         $this->algorithm   = $algotithm;
         $this->size        = $size > 0 && $size < self::MAX_BUCKET_SIZE ? $size : self::MAX_BUCKET_SIZE;
+        $this->backgroundFilter = $backgroundFilter;
     }
 
     /**
@@ -124,5 +132,15 @@ class SignificantTerm extends AbstractBucket
     public function getAlgorithm()
     {
         return $this->algorithm;
+    }
+
+    /**
+     * Filter documents used in significant term query.
+     *
+     * @return ?QueryInterface
+     */
+    public function getBackgroundFilter()
+    {
+        return $this->backgroundFilter;
     }
 }

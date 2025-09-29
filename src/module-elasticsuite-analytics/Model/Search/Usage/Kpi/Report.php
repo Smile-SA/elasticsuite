@@ -27,7 +27,11 @@ class Report extends AbstractReport
      * @var array
      */
     private $defaultKeys = [
-        'page_view_counts',
+        'page_views_count',
+        'product_views_count',
+        'category_views_count',
+        'add_to_cart_count',
+        'sales_count',
         'sessions_count',
         'visitors_count',
         'search_page_views_count',
@@ -49,12 +53,15 @@ class Report extends AbstractReport
             if ($value->getValue() == 'all') {
                 $data['sessions_count'] = (int) $value->getMetrics()['unique_sessions'];
                 $data['visitors_count'] = (int) $value->getMetrics()['unique_visitors'];
-            } else {
+            } elseif ($value->getValue() == 'searches') {
                 $data['search_page_views_count'] = (int) $value->getMetrics()['count'];
                 $data['search_sessions_count']   = (int) $value->getMetrics()['unique_sessions'];
                 $data['search_usage_rate']       = round($data['search_page_views_count'] / ($data['search_sessions_count'] ?: 1), 1);
                 $data['spellcheck_usage_count']  = (int) $value->getMetrics()['spellcheck_usage']['sum'];
                 $data['spellcheck_usage_rate']   = $value->getMetrics()['spellcheck_usage']['avg'];
+            } elseif (in_array($value->getValue(), ['product_views', 'category_views', 'add_to_cart', 'sales'])) {
+                $key = sprintf("%s_count", $value->getValue());
+                $data[$key] = (int) $value->getMetrics()['count'];
             }
         }
 

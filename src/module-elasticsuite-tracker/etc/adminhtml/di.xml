@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteTracker adminhtml dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteTracker
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2024 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Elasticsuite notifications -->
+    <type name="Magento\Framework\Notification\MessageList">
+        <arguments>
+            <argument name="messages" xsi:type="array">
+                <item name="elasticsuite_invalid_tracker_events_warning" xsi:type="string">Smile\ElasticsuiteTracker\Model\System\Message\WarningAboutInvalidTrackerEvents</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Elasticsuite Health Check -->
+    <type name="Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList">
+        <arguments>
+            <argument name="checks" xsi:type="array">
+                <item name="tracker_pending_events" xsi:type="object">Smile\ElasticsuiteTracker\Model\Healthcheck\TrackerPendingEvents</item>
+            </argument>
+        </arguments>
+    </type>
+
+</config>

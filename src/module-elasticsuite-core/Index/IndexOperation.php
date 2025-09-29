@@ -14,8 +14,10 @@
 
 namespace Smile\ElasticsuiteCore\Index;
 
+use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
+use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 
 /**
  * Default implementation of operation on indices (\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface).
@@ -52,29 +54,45 @@ class IndexOperation implements IndexOperationInterface
     private $client;
 
     /**
+     * @var \Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface
+     */
+    private $pipelineManager;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
     /**
-     * Instanciate the index operation manager.
+     * @var \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager
+     */
+    private $bulkErrorManager;
+
+    /**
+     * Instantiate the index operation manager.
      *
-     * @param \Magento\Framework\ObjectManagerInterface                $objectManager Object manager.
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client        ES client.
-     * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings ES settings.
-     * @param \Psr\Log\LoggerInterface                                 $logger        Logger access.
+     * @param \Magento\Framework\ObjectManagerInterface                $objectManager    Object manager.
+     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client           ES client.
+     * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings    ES settings.
+     * @param PipelineManagerInterface                                 $pipelineManager  Ingest Pipeline Manager.
+     * @param \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager    $bulkErrorManager Bulk error manager.
+     * @param \Psr\Log\LoggerInterface                                 $logger           Logger access.
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
+        PipelineManagerInterface $pipelineManager,
+        \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager $bulkErrorManager,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->objectManager        = $objectManager;
         $this->client               = $client;
         $this->indexSettings        = $indexSettings;
         $this->indicesConfiguration = $indexSettings->getIndicesConfig();
+        $this->pipelineManager      = $pipelineManager;
         $this->logger               = $logger;
+        $this->bulkErrorManager     = $bulkErrorManager;
     }
 
     /**
@@ -131,14 +149,28 @@ class IndexOperation implements IndexOperationInterface
     public function createIndex($indexIdentifier, $store)
     {
         $index         = $this->initIndex($indexIdentifier, $store, false);
+        // @codingStandardsIgnoreStart
         $indexSettings = [
-            'settings' => $this->indexSettings->getCreateIndexSettings() + $this->indexSettings->getDynamicIndexSettings($store),
+            'settings' => $this->indexSettings->getCreateIndexSettings($indexIdentifier) + $this->indexSettings->getDynamicIndexSettings($store),
         ];
+        // @codingStandardsIgnoreEnd
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
+
+        // Add (and create, if needed) default pipeline.
+        $pipeline = $this->pipelineManager->createByIndexIdentifier($indexIdentifier);
+        if ($pipeline !== null) {
+            $indexSettings['settings']['default_pipeline'] = $pipeline->getName();
+        }
+
+        if ($index->useKnn()) {
+            $indexSettings['settings']['index.knn'] = true;
+        }
 
         $this->client->createIndex($index->getName(), $indexSettings);
 
         $this->client->putMapping($index->getName(), $index->getMapping()->asArray());
+
+        $this->bulkErrorManager->cleanBulkErrors($store, $indexIdentifier);
 
         return $index;
     }
@@ -172,7 +204,7 @@ class IndexOperation implements IndexOperationInterface
 
             $this->client->putMapping($index->getName(), $mapping);
         } catch (\LogicException $exception) {
-            ; // Do nothing, we cannot update mapping of a non existing index.
+            // Do nothing, we cannot update mapping of a non existing index.
         }
     }
 
@@ -187,7 +219,7 @@ class IndexOperation implements IndexOperationInterface
             $indexAlias      = $this->indexSettings->getIndexAliasFromIdentifier($indexIdentifier, $store);
 
             $this->client->forceMerge($indexName);
-            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings());
+            $this->client->putIndexSettings($indexName, $this->indexSettings->getInstallIndexSettings($indexIdentifier));
 
             $this->proceedIndexInstall($indexName, $indexAlias);
         }
@@ -321,6 +353,17 @@ class IndexOperation implements IndexOperationInterface
                     ),
                 ];
                 $this->logger->error(implode(" ", $errorMessages));
+                if ($error['operation'] === BulkRequestInterface::ACTION_INDEX) {
+                    $this->bulkErrorManager->recordError(
+                        $error['index'],
+                        $error['operation'],
+                        $error['error']['type'],
+                        $error['error']['simple_reason'],
+                        $error['error']['reason'],
+                        (int) $error['count'] ?? 1,
+                        implode(', ', $error['document_ids']),
+                    );
+                }
             }
         }
 

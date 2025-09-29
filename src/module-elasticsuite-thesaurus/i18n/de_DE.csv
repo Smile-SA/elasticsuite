@@ -1,10 +1,10 @@
-Thesaurus,Thesaurus
+"Thesaurus","Thesaurus"
 "Add New Thesaurus","Neuen Thesaurus hinzufügen"
 "Create Thesaurus","Thesaurus erstellen"
 "Create a Thesaurus","Einen Thesaurus erstellen"
-Synonym,Synonym
-Expansion,Erweiterung
-Type,Typ
+"Synonym","Synonym"
+"Expansion","Erweiterung"
+"Type","Typ"
 "Thesaurus Type","Thesaurus Typ"
 "Save Thesaurus","Thesaurus speichern"
 "Save and Continue Edit","Speichern und weiter bearbeiten"
@@ -12,15 +12,15 @@ Type,Typ
 "Edit a Thesaurus","Einen Thesaurus bearbeiten"
 "General Information","Allgemeine Informationen"
 "Thesaurus Name","Thesaurus Name"
-Active,Aktiv
-Store,Store
+"Active","Aktiv"
+"Store","Shop"
 "Bag of words","Wortliste"
-Synonyms,Synonyme
+"Synonyms","Synonyme"
 "Reference Term","Referenzbegriff"
 "Expansion terms","Erweiterte Begriffe"
-"Add Expansion","Erweiterung hinzufügen"
+"Add Expansion Rule","Erweiterungsregel hinzufügen"
 "Synonym terms","Synonyme"
-"Add Synonym","Synonym hinzufügen"
+"Add Synonym Rule","Synonymregel hinzufügen"
 "This thesaurus no longer exists.","Dieser Thesaurus existiert nicht mehr."
 "You deleted the thesaurus %1.","Der thesaurus %1 wurde gelöscht."
 "Edit %1 (%2)","%1 (%2) bearbeiten"
@@ -30,6 +30,11 @@ Synonyms,Synonyme
 "Total of %1 record(s) were deleted.","%1 Eintrag / Einträge wurden gelöscht."
 "You saved the thesaurus %1.","Der Thesaurus %1 wurde gespeichert."
 "Thesaurus Configuration","Thesaurus Einstellungen"
+"General Configuration","General Configuration"
+"Max Allowed Rewrites","Max Allowed Rewrites"
+"Maximum number of thesaurus rules applied at a given time to a given search query to produce alternative queries. That number applies first to the synonyms rules and then the expansion rules. For instance if the setting's value is 2, it means each alternative query will be the result of the application of at most 2 synonyms rules and at most 2 expansion rules. But if you have 10 synonym rules and 5 expansion rules, they could all end up being applied by pairs. So be careful about augmenting this setting's value, especially if you already have a lot of rules with long lists of alternative terms.","Maximum number of thesaurus rules applied at a given time to a given search query to produce alternative queries. That number applies first to the synonyms rules and then the expansion rules. For instance if the setting's value is 2, it means each alternative query will be the result of the application of at most 2 synonyms rules and at most 2 expansion rules. But if you have 10 synonym rules and 5 expansion rules, they could all end up being applied by pairs. So be careful about augmenting this setting's value, especially if you already have a lot of rules with long lists of alternative terms."
+"Max Alternative Search Queries","Max Alternative Search Queries"
+"Maximum number of alternative search queries taken into account. Lower its value if you have ""max boolean clauses"" errors or performance issues arising on your cluster related to a huge volume of thesaurus rules and/or having the stemming enabled for the thesaurus. Defaults to 50. (Used to default to 0 - no limitation).","Maximum number of alternative search queries taken into account. Lower its value if you have ""max boolean clauses"" errors or performance issues arising on your cluster related to a huge volume of thesaurus rules and/or having the stemming enabled for the thesaurus. Defaults to 50. (Used to default to 0 - no limitation)."
 "Synonyms Configuration","Synonyme Einstellungen"
 "Enable Synonyms Search","Aktiviere Suche nach Synonymen"
 "Synonyms Weight Divider","Verteilung der Gewichtung von Synonymen"
@@ -38,12 +43,31 @@ Synonyms,Synonyme
 "Concepts Weight Divider","Verteilung der Gewichtung von Begriffen"
 "ElasticSuite Thesaurus Indexing","ElasticSuite Thesaurus Indexierung"
 "Reindex ElasticSuite search engine thesaurus.","Reindexierung der ElasticSuite Suchmaschine Thesaurus."
-Delete,Löschen
+"Manage Elasticsuite Thesaurus","Elasticsuite Thesaurus verwalten"
+"Delete","Löschen"
 "Are you sure?","Sind Sie sicher?"
-Name,Name
-Expansions,Erweiterungen
-Terms,Begriffe
-Status,Status
-Inactive,Inaktiv
-Action,Aktion
-Edit,Bearbeiten
+"Name","Name"
+"Expansions","Erweiterungen"
+"Terms","Begriffe"
+"Status","Status"
+"Inactive","Inaktiv"
+"Action","Aktion"
+"Edit","Bearbeiten"
+"Any","Alle"
+"Mass Actions","Massenaktionen"
+"Enable","Aktivieren"
+"Disable","Deaktivieren"
+"Select All","Alle auswählen"
+"Unselect All","Alle abwählen"
+"Select Visible","Sichtbar auswählen"
+"Unselect Visible","Sichtbar deaktivieren"
+"Are you sure you want to enable the selected thesaurus?","Sind Sie sicher, dass Sie den ausgewählten Thesaurus aktivieren möchten?"
+"Are you sure you want to disable the selected thesaurus?","Sind Sie sicher, dass Sie den ausgewählten Thesaurus deaktivieren möchten?"
+"Are you sure you want to delete the selected thesaurus?","Sind Sie sicher, dass Sie den ausgewählten Thesaurus löschen möchten?"
+"Please select thesaurus to disable.","Bitte Thesaurus zum Deaktivieren auswählen."
+"Total of %1 thesaurus were disabled.","Insgesamt wurden %1 Thesaurus deaktiviert."
+"Please select thesaurus to enable.","Bitte wählen Sie Thesaurus zum Aktivieren."
+"Total of %1 thesaurus were enabled.","Insgesamt wurden %1 Thesaurus aktiviert."
+"Text Analysis","Textanalyse"
+"Enable stemming on synonym and expansion rules","Aktivieren Sie die Wortstammerkennung für Synonym- und Erweiterungsregeln"
+"If enabled, by applying the same stemming behavior that occurs when indexing product data, this will allow search queries to match synonym and expansion rules more broadly with regard to singular and plural forms of words. For instance, for a synonym rule ""story,tale"", searching either for ""story"" <strong>or ""stories""</strong> will trigger the synonym and make Elasticsuite also search for ""tale"". For an expansion rule ""sport => football,tennis,soccer,running"", searching either for ""sport"" <strong>or ""sports""</strong> will trigger the expansion and make Elasticsuite also search for ""football"", ""tennis"", ""soccer"" and ""running"".<br />If disabled, the legacy stricter matching mode will be applied, where searching for ""stor<strong>ies</strong>"" would <strong>not</strong> trigger a ""story,tale"" synonym or searching for ""sport<strong>s</strong>"" would not trigger a ""sport => football,tennis,soccer,running"" expansion.","Wenn diese Option aktiviert ist, können Suchanfragen durch die Anwendung des gleichen Stemming-Verhaltens, das beim Indizieren von Produktdaten auftritt, in Bezug auf Singular- und Pluralformen von Wörtern umfassender mit Synonym- und Erweiterungsregeln übereinstimmen. Beispielsweise wird bei einer Synonymregel ""geschichte,erzählung"", die Suche nach ""geschichte"" <strong>oder ""geschichten""</strong> löst das Synonym aus und veranlasst Elasticsuite, auch nach ""erzählung"" zu suchen. Bei einer Erweiterungsregel ""aktivität => fußball,tennis,schwimmen,laufen"" löst die Suche nach ""aktivität"" <strong>oder ""aktivitäten""</strong> die Erweiterung aus und veranlasst Elasticsuite, auch nach ""fußball"", ""tennis"", ""schwimmen"" und ""laufen"" zu suchen.<br />Wenn deaktiviert, wird der ältere strengere Übereinstimmungsmodus angewendet, wo die Suche nach ""geschichten"" <strong>kein</strong> Synonym für ""geschichte,erzählung"" auslösen würde oder die Suche nach ""aktivität<strong>en</strong>“ würde keine Erweiterung ""aktivität => fußball,tennis,schwimmen,laufen"" auslösen."

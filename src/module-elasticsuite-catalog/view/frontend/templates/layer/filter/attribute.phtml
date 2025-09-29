@@ -22,7 +22,7 @@
   $datascope = $this->getFilter()->getRequestVar() . 'Filter';
 ?>
 <?php if (!empty($filterItems)) : ?>
-<div data-bind="scope: '<?php echo /* @escapeNotVerified */ $datascope; ?>'">
+<div data-bind="scope: '<?php echo /* @escapeNotVerified */ $datascope; ?>'" aria-live="polite" aria-atomic="true">
     <!-- ko template: getTemplate() --> <!-- /ko -->
 </div>
 

@@ -71,6 +71,7 @@ class Field implements FieldInterface
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
         'norms_disabled'          => false,
         'is_spannable'            => false,
+        'similarity'              => self::SIMILARITY_DEFAULT,
     ];
 
     /**
@@ -229,6 +230,12 @@ class Field implements FieldInterface
             }
         }
 
+        if ($this->getType() === self::FIELD_TYPE_TOKEN_COUNT) {
+            $property = $this->getPropertyConfig(
+                $this->getDefaultSearchAnalyzer() ?? self::ANALYZER_KEYWORD
+            );
+        }
+
         return $property;
     }
 
@@ -302,6 +309,22 @@ class Field implements FieldInterface
     public function getFilterLogicalOperator()
     {
         return (int) $this->config['filter_logical_operator'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasSpecificSimilarity()
+    {
+        return ($this->getSimilarity() !== self::SIMILARITY_DEFAULT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSimilarity()
+    {
+        return $this->config['similarity'] ?? self::SIMILARITY_DEFAULT;
     }
 
     /**
@@ -404,9 +427,12 @@ class Field implements FieldInterface
      * Build the property config from the field type and an optional
      * analyzer (used for string and detected through getAnalyzers).
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param string|null $analyzer Used analyzer.
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function getPropertyConfig($analyzer = self::ANALYZER_UNTOUCHED): array
     {
@@ -429,6 +455,10 @@ class Field implements FieldInterface
                         $fieldMapping['norms'] = false;
                     }
 
+                    if ($this->hasSpecificSimilarity()) {
+                        $fieldMapping['similarity'] = $this->getSimilarity();
+                    }
+
                     if ($analyzer === self::ANALYZER_SORTABLE) {
                         $fieldMapping['fielddata'] = true;
                     }
@@ -436,6 +466,15 @@ class Field implements FieldInterface
                 break;
             case self::FIELD_TYPE_DATE:
                 $fieldMapping['format'] = implode('||', $this->dateFormats);
+                break;
+            case self::FIELD_TYPE_KNN_VECTOR:
+                $fieldMapping['dimension'] = $this->config['dimension'];
+                $fieldMapping['method']    = $this->config['model'];
+                break;
+            case self::FIELD_TYPE_TOKEN_COUNT:
+                $fieldMapping['analyzer'] = $analyzer;
+                $fieldMapping['store'] = true;
+                $fieldMapping['enable_position_increments'] = false;
                 break;
         }
 

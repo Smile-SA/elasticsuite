@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteIndices\Model;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
 
@@ -26,6 +27,21 @@ use Smile\ElasticsuiteIndices\Block\Widget\Grid\Column\Renderer\IndexStatus;
  */
 class IndexStatsProvider
 {
+    /**
+     * Cache Key Prefix.
+     */
+    const CACHE_KEY_PREFIX = 'es_index_shard_settings';
+
+    /**
+     * Cache Tag.
+     */
+    const CACHE_TAG = 'index_settings';
+
+    /**
+     * @var int Cache lifetime.
+     */
+    const CACHE_LIFETIME = 7200;
+
     /**
      * @var ClientInterface
      */
@@ -42,6 +58,11 @@ class IndexStatsProvider
     protected $indexStatusProvider;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var null
      */
     private $elasticsuiteIndices = null;
@@ -52,20 +73,28 @@ class IndexStatsProvider
     private $indicesStats = null;
 
     /**
+     * @var array
+     */
+    private $cachedIndexSettings = null;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface     $client              ES client.
      * @param IndicesList         $indicesList         Index list.
      * @param IndexStatusProvider $indexStatusProvider Index Status Provider.
+     * @param LoggerInterface     $logger              Logger.
      */
     public function __construct(
         ClientInterface $client,
         IndicesList $indicesList,
-        IndexStatusProvider $indexStatusProvider
+        IndexStatusProvider $indexStatusProvider,
+        LoggerInterface $logger
     ) {
         $this->client = $client;
         $this->indicesList = $indicesList;
         $this->indexStatusProvider = $indexStatusProvider;
+        $this->logger = $logger;
         $this->initStats();
     }
 
@@ -111,12 +140,19 @@ class IndexStatsProvider
     public function indexStats($indexName, $alias): array
     {
         $data = [
-            'index_name'  => $indexName,
-            'index_alias' => $alias,
-            'size'        => 'undefined',
+            'index_name'          => $indexName,
+            'index_alias'         => $alias,
+            'number_of_documents' => 'N/A',
+            'size'                => 'N/A',
+            'number_of_shards'    => 'N/A',
+            'number_of_replicas'  => 'N/A',
         ];
 
         try {
+            // Retrieve number of shards and replicas configuration.
+            $data['number_of_shards'] = $this->getPrimaryShardsConfiguration($indexName) ?? 'N/A';
+            $data['number_of_replicas'] = $this->getReplicasConfiguration($indexName) ?? 'N/A';
+
             if (!isset($this->indicesStats[$indexName])) {
                 $indexStatsResponse             = $this->client->indexStats($indexName);
                 $this->indicesStats[$indexName] = current($indexStatsResponse['indices']);
@@ -131,10 +167,67 @@ class IndexStatsProvider
                 $data['size_in_bytes'] = $indexStats['total']['store']['size_in_bytes'];
             }
         } catch (Exception $e) {
-            $data['index_status'] = IndexStatus::REBUILDING_STATUS;
+            $this->logger->error(
+                sprintf('Error when loading/parsing statistics for index "%s"', $indexName),
+                ['exception' => $e]
+            );
+            $data['index_status'] = IndexStatus::CLOSED_STATUS;
         }
 
         return $data;
+    }
+
+    /**
+     * Get index settings with caching.
+     *
+     * @param string $indexName Index name.
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
+    private function getIndexSettings(string $indexName): array
+    {
+        return $this->cachedIndexSettings[$indexName] ?? [];
+    }
+
+    /**
+     * Retrieve number of primary shards from index settings.
+     *
+     * @param string $indexName Index name.
+     *
+     * @return int|null
+     */
+    private function getPrimaryShardsConfiguration($indexName): ?int
+    {
+        // Retrieve the index settings.
+        $indexSettings = $this->getIndexSettings($indexName);
+
+        $shards = null;
+        if (isset($indexSettings['settings']['index']['number_of_shards'])) {
+            $shards = (int) $indexSettings['settings']['index']['number_of_shards'];
+        }
+
+        return $shards;
+    }
+
+    /**
+     * Retrieve number of replicas from index settings.
+     *
+     * @param string $indexName Index name.
+     *
+     * @return int|null
+     */
+    private function getReplicasConfiguration($indexName): ?int
+    {
+        // Retrieve the index settings.
+        $indexSettings = $this->getIndexSettings($indexName);
+
+        $replicas = null;
+        if (isset($indexSettings['settings']['index']['number_of_replicas'])) {
+            $replicas = (int) $indexSettings['settings']['index']['number_of_replicas'];
+        }
+
+        return $replicas;
     }
 
     /**
@@ -183,8 +276,26 @@ class IndexStatsProvider
     private function initStats()
     {
         if ($this->indicesStats === null) {
-            $indexStatsResponse = $this->client->indexStats('_all');
-            $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            try {
+                $indexStatsResponse = $this->client->indexStats('_all');
+                $this->indicesStats = $indexStatsResponse['indices'] ?? [];
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices statistics', ['exception' => $e]);
+                $this->indicesStats = [];
+            }
+        }
+
+        if (null === $this->cachedIndexSettings) {
+            try {
+                $indicesShardSettings = $this->client->getSpecificSettings(
+                    '_all',
+                    ['index.number_of_shards', 'index.number_of_replicas']
+                );
+                $this->cachedIndexSettings = $indicesShardSettings;
+            } catch (Exception $e) {
+                $this->logger->error('Error when loading all indices shard settings', ['exception' => $e]);
+                $this->cachedIndexSettings = [];
+            }
         }
     }
 }

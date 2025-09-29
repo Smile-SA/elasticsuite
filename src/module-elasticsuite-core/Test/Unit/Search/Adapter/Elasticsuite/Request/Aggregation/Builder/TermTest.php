@@ -53,7 +53,46 @@ class TermTest extends \PHPUnit\Framework\TestCase
     public function testAplhabeticSortOrderTermAggregationBuild()
     {
         $aggBuilder = $this->getAggregationBuilder();
-        $termBucket = new TermBucket('aggregationName', 'fieldName', [], [], [], null, null, null, 1, TermBucket::SORT_ORDER_TERM);
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            TermBucket::SORT_ORDER_TERM
+        );
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertArrayHasKey('terms', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['terms']['field']);
+        $this->assertEquals([TermBucket::SORT_ORDER_TERM => SortOrderInterface::SORT_ASC], $aggregation['terms']['order']);
+    }
+
+    /**
+     * Test the standard term aggregation building sorted by alphabetic order using the deprecated sort order.
+     *
+     * @return void
+     */
+    public function testAplhabeticSortOrderTermDeprecatedAggregationBuild()
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            TermBucket::SORT_ORDER_TERM_DEPRECATED
+        );
 
         $aggregation = $aggBuilder->buildBucket($termBucket);
 
@@ -80,6 +119,102 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $this->assertArrayHasKey('aggregations', $aggregation);
         $this->assertArrayHasKey('termRelevance', $aggregation['aggregations']);
         $this->assertEquals(['avg' => ['script' => TermBucket::SORT_ORDER_RELEVANCE]], $aggregation['aggregations']['termRelevance']);
+    }
+
+    /**
+     * Test the standard term aggregation building sorted by provided params.
+     *
+     * @return void
+     */
+    public function testComplexSortOrderTermAggregationBuild()
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            ['sortField' => SortOrderInterface::SORT_DESC]
+        );
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertArrayHasKey('terms', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['terms']['field']);
+        $this->assertEquals(['sortField' => SortOrderInterface::SORT_DESC], $aggregation['terms']['order']);
+    }
+
+    /**
+     * Test the standard term aggregation building when using include and exclude params.
+     *
+     * @return void
+     */
+    public function testFilteringValuesTermAggregationBuild()
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            BucketInterface::SORT_ORDER_COUNT,
+            ['.*sport.*'],
+            ['water', 'rain', 'snow']
+        );
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertArrayHasKey('terms', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['terms']['field']);
+        $this->assertEquals([TermBucket::SORT_ORDER_COUNT => SortOrderInterface::SORT_DESC], $aggregation['terms']['order']);
+        $this->assertEquals(['.*sport.*'], $aggregation['terms']['include']);
+        $this->assertEquals(['water', 'rain', 'snow'], $aggregation['terms']['exclude']);
+        $this->assertArrayNotHasKey('min_doc_count', $aggregation['terms']);
+    }
+
+    /**
+     * Test the standard term aggregation building when min doc count param.
+     *
+     * @return void
+     */
+    public function testNoFilterMinDocCountTermAggregationBuild()
+    {
+        $aggBuilder = $this->getAggregationBuilder();
+        $termBucket = new TermBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            1,
+            BucketInterface::SORT_ORDER_COUNT,
+            [],
+            [],
+            5
+        );
+
+        $aggregation = $aggBuilder->buildBucket($termBucket);
+
+        $this->assertArrayHasKey('terms', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['terms']['field']);
+        $this->assertEquals([TermBucket::SORT_ORDER_COUNT => SortOrderInterface::SORT_DESC], $aggregation['terms']['order']);
+        $this->assertArrayNotHasKey('include', $aggregation['terms']);
+        $this->assertArrayNotHasKey('exclude', $aggregation['terms']);
+        $this->assertArrayHasKey('min_doc_count', $aggregation['terms']);
+        $this->assertEquals(5, $aggregation['terms']['min_doc_count']);
     }
 
     /**

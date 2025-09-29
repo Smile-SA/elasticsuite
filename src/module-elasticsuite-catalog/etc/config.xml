@@ -16,6 +16,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <catalog>
+            <frontend>
+                <default_sort_direction_by>asc</default_sort_direction_by>
+            </frontend>
             <search>
                 <engine>elasticsuite</engine>
             </search>
@@ -40,6 +43,7 @@
                 <adaptive_slider_enabled>0</adaptive_slider_enabled>
                 <index_child_product_sku>0</index_child_product_sku>
                 <compute_child_product_discount>0</compute_child_product_discount>
+                <collector_fields_scoring_algorithm>default</collector_fields_scoring_algorithm>
             </catalogsearch>
         </smile_elasticsuite_catalogsearch_settings>
     </default>
