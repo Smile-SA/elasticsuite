@@ -89,6 +89,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      * @param array                     $indexedBackendModels        List of indexed backend models added to the default list.
      * @param array                     $forbiddenChildrenAttributes List of the forbidden children attributes.
      * @param ScopeConfigInterface|null $scopeConfig                 Scope Config.
+     * @param ResolverInterface|null    $localeResolver              Locale resolver.
+     * @param TranslateInterface|null   $translator                  Translator.
+     * @param State|null                $appState                    App state.
+     * @param AreaList|null             $areaList                    Area list.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -117,10 +121,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
-        // load store translation for static attribute options
+        // Load store translation for static attribute options
         $this->localeResolver->emulate($storeId);
         $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
-        // Translate area part may not be loaded :
+        // Translate area part may not be loaded
         $area = $this->areaList->getArea($this->appState->getAreaCode());
         $area->load(\Magento\Framework\App\Area::PART_TRANSLATE);
 
@@ -153,7 +157,7 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
             }
         }
 
-        // reinitialize translation
+        // Reinitialize translation
         $this->localeResolver->revert();
         $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
 
