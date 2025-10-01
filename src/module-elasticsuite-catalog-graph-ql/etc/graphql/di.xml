@@ -182,4 +182,8 @@
         <plugin name="layered_nav_attributes_replace_filter_field"
                 type="Smile\ElasticsuiteCatalog\Plugin\Search\Request\Product\Attribute\Aggregation\LayeredNavAttribute"/>
     </type>
+
+    <type name="Magento\CatalogGraphQl\Model\Config\FilterAttributeReader">
+        <plugin name="decimal_int_filter_type" type="Smile\ElasticsuiteCatalogGraphQl\Plugin\CatalogGraphQl\Model\Config\FilterAttributeReaderPlugin"/>
+    </type>
 </config>
