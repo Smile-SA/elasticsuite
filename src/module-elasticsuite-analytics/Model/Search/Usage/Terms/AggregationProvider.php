@@ -85,7 +85,10 @@ class AggregationProvider implements AggregationProviderInterface
             'name'      => 'search_terms',
             'metrics'   => $this->getMetrics(),
             'pipelines' => $this->getPipelines(),
-            'childBuckets'  => [$this->getFilteredResultCountMetric()],
+            'childBuckets'  => [
+                $this->getFilteredResultCountMetric(),
+                $this->getPageTypeIdentifierBucket(),
+            ],
             'sortOrder' => ['unique_sessions' => 'desc'],
             'size'      => $this->helper->getMaxSearchTerms(),
         ];
@@ -149,6 +152,36 @@ class AggregationProvider implements AggregationProviderInterface
                         ],
                     ]
                 ),
+            ]
+        );
+    }
+
+    /**
+     * Return aggregation providing the page type identifier.
+     *
+     * @return BucketInterface
+     */
+    protected function getPageTypeIdentifierBucket()
+    {
+        return $this->aggregationFactory->create(
+            BucketInterface::TYPE_TERM,
+            [
+                'name'          => 'page_type_identifier',
+                'field'         => 'page.type.identifier',
+                'metrics'       => [
+                    $this->metricFactory->create(
+                        [
+                            'name' => 'unique_sessions',
+                            'field' => 'session.uid',
+                            'type' => MetricInterface::TYPE_CARDINALITY,
+                        ]
+                    ),
+                ],
+                'include'       => [
+                    'catalogsearch_result_index',
+                    'catalogsearch_autocomplete',
+                    'catalogsearch_autocomplete_click',
+                ],
             ]
         );
     }

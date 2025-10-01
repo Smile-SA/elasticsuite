@@ -56,6 +56,8 @@ class Report extends AbstractReport
                 return __('Search');
             case 'product_views_catalog_product_view_count':
                 return __('Recommender');
+            case 'product_views_catalogsearch_autocomplete_click_count':
+                return __('Autocomplete');
             default:
                 return __('Other');
         }
@@ -64,6 +66,7 @@ class Report extends AbstractReport
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
     {
@@ -84,10 +87,17 @@ class Report extends AbstractReport
                 $data[$key] = (int) $value->getMetrics()['count'];
                 if ($value->getAggregations()->getBucket('origin')->getValues()) {
                     $originDetails = '';
+                    $rawData = [];
                     foreach ($value->getAggregations()->getBucket('origin')->getValues() ?? [] as $originData) {
                         $key = sprintf("%s_%s_count", $value->getValue(), $originData->getValue());
                         $data[$key] = (int) $originData->getMetrics()['count'];
-                        $originDetails .= "• {$this->getLabel($key)}: {$originData->getMetrics()['count']}\n";
+                        $label = $this->getLabel($key);
+                        if (!array_key_exists($label, $rawData)) {
+                            $rawData[$label] = $data[$key];
+                        }
+                    }
+                    foreach ($rawData as $label => $count) {
+                        $originDetails .= "• {$label}: {$count}\n";
                     }
                     $data[$value->getValue() . '_origin_details'] = $originDetails;
                 }

@@ -67,13 +67,19 @@ const smileTracker = (function () {
     // Add page title and page URL to the tracked variables
     function addStandardPageVars() {
         // Website base url tracking (eg. mydomain.com)
-        this.addPageVar("site", window.location.hostname);
+        if (!this.vars.hasOwnProperty(transformVarName.bind(this)("site", "page"))) {
+            this.addPageVar("site", window.location.hostname);
+        }
 
         // Page URL tracking (eg. home.html)
-        this.addPageVar("url", window.location.pathname);
+        if (!this.vars.hasOwnProperty(transformVarName.bind(this)("url", "page"))) {
+            this.addPageVar("url", window.location.pathname);
+        }
 
         // Page title tracking
-        this.addPageVar("title", document.title);
+        if (!this.vars.hasOwnProperty(transformVarName.bind(this)("title", "page"))) {
+            this.addPageVar("title", document.title);
+        }
     }
 
     // Append GA campaign variable to the tracked variables
@@ -205,6 +211,7 @@ const smileTracker = (function () {
                 buildTrackingImg.bind(this)(bodyNode, getTrackerUrl.bind(this)());
             }
             this.trackerSent = true;
+            this.trackerVarsAdded = false;
             this.vars = {};
         }
     }
@@ -411,6 +418,37 @@ const smileTracker = (function () {
         }
     }
 
+    function bindAutocompleteEvent() {
+        let autocompleteDebounceTimer = null;
+        const AUTOCOMPLETE_DEBOUNCE_DELAY = 1000; // 1s
+
+        document.addEventListener('elasticsuite:autocomplete', function(event) {
+            if (autocompleteDebounceTimer !== null) {
+                clearTimeout(autocompleteDebounceTimer);
+            }
+
+            // Prevent to send many autocomplete tracking event as the user type in the search box.
+            autocompleteDebounceTimer = setTimeout(function() {
+                smileTracker.addPageVar('search.query', event.detail.queryString);
+                smileTracker.addPageVar('type.identifier', 'catalogsearch_autocomplete');
+                smileTracker.addPageVar('type.label', 'Autocomplete Form');
+                smileTracker.addPageVar('url', event.detail.path);
+                smileTracker.addPageVar('product_list.product_count', event.detail.productCount);
+                smileTracker.sendTag(true);
+
+                autocompleteDebounceTimer = null;
+            }, AUTOCOMPLETE_DEBOUNCE_DELAY);
+        });
+
+        document.addEventListener('elasticsuite:autocomplete:product_click', function(event) {
+            smileTracker.addPageVar('search.query', event.detail.queryString);
+            smileTracker.addPageVar('type.identifier', 'catalogsearch_autocomplete_click');
+            smileTracker.addPageVar('type.label', event.detail.text);
+            smileTracker.addPageVar('url', event.detail.href);
+            smileTracker.sendTag(true);
+        });
+    }
+
     // Implementation of the tracker
     const SmileTrackerImpl = function() {
         this.vars = {};
@@ -419,6 +457,7 @@ const smileTracker = (function () {
         this.trackerVarsAdded = false;
         this.sessionInitialized = false;
         this.customerData = {};
+        bindAutocompleteEvent.bind(this)();
     };
 
     SmileTrackerImpl.prototype.sendTag = function (forceCollect = false) {

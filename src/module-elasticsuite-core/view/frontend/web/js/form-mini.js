@@ -276,6 +276,19 @@ define([
 
                         if (this.responseList.indexList.length) {
                             this._updateAriaHasPopup(true);
+                            const productCount = data.filter(item => item.type === 'product').length;
+                            const urlObject = new URL(this.options.url);
+                            const trackingEvent = new CustomEvent(
+                                'elasticsuite:autocomplete',
+                                {
+                                    detail: {
+                                        path: urlObject.pathname,
+                                        queryString: value,
+                                        productCount: productCount
+                                    }
+                                }
+                            );
+                            document.dispatchEvent(trackingEvent);
                         } else {
                             this._updateAriaHasPopup(false);
                         }
@@ -283,8 +296,35 @@ define([
                         this.responseList.indexList
                             .on('click vclick', function (e) {
                                 self.responseList.selected = $(this);
+
                                 if (self.responseList.selected.attr("href")) {
-                                    window.location.href = self.responseList.selected.attr("href");
+                                    // Find the section header (dt) by going up to the dl parent and finding its dt
+                                    const sectionHeader = self.responseList.selected.closest('dl').find('dt');
+                                    const isProduct = sectionHeader.hasClass('title-product');
+
+                                    // Only dispatch the custom event for products
+                                    if (isProduct) {
+                                        const trackingEvent = new CustomEvent(
+                                            'elasticsuite:autocomplete:product_click',
+                                            {
+                                                detail: {
+                                                    href: self.responseList.selected.attr("href"),
+                                                    text: self.responseList.selected.find('.product-name').text(),
+                                                    queryString: self.element.val()
+                                                },
+                                                bubbles: true,
+                                                cancelable: true
+                                            }
+                                        );
+
+                                        document.dispatchEvent(trackingEvent);
+                                    }
+
+                                    const href = self.responseList.selected.attr("href");
+                                    setTimeout(function() {
+                                        window.location.href = href;
+                                    }, 100);
+
                                     e.stopPropagation();
                                     return false;
                                 }

@@ -13,8 +13,13 @@
  */
 namespace Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms;
 
+use Magento\Framework\Api\Search\AggregationValueInterface;
+use Magento\Framework\Api\Search\BucketInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Search\Model\SearchEngine;
 use Smile\ElasticsuiteAnalytics\Model\AbstractReport;
 use Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder;
+use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 
 /**
  * Search terms Report
@@ -22,7 +27,7 @@ use Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder;
  * @category Smile
  * @package  Smile\ElasticsuiteAnalytics
  */
-class Report extends AbstractReport implements \Magento\Framework\View\Element\Block\ArgumentInterface
+class Report extends AbstractReport implements ArgumentInterface
 {
     /**
      * @var array
@@ -32,12 +37,12 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
     /**
      * Constructor.
      *
-     * @param \Magento\Search\Model\SearchEngine $searchEngine         Search engine.
-     * @param SearchRequestBuilder               $searchRequestBuilder Search request builder.
-     * @param array                              $postProcessors       Response post processors.
+     * @param SearchEngine         $searchEngine         Search engine.
+     * @param SearchRequestBuilder $searchRequestBuilder Search request builder.
+     * @param array                $postProcessors       Response post processors.
      */
     public function __construct(
-        \Magento\Search\Model\SearchEngine $searchEngine,
+        SearchEngine $searchEngine,
         SearchRequestBuilder $searchRequestBuilder,
         array $postProcessors = []
     ) {
@@ -49,7 +54,7 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function processResponse(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
+    protected function processResponse(QueryResponse $response)
     {
         $data = [];
 
@@ -73,6 +78,13 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
                     }
                     $data[$searchTerm]['result_count'] = round((float) $resultCountMetrics ?: 0);
                 }
+                if ($value->getAggregations()->getBucket('page_type_identifier')) {
+                    $this->processAutocompleteData(
+                        $value->getAggregations()->getBucket('page_type_identifier'),
+                        $searchTerm,
+                        $data
+                    );
+                }
             }
         }
 
@@ -84,13 +96,37 @@ class Report extends AbstractReport implements \Magento\Framework\View\Element\B
     }
 
     /**
+     * Process autocomplete data from page type aggregation.
+     *
+     * @param BucketInterface $pageTypeIdAgg Page type aggregation bucket.
+     * @param string          $searchTerm    Search term.
+     * @param array           $data          Aggregated data.
+     * @return void
+     */
+    private function processAutocompleteData(BucketInterface $pageTypeIdAgg, string $searchTerm, array &$data): void
+    {
+        $sessionsByPageType = [];
+        foreach ($pageTypeIdAgg->getValues() as $pageTypeIdVal) {
+            $sessionsByPageType[$pageTypeIdVal->getValue()] = $pageTypeIdVal->getMetrics()['unique_sessions'];
+        }
+
+        $typedWithClick = $sessionsByPageType['catalogsearch_autocomplete_click'] ?? 0;
+        $typedAndPressEnter = $sessionsByPageType['catalogsearch_result_index'] ?? 0;
+        $typedWithNoClick = $data[$searchTerm]['sessions'] - $typedWithClick - $typedAndPressEnter;
+
+        $data[$searchTerm]['sessions_without_click'] = $typedWithNoClick;
+        $data[$searchTerm]['sessions_with_click'] = $typedWithClick;
+        $data[$searchTerm]['sessions_with_submit']  = $typedAndPressEnter;
+    }
+
+    /**
      * Return the bucket values from the main aggregation
      *
-     * @param \Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response ES Query response.
+     * @param QueryResponse $response ES Query response.
      *
-     * @return \Magento\Framework\Api\Search\AggregationValueInterface[]
+     * @return AggregationValueInterface[]
      */
-    private function getValues(\Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse $response)
+    private function getValues(QueryResponse $response)
     {
         $bucket = $response->getAggregations()->getBucket('search_terms');
 
