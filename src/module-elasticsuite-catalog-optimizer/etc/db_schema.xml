@@ -94,13 +94,13 @@
         <column name="category_id"
                 xsi:type="int"
                 default="null"
-                nullable="true"
+                nullable="false"
                 unsigned="true"
                 comment="Category ID"/>
         <column name="query_id"
                 xsi:type="int"
                 default="null"
-                nullable="true"
+                nullable="false"
                 unsigned="true"
                 comment="Query ID"/>
         <constraint xsi:type="foreign"
