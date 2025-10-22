@@ -351,6 +351,7 @@
                 </item>
                 <item name="catalog_category" xsi:type="array">
                     <item name="attributes" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\AttributeData</item>
+                    <item name="urlRewrites" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Category\Indexer\Fulltext\Datasource\UrlRewriteData</item>
                 </item>
             </argument>
         </arguments>
