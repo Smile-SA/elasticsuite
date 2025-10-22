@@ -19,6 +19,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Store\Model\Store;
 
 /**
  * Create an autocomplete item from a category.
@@ -45,9 +46,14 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     private $urlBuilder;
 
     /**
-     * @var null
+     * @var ScopeConfigInterface
      */
-    private $categoryUrlSuffix = null;
+    private $scopeConfig;
+
+    /**
+     * @var array
+     */
+    private $categoryUrlSuffixes = [];
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Category|null
@@ -70,7 +76,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     ) {
         parent::__construct($objectManager);
         $this->urlBuilder = $urlBuilder;
-        $this->categoryUrlSuffix = $scopeConfig->getValue(self::XML_PATH_CATEGORY_URL_SUFFIX, ScopeInterface::SCOPE_STORES);
+        $this->scopeConfig = $scopeConfig;
         $this->categoryResource = $categoryResource;
     }
 
@@ -129,10 +135,30 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         if ($documentSource && isset($documentSource['url_path'])) {
             $urlPath = is_array($documentSource['url_path']) ? current($documentSource['url_path']) : $documentSource['url_path'];
 
-            return trim($this->urlBuilder->getDirectUrl($urlPath), '/') . $this->categoryUrlSuffix;
+            return trim($this->urlBuilder->getDirectUrl($urlPath), '/') . $this->getCategoryUrlSuffix($category->getStoreId());
         }
 
         return $category->getUrl();
+    }
+
+    /**
+     * Get the configured category URL suffix for the given store.
+     *
+     * @param int $storeId Store ID.
+     *
+     * @return string
+     */
+    private function getCategoryUrlSuffix($storeId)
+    {
+        if (false === array_key_exists($storeId, $this->categoryUrlSuffixes)) {
+            $this->categoryUrlSuffixes[$storeId] = (string) $this->scopeConfig->getValue(
+                self::XML_PATH_CATEGORY_URL_SUFFIX,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+        }
+
+        return $this->categoryUrlSuffixes[$storeId];
     }
 
     /**
