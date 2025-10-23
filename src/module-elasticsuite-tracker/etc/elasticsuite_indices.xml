@@ -39,6 +39,11 @@
                 <field name="page.title" type="keyword" />
                 <field name="page.url" type="keyword" />
 
+                <!-- Previous page metadata -->
+                <field name="previousPage.url" type="keyword" />
+                <field name="previousPage.type.identifier" type="keyword" />
+                <field name="previousPage.type.label" type="keyword" />
+
                 <!-- Page data (type) -->
                 <field name="page.type.identifier" type="keyword" />
                 <field name="page.type.label" type="keyword" />

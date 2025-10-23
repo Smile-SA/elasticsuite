@@ -52,8 +52,12 @@ $data = $block->getKpi();
             </li>
             <li class="dashboard-totals-item">
                 <span class="dashboard-totals-label"><?= __('Product views') ?></span>
-                <strong class="dashboard-totals-value">
-                    <span class="value"><?= $data['product_views_count']; ?></span>
+                <?php if (!empty($data['product_views_origin_details'])) :?>
+                <?php endif;?>
+                <strong class="dashboard-totals-value <?= !empty($data['product_views_origin_details']) ? 'has-details' : '' ?>">
+                    <span class="value" title="<?= $data['product_views_origin_details'] ?? '' ?>">
+                        <?= $data['product_views_count']; ?>
+                    </span>
                     <span class="dashboard-totals-decimals"></span>
                 </strong>
             </li>

@@ -66,6 +66,7 @@ class AggregationProvider implements AggregationProviderInterface
             'name'    => 'data',
             'queries' => $this->getQueries(),
             'metrics' => $this->getMetrics(),
+            'childBuckets' => $this->getChildBuckets(),
         ];
 
         return $this->aggregationFactory->create(BucketInterface::TYPE_QUERY_GROUP, $aggParams);
@@ -142,5 +143,20 @@ class AggregationProvider implements AggregationProviderInterface
         ];
 
         return $queries;
+    }
+
+    /**
+     * Return child bucket for query group aggregation.
+     *
+     * @return array
+     */
+    private function getChildBuckets(): array
+    {
+        return [
+            'origin' => $this->aggregationFactory->create(
+                BucketInterface::TYPE_TERM,
+                ['name' => 'origin', 'field' => 'previous_page.type.identifier.keyword']
+            ),
+        ];
     }
 }

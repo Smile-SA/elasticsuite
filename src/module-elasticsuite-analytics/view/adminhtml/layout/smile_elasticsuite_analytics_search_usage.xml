@@ -88,6 +88,12 @@
                             <argument name="chart_type" xsi:type="string">BarChart</argument>
                         </arguments>
                     </block>
+                    <block name="elasticsuite.analytics.view.origin" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\ViewOrigins" template="Smile_ElasticsuiteAnalytics::search/usage/chart.phtml">
+                        <arguments>
+                            <argument name="title" xsi:type="string" translate="true">Views origins</argument>
+                            <argument name="chart_type" xsi:type="string">PieChart</argument>
+                        </arguments>
+                    </block>
                 </container>
             </container>
         </referenceContainer>

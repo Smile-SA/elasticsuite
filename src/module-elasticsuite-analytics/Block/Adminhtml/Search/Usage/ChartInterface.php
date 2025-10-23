@@ -38,6 +38,21 @@ interface ChartInterface
     const COLOR_GREEN   = '#25BC94';
 
     /**
+     * Constant for yellow background/drawing chart color
+     */
+    const COLOR_YELLOW  = '#FFB800';
+
+    /**
+     * Constant for gray background/drawing chart color
+     */
+    const COLOR_GRAY    = '#6B7280';
+
+    /**
+     * Constant for pink background/drawing chart color
+     */
+    const COLOR_PINK    = '#EC4899';
+
+    /**
      * Return chart data in the format expected by Google Charts API as a JSON encoded string.
      * (see https://developers.google.com/chart/interactive/docs/reference#dataparam)
      *
