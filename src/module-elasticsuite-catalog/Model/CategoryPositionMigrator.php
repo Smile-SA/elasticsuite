@@ -219,6 +219,10 @@ class CategoryPositionMigrator
      * @return array{migrated:int,deleted:int,updates:array<int,array{product_id:int,position:int}>,normalized:array<int,int>}
      *
      * @throws LocalizedException If any database or transactional error occurs.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function migrateCategoryPositions(
         int $categoryId,

@@ -125,6 +125,7 @@ class CategoryPositionMigrate extends Command
      * @param OutputInterface $output The output interface used to write messages to the console.
      *
      * @return int
+     * @SuppressWarnings(PHPMD.ElseExpression)
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
