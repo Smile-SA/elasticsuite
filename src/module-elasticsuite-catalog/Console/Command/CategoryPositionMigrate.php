@@ -132,11 +132,11 @@ class CategoryPositionMigrate extends Command
         try {
             $this->appState->setAreaCode('adminhtml');
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            // area already set, ignore.
+            // Area already set, ignore.
         }
 
         $categoryId = $input->getOption(self::OPTION_CATEGORY_ID);
-        $dryRun = (bool)$input->getOption(self::OPTION_DRY_RUN);
+        $dryRun = (bool) $input->getOption(self::OPTION_DRY_RUN);
         $helper = $this->getHelper('question');
 
         // Ask interactive migration options once for all categories.
@@ -147,7 +147,7 @@ class CategoryPositionMigrate extends Command
             $result = $this->migrator->wholeCatalogMigration($options, $dryRun, $output);
         } else {
             // Single category mode.
-            $result = $this->migrator->singleCategoryMigration((int)$categoryId, $options, $dryRun, $output);
+            $result = $this->migrator->singleCategoryMigration((int) $categoryId, $options, $dryRun, $output);
         }
 
         // Render preview or summary.
@@ -219,9 +219,9 @@ class CategoryPositionMigrate extends Command
         );
 
         return [
-            'migrateNegative' => (bool)$migrateNegative,
-            'migrateZero' => (bool)$migrateZero,
-            'migratePositive' => (bool)$migratePositive,
+            'migrateNegative' => (bool) $migrateNegative,
+            'migrateZero' => (bool) $migrateZero,
+            'migratePositive' => (bool) $migratePositive,
             'conflictStrategy' => $conflict,
         ];
     }

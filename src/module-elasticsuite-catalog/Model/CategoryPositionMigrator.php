@@ -251,7 +251,7 @@ class CategoryPositionMigrator
             $migrateZero,
             $migratePositive
         ): ?array {
-            $pos = (int)$r['position'];
+            $pos = (int) $r['position'];
             if ($pos < 0 && !$migrateNegative) {
                 return null;
             }
@@ -261,7 +261,8 @@ class CategoryPositionMigrator
             if ($pos > 0 && !$migratePositive) {
                 return null;
             }
-            return ['product_id' => (int)$r['product_id'], 'position' => $pos];
+
+            return ['product_id' => (int) $r['product_id'], 'position' => $pos];
         }, $rows)));
 
         if (empty($updates)) {
@@ -286,7 +287,7 @@ class CategoryPositionMigrator
                     $toDelete[] = $pid;
                     continue;
                 }
-                // reorder: just continue assigning unique new positions.
+                // Reorder: just continue assigning unique new positions.
             }
 
             $seenPositions[$pos] = true;
