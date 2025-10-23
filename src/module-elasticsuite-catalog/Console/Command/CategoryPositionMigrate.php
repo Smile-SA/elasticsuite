@@ -13,25 +13,25 @@
 
 namespace Smile\ElasticsuiteCatalog\Console\Command;
 
-use Magento\Catalog\Api\CategoryListInterface;
-use Magento\Catalog\Model\CategoryRepository;
-use Magento\Catalog\Model\ResourceModel\CategoryProduct;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\App\State;
 use Magento\Framework\Console\Cli;
+use Magento\Framework\App\State;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\HelperInterface;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Smile\ElasticsuiteCatalog\Model\CategoryPositionMigrator;
 
 /**
  * CLI command to migrate legacy product positions in categories
  * to ElasticSuite-compatible ones (positive, contiguous positions).
  *
  * Features:
- * - Interactive migration for a single category (--category option).
+ * - Interactive migration for a single category (--category [id] option).
  * - Migration for the whole catalog (no option).
  * - Handles negative, zero, positive positions separately.
  * - Resolves conflicts (products with the same position) by reorder or delete.
@@ -52,7 +52,7 @@ class CategoryPositionMigrate extends Command
      * Used with:
      * php bin/magento elasticsuite:category-position:migrate --category [id]
      */
-    private const OPTION_CATEGORY = 'category';
+    private const OPTION_CATEGORY_ID = 'category';
 
     /**
      * CLI option name for enabling dry-run mode.
@@ -69,24 +69,9 @@ class CategoryPositionMigrate extends Command
     private const OPTION_DRY_RUN = 'dry-run';
 
     /**
-     * @var CategoryRepository
+     * @var CategoryPositionMigrator
      */
-    private $categoryRepository;
-
-    /**
-     * @var CategoryProduct
-     */
-    private $categoryProduct;
-
-    /**
-     * @var CategoryListInterface
-     */
-    private $categoryList;
-
-    /**
-     * @var SearchCriteriaBuilder
-     */
-    private $criteriaBuilder;
+    private CategoryPositionMigrator $migrator;
 
     /**
      * @var State
@@ -96,28 +81,18 @@ class CategoryPositionMigrate extends Command
     /**
      * Constructor.
      *
-     * @param CategoryRepository    $categoryRepository Category repository for loading categories.
-     * @param CategoryProduct       $categoryProduct    Resource model for category-product relation.
-     * @param CategoryListInterface $categoryList       Service to fetch category lists.
-     * @param SearchCriteriaBuilder $criteriaBuilder    Builder for search criteria in repository queries.
-     * @param State                 $appState           Application state (for setting area code).
-     * @param string|null           $name               Command name (optional).
+     * @param CategoryPositionMigrator $migrator Migration service class.
+     * @param State                    $appState Application state (for setting area code).
+     * @param string|null              $name     Command name (optional).
      */
     public function __construct(
-        CategoryRepository $categoryRepository,
-        CategoryProduct $categoryProduct,
-        CategoryListInterface $categoryList,
-        SearchCriteriaBuilder $criteriaBuilder,
+        CategoryPositionMigrator $migrator,
         State $appState,
-        string $name = null
+        ?string $name = null
     ) {
-        $this->categoryRepository = $categoryRepository;
-        $this->categoryProduct = $categoryProduct;
-        $this->categoryList = $categoryList;
-        $this->criteriaBuilder = $criteriaBuilder;
-        $this->appState = $appState;
-
         parent::__construct($name);
+        $this->migrator = $migrator;
+        $this->appState = $appState;
     }
 
     /**
@@ -126,262 +101,109 @@ class CategoryPositionMigrate extends Command
     protected function configure(): void
     {
         $this->setName('elasticsuite:category-position:migrate')
-            ->setDescription('Migrate legacy product positions in categories to ElasticSuite-compatible ones.')
+            ->setDescription('Migrate category product positions to ElasticSuite table.')
             ->addOption(
-                self::OPTION_CATEGORY,
+                self::OPTION_CATEGORY_ID,
                 null,
-                InputOption::VALUE_REQUIRED,
-                'Category ID (if omitted, process whole catalog)'
+                InputArgument::OPTIONAL,
+                'Category ID to migrate (omit to process all categories).'
             )
             ->addOption(
                 self::OPTION_DRY_RUN,
                 null,
                 InputOption::VALUE_NONE,
-                'Preview migration without updating the database'
+                'Dry-run: preview only (no database changes will be made).'
             );
+
+        parent::configure();
     }
 
     /**
-     * Execute the command.
+     * Execute CLI command.
      *
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     *
-     * @param InputInterface  $input  CLI input.
-     * @param OutputInterface $output CLI output.
+     * @param InputInterface  $input  The input interface from the CLI context.
+     * @param OutputInterface $output The output interface used to write messages to the console.
      *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        // Ensure area code is set safely.
+        // Ensure adminhtml area code for resource/model usage.
         try {
             $this->appState->setAreaCode('adminhtml');
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            // Area code is already set, safe to continue.
+            // area already set, ignore.
         }
 
-        $categoryId = $input->getOption(self::OPTION_CATEGORY);
-        $dryRun = (bool) $input->getOption(self::OPTION_DRY_RUN);
+        $categoryId = $input->getOption(self::OPTION_CATEGORY_ID);
+        $dryRun = (bool)$input->getOption(self::OPTION_DRY_RUN);
+        $helper = $this->getHelper('question');
 
-        if ($categoryId) {
-            $output->writeln("<info>Processing category ID {$categoryId}</info>");
-            try {
-                $this->categoryRepository->get((int) $categoryId);
-                $this->processCategory(
-                    (int) $categoryId,
-                    $output,
-                    $input,
-                    null,
-                    null,
-                    null,
-                    null,
-                    false,
-                    $dryRun
-                );
-            } catch (\Exception $e) {
-                $output->writeln("<error>{$e->getMessage()}</error>");
+        // Ask interactive migration options once for all categories.
+        $options = $this->askMigrationOptions($helper, $input, $output);
 
-                return Cli::RETURN_FAILURE;
-            }
+        if ($categoryId === null) {
+            // Whole-catalog mode when no categoryId provided.
+            $result = $this->migrator->wholeCatalogMigration($options, $dryRun, $output);
         } else {
-            $output->writeln("<info>Processing all categories...</info>");
-
-            // Ask migration rules once for the whole catalog.
-            [$migrateNegative, $migrateZero, $migratePositive, $conflictStrategy] = $this->askMigrationRules($input, $output);
-
-            $criteria = $this->criteriaBuilder->create();
-            $categories = $this->categoryList->getList($criteria)->getItems();
-
-            foreach ($categories as $category) {
-                if ((int) $category->getId() === 1) {
-                    continue; // Skip root category.
-                }
-                $output->writeln("<comment>Processing category ID {$category->getId()} ({$category->getName()})</comment>");
-
-                $this->processCategory(
-                    (int) $category->getId(),
-                    $output,
-                    $input,
-                    $migrateNegative,
-                    $migrateZero,
-                    $migratePositive,
-                    $conflictStrategy,
-                    true,
-                    $dryRun
-                );
-            }
+            // Single category mode.
+            $result = $this->migrator->singleCategoryMigration((int)$categoryId, $options, $dryRun, $output);
         }
+
+        // Render preview or summary.
+        if ($dryRun && !empty($result['preview'])) {
+            $output->writeln('<comment>Preview mode: showing up to 100 rows.</comment>');
+            $this->renderTable($output, $result['preview_headers'], $result['preview']);
+        }
+
+        $output->writeln(sprintf(
+            '<info>Migration finished. Total categories: %d | Migrated: %d</info>',
+            $result['categories'] ?? 0,
+            $result['migrated'] ?? 0
+        ));
 
         return Cli::RETURN_SUCCESS;
     }
 
     /**
-     * Process migration for a single category.
+     * Ask interactive migration options from the CLI user.
      *
-     * @param int             $categoryId       Category ID.
-     * @param OutputInterface $output           CLI output.
-     * @param InputInterface  $input            CLI input.
-     * @param bool|null       $migrateNegative  Handle negative positions (null = ask interactively).
-     * @param bool|null       $migrateZero      Handle zero positions (null = ask interactively).
-     * @param bool|null       $migratePositive  Handle positive positions (null = ask interactively).
-     * @param string|null     $conflictStrategy Conflict strategy (reorder|delete) (null = ask interactively).
-     * @param bool            $silentMode       If true, limit preview (for catalog mode).
-     * @param bool            $dryRun           If true, preview only (no DB updates).
+     * This method is responsible for collecting interactive answers about how
+     * category product positions should be migrated. It presents a series of
+     * confirmation and choice questions to the user to determine:
      *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PMD.BooleanArgumentFlag)
-     * @SuppressWarnings(PHPMD.ShortVariable)
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * - Whether to migrate products with negative positions.
+     * - Whether to migrate products with zero positions.
+     * - Whether to migrate products with positive positions.
+     * - How to handle conflicts (either by reordering or deleting).
+     *
+     * @param HelperInterface $helper The console helper responsible for handling interactive questions.
+     * @param InputInterface  $input  The input interface from the CLI context.
+     * @param OutputInterface $output The output interface used to write messages to the console.
+     *
+     * @return array{
+     *     migrateNegative: bool,
+     *     migrateZero: bool,
+     *     migratePositive: bool,
+     *     conflictStrategy: string
+     * } An associative array containing the migration options:
+     *     - 'migrateNegative': Whether to migrate negative positions.
+     *     - 'migrateZero': Whether to migrate zero positions.
+     *     - 'migratePositive': Whether to migrate positive positions.
+     *     - 'conflictStrategy': Conflict handling mode ('reorder' or 'delete').
      */
-    private function processCategory(
-        int $categoryId,
-        OutputInterface $output,
-        InputInterface $input,
-        ?bool $migrateNegative = null,
-        ?bool $migrateZero = null,
-        ?bool $migratePositive = null,
-        ?string $conflictStrategy = null,
-        bool $silentMode = false,
-        bool $dryRun = false
-    ): void {
-        $connection = $this->categoryProduct->getConnection();
-        $table = $this->categoryProduct->getMainTable();
-
-        $select = $connection->select()
-            ->from($table, ['product_id', 'position'])
-            ->where('category_id = ?', $categoryId)
-            ->order('position ASC');
-
-        $rows = $connection->fetchAll($select);
-
-        if (!$rows) {
-            $output->writeln("<comment>No products found for category {$categoryId}</comment>");
-
-            return;
-        }
-
-        if (!$silentMode) {
-            $output->writeln("<info>Found " . count($rows) . " products</info>");
-            $output->writeln("| product_id | position |");
-            $output->writeln("|------------|----------|");
-            foreach (array_slice($rows, 0, 100) as $row) {
-                $output->writeln(sprintf("| %10s | %8s |", $row['product_id'], $row['position']));
-            }
-            if (count($rows) > 100) {
-                $output->writeln("... and more");
-            }
-        }
-
-        // If rules not given, ask interactively.
-        if ($migrateNegative === null || $migrateZero === null || $migratePositive === null || $conflictStrategy === null) {
-            [$migrateNegative, $migrateZero, $migratePositive, $conflictStrategy] = $this->askMigrationRules($input, $output);
-        }
-
-        // --- Apply migration ---
-        $updates = [];
-        $toDelete = [];
-
-        // Step 1: filter products by rules.
-        foreach ($rows as $row) {
-            $position = (int) $row['position'];
-            $pid = (int) $row['product_id'];
-
-            if ($position < 0 && !$migrateNegative) {
-                continue;
-            }
-            if ($position === 0 && !$migrateZero) {
-                continue;
-            }
-            if ($position > 0 && !$migratePositive) {
-                continue;
-            }
-
-            $updates[] = [
-                'product_id' => $pid,
-                'position'   => $position,
-            ];
-        }
-
-        // Step 2: reorder positions sequentially.
-        usort($updates, fn($a, $b) => $a['position'] <=> $b['position']);
-
-        $normalized = [];
-        $newPos = 1;
-        foreach ($updates as $update) {
-            $pid = $update['product_id'];
-            if (isset($normalized[$update['position']])) {
-                // Conflict.
-                if ($conflictStrategy === 'delete') {
-                    $toDelete[] = $pid;
-                    continue;
-                }
-            }
-            $normalized[$newPos] = $pid;
-            $newPos++;
-        }
-
-        // Step 3: persist or preview.
-        if ($dryRun) {
-            $output->writeln("<comment>[Dry-Run]</comment> Category {$categoryId}: would migrate " . count($normalized) . " products.");
-            if (!empty($toDelete)) {
-                $output->writeln("<comment>[Dry-Run]</comment> Would delete " . count($toDelete) . " products due to conflicts.");
-            }
-
-            return;
-        }
-
-        $connection->beginTransaction();
-        try {
-            if (!empty($toDelete)) {
-                $connection->delete(
-                    $table,
-                    ['category_id = ?' => $categoryId, 'product_id IN (?)' => $toDelete]
-                );
-                $output->writeln("<comment>Deleted " . count($toDelete) . " products due to conflicts.</comment>");
-            }
-
-            $i = 1;
-            foreach ($normalized as $pos => $pid) {
-                $connection->update(
-                    $table,
-                    ['position' => $i],
-                    ['category_id = ?' => $categoryId, 'product_id = ?' => $pid]
-                );
-                $i++;
-            }
-
-            $connection->commit();
-            $output->writeln("<info>Category {$categoryId}: migrated " . count($normalized) . " products.</info>");
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            $output->writeln("<error>Migration failed for category {$categoryId}: {$e->getMessage()}</error>");
-        }
-    }
-
-    /**
-     * Ask the user migration rules (interactive mode).
-     *
-     * @param InputInterface  $input  CLI input.
-     * @param OutputInterface $output CLI output.
-     *
-     * @return array{bool,bool,bool,string} [migrateNegative, migrateZero, migratePositive, conflictStrategy]
-     */
-    private function askMigrationRules(InputInterface $input, OutputInterface $output): array
+    private function askMigrationOptions(HelperInterface $helper, InputInterface $input, OutputInterface $output): array
     {
-        $helper = $this->getHelper('question');
-
         $migrateNegative = $helper->ask(
             $input,
             $output,
-            new ConfirmationQuestion('Transfer negative positions to contiguous positive ones? (y/n) ', false)
+            new ConfirmationQuestion('Transfer negative positions to positive and contiguous ones (y/n) ', false)
         );
 
         $migrateZero = $helper->ask(
             $input,
             $output,
-            new ConfirmationQuestion('Transfer zero positions? (y/n) ', false)
+            new ConfirmationQuestion('Transfer zero positions? (y/n) ', true)
         );
 
         $migratePositive = $helper->ask(
@@ -390,13 +212,34 @@ class CategoryPositionMigrate extends Command
             new ConfirmationQuestion('Transfer positive positions? (y/n) ', true)
         );
 
-        $conflictQuestion = new ChoiceQuestion(
-            'What to do with products sharing the same position?',
-            ['reorder', 'delete'],
-            0
+        $conflict = $helper->ask(
+            $input,
+            $output,
+            new ChoiceQuestion('What to do with products sharing the same position?', ['reorder', 'delete'], 0)
         );
-        $conflictStrategy = $helper->ask($input, $output, $conflictQuestion);
 
-        return [$migrateNegative, $migrateZero, $migratePositive, $conflictStrategy];
+        return [
+            'migrateNegative' => (bool)$migrateNegative,
+            'migrateZero' => (bool)$migrateZero,
+            'migratePositive' => (bool)$migratePositive,
+            'conflictStrategy' => $conflict,
+        ];
+    }
+
+    /**
+     * Render a simple table (Symfony Table) with given headers and rows.
+     *
+     * @param OutputInterface $output  Console output.
+     * @param string[]        $headers Array of column headers for the table.
+     * @param array[]         $rows    Array of row data.
+     *
+     * @return void
+     */
+    private function renderTable(OutputInterface $output, array $headers, array $rows): void
+    {
+        $table = new Table($output);
+        $table->setHeaders($headers);
+        $table->setRows($rows);
+        $table->render();
     }
 }
