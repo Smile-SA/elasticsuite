@@ -132,6 +132,12 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     {
         $documentSource = $category->getDocumentSource();
 
+        if ($documentSource && isset($documentSource['url'])) {
+            $url = is_array($documentSource['url']) ? current($documentSource['url']) : $documentSource['url'];
+
+            return trim($this->urlBuilder->getDirectUrl($url), '/');
+        }
+
         if ($documentSource && isset($documentSource['url_path'])) {
             $urlPath = is_array($documentSource['url_path']) ? current($documentSource['url_path']) : $documentSource['url_path'];
 
@@ -173,10 +179,10 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
         $path    = $category->getPath();
         $rawPath = explode('/', $path);
 
-        // First occurence is root category (1), second is root category of store.
+        // First occurrence is root category (1), second is root category of store.
         $rawPath = array_slice($rawPath, 2);
 
-        // Last occurence is the category displayed.
+        // Last occurrence is the category displayed.
         array_pop($rawPath);
 
         $breadcrumb = [];
@@ -188,7 +194,7 @@ class ItemFactory extends \Magento\Search\Model\Autocomplete\ItemFactory
     }
 
     /**
-     * Retrieve a category name by it's id, and store it in local cache
+     * Retrieve a category name by its id, and store it in local cache
      *
      * @param int $categoryId The category Id
      * @param int $storeId    The store Id
