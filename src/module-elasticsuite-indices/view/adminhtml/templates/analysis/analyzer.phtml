@@ -88,6 +88,7 @@ $formId = 'form-' . $blockId;
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Position') ?></th>
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Start Offset') ?></th>
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('End Offset') ?></th>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Token Type') ?></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -186,7 +187,9 @@ $formId = 'form-' . $blockId;
                                     startOffsetCell.innerText = row.start_offset;
                                     let endOffsetCell = document.createElement('td');
                                     endOffsetCell.innerText = row.end_offset;
-                                    resultRow.append(tokenCell, positionCell, startOffsetCell, endOffsetCell);
+                                    let tokenTypeCell = document.createElement('td');
+                                    tokenTypeCell.innerText = row.type;
+                                    resultRow.append(tokenCell, positionCell, startOffsetCell, endOffsetCell, tokenTypeCell);
                                     results.push(resultRow);
                                 });
                                 $('#admin__es-analysis-tokens').show();
