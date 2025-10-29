@@ -173,16 +173,22 @@ $formId = 'form-' . $blockId;
                                 $('#error-message').remove();
                                 $('#admin__es-analysis-tokens tbody tr').remove();
 
-                                let results = '';
+                                let results = [];
                                 $.each(responseData.output['tokens'], function (idx, row) {
-                                    // token	position	start offset	end offset
-                                    results += '<tr class="data-row">' +
-                                        '<td>' + row.token + '</td>' +
-                                        '<td>' + row.position + '</td>' +
-                                        '<td>' + row.start_offset + '</td>' +
-                                        '<td>' + row.end_offset + '</td></tr>';
+                                    // token	position	start_offset	end_offset
+                                    let resultRow = document.createElement('tr')
+                                    resultRow.setAttribute('class', 'data-row');
+                                    let tokenCell = document.createElement('td');
+                                    tokenCell.innerText = row.token;
+                                    let positionCell = document.createElement('td');
+                                    positionCell.innerText = row.position;
+                                    let startOffsetCell = document.createElement('td');
+                                    startOffsetCell.innerText = row.start_offset;
+                                    let endOffsetCell = document.createElement('td');
+                                    endOffsetCell.innerText = row.end_offset;
+                                    resultRow.append(tokenCell, positionCell, startOffsetCell, endOffsetCell);
+                                    results.push(resultRow);
                                 });
-
                                 $('#admin__es-analysis-tokens').show();
                                 $('#admin__es-analysis-tokens tbody').append(results).slideDown(1000);
                             }
