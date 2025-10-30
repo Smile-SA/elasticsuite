@@ -14,15 +14,16 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Helper\Text;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
-use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
 
 /**
  * Thesaurus index.
@@ -79,6 +80,11 @@ class Index
     private $thesaurusCacheConfig;
 
     /**
+     * @var ThesaurusStemmingConfig
+     */
+    private $stemmingConfig;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface        $client                 ES client.
@@ -87,6 +93,7 @@ class Index
      * @param Text                   $textHelper             Helper text explaining multibyte string handling.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param ThesaurusStemmingConfig $stemmingConfig        Stemming configuration.
      */
     public function __construct(
         ClientInterface $client,
@@ -94,7 +101,8 @@ class Index
         CacheHelper $cacheHelper,
         Text $textHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
-        ThesaurusCacheConfig $thesaurusCacheConfig
+        ThesaurusCacheConfig $thesaurusCacheConfig,
+        ThesaurusStemmingConfig $stemmingConfig
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
@@ -102,6 +110,7 @@ class Index
         $this->cacheHelper            = $cacheHelper;
         $this->textHelper             = $textHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
+        $this->stemmingConfig         = $stemmingConfig;
     }
 
     /**
@@ -331,17 +340,21 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        if ($this->textHelper->mbWordCount($queryText) < 2) {
+        if (!$this->stemmingConfig->useStemming($storeId) && $this->textHelper->mbWordCount($queryText) < 2) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
         // Generate the shingles.
         // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
+        // If stemming is enabled, analysis of "dresses" will give "dress"
+        // and analysis of "long sleeves" will give "long_sleev"
         // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
         $indexName = $this->getIndexAlias($storeId);
         try {
+            // No need to compute variations of shingles with a one-word-query but we need to extract the stem if enabled.
+            $analyzer = $this->textHelper->mbWordCount($queryText) < 2 ? 'clean' : 'shingles';
             $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $analyzer]]
             );
         } catch (\Exception $e) {
             $analysis = ['tokens' => []];
