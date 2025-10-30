@@ -23,18 +23,18 @@
 <?php
 $jsonHelper = $block->getJsonHelper();
 if ($block->isEnabled()) {
+    $storeId = $this->escapeJsQuote($block->getStoreId());
     $beaconUrl        = $this->escapeJsQuote($block->getBeaconUrl());
     $telemetryUrl     = $this->escapeJsQuote($block->getTelemetryUrl());
     $telemetryEnabled = $this->escapeJsQuote($block->isTelemetryEnabled());
     $sessionConfig    = $jsonHelper->jsonEncode($block->getCookieConfig());
-    $trackerApiConfig = "";
+    $trackerApiConfig = "storeId: '{$storeId}',";
 
     if ($block->isUsingAPI()) {
         $endpointUrl = $this->escapeJsQuote($block->getEndpointUrl());
         $trackerApiConfig .= "endpointUrl:'{$endpointUrl}',";
     }
 
-    $storeId = $this->escapeJsQuote($block->getStoreId());
     $userConsentScript = $this->escapeJsQuote($block->getUserConsentScript());
     $userConsentConfig = $jsonHelper->jsonEncode($block->getUserConsentConfig());
 

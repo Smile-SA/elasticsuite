@@ -51,6 +51,9 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
                 <tr>
                     <th class="data-grid-th no-link col-search-query"><span><?= __('Term');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('Sessions');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('without clicks');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('with clicks');?></span></th>
+                    <th class="data-grid-th no-link"><span><?= __('with submit');?></span></th>
                     <th class="data-grid-th no-link"><span><?= __('Visitors');?></span></th>
                     <th class="data-grid-th no-link <?php if (!$block->getShowConversionRate()) : ?>col-total<?php endif; ?>"><span><?= __('# Results (avg.)');?></span></th>
                     <?php if ($block->getShowConversionRate()) : ?>
@@ -82,6 +85,9 @@ $hiddenTermsData    = array_slice($termsData, $maxVisibleTerms);
                             <?php endif; ?>
                         </td>
                         <td class="col-number"><?= $termData['sessions']; ?></td>
+                        <td class="col-number"><?= $termData['sessions_without_click'] ?? 0; ?></td>
+                        <td class="col-number"><?= $termData['sessions_with_click'] ?? 0; ?></td>
+                        <td class="col-number"><?= $termData['sessions_with_submit'] ?? 0; ?></td>
                         <td class="col-number"><?= $termData['visitors']; ?></td>
                         <td class="col-number"><?= $termData['result_count']; ?></td>
                         <?php if ($block->getShowConversionRate()) : ?>
