@@ -54,6 +54,17 @@ interface FieldInterface
     const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
+     * Token filter types declarations.
+     */
+    const TOKEN_FILTER_TYPE_WORD_DELIMITER = 'word_delimiter_graph';
+    const TOKEN_FILTER_TYPE_REMOVE_DUPLICATES = 'remove_duplicates';
+
+    /**
+     * Tokenizer declarations.
+     */
+    const TOKENIZER_WHITESPACE = 'whitespace';
+
+    /**
      * Field filter logical operators.
      */
     const FILTER_LOGICAL_OPERATOR_OR   = 0;
