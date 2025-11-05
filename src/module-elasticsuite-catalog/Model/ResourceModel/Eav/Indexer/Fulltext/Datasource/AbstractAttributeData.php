@@ -140,8 +140,7 @@ class AbstractAttributeData extends Indexer
                     ['attribute_id', 'attribute_code']
                 )
                 ->where("entity.{$entityIdField} IN (?)", $entityIds)
-                ->where("t_attribute.attribute_id IN (?)", $attributeIds)
-                ->where("t_attribute.value IS NOT NULL");
+                ->where("t_attribute.attribute_id IN (?)", $attributeIds);
 
             // Get the result and override values from a previous loop.
             foreach ($this->connection->fetchAll($select) as $row) {
