@@ -71,6 +71,7 @@ class Field implements FieldInterface
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
         'norms_disabled'          => false,
         'is_spannable'            => false,
+        'similarity'              => self::SIMILARITY_DEFAULT,
     ];
 
     /**
@@ -313,6 +314,22 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
+    public function hasSpecificSimilarity()
+    {
+        return ($this->getSimilarity() !== self::SIMILARITY_DEFAULT);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSimilarity()
+    {
+        return $this->config['similarity'] ?? self::SIMILARITY_DEFAULT;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getConfig(): array
     {
         return $this->config ?? [];
@@ -436,6 +453,10 @@ class Field implements FieldInterface
 
                     if ($this->normsDisabled() || ($analyzer === self::ANALYZER_KEYWORD)) {
                         $fieldMapping['norms'] = false;
+                    }
+
+                    if ($this->hasSpecificSimilarity()) {
+                        $fieldMapping['similarity'] = $this->getSimilarity();
                     }
 
                     if ($analyzer === self::ANALYZER_SORTABLE) {

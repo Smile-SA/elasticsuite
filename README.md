@@ -40,7 +40,7 @@ Magento Version (Open Source/Commerce)                                     | Ela
 **>=2.4.1 && < 2.4.6** |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.13``` | 6.x & 7.x | 1.x | **Yes**
 **>=2.4.4 && < 2.4.6** |ElasticSuite **2.10.x** **(OpenSearch 2 support)** : ```composer require smile/elasticsuite ~2.10.27``` | 6.x & 7.x | 1.x **& 2.x** | **Yes**
 **>=2.4.6 && < 2.4.8** |ElasticSuite **2.11.x** : ```composer require smile/elasticsuite ~2.11.0``` | 7.x & 8.x | 1.x & 2.x | **Yes**
-**>=2.4.8** |ElasticSuite **2.11.x >= 2.11.13** : ```composer require smile/elasticsuite ~2.11.13``` | 7.x & 8.x | 1.x & 2.x | **Yes**
+**>=2.4.8** |ElasticSuite **2.11.x >= 2.11.13** : ```composer require smile/elasticsuite ~2.11.13``` | 7.x & 8.x | 1.x & 2.x **& 3.x** | **Yes**
 
 ### Magento2 B2B Compatibility
 

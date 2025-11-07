@@ -22,6 +22,9 @@
                 <always>1</always>
                 <min_rewrites>0</min_rewrites>
             </cache>
+            <analysis>
+                <use_stemming>0</use_stemming>
+            </analysis>
         </smile_elasticsuite_thesaurus_settings>
     </default>
 </config>

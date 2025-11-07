@@ -130,7 +130,7 @@
             <class>separator-top</class>
             <label>Analyzers Settings</label>
             <tab>smile_elasticsuite</tab>
-            <resource>Magento_Catalog::config_smile_elasticsuite_core_analysis_settings</resource>
+            <resource>Magento_Catalog::config_smile_elasticsuite_core_base_settings</resource>
 
             <group id="reference_analyzer" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Reference analyzer configuration</label>
