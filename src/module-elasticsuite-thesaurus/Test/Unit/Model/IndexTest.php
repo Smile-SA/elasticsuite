@@ -25,6 +25,7 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
 use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
@@ -34,6 +35,7 @@ use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
@@ -104,6 +106,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $stemmingConfig = $this->getMockBuilder(ThesaurusStemmingConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -116,6 +122,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
             new TextHelper(),
+            $stemMappingMock,
             $stemmingConfig
         );
 
@@ -238,6 +245,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $stemmingConfig = $this->getMockBuilder(ThesaurusStemmingConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -250,6 +261,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
             new TextHelper(),
+            $stemMappingMock,
             $stemmingConfig
         );
 
@@ -857,6 +869,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $stemmingConfig = $this->getMockBuilder(ThesaurusStemmingConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -869,6 +885,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
             new TextHelper(),
+            $stemMappingMock,
             $stemmingConfig
         );
 
@@ -1907,6 +1924,10 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $stemmingConfig = $this->getMockBuilder(ThesaurusStemmingConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1919,6 +1940,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
             new TextHelper(),
+            $stemMappingMock,
             $stemmingConfig
         );
 

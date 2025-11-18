@@ -23,6 +23,7 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
 use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 
 /**
@@ -80,6 +81,11 @@ class Index
     private $textHelper;
 
     /**
+     * @var StemMapping
+     */
+    private $stemMappingHelper;
+
+    /**
      * @var ThesaurusStemmingConfig
      */
     private $stemmingConfig;
@@ -93,6 +99,7 @@ class Index
      * @param ThesaurusConfigFactory  $thesaurusConfigFactory Thesaurus configuration factory.
      * @param ThesaurusCacheConfig    $thesaurusCacheConfig   Thesaurus cache configuration helper.
      * @param TextHelper              $textHelper             Text manipulation helper.
+     * @param StemMapping             $stemMappingHelper      Stem mapping helper.
      * @param ThesaurusStemmingConfig $stemmingConfig         Stemming configuration.
      */
     public function __construct(
@@ -102,6 +109,7 @@ class Index
         ThesaurusConfigFactory $thesaurusConfigFactory,
         ThesaurusCacheConfig $thesaurusCacheConfig,
         TextHelper $textHelper,
+        StemMapping $stemMappingHelper,
         ThesaurusStemmingConfig $stemmingConfig
     ) {
         $this->client                 = $client;
@@ -110,6 +118,7 @@ class Index
         $this->cacheHelper            = $cacheHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
         $this->textHelper             = $textHelper;
+        $this->stemMappingHelper      = $stemMappingHelper;
         $this->stemmingConfig      = $stemmingConfig;
     }
 
@@ -174,7 +183,7 @@ class Index
             }
         }
 
-        return $rewrites;
+        return $this->stemmingConfig->useStemming($storeId) ? $this->unstemRewrites($storeId, $rewrites) : $rewrites;
     }
 
     /**
@@ -388,5 +397,37 @@ class Index
         };
 
         return array_map($mapper, $queryRewrites);
+    }
+
+    /**
+     * Replace stemmed terms in rewrites with original terms from cache.
+     *
+     * @param int   $storeId  Store id.
+     * @param array $rewrites Rewrites with stemmed terms as keys.
+     *
+     * @return array
+     */
+    private function unstemRewrites(int $storeId, array $rewrites): array
+    {
+        $stemMapping = $this->stemMappingHelper->getMapping($storeId);
+
+        if (empty($stemMapping)) {
+            return $rewrites;
+        }
+
+        $unstemmedRewrites = [];
+
+        foreach ($rewrites as $rewriteText => $weight) {
+            $unstemmedWords = array_map(
+                function ($word) use ($stemMapping) {
+                    return $stemMapping[$word] ?? $word;
+                },
+                explode(' ', $rewriteText)
+            );
+
+            $unstemmedRewrites[implode(' ', $unstemmedWords)] = $weight;
+        }
+
+        return $unstemmedRewrites;
     }
 }
