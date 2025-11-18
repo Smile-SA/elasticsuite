@@ -17,10 +17,12 @@ namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
+use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
+use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
 /**
@@ -58,6 +60,11 @@ class IndexHandler
     const STEMMER_OVERRIDE_FILTER = 'stemmer_override';
 
     /**
+     * @var array
+     */
+    private $stemMapping = [];
+
+    /**
      * @var ClientInterface
      */
     private $client;
@@ -88,6 +95,16 @@ class IndexHandler
     private $cacheHelper;
 
     /**
+     * @var TextHelper
+     */
+    private $textHelper;
+
+    /**
+     * @var StemMapping
+     */
+    private $stemMappingHelper;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface         $client              ES client.
@@ -96,6 +113,8 @@ class IndexHandler
      * @param IndexSettingsInterface  $indexSettings       Index settings provider.
      * @param ScopeConfigInterface    $scopeConfig         Scope config interface.
      * @param CacheHelper             $cacheHelper         ES caching helper.
+     * @param TextHelper              $textHelper          Text manipulation helper.
+     * @param StemMapping             $stemMappingHelper   Stem mapping helper.
      */
     public function __construct(
         ClientInterface $client,
@@ -103,7 +122,9 @@ class IndexHandler
         IndexSettingsHelper $indexSettingsHelper,
         IndexSettingsInterface $indexSettings,
         ScopeConfigInterface $scopeConfig,
-        CacheHelper $cacheHelper
+        CacheHelper $cacheHelper,
+        TextHelper $textHelper,
+        StemMapping $stemMappingHelper
     ) {
         $this->client              = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
@@ -111,6 +132,8 @@ class IndexHandler
         $this->indexSettings       = $indexSettings;
         $this->scopeConfig         = $scopeConfig;
         $this->cacheHelper         = $cacheHelper;
+        $this->textHelper          = $textHelper;
+        $this->stemMappingHelper   = $stemMappingHelper;
     }
 
     /**
@@ -124,12 +147,18 @@ class IndexHandler
      */
     public function reindex($storeId, $synonyms, $expansions)
     {
+        $this->stemMapping = [];
+        $this->stemMappingHelper->clearMapping($storeId);
+
         $indexIdentifier = ThesaurusIndex::INDEX_IDENTIER;
         $indexName       = $this->indexSettingsHelper->createIndexNameFromIdentifier($indexIdentifier, $storeId);
         $indexAlias      = $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
         $indexSettings   = ['settings' => $this->getIndexSettings($storeId, $synonyms, $expansions)];
         $this->client->createIndex($indexName, $indexSettings);
         $this->indexManager->proceedIndexInstall($indexName, $indexAlias);
+
+        $this->stemMappingHelper->saveMapping($storeId, $this->stemMapping);
+
         $this->cacheHelper->cleanIndexCache(ThesaurusIndex::INDEX_IDENTIER, $storeId);
     }
 
@@ -181,10 +210,11 @@ class IndexHandler
             }
         }
 
+        $settings = $this->addCleanAnalyzer($settings, array_keys($stemmingFilters));
         $settings = $this->addShinglesAnalyzer($settings, array_keys($stemmingFilters));
 
-        $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms, array_keys($stemmingFilters));
-        $settings = $this->addAnalyzerSettings($settings, 'expansion', $expansions, array_keys($stemmingFilters));
+        $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms, $stemmingFilters);
+        $settings = $this->addAnalyzerSettings($settings, 'expansion', $expansions, $stemmingFilters);
 
         return $settings;
     }
@@ -234,6 +264,31 @@ class IndexHandler
     }
 
     /**
+     * Append the analyzer dedicated to match clean token to the existing settings.
+     *
+     * @param array $settings   Original settings.
+     * @param array $preFilters Token filters to add in the analysis chain.
+     *
+     * @return array
+     */
+    private function addCleanAnalyzer($settings, $preFilters)
+    {
+        $settings['analysis']['analyzer']['clean'] = [
+            'tokenizer' => 'whitespace',
+            'filter' => ['lowercase', 'asciifolding'],
+        ];
+
+        if (!empty($preFilters)) {
+            $settings['analysis']['analyzer']['clean']['filter'] = array_merge(
+                $settings['analysis']['analyzer']['clean']['filter'],
+                $preFilters
+            );
+        }
+
+        return $settings;
+    }
+
+    /**
      * Append the analyzer dedicated to match and detect multi-words synonyms ("A B,C" or "A-B,C")
      * to the existing settings.
      *
@@ -278,15 +333,8 @@ class IndexHandler
             'filter' => ['lowercase', 'asciifolding'],
         ];
 
-        if (!empty($preFilters)) {
-            $settings['analysis']['analyzer'][$type]['filter'] = array_merge(
-                $settings['analysis']['analyzer'][$type]['filter'],
-                $preFilters
-            );
-        }
-
         if (!empty($values)) {
-            $values = $this->prepareSynonymFilterData($values);
+            $values = $this->prepareSynonymFilterData($values, $preFilters);
             $settings['analysis']['filter'][$type] = ['type' => 'synonym', 'synonyms' => $values, 'lenient' => true];
             $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
@@ -300,17 +348,77 @@ class IndexHandler
     /**
      * Prepare the thesaurus data to be saved.
      * Spaces and hyphens are replaced with "_" into multiwords expression (ex foo bar => foo_bar).
+     * Applies stemming filters if provided.
      *
-     * @param string[] $rows Original thesaurus text rows.
+     * @param string[] $rows       Original thesaurus text rows.
+     * @param array    $preFilters Token filters to apply before synonym processing.
      *
      * @return string[]
      */
-    private function prepareSynonymFilterData($rows)
+    private function prepareSynonymFilterData($rows, $preFilters)
     {
-        $rowMapper = function ($row) {
-            return preg_replace('/([^\s-])[\s-]+(?=[^\s-])/u', '\1_', $row);
-        };
+        if (empty($rows)) {
+            return $rows;
+        }
 
-        return array_map($rowMapper, $rows);
+        return array_map(function ($row) use ($preFilters) {
+            if (!empty($preFilters)) {
+                $row = $this->analyzeRow($row, $preFilters);
+            }
+
+            return preg_replace('/([^\s-])[\s-]+(?=[^\s-])/u', '\1_', $row);
+        }, $rows);
+    }
+
+    /**
+     * Analyze an entire thesaurus row using Elasticsearch analyze API.
+     *
+     * @param string $row        Row to analyze.
+     * @param array  $preFilters Token filters configuration.
+     *
+     * @return string Analyzed row with stemmed terms.
+     */
+    private function analyzeRow($row, $preFilters)
+    {
+        $analyzeParams = [
+            'body' => [
+                'tokenizer' => 'whitespace',
+                'filter' => array_merge(['lowercase', 'asciifolding'], array_values($preFilters)),
+                'char_filter' => [],
+                'text' => str_replace(',', ' ', $row),
+            ],
+        ];
+
+        $response = $this->client->analyze($analyzeParams);
+
+        if (isset($response['tokens']) && !empty($response['tokens'])) {
+            $rewrittenRow = $row;
+            $offset = 0;
+
+            foreach ($response['tokens'] as $token) {
+                $startOffset = $token['start_offset'];
+                $length = $token['end_offset'] - $token['start_offset'];
+
+                $originalTerm = mb_substr($row, $startOffset, $length);
+                $stemmedTerm = $token['token'];
+
+                if (!isset($this->stemMapping[$stemmedTerm])) {
+                    $this->stemMapping[$stemmedTerm] = $originalTerm;
+                }
+
+                $rewrittenRow = $this->textHelper->mbSubstrReplace(
+                    $rewrittenRow,
+                    $stemmedTerm,
+                    $startOffset + $offset,
+                    $length
+                );
+
+                $offset += mb_strlen($stemmedTerm) - $length;
+            }
+
+            return $rewrittenRow;
+        }
+
+        return $row;
     }
 }

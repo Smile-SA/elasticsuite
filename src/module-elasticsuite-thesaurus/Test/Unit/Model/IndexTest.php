@@ -24,6 +24,8 @@ use Smile\ElasticsuiteCore\Helper\IndexSettings;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
+use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
 /**
@@ -102,12 +104,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', [$indexAlias, $containerName, $queryText]);
@@ -141,13 +149,13 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                 0, [], [],
             ],
             ['foo', true, 10, false, 10, 2,
-                1, [[]], [],
+                2, [[]], [],
             ],
             ['foo', true, 10, true, 10, 2,
-                2, [[], []], [],
+                4, [[], []], [],
             ],
             ['foo', true, 10, true, 10, 2,
-                2, [[], []], [], false,
+                4, [[], []], [], false,
             ],
         ];
     }
@@ -229,12 +237,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -270,8 +284,19 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Only synonyms enabled. Simulating 'foo,bar,baz'.
             ['foo', true, 10, false, 10, 2,
-                1,
+                2,
                 [
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     [
                         'tokens' => [
                             [
@@ -299,9 +324,23 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Only synonyms enabled. Simulating 'foo,bar,baz'.
             // Same test as before, but client->analyze returns expressed as a mapping.
             ['foo', true, 10, false, 10, 2,
-                1,
+                2,
                 [
                     'map' => [
+                        [
+                            ['text' => 'foo', 'analyzer' => 'clean'],
+                            [
+                                'tokens' => [
+                                    [
+                                        'type' => '<ALPHANUM>',
+                                        'token' => 'foo',
+                                        'start_offset' => 0,
+                                        'end_offset' => 3,
+                                        'position' => 0,
+                                    ],
+                                ],
+                            ],
+                        ],
                         [
                             ['text' => 'foo', 'analyzer' => 'synonym'],
                             [
@@ -332,36 +371,22 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Only expansions enabled. Simulating 'foo => bar,baz'.
             ['foo', false, 10, true, 10, 2,
-                1,
+                2,
                 [
                     [
-                        'tokens' => [
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'bar',
-                                'start_offset' => 0,
-                                'end_offset' => 3,
-                                'position' => 0,
-                            ],
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'baz',
-                                'start_offset' => 0,
-                                'end_offset' => 3,
-                                'position' => 0,
+                        ['text' => 'foo', 'analyzer' => 'clean'],
+                        [
+                            'tokens' => [
+                                [
+                                    'type' => '<ALPHANUM>',
+                                    'token' => 'foo',
+                                    'start_offset' => 0,
+                                    'end_offset' => 3,
+                                    'position' => 0,
+                                ],
                             ],
                         ],
                     ],
-                ],
-                [
-                    'bar' => 0.1,
-                    'baz' => 0.1,
-                ],
-            ],
-            // Only expansions enabled. Simulating 'foo => bar,baz'.
-            ['foo', false, 10, true, 10, 2,
-                1,
-                [
                     [
                         'tokens' => [
                             [
@@ -388,8 +413,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Both synonyms and expansions enabled. Simulating 'foo,bar,baz' and 'bar => pub,cafe'.
             ['foo', true, 10, true, 10, 2,
-                4,
+                8,
                 [
+                    // Stem call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Synonyms call for 'foo'.
                     [
                         'tokens' => [
@@ -409,9 +446,33 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
+                    // Stem call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Expansions call.
                     // No expansion for 'foo'.
                     ['tokens' => []],
+                    // Stem call for 'bar'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'bar',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Expansion for 'bar'.
                     [
                         'tokens' => [
@@ -425,6 +486,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             [
                                 'type' => 'SYNONYM',
                                 'token' => 'cafe',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // Stem call for 'baz'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'baz',
                                 'start_offset' => 0,
                                 'end_offset' => 3,
                                 'position' => 0,
@@ -445,8 +518,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions enabled. Simulating 'foo,bar,baz' and 'bar => pub,cafe'.
             // No cache storage allowed.
             ['foo', true, 10, true, 10, 2,
-                4,
+                8,
                 [
+                    // Stem call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Synonyms call for 'foo'.
                     [
                         'tokens' => [
@@ -466,9 +551,33 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
+                    // Stem call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Expansions call.
                     // No expansion for 'foo'.
                     ['tokens' => []],
+                    // Stem call for 'bar'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'bar',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Expansion for 'bar'.
                     [
                         'tokens' => [
@@ -482,6 +591,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             [
                                 'type' => 'SYNONYM',
                                 'token' => 'cafe',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // Stem call for 'baz'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'baz',
                                 'start_offset' => 0,
                                 'end_offset' => 3,
                                 'position' => 0,
@@ -734,12 +855,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -755,6 +882,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
 
         $rewrites = $thesaurusIndex->getQueryRewrites($containerConfig, $queryText);
         $this->assertEquals($expectedRewrites, $rewrites);
+
+        $this->assertTrue(true);
     }
 
     /**
@@ -1332,8 +1461,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Only synonyms enabled. Simulating 'foo,bar,baz' and 'bar,pub,cafe' and 'bar,pipe,tube'.
             ['foo', true, 10, false, 10, 2,
-                1,
+                2,
                 [
+                    // Stemm call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     [
                         'tokens' => [
                             [
@@ -1368,8 +1509,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Only expansions enabled. Simulating 'foo => bar,baz' and 'bar => pub,cafe' and 'bar => pipe,tube'.
             ['foo', false, 10, true, 10, 2,
-                1,
+                2,
                 [
+                    // Stemm call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     [
                         'tokens' => [
                             [
@@ -1406,8 +1559,20 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Simulating 'foo,bar,baz' and 'bar,pub,cafe' and 'bar,pipe,tube'.
             // and 'foo => bar,baz' and 'bar => pub,cafe' and 'bar => pipe,tube'.
             ['foo', true, 10, true, 100, 2,
-                4,
+                8,
                 [
+                    // Stemm call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // Synonyms call for 'foo'.
                     [
                         'tokens' => [
@@ -1429,6 +1594,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             [
                                 'type' => 'SYNONYM',
                                 'token' => 'baz',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // Stemm call for 'foo'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'foo',
                                 'start_offset' => 0,
                                 'end_offset' => 3,
                                 'position' => 0,
@@ -1457,6 +1634,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             [
                                 'type' => 'SYNONYM',
                                 'token' => 'baz',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
+                    // Stemm call for 'bar'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'bar',
                                 'start_offset' => 0,
                                 'end_offset' => 3,
                                 'position' => 0,
@@ -1544,6 +1733,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
+                    // Stemm call for 'baz'.
+                    [
+                        'tokens' => [
+                            [
+                                'type' => '<ALPHANUM>',
+                                'token' => 'baz',
+                                'start_offset' => 0,
+                                'end_offset' => 3,
+                                'position' => 0,
+                            ],
+                        ],
+                    ],
                     // No expansion for 'baz'.
                     ['tokens' => []],
                 ],
@@ -1561,7 +1762,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Simulating 'foo,bar' and 'foobar,foo bar', 'bar,pipe,tube' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
             ['foo bar', true, 10, true, 10, 2,
-                28,
+                29,
                 $cyclingMappingResults,
                 [
                     // Synonyms only for 'foo (bar)'.
@@ -1606,7 +1807,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Simulating 'foo,bar' and 'foobar,foo bar', 'bar,pipe,tube' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
             ['foo bar', true, 10, true, 10, 1,
-                19,
+                20,
                 $cyclingMappingResults,
                 [
                     // Synonyms only for 'foo (bar)'.
@@ -1703,12 +1904,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -1742,11 +1949,11 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions disabled.
             ['foo', false, 10, false, 10, 2, 0, []],
             // Only synonyms enabled.
-            ['foo', true, 10, false, 10, 2, 1, []],
+            ['foo', true, 10, false, 10, 2, 2, []],
             // Only expansions enabled.
-            ['foo', false, 10, true, 10, 2, 1, []],
+            ['foo', false, 10, true, 10, 2, 2, []],
             // Both synonyms and expansions enabled.
-            ['foo', true, 10, true, 10, 2, 2, []],
+            ['foo', true, 10, true, 10, 2, 4, []],
             // Both synonyms and expansions enabled, multi-words search.
             // Careful, the client is also called in getQueryCombinations.
             ['foo bar', true, 10, true, 10, 2, 4, []],
