@@ -24,6 +24,7 @@ use Smile\ElasticsuiteCore\Helper\IndexSettings;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
 use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
@@ -103,13 +104,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
-            new TextHelper()
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', [$indexAlias, $containerName, $queryText]);
@@ -231,13 +237,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
-            new TextHelper()
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -844,13 +855,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
-            new TextHelper()
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -1888,13 +1904,18 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $containerConfig->method('getStoreId')->willReturn($storeId);
         $containerConfig->method('getName')->willReturn($containerName);
 
+        $stemMappingMock = $this->getMockBuilder(StemMapping::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $thesaurusIndex = new ThesaurusIndex(
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock,
-            new TextHelper()
+            new TextHelper(),
+            $stemMappingMock
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));

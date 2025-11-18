@@ -17,12 +17,13 @@ namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
-use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
-use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
+use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
 use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
+use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
 /**
  * Synonym index handler.
@@ -57,6 +58,11 @@ class IndexHandler
      * @var string
      */
     const STEMMER_OVERRIDE_FILTER = 'stemmer_override';
+
+    /**
+     * @var array
+     */
+    private $stemMapping = [];
 
     /**
      * @var ClientInterface
@@ -94,6 +100,11 @@ class IndexHandler
     private $textHelper;
 
     /**
+     * @var StemMapping
+     */
+    private $stemMappingHelper;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface         $client              ES client.
@@ -103,6 +114,7 @@ class IndexHandler
      * @param ScopeConfigInterface    $scopeConfig         Scope config interface.
      * @param CacheHelper             $cacheHelper         ES caching helper.
      * @param TextHelper              $textHelper          Text manipulation helper.
+     * @param StemMapping             $stemMappingHelper   Stem mapping helper.
      */
     public function __construct(
         ClientInterface $client,
@@ -111,7 +123,8 @@ class IndexHandler
         IndexSettingsInterface $indexSettings,
         ScopeConfigInterface $scopeConfig,
         CacheHelper $cacheHelper,
-        TextHelper $textHelper
+        TextHelper $textHelper,
+        StemMapping $stemMappingHelper
     ) {
         $this->client              = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
@@ -120,6 +133,7 @@ class IndexHandler
         $this->scopeConfig         = $scopeConfig;
         $this->cacheHelper         = $cacheHelper;
         $this->textHelper          = $textHelper;
+        $this->stemMappingHelper   = $stemMappingHelper;
     }
 
     /**
@@ -133,12 +147,18 @@ class IndexHandler
      */
     public function reindex($storeId, $synonyms, $expansions)
     {
+        $this->stemMapping = [];
+        $this->stemMappingHelper->clearMapping($storeId);
+
         $indexIdentifier = ThesaurusIndex::INDEX_IDENTIER;
         $indexName       = $this->indexSettingsHelper->createIndexNameFromIdentifier($indexIdentifier, $storeId);
         $indexAlias      = $this->indexSettingsHelper->getIndexAliasFromIdentifier($indexIdentifier, $storeId);
         $indexSettings   = ['settings' => $this->getIndexSettings($storeId, $synonyms, $expansions)];
         $this->client->createIndex($indexName, $indexSettings);
         $this->indexManager->proceedIndexInstall($indexName, $indexAlias);
+
+        $this->stemMappingHelper->saveMapping($storeId, $this->stemMapping);
+
         $this->cacheHelper->cleanIndexCache(ThesaurusIndex::INDEX_IDENTIER, $storeId);
     }
 
@@ -379,14 +399,21 @@ class IndexHandler
                 $startOffset = $token['start_offset'];
                 $length = $token['end_offset'] - $token['start_offset'];
 
+                $originalTerm = mb_substr($row, $startOffset, $length);
+                $stemmedTerm = $token['token'];
+
+                if (!isset($this->stemMapping[$stemmedTerm])) {
+                    $this->stemMapping[$stemmedTerm] = $originalTerm;
+                }
+
                 $rewrittenRow = $this->textHelper->mbSubstrReplace(
                     $rewrittenRow,
-                    $token['token'],
+                    $stemmedTerm,
                     $startOffset + $offset,
                     $length
                 );
 
-                $offset += mb_strlen($token['token']) - $length;
+                $offset += mb_strlen($stemmedTerm) - $length;
             }
 
             return $rewrittenRow;

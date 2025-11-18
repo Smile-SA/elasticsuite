@@ -14,14 +14,15 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
-use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
 use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 
 /**
@@ -79,6 +80,11 @@ class Index
     private $textHelper;
 
     /**
+     * @var StemMapping
+     */
+    private $stemMappingHelper;
+
+    /**
      * Constructor.
      *
      * @param ClientInterface        $client                 ES client.
@@ -87,6 +93,7 @@ class Index
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
      * @param TextHelper             $textHelper             Text manipulation helper.
+     * @param StemMapping            $stemMappingHelper      Stem mapping helper.
      */
     public function __construct(
         ClientInterface $client,
@@ -94,7 +101,8 @@ class Index
         CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
         ThesaurusCacheConfig $thesaurusCacheConfig,
-        TextHelper $textHelper
+        TextHelper $textHelper,
+        StemMapping $stemMappingHelper
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
@@ -102,6 +110,7 @@ class Index
         $this->cacheHelper            = $cacheHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
         $this->textHelper             = $textHelper;
+        $this->stemMappingHelper      = $stemMappingHelper;
     }
 
     /**
@@ -165,7 +174,7 @@ class Index
             }
         }
 
-        return $rewrites;
+        return $this->unstemRewrites($storeId, $rewrites);
     }
 
     /**
@@ -375,5 +384,37 @@ class Index
         };
 
         return array_map($mapper, $queryRewrites);
+    }
+
+    /**
+     * Replace stemmed terms in rewrites with original terms from cache.
+     *
+     * @param int   $storeId  Store id.
+     * @param array $rewrites Rewrites with stemmed terms as keys.
+     *
+     * @return array
+     */
+    private function unstemRewrites(int $storeId, array $rewrites): array
+    {
+        $stemMapping = $this->stemMappingHelper->getMapping($storeId);
+
+        if (empty($stemMapping)) {
+            return $rewrites;
+        }
+
+        $unstemmedRewrites = [];
+
+        foreach ($rewrites as $rewriteText => $weight) {
+            $unstemmedWords = array_map(
+                function ($word) use ($stemMapping) {
+                    return $stemMapping[$word] ?? $word;
+                },
+                explode(' ', $rewriteText)
+            );
+
+            $unstemmedRewrites[implode(' ', $unstemmedWords)] = $weight;
+        }
+
+        return $unstemmedRewrites;
     }
 }
