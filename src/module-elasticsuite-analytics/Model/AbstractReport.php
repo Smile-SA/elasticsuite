@@ -20,7 +20,7 @@ namespace Smile\ElasticsuiteAnalytics\Model;
  * @package  Smile\ElasticsuiteAnalytics
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
-abstract class AbstractReport
+abstract class AbstractReport implements ReportInterface
 {
     /**
      * @var \Magento\Search\Model\SearchEngine
