@@ -48,6 +48,11 @@ class SearchRequestBuilder
     private $aggregationProviders;
 
     /**
+     * @var boolean
+     */
+    private $trackTotalHits = true;
+
+    /**
      * Constructor.
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder Search request builder.
@@ -55,19 +60,23 @@ class SearchRequestBuilder
      * @param AggregationProviderInterface[]                 $aggregationProviders Aggregation providers.
      * @param QueryProviderInterface[]                       $queryProviders       Query providers.
      * @param string                                         $containerName        Search request container name.
+     * @param bool                                           $trackTotalHits       Whether to track total hits.
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Search\Request\Builder $searchRequestBuilder,
         Context $context,
         array $aggregationProviders = [],
         array $queryProviders = [],
-        $containerName = 'tracking_log_event'
+        $containerName = 'tracking_log_event',
+        $trackTotalHits = true
     ) {
         $this->searchRequestBuilder = $searchRequestBuilder;
         $this->context              = $context;
         $this->containerName        = $containerName;
         $this->aggregationProviders = $aggregationProviders;
         $this->queryProviders       = $queryProviders;
+        $this->trackTotalHits       = $trackTotalHits;
     }
 
     /**
@@ -81,7 +90,18 @@ class SearchRequestBuilder
         $aggregations = $this->getAggregations();
         $searchQuery  = $this->getSearchQuery();
 
-        return $this->searchRequestBuilder->create($storeId, $this->containerName, 0, 0, null, [], [], $searchQuery, $aggregations);
+        return $this->searchRequestBuilder->create(
+            $storeId,
+            $this->containerName,
+            0,
+            0,
+            null,
+            [],
+            [],
+            $searchQuery,
+            $aggregations,
+            $this->trackTotalHits
+        );
     }
 
     /**
