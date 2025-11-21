@@ -14,11 +14,11 @@
 
 namespace Smile\ElasticsuiteCatalog\Helper;
 
-use Smile\ElasticsuiteCore\Helper\Mapping;
-use Magento\Framework\App\Helper\Context;
 use Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory;
 use Magento\Eav\Model\Entity\Attribute\AttributeInterface;
+use Magento\Framework\App\Helper\Context;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
+use Smile\ElasticsuiteCore\Helper\Mapping;
 
 /**
  * Abstract ElasticSuite catalog attributes helper.
@@ -251,7 +251,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         if ($this->usesSource($attributeId) && !is_array($value)) {
-            $value = explode(',', $value);
+            $value = explode(',', (string) $value);
         }
 
         if (!is_array($value)) {
@@ -295,9 +295,7 @@ abstract class AbstractAttribute extends Mapping
             };
         }
 
-        $optionValues = array_map($this->attributeMappers[$mapperKey], $optionIds);
-
-        return $optionValues;
+        return array_map($this->attributeMappers[$mapperKey], $optionIds);
     }
 
     /**
