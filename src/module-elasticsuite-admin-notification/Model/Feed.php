@@ -66,6 +66,8 @@ class Feed extends \Magento\AdminNotification\Model\Feed
     {
         $this->_cacheManager->save(time(), self::ELASTICSUITE_FEED_UPDATE_CACHE_KEY);
 
+        echo "Test";
+
         return $this;
     }
 }
