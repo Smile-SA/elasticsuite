@@ -25,7 +25,7 @@ use Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\ChartInterface;
 class Spellcheck extends \Magento\Backend\Block\Template implements ChartInterface
 {
     /**
-     * @var \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report
+     * @var \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report
      */
     private $report;
 
@@ -37,14 +37,14 @@ class Spellcheck extends \Magento\Backend\Block\Template implements ChartInterfa
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\Block\Template\Context                    $context    Context.
-     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report     KPI report model.
-     * @param \Magento\Framework\Serialize\Serializer\Json               $serializer Json serializer.
-     * @param array                                                      $data       Data.
+     * @param \Magento\Backend\Block\Template\Context                               $context    Context.
+     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report $report     KPI report model.
+     * @param \Magento\Framework\Serialize\Serializer\Json                          $serializer Json serializer.
+     * @param array                                                                 $data       Data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report,
+        \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report $report,
         \Magento\Framework\Serialize\Serializer\Json $serializer,
         array $data = []
     ) {
