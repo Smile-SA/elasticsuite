@@ -103,6 +103,7 @@
             <argument name="checkers" xsi:type="array">
                 <item name="undefinedSessionIdInEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\UndefinedSessionId</item>
                 <item name="undefinedSessionIdInSessions" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId</item>
+                <item name="mistypedAddToCartEvents" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Checker\Event\MistypedAddToCartEvent</item>
             </argument>
         </arguments>
     </type>
@@ -116,6 +117,12 @@
     <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Session\UndefinedSessionId">
         <arguments>
             <argument name="dataFixer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Fixer\Session\DeleteUndefinedSessionId</argument>
+        </arguments>
+    </type>
+
+    <type name="Smile\ElasticsuiteTracker\Model\Data\Checker\Event\MistypedAddToCartEvent">
+        <arguments>
+            <argument name="dataFixer" xsi:type="object">Smile\ElasticsuiteTracker\Model\Data\Fixer\Event\MistypedAddToCartAddEvent</argument>
         </arguments>
     </type>
 
