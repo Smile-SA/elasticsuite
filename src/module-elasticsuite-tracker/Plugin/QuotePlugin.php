@@ -141,8 +141,10 @@ class QuotePlugin
     private function logEvent(int $productId, int $storeId, ?int $customerGroupId, ?int $companyId): void
     {
         $pageData = [
-            'identifier' => 'checkout_cart_add',
-            'label'      => stripslashes($this->getPageTypeLabel('checkout_cart_add')),
+            'type' => [
+                'identifier' => 'checkout_cart_add',
+                'label'      => stripslashes($this->getPageTypeLabel('checkout_cart_add')),
+            ],
         ];
         $pageData['store_id']           = $storeId;
         $pageData['cart']['product_id'] = $productId;
