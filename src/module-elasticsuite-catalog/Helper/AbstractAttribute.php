@@ -251,7 +251,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         if ($this->usesSource($attributeId) && !is_array($value)) {
-            $value = explode(',', $value);
+            $value = explode(',', (string) $value);
         }
 
         if (!is_array($value)) {
