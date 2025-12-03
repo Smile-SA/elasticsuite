@@ -14,14 +14,17 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
-use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
+use Smile\ElasticsuiteThesaurus\Helper\StemMapping;
+use Smile\ElasticsuiteThesaurus\Helper\Text as TextHelper;
 
 /**
  * Thesaurus index.
@@ -73,26 +76,50 @@ class Index
     private $thesaurusCacheConfig;
 
     /**
+     * @var TextHelper
+     */
+    private $textHelper;
+
+    /**
+     * @var StemMapping
+     */
+    private $stemMappingHelper;
+
+    /**
+     * @var ThesaurusStemmingConfig
+     */
+    private $stemmingConfig;
+
+    /**
      * Constructor.
      *
-     * @param ClientInterface        $client                 ES client.
-     * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
-     * @param CacheHelper            $cacheHelper            ES caching helper.
-     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
-     * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param ClientInterface         $client                 ES client.
+     * @param IndexSettingsHelper     $indexSettingsHelper    Index Settings Helper.
+     * @param CacheHelper             $cacheHelper            ES caching helper.
+     * @param ThesaurusConfigFactory  $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param ThesaurusCacheConfig    $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param TextHelper              $textHelper             Text manipulation helper.
+     * @param StemMapping             $stemMappingHelper      Stem mapping helper.
+     * @param ThesaurusStemmingConfig $stemmingConfig         Stemming configuration.
      */
     public function __construct(
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
-        ThesaurusCacheConfig $thesaurusCacheConfig
+        ThesaurusCacheConfig $thesaurusCacheConfig,
+        TextHelper $textHelper,
+        StemMapping $stemMappingHelper,
+        ThesaurusStemmingConfig $stemmingConfig
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
+        $this->textHelper             = $textHelper;
+        $this->stemMappingHelper      = $stemMappingHelper;
+        $this->stemmingConfig      = $stemmingConfig;
     }
 
     /**
@@ -156,7 +183,7 @@ class Index
             }
         }
 
-        return $rewrites;
+        return $this->stemmingConfig->useStemming($storeId) ? $this->unstemRewrites($storeId, $rewrites) : $rewrites;
     }
 
     /**
@@ -275,17 +302,21 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        if (str_word_count($queryText) < 2) {
+        if (!$this->stemmingConfig->useStemming($storeId) && str_word_count($queryText) < 2) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
         // Generate the shingles.
         // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
+        // If stemming is enabled, analysis of "dresses" will give "dress"
+        // and analysis of "long sleeves" will give "long_sleev"
         // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
         $indexName = $this->getIndexAlias($storeId);
         try {
+            // No need to compute variations of shingles with a one-word-query but we need to extract the stem if enabled.
+            $analyzer = str_word_count($queryText) < 2 ? 'clean' : 'shingles';
             $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $analyzer]]
             );
         } catch (\Exception $e) {
             $analysis = ['tokens' => []];
@@ -297,7 +328,7 @@ class Index
         foreach ($analysis['tokens'] ?? [] as $token) {
             $startOffset        = $token['start_offset'];
             $length             = $token['end_offset'] - $token['start_offset'];
-            $rewrittenQueryText = $this->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
+            $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
             $queries[]          = $rewrittenQueryText;
         }
         $queries = array_unique($queries);
@@ -327,7 +358,7 @@ class Index
             foreach ($currentPositionSynonyms as $synonym) {
                 $startOffset = $synonym['start_offset'] + $offset;
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
-                $rewrittenQueryText = $this->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
+                $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
                 $newOffset = mb_strlen($rewrittenQueryText) - mb_strlen($queryText) + $offset;
                 $combinations[$rewrittenQueryText] = $substitutions + 1;
 
@@ -369,27 +400,34 @@ class Index
     }
 
     /**
-     * Partial implementation of a multi-byte aware version of substr_replace.
-     * Required because the tokens offsets used as for parameters start and length
-     * are expressed as a number of (UTF-8) characters, independently of the number of bytes.
-     * Does not accept arrays as first and second parameters.
-     * Source: https://github.com/fluxbb/utf8/blob/master/functions/substr_replace.php
-     * Alternative: https://gist.github.com/bantya/563d7d070c286ba1b5a83b9036f0561a
+     * Replace stemmed terms in rewrites with original terms from cache.
      *
-     * @param string $string      Input string
-     * @param string $replacement Replacement string
-     * @param mixed  $start       Start offset
-     * @param mixed  $length      Length of replacement
+     * @param int   $storeId  Store id.
+     * @param array $rewrites Rewrites with stemmed terms as keys.
      *
-     * @return mixed
+     * @return array
      */
-    private function mbSubstrReplace($string, $replacement, $start, $length = null)
+    private function unstemRewrites(int $storeId, array $rewrites): array
     {
-        preg_match_all('/./us', $string, $stringChars);
-        preg_match_all('/./us', $replacement, $replacementChars);
-        $length = is_int($length) ? $length : mb_strlen($string);
-        array_splice($stringChars[0], $start, $length, $replacementChars[0]);
+        $stemMapping = $this->stemMappingHelper->getMapping($storeId);
 
-        return implode($stringChars[0]);
+        if (empty($stemMapping)) {
+            return $rewrites;
+        }
+
+        $unstemmedRewrites = [];
+
+        foreach ($rewrites as $rewriteText => $weight) {
+            $unstemmedWords = array_map(
+                function ($word) use ($stemMapping) {
+                    return $stemMapping[$word] ?? $word;
+                },
+                explode(' ', $rewriteText)
+            );
+
+            $unstemmedRewrites[implode(' ', $unstemmedWords)] = $weight;
+        }
+
+        return $unstemmedRewrites;
     }
 }
