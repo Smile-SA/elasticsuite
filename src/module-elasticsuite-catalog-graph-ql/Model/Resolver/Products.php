@@ -54,6 +54,16 @@ class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implemen
     private $argsProcessor;
 
     /**
+     * @var ProductDataProvider
+     */
+    private $productDataProvider;
+
+    /**
+     * @var AttributesJoiner
+     */
+    private $attributesJoiner;
+
+    /**
      * @param ProductQueryInterface                         $searchQuery                Search Query
      * @param ContextUpdater                                $contextUpdater             Context Updater
      * @param ArgumentsProcessorInterface|null              $argumentProcessor          Args Processor
