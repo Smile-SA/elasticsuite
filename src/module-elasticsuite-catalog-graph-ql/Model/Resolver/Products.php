@@ -24,7 +24,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
-use Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
+use Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder as MagentoSearchCriteriaBuilder;
 
 /**
  * Elasticsuite custom implementation of GraphQL Products Resolver
@@ -59,7 +59,7 @@ class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implemen
         ProductQueryInterface $searchQuery,
         ContextUpdater $contextUpdater,
         ?ArgumentsProcessorInterface $argumentProcessor = null,
-        ?SearchCriteriaBuilder $searchApiCriteriaBuilder = null
+        ?MagentoSearchCriteriaBuilder $searchApiCriteriaBuilder = null
     ) {
         parent::__construct($searchQuery, $searchApiCriteriaBuilder);
         $this->searchQuery    = $searchQuery;
