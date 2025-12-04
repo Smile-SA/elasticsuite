@@ -51,9 +51,10 @@ class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implemen
     private $argsProcessor;
 
     /**
-     * @param ProductQueryInterface            $searchQuery       Search Query
-     * @param ContextUpdater                   $contextUpdater    Context Updater
-     * @param ArgumentsProcessorInterface|null $argumentProcessor Args Processor
+     * @param ProductQueryInterface                $searchQuery                Search Query
+     * @param ContextUpdater                       $contextUpdater             Context Updater
+     * @param ArgumentsProcessorInterface|null     $argumentProcessor          Args Processor
+     & @param MagentoSearchCriteriaBuilder|null    $searchApiCriteriaBuilder   Core SearchCriteria Builder 
      */
     public function __construct(
         ProductQueryInterface $searchQuery,
