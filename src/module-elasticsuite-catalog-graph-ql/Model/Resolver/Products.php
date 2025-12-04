@@ -24,6 +24,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
+use Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 
 /**
  * Elasticsuite custom implementation of GraphQL Products Resolver
@@ -32,7 +33,7 @@ use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Products implements ResolverInterface
+class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implements ResolverInterface
 {
     /**
      * @var ProductQueryInterface
@@ -57,8 +58,10 @@ class Products implements ResolverInterface
     public function __construct(
         ProductQueryInterface $searchQuery,
         ContextUpdater $contextUpdater,
-        ?ArgumentsProcessorInterface $argumentProcessor = null
+        ?ArgumentsProcessorInterface $argumentProcessor = null,
+        ?SearchCriteriaBuilder $searchApiCriteriaBuilder = null
     ) {
+        parent::__construct($searchQuery, $searchApiCriteriaBuilder);
         $this->searchQuery    = $searchQuery;
         $this->contextUpdater = $contextUpdater;
         $this->argsProcessor  = $argumentProcessor ?: ObjectManager::getInstance()->get(ArgumentsProcessorInterface::class);
@@ -71,6 +74,9 @@ class Products implements ResolverInterface
     {
         $args = $this->getProcessedArgs($info, $args);
         $this->validateArgs($args);
+        if (isset($args['filters']['sku'])) {
+            return parent::resolve($field, $context, $info, $value, $args);
+        }
         $this->contextUpdater->updateSearchContext($args);
 
         $searchResult = $this->searchQuery->getResult($args, $info, $context);
