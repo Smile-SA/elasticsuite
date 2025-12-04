@@ -131,7 +131,6 @@ class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implemen
                     'total_count'   => 1,
                     'items'         => [$formattedProduct],
                     'suggestions'   => [],
-                    'suggestions'   =>
                     'page_info'     => [
                         'page_size'    => 1,
                         'current_page' => 1,
