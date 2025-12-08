@@ -293,30 +293,44 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
+        // No need to compute variations of shingles with a one-word-query but we need to extract the stem if enabled.
         if (!$this->stemmingConfig->useStemming($storeId) && $this->textHelper->mbWordCount($queryText) < 2) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
+
+        $indexName = $this->getIndexAlias($storeId);
+
+        // Get the stem of the search term
+        try {
+            $analysis = $this->client->analyze(
+                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'clean']]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
+        }
+        $tokens = $analysis['tokens'] ?? [];
 
         // Generate the shingles.
         // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
         // If stemming is enabled, analysis of "dresses" will give "dress"
         // and analysis of "long sleeves" will give "long_sleev"
         // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
-        $indexName = $this->getIndexAlias($storeId);
-        try {
-            // No need to compute variations of shingles with a one-word-query but we need to extract the stem if enabled.
-            $analyzer = $this->textHelper->mbWordCount($queryText) < 2 ? 'clean' : 'shingles';
-            $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => $analyzer]]
-            );
-        } catch (\Exception $e) {
-            $analysis = ['tokens' => []];
+        if ($this->textHelper->mbWordCount($queryText) < 2) {
+            try {
+                $analysis = $this->client->analyze(
+                    ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
+                );
+            } catch (\Exception $e) {
+                $analysis = ['tokens' => []];
+            }
+
+            $tokens = array_merge($tokens, $analysis['tokens'] ?? []);
         }
 
         // Get all variations of the query text by injecting the shingles inside.
         // $tokens = ['long sleeve dress', 'long_sleeve dress', 'long sleeve_dress'];.
         $queries[] = $queryText;
-        foreach ($analysis['tokens'] ?? [] as $token) {
+        foreach ($tokens as $token) {
             $startOffset        = $token['start_offset'];
             $length             = $token['end_offset'] - $token['start_offset'];
             $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
