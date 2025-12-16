@@ -14,16 +14,16 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\Query\Fulltext;
 
-use Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Reader\Container;
-use Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface;
-use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
-use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
-use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
-use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
-use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\Query\SpanQueryInterface;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
  * Prepare a fulltext search query.
@@ -40,6 +40,11 @@ class QueryBuilder
     private $queryFactory;
 
     /**
+     * @var Text
+     */
+    private $textHelper;
+
+    /**
      *
      * @var FieldFilterInterface[]
      */
@@ -49,11 +54,16 @@ class QueryBuilder
      * Constructor.
      *
      * @param QueryFactory           $queryFactory Query factory (used to build subqueries.
+     * @param Text                   $textHelper   Helper text explaining multibyte string handling.
      * @param FieldFilterInterface[] $fieldFilters Field filters models.
      */
-    public function __construct(QueryFactory $queryFactory, array $fieldFilters = [])
-    {
+    public function __construct(
+        QueryFactory $queryFactory,
+        Text $textHelper,
+        array $fieldFilters = []
+    ) {
         $this->queryFactory = $queryFactory;
+        $this->textHelper = $textHelper;
         $this->fieldFilters = $fieldFilters;
     }
 
@@ -176,7 +186,7 @@ class QueryBuilder
         $phraseAnalyzer        = FieldInterface::ANALYZER_WHITESPACE;
         $sortableMatchBoost    = 2 * $phraseMatchBoost;
 
-        if (is_string($queryText) && str_word_count($queryText) > 1) {
+        if (is_string($queryText) && $this->textHelper->mbWordCount($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         } elseif ($relevanceConfig->areExactMatchSingleTermBoostsCustomized()) {
             $phraseMatchBoost = $relevanceConfig->getExactMatchSingleTermPhraseMatchBoost();
@@ -214,7 +224,7 @@ class QueryBuilder
         $relevanceConfig = $containerConfig->getRelevanceConfig();
 
         $analyzer = FieldInterface::ANALYZER_WHITESPACE;
-        if (is_string($queryText) && str_word_count($queryText) > 1) {
+        if (is_string($queryText) && $this->textHelper->mbWordCount($queryText) > 1) {
             $analyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
@@ -289,7 +299,7 @@ class QueryBuilder
 
         $standardAnalyzer = FieldInterface::ANALYZER_WHITESPACE;
         $phraseAnalyzer   = FieldInterface::ANALYZER_WHITESPACE;
-        if (is_string($queryText) && str_word_count($queryText) > 1) {
+        if (is_string($queryText) && $this->textHelper->mbWordCount($queryText) > 1) {
             $phraseAnalyzer = FieldInterface::ANALYZER_SHINGLE;
         }
 
