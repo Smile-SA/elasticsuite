@@ -1,15 +1,13 @@
-name: PHPStan Code Quality (2.11.x)
+name: PHPStan Code Quality (2.10.x)
 
 on:
   push:
     branches:
-      - 2.11.x
-      - master
+      - 2.10.x
 
   pull_request_target:
     branches:
-      - 2.11.x
-      - master
+        - 2.10.x
     types: [labeled,synchronize]
 
 jobs:
@@ -24,30 +22,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - php-versions: '7.4'
+            magento-versions: '2.4.2-p2'
+            magento-editions: 'enterprise'
+            experimental: true
+          - php-versions: '7.4'
+            magento-versions: '2.4.3-p3'
+            magento-editions: 'enterprise'
+            experimental: false
           - php-versions: '8.1'
-            magento-versions: '2.4.6-p12'
+            magento-versions: '2.4.4-p13'
             magento-editions: 'enterprise'
             experimental: false
-          - php-versions: '8.2'
-            magento-versions: '2.4.6-p12'
+          - php-versions: '8.1'
+            magento-versions: '2.4.5-p14'
             magento-editions: 'enterprise'
             experimental: false
-          - php-versions: '8.2'
-            magento-versions: '2.4.7-p7'
-            magento-editions: 'enterprise'
-            experimental: false
-          - php-versions: '8.3'
-            magento-versions: '2.4.7-p7'
-            magento-editions: 'enterprise'
-            experimental: true
-          - php-versions: '8.3'
-            magento-versions: '2.4.8-p2'
-            magento-editions: 'enterprise'
-            experimental: true
-          - php-versions: '8.4'
-            magento-versions: '2.4.8-p2'
-            magento-editions: 'enterprise'
-            experimental: true
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -86,10 +76,17 @@ jobs:
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
           if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
             composer self-update --1
-          elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
-            composer self-update --2.2
           else
-            composer self-update 2.7.9
+            composer self-update 2.1.14
+          fi
+
+      - name: "[Init] Optimize Composer"
+        env:
+          MAGENTO_VERSION: ${{ matrix.magento-versions }}
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+            composer global require hirak/prestissimo:0.3.10
           fi
 
       - name: "[Init] Determine composer cache directory"
@@ -110,9 +107,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.magento-directory }}
-          key: phpstan-magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+          key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
           restore-keys: |
-            phpstan-magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+            magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
 
       - name: "[Init] Prepare credentials"
         if: ${{env.MAGENTO_USERNAME}} != 0
@@ -145,23 +142,27 @@ jobs:
           sudo chown -R $USER:www-data $MAGENTO_ROOT
           composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
-      - name: "[Init] Add current build of Elasticsuite"
+      - name: "[Init] Fix symfony/console and symfony string version"
+        working-directory: ${{ env.magento-directory }}
         env:
           MAGENTO_VERSION: ${{ matrix.magento-versions }}
-        working-directory: ${{ env.magento-directory }}
         run: |
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
-          OPTS="--update-with-all-dependencies --minimal-changes"
-          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
-            OPTS=""
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.4") ]; then
+            composer require symfony/console:4.4.26 --ignore-platform-reqs
+            composer require symfony/string:5.4.2 --ignore-platform-reqs
           fi
-          composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs $OPTS
+
+      - name: "[Init] Add current build of Elasticsuite"
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
           rm -rf vendor/smile/elasticsuite/**
           cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
       - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
-        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+        run: composer require --dev --no-update smile/magento2-smilelab-phpstan ^1.0
 
       - name: "[Init] Fix Magento directory permissions"
         env:
@@ -186,10 +187,7 @@ jobs:
         working-directory: ${{ env.magento-directory }}
         run: |
           sudo chmod u+x vendor/bin/phpstan
-          vendor/bin/phpstan -V
-          vendor/bin/phpstan clear-result-cache
-          cp -a vendor/smile/elasticsuite/phpstan.neon.dist elastan.neon.dist
-          vendor/bin/phpstan analyze -c elastan.neon.dist --level=0 vendor/smile/elasticsuite
+          vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
         env:
