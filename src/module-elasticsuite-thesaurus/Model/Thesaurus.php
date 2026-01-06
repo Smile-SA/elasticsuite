@@ -299,56 +299,145 @@ class Thesaurus extends \Magento\Framework\Model\AbstractModel implements Thesau
     }
 
     /**
-     * Check for existing terms in other thesaurus
+     * Check for existing terms in other thesaurus.
      *
      * @return void
      */
-    public function checkThesaurusTerms()
+    public function checkThesaurusTerms(): void
     {
         $termsData = $this->getTermsData();
+        $currentType = $this->getType();
 
-        $terms = [];
-        foreach ($termsData as $termData) {
-            if (isset($termData['reference_term']) && !empty($termData['reference_term'])) {
-                $terms[] = $termData['reference_term'];
+        $lhs = [];
+        $rhs = [];
+
+        foreach ($termsData as $row) {
+            if (!empty($row['reference_term'])) {
+                $lhs[] = trim($row['reference_term']);
             }
+            if (!empty($row['values'])) {
+                foreach (explode(',', $row['values']) as $v) {
+                    $value = trim($v);
+                    if ($value !== '') {
+                        $rhs[] = $value;
+                    }
+                }
+            }
+        }
 
-            $terms = array_merge($terms, explode(',', $termData['values']));
+        $lhs = array_values(array_unique($lhs));
+        $rhs = array_values(array_unique($rhs));
+
+        if (empty($lhs) && empty($rhs)) {
+            return;
+        }
+
+        // Logic for thesaurus with type 'expansion'.
+        if ($currentType === self::TYPE_EXPANSION) {
+            $this->checkExpansionTerms($lhs, (int) $this->getId());
+
+            return;
+        }
+
+        // Logic for thesaurus with type 'synonym'.
+        $allTerms = array_unique(array_merge($lhs, $rhs));
+        $this->checkSynonymTerms($allTerms, (int) $this->getId());
+    }
+
+    /**
+     * Check duplicate reference terms (LHS) for thesaurus with type 'expansion'.
+     *
+     * For thesaurus with type 'expansion' we only show a warning about duplicate when the reference term (LHS)
+     * exists as a reference term in another thesaurus (duplicate LHS).
+     * Duplicate values (RHS) are ignored entirely.
+     *
+     * @param string[] $lhsTerms           List of reference (LHS) terms.
+     * @param int      $currentThesaurusId Identifier of the currently saved thesaurus.
+     *
+     * @return void
+     */
+    protected function checkExpansionTerms(array $lhsTerms, int $currentThesaurusId): void
+    {
+        if (empty($lhsTerms)) {
+            return;
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $expandedTableName = $this->resourceConnection->getTableName(self::THESAURUS_EXPANDED_TERMS_TABLE_NAME);
-        $referenceTableName = $this->resourceConnection->getTableName(self::THESAURUS_REFERENCE_TERMS_TABLE_NAME);
+        $referenceTable = $this->resourceConnection->getTableName(
+            self::THESAURUS_REFERENCE_TERMS_TABLE_NAME
+        );
 
-        $selectExpanded = $connection->select()
-            ->from(['expanded' => $expandedTableName], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
-            ->where('expanded.term IN (?)', $terms)
-            ->where('expanded.thesaurus_id != ?', $this->getId())
-            ->group(['term', 'thesaurus_id'])
-            ->order('expanded.term ASC');
-
-        $selectReference = $connection->select()
-            ->from(['reference' => $referenceTableName], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
-            ->where('reference.term IN (?)', $terms)
-            ->where('reference.thesaurus_id != ?', $this->getId())
+        $select = $connection->select()
+            ->from(['r' => $referenceTable], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('r.term IN (?)', $lhsTerms)
+            ->where('r.thesaurus_id != ?', $currentThesaurusId)
             ->group(['term', 'thesaurus_id']);
 
-        $resultExpanded = $connection->fetchAll($selectExpanded);
-        $resultReference = $connection->fetchAll($selectReference);
+        $rows = $connection->fetchAll($select);
 
-        $result = array_merge($resultReference, $resultExpanded);
+        foreach ($rows as $row) {
+            if ((int) $row['count'] > 0) {
+                $name = $this->getThesaurusNameById((int) $row['thesaurus_id']);
+                $this->messageManager->addWarning(__(
+                    'The reference term "<strong>%1</strong>" is already defined as a ' .
+                    'reference term in the <strong>%2</strong> thesaurus.',
+                    $row['term'],
+                    $name
+                ));
+            }
+        }
+    }
 
-        foreach ($result as $row) {
-            if ($row['count'] > 0) {
-                $existingThesaurusId = $row['thesaurus_id'];
-                $existingThesaurusName = $this->getThesaurusNameById($existingThesaurusId);
+    /**
+     * Check duplicate synonym terms across all thesaurus tables.
+     *
+     * For thesaurus with type 'synonym' all synonym terms are checked on duplicate across all tables.
+     * If duplicates exist, a warning about duplicate will be displayed.
+     *
+     * @param string[] $allTerms           List of all terms.
+     * @param int      $currentThesaurusId Identifier of the currently saved thesaurus.
+     *
+     * @return void
+     */
+    protected function checkSynonymTerms(array $allTerms, int $currentThesaurusId): void
+    {
+        if (empty($allTerms)) {
+            return;
+        }
 
-                $message = __(
+        $connection = $this->resourceConnection->getConnection();
+        $referenceTable = $this->resourceConnection->getTableName(
+            self::THESAURUS_REFERENCE_TERMS_TABLE_NAME
+        );
+        $expandedTable = $this->resourceConnection->getTableName(
+            self::THESAURUS_EXPANDED_TERMS_TABLE_NAME
+        );
+
+        $selectReference = $connection->select()
+            ->from(['r' => $referenceTable], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('r.term IN (?)', $allTerms)
+            ->where('r.thesaurus_id != ?', $currentThesaurusId)
+            ->group(['term', 'thesaurus_id']);
+
+        $selectExpanded = $connection->select()
+            ->from(['e' => $expandedTable], ['term', 'thesaurus_id', 'count' => 'COUNT(*)'])
+            ->where('e.term IN (?)', $allTerms)
+            ->where('e.thesaurus_id != ?', $currentThesaurusId)
+            ->group(['term', 'thesaurus_id']);
+
+        $rows = array_merge(
+            $connection->fetchAll($selectReference),
+            $connection->fetchAll($selectExpanded)
+        );
+
+        foreach ($rows as $row) {
+            if ((int) $row['count'] > 0) {
+                $name = $this->getThesaurusNameById((int) $row['thesaurus_id']);
+                $this->messageManager->addWarning(__(
                     'The term "<strong>%1</strong>" is already existing in the <strong>%2</strong> thesaurus.',
                     $row['term'],
-                    $existingThesaurusName
-                );
-                $this->messageManager->addWarning($message);
+                    $name
+                ));
             }
         }
     }
