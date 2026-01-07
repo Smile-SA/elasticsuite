@@ -20,6 +20,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Helper\Cache;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteCore\Helper\IndexSettings;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
@@ -78,6 +79,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $clientMock                 = $this->getClientMock();
         $indexSettingsHelperMock    = $this->getIndexSettingsHelperMock();
         $cacheHelperMock            = $this->getCacheHelperMock();
+        $textHelper                 = $this->getRealTextHelper();
         $thesaurusConfigMock        = $this->getThesaurusConfigMock(
             $synonymsEnabled,
             $synonymWeightDivider,
@@ -106,6 +108,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
+            $textHelper,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock
         );
@@ -193,6 +196,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $clientMock                 = $this->getClientMock();
         $indexSettingsHelperMock    = $this->getIndexSettingsHelperMock();
         $cacheHelperMock            = $this->getCacheHelperMock();
+        $textHelper                 = $this->getRealTextHelper();
         $thesaurusConfigMock        = $this->getThesaurusConfigMock(
             $synonymsEnabled,
             $synonymWeightDivider,
@@ -233,6 +237,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
+            $textHelper,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock
         );
@@ -698,6 +703,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $clientMock                 = $this->getClientMock();
         $indexSettingsHelperMock    = $this->getIndexSettingsHelperMock();
         $cacheHelperMock            = $this->getCacheHelperMock();
+        $textHelper                 = $this->getRealTextHelper();
         $thesaurusConfigMock        = $this->getThesaurusConfigMock(
             $synonymsEnabled,
             $synonymWeightDivider,
@@ -738,6 +744,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
+            $textHelper,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock
         );
@@ -1681,6 +1688,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $clientMock                 = $this->getClientMock();
         $indexSettingsHelperMock    = $this->getIndexSettingsHelperMock();
         $cacheHelperMock            = $this->getCacheHelperMock();
+        $textHelper                 = $this->getRealTextHelper();
         $thesaurusConfigMock        = $this->getThesaurusConfigMock(
             $synonymsEnabled,
             $synonymWeightDivider,
@@ -1707,6 +1715,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $clientMock,
             $indexSettingsHelperMock,
             $cacheHelperMock,
+            $textHelper,
             $thesaurusConfigFactoryMock,
             $thesaurusCacheConfigMock
         );
@@ -1842,6 +1851,16 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $thesaurusCacheConfig->method('isCacheStorageAllowed')->willReturn($cacheStorageAllowed);
 
         return $thesaurusCacheConfig;
+    }
+
+    /**
+     * Get Elasticsuite text helper mock.
+     *
+     * @return Text
+     */
+    private function getRealTextHelper()
+    {
+        return new Text();
     }
 
     /**

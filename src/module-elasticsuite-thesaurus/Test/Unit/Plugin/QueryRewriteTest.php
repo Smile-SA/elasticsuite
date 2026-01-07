@@ -19,10 +19,12 @@ namespace Smile\ElasticsuiteThesaurus\Test\Unit\Plugin;
 use Magento\Framework\Interception\DefinitionInterface;
 use Magento\Framework\Interception\PluginList\PluginList;
 use Magento\Framework\ObjectManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
@@ -284,6 +286,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     private function getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin)
     {
         $fieldFilters = $this->getFieldFilters();
+        $textHelper   = $this->getRealTextHelper();
 
         $pluginList = $this->getMockBuilder(Pluginlist::class)
             ->disableOriginalConstructor()
@@ -301,7 +304,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         ));
 
         $queryBuilderInterceptor = $this->getMockBuilder(FulltextQueryBuilderInterceptor::class)
-            ->setConstructorArgs([$queryFactory, $fieldFilters])
+            ->setConstructorArgs([$queryFactory, $textHelper, $fieldFilters])
             ->onlyMethods(['___init'])
             ->getMock();
 
@@ -382,6 +385,16 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
 
         return $config;
+    }
+
+    /**
+     * Get Elasticsuite text helper mock.
+     *
+     * @return Text
+     */
+    private function getRealTextHelper()
+    {
+        return new Text();
     }
 
     /**
