@@ -1,4 +1,4 @@
-name: PHP Code Quality
+name: PHP Code Quality (2.11.x)
 
 on:
     push:

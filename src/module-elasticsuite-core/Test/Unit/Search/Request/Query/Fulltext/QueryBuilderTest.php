@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
@@ -21,6 +22,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Magento\Framework\ObjectManagerInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Index\Mapping;
@@ -148,8 +150,9 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
         $fieldFilters    = $this->getFieldFilters();
         $containerConfig = $this->getContainerConfigMock($this->fields);
+        $textHelper      = $this->getTextHelperMock();
 
-        $builder = new QueryBuilder($queryFactory, $fieldFilters);
+        $builder = new QueryBuilder($queryFactory, $textHelper, $fieldFilters);
 
         $query = $builder->create($containerConfig, $searchTerms, $spellingType);
 
@@ -200,6 +203,18 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
 
         return $config;
+    }
+
+    /**
+     * Get Elasticsuite text helper mock.
+     *
+     * @return MockObject|Text
+     */
+    private function getTextHelperMock()
+    {
+        return $this->getMockBuilder(Text::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

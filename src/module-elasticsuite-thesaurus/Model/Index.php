@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteThesaurus\Model;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
@@ -68,6 +69,11 @@ class Index
     private $cacheHelper;
 
     /**
+     * @var Text
+     */
+    private $textHelper;
+
+    /**
      * @var ThesaurusConfig
      */
     private $thesaurusCacheConfig;
@@ -78,6 +84,7 @@ class Index
      * @param ClientInterface        $client                 ES client.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
+     * @param Text                   $textHelper             Helper text explaining multibyte string handling.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
      */
@@ -85,6 +92,7 @@ class Index
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
+        Text $textHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
         ThesaurusCacheConfig $thesaurusCacheConfig
     ) {
@@ -92,6 +100,7 @@ class Index
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
+        $this->textHelper             = $textHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
     }
 
@@ -275,7 +284,7 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        if (str_word_count($queryText) < 2) {
+        if ($this->textHelper->mbWordCount($queryText) < 2) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
@@ -297,7 +306,7 @@ class Index
         foreach ($analysis['tokens'] ?? [] as $token) {
             $startOffset        = $token['start_offset'];
             $length             = $token['end_offset'] - $token['start_offset'];
-            $rewrittenQueryText = $this->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
+            $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
             $queries[]          = $rewrittenQueryText;
         }
         $queries = array_unique($queries);
@@ -327,7 +336,7 @@ class Index
             foreach ($currentPositionSynonyms as $synonym) {
                 $startOffset = $synonym['start_offset'] + $offset;
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
-                $rewrittenQueryText = $this->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
+                $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
                 $newOffset = mb_strlen($rewrittenQueryText) - mb_strlen($queryText) + $offset;
                 $combinations[$rewrittenQueryText] = $substitutions + 1;
 
@@ -366,30 +375,5 @@ class Index
         };
 
         return array_map($mapper, $queryRewrites);
-    }
-
-    /**
-     * Partial implementation of a multi-byte aware version of substr_replace.
-     * Required because the tokens offsets used as for parameters start and length
-     * are expressed as a number of (UTF-8) characters, independently of the number of bytes.
-     * Does not accept arrays as first and second parameters.
-     * Source: https://github.com/fluxbb/utf8/blob/master/functions/substr_replace.php
-     * Alternative: https://gist.github.com/bantya/563d7d070c286ba1b5a83b9036f0561a
-     *
-     * @param string $string      Input string
-     * @param string $replacement Replacement string
-     * @param mixed  $start       Start offset
-     * @param mixed  $length      Length of replacement
-     *
-     * @return mixed
-     */
-    private function mbSubstrReplace($string, $replacement, $start, $length = null)
-    {
-        preg_match_all('/./us', $string, $stringChars);
-        preg_match_all('/./us', $replacement, $replacementChars);
-        $length = is_int($length) ? $length : mb_strlen($string);
-        array_splice($stringChars[0], $start, $length, $replacementChars[0]);
-
-        return implode($stringChars[0]);
     }
 }
