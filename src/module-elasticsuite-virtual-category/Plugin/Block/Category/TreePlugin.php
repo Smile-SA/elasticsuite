@@ -225,7 +225,7 @@ class TreePlugin
             $legacyClasses .= $this->cssClass;
             $node['cls'] = $legacyClasses;
 
-            // jsTree standard key (>= 2.4.8).
+            // JsTree standard key (>= 2.4.8).
             if (!isset($node['li_attr']) || !is_array($node['li_attr'])) {
                 $node['li_attr'] = [];
             }
