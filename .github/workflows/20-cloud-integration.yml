@@ -313,11 +313,11 @@ jobs:
                   DB_PORT: ${{ matrix.db }}
                   FORCE_OPENSEARCH: ${{ matrix.force-opensearch }}
               run: |
-                ENGINE_OPT='';
+                ENGINE_OPT="";
                 if [ $FORCE_OPENSEARCH = true ]; then
-                  ENGINE_OPT='--search-engine="opensearch"'
+                  ENGINE_OPT="--search-engine=\"opensearch\""
                 fi
-                php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" $ENGINE_OPT --opensearch-host="localhost" --opensearch-port="${{ env[env.SEARCH_ENGINE] }}" -q
+                php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" $ENGINE_OPT --opensearch-host="localhost" --opensearch-port="${{ env[env.SEARCH_ENGINE] }}"
 
             - name: "[Test] Setup Upgrade"
               working-directory: ${{ env.magento-directory }}
