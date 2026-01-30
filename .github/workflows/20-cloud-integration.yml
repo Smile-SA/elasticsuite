@@ -1,0 +1,490 @@
+name: Cloud Integration (2.11.x)
+
+on:
+    push:
+        branches:
+          - 2.11.x
+          - master
+
+    pull_request_target:
+        branches:
+          - 2.11.x
+          - master
+        types: [labeled,synchronize]
+
+env:
+# List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
+#  elasticsearch6: 7200
+#  elasticsearch7: 9200
+#  opensearch1: 10200
+  opensearch2: 19200
+  opensearch3: 19300
+# List of DB port for each server version. Must be consistent with jobs.build.services definitions.
+  mysql80: 3380
+  mysql84: 3384
+
+jobs:
+    build:
+        if: |
+          ( ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
+            && (github.event.pull_request.draft == false) )
+        runs-on: ubuntu-22.04
+        name: 'Integration'
+        services:
+            mysql80:
+                image: docker://mysql:8.0
+                env:
+                    MYSQL_ROOT_PASSWORD: magento2
+                    MYSQL_DATABASE: magento2
+                ports:
+                    - 3380:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+            mysql84:
+                image: docker://mysql:8.4
+                env:
+                    MYSQL_ROOT_PASSWORD: magento2
+                    MYSQL_DATABASE: magento2
+                ports:
+                    - 3384:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+#            elasticsearch6:
+#                image: docker://magento/magento-cloud-docker-elasticsearch:6.8-1.3.0
+#                ports:
+#                    - 7200:7200
+#                options: -e="http.port=7200" -e="transport.port=7300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:7200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+#            elasticsearch7:
+#                image: docker://magento/magento-cloud-docker-elasticsearch:7.9-1.3.0
+#                ports:
+#                    - 9200:9200
+#                options: -e="http.port=9200" -e="transport.port=9300" -e="discovery.type=single-node" --health-cmd="curl http://localhost:9200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+#            opensearch1:
+#                image: docker://magento/magento-cloud-docker-opensearch:1.3-1.4.2
+#                ports:
+#                    - 10200:10200
+#                options: -e="http.port=10200" -e="transport.port=10300" -e="discovery.type=single-node" -e="plugins.security.disabled=true" --health-cmd="curl http://localhost:10200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+            opensearch2:
+                image: docker://magento/magento-cloud-docker-opensearch:2.4-1.3.5
+                ports:
+                    - 19200:19200
+                options: -e="http.port=19200" -e="transport.port=19250" -e="discovery.type=single-node" -e="plugins.security.disabled=true" -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=dummy97glC8c/]$u1" --health-cmd="curl http://localhost:19200/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+            opensearch3:
+                image: docker://magento/magento-cloud-docker-opensearch:3-1.4.4
+                ports:
+                    - 19300:19300
+                options: -e="http.port=19300" -e="transport.port=19350" -e="discovery.type=single-node" -e="plugins.security.disabled=true" -e "OPENSEARCH_INITIAL_ADMIN_PASSWORD=dummy97glC8c/]$u1" --health-cmd="curl http://localhost:19300/_cluster/health" --health-interval=10s --health-timeout=5s --health-retries=10
+
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                  - php-versions: '8.1'
+                    magento-versions: '2.4.6-p13'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: false
+                    force-opensearch: true
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.6-p13'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: false
+                    force-opensearch: false
+                  - php-versions: '8.2'
+                    magento-versions: '2.4.7-p8'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: false
+                    force-opensearch: true
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.7-p8'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: false
+                    force-opensearch: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: true
+                    force-opensearch: true
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
+                    engine: 'opensearch2'
+                    experimental: true
+                    force-opensearch: false
+                  - php-versions: '8.3'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
+                    engine: 'opensearch3'
+                    experimental: true
+                    force-opensearch: true
+                  - php-versions: '8.4'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch2'
+                    experimental: true
+                    force-opensearch: false
+                  - php-versions: '8.4'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql80'
+                    engine: 'opensearch3'
+                    experimental: true
+                    force-opensearch: true
+                  - php-versions: '8.4'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
+                    engine: 'opensearch2'
+                    experimental: true
+                    force-opensearch: false
+                  - php-versions: '8.4'
+                    magento-versions: '2.4.8-p3'
+                    magento-editions: 'enterprise'
+                    db: 'mysql84'
+                    engine: 'opensearch3'
+                    experimental: true
+                    force-opensearch: true
+
+        continue-on-error: ${{ matrix.experimental }}
+
+        env:
+            magento-directory: /var/www/magento
+            MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
+            MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
+
+        steps:
+            - name: "[Init] Checkout"
+              uses: actions/checkout@v3
+              with:
+                ref: ${{ github.event.pull_request.head.sha }}
+                persist-credentials: false
+
+            - name: "[Init] Setup PHP"
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: hash, iconv, mbstring, intl, bcmath, ctype, gd, pdo, mysql, curl, zip, dom, sockets, soap, openssl, simplexml, xsl
+                  ini-values: post_max_size=256M, max_execution_time=180
+              env:
+                  update: true
+
+            - name: "[Init] Add php-fpm"
+              env:
+                  version: ${{ matrix.php-versions }}
+              run: |
+                sudo apt-get -qq update
+                sudo apt-get install -y php$version-fpm
+                sudo service php$version-fpm start
+                sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
+                sudo service php$version-fpm start
+                sudo service php$version-fpm status
+
+            - name: "[Init] Setup Apache with PHP-FPM"
+              env:
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+                  version: ${{ matrix.php-versions }}
+              run: |
+                sudo apt-get -qq update
+                sudo apt-get -qq install apache2
+                sudo a2enmod rewrite actions alias proxy proxy_fcgi
+                sudo usermod -a -G www-data $USER
+                sudo cp -f Resources/tests/apache/apache.conf /etc/apache2/sites-available/000-default.conf
+                sudo mkdir -p $MAGENTO_ROOT
+                sudo chown -R $USER:www-data $MAGENTO_ROOT
+                sudo sed -e "s?%MAGENTO_ROOT%?$(readlink -f $MAGENTO_ROOT)?g" --in-place /etc/apache2/sites-available/000-default.conf
+                sudo sed -e "s?%PHP_VERSION%?$version?g" --in-place /etc/apache2/sites-available/000-default.conf
+                sudo apachectl configtest
+                sudo systemctl restart apache2
+                sudo service apache2 status
+
+            - name: "[Init] Prepare GraphQL test suite"
+              run: |
+                sudo chown $USER -R /usr/local/lib/node_modules
+                npm install -g graphqurl
+
+            - name: "[Init] Downgrade Composer"
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+                  composer self-update --1
+                elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
+                  composer self-update --2.2
+                else
+                  composer self-update 2.7.9
+                fi
+
+            - name: "[Init] Determine composer cache directory"
+              id: composer-cache-directory
+              run: "echo \"directory=$(composer config cache-dir)\" >> $GITHUB_OUTPUT"
+
+            - name: "[Init] Cache Composer cache"
+              id: composer-cache
+              uses: actions/cache@v3
+              with:
+                  path: ${{ steps.composer-cache-directory.outputs.directory }}
+                  key: composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  restore-keys: |
+                      composer-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+            - name: "[Init] Cache Magento install"
+              id: magento-cache
+              uses: actions/cache@v3
+              with:
+                  path: ${{ env.magento-directory }}
+                  key: magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+                  restore-keys: |
+                    magento-${{ matrix.php-versions }}-${{ matrix.magento-editions }}-${{ matrix.magento-versions }}
+
+            - name: "[Init] Prepare credentials"
+              if: ${{env.MAGENTO_USERNAME}} != 0
+              run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
+
+            - name: "[Init] Prepare Magento install if needed"
+              if: steps.magento-cache.outputs.cache-hit == 'true'
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                rm -rf app/etc/env.php app/etc/config.php
+                composer config discard-changes true
+                composer remove magento/module-catalog-sample-data-venia --no-update --no-interaction
+                composer remove magento/module-configurable-sample-data-venia --no-update --no-interaction
+                composer remove magento/sample-data-media-venia --no-update --no-interaction
+                composer remove smile/elasticsuite --no-update --no-interaction
+                composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia smile/elasticsuite
+                composer config discard-changes false
+
+            - name: "[Init] Install proper version of Magento through Composer"
+              if: steps.magento-cache.outputs.cache-hit != 'true'
+              env:
+                  MAGENTO_VERSION: ${{ matrix.magento-versions }}
+                  MAGENTO_EDITION: ${{ matrix.magento-editions }}
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+                  EXPERIMENTAL: ${{ matrix.experimental }}
+              run: |
+                STABILITY="--stability=stable"
+                if [ $EXPERIMENTAL = true ]; then
+                  STABILITY=""
+                fi
+                sudo rm -rf $MAGENTO_ROOT
+                sudo mkdir -p $MAGENTO_ROOT
+                sudo chown -R $USER:www-data $MAGENTO_ROOT
+                composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
+
+            - name: "[Init] Add current build of Elasticsuite"
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                OPTS="--update-with-all-dependencies --minimal-changes"
+                if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
+                  OPTS=""
+                fi
+                composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs $OPTS
+                rm -rf vendor/smile/elasticsuite/**
+                cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
+
+            - name: "[Init] Fix Magento directory permissions"
+              env:
+                  MAGENTO_ROOT: ${{ env.magento-directory }}
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                sudo chmod -R a=r,u+w,a+X .
+                sudo find var pub/static pub/media app/etc generated/ -type f -exec chmod g+w {} \;
+                sudo find var pub/static pub/media app/etc generated/ -type d -exec chmod g+ws {} \;
+                sudo chown -R runner:www-data .
+                sudo chmod u+x bin/magento
+
+            - name: "[Test] Install Magento"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                  SEARCH_ENGINE: ${{ matrix.engine }}
+                  DB_PORT: ${{ matrix.db }}
+                  FORCE_OPENSEARCH: ${{ matrix.force-opensearch }}
+              run: |
+                engine_opt = '';
+                if [ $FORCE_OPENSEARCH = true ]; then
+                  engine_opt = '-search-engine="opensearch"'
+                fi
+                php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" ${engine_opt} --opensearch-host="localhost" --opensearch-port="${{ env[env.SEARCH_ENGINE] }}" -q
+
+            - name: "[Test] Setup Upgrade"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:upgrade -q
+
+            - name: "[Test] Reindex"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento index:reindex
+
+            - name: "[Test] Cache Flush"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:flush
+
+            - name: "[Test] Compile"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:di:compile
+
+            - name: "[Test] Data : Require"
+              working-directory: ${{ env.magento-directory }}
+              env:
+                MAGENTO_VERSION: ${{ matrix.magento-versions }}
+              run: |
+                composer config discard-changes true
+                composer require magento/module-catalog-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                composer require magento/module-configurable-sample-data-venia --no-update --no-interaction --ignore-platform-reqs
+                composer require magento/sample-data-media-venia --no-update --no-interaction --ignore-platform-reqs
+                composer update --no-interaction --ignore-platform-reqs magento/module-catalog-sample-data-venia magento/module-configurable-sample-data-venia magento/sample-data-media-venia
+
+            - name: "[Init] Data : Prepare for Magento >= 2.4.4"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+                if [ $(version $MAGENTO_VERSION) -ge $(version "2.4.2") ]; then
+                  sed -i '/^<\/config>/i <preference for="Magento\\Framework\\Filesystem\\DriverInterface" type="Magento\\Framework\\Filesystem\\Driver\\File" />' app/etc/di.xml
+                fi
+
+            - name: "[Init] Data : Remove Downloadable / Virtual products"
+              working-directory: ${{ env.magento-directory }}
+              run: |
+                  rm -rf vendor/magento/module-catalog-sample-data-venia/Setup/Patch/Data/InstallDownloadableProducts.php
+
+            - name: "[Test] Data : Install"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento setup:upgrade --keep-generated
+
+            - name: "[Test] Cache Clean before re-indexing"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento cache:clean
+
+            - name: "[Test] Data : Index"
+              working-directory: ${{ env.magento-directory }}
+              run: php bin/magento index:reindex
+
+            - name: "[Test] Web : Homepage"
+              run: |
+                echo "==> Testing homepage..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/ -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] Web : Catalogsearch"
+              run: |
+                echo "==> Testing catalogsearch..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/catalogsearch/result/?q=top -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] Web : Autocomplete"
+              run: |
+                echo "==> Testing Autocomplete..."
+                curl_status=`curl --silent --connect-timeout 8 --output /dev/null -LI http://localhost/search/ajax/suggest/?q=top -LI -w "%{http_code}\n"`
+                echo ${curl_status}
+                if [[ ${curl_status} -ge 400 ]];
+                then
+                  exit 2;
+                fi;
+
+            - name: "[Test] Rest : Schema"
+              run: |
+                echo "==> Testing Rest Schema..."
+                curl -i -X GET http://localhost/rest/all/schema?services=all
+
+            - name: "[Test] GraphQl : Schema"
+              run: |
+                echo "==> Testing GraphQL Schema..."
+                curl -i -X POST http://localhost/graphql -H "Content-Type: application/json" -d @$GITHUB_WORKSPACE/Resources/tests/graphql/introspection_query.json
+
+            - name: "[Test] GraphQl : Search"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : Search (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/filter/query.gql"
+
+            - name: "[Test] GraphQl : Category"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/query.gql"
+
+            - name: "[Test] GraphQl : Category (filtered)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/category/filter/query.gql"
+
+            - name: "[Test] GraphQl : Product Detail"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/search/query.gql"
+
+            - name: "[Test] GraphQl : View More (Category)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/category/query.gql"
+
+            - name: "[Test] GraphQl : View More (Search)"
+              run: |
+                echo "==> Testing Search"
+                gq \
+                http://localhost/graphql \
+                -l \
+                -H "Content-Type: application/json" \
+                --variablesFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/variables.json" \
+                --queryFile="$GITHUB_WORKSPACE/Resources/tests/graphql/viewmore/search/query.gql"
+
+            - name: "[End] Job failed, gathering logs"
+              env:
+                MAGENTO_ROOT: ${{ env.magento-directory }}
+              if: ${{ failure() }}
+              run: |
+                tail -n 100 /var/log/apache2/apache-error.log
+                tail -n 100 $MAGENTO_ROOT/var/log/*.log
