@@ -88,6 +88,7 @@ class InstallConfig implements InstallConfigInterface
      * {@inheritDoc}
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function configure(array $inputOptions)
     {
@@ -108,6 +109,11 @@ class InstallConfig implements InstallConfigInterface
 
         if (isset($inputOptions['elasticsearch-host']) && isset($inputOptions['elasticsearch-port'])) {
             $esHosts = sprintf('%s:%s', $inputOptions['elasticsearch-host'], $inputOptions['elasticsearch-port']);
+            $this->configWriter->save(self::ES_CLIENT . 'servers', $esHosts);
+        }
+
+        if (isset($inputOptions['opensearch-host']) && isset($inputOptions['opensearch-port'])) {
+            $esHosts = sprintf('%s:%s', $inputOptions['opensearch-host'], $inputOptions['opensearch-port']);
             $this->configWriter->save(self::ES_CLIENT . 'servers', $esHosts);
         }
     }
