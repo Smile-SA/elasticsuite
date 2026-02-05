@@ -1,16 +1,7 @@
 name: Cloud Integration (2.11.x)
 
 on:
-    push:
-        branches:
-          - 2.11.x
-          - master
-
-    pull_request_target:
-        branches:
-          - 2.11.x
-          - master
-        types: [labeled,synchronize]
+  workflow_dispatch:
 
 env:
 # List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
@@ -25,11 +16,8 @@ env:
 
 jobs:
     build:
-        if: |
-          ( ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
-            && (github.event.pull_request.draft == false) )
         runs-on: ubuntu-22.04
-        name: 'Integration'
+        name: 'Cloud Integration'
         services:
             mysql80:
                 image: docker://mysql:8.0
