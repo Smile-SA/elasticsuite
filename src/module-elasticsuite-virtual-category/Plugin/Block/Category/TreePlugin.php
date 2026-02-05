@@ -205,26 +205,42 @@ class TreePlugin
     /**
      * Decorate a category tree node if it is virtual and then dig into the children.
      *
-     * @param array  $node     Category tree node.
-     * @param string $classKey CSS class property identifier.
+     * Supports both legacy (`cls`) and jsTree (`li_attr.class`) formats
+     * to ensure compatibility across Magento versions.
+     *
+     * @param array $node Category tree node.
      *
      * @return void
      */
-    private function decorateNode(array &$node, $classKey = 'cls')
+    private function decorateNode(array &$node): void
     {
         $categoryId = $node['id'] ?? 0;
+
         if (array_key_exists($categoryId, $this->getAllVirtualCategoriesIds())) {
-            $cssClasses = $node[$classKey] ?? '';
-            if (!empty($cssClasses)) {
-                $cssClasses .= ' ';
+            // Legacy Magento key (<= 2.4.7).
+            $legacyClasses = $node['cls'] ?? '';
+            if ($legacyClasses !== '') {
+                $legacyClasses .= ' ';
             }
-            $cssClasses .= $this->cssClass;
-            $node[$classKey] = $cssClasses;
+            $legacyClasses .= $this->cssClass;
+            $node['cls'] = $legacyClasses;
+
+            // JsTree standard key (>= 2.4.8).
+            if (!isset($node['li_attr']) || !is_array($node['li_attr'])) {
+                $node['li_attr'] = [];
+            }
+
+            $liAttrClasses = $node['li_attr']['class'] ?? '';
+            if ($liAttrClasses !== '') {
+                $liAttrClasses .= ' ';
+            }
+            $liAttrClasses .= $this->cssClass;
+            $node['li_attr']['class'] = $liAttrClasses;
         }
 
-        if (array_key_exists('children', $node)) {
+        if (!empty($node['children']) && is_array($node['children'])) {
             foreach ($node['children'] as &$childNode) {
-                $this->decorateNode($childNode, $classKey);
+                $this->decorateNode($childNode);
             }
         }
     }
