@@ -1,16 +1,7 @@
-name: Integration (2.11.x)
+name: Cloud Integration (2.11.x)
 
 on:
-    push:
-        branches:
-          - 2.11.x
-          - master
-
-    pull_request_target:
-        branches:
-          - 2.11.x
-          - master
-        types: [labeled,synchronize]
+  workflow_dispatch:
 
 env:
 # List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
@@ -25,11 +16,8 @@ env:
 
 jobs:
     build:
-        if: |
-          ( ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
-            && (github.event.pull_request.draft == false) )
         runs-on: ubuntu-22.04
-        name: 'Integration'
+        name: 'Cloud Integration'
         services:
             mysql80:
                 image: docker://mysql:8.0
@@ -79,106 +67,81 @@ jobs:
                 include:
                   - php-versions: '8.1'
                     magento-versions: '2.4.6-p13'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: false
-                  - php-versions: '8.1'
-                    magento-versions: '2.4.6-p13'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
-                  - php-versions: '8.2'
-                    magento-versions: '2.4.6-p13'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: false
+                    force-opensearch: true
                   - php-versions: '8.2'
                     magento-versions: '2.4.6-p13'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
-                  - php-versions: '8.2'
-                    magento-versions: '2.4.7-p8'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: false
+                    force-opensearch: false
                   - php-versions: '8.2'
                     magento-versions: '2.4.7-p8'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
-                  - php-versions: '8.3'
-                    magento-versions: '2.4.7-p8'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: false
+                    force-opensearch: true
                   - php-versions: '8.3'
                     magento-versions: '2.4.7-p8'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: false
-                  - php-versions: '8.3'
-                    magento-versions: '2.4.8-p3'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: true
+                    force-opensearch: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: true
+                    force-opensearch: true
                   - php-versions: '8.3'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch2'
                     experimental: true
+                    force-opensearch: false
                   - php-versions: '8.3'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch3'
                     experimental: true
-                  - php-versions: '8.4'
-                    magento-versions: '2.4.8-p3'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch2'
-                    experimental: true
+                    force-opensearch: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch2'
                     experimental: true
+                    force-opensearch: false
                   - php-versions: '8.4'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch3'
                     experimental: true
+                    force-opensearch: true
                   - php-versions: '8.4'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch2'
                     experimental: true
+                    force-opensearch: false
                   - php-versions: '8.4'
                     magento-versions: '2.4.8-p3'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch3'
                     experimental: true
+                    force-opensearch: true
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -336,8 +299,13 @@ jobs:
               env:
                   SEARCH_ENGINE: ${{ matrix.engine }}
                   DB_PORT: ${{ matrix.db }}
-              run: php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --elasticsearch-host="localhost" --elasticsearch-port="${{ env[env.SEARCH_ENGINE] }}" -q
-
+                  FORCE_OPENSEARCH: ${{ matrix.force-opensearch }}
+              run: |
+                if [ $FORCE_OPENSEARCH = true ]; then
+                  php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --search-engine="opensearch" --opensearch-host="localhost" --opensearch-port="${{ env[env.SEARCH_ENGINE] }}"
+                else
+                  php bin/magento setup:install --db-host="0.0.0.0:${{ env[env.DB_PORT] }}" --db-password="magento2" --admin-user="admin" --admin-password="smile1234" --admin-email="admin@example.com" --admin-firstname="Admin" --admin-lastname="Smile" --db-name="magento2" --opensearch-host="localhost" --opensearch-port="${{ env[env.SEARCH_ENGINE] }}"
+                fi
             - name: "[Test] Setup Upgrade"
               working-directory: ${{ env.magento-directory }}
               run: php bin/magento setup:upgrade -q

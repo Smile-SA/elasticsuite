@@ -140,12 +140,16 @@ class AbstractAttributeData extends Indexer
                     ['attribute_id', 'attribute_code']
                 )
                 ->where("entity.{$entityIdField} IN (?)", $entityIds)
-                ->where("t_attribute.attribute_id IN (?)", $attributeIds)
-                ->where("t_attribute.value IS NOT NULL");
+                ->where("t_attribute.attribute_id IN (?)", $attributeIds);
 
             // Get the result and override values from a previous loop.
             foreach ($this->connection->fetchAll($select) as $row) {
                 $key = "{$row['entity_id']}-{$row['attribute_id']}";
+                if ($row['value'] === null) {
+                    // When an attribute value is explicitly set to null in a higher-priority scope, do not use the fallback value.
+                    unset($result[$key]);
+                    continue;
+                }
                 $result[$key] = $row;
             }
         }

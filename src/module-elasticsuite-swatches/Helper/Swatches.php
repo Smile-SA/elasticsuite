@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteSwatches\Helper;
 
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductInterface as Product;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 use Magento\Eav\Model\Entity\Attribute;
@@ -70,6 +71,37 @@ class Swatches extends \Magento\Swatches\Helper\Data
         }
 
         return $variation;
+    }
+
+    /**
+     * Load first variation with image
+     * Override: Manage fallback for child products with images when multiple swatch values
+     * are selected and the current child does not have an image.
+     *
+     * @param ProductInterface $configurableProduct Configurable product.
+     * @param array            $requiredAttributes  Attributes to match in the child product.
+     *
+     * @return bool|ProductInterface
+     */
+    public function loadFirstVariationWithImage(ProductInterface $configurableProduct, array $requiredAttributes)
+    {
+        if ($this->isProductHasSwatch($configurableProduct)) {
+            $usedProducts = $configurableProduct->getTypeInstance()->getUsedProducts($configurableProduct);
+
+            foreach ($usedProducts as $simpleProduct) {
+                foreach ($requiredAttributes as $attributeCode => $requiredValues) {
+                    if (!in_array($simpleProduct->getData($attributeCode), $requiredValues)) {
+                        break 2;
+                    }
+                }
+
+                if ($this->isMediaAvailable($simpleProduct, 'image')) {
+                    return $simpleProduct;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -173,5 +205,29 @@ class Swatches extends \Magento\Swatches\Helper\Data
             ['pr' => $tableProductRelation],
             'e.entity_id = pr.child_id'
         )->where('pr.parent_id = ?', $parentId);
+    }
+
+    /**
+     * Check is media attribute available
+     * Override: Copy this method because native one is private.
+     *
+     * @param Product $product       Product.
+     * @param string  $attributeCode Media attribute code.
+     *
+     * @return bool
+     */
+    private function isMediaAvailable(Product $product, string $attributeCode): bool
+    {
+        $isAvailable = false;
+
+        $mediaGallery = $product->getMediaGalleryEntries();
+        foreach ($mediaGallery as $mediaEntry) {
+            if (in_array($attributeCode, $mediaEntry->getTypes(), true)) {
+                $isAvailable = !$mediaEntry->isDisabled();
+                break;
+            }
+        }
+
+        return $isAvailable;
     }
 }
