@@ -147,7 +147,8 @@ define([
          * Search result message
          */
         getSearchResultMessage : function() {
-            return this.noSearchResultLabel.replace("%s", '"' + this.fulltextSearch() + '"')
+            const escapedSearch = $('<div/>').text(this.fulltextSearch()).html();
+            return this.noSearchResultLabel.replace("%s", `"${escapedSearch}"`);
         },
         
         /**
