@@ -17,6 +17,10 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Indexer;
  * Generic indexer handler test case.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ * @SuppressWarnings(PHPMD.NPathComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -380,21 +384,58 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
             $typeName
         );
 
-        $mockIndexOperation->expects($this->exactly(2))
+        $invokeCount = $this->exactly(2);
+        $invocationsCountCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $invocationsCountCallback = 'getInvocationCount';
+        }
+        $mockIndexOperation->expects($invokeCount)
             ->method('indexExists')
-            ->withConsecutive(
-                [$indexName, 1],
-                [$indexName, 2]
-            )
-            ->willReturn(true);
+            /*
+             * withConsecutive removed in PHPUnit 10 without any alternative \o/.
+             * ---
+             * ->withConsecutive(
+             *   [$indexName, 1],
+             *   [$indexName, 2]
+             * )
+             * ->willReturn(true);
+             */
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $indexName) {
+                $this->assertEquals($indexName, $expectedParameters[0]);
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals(1, $expectedParameters[1]);
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals(2, $expectedParameters[1]);
+                }
 
-        $mockIndexOperation->expects($this->exactly(2))
+                return true;
+            });
+
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
             ->method('getIndexByName')
+            /*
             ->withConsecutive(
                 [$indexName, 1],
                 [$indexName, 2]
             )
             ->willReturnOnConsecutiveCalls($mockIndex1, $mockIndex2);
+            */
+            ->willReturnCallback(
+                function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $indexName, $mockIndex1, $mockIndex2) {
+                    $this->assertEquals($indexName, $expectedParameters[0]);
+                    if ($invokeCount->$invocationsCountCallback() === 1) {
+                        $this->assertEquals(1, $expectedParameters[1]);
+                    }
+                    if ($invokeCount->$invocationsCountCallback() === 2) {
+                        $this->assertEquals(2, $expectedParameters[1]);
+                    }
+
+                    return ($expectedParameters[1] === 1) ? $mockIndex1 : $mockIndex2;
+                }
+            );
 
         $mockIndexOperation->expects($this->exactly(2))
             ->method('getBatchIndexingSize')
@@ -421,13 +462,37 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('createBulk')
             ->willReturnOnConsecutiveCalls($mockBulk1, $mockBulk2);
 
-        $mockIndexOperation->expects($this->exactly(2))
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
             ->method('executeBulk')
-            ->withConsecutive([$mockBulk1], [$mockBulk2]);
+            // ->withConsecutive([$mockBulk1], [$mockBulk2]);
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $mockBulk1, $mockBulk2) {
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals($mockBulk1, $expectedParameters[0]);
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals($mockBulk2, $expectedParameters[0]);
+                }
 
-        $mockIndexOperation->expects($this->exactly(2))
+                return true;
+            });
+
+
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
             ->method('refreshIndex')
-            ->withConsecutive([$mockIndex1], [$mockIndex2]);
+            // ->withConsecutive([$mockIndex1], [$mockIndex2]);
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $mockIndex1, $mockIndex2) {
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals($mockIndex1, $expectedParameters[0]);
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals($mockIndex2, $expectedParameters[0]);
+                }
+
+                return true;
+            });
+
 
         $result = $genericIndexerHandler->deleteIndex([$dimension1, $dimension2], $documents);
 
@@ -569,22 +634,76 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
             $typeName
         );
 
-        $mockIndexOperation->expects($this->exactly(3))
+        $invokeCount = $this->exactly(3);
+        $invocationsCountCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $invocationsCountCallback = 'getInvocationCount';
+        }
+        $mockIndexOperation->expects($invokeCount)
             ->method('indexExists')
+            /*
             ->withConsecutive(
                 [$indexName, 1],
                 [$indexName, 2],
                 [$indexName, 3]
             )
             ->willReturnOnConsecutiveCalls(true, false, true);
+            */
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $indexName) {
+                $this->assertEquals($indexName, $expectedParameters[0], 'Index name');
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals(1, $expectedParameters[1], 'Store ID');
 
-        $mockIndexOperation->expects($this->exactly(2))
+                    return true;
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals(2, $expectedParameters[1], 'Store ID');
+
+                    return false;
+                }
+                if ($invokeCount->$invocationsCountCallback() === 3) {
+                    $this->assertEquals(3, $expectedParameters[1], 'Store ID');
+
+                    return true;
+                }
+
+                return false;
+            });
+
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
             ->method('getIndexByName')
+            /*
             ->withConsecutive(
                 [$indexName, 1],
                 [$indexName, 3]
             )
             ->willReturnOnConsecutiveCalls($mockIndex1, $mockIndex3);
+            */
+            ->willReturnCallback(
+                function (...$expectedParameters) use (
+                    $invokeCount,
+                    $invocationsCountCallback,
+                    $indexName,
+                    $mockIndex1,
+                    $mockIndex3
+                ) {
+                    $this->assertEquals($indexName, $expectedParameters[0], 'Index name');
+                    if ($invokeCount->$invocationsCountCallback() === 1) {
+                        $this->assertEquals(1, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex1;
+                    }
+                    if ($invokeCount->$invocationsCountCallback() === 2) {
+                        $this->assertEquals(3, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex3;
+                    }
+
+                    return null;
+                }
+            );
 
         $mockIndexOperation->expects($this->exactly(2))
             ->method('getBatchIndexingSize')
@@ -611,13 +730,52 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('createBulk')
             ->willReturnOnConsecutiveCalls($mockBulk1, $mockBulk3);
 
-        $mockIndexOperation->expects($this->exactly(2))
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
             ->method('executeBulk')
-            ->withConsecutive([$mockBulk1], [$mockBulk3]);
+            // ->withConsecutive([$mockBulk1], [$mockBulk3]);
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $mockBulk1, $mockBulk3) {
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals($mockBulk1, $expectedParameters[0]);
 
-        $mockIndexOperation->expects($this->exactly(2))
+                    return true;
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals($mockBulk3, $expectedParameters[0]);
+
+                    return true;
+                }
+
+                return false;
+            });
+
+        /*
+        $mockIndexOperation->expects($this->once())
             ->method('refreshIndex')
-            ->withConsecutive([$mockIndex1], [$mockIndex3]);
+            ->with($mockIndex1);
+
+        $result = $genericIndexerHandler->deleteIndex([$dimension1, $dimension2, $dimension3], $documents);
+
+        $this->assertSame($genericIndexerHandler, $result);
+        */
+        $invokeCount = $this->exactly(2);
+        $mockIndexOperation->expects($invokeCount)
+            ->method('refreshIndex')
+            // ->withConsecutive([$mockIndex1], [$mockIndex3]);
+            ->willReturnCallback(function (...$expectedParameters) use ($invokeCount, $invocationsCountCallback, $mockIndex1, $mockIndex3) {
+                if ($invokeCount->$invocationsCountCallback() === 1) {
+                    $this->assertEquals($mockIndex1, $expectedParameters[0]);
+
+                    return true;
+                }
+                if ($invokeCount->$invocationsCountCallback() === 2) {
+                    $this->assertEquals($mockIndex3, $expectedParameters[0]);
+
+                    return true;
+                }
+
+                return false;
+            });
 
         $result = $genericIndexerHandler->deleteIndex([$dimension1, $dimension2, $dimension3], $documents);
 
@@ -668,14 +826,51 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
         $mockIndex2 = $this->getMockIndex();
         $mockIndex3 = $this->getMockIndex();
 
-        $mockIndexOperation->expects($this->exactly(3))
+        $invokeCount = $this->exactly(3);
+        $invocationsCountCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $invocationsCountCallback = 'getInvocationCount';
+        }
+        $mockIndexOperation->expects($invokeCount)
             ->method('createIndex')
+            /*
             ->withConsecutive(
                 [$indexName, 1],
                 [$indexName, 2],
                 [$indexName, 3]
             )
             ->willReturnOnConsecutiveCalls($mockIndex1, $mockIndex2, $mockIndex3);
+            */
+            ->willReturnCallback(
+                function (...$expectedParameters) use (
+                    $invokeCount,
+                    $invocationsCountCallback,
+                    $indexName,
+                    $mockIndex1,
+                    $mockIndex2,
+                    $mockIndex3
+                ) {
+                    $this->assertEquals($indexName, $expectedParameters[0], 'Index name');
+                    if ($invokeCount->$invocationsCountCallback() === 1) {
+                        $this->assertEquals(1, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex1;
+                    }
+                    if ($invokeCount->$invocationsCountCallback() === 2) {
+                        $this->assertEquals(2, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex2;
+                    }
+                    if ($invokeCount->$invocationsCountCallback() === 3) {
+                        $this->assertEquals(3, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex3;
+                    }
+
+                    return null;
+                }
+            );
 
         $result = $genericIndexerHandler->cleanIndex([$dimension1, $dimension2, $dimension3]);
 
@@ -719,8 +914,15 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
         );
 
         $mockIndex1 = $this->getMockIndex();
-        $mockIndexOperation->expects($this->exactly(2))
+        $invokeCount = $this->exactly(2);
+        $invocationsCountCallback = 'numberOfInvocations';
+        if (method_exists($invokeCount, 'getInvocationCount')) {
+            // Method 'numberOfInvocations' only exists starting from PHPUnit 10.
+            $invocationsCountCallback = 'getInvocationCount';
+        }
+        $mockIndexOperation->expects($invokeCount)
             ->method('createIndex')
+            /*
             ->withConsecutive(
                 [$indexName, 1],
                 [$indexName, 2]
@@ -728,6 +930,28 @@ class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturnOnConsecutiveCalls(
                 $mockIndex1,
                 $this->throwException(new \Exception('Failed to create index'))
+            );
+            */
+            ->willReturnCallback(
+                function (...$expectedParameters) use (
+                    $invokeCount,
+                    $invocationsCountCallback,
+                    $indexName,
+                    $mockIndex1
+                ) {
+                    $this->assertEquals($indexName, $expectedParameters[0], 'Index name');
+                    if ($invokeCount->$invocationsCountCallback() === 1) {
+                        $this->assertEquals(1, $expectedParameters[1], 'Store ID');
+
+                        return $mockIndex1;
+                    }
+                    if ($invokeCount->$invocationsCountCallback() === 2) {
+                        $this->assertEquals(2, $expectedParameters[1], 'Store ID');
+                        throw new \Exception('Failed to create index');
+                    }
+
+                    return null;
+                }
             );
 
         $this->expectException(\Exception::class);
