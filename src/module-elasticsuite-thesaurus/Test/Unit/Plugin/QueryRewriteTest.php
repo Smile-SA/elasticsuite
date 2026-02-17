@@ -95,12 +95,12 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $maxRewrittenQueries = 0;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -162,12 +162,12 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $maxRewrittenQueries = 0;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -224,13 +224,13 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $maxRewrittenQueries = 1;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        // Passing the mock Query Factory to the plugin to count the occurrence of calls to 'create'.
-        $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex);
+        // Passing the mock Query Factory to the plugin to count the occurence of calls to 'create'.
+        $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         // But passing the real Query Factory (with mocked factories) to the query builder itself.
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 

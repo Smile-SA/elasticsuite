@@ -71,7 +71,7 @@ class QueryBuilder
      * Create the fulltext search query.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container configuration.
-     * @param string                          $queryText       The text query.
+     * @param string|array                    $queryText       The text query.
      * @param string                          $spellingType    The type of spellchecked applied.
      * @param float                           $boost           Boost of the created query.
      * @param int                             $depth           Call depth of the create method. Can be used to avoid/prevent cycles.
