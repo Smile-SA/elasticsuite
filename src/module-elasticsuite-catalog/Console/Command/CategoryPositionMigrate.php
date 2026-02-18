@@ -151,8 +151,8 @@ class CategoryPositionMigrate extends Command
             $result = $this->migrator->singleCategoryMigration((int) $categoryId, $options, $dryRun, $output);
         }
 
-        // Render preview or summary.
-        if ($dryRun && !empty($result['preview'])) {
+        // Render preview and summary.
+        if (!empty($result['preview'])) {
             $output->writeln('<comment>Preview mode: showing up to 100 rows.</comment>');
             $this->renderTable($output, $result['preview_headers'], $result['preview']);
         }
@@ -204,8 +204,38 @@ class CategoryPositionMigrate extends Command
         $migrateZero = $helper->ask(
             $input,
             $output,
-            new ConfirmationQuestion('Transfer zero positions? (y/n) ', true)
+            new ConfirmationQuestion('Transfer zero positions? (y/n) ', false)
         );
+
+        // Show warning ONLY if user selected "Yes" for zero positions.
+        if ($migrateZero) {
+            $output->writeln('');
+            $output->writeln(
+                '<error>WARNING:</error><comment> '
+                . 'This may migrate a large number of unused positions, significantly slowing '
+                . 'down category pages in the BO and potentially impacting boost application.'
+                . '</comment>'
+            );
+            $output->writeln(
+                '<comment>Enabling this option is generally not recommended.</comment>'
+            );
+            $output->writeln('');
+
+            $confirmRisk = $helper->ask(
+                $input,
+                $output,
+                new ConfirmationQuestion(
+                    'Are you absolutely sure you want to continue? (y/n) ',
+                    false
+                )
+            );
+
+            if (!$confirmRisk) {
+                $migrateZero = false;
+                $output->writeln('<comment>Zero positions migration has been disabled.</comment>');
+                $output->writeln('');
+            }
+        }
 
         $migratePositive = $helper->ask(
             $input,

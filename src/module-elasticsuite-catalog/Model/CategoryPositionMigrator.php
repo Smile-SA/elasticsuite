@@ -13,8 +13,11 @@
 
 namespace Smile\ElasticsuiteCatalog\Model;
 
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\CategoryProduct as CategoryProductResource;
+use Magento\Eav\Model\Config;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
@@ -46,6 +49,21 @@ class CategoryPositionMigrator
     const TARGET_TABLE_NAME = 'smile_virtualcategory_catalog_category_product_position';
 
     /**
+     * @var string Product visibility table (int values).
+     */
+    const PRODUCT_VISIBILITY_TABLE_NAME = 'catalog_product_entity_int';
+
+    /**
+     * @var int Number of rows displayed in CLI preview output.
+     */
+    const PREVIEW_LIMIT = 100;
+
+    /**
+     * @var int Number of records to insert in a single batch during migration.
+     */
+    const BATCH_SIZE = 1000;
+
+    /**
      * @var ResourceConnection
      */
     private $resource;
@@ -66,6 +84,13 @@ class CategoryPositionMigrator
     private $categoryProductResource;
 
     /**
+     * Eav config.
+     *
+     * @var Config
+     */
+    private $eavConfig;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -76,18 +101,21 @@ class CategoryPositionMigrator
      * @param ResourceConnection        $resource                  Resource connection for DB access.
      * @param CategoryCollectionFactory $categoryCollectionFactory Magento category collection factory.
      * @param CategoryProductResource   $categoryProductResource   Magento legacy category-product relation resource model.
+     * @param Config                    $eavConfig                 Eav config.
      * @param LoggerInterface           $logger                    PSR-compliant logger for debug and error logging.
      */
     public function __construct(
         ResourceConnection $resource,
         CategoryCollectionFactory $categoryCollectionFactory,
         CategoryProductResource $categoryProductResource,
+        Config $eavConfig,
         LoggerInterface $logger
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->categoryProductResource = $categoryProductResource;
+        $this->eavConfig = $eavConfig;
         $this->logger = $logger;
     }
 
@@ -113,7 +141,7 @@ class CategoryPositionMigrator
      * @param bool                $dryRun  Whether to simulate changes without writing to DB.
      * @param OutputInterface     $output  CLI output for progress display.
      *
-     * @return array{categories:int,migrated:int,preview_headers:array<int,string>,preview:array<int,array<int,mixed>>}
+     * @return array{migrated:int,deleted:int,normalized:array<int,int>,preview:array<int,array<int,int>>}
      */
     public function wholeCatalogMigration(array $options, bool $dryRun, OutputInterface $output): array
     {
@@ -122,7 +150,6 @@ class CategoryPositionMigrator
 
         $totalMigrated = 0;
         $previewRows = [];
-        $previewLimit = 100;
 
         foreach ($categoryIds as $categoryId) {
             try {
@@ -138,17 +165,12 @@ class CategoryPositionMigrator
                 $totalMigrated += $result['migrated'];
 
                 // Only gather limited preview rows.
-                if ($dryRun && count($previewRows) < $previewLimit) {
-                    foreach ($result['updates'] as $row) {
-                        if (count($previewRows) >= $previewLimit) {
+                if ($dryRun && count($previewRows) < self::PREVIEW_LIMIT) {
+                    foreach ($result['preview'] as $row) {
+                        if (count($previewRows) >= self::PREVIEW_LIMIT) {
                             break;
                         }
-                        $previewRows[] = [
-                            $categoryId,
-                            $row['product_id'],
-                            $row['position'],
-                            $result['normalized'][$row['product_id']] ?? null,
-                        ];
+                        $previewRows[] = $row;
                     }
                 }
             } catch (LocalizedException $e) {
@@ -173,7 +195,7 @@ class CategoryPositionMigrator
      * @param bool                $dryRun     Whether to simulate without persisting data.
      * @param OutputInterface     $output     CLI output for messaging.
      *
-     * @return array{categories:int,migrated:int,preview_headers:array<int,string>,preview:array<int,array<int,mixed>>}
+     * @return array{migrated:int,deleted:int,normalized:array<int,int>,preview:array<int,array<int,int>>}
      */
     public function singleCategoryMigration(int $categoryId, array $options, bool $dryRun, OutputInterface $output): array
     {
@@ -188,15 +210,7 @@ class CategoryPositionMigrator
             $options['conflictStrategy']
         );
 
-        $previewRows = [];
-        foreach ($result['updates'] as $row) {
-            $previewRows[] = [
-                $categoryId,
-                $row['product_id'],
-                $row['position'],
-                $result['normalized'][$row['product_id']] ?? null,
-            ];
-        }
+        $previewRows = $result['preview'];
 
         return [
             'categories'       => 1,
@@ -209,6 +223,14 @@ class CategoryPositionMigrator
     /**
      * Core logic: Migrate or preview product positions for one category.
      *
+     *  This method:
+     *  - Uses pagination to avoid memory issues.
+     *  - Filters out non-visible products (e.g. children of configurables).
+     *  - Normalizes positions to positive contiguous values.
+     *  - Handles conflicts (delete or reorder).
+     *  - Collects first 100 rows with old and new positions.
+     *  - Inserts data in batches for performance.
+     *
      * @param int    $categoryId       Category to process.
      * @param bool   $dryRun           If true, no database writes are performed.
      * @param bool   $migrateNegative  Include negative positions.
@@ -216,13 +238,13 @@ class CategoryPositionMigrator
      * @param bool   $migratePositive  Include positive positions.
      * @param string $conflictStrategy Conflict resolution mode ('reorder' or 'delete').
      *
-     * @return array{migrated:int,deleted:int,updates:array<int,array{product_id:int,position:int}>,normalized:array<int,int>}
+     * @return array{migrated:int,deleted:int,normalized:array<int,int>,preview:array<int,array<int,mixed>>}
      *
      * @throws LocalizedException If any database or transactional error occurs.
+     *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function migrateCategoryPositions(
         int $categoryId,
@@ -234,118 +256,139 @@ class CategoryPositionMigrator
     ): array {
         $conflictStrategy = ($conflictStrategy === 'delete') ? 'delete' : 'reorder';
 
-        $legacyTable = $this->categoryProductResource->getMainTable();
-        $targetTable = $this->resource->getTableName(self::TARGET_TABLE_NAME);
+        $legacyTable     = $this->categoryProductResource->getMainTable();
+        $targetTable     = $this->resource->getTableName(self::TARGET_TABLE_NAME);
+        $visibilityTable = $this->resource->getTableName(self::PRODUCT_VISIBILITY_TABLE_NAME);
 
-        // Fetch all legacy positions.
-        $select = $this->connection->select()
-            ->from($legacyTable, ['product_id', 'position'])
-            ->where('category_id = ?', $categoryId)
-            ->order('position ASC');
+        // Resolve visibility attribute ID.
+        $visibilityAttribute = $this->eavConfig->getAttribute(Product::ENTITY, 'visibility');
+        $visibilityAttributeId = (int) $visibilityAttribute->getAttributeId();
 
-        $rows = $this->connection->fetchAll($select);
+        $storeId = 0;
+        $offset = 0;
 
-        if (empty($rows)) {
-            return ['migrated' => 0, 'deleted' => 0, 'updates' => [], 'normalized' => []];
-        }
-
-        // Filter based on migration rules.
-        $updates = array_values(array_filter(array_map(static function (array $r) use (
-            $migrateNegative,
-            $migrateZero,
-            $migratePositive
-        ): ?array {
-            $pos = (int) $r['position'];
-            if ($pos < 0 && !$migrateNegative) {
-                return null;
-            }
-            if ($pos === 0 && !$migrateZero) {
-                return null;
-            }
-            if ($pos > 0 && !$migratePositive) {
-                return null;
-            }
-
-            return ['product_id' => (int) $r['product_id'], 'position' => $pos];
-        }, $rows)));
-
-        if (empty($updates)) {
-            return ['migrated' => 0, 'deleted' => 0, 'updates' => [], 'normalized' => []];
-        }
-
-        // Sort by position.
-        usort($updates, static fn($a, $b) => $a['position'] <=> $b['position']);
-
-        // Normalize into sequential positions.
-        $normalized = [];
-        $seenPositions = [];
+        $processedOriginalPositions = [];
         $toDelete = [];
+        $normalized = [];
+        $previewRows = [];
+
         $nextPos = 1;
 
-        foreach ($updates as $u) {
-            $pid = $u['product_id'];
-            $pos = $u['position'];
+        do {
+            // Fetch a batch of products with left join to visibility.
+            $select = $this->connection->select()
+                ->from(['ccp' => $legacyTable], ['product_id', 'position'])
+                ->joinLeft(
+                    ['cpei' => $visibilityTable],
+                    'cpei.row_id = ccp.product_id'
+                    . ' AND cpei.attribute_id = ' . $visibilityAttributeId
+                    . ' AND cpei.store_id = ' . $storeId,
+                    []
+                )
+                ->where('ccp.category_id = ?', $categoryId)
+                // Treat NULL visibility as VISIBILITY_BOTH.
+                ->order('ccp.position ASC')
+                ->limit(self::BATCH_SIZE, $offset);
 
-            if (isset($seenPositions[$pos])) {
-                if ($conflictStrategy === 'delete') {
-                    $toDelete[] = $pid;
+            $rows = $this->connection->fetchAll($select);
+            if (empty($rows)) {
+                break;
+            }
+
+            foreach ($rows as $row) {
+                $productId   = (int) $row['product_id'];
+                $originalPos = (int) $row['position'];
+                $visibility  = $row['value'] ?? Visibility::VISIBILITY_BOTH;
+
+                // Respect visibility: skip "Not Visible Individually".
+                if ($visibility == Visibility::VISIBILITY_NOT_VISIBLE) {
                     continue;
                 }
-                // Reorder: just continue assigning unique new positions.
-            }
 
-            $seenPositions[$pos] = true;
-            $normalized[$pid] = $nextPos++;
-        }
-
-        if ($conflictStrategy === 'delete' && !empty($toDelete)) {
-            $updates = array_values(array_filter($updates, static function ($u) use ($toDelete) {
-                return !in_array($u['product_id'], $toDelete, true);
-            }));
-
-            $normalized = [];
-            $newPos = 1;
-            foreach ($updates as $u) {
-                $normalized[$u['product_id']] = $newPos++;
-            }
-        }
-
-        // Persist data.
-        if (!$dryRun) {
-            $this->connection->beginTransaction();
-            try {
-                $this->connection->delete($targetTable, ['category_id = ?' => $categoryId, 'store_id = ?' => 0]);
-
-                if (!empty($normalized)) {
-                    $insertData = [];
-                    foreach ($normalized as $pid => $pos) {
-                        $insertData[] = [
-                            'category_id' => $categoryId,
-                            'product_id'  => $pid,
-                            'store_id'    => 0,
-                            'position'    => $pos,
-                        ];
-                    }
-                    $this->connection->insertMultiple($targetTable, $insertData);
+                // Apply migration filters (negative, zero, positive).
+                if (
+                    ($originalPos < 0 && !$migrateNegative) ||
+                    ($originalPos === 0 && !$migrateZero) ||
+                    ($originalPos > 0 && !$migratePositive)
+                ) {
+                    continue;
                 }
 
-                $this->connection->commit();
-            } catch (\Throwable $e) {
-                $this->connection->rollBack();
-                $this->logger->error(
-                    sprintf('Migration failed for category %d: %s', $categoryId, $e->getMessage())
-                );
-                throw new LocalizedException(
-                    __('Migration failed for category %1: %2', $categoryId, $e->getMessage())
-                );
+                // Conflict handling: delete or reorder.
+                if ($conflictStrategy === 'delete') {
+                    if (isset($processedOriginalPositions[$originalPos])) {
+                        $toDelete[] = $productId;
+                        continue;
+                    }
+                }
+
+                // Mark original position as processed.
+                $processedOriginalPositions[$originalPos] = true;
+
+                // Assign new sequential position.
+                $normalized[$productId] = $nextPos;
+
+                // Collect preview rows.
+                if (count($previewRows) < self::PREVIEW_LIMIT) {
+                    $previewRows[] = [
+                        $categoryId,
+                        $productId,
+                        $originalPos,
+                        $nextPos,
+                    ];
+                }
+
+                $nextPos++;
             }
+
+            $offset += self::BATCH_SIZE;
+        } while (count($rows) === self::BATCH_SIZE);
+
+        // If dry-run or nothing to persist, return immediately.
+        if ($dryRun || empty($normalized)) {
+            return [
+                'migrated'   => count($normalized),
+                'deleted'    => count($toDelete),
+                'normalized' => $normalized,
+                'preview'    => $previewRows,
+            ];
+        }
+
+        // Persist in batches.
+        $this->connection->beginTransaction();
+        try {
+            // Clear existing positions for this category/store.
+            $this->connection->delete($targetTable, ['category_id = ?' => $categoryId, 'store_id = ?' => $storeId]);
+
+            $batch = [];
+            foreach ($normalized as $productId => $position) {
+                $batch[] = [
+                    'category_id' => $categoryId,
+                    'product_id'  => $productId,
+                    'store_id'    => $storeId,
+                    'position'    => $position,
+                ];
+                if (count($batch) >= self::BATCH_SIZE) {
+                    $this->connection->insertMultiple($targetTable, $batch);
+                    $batch = [];
+                }
+            }
+            if (!empty($batch)) {
+                $this->connection->insertMultiple($targetTable, $batch);
+            }
+
+            $this->connection->commit();
+        } catch (\Throwable $e) {
+            $this->connection->rollBack();
+            $this->logger->error(sprintf('Migration failed for category %d: %s', $categoryId, $e->getMessage()));
+            throw new LocalizedException(__('Migration failed for category %1: %2', $categoryId, $e->getMessage()));
         }
 
         return [
             'migrated'   => count($normalized),
             'deleted'    => count($toDelete),
-            'updates'    => $updates,
             'normalized' => $normalized,
+            'preview'    => $previewRows,
         ];
     }
 }
