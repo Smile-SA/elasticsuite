@@ -291,7 +291,9 @@ class CategoryPositionMigrator
                 ->limit(self::BATCH_SIZE, $offset);
 
             $rows = $this->connection->fetchAll($select);
-            if (empty($rows)) {
+            $rowCount = count($rows);
+
+            if ($rowCount === 0) {
                 break;
             }
 
@@ -306,8 +308,7 @@ class CategoryPositionMigrator
                 }
 
                 // Apply migration filters (negative, zero, positive).
-                if (
-                    ($originalPos < 0 && !$migrateNegative) ||
+                if (($originalPos < 0 && !$migrateNegative) ||
                     ($originalPos === 0 && !$migrateZero) ||
                     ($originalPos > 0 && !$migratePositive)
                 ) {
@@ -342,7 +343,7 @@ class CategoryPositionMigrator
             }
 
             $offset += self::BATCH_SIZE;
-        } while (count($rows) === self::BATCH_SIZE);
+        } while ($rowCount === self::BATCH_SIZE);
 
         // If dry-run or nothing to persist, return immediately.
         if ($dryRun || empty($normalized)) {
