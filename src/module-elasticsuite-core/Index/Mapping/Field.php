@@ -68,6 +68,7 @@ class Field implements FieldInterface
         'is_used_in_spellcheck'   => false,
         'search_weight'           => 1,
         'default_search_analyzer' => self::ANALYZER_STANDARD,
+        'custom_search_analyzers' => [],
         'filter_logical_operator' => self::FILTER_LOGICAL_OPERATOR_OR,
         'norms_disabled'          => false,
         'is_spannable'            => false,
@@ -275,6 +276,18 @@ class Field implements FieldInterface
     /**
      * {@inheritDoc}
      */
+    public function getCustomSearchAnalyzers()
+    {
+        if (is_array($this->config['custom_search_analyzers'])) {
+            return $this->config['custom_search_analyzers'];
+        }
+
+        return json_decode($this->config['custom_search_analyzers'], true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function mergeConfig(array $config = [])
     {
         $config = array_merge($this->config, $config);
@@ -409,6 +422,7 @@ class Field implements FieldInterface
         if ($this->isSearchable() && $this->getSearchWeight() > 1) {
             $analyzers[] = self::ANALYZER_WHITESPACE;
             $analyzers[] = self::ANALYZER_SHINGLE;
+            $analyzers   = array_merge($analyzers, $this->getCustomSearchAnalyzers());
         }
 
         if (empty($analyzers) || $this->isFilterable()) {
