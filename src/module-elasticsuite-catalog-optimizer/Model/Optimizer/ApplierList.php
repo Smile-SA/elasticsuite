@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\Filter\PreBuilder as FunctionFilterPreBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -39,6 +40,11 @@ class ApplierList
     private $functionsProvider;
 
     /**
+     * @var FunctionFilterPreBuilder
+     */
+    private $preBuilder;
+
+    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
@@ -53,17 +59,20 @@ class ApplierList
      *
      * @param QueryFactory               $queryFactory      Query factory.
      * @param ProviderInterface          $functionsProvider Functions provider.
+     * @param FunctionFilterPreBuilder   $preBuilder        Function filter pre-builder.
      * @param ScopeConfigInterface       $scopeConfig       Scope configuration.
      * @param OptimizerFilterInterface[] $filters           Optimizer filters.
      */
     public function __construct(
         QueryFactory $queryFactory,
         ProviderInterface $functionsProvider,
+        FunctionFilterPreBuilder $preBuilder,
         ScopeConfigInterface $scopeConfig,
         array $filters = []
     ) {
         $this->queryFactory       = $queryFactory;
         $this->functionsProvider  = $functionsProvider;
+        $this->preBuilder         = $preBuilder;
         $this->scopeConfig        = $scopeConfig;
         $this->filters            = $filters;
     }
@@ -84,6 +93,8 @@ class ApplierList
             $optimizerIds = $this->filters[$containerConfiguration->getName()]->getOptimizerIds() ?? array_keys($functions);
             $functions = array_intersect_key($functions, array_flip($optimizerIds));
         }
+
+        $functions = $this->preBuilder->prebuild($containerConfiguration, $functions);
 
         return $this->applyFunctions($query, $functions);
     }
