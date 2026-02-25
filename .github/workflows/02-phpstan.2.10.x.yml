@@ -202,7 +202,7 @@ jobs:
 
       - name: "[Test] Collect i18n phrases"
         working-directory: ${{ env.magento-directory }}
-        run: php bin/magento i18n:collect-phrases vendor/smile/elasticsuite-premium 1>/dev/null
+        run: php bin/magento i18n:collect-phrases vendor/smile/elasticsuite 1>/dev/null
 
       - name: "[End] Job failed, gathering logs"
         env:
