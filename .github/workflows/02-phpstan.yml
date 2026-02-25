@@ -202,6 +202,10 @@ jobs:
             vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
           fi
 
+      - name: "[Test] Collect i18n phrases"
+        working-directory: ${{ env.magento-directory }}
+        run: php bin/magento i18n:collect-phrases vendor/smile/elasticsuite 1>/dev/null
+
       - name: "[End] Job failed, gathering logs"
         env:
           MAGENTO_ROOT: ${{ env.magento-directory }}
