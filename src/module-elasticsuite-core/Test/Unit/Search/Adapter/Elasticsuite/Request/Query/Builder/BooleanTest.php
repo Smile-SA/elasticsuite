@@ -121,6 +121,23 @@ class BooleanTest extends AbstractComplexQueryBuilder
     }
 
     /**
+     * Test the builder with a query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedBooleanQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $boolQuery = new BooleanQuery();
+        $boolQuery->setName('queryName');
+        $query = $builder->buildQuery($boolQuery);
+
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
+    }
+
+    /**
      * Test the builder with mandatory + cache params.
      *
      * @return void
