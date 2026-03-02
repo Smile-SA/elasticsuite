@@ -15,9 +15,12 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -32,6 +35,7 @@ use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCateg
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Url
 {
@@ -139,9 +143,14 @@ class Url
         if (!$this->virtualCategoryRoot->getAppliedRootCategory()) {
             $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
         } else {
-            $urlKeys = explode('/', $categoryRequestPath);
-            $urlKey  = array_pop($urlKeys);
-            $category = $this->loadCategoryByUrlKey($urlKey);
+            $categoryUrlPath = $categoryRequestPath;
+            $appliedRoot = $this->virtualCategoryRoot->getAppliedRootCategory();
+            $appliedRootUrlPath = $appliedRoot->getUrlPath();
+            if (!empty($appliedRootUrlPath) && (strpos($categoryRequestPath, $appliedRootUrlPath) === 0)) {
+                $categoryUrlPath = str_replace($appliedRootUrlPath, '', $categoryRequestPath);
+                $categoryUrlPath = ltrim($categoryUrlPath, '/');
+            }
+            $category = $this->loadCategoryByUrlPath($categoryUrlPath);
             $categoryId = $category->getId();
         }
         if ($categoryId) {
@@ -210,7 +219,7 @@ class Url
     /**
      * Retrieve Category Url Rewrite by path and Store.
      *
-     * @param string $categoryPath A category Path
+     * @param string $categoryPath A full category path (path/to/category))
      * @param int    $storeId      The Store Id
      *
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
@@ -218,7 +227,7 @@ class Url
     public function getCategoryRewrite($categoryPath, $storeId)
     {
         $categoryPath = str_replace($this->getCategoryUrlSuffix() ?? '', '', $categoryPath);
-        $category = $this->loadCategoryByUrlKey($categoryPath);
+        $category = $this->loadCategoryByUrlPath($categoryPath);
         $rewrite  = null;
 
         if ($category && $category->getId()) {
@@ -258,8 +267,10 @@ class Url
      *
      * @param string $requestPath The Request Path
      *
-     * @return \Magento\Framework\DataObject
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return DataObject
+     * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @deprecated
      */
     private function loadCategoryByUrlKey($requestPath)
     {
@@ -267,6 +278,25 @@ class Url
 
         $collection->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_key', ['eq' => $requestPath]);
+
+        return $collection->getFirstItem();
+    }
+
+    /**
+     * Load a category by its url path.
+     *
+     * @param string $requestPath The full request path
+     *
+     * @return DataObject
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function loadCategoryByUrlPath($requestPath)
+    {
+        $collection = $this->categoryCollectionFactory->create();
+
+        $collection->setStoreId($this->storeManager->getStore()->getId())
+            ->addAttributeToFilter('url_path', ['eq' => $requestPath]);
 
         return $collection->getFirstItem();
     }
@@ -302,7 +332,7 @@ class Url
     }
 
     /**
-     * Check if urls should be rendered by including the category path.
+     * Check if product urls should be rendered by including the category path.
      *
      * @return bool
      */
