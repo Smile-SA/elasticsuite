@@ -228,8 +228,8 @@ class CategoryPositionMigrator
      *  - Filters out non-visible products (e.g. children of configurables).
      *  - Normalizes positions to positive contiguous values.
      *  - Handles conflicts (delete or reorder).
-     *  - Collects first 100 rows with old and new positions.
-     *  - Inserts data in batches for performance.
+     *  - Collects first PREVIEW_LIMIT rows with old and new positions (by default 100 rows).
+     *  - Inserts data in fixed-size batches (streaming write, memory safe).
      *
      * @param int    $categoryId       Category to process.
      * @param bool   $dryRun           If true, no database writes are performed.
@@ -266,13 +266,30 @@ class CategoryPositionMigrator
 
         $storeId = 0;
         $offset = 0;
+        $migratedCount = 0;
 
         $processedOriginalPositions = [];
         $toDelete = [];
-        $normalized = [];
         $previewRows = [];
+        $batch = [];
 
         $nextPos = 1;
+
+        if (!$dryRun) {
+            $this->connection->beginTransaction();
+            try {
+                // Clear existing positions before inserting new ones.
+                $this->connection->delete(
+                    $targetTable,
+                    ['category_id = ?' => $categoryId, 'store_id = ?' => $storeId]
+                );
+            } catch (\Throwable $e) {
+                $this->connection->rollBack();
+                throw new LocalizedException(
+                    __('Failed to clean target table before migration: %1', $e->getMessage())
+                );
+            }
+        }
 
         do {
             // Fetch a batch of products with left join to visibility.
@@ -283,14 +300,14 @@ class CategoryPositionMigrator
                     'cpei.row_id = ccp.product_id'
                     . ' AND cpei.attribute_id = ' . $visibilityAttributeId
                     . ' AND cpei.store_id = ' . $storeId,
-                    []
+                    ['']
                 )
                 ->where('ccp.category_id = ?', $categoryId)
                 // Treat NULL visibility as VISIBILITY_BOTH.
                 ->order('ccp.position ASC')
                 ->limit(self::BATCH_SIZE, $offset);
 
-            $rows = $this->connection->fetchAll($select);
+            $rows     = $this->connection->fetchAll($select);
             $rowCount = count($rows);
 
             if ($rowCount === 0) {
@@ -308,7 +325,8 @@ class CategoryPositionMigrator
                 }
 
                 // Apply migration filters (negative, zero, positive).
-                if (($originalPos < 0 && !$migrateNegative) ||
+                if (
+                    ($originalPos < 0 && !$migrateNegative) ||
                     ($originalPos === 0 && !$migrateZero) ||
                     ($originalPos > 0 && !$migratePositive)
                 ) {
@@ -326,69 +344,63 @@ class CategoryPositionMigrator
                 // Mark original position as processed.
                 $processedOriginalPositions[$originalPos] = true;
 
-                // Assign new sequential position.
-                $normalized[$productId] = $nextPos;
+                // Assign normalized position.
+                $newPosition = $nextPos++;
 
-                // Collect preview rows.
+                $migratedCount++;
+
+                // Collect preview rows (limited).
                 if (count($previewRows) < self::PREVIEW_LIMIT) {
                     $previewRows[] = [
                         $categoryId,
                         $productId,
                         $originalPos,
-                        $nextPos,
+                        $newPosition,
                     ];
                 }
 
-                $nextPos++;
+                // Stream insert immediately (memory-safe).
+                if (!$dryRun) {
+                    $batch[] = [
+                        'category_id' => $categoryId,
+                        'product_id'  => $productId,
+                        'store_id'    => $storeId,
+                        'position'    => $newPosition,
+                    ];
+
+                    if (count($batch) >= self::BATCH_SIZE) {
+                        $this->connection->insertMultiple($targetTable, $batch);
+                        $batch = []; // Free memory.
+                    }
+                }
             }
 
             $offset += self::BATCH_SIZE;
+
         } while ($rowCount === self::BATCH_SIZE);
 
-        // If dry-run or nothing to persist, return immediately.
-        if ($dryRun || empty($normalized)) {
-            return [
-                'migrated'   => count($normalized),
-                'deleted'    => count($toDelete),
-                'normalized' => $normalized,
-                'preview'    => $previewRows,
-            ];
-        }
-
-        // Persist in batches.
-        $this->connection->beginTransaction();
-        try {
-            // Clear existing positions for this category/store.
-            $this->connection->delete($targetTable, ['category_id = ?' => $categoryId, 'store_id = ?' => $storeId]);
-
-            $batch = [];
-            foreach ($normalized as $productId => $position) {
-                $batch[] = [
-                    'category_id' => $categoryId,
-                    'product_id'  => $productId,
-                    'store_id'    => $storeId,
-                    'position'    => $position,
-                ];
-                if (count($batch) >= self::BATCH_SIZE) {
+        // Flush remaining batch.
+        if (!$dryRun) {
+            try {
+                if (!empty($batch)) {
                     $this->connection->insertMultiple($targetTable, $batch);
-                    $batch = [];
                 }
+                $this->connection->commit();
+            } catch (\Throwable $e) {
+                $this->connection->rollBack();
+                $this->logger->error(
+                    sprintf('Migration failed for category %d: %s', $categoryId, $e->getMessage())
+                );
+                throw new LocalizedException(
+                    __('Migration failed for category %1: %2', $categoryId, $e->getMessage())
+                );
             }
-            if (!empty($batch)) {
-                $this->connection->insertMultiple($targetTable, $batch);
-            }
-
-            $this->connection->commit();
-        } catch (\Throwable $e) {
-            $this->connection->rollBack();
-            $this->logger->error(sprintf('Migration failed for category %d: %s', $categoryId, $e->getMessage()));
-            throw new LocalizedException(__('Migration failed for category %1: %2', $categoryId, $e->getMessage()));
         }
 
         return [
-            'migrated'   => count($normalized),
+            'migrated'   => $migratedCount,
             'deleted'    => count($toDelete),
-            'normalized' => $normalized,
+            'normalized' => [], // No longer stored to avoid memory growth.
             'preview'    => $previewRows,
         ];
     }
