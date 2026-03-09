@@ -23,6 +23,10 @@ use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasourc
 use Smile\ElasticsuiteCore\Api\Index\DatasourceInterface;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\DynamicFieldProviderInterface;
 use Smile\ElasticsuiteCore\Index\Mapping\FieldFactory;
+use Magento\Framework\Locale\ResolverInterface;
+use Magento\Framework\TranslateInterface;
+use Magento\Framework\App\State;
+use Magento\Framework\App\AreaList;
 
 /**
  * Datasource used to index product attributes.
@@ -57,6 +61,26 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
     private $isIndexingChildProductSkuEnabled;
 
     /**
+     * @var ResolverInterface
+     */
+    private $localeResolver;
+
+    /**
+     * @var TranslateInterface
+     */
+    private $translator;
+
+    /**
+     * @var State
+     */
+    private $appState;
+
+    /**
+     * @var AreaList
+     */
+    private $areaList;
+
+    /**
      * Constructor
      *
      * @param ResourceModel             $resourceModel               Resource model.
@@ -65,6 +89,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      * @param array                     $indexedBackendModels        List of indexed backend models added to the default list.
      * @param array                     $forbiddenChildrenAttributes List of the forbidden children attributes.
      * @param ScopeConfigInterface|null $scopeConfig                 Scope Config.
+     * @param ResolverInterface|null    $localeResolver              Locale resolver.
+     * @param TranslateInterface|null   $translator                  Translator.
+     * @param State|null                $appState                    App state.
+     * @param AreaList|null             $areaList                    Area list.
      */
     public function __construct(
         ResourceModel $resourceModel,
@@ -72,12 +100,20 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
         AttributeHelper $attributeHelper,
         array $indexedBackendModels = [],
         array $forbiddenChildrenAttributes = [],
-        ?ScopeConfigInterface $scopeConfig = null
+        ?ScopeConfigInterface $scopeConfig = null,
+        ?ResolverInterface $localeResolver = null,
+        ?TranslateInterface $translator = null,
+        ?State $appState = null,
+        ?AreaList $areaList = null
     ) {
         parent::__construct($resourceModel, $fieldFactory, $attributeHelper, $indexedBackendModels);
 
         $this->scopeConfig = $scopeConfig;
         $this->forbiddenChildrenAttributes = array_values($forbiddenChildrenAttributes);
+        $this->localeResolver = $localeResolver ?? ObjectManager::getInstance()->get(ResolverInterface::class);
+        $this->translator = $translator ?? ObjectManager::getInstance()->get(TranslateInterface::class);
+        $this->appState = $appState ?? ObjectManager::getInstance()->get(State::class);
+        $this->areaList = $areaList ?? ObjectManager::getInstance()->get(AreaList::class);
     }
 
     /**
@@ -85,6 +121,13 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
      */
     public function addData($storeId, array $indexData)
     {
+        // Load store translation for static attribute options.
+        $this->localeResolver->emulate($storeId);
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
+        // Translate area part may not be loaded.
+        $area = $this->areaList->getArea($this->appState->getAreaCode());
+        $area->load(\Magento\Framework\App\Area::PART_TRANSLATE);
+
         $productIds   = array_keys($indexData);
         $indexData    = $this->addAttributeData($storeId, $productIds, $indexData);
 
@@ -113,6 +156,10 @@ class AttributeData extends AbstractAttributeData implements DatasourceInterface
                 }
             }
         }
+
+        // Reinitialize translation.
+        $this->localeResolver->revert();
+        $this->translator->setLocale($this->localeResolver->getLocale())->loadData(null, true);
 
         return $this->filterCompositeProducts($indexData);
     }
