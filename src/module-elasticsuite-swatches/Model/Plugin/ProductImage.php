@@ -90,7 +90,7 @@ class ProductImage extends \Magento\Swatches\Model\Plugin\ProductImage
     private function loadSimpleVariation(Product $parentProduct, array $filterArray)
     {
         $childProduct = $this->swatchHelperData->loadVariationByFallback($parentProduct, $filterArray);
-        if ($childProduct && !$childProduct->getImage()) {
+        if ($childProduct && (!$childProduct->getImage() || $childProduct->getImage() == 'no_selection')) {
             $childProduct = $this->swatchHelperData->loadFirstVariationWithImage($parentProduct, $filterArray);
         }
         if (!$childProduct) {
