@@ -90,8 +90,11 @@ class Swatches extends \Magento\Swatches\Helper\Data
 
             foreach ($usedProducts as $simpleProduct) {
                 foreach ($requiredAttributes as $attributeCode => $requiredValues) {
-                    if (!in_array($simpleProduct->getData($attributeCode), $requiredValues)) {
-                        break 2;
+                    if (!in_array(
+                        $simpleProduct->getData($attributeCode),
+                        is_array($requiredValues) ? $requiredValues : [$requiredValues]
+                    )) {
+                        continue 2;
                     }
                 }
 
