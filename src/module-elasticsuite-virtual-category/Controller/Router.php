@@ -118,7 +118,7 @@ class Router implements RouterInterface
             return null;
         }
 
-        $categoryRewrite = $this->getCategoryRewrite($identifier, $appliedRoot);
+        $categoryRewrite = $this->getCategoryRewrite($identifier);
         if ($categoryRewrite) {
             $request->setAlias(UrlInterface::REWRITE_REQUEST_PATH_ALIAS, $identifier);
             $request->setPathInfo('/' . $categoryRewrite->getTargetPath());
@@ -149,21 +149,15 @@ class Router implements RouterInterface
     /**
      * Check if the current request could match a category under a virtual category subtree.
      *
-     * @param string            $identifier  Current identifier
-     * @param CategoryInterface $appliedRoot Applied virtual category root
+     * @param string $identifier Current identifier
      *
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
      */
-    private function getCategoryRewrite($identifier, $appliedRoot)
+    private function getCategoryRewrite($identifier)
     {
-        $categoryPath = $identifier;
-        $appliedRootUrlPath = $appliedRoot->getUrlPath();
-        if (!empty($appliedRootUrlPath) && (strpos($categoryPath, $appliedRootUrlPath) === 0)) {
-            // Current identifier path is expressed as /path/to/virtual/category/path/of/subcategory.
-            $categoryPath = str_replace($appliedRootUrlPath, '', $identifier);
-            $categoryPath = ltrim($categoryPath, '/');
-        }
-        $storeId = $this->storeManager->getStore()->getId();
+        $chunks       = explode('/', $identifier);
+        $categoryPath = array_pop($chunks);
+        $storeId      = $this->storeManager->getStore()->getId();
 
         return $this->urlModel->getCategoryRewrite($categoryPath, $storeId);
     }
