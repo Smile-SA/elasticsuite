@@ -71,6 +71,36 @@ class CommonTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedCommonQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $commonQuery = new CommonQuery('search text', 'searchField');
+        $commonQuery->setName('queryName');
+        $query = $builder->buildQuery($commonQuery);
+
+        $this->assertArrayHasKey('_name', $query['common']);
+        $this->assertEquals('queryName', $query['common']['_name']);
+
+        $commonQuery = new CommonQuery(
+            'search text',
+            'searchField',
+            CommonQuery::DEFAULT_CUTOFF_FREQUENCY,
+            CommonQuery::DEFAULT_BOOST_VALUE,
+            'originalQueryName'
+        );
+        $commonQuery->setName('queryName');
+        $query = $builder->buildQuery($commonQuery);
+
+        $this->assertArrayHasKey('_name', $query['common']);
+        $this->assertEquals('queryName', $query['common']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

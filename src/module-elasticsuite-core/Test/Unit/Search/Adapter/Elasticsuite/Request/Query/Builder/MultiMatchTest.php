@@ -77,6 +77,36 @@ class MultiMatchTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a multi match query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedMultiMatchQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $matchQuery = new MultiMatchQuery('search text', ['searchField' => 1]);
+        $matchQuery->setName('queryName');
+        $query = $builder->buildQuery($matchQuery);
+
+        $this->assertArrayHasKey('_name', $query['multi_match']);
+        $this->assertEquals('queryName', $query['multi_match']['_name']);
+
+        $matchQuery = new MultiMatchQuery(
+            'search text',
+            ['searchField' => 1],
+            MultiMatchQuery::DEFAULT_MINIMUM_SHOULD_MATCH,
+            MultiMatchQuery::DEFAULT_TIE_BREAKER,
+            'originalQueryName'
+        );
+        $matchQuery->setName('queryName');
+        $query = $builder->buildQuery($matchQuery);
+
+        $this->assertArrayHasKey('_name', $query['multi_match']);
+        $this->assertEquals('queryName', $query['multi_match']['_name']);
+    }
+
+    /**
      * Test the builder with mandatory + cutoff_frequency params.
      *
      * @return void

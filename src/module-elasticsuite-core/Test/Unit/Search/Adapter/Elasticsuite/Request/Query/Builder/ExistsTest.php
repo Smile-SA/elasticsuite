@@ -40,6 +40,8 @@ class ExistsTest extends AbstractSimpleQueryBuilder
         $this->assertArrayHasKey('exists', $query);
         $this->assertArrayHasKey('field', $query['exists']);
         $this->assertArrayNotHasKey('_name', $query['exists']);
+
+        $this->assertEquals(ExistsQuery::DEFAULT_BOOST_VALUE, $missingQuery->getBoost());
     }
 
     /**
@@ -52,6 +54,30 @@ class ExistsTest extends AbstractSimpleQueryBuilder
         $builder = $this->getQueryBuilder();
 
         $missingQuery = new ExistsQuery('field', 'queryName');
+        $query = $builder->buildQuery($missingQuery);
+
+        $this->assertArrayHasKey('_name', $query['exists']);
+        $this->assertEquals('queryName', $query['exists']['_name']);
+    }
+
+    /**
+     * Test the builder with a query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedMissingQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $missingQuery = new ExistsQuery('field');
+        $missingQuery->setName('queryName');
+        $query = $builder->buildQuery($missingQuery);
+
+        $this->assertArrayHasKey('_name', $query['exists']);
+        $this->assertEquals('queryName', $query['exists']['_name']);
+
+        $missingQuery = new ExistsQuery('field', 'originalQueryName');
+        $missingQuery->setName('queryName');
         $query = $builder->buildQuery($missingQuery);
 
         $this->assertArrayHasKey('_name', $query['exists']);
