@@ -182,7 +182,7 @@ class Builder
         ];
 
         // Use min_score only for fulltext queries.
-        if ($query !== null) {
+        if ($containerConfig->isFulltext() && ($query !== null)) {
             $requestParams['minScore'] = $containerConfig->getRelevanceConfig()->getMinScore();
         }
 
