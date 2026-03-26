@@ -63,12 +63,41 @@ class SpanFieldMaskingTest extends AbstractComplexSpanQueryBuilder
         $query = $builder->buildQuery($spanQuery);
 
         $this->checkDefaultStructure($query);
-        // Name not supported yet.
+        // Name not supported yet by the builder.
         $this->assertArrayNotHasKey('_name', $query['span_field_masking']);
 
         $this->assertEquals('internalSpanQuery', $query['span_field_masking']['query']);
         $this->assertEquals('searchField', $query['span_field_masking']['field']);
         $this->assertEquals(17, $query['span_field_masking']['boost']);
+    }
+
+    /**
+     * Test the name setter and getter of the query model.
+     */
+    public function testNamedSpanFieldMaskingQuery(): void
+    {
+        // Check that by default, the name is null.
+        $spanQuery = new SpanFieldMaskingQuery(
+            $this->getSubQueryMock('internalSpanQuery'),
+            'searchField'
+        );
+        $this->assertNull($spanQuery->getName());
+
+        // Check that getName returns the value set through setName.
+        $spanQuery->setName('queryName');
+        $this->assertEquals('queryName', $spanQuery->getName());
+
+        // Check that the name parameter is correctly assigned via constructor.
+        $spanQuery = new SpanFieldMaskingQuery(
+            $this->getSubQueryMock('internalSpanQuery'),
+            'searchField',
+            'myQueryName'
+        );
+        $this->assertEquals('myQueryName', $spanQuery->getName());
+
+        // Check renaming an existing name.
+        $spanQuery->setName('newQueryName');
+        $this->assertEquals('newQueryName', $spanQuery->getName());
     }
 
     /**

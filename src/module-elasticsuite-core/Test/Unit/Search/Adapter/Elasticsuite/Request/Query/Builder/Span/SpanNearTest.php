@@ -62,13 +62,40 @@ class SpanNearTest extends AbstractComplexSpanQueryBuilder
         $query = $builder->buildQuery($spanQuery);
 
         $this->checkDefaultStructure($query);
-        // Name not supported yet.
+        // Name not supported yet by the builder.
         $this->assertArrayNotHasKey('_name', $query['span_near']);
 
         $this->assertEquals(['clause1', 'clause2'], $query['span_near']['clauses']);
         $this->assertEquals(5, $query['span_near']['slop']);
         $this->assertEquals(false, $query['span_near']['in_order']);
         $this->assertEquals(17, $query['span_near']['boost']);
+    }
+
+    /**
+     * Test the name setter and getter of the query model.
+     */
+    public function testNamedSpanNearQuery(): void
+    {
+        // Check that by default, the name is null.
+        $spanQuery = new SpanNearQuery();
+        $this->assertNull($spanQuery->getName());
+
+        // Check that getName returns the value set through setName.
+        $spanQuery->setName('queryName');
+        $this->assertEquals('queryName', $spanQuery->getName());
+
+        // Check that the name parameter is correctly assigned via constructor.
+        $spanQuery = new SpanNearQuery(
+            [$this->getSubQueryMock('clause1')],
+            5,
+            false,
+            'myQueryName'
+        );
+        $this->assertEquals('myQueryName', $spanQuery->getName());
+
+        // Check renaming an existing name.
+        $spanQuery->setName('newQueryName');
+        $this->assertEquals('newQueryName', $spanQuery->getName());
     }
 
     /**

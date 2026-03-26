@@ -95,6 +95,43 @@ class MoreLikeThisTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a more like this query named or renamed after creation.
+     */
+    public function testLaterNamedMoreLikeThisQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $moreLikeThisQuery = new MoreLikeThisQuery(['searchField'], 'search like text');
+        $moreLikeThisQuery->setName('queryName');
+        $query = $builder->buildQuery($moreLikeThisQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['more_like_this']);
+        $this->assertEquals('queryName', $query['more_like_this']['_name']);
+
+        $moreLikeThisQuery = new MoreLikeThisQuery(
+            ['searchField'],
+            'search like text',
+            MoreLikeThisQuery::DEFAULT_MINIMUM_SHOULD_MATCH,
+            MoreLikeThisQuery::DEFAULT_BOOST_TERMS,
+            MoreLikeThisQuery::DEFAULT_MIN_TERM_FREQ,
+            MoreLikeThisQuery::DEFAULT_MIN_DOC_FREQ,
+            MoreLikeThisQuery::DEFAULT_MAX_DOC_FREQ,
+            MoreLikeThisQuery::DEFAULT_MAX_QUERY_TERMS,
+            MoreLikeThisQuery::DEFAULT_MIN_WORD_LENGTH,
+            MoreLikeThisQuery::DEFAULT_MAX_WORD_LENGTH,
+            false,
+            'originalQueryName'
+        );
+        $moreLikeThisQuery->setName('queryName');
+        $query = $builder->buildQuery($moreLikeThisQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['more_like_this']);
+        $this->assertEquals('queryName', $query['more_like_this']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

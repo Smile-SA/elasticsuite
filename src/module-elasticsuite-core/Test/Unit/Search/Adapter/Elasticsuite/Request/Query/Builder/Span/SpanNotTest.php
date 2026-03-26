@@ -63,12 +63,41 @@ class SpanNotTest extends AbstractComplexSpanQueryBuilder
         $query = $builder->buildQuery($spanQuery);
 
         $this->checkDefaultStructure($query);
-        // Name not supported yet.
+        // Name not supported yet by the builder.
         $this->assertArrayNotHasKey('_name', $query['span_not']);
 
         $this->assertEquals('includeQuery', $query['span_not']['include']);
         $this->assertEquals('excludeQuery', $query['span_not']['exclude']);
         $this->assertEquals(17, $query['span_not']['boost']);
+    }
+
+    /**
+     * Test the name setter and getter of the query model.
+     */
+    public function testNamedSpanNotQuery(): void
+    {
+        // Check that by default, the name is null.
+        $spanQuery = new SpanNotQuery(
+            $this->getSubQueryMock('includeQuery'),
+            $this->getSubQueryMock('excludeQuery')
+        );
+        $this->assertNull($spanQuery->getName());
+
+        // Check that getName returns the value set through setName.
+        $spanQuery->setName('queryName');
+        $this->assertEquals('queryName', $spanQuery->getName());
+
+        // Check that the name parameter is correctly assigned via constructor.
+        $spanQuery = new SpanNotQuery(
+            $this->getSubQueryMock('includeQuery'),
+            $this->getSubQueryMock('excludeQuery'),
+            'myQueryName'
+        );
+        $this->assertEquals('myQueryName', $spanQuery->getName());
+
+        // Check renaming an existing name.
+        $spanQuery->setName('newQueryName');
+        $this->assertEquals('newQueryName', $spanQuery->getName());
     }
 
     /**

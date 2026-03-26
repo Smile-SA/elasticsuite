@@ -69,6 +69,30 @@ class RegexpTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a regexp query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedRegexpQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $regexpQuery = new RegexpQuery('value', 'field');
+        $regexpQuery->setName('queryName');
+        $query = $builder->buildQuery($regexpQuery);
+
+        $this->assertArrayHasKey('_name', $query['regexp']);
+        $this->assertEquals('queryName', $query['regexp']['_name']);
+
+        $regexpQuery = new RegexpQuery('value', 'field', 'originalQueryName');
+        $regexpQuery->setName('queryName');
+        $query = $builder->buildQuery($regexpQuery);
+
+        $this->assertArrayHasKey('_name', $query['regexp']);
+        $this->assertEquals('queryName', $query['regexp']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()
