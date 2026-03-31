@@ -128,10 +128,19 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
                 $rootCategory = $this->virtualCategoryRoot->getVirtualCategoryRoot($currentCategory);
                 if ($rootCategory->getId()) {
                     $this->childrenCategories = $rootCategory->getChildrenCategories();
-                    $this->childrenCategories->clear()->addFieldToFilter(
-                        'entity_id',
-                        ['neq' => $currentCategory->getId()]
-                    );
+                    if ($this->childrenCategories instanceof \Magento\Catalog\Model\ResourceModel\Category\Collection) {
+                        $this->childrenCategories->clear()->addFieldToFilter(
+                            'entity_id',
+                            ['neq' => $currentCategory->getId()]
+                        );
+                    } else {
+                        $this->childrenCategories = array_filter(
+                            $this->childrenCategories,
+                            static function ($category) use ($currentCategory) {
+                                return (int) $category->getId() !== (int) $currentCategory->getId();
+                            }
+                        );
+                    }
                 }
             }
         }
