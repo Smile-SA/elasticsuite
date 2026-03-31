@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\Layer\Filter;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\ResourceModel\Category\Collection;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 
 /**
@@ -127,17 +128,18 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
             if ($this->virtualCategoryRoot->useVirtualRootCategorySubtree($currentCategory)) {
                 $rootCategory = $this->virtualCategoryRoot->getVirtualCategoryRoot($currentCategory);
                 if ($rootCategory->getId()) {
+                    $currentCategoryId = (int) $currentCategory->getId();
                     $this->childrenCategories = $rootCategory->getChildrenCategories();
-                    if ($this->childrenCategories instanceof \Magento\Catalog\Model\ResourceModel\Category\Collection) {
+                    if ($this->childrenCategories instanceof Collection) {
                         $this->childrenCategories->clear()->addFieldToFilter(
                             'entity_id',
-                            ['neq' => $currentCategory->getId()]
+                            ['neq' => $currentCategoryId]
                         );
                     } else {
                         $this->childrenCategories = array_filter(
                             $this->childrenCategories,
-                            static function ($category) use ($currentCategory) {
-                                return (int) $category->getId() !== (int) $currentCategory->getId();
+                            static function ($category) use ($currentCategoryId) {
+                                return (int) $category->getId() !== $currentCategoryId;
                             }
                         );
                     }
