@@ -517,7 +517,7 @@ class FrontPlugin
             [
                 'name'  => 'display_pattern',
                 'label' => __('Display pattern'),
-                'note'  => __('A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €'),
+                'note'  => __('A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 € or %s%% => 20%'),
             ]
         );
 

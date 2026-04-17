@@ -23,7 +23,7 @@ Save,Sauvegarder
 "Sort products without value when sorting DESC","Trier les produits sans valeurs lors d'un tri DESC"
 "Slider Display Configuration","Slider Display Configuration"
 "Display pattern","Display pattern"
-"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 € or %s%% => 20%","Un motif comme %s UNIT où %s est la valeur. Exemple: $%s => $20 ou %s € => 20 € ou %s%% => 20%"
 "Display Precision","Display Precision"
 "The number of digits to use for precision when displaying.","The number of digits to use for precision when displaying."
 "No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","Aucun résultat exact pour la recherche: <b>'%1'</b>. Nous vous proposons des résultats approchants."
