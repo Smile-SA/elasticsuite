@@ -71,6 +71,7 @@ class Mapper
 
     /**
      * Transform the search request into an ES request.
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * @param RequestInterface $request Search Request.
      *
@@ -116,6 +117,10 @@ class Mapper
         $source = $this->getSource($request);
         if (!empty($source)) {
             $searchRequest['_source'] = $source;
+        }
+
+        if ($request->hasHighlightConfig()) {
+            $searchRequest['highlight'] = $this->getHighlight($request);
         }
 
         return $searchRequest;
@@ -203,6 +208,24 @@ class Mapper
         }
 
         return $collapse;
+    }
+
+    /**
+     * Build and return the highlight configuration from the search request.
+     *
+     * @param RequestInterface $request Search request.
+     *
+     * @return array
+     */
+    private function getHighlight(RequestInterface $request)
+    {
+        $highlight = $request->getHighlightConfig() ?? [];
+
+        if (array_key_exists('highlight_query', $highlight)) {
+            $highlight['highlight_query'] = $this->queryBuilder->buildQuery($highlight['highlight_query']);
+        }
+
+        return $highlight;
     }
 
     /**

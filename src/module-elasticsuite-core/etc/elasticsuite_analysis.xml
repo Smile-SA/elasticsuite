@@ -167,6 +167,10 @@
                 So the actual valid rule might be "trapano => trapan" ... -->
             <rules>["trapani => trap", "zanzariere => zanzarier", "lavatoi => lavatoi", "lamiere => lamier", "plafoniere => plafonier"]</rules>
         </filter>
+        <filter name="stemmer_override" type="stemmer_override" language="sv">
+            <!-- Known slipsar/slips issue with both the "swedish" and "light_swedish" variants of the "swedish" stemmer -->
+            <rules>["slipsar => slip"]</rules>
+        </filter>
         <filter name="elision" type="elision" language="ca">
             <articles>["d", "l", "m", "n", "s", "t"]</articles>
             <articles_case>true</articles_case>

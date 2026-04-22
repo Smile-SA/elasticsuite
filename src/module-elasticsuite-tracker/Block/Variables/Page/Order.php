@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteTracker\Block\Variables\Page;
 
 use Magento\Framework\View\Element\Template;
+use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 
 /**
  * Order variables block for page tracking, exposes all order related tracking variables
@@ -76,7 +77,8 @@ class Order extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBloc
 
             $itemId = 0;
             foreach ($order->getAllItems() as $item) {
-                $variables = array_merge($variables, $this->getOrderItemVariables($item, $itemId++));
+                $variables = array_merge($variables, $this->getOrderItemVariables($item, $itemId));
+                $itemId++;
             }
         }
 
@@ -91,7 +93,7 @@ class Order extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBloc
      *
      * @return array
      */
-    private function getOrderItemVariables($item, $itemId)
+    private function getOrderItemVariables($item, &$itemId)
     {
         $variables = [];
 
@@ -105,11 +107,30 @@ class Order extends \Smile\ElasticsuiteTracker\Block\Variables\Page\AbstractBloc
             $variables[$prefix . '.label']      = $item->getName();
             $variables[$prefix . '.salesrules'] = $item->getAppliedRuleIds();
 
+            $categoriesId = [];
             $product = $item->getProduct();
             if ($product) {
                 $categoriesId = $product->getCategoryIds();
                 if (count($categoriesId)) {
                     $variables[$prefix . '.category_ids'] = implode(",", $categoriesId);
+                }
+            }
+
+            if ($item->getProductType() === Configurable::TYPE_CODE) {
+                foreach ($item->getChildrenItems() ?? [] as $childItem) {
+                    /** @var \Magento\Sales\Model\Order\Item $childItem */
+                    $itemId++;
+                    $prefix = "order.items.$itemId";
+                    $variables[$prefix . '.sku']        = $childItem->getSku();
+                    $variables[$prefix . '.product_id'] = $childItem->getProductId();
+                    $variables[$prefix . '.qty']        = $childItem->getQtyOrdered();
+                    $variables[$prefix . '.price']      = $childItem->getParentItem()->getBasePrice();
+                    $variables[$prefix . '.row_total']  = $childItem->getParentItem()->getRowTotal();
+                    $variables[$prefix . '.label']      = $childItem->getName();
+                    $variables[$prefix . '.salesrules'] = $item->getAppliedRuleIds();
+                    if (count($categoriesId)) {
+                        $variables[$prefix . '.category_ids'] = implode(",", $categoriesId);
+                    }
                 }
             }
         }

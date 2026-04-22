@@ -66,6 +66,11 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     private $sourceConfig = [];
 
     /**
+     * @var array
+     */
+    private $highlightConfig = [];
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -217,6 +222,30 @@ class Request extends \Magento\Framework\Search\Request implements RequestInterf
     public function getSourceConfig()
     {
         return $this->sourceConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setHighlightConfig($highlightConfig)
+    {
+        return $this->highlightConfig = $highlightConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasHighlightConfig()
+    {
+        return !empty($this->highlightConfig);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getHighlightConfig()
+    {
+        return $this->highlightConfig;
     }
 
     /**

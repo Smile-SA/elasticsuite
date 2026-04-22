@@ -23,7 +23,7 @@
 "Sort products without value when sorting DESC","Sorteer producten zonder waarde bij het sorteren van DESC"
 "Slider Display Configuration","Slider weergaveconfiguratie"
 "Display pattern","Patroon weergeven"
-"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 €","Een patroon zoals %s UNIT waar %s de waarde is. Bijvoorbeeld: $%s => $20 of %s € => 20 €"
+"A pattern like %s UNIT where %s is the value. Eg : $%s => $20 or %s € => 20 € or %s%% => 20%","Een patroon zoals %s UNIT waar %s de waarde is. Bijvoorbeeld: $%s => $20 of %s € => 20 € of %s%% => 20%"
 "Display Precision","Toon Precisie"
 "The number of digits to use for precision when displaying.","Het aantal te gebruiken cijfers voor precisie bij weergave."
 "No exact results found for: <b>'%1'</b>. The displayed items are the closest matches.","Geen exacte resultaten gevonden: <b>'%1'</b>. De weergegeven items zijn de dichtstbijzijnde matches."

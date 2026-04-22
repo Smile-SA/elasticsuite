@@ -293,9 +293,19 @@
         </arguments>
     </type>
 
+    <!-- Declared as a virtual type to make it injectable in \Magento\Config\Model\Config\Loader -->
+    <virtualType name="Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\CollectionFactory"
+                 type="Magento\Config\Model\ResourceModel\Config\Data\CollectionFactory">
+        <arguments>
+            <argument name="instanceName" xsi:type="string">Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\Collection</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\Loader" type="Magento\Config\Model\Config\Loader">
         <arguments>
             <argument name="configValueFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\Search\Request\RelevanceConfig\ValueFactory</argument>
+            <!-- Replaces the configValueFactory to get the collection used to load data in 2.4.7+ -->
+            <argument name="collectionFactory" xsi:type="object">Smile\ElasticsuiteCore\Model\ResourceModel\Search\Request\RelevanceConfig\Data\CollectionFactory</argument>
         </arguments>
     </virtualType>
 
