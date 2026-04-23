@@ -249,9 +249,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setCurPage($page)
     {
-        $this->_isFiltersRendered = false;
+        if ($page !== $this->_curPage) {
+            $this->_curPage = $page;
+            $this->_isFiltersRendered = false;
+        }
 
-        return parent::setCurPage($page);
+        return $this;
     }
 
     /**
@@ -264,8 +267,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
          * That is: no pagination, all items are expected.
          */
         $size = ($size === null) ? false : $size;
-        $this->_pageSize = $size;
-        $this->_isFiltersRendered = false;
+        if ($size !== $this->_pageSize) {
+            $this->_pageSize = $size;
+            $this->_isFiltersRendered = false;
+        }
 
         return $this;
     }
@@ -414,8 +419,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         if ($categoryId) {
             $this->addFieldToFilter('category_ids', $categoryId);
             $this->_productLimitationFilters['category_ids'] = $categoryId;
+            $this->_isFiltersRendered = false;
         }
-        $this->_isFiltersRendered = false;
 
         return $this;
     }
