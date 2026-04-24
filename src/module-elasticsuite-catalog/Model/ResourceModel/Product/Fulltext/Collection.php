@@ -92,15 +92,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $originalPageSize = false;
 
     /**
-     * @var array
-     */
-    private $countByAttributeSet;
-    /**
-     * @var array
-     */
-    private $countByAttributeCode;
-
-    /**
      * @var RequestFieldMapper
      */
     private $requestFieldMapper;
@@ -691,10 +682,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $storeId     = $this->getStoreId();
         $requestName = $this->searchRequestName;
-        $facets = [
-            ['name' => 'attribute_set_id', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
-            ['name' => 'indexed_attributes', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
-        ];
         $searchRequest = $this->requestBuilder->create(
             $storeId,
             $requestName,
@@ -704,28 +691,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             [],
             $this->filters,
             $this->queryFilters,
-            $facets,
+            [],
             true
         );
         $searchResponse = $this->searchEngine->search($searchRequest);
-        $this->_totalRecords        = $searchResponse->count();
-        $this->countByAttributeSet  = [];
-        $this->countByAttributeCode = [];
-        $this->isSpellchecked       = $searchRequest->isSpellchecked();
-        $attributeSetIdBucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
-        $attributeCodeBucket  = $searchResponse->getAggregations()->getBucket('indexed_attributes');
-        if ($attributeSetIdBucket) {
-            foreach ($attributeSetIdBucket->getValues() as $value) {
-                $metrics = $value->getMetrics();
-                $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
-            }
-        }
-        if ($attributeCodeBucket) {
-            foreach ($attributeCodeBucket->getValues() as $value) {
-                $metrics = $value->getMetrics();
-                $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
-            }
-        }
+        $this->_totalRecords    = $searchResponse->count();
+        $this->isSpellchecked   = $searchRequest->isSpellchecked();
     }
 
     /**
