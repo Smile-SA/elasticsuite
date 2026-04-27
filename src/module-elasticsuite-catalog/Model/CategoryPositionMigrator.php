@@ -42,6 +42,8 @@ use Magento\Framework\EntityManager\MetadataPool;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Vadym Honcharuk <vahonc@smile.fr>
+ * 
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CategoryPositionMigrator
 {
@@ -274,6 +276,8 @@ class CategoryPositionMigrator
         $visibilityAttribute = $this->eavConfig->getAttribute(Product::ENTITY, 'visibility');
         $visibilityAttributeId = (int) $visibilityAttribute->getAttributeId();
 
+        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+
         $storeId = 0;
         $offset = 0;
         $migratedCount = 0;
@@ -302,7 +306,6 @@ class CategoryPositionMigrator
         }
 
         do {
-            $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
             // Fetch a batch of products with left join to visibility.
             $select = $this->connection->select()
                 ->from(['ccp' => $legacyTable], ['product_id', 'position'])
