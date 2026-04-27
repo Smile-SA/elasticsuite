@@ -297,7 +297,7 @@ class CategoryPositionMigrator
                 ->from(['ccp' => $legacyTable], ['product_id', 'position'])
                 ->joinLeft(
                     ['cpei' => $visibilityTable],
-                    'cpei.row_id = ccp.product_id'
+                    'cpei.entity_id = ccp.product_id'
                     . ' AND cpei.attribute_id = ' . $visibilityAttributeId
                     . ' AND cpei.store_id = ' . $storeId,
                     ['']
