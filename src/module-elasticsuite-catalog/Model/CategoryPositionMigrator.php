@@ -23,6 +23,8 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Framework\EntityManager\MetadataPool;
 
 /**
  * Service class responsible for migrating product positions from Magento legacy catalog table to ElasticSuite table.
@@ -96,6 +98,11 @@ class CategoryPositionMigrator
     private $logger;
 
     /**
+     * @var MetadataPool
+     */
+    private $metadataPool;
+
+    /**
      * Constructor.
      *
      * @param ResourceConnection        $resource                  Resource connection for DB access.
@@ -103,13 +110,15 @@ class CategoryPositionMigrator
      * @param CategoryProductResource   $categoryProductResource   Magento legacy category-product relation resource model.
      * @param Config                    $eavConfig                 Eav config.
      * @param LoggerInterface           $logger                    PSR-compliant logger for debug and error logging.
+     * @param MetadataPool              $metadataPool              Magento entity metadata pool.
      */
     public function __construct(
         ResourceConnection $resource,
         CategoryCollectionFactory $categoryCollectionFactory,
         CategoryProductResource $categoryProductResource,
         Config $eavConfig,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        MetadataPool $metadataPool
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -117,6 +126,7 @@ class CategoryPositionMigrator
         $this->categoryProductResource = $categoryProductResource;
         $this->eavConfig = $eavConfig;
         $this->logger = $logger;
+        $this->metadataPool = $metadataPool;
     }
 
     /**
@@ -292,12 +302,13 @@ class CategoryPositionMigrator
         }
 
         do {
+            $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
             // Fetch a batch of products with left join to visibility.
             $select = $this->connection->select()
                 ->from(['ccp' => $legacyTable], ['product_id', 'position'])
                 ->joinLeft(
                     ['cpei' => $visibilityTable],
-                    'cpei.entity_id = ccp.product_id'
+                    'cpei.' . $linkField . ' = ccp.product_id'
                     . ' AND cpei.attribute_id = ' . $visibilityAttributeId
                     . ' AND cpei.store_id = ' . $storeId,
                     ['']
@@ -403,3 +414,4 @@ class CategoryPositionMigrator
         ];
     }
 }
+
