@@ -23,7 +23,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
+use \Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 
 /**
