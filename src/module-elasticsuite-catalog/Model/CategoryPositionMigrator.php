@@ -42,7 +42,6 @@ use Magento\Framework\EntityManager\MetadataPool;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
  * @author   Vadym Honcharuk <vahonc@smile.fr>
- * 
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CategoryPositionMigrator
