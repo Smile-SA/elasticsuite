@@ -110,4 +110,7 @@
             <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
         </arguments>
     </type>
+
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocatorInterface" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Attribute\Locator" />
+
 </config>

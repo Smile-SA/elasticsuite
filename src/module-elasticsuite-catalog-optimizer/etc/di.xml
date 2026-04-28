@@ -144,4 +144,13 @@
         </arguments>
     </type>
 
+    <!-- Register Optimizer Location Provider -->
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Attribute\Locator">
+        <arguments>
+            <argument name="locationProviders" xsi:type="array">
+                <item name="optimizer" xsi:type="object">Smile\ElasticsuiteCatalogOptimizer\Model\Rule\Attribute\OptimizerLocationProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>
