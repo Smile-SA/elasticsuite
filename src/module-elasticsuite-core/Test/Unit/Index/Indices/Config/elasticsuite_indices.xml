@@ -36,12 +36,14 @@
             </mapping>
         </type>
     </index>
-    
+
     <index identifier="index2" defaultSearchType="simpleType">
         <type name="simpleType" idFieldName="idField">
             <mapping>
                 <field name="idField" type="integer" />
-                <field name="stringField" type="string" />
+                <field name="stringField" type="string">
+                    <isSearchable>1</isSearchable>
+                </field>
             </mapping>
         </type>
     </index>
