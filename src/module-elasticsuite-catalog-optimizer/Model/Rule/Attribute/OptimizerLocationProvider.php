@@ -14,22 +14,20 @@
 
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Rule\Attribute;
 
-use Magento\Framework\App\ResourceConnection;
-use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Rule\Attribute\OptimizerCollectionFilterInterface;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocationProviderInterface;
 
 /**
- * Catalog Optimizer Attribute Location Provider.
+ * Catalog Optimizer Location Provider.
  *
- * This provider checks whether a given attribute is used in any
- * Elasticsuite Catalog Optimizer rule.
+ * This provider determines whether a given product attribute
+ * is used in Elasticsuite Optimizer rules.
  *
- * It performs a database lookup on the `smile_elasticsuite_optimizer` table,
- * scanning the `rule_condition` column for serialized conditions containing
- * the attribute code.
- *
- * Current implementation relies on a LIKE-based SQL query:
- *    rule_condition LIKE '%"attribute":"<attribute_code>"%'
+ * The implementation is intentionally decoupled from any specific module
+ * (e.g. A/B Campaign) by relying on a pool of collection filters injected
+ * via Dependency Injection. This allows external modules to alter the filtering behavior
+ * without modifying this class.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -38,28 +36,31 @@ use Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocationProviderInterface;
 class OptimizerLocationProvider implements LocationProviderInterface
 {
     /**
-     * @var ResourceConnection
+     * @var CollectionFactory
      */
-    private ResourceConnection $resource;
+    private CollectionFactory $collectionFactory;
+
+    /**
+     * @var OptimizerCollectionFilterInterface[]
+     */
+    private array $filters;
 
     /**
      * Constructor.
      *
-     * @param ResourceConnection $resource Database resource connection.
-     */
-    public function __construct(ResourceConnection $resource)
-    {
-        $this->resource = $resource;
+     * @param CollectionFactory                    $collectionFactory Optimizer collection factory.
+     * @param OptimizerCollectionFilterInterface[] $filters           Optional filters applied to the collection.
+ */
+    public function __construct(
+        CollectionFactory $collectionFactory,
+        array $filters = []
+    ) {
+        $this->collectionFactory = $collectionFactory;
+        $this->filters = $filters;
     }
 
     /**
-     * Check if attribute is present in any optimizer rule.
-     *
-     * This method executes a COUNT query to determine if at least one
-     * optimizer rule references the provided attribute.
-     *
-     * @param string $attribute Attribute code.
-     * @return bool
+     * {@inheritdoc}
      */
     public function isPresent(string $attribute): bool
     {
@@ -67,27 +68,24 @@ class OptimizerLocationProvider implements LocationProviderInterface
             return false;
         }
 
-        $connection = $this->resource->getConnection();
-        $tableName = $this->resource->getTableName(OptimizerInterface::TABLE_NAME);
+        $collection = $this->collectionFactory->create();
 
-        /**
-         * Build LIKE pattern:
-         * We search for exact match of JSON fragment:
-         *     "attribute":"<attribute_code>"
-         *
-         * Important:
-         * - We use bind parameter to avoid SQL injection
-         * - Wildcards are added around the pattern
-         */
-        $likePattern = '%"attribute":"' . $attribute . '"%';
+        // Apply all injected filters.
+        foreach ($this->filters as $filter) {
+            if ($filter instanceof OptimizerCollectionFilterInterface) {
+                $filter->apply($collection);
+            }
+        }
 
-        $select = $connection->select()
-            ->from($tableName, new \Zend_Db_Expr('COUNT(*)'))
-            ->where('rule_condition LIKE ?', $likePattern)
-            ->limit(1);
+        // Apply attribute search.
+        $collection->addFieldToFilter(
+            'rule_condition',
+            ['like' => '%"attribute":"' . $attribute . '"%']
+        );
 
-        $count = (int) $connection->fetchOne($select);
+        // Lightweight existence check.
+        $collection->getSelect()->limit(1);
 
-        return $count > 0;
+        return (bool) $collection->getSize();
     }
 }

@@ -14,27 +14,25 @@
 
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Rule\Attribute;
 
-use Magento\Framework\App\ResourceConnection;
-use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Select;
 use PHPUnit\Framework\TestCase;
+use Smile\ElasticsuiteCatalogOptimizer\Api\Rule\Attribute\OptimizerCollectionFilterInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Rule\Attribute\OptimizerLocationProvider;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
+use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory;
 
 /**
  * Unit test for {@see OptimizerLocationProvider}.
  *
- * This test suite validates the behavior of the location provider responsible
- * for detecting whether a given attribute is used inside Elasticsuite
- * Catalog Optimizer rules.
+ * This test validates the behavior of the location provider responsible
+ * for determining whether a given product attribute is used in Elasticsuite Catalog Optimizer rules.
  *
- * The provider relies on a database query using a LIKE condition against
- * the `rule_condition` column. Since this is a unit test, the database layer
- * is fully mocked.
- *
- * Covered scenarios:
- * - Attribute is present in at least one rule (positive case)
- * - Attribute is not present in any rule (negative case)
- * - Empty attribute input handling
+ * Key responsibilities of the provider:
+ * - Create optimizer collection
+ * - Apply injected collection filters (agnostic to module origin)
+ * - Apply attribute LIKE filter on `rule_condition`
+ * - Limit query to 1 result for performance
+ * - Return TRUE/FALSE depending on collection size
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -43,120 +41,154 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Rule\Attribute\OptimizerLocationPro
 class OptimizerLocationProviderTest extends TestCase
 {
     /**
-     * Test that `isPresent()` returns TRUE when the attribute exists in rules.
+     * Test that isPresent() returns TRUE when attribute exists.
      *
      * Scenario:
-     * - DB query returns a count greater than zero
-     * - Method should return TRUE
+     * - Attribute is found in at least one optimizer rule
+     * - Collection size > 0
      *
-     * @return void
+     * Verifies:
+     * - Collection is created
+     * - All filters are applied
+     * - LIKE filter is added correctly
+     * - limit(1) is applied to select
+     * - TRUE is returned
      */
     public function testIsPresentReturnsTrueWhenAttributeExists(): void
     {
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $resourceMock   = $this->createMock(ResourceConnection::class);
-        $selectMock     = $this->createMock(Select::class);
+        $collectionMock = $this->createMock(Collection::class);
+        $collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $filterMock = $this->createMock(OptimizerCollectionFilterInterface::class);
 
-        // Table name.
-        $resourceMock->method('getTableName')
-            ->willReturn('smile_elasticsuite_optimizer');
+        // Mock Select object.
+        $selectMock = $this->getMockBuilder(Select::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['limit'])
+            ->getMock();
 
-        // Connection.
-        $resourceMock->method('getConnection')
-            ->willReturn($connectionMock);
+        // Expect limit(1) call for optimization.
+        $selectMock->expects($this->once())
+            ->method('limit')
+            ->with(1)
+            ->willReturnSelf();
 
-        // Mock select builder chain.
-        $connectionMock->method('select')
+        // Collection factory should create collection.
+        $collectionFactoryMock->method('create')
+            ->willReturn($collectionMock);
+
+        // Ensure filter is applied.
+        $filterMock->expects($this->once())
+            ->method('apply')
+            ->with($collectionMock);
+
+        // Ensure attribute LIKE filter is applied correctly.
+        $collectionMock->expects($this->once())
+            ->method('addFieldToFilter')
+            ->with(
+                'rule_condition',
+                $this->callback(function ($condition) {
+                    return isset($condition['like'])
+                        && str_contains($condition['like'], '"attribute":"activity"');
+                })
+            )
+            ->willReturnSelf();
+
+        // Attach mocked Select.
+        $collectionMock->method('getSelect')
             ->willReturn($selectMock);
 
-        $selectMock->method('from')
-            ->willReturnSelf();
-
-        $selectMock->method('where')
-            ->willReturnSelf();
-
-        $selectMock->method('limit')
-            ->willReturnSelf();
-
-        // Ensure query is executed.
-        $connectionMock->expects($this->once())
-            ->method('fetchOne')
-            ->with($selectMock)
+        // Simulate that matching records exist.
+        $collectionMock->method('getSize')
             ->willReturn(1);
 
-        $provider = new OptimizerLocationProvider($resourceMock);
+        $provider = new OptimizerLocationProvider(
+            $collectionFactoryMock,
+            [$filterMock]
+        );
 
         $this->assertTrue($provider->isPresent('activity'));
     }
 
     /**
-     * Test that `isPresent()` returns FALSE when the attribute does not exist.
+     * Test that isPresent() returns FALSE when attribute does not exist.
      *
      * Scenario:
-     * - DB query returns zero
-     * - Method should return FALSE
+     * - No optimizer rule contains the attribute
+     * - Collection size = 0
      *
-     * @return void
+     * Verifies:
+     * - Same flow as positive test
+     * - FALSE is returned when no results found
      */
     public function testIsPresentReturnsFalseWhenAttributeDoesNotExist(): void
     {
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $resourceMock   = $this->createMock(ResourceConnection::class);
-        $selectMock     = $this->createMock(Select::class);
+        $collectionMock = $this->createMock(Collection::class);
+        $collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $filterMock = $this->createMock(OptimizerCollectionFilterInterface::class);
 
-        // Mock table name.
-        $resourceMock->method('getTableName')
-            ->willReturn('smile_elasticsuite_optimizer');
+        $selectMock = $this->getMockBuilder(Select::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['limit'])
+            ->getMock();
 
-        // Mock DB connection.
-        $resourceMock->method('getConnection')
-            ->willReturn($connectionMock);
+        $selectMock->expects($this->once())
+            ->method('limit')
+            ->with(1)
+            ->willReturnSelf();
 
-        // Mock select builder.
-        $connectionMock->method('select')
+        $collectionFactoryMock->method('create')
+            ->willReturn($collectionMock);
+
+        $filterMock->expects($this->once())
+            ->method('apply')
+            ->with($collectionMock);
+
+        $collectionMock->expects($this->once())
+            ->method('addFieldToFilter')
+            ->willReturnSelf();
+
+        $collectionMock->method('getSelect')
             ->willReturn($selectMock);
 
-        $selectMock->method('from')
-            ->willReturnSelf();
-
-        $selectMock->method('where')
-            ->willReturnSelf();
-
-        $selectMock->method('limit')
-            ->willReturnSelf();
-
-        // Simulate no matching rows.
-        $connectionMock->method('fetchOne')
-            ->with($selectMock)
+        // Simulate no results.
+        $collectionMock->method('getSize')
             ->willReturn(0);
 
-        $provider = new OptimizerLocationProvider($resourceMock);
+        $provider = new OptimizerLocationProvider(
+            $collectionFactoryMock,
+            [$filterMock]
+        );
 
         $this->assertFalse($provider->isPresent('non_existing_attribute'));
     }
 
     /**
-     * Test that `isPresent()` returns FALSE for empty attribute input.
+     * Test that isPresent() returns FALSE for empty attribute.
      *
      * Scenario:
-     * - Empty string is passed
-     * - Method should short-circuit and return FALSE without querying DB
+     * - Empty string is provided
      *
-     * @return void
-     */
+     * Verifies:
+     * - No collection is created
+     * - No filters are applied
+     * - Method returns FALSE immediately
+ */
     public function testIsPresentReturnsFalseForEmptyAttribute(): void
     {
-        $connectionMock = $this->createMock(AdapterInterface::class);
-        $resourceMock   = $this->createMock(ResourceConnection::class);
+        $collectionFactoryMock = $this->createMock(CollectionFactory::class);
+        $filterMock = $this->createMock(OptimizerCollectionFilterInterface::class);
 
-        // Ensure DB is never called.
-        $connectionMock->expects($this->never())
-            ->method('fetchOne');
+        // Ensure no interaction happens.
+        $collectionFactoryMock->expects($this->never())
+            ->method('create');
 
-        $resourceMock->method('getConnection')
-            ->willReturn($connectionMock);
+        $filterMock->expects($this->never())
+            ->method('apply');
 
-        $provider = new OptimizerLocationProvider($resourceMock);
+        $provider = new OptimizerLocationProvider(
+            $collectionFactoryMock,
+            [$filterMock]
+        );
 
         $this->assertFalse($provider->isPresent(''));
     }

@@ -1,6 +1,7 @@
 name: Integration (2.10.x)
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - 2.10.x
@@ -204,10 +205,16 @@ jobs:
                   version: ${{ matrix.php-versions }}
               run: |
                 sudo apt-get install -y php$version-fpm
-                sudo service php$version-fpm start
+                : # sudo service php$version-fpm start
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
                 sudo service php$version-fpm start
                 sudo service php$version-fpm status
+                : # grep -E '^listen' /etc/php/$version/fpm/pool.d/www.conf
+                : # netstat -lp | grep -i "fpm.sock"
+                : # for i in `netstat -lp | grep -i "fpm.sock" | tr -s '[:space:]' | cut -d' ' -f10`; do ls -al $i; done
+                sudo service php$version-fpm restart
+                for i in `netstat -lp | grep -i "fpm.sock" | tr -s '[:space:]' | cut -d' ' -f10`; do ls -al $i; done
+
 
             - name: "[Init] Setup Apache with PHP-FPM"
               env:

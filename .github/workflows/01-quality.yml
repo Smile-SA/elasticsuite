@@ -1,6 +1,7 @@
 name: PHP Code Quality (2.11.x)
 
 on:
+    workflow_dispatch:
     push:
         branches:
         - 2.10.x
