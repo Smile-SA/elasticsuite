@@ -1,6 +1,7 @@
 name: Integration (2.11.x)
 
 on:
+    workflow_dispatch:
     push:
         branches:
           - 2.11.x
