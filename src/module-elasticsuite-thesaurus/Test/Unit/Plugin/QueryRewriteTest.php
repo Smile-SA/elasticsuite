@@ -285,17 +285,17 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $pluginList = $this->getMockBuilder(Pluginlist::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $pluginList->method('getNext')->will($this->returnValueMap(
+        $pluginList->method('getNext')->willReturnMap(
             [
                 [Builder::class, 'create', '__self', [DefinitionInterface::LISTENER_AROUND => 'queryRewriteSynonyms']],
                 [Builder::class, 'create', 'queryRewriteSynonyms', null],
             ]
-        ));
-        $pluginList->method('getPlugin')->will($this->returnValueMap(
+        );
+        $pluginList->method('getPlugin')->willReturnMap(
             [
                 [Builder::class, 'queryRewriteSynonyms', $queryRewritePlugin],
             ]
-        ));
+        );
 
         $queryBuilderInterceptor = $this->getMockBuilder(FulltextQueryBuilderInterceptor::class)
             ->setConstructorArgs([$queryFactory, $textHelper, $fieldFilters])
