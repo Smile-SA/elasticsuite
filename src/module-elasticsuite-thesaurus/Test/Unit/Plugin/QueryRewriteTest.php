@@ -327,10 +327,10 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
 
         foreach ($queryTypes as $currentType) {
             $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
-            $queryMock->method('getType')->will($this->returnValue($currentType));
+            $queryMock->method('getType')->willReturn($currentType);
 
             $factory = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-            $factory->method('create')->will($this->returnValue($queryMock));
+            $factory->method('create')->willReturn($queryMock);
 
             $factories[$currentType] = $factory;
         }
@@ -350,12 +350,12 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $thesaurusConfig = $this->getMockBuilder(ThesaurusConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $thesaurusConfig->method('getMaxRewrittenQueries')->will($this->returnValue($maxRewrittenQueries));
+        $thesaurusConfig->method('getMaxRewrittenQueries')->willReturn($maxRewrittenQueries);
 
         $thesaurusConfigFactory = $this->getMockBuilder(ThesaurusConfigFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $thesaurusConfigFactory->method('create')->will($this->returnValue($thesaurusConfig));
+        $thesaurusConfigFactory->method('create')->willReturn($thesaurusConfig);
 
         return $thesaurusConfigFactory;
     }
@@ -373,10 +373,10 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $mapping = new Mapping('idField', $fields);
-        $config->method('getMapping')->will($this->returnValue($mapping));
+        $config->method('getMapping')->willReturn($mapping);
 
         $relevanceConfig = $this->getRelevanceConfig();
-        $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
+        $config->method('getRelevanceConfig')->willReturn($relevanceConfig);
 
         return $config;
     }
@@ -401,8 +401,8 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)
             ->getMock();
 
-        $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
-        $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
+        $relevanceConfig->method('isFuzzinessEnabled')->willReturn(true);
+        $relevanceConfig->method('isPhoneticSearchEnabled')->willReturn(true);
 
         return $relevanceConfig;
     }
@@ -416,7 +416,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     {
         $fieldFilterMock = $this->getMockBuilder(FieldFilterInterface::class)->getMock();
 
-        $fieldFilterMock->method('filterField')->will($this->returnValue(true));
+        $fieldFilterMock->method('filterField')->willReturn(true);
 
         return [
             'searchableFieldFilter'       => $fieldFilterMock,

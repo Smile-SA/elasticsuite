@@ -39,7 +39,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuildValidQuery()
     {
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue('queryType'));
+        $query->method('getType')->willReturn('queryType');
 
         $this->assertEquals(['type' => 'queryType'], $this->getQueryBuilder()->buildQuery($query));
     }
@@ -54,7 +54,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Unknow query builder for invalidQueryType.");
         $this->expectException(\InvalidArgumentException::class);
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue('invalidQueryType'));
+        $query->method('getType')->willReturn('invalidQueryType');
 
         $this->getQueryBuilder()->buildQuery($query);
     }

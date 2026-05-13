@@ -180,10 +180,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         foreach ($queryTypes as $currentType) {
             $queryMock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class)->getMock();
-            $queryMock->method('getType')->will($this->returnValue($currentType));
+            $queryMock->method('getType')->willReturn($currentType);
 
             $factory = $this->getMockBuilder(\Magento\Framework\ObjectManagerInterface::class)->getMock();
-            $factory->method('create')->will($this->returnValue($queryMock));
+            $factory->method('create')->willReturn($queryMock);
 
             $factories[$currentType] = $factory;
         }
@@ -205,7 +205,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $mapping = new \Smile\ElasticsuiteCore\Index\Mapping('idField', $fields);
-        $config->method('getMapping')->will($this->returnValue($mapping));
+        $config->method('getMapping')->willReturn($mapping);
 
         return $config;
     }

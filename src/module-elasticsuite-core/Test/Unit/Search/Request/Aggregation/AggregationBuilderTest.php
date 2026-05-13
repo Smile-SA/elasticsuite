@@ -187,7 +187,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
         $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
 
         $queryFactory = $this->getMockBuilder(QueryFactory::class)->disableOriginalConstructor()->getMock();
-        $queryFactory->method('create')->will($this->returnValue($queryMock));
+        $queryFactory->method('create')->willReturn($queryMock);
 
         return new \Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder($queryFactory);
     }
@@ -218,7 +218,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $mapping = $this->getMapping();
         $containerConfig->method('getMapping')
-            ->will($this->returnValue($mapping));
+            ->willReturn($mapping);
 
         return $containerConfig;
     }

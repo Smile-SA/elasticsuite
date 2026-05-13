@@ -146,9 +146,9 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
 
         $indexSettingHelper->method('getIndexAliasFromIdentifier')->will($indexIdentifierMethodStub);
         $indexSettingHelper->method('createIndexNameFromIdentifier')->will($indexIdentifierMethodStub);
-        $indexSettingHelper->method('getBatchIndexingSize')->will($this->returnValue(100));
-        $indexSettingHelper->method('getNumberOfShards')->will($this->returnValue(1));
-        $indexSettingHelper->method('getNumberOfReplicas')->will($this->returnValue(1));
+        $indexSettingHelper->method('getBatchIndexingSize')->willReturn(100);
+        $indexSettingHelper->method('getNumberOfShards')->willReturn(1);
+        $indexSettingHelper->method('getNumberOfReplicas')->willReturn(1);
         $indexSettingHelper->method('getLanguageCode')->will($this->returnCallback($getLanguageCodeStub));
 
         return $indexSettingHelper;
@@ -162,7 +162,7 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
     private function getIndicesConfigMock()
     {
         $indicesConfig = $this->getMockBuilder(IndicesConfig::class)->disableOriginalConstructor()->getMock();
-        $indicesConfig->method('get')->will($this->returnValue(['index' => 'indexConfiguration']));
+        $indicesConfig->method('get')->willReturn(['index' => 'indexConfiguration']);
 
         return $indicesConfig;
     }

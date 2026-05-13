@@ -147,16 +147,16 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     private function getMapper()
     {
         $queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $queryBuilderMock->method('buildQuery')->will($this->returnValue('query'));
+        $queryBuilderMock->method('buildQuery')->willReturn('query');
 
         $sortOrderBuilderMock = $this->getMockBuilder(SortOrderBuilder::class)->disableOriginalConstructor()->getMock();
-        $sortOrderBuilderMock->method('buildSortOrders')->will($this->returnValue('sortOrders'));
+        $sortOrderBuilderMock->method('buildSortOrders')->willReturn('sortOrders');
 
         $aggregationBuilderMock = $this->getMockBuilder(AggregationBuilder::class)->disableOriginalConstructor()->getMock();
-        $aggregationBuilderMock->method('buildAggregations')->will($this->returnValue('aggregations'));
+        $aggregationBuilderMock->method('buildAggregations')->willReturn('aggregations');
 
         $collapseBuilderMock = $this->getMockBuilder(CollapseBuilder::class)->disableOriginalConstructor()->getMock();
-        $collapseBuilderMock->method('buildCollapse')->will($this->returnValue('collapse'));
+        $collapseBuilderMock->method('buildCollapse')->willReturn('collapse');
 
         return new Mapper($queryBuilderMock, $sortOrderBuilderMock, $aggregationBuilderMock, $collapseBuilderMock);
     }

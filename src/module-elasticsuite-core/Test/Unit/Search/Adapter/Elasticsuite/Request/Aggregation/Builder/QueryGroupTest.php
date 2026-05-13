@@ -39,8 +39,8 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
             'filter1' => $this->getMockBuilder(QueryInterface::class)->getMock(),
             'filter2' => $this->getMockBuilder(QueryInterface::class)->getMock(),
         ];
-        $queries['filter1']->method('getName')->will($this->returnValue('filter1'));
-        $queries['filter2']->method('getName')->will($this->returnValue('filter2'));
+        $queries['filter1']->method('getName')->willReturn('filter1');
+        $queries['filter2']->method('getName')->willReturn('filter2');
         $bucket      = new QueryGroupBucket('aggregationName', $queries, []);
         $aggregation = $this->getQueryGroupAggregationBuilder()->buildBucket($bucket);
 
@@ -59,7 +59,7 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $termBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $termBucket->method('getType')->will($this->returnValue('invalidType'));
+        $termBucket->method('getType')->willReturn('invalidType');
 
         $this->getQueryGroupAggregationBuilder()->buildBucket($termBucket);
     }

@@ -227,7 +227,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $termBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $termBucket->method('getType')->will($this->returnValue('invalidType'));
+        $termBucket->method('getType')->willReturn('invalidType');
 
         $this->getAggregationBuilder()->buildBucket($termBucket);
     }

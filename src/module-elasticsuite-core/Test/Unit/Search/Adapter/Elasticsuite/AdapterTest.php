@@ -98,7 +98,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     {
         $mapperMock = $this->getMockBuilder(Mapper::class)->disableOriginalConstructor()->getMock();
 
-        $mapperMock->method('buildSearchRequest')->will($this->returnValue('searchQueryBody'));
+        $mapperMock->method('buildSearchRequest')->willReturn('searchQueryBody');
 
         return $mapperMock;
     }

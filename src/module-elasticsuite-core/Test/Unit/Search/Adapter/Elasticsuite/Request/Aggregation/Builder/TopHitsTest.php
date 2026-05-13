@@ -203,7 +203,7 @@ class TopHitsTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $topHitsBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $topHitsBucket->method('getType')->will($this->returnValue('invalidType'));
+        $topHitsBucket->method('getType')->willReturn('invalidType');
 
         $this->getAggregationBuilder()->buildBucket($topHitsBucket);
     }
