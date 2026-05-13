@@ -51,20 +51,14 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    private $fields = [];
+    private static $fields = [];
 
     /**
-     * Constructor.
-     *
-     * @param string $name     Test case name.
-     * @param array  $data     Test case data.
-     * @param string $dataName Test case data name.
+     * {@inheritDoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-
-        $this->fields = [
+        self::$fields = [
             new Field('idField', Field::FIELD_TYPE_INTEGER),
             new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
             new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
@@ -149,7 +143,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
         $fieldFilters    = $this->getFieldFilters();
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $textHelper      = $this->getTextHelperMock();
 
         $builder = new QueryBuilder($queryFactory, $textHelper, $fieldFilters);

@@ -60,20 +60,14 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    private $fields = [];
+    private static $fields = [];
 
     /**
-     * Constructor.
-     *
-     * @param string $name     Test case name.
-     * @param array  $data     Test case data.
-     * @param string $dataName Test case data name.
+     * {@inheritDoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-
-        $this->fields = [
+        self::$fields = [
             new Field('idField', Field::FIELD_TYPE_INTEGER),
             new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
             new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
@@ -90,7 +84,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     public function testMultipleSearchQueryDepthBuilder()
     {
         $queryFactory = $this->getQueryFactory($this->mockedQueryTypes);
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 0;
 
@@ -157,7 +151,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     public function testMultipleSearchQueryDepthBuilderWithRewrites()
     {
         $queryFactory = $this->getQueryFactory($this->mockedQueryTypes);
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 0;
 
@@ -219,7 +213,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $queryFactoryFullMock = $this->getMockBuilder(QueryFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 1;
 
