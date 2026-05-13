@@ -205,7 +205,7 @@ jobs:
                     engine: 'opensearch3'
                     experimental: false
                   - php-versions: '8.4'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch3'
