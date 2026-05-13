@@ -37,7 +37,7 @@ abstract class AbstractComplexQueryBuilder extends AbstractSimpleQueryBuilder
             return $query->getName();
         };
 
-        $mock->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $mock->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return $mock;
     }

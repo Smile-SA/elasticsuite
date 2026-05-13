@@ -202,7 +202,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
         $aggregationFactory = $this->getMockBuilder(AggregationFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $aggregationFactory->method('create')->will($this->returnArgument(1));
+        $aggregationFactory->method('create')->willReturnArgument(1);
 
         return $aggregationFactory;
     }
