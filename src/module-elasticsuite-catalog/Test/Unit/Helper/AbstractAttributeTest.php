@@ -60,6 +60,7 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
 
         $attributeFactoryMock->method('create')->willReturn($attributeMock);
 
+        /*
         $helperMock = $this->getMockForAbstractClass(
             AbstractAttribute::class,
             [$contextMock, $attributeFactoryMock, null],
@@ -69,6 +70,11 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
             true,
             ['getAttributeById']
         );
+        */
+        $helperMock = $this->getMockBuilder(AbstractAttribute::class)
+            ->setConstructorArgs([$contextMock, $attributeFactoryMock, null])
+            ->onlyMethods([])
+            ->getMock();
 
         $this->assertEquals($expectedType, $helperMock->getFieldType($attributeMock->getId()));
     }
