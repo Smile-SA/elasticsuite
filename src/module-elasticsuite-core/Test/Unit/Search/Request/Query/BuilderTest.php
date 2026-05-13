@@ -102,7 +102,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             return $queryClass->newInstanceArgs($params);
         };
 
-        $queryFactory->method('create')->will($this->returnCallback($createQueryCallback));
+        $queryFactory->method('create')->willReturnCallback($createQueryCallback);
 
         return $queryFactory;
     }

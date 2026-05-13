@@ -231,7 +231,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             return ['type' => $query->getType()];
         };
 
-        $queryBuilderMock->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $queryBuilderMock->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return new AdapterQueryBuilder(['queryType' => $queryBuilderMock]);
     }

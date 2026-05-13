@@ -77,7 +77,7 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
             return $query->getName();
         };
 
-        $queryBuilder->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $queryBuilder->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return new QueryGroupBuilder($queryBuilder);
     }

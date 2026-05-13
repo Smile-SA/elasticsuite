@@ -236,7 +236,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
             return $instance;
         };
 
-        $objectManagerMock->method('create')->will($this->returnCallback($createObjectStub));
+        $objectManagerMock->method('create')->willReturnCallback($createObjectStub);
 
         return $objectManagerMock;
     }
@@ -255,7 +255,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $indicesExistsMethodStub = function ($indexName) {
             return $indexName === 'index_identifier_store_code';
         };
-        $this->clientMock->method('indexExists')->will($this->returnCallback($indicesExistsMethodStub));
+        $this->clientMock->method('indexExists')->willReturnCallback($indicesExistsMethodStub);
     }
 
     /**
@@ -270,7 +270,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
             return "{$indexIdentifier}_{$store}";
         };
 
-        $indexSettingsMock->method('getIndexAliasFromIdentifier')->will($this->returnCallback($getIndexIdentiferMethodStub));
+        $indexSettingsMock->method('getIndexAliasFromIdentifier')->willReturnCallback($getIndexIdentiferMethodStub);
         $indexSettingsMock->method('getIndicesConfig')->willReturn(['index_identifier' => []]);
         $indexSettingsMock->method('getBatchIndexingSize')->willReturn(100);
 
@@ -294,7 +294,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
             $this->logRows['errors'][] = $message;
         };
-        $loggerMock->method('error')->will($this->returnCallback($errorLoggerStub));
+        $loggerMock->method('error')->willReturnCallback($errorLoggerStub);
 
         return $loggerMock;
     }

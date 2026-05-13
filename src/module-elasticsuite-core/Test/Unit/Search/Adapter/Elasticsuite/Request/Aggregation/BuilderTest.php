@@ -157,13 +157,13 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $buildBucketCallback = function (BucketInterface $bucket) {
             return ['type' => $bucket->getType()];
         };
-        $aggregationBuilderMock->method('buildBucket')->will($this->returnCallback($buildBucketCallback));
+        $aggregationBuilderMock->method('buildBucket')->willReturnCallback($buildBucketCallback);
 
         $pipelineBuilderMock = $this->getMockBuilder(PipelineBuilderInterface::class)->getMock();
         $buildPipelineCallback = function (PipelineInterface $pipeline) {
             return ['type' => $pipeline->getType()];
         };
-        $pipelineBuilderMock->method('buildPipeline')->will($this->returnCallback($buildPipelineCallback));
+        $pipelineBuilderMock->method('buildPipeline')->willReturnCallback($buildPipelineCallback);
 
         return new AggregationBuilder(
             $queryBuilder,
