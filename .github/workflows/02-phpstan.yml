@@ -50,13 +50,13 @@ jobs:
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.4'
-            magento-versions: '2.4.9-beta1'
+            magento-versions: '2.4.9'
             magento-editions: 'enterprise'
-            experimental: true
+            experimental: false
           - php-versions: '8.5'
-            magento-versions: '2.4.9-beta1'
+            magento-versions: '2.4.9'
             magento-editions: 'enterprise'
-            experimental: true
+            experimental: false
 
     continue-on-error: ${{ matrix.experimental }}
 
