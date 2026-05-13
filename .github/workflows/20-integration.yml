@@ -181,41 +181,41 @@ jobs:
                     engine: 'opensearch3'
                     experimental: false
                   - php-versions: '8.4'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'community'
                     db: 'mysql80'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
                   - php-versions: '8.5'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'community'
                     db: 'mysql80'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
                   - php-versions: '8.4'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
                   - php-versions: '8.5'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'enterprise'
                     db: 'mysql80'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
                   - php-versions: '8.4'
                     magento-versions: '2.4.9-beta1'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
                   - php-versions: '8.5'
-                    magento-versions: '2.4.9-beta1'
+                    magento-versions: '2.4.9'
                     magento-editions: 'enterprise'
                     db: 'mysql84'
                     engine: 'opensearch3'
-                    experimental: true
+                    experimental: false
 
         continue-on-error: ${{ matrix.experimental }}
 
