@@ -52,11 +52,11 @@ jobs:
           - php-versions: '8.4'
             magento-versions: '2.4.9'
             magento-editions: 'enterprise'
-            experimental: false
+            experimental: true
           - php-versions: '8.5'
             magento-versions: '2.4.9'
             magento-editions: 'enterprise'
-            experimental: false
+            experimental: true
 
     continue-on-error: ${{ matrix.experimental }}
 
