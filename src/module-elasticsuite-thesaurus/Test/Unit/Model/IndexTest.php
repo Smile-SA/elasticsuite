@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Model;
 
 use OpenSearch\Common\Exceptions\BadRequest400Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -60,6 +61,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('noRewriteDataProvider')]
     public function testCacheUsageNoRewrites(
         $queryText,
         $synonymsEnabled,
@@ -177,6 +179,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('singleLevelRewritesDataProvider')]
     public function testSingleLevelRewrites(
         $queryText,
         $synonymsEnabled,
@@ -684,6 +687,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('multiLevelRewritesDataProvider')]
     public function testMultiLevelRewritesCombination(
         $queryText,
         $synonymsEnabled,
@@ -1670,6 +1674,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('withAnalysisFailureDataProvider')]
     public function testAnalyzeFailure(
         $queryText,
         $synonymsEnabled,

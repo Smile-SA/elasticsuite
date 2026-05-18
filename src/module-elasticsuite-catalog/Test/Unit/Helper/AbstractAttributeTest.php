@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
@@ -42,6 +43,7 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('attributeTypeProvider')]
     public function testFieldTypes($attributeId, $backendType, $usesSource, $sourceModel, $frontendClass, $expectedType)
     {
         $contextMock   = $this->createMock(\Magento\Framework\App\Helper\Context::class);
