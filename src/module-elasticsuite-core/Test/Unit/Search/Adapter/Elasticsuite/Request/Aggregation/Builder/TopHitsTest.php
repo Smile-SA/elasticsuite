@@ -83,7 +83,7 @@ class TopHitsTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function sizeDataProvider()
+    public static function sizeDataProvider()
     {
         return [
             [0, false, 0],

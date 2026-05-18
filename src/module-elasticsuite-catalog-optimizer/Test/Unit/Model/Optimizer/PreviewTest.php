@@ -168,7 +168,7 @@ class PreviewTest extends TestCase
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         $data = [
             [['quick_search_container'], 'catalog_product_autocomplete', null, null, null, null, null, false],

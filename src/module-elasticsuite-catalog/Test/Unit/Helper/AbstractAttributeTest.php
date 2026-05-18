@@ -84,7 +84,7 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function attributeTypeProvider()
+    public static function attributeTypeProvider()
     {
         return [
             [1, 'int', true, 'Magento\Eav\Model\Entity\Attribute\Source\Boolean', null, FieldInterface::FIELD_TYPE_BOOLEAN],
