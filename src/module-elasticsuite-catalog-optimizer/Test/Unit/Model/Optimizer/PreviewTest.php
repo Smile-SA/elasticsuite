@@ -498,9 +498,8 @@ class PreviewTest extends TestCase
     private function getOptimizerMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
-            ->getMockBuilder(Optimizer::class)
+            ->getMockBuilder(MockableOptimizer::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getSearchContainer', 'getQuickSearchContainer', 'getCatalogViewContainer'])
             ->getMock();
     }
 
