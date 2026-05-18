@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Optimizer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -130,6 +131,7 @@ class PreviewTest extends TestCase
      * @param integer $category             Category
      * @param boolean $expectedResult       Expected result
      */
+    #[DataProvider('dataProvider')]
     public function testCanApply(
         $searchContainers,
         $name,

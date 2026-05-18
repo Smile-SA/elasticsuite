@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Indices;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Smile\ElasticsuiteCore\Index\Indices\Config\Converter;
@@ -59,6 +60,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('stringFieldDynamicConfigProvider')]
     public function testConfig($stringFieldDynamicConfig)
     {
         $config = new Config(

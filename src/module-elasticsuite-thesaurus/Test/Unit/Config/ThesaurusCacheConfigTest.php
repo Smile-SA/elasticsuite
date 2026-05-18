@@ -16,6 +16,7 @@ declare(strict_types = 1);
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -40,6 +41,7 @@ class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
      * @param int   $rewritesCount               Number of rewrites/alternative queries.
      * @param bool  $expectedCacheStorageAllowed Expected cache storage allowed result.
      */
+    #[DataProvider('cacheStorageLimitationDataProvider')]
     public function testCacheStorageLimitation(
         $isSetFlagReturnsMap,
         $getValueReturnsMap,

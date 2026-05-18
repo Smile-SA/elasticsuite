@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Helper;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
@@ -43,6 +44,7 @@ class IndexSettingsTest extends TestCase
      *
      * @return void
      */
+    #[DataProvider('parseIndexNameDataProvider')]
     public function testParseIndexName(string $indexName, string $alias, string $suffixPattern, $expected)
     {
         $scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();

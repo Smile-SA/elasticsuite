@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
@@ -28,13 +29,14 @@ class SearchTest extends \PHPUnit\Framework\TestCase
     /**
      * Test search response format.
      *
-     * @dataProvider dataprovider
+     * @dataProvider dataProvider
      *
-     * @param unknown $documents Search engine hits.
-     * @param unknown $docCount  Total number of docs that match the search.
+     * @param array $documents Search engine hits.
+     * @param int   $docCount  Total number of docs that match the search.
      *
      * @return void.
      */
+    #[DataProvider('dataProvider')]
     public function testSearch($documents, $docCount)
     {
         $searchEngine          = $this->getSearchEngine($documents, $docCount);
