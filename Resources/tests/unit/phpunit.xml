@@ -23,6 +23,7 @@
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
          displayDetailsOnPhpunitDeprecations="true"
+         displayDetailsOnPhpunitNotices="true"
          failOnDeprecation="false"
          failOnNotice="false"
          failOnWarning="false"
