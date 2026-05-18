@@ -100,7 +100,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function stringFieldDynamicConfigProvider()
+    public static function stringFieldDynamicConfigProvider()
     {
         return [
             // Dynamic configuration for the stringField field in 'index2'.

@@ -140,9 +140,9 @@ class MultiMatchTest extends AbstractSimpleQueryBuilder
     public function testFuzzyMultiMatchQueryBuilder()
     {
         $fuzzyConfiguration = $this->getMockBuilder(FuzzinessConfigurationInterface::class)->getMock();
-        $fuzzyConfiguration->method('getValue')->will($this->returnValue('AUTO'));
-        $fuzzyConfiguration->method('getPrefixLength')->will($this->returnValue(1));
-        $fuzzyConfiguration->method('getMaxExpansion')->will($this->returnValue(10));
+        $fuzzyConfiguration->method('getValue')->willReturn('AUTO');
+        $fuzzyConfiguration->method('getPrefixLength')->willReturn(1);
+        $fuzzyConfiguration->method('getMaxExpansion')->willReturn(10);
 
         $builder = $this->getQueryBuilder();
 

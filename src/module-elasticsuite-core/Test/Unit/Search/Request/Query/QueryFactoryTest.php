@@ -67,7 +67,7 @@ class QueryFactoryTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $queryFactoryMock->method('create')
-            ->will($this->returnValue($queryMock));
+            ->willReturn($queryMock);
 
         $factories = ['queryType' => $queryFactoryMock];
 

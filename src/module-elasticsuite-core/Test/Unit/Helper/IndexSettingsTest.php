@@ -62,14 +62,12 @@ class IndexSettingsTest extends TestCase
         $indicesConfig = $this->getMockBuilder(IndicesConfig::class)->disableOriginalConstructor()->getMock();
         $indicesConfig
             ->method('get')
-            ->will(
-                $this->returnValue(
-                    [
-                        'catalog' => 'indexConfiguration',
-                        'catalog_product' => 'indexConfiguration',
-                        'tracking_log_session' => 'indexConfiguration',
-                    ]
-                )
+            ->willreturn(
+                [
+                    'catalog' => 'indexConfiguration',
+                    'catalog_product' => 'indexConfiguration',
+                    'tracking_log_session' => 'indexConfiguration',
+                ]
             );
 
         $indexSettings = new IndexSettingsHelper($contextMock, $storeManager, $indicesConfig);

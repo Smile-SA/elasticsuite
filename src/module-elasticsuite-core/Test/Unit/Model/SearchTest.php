@@ -58,7 +58,7 @@ class SearchTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $data = [[[], 0], [['doc1'], 1], [['doc1'], 2], [['doc1', 'doc2'], 2]];
 

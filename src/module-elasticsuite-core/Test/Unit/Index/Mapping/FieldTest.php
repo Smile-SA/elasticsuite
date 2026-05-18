@@ -180,7 +180,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getIsUsedInSpellcheckFieldConfigDataProvider()
+    public static function getIsUsedInSpellcheckFieldConfigDataProvider()
     {
         return [
             [
@@ -265,7 +265,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
 
      * @return array
      */
-    public function getMergeConfigFieldConfigDataProvider()
+    public static function getMergeConfigFieldConfigDataProvider()
     {
         return [
             [
