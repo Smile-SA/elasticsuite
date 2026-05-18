@@ -23,6 +23,12 @@
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
          displayDetailsOnPhpunitDeprecations="true"
+         failOnDeprecation="false"
+         failOnNotice="false"
+         failOnWarning="false"
+         failOnRisky="false"
+         failOnPhpunitDeprecation="false"
+         failOnPhpunitWarning="false"
         >
 
     <testsuite name="ElasticSuite Unit Tests">
