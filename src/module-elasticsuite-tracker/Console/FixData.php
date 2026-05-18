@@ -72,7 +72,7 @@ class FixData extends Command
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $progressIndicator = new ProgressIndicator($output, 'verbose', 500, ['⠏', '⠛', '⠹', '⢸', '⣰', '⣤', '⣆', '⡇']);
         $progressIndicator->start('Processing...');
