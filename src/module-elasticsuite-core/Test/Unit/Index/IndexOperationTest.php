@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 use Smile\ElasticsuiteCore\Index\IndexOperation;
 
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Index\IndexOperation;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexOperationTest extends \PHPUnit\Framework\TestCase
 {
     /**

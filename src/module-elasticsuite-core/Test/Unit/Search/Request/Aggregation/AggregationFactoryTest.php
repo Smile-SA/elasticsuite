@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Term;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**

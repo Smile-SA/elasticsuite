@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\Terms as TermsQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Terms as TermsQueryBuilder;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Ter
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class TermsTest extends AbstractSimpleQueryBuilder
 {
     /**

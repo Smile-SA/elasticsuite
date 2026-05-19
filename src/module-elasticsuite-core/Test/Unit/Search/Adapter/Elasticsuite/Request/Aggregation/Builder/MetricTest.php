@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Metric as MetricBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Metric as MetricBucket;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
@@ -26,6 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MetricTest extends \PHPUnit\Framework\TestCase
 {
     /**

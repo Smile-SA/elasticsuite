@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory;
 use Magento\Framework\ObjectManagerInterface;
@@ -65,6 +66,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryBuilderTest extends TestCase
 {
     /**

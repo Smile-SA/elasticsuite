@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\MoreLikeThis as MoreLikeThisQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MoreLikeThis as MoreLikeThisQueryBuilder;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Mor
  * @package   Smile\ElasticsuiteCore
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MoreLikeThisTest extends AbstractSimpleQueryBuilder
 {
     /**

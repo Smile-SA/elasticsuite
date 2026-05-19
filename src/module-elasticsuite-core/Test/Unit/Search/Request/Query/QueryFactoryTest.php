@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\Boolean;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**

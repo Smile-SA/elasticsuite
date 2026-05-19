@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\PipelineBuilder\BucketSelector as BucketSelectorBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\BucketSelector;
 use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BucketSelectorTest extends \PHPUnit\Framework\TestCase
 {
     /**

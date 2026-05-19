@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Analysis\Config;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\Analysis\Config\Converter;
 
 /**
@@ -22,6 +23,7 @@ use Smile\ElasticsuiteCore\Index\Analysis\Config\Converter;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ConverterTest extends \PHPUnit\Framework\TestCase
 {
     /**

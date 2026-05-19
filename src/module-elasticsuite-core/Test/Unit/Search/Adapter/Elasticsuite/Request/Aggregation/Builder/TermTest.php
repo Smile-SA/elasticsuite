@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term as TermBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Term as TermBucket;
@@ -26,6 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class TermTest extends \PHPUnit\Framework\TestCase
 {
     /**

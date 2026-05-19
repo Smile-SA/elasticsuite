@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Indices;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Framework\Config\CacheInterface;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -34,6 +35,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  */
+#[AllowMockObjectsWithoutExpectations]
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**

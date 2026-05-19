@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\Span;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanOr as SpanOrQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanOr as SpanOrQuery;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpanOrTest extends AbstractComplexSpanQueryBuilder
 {
     /**

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Optimizer;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +39,7 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[AllowMockObjectsWithoutExpectations]
 class PreviewTest extends TestCase
 {
     /**
@@ -144,7 +146,6 @@ class PreviewTest extends TestCase
     ) : void {
         $class = new ReflectionClass(Preview::class);
         $method = $class->getMethod('canApply');
-        $method->setAccessible(true);
 
         $this->optimizer->method('getSearchContainer')->willReturn($searchContainers);
         $this->optimizer->method('getQuickSearchContainer')->willReturn($quickSearchContainer);
@@ -156,7 +157,6 @@ class PreviewTest extends TestCase
 
         $reflection = new ReflectionClass($this->preview);
         $property = $reflection->getProperty('queryText');
-        $property->setAccessible(true);
         $property->setValue($this->preview, $queryText);
 
         $result = $method->invoke($this->preview);

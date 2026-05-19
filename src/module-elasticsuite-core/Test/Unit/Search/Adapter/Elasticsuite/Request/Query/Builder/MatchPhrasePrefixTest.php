@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MatchPhrasePrefix as MatchPhrasePrefixQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\MatchPhrasePrefix as MatchPhrasePrefixQuery;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MatchPhrasePrefixTest extends AbstractSimpleQueryBuilder
 {
     /**

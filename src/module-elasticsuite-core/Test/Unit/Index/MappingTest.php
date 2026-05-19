@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
@@ -28,6 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\SearchableFieldFilter;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MappingTest extends \PHPUnit\Framework\TestCase
 {
     /**

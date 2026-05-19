@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\Regexp as RegexpQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Regexp as RegexpQueryBuilder;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Reg
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class RegexpTest extends AbstractSimpleQueryBuilder
 {
     /**

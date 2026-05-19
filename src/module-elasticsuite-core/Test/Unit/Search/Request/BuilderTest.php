@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Search\Request\DimensionFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +39,7 @@ use Smile\ElasticsuiteCore\Search\Spellchecker\Request as SpellcheckerRequest;
  * @package   Smile\ElasticsuiteCore
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BuilderTest extends TestCase
 {
     /**

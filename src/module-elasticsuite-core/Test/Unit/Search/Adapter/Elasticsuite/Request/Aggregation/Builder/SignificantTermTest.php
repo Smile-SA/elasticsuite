@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm as SignificantTermBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTerm;
@@ -27,6 +28,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SignificantTermTest extends \PHPUnit\Framework\TestCase
 {
     /**

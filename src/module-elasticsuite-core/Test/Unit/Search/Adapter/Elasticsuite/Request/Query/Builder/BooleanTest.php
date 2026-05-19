@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\Boolean as BooleanQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boolean as BooleanQueryBuilder;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Boo
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BooleanTest extends AbstractComplexQueryBuilder
 {
     /**

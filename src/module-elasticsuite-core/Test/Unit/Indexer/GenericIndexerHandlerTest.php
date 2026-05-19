@@ -13,6 +13,8 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Indexer;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+
 /**
  * Generic indexer handler test case.
  *
@@ -26,6 +28,7 @@ namespace Smile\ElasticsuiteCore\Test\Unit\Indexer;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class GenericIndexerHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /**

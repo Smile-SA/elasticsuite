@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup as QueryGroupBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroup as QueryGroupBucket;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
@@ -26,6 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryGroupTest extends \PHPUnit\Framework\TestCase
 {
     /**

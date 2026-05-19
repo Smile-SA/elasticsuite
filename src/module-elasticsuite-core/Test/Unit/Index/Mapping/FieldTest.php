@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Mapping;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class FieldTest extends \PHPUnit\Framework\TestCase
 {
     /**

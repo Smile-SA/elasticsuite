@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\IndexSettings;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Index\Analysis\Config as AnalysisConfig;
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexSettingsTest extends \PHPUnit\Framework\TestCase
 {
     /**

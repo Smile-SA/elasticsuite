@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product\SpecialAttribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Config\Model\Config\Source\Yesno;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductType;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\StockQty;
@@ -27,6 +28,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  */
+#[AllowMockObjectsWithoutExpectations]
 class ProductTypeTest extends AbstractSpecialAttribute
 {
     /**

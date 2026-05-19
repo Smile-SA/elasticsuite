@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
@@ -36,6 +37,7 @@ use Smile\ElasticsuiteCore\Index\Mapping;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
