@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Rule\Attribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\DB\Select;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Rule\Attribute\OptimizerCollectionFilterInterface;
@@ -38,6 +39,7 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionF
  * @package  Smile\ElasticsuiteCatalogOptimizer
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class OptimizerLocationProviderTest extends TestCase
 {
     /**

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder as QueryBuilder;
@@ -31,6 +32,7 @@ use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**

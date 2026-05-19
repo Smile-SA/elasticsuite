@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Optimizer;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,6 +39,7 @@ use Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration;
  * @author    Dmytro ANDROSHCHUK <dmand@smile.fr>
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
+#[AllowMockObjectsWithoutExpectations]
 class PreviewTest extends TestCase
 {
     /**

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Filter;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Index\Mapping\Field;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**

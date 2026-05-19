@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute;
@@ -27,6 +28,7 @@ use \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as AttributeFactor
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
 {
     /**

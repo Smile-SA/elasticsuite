@@ -15,6 +15,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use OpenSearch\Common\Exceptions\BadRequest400Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -38,6 +39,7 @@ use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends \PHPUnit\Framework\TestCase
 {
     /**

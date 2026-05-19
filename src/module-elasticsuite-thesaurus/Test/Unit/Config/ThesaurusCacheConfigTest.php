@@ -15,6 +15,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Config;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\ScopeInterface;
@@ -29,6 +30,7 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
  * @package  Smile\ElasticsuiteThesaurus
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**

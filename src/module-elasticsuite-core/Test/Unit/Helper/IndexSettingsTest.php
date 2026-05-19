@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -28,6 +29,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
  * @package   Smile\ElasticsuiteCore
  * @author    Pierre Gauthier <pigau@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexSettingsTest extends TestCase
 {
     /**

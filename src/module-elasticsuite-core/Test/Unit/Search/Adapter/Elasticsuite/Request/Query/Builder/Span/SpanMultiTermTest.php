@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\Span;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanMultiTerm as SpanMultiTermQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanMultiTerm as SpanMultiTermQuery;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanMultiTerm as SpanMultiT
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpanMultiTermTest extends AbstractComplexSpanQueryBuilder
 {
     /**

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SearchTest extends \PHPUnit\Framework\TestCase
 {
     /**

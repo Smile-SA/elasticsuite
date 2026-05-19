@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Test\Unit\Model\Rule\Attribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Model\Entity\Attribute\AbstractAttribute;
 use Magento\Framework\App\ResourceConnection;
@@ -39,6 +40,7 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\Attribute\VirtualCategoryLocati
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class VirtualCategoryLocationProviderTest extends TestCase
 {
     /**

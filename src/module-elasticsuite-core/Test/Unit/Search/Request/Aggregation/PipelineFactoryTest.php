@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Pipeline\MaxBucket;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
 use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\PipelineInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class PipelineFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**

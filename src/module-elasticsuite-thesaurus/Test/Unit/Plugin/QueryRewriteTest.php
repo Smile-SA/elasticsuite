@@ -16,6 +16,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Plugin;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\Interception\DefinitionInterface;
 use Magento\Framework\Interception\PluginList\PluginList;
 use Magento\Framework\ObjectManagerInterface;
@@ -45,6 +46,7 @@ use Smile\ElasticsuiteThesaurus\Test\Unit\FulltextQueryBuilderInterceptor;
  * @package  Smile\ElasticsuiteThesaurus
  * @author   Richard Bayet <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryRewriteTest extends \PHPUnit\Framework\TestCase
 {
     /**

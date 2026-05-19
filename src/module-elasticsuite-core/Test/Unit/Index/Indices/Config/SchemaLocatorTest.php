@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Indices\Config;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\Indices\Config\SchemaLocator;
 
 /**
@@ -22,6 +23,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config\SchemaLocator;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
 {
     /**

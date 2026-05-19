@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Bulk;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\Bulk\BulkRequest;
 use Smile\ElasticsuiteCore\Api\Index\IndexInterface;
 use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BulkRequestTest extends \PHPUnit\Framework\TestCase
 {
     /**
