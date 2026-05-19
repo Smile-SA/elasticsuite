@@ -306,11 +306,9 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
 
         $queryBuilderReflection = new \ReflectionClass(FulltextQueryBuilderInterceptor::class);
         $subjectTypeProperty = $queryBuilderReflection->getProperty('subjectType');
-        $subjectTypeProperty->setAccessible(true);
         $subjectTypeProperty->setValue($queryBuilderInterceptor, Builder::class);
 
         $pluginListProperty = $queryBuilderReflection->getProperty('pluginList');
-        $pluginListProperty->setAccessible(true);
         $pluginListProperty->setValue($queryBuilderInterceptor, $pluginList);
 
         return $queryBuilderInterceptor;

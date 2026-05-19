@@ -146,7 +146,6 @@ class PreviewTest extends TestCase
     ) : void {
         $class = new ReflectionClass(Preview::class);
         $method = $class->getMethod('canApply');
-        $method->setAccessible(true);
 
         $this->optimizer->method('getSearchContainer')->willReturn($searchContainers);
         $this->optimizer->method('getQuickSearchContainer')->willReturn($quickSearchContainer);
@@ -158,7 +157,6 @@ class PreviewTest extends TestCase
 
         $reflection = new ReflectionClass($this->preview);
         $property = $reflection->getProperty('queryText');
-        $property->setAccessible(true);
         $property->setValue($this->preview, $queryText);
 
         $result = $method->invoke($this->preview);
