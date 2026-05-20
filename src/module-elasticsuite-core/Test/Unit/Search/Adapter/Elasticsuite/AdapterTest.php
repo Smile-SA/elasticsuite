@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Adapter;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper;
@@ -28,6 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AdapterTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -51,7 +53,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
         $query    = $this->getMockBuilder(QueryInterface::class)->getMock();
         $request  = new Request('requestName', 'indexName', $query);
 
-        $this->client->method('search')->will($this->returnArgument(0));
+        $this->client->method('search')->willReturnArgument(0);
 
         $response = $this->adapter->query($request);
 
@@ -98,7 +100,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
     {
         $mapperMock = $this->getMockBuilder(Mapper::class)->disableOriginalConstructor()->getMock();
 
-        $mapperMock->method('buildSearchRequest')->will($this->returnValue('searchQueryBody'));
+        $mapperMock->method('buildSearchRequest')->willReturn('searchQueryBody');
 
         return $mapperMock;
     }
@@ -115,7 +117,7 @@ class AdapterTest extends \PHPUnit\Framework\TestCase
             ->onlyMethods(['create'])
             ->getMock();
 
-        $queryResponseFactoryMock->method('create')->will($this->returnArgument(0));
+        $queryResponseFactoryMock->method('create')->willReturnArgument(0);
 
         return $queryResponseFactoryMock;
     }

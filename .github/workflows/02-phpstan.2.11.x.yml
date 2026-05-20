@@ -1,6 +1,7 @@
 name: PHPStan Code Quality (2.11.x)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 2.11.x
@@ -49,11 +50,11 @@ jobs:
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.4'
-            magento-versions: '2.4.9-beta1'
+            magento-versions: '2.4.9'
             magento-editions: 'enterprise'
             experimental: true
           - php-versions: '8.5'
-            magento-versions: '2.4.9-beta1'
+            magento-versions: '2.4.9'
             magento-editions: 'enterprise'
             experimental: true
 

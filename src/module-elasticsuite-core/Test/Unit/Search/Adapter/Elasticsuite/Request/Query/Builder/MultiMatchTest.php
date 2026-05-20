@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Query\MultiMatch as MultiMatchQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\MultiMatch as MultiMatchQueryBuilder;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\F
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MultiMatchTest extends AbstractSimpleQueryBuilder
 {
     /**
@@ -140,9 +142,9 @@ class MultiMatchTest extends AbstractSimpleQueryBuilder
     public function testFuzzyMultiMatchQueryBuilder()
     {
         $fuzzyConfiguration = $this->getMockBuilder(FuzzinessConfigurationInterface::class)->getMock();
-        $fuzzyConfiguration->method('getValue')->will($this->returnValue('AUTO'));
-        $fuzzyConfiguration->method('getPrefixLength')->will($this->returnValue(1));
-        $fuzzyConfiguration->method('getMaxExpansion')->will($this->returnValue(10));
+        $fuzzyConfiguration->method('getValue')->willReturn('AUTO');
+        $fuzzyConfiguration->method('getPrefixLength')->willReturn(1);
+        $fuzzyConfiguration->method('getMaxExpansion')->willReturn(10);
 
         $builder = $this->getQueryBuilder();
 

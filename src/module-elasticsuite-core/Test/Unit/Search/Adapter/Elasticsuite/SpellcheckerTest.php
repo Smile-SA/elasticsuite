@@ -15,6 +15,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
@@ -36,6 +37,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Spellchecker;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpellcheckerTest extends TestCase
 {
     /**

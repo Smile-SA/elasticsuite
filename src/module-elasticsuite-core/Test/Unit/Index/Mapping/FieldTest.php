@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index\Mapping;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
@@ -24,6 +26,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class FieldTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -166,6 +169,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      * @param bool  $isSearchable       Expected result for is_searchable property
      * @param bool  $isUsedInSpellcheck Expected result for is_used_in_spellcheck property
      */
+    #[DataProvider('getIsUsedInSpellcheckFieldConfigDataProvider')]
     public function testIsUsedInSpellcheckField($fieldConfig, $isSearchable, $isUsedInSpellcheck)
     {
         $fieldType   = FieldInterface::FIELD_TYPE_TEXT;
@@ -180,7 +184,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function getIsUsedInSpellcheckFieldConfigDataProvider()
+    public static function getIsUsedInSpellcheckFieldConfigDataProvider()
     {
         return [
             [
@@ -237,6 +241,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
      * @param int    $searchWeight       Expected result for search_weight property
      * @param string $defaultAnalyzer    Expected result for default_search_analyzer property
      */
+    #[DataProvider('getMergeConfigFieldConfigDataProvider')]
     public function testMergeConfig(
         $fieldConfig,
         $config,
@@ -265,7 +270,7 @@ class FieldTest extends \PHPUnit\Framework\TestCase
 
      * @return array
      */
-    public function getMergeConfigFieldConfigDataProvider()
+    public static function getMergeConfigFieldConfigDataProvider()
     {
         return [
             [

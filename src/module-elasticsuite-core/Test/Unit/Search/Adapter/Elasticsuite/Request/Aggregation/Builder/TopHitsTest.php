@@ -13,6 +13,8 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\TopHits as TopHitsBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Term as TermBucket;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\TopHits as TopHitsBucket;
@@ -26,6 +28,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class TopHitsTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -40,6 +43,7 @@ class TopHitsTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('sizeDataProvider')]
     public function testBucketNoSize($size, $hasSize, $expected)
     {
         $aggBuilder = $this->getAggregationBuilder();
@@ -83,7 +87,7 @@ class TopHitsTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function sizeDataProvider()
+    public static function sizeDataProvider()
     {
         return [
             [0, false, 0],
@@ -203,7 +207,7 @@ class TopHitsTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $topHitsBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $topHitsBucket->method('getType')->will($this->returnValue('invalidType'));
+        $topHitsBucket->method('getType')->willReturn('invalidType');
 
         $this->getAggregationBuilder()->buildBucket($topHitsBucket);
     }

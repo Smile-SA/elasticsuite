@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Cluster;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Cluster\ClusterInfo;
 
 /**
@@ -22,6 +23,7 @@ use Smile\ElasticsuiteCore\Cluster\ClusterInfo;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ClusterInfoTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -75,7 +77,7 @@ class ClusterInfoTest extends \PHPUnit\Framework\TestCase
             $info['version']['distribution'] = $distribution;
         }
 
-        $clientMock->method('info')->will($this->returnValue($info));
+        $clientMock->method('info')->willReturn($info);
 
         return $clientMock;
     }

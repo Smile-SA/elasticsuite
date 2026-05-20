@@ -15,7 +15,9 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Config;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\ScopeInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -28,6 +30,7 @@ use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
  * @package  Smile\ElasticsuiteThesaurus
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -40,6 +43,7 @@ class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
      * @param int   $rewritesCount               Number of rewrites/alternative queries.
      * @param bool  $expectedCacheStorageAllowed Expected cache storage allowed result.
      */
+    #[DataProvider('cacheStorageLimitationDataProvider')]
     public function testCacheStorageLimitation(
         $isSetFlagReturnsMap,
         $getValueReturnsMap,
@@ -66,7 +70,7 @@ class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function cacheStorageLimitationDataProvider()
+    public static function cacheStorageLimitationDataProvider()
     {
         $isSetFlagReturnsMap = [
             [ThesaurusCacheConfig::ALWAYS_CACHE_RESULTS_XML_PATH, ScopeInterface::SCOPE_STORES, 1, true],

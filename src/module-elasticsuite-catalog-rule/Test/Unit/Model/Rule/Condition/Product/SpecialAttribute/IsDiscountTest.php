@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product\SpecialAttribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Customer\Model\Session;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -28,6 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Term;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  */
+#[AllowMockObjectsWithoutExpectations]
 class IsDiscountTest extends AbstractSpecialAttribute
 {
     /**

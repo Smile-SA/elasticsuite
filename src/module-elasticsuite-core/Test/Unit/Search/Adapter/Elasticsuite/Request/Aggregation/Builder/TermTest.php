@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\Term as TermBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\Term as TermBucket;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
@@ -25,6 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class TermTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -227,7 +230,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $termBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $termBucket->method('getType')->will($this->returnValue('invalidType'));
+        $termBucket->method('getType')->willReturn('invalidType');
 
         $this->getAggregationBuilder()->buildBucket($termBucket);
     }
@@ -242,6 +245,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('sizeDataProvider')]
     public function testBucketSize($size, $expected)
     {
         $aggBuilder = $this->getAggregationBuilder();
@@ -257,7 +261,7 @@ class TermTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function sizeDataProvider()
+    public static function sizeDataProvider()
     {
         return [
             [0, TermBucket::MAX_BUCKET_SIZE],

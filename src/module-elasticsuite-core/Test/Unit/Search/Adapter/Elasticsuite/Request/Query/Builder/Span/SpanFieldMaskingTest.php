@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder\Span;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Span\SpanFieldMasking as SpanFieldMaskingQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFieldMasking as SpanFieldMaskingQuery;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\Span\SpanFieldMasking as SpanFie
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpanFieldMaskingTest extends AbstractComplexSpanQueryBuilder
 {
     /**

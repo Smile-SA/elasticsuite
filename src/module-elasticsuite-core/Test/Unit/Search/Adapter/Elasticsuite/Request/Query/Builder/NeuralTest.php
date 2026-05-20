@@ -13,6 +13,8 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Search\Request\Query\Vector\Opensearch\Neural as NeuralQuery;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Opensearch\Neural as NeuralQueryBuilder;
 
@@ -23,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder\Ope
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class NeuralTest extends AbstractSimpleQueryBuilder
 {
     /**
@@ -33,6 +36,7 @@ class NeuralTest extends AbstractSimpleQueryBuilder
      *
      * @return void
      */
+    #[DataProvider('neuralQueryAssemblerDataProvider')]
     public function testNeuralQueryAssembler(
         array $queryParameters,
         array $expectedQuery,
@@ -48,7 +52,7 @@ class NeuralTest extends AbstractSimpleQueryBuilder
      *
      * @return iterable
      */
-    public function neuralQueryAssemblerDataProvider(): iterable
+    public static function neuralQueryAssemblerDataProvider(): iterable
     {
         yield [
             ['search text', 100],

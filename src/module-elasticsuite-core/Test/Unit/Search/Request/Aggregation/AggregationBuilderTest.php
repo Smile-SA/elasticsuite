@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Aggregation;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationFactory;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\AggregationBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder as QueryBuilder;
@@ -31,6 +32,7 @@ use Smile\ElasticsuiteCore\Search\Request\Aggregation\PipelineFactory;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -187,7 +189,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
         $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
 
         $queryFactory = $this->getMockBuilder(QueryFactory::class)->disableOriginalConstructor()->getMock();
-        $queryFactory->method('create')->will($this->returnValue($queryMock));
+        $queryFactory->method('create')->willReturn($queryMock);
 
         return new \Smile\ElasticsuiteCore\Search\Request\Query\Filter\QueryBuilder($queryFactory);
     }
@@ -202,7 +204,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
         $aggregationFactory = $this->getMockBuilder(AggregationFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $aggregationFactory->method('create')->will($this->returnArgument(1));
+        $aggregationFactory->method('create')->willReturnArgument(1);
 
         return $aggregationFactory;
     }
@@ -218,7 +220,7 @@ class AggregationBuilderTest extends \PHPUnit\Framework\TestCase
 
         $mapping = $this->getMapping();
         $containerConfig->method('getMapping')
-            ->will($this->returnValue($mapping));
+            ->willReturn($mapping);
 
         return $containerConfig;
     }

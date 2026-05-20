@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalogOptimizer\Test\Unit\Model\Optimizer\Preview;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Preview\SearchQuery;
@@ -32,6 +33,7 @@ use Smile\ElasticsuiteCore\Search\Spellchecker\Request as SpellcheckerRequest;
  * @package   Smile\ElasticsuiteCatalogOptimizer
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SearchQueryTest extends TestCase
 {
     /**

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Query;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as AdapterQueryBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\BuilderInterface;
@@ -29,6 +30,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -39,7 +41,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     public function testBuildValidQuery()
     {
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue('queryType'));
+        $query->method('getType')->willReturn('queryType');
 
         $this->assertEquals(['type' => 'queryType'], $this->getQueryBuilder()->buildQuery($query));
     }
@@ -54,7 +56,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Unknow query builder for invalidQueryType.");
         $this->expectException(\InvalidArgumentException::class);
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue('invalidQueryType'));
+        $query->method('getType')->willReturn('invalidQueryType');
 
         $this->getQueryBuilder()->buildQuery($query);
     }
@@ -231,7 +233,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             return ['type' => $query->getType()];
         };
 
-        $queryBuilderMock->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $queryBuilderMock->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return new AdapterQueryBuilder(['queryType' => $queryBuilderMock]);
     }

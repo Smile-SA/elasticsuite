@@ -14,6 +14,8 @@
 
 namespace Smile\ElasticsuiteCatalog\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCatalog\Helper\AbstractAttribute;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
@@ -26,6 +28,7 @@ use \Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory as AttributeFactor
  * @package  Smile\ElasticsuiteCatalog
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -42,24 +45,26 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('attributeTypeProvider')]
     public function testFieldTypes($attributeId, $backendType, $usesSource, $sourceModel, $frontendClass, $expectedType)
     {
         $contextMock   = $this->createMock(\Magento\Framework\App\Helper\Context::class);
         $attributeMock = $this->createMock(\Magento\Catalog\Model\Entity\Attribute::class);
 
-        $attributeMock->expects($this->any())->method('getBackendType')->will($this->returnValue($backendType));
-        $attributeMock->method('usesSource')->will($this->returnValue($usesSource));
-        $attributeMock->method('getId')->will($this->returnValue($attributeId));
-        $attributeMock->method('getSourceModel')->will($this->returnValue($sourceModel));
-        $attributeMock->method('getFrontendClass')->will($this->returnValue($frontendClass));
+        $attributeMock->expects($this->any())->method('getBackendType')->willReturn($backendType);
+        $attributeMock->method('usesSource')->willReturn($usesSource);
+        $attributeMock->method('getId')->willReturn($attributeId);
+        $attributeMock->method('getSourceModel')->willReturn($sourceModel);
+        $attributeMock->method('getFrontendClass')->willReturn($frontendClass);
 
         $attributeFactoryMock = $this->getMockBuilder('\Magento\Catalog\Model\ResourceModel\Eav\AttributeFactory')
             ->disableOriginalConstructor()
             ->onlyMethods(['create'])
             ->getMock();
 
-        $attributeFactoryMock->method('create')->will(($this->returnValue($attributeMock)));
+        $attributeFactoryMock->method('create')->willReturn($attributeMock);
 
+        /*
         $helperMock = $this->getMockForAbstractClass(
             AbstractAttribute::class,
             [$contextMock, $attributeFactoryMock, null],
@@ -69,6 +74,11 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
             true,
             ['getAttributeById']
         );
+        */
+        $helperMock = $this->getMockBuilder(AbstractAttribute::class)
+            ->setConstructorArgs([$contextMock, $attributeFactoryMock, null])
+            ->onlyMethods([])
+            ->getMock();
 
         $this->assertEquals($expectedType, $helperMock->getFieldType($attributeMock->getId()));
     }
@@ -78,7 +88,7 @@ class AbstractAttributeTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function attributeTypeProvider()
+    public static function attributeTypeProvider()
     {
         return [
             [1, 'int', true, 'Magento\Eav\Model\Entity\Attribute\Source\Boolean', null, FieldInterface::FIELD_TYPE_BOOLEAN],

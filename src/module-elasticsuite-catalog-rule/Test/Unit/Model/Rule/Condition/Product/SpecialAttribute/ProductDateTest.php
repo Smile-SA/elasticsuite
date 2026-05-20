@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product\SpecialAttribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductDate;
 use Smile\ElasticsuiteCore\Search\Request\Query\Not;
 use Smile\ElasticsuiteCore\Search\Request\Query\Range;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  */
+#[AllowMockObjectsWithoutExpectations]
 class ProductDateTest extends AbstractSpecialAttribute
 {
     /**

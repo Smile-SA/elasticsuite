@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
 use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 use \Smile\ElasticsuiteCore\Index\Index;
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Api\Index\TypeInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -42,7 +44,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
 
         $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
-        $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
+        $mappingMock->method('getIdField')->willReturn($fieldMock);
 
 
         $this->index = new Index('identifier', 'name', 'type', $mappingMock);

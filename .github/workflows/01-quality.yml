@@ -1,16 +1,19 @@
 name: PHP Code Quality (2.11.x)
 
 on:
+    workflow_dispatch:
     push:
         branches:
         - 2.10.x
         - 2.11.x
+        - 2.12.x
         - master
 
     pull_request_target:
         branches:
         - 2.10.x
         - 2.11.x
+        - 2.12.x
         - master
 
 jobs:

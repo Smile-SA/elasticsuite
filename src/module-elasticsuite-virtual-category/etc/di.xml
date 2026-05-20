@@ -237,4 +237,14 @@
     <type name="Magento\Catalog\Model\ResourceModel\Category">
         <plugin name="cleanRuleCacheAfterSave" type="Smile\ElasticsuiteVirtualCategory\Plugin\CleanRuleCacheAfterSave"/>
     </type>
+
+    <!-- Register Virtual Category Location Provider -->
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Attribute\Locator">
+        <arguments>
+            <argument name="locationProviders" xsi:type="array">
+                <item name="virtual_category" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Rule\Attribute\VirtualCategoryLocationProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

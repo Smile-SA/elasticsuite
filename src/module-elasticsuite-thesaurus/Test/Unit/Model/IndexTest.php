@@ -15,7 +15,9 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use OpenSearch\Common\Exceptions\BadRequest400Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -37,6 +39,7 @@ use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -60,6 +63,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('noRewriteDataProvider')]
     public function testCacheUsageNoRewrites(
         $queryText,
         $synonymsEnabled,
@@ -133,7 +137,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function noRewriteDataProvider()
+    public static function noRewriteDataProvider()
     {
         /*
          * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
@@ -177,6 +181,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('singleLevelRewritesDataProvider')]
     public function testSingleLevelRewrites(
         $queryText,
         $synonymsEnabled,
@@ -262,7 +267,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function singleLevelRewritesDataProvider()
+    public static function singleLevelRewritesDataProvider()
     {
         /*
          * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
@@ -684,6 +689,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('multiLevelRewritesDataProvider')]
     public function testMultiLevelRewritesCombination(
         $queryText,
         $synonymsEnabled,
@@ -769,7 +775,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function multiLevelRewritesDataProvider()
+    public static function multiLevelRewritesDataProvider()
     {
         /*
          * Results map for rules:
@@ -1670,6 +1676,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
+    #[DataProvider('withAnalysisFailureDataProvider')]
     public function testAnalyzeFailure(
         $queryText,
         $synonymsEnabled,
@@ -1740,7 +1747,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function withAnalysisFailureDataProvider()
+    public static function withAnalysisFailureDataProvider()
     {
         return [
             /*

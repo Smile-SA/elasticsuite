@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\ReverseNested as ReverseNestedBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\ReverseNested;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
@@ -24,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
  * @package  Smile\ElasticsuiteCore
  * @author   Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ReverseNestedTest extends \PHPUnit\Framework\TestCase
 {
     /**

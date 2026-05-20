@@ -13,8 +13,10 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Helper;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\Context;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
@@ -27,6 +29,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
  * @package   Smile\ElasticsuiteCore
  * @author    Pierre Gauthier <pigau@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexSettingsTest extends TestCase
 {
     /**
@@ -43,6 +46,7 @@ class IndexSettingsTest extends TestCase
      *
      * @return void
      */
+    #[DataProvider('parseIndexNameDataProvider')]
     public function testParseIndexName(string $indexName, string $alias, string $suffixPattern, $expected)
     {
         $scopeConfigMock = $this->getMockBuilder(ScopeConfigInterface::class)->disableOriginalConstructor()->getMock();
@@ -62,14 +66,12 @@ class IndexSettingsTest extends TestCase
         $indicesConfig = $this->getMockBuilder(IndicesConfig::class)->disableOriginalConstructor()->getMock();
         $indicesConfig
             ->method('get')
-            ->will(
-                $this->returnValue(
-                    [
-                        'catalog' => 'indexConfiguration',
-                        'catalog_product' => 'indexConfiguration',
-                        'tracking_log_session' => 'indexConfiguration',
-                    ]
-                )
+            ->willreturn(
+                [
+                    'catalog' => 'indexConfiguration',
+                    'catalog_product' => 'indexConfiguration',
+                    'tracking_log_session' => 'indexConfiguration',
+                ]
             );
 
         $indexSettings = new IndexSettingsHelper($contextMock, $storeManager, $indicesConfig);

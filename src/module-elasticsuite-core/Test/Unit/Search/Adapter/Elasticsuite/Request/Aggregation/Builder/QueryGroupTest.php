@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\QueryGroup as QueryGroupBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\QueryGroup as QueryGroupBucket;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
@@ -26,6 +27,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryGroupTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -39,8 +41,8 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
             'filter1' => $this->getMockBuilder(QueryInterface::class)->getMock(),
             'filter2' => $this->getMockBuilder(QueryInterface::class)->getMock(),
         ];
-        $queries['filter1']->method('getName')->will($this->returnValue('filter1'));
-        $queries['filter2']->method('getName')->will($this->returnValue('filter2'));
+        $queries['filter1']->method('getName')->willReturn('filter1');
+        $queries['filter2']->method('getName')->willReturn('filter2');
         $bucket      = new QueryGroupBucket('aggregationName', $queries, []);
         $aggregation = $this->getQueryGroupAggregationBuilder()->buildBucket($bucket);
 
@@ -59,7 +61,7 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $termBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $termBucket->method('getType')->will($this->returnValue('invalidType'));
+        $termBucket->method('getType')->willReturn('invalidType');
 
         $this->getQueryGroupAggregationBuilder()->buildBucket($termBucket);
     }
@@ -77,7 +79,7 @@ class QueryGroupTest extends \PHPUnit\Framework\TestCase
             return $query->getName();
         };
 
-        $queryBuilder->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $queryBuilder->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return new QueryGroupBuilder($queryBuilder);
     }

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
@@ -27,6 +28,7 @@ use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class BuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -79,7 +81,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $containerConfiguration = $this->getMockBuilder(ContainerConfigurationInterface::class)->getMock();
 
-        $containerConfiguration->method('getFilters')->will($this->returnValue([]));
+        $containerConfiguration->method('getFilters')->willReturn([]);
 
         return $containerConfiguration;
     }
@@ -102,7 +104,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             return $queryClass->newInstanceArgs($params);
         };
 
-        $queryFactory->method('create')->will($this->returnCallback($createQueryCallback));
+        $queryFactory->method('create')->willReturnCallback($createQueryCallback);
 
         return $queryFactory;
     }
@@ -138,10 +140,10 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     private function getQueryBuilder($class, $name)
     {
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue($name));
+        $query->method('getType')->willReturn($name);
 
         $queryBuilder = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
-        $queryBuilder->method('create')->will($this->returnValue($query));
+        $queryBuilder->method('create')->willReturn($query);
 
         return $queryBuilder;
     }

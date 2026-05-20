@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\SortOrder;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Request\SortOrder\Script as ScriptSortOrder;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
@@ -23,6 +24,7 @@ use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Richard BAYET <richard.bayet@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class ScriptTest extends \PHPUnit\Framework\TestCase
 {
     /**

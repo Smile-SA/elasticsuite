@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Mapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder as AggregationBuilder;
@@ -29,6 +30,7 @@ use Smile\ElasticsuiteCore\Search\Request\CollapseInterface;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class MapperTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -147,16 +149,16 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     private function getMapper()
     {
         $queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $queryBuilderMock->method('buildQuery')->will($this->returnValue('query'));
+        $queryBuilderMock->method('buildQuery')->willReturn('query');
 
         $sortOrderBuilderMock = $this->getMockBuilder(SortOrderBuilder::class)->disableOriginalConstructor()->getMock();
-        $sortOrderBuilderMock->method('buildSortOrders')->will($this->returnValue('sortOrders'));
+        $sortOrderBuilderMock->method('buildSortOrders')->willReturn('sortOrders');
 
         $aggregationBuilderMock = $this->getMockBuilder(AggregationBuilder::class)->disableOriginalConstructor()->getMock();
-        $aggregationBuilderMock->method('buildAggregations')->will($this->returnValue('aggregations'));
+        $aggregationBuilderMock->method('buildAggregations')->willReturn('aggregations');
 
         $collapseBuilderMock = $this->getMockBuilder(CollapseBuilder::class)->disableOriginalConstructor()->getMock();
-        $collapseBuilderMock->method('buildCollapse')->will($this->returnValue('collapse'));
+        $collapseBuilderMock->method('buildCollapse')->willReturn('collapse');
 
         return new Mapper($queryBuilderMock, $sortOrderBuilderMock, $aggregationBuilderMock, $collapseBuilderMock);
     }

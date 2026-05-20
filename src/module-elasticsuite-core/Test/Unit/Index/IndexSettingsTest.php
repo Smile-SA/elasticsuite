@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Index;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCore\Index\IndexSettings;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Index\Analysis\Config as AnalysisConfig;
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Index\Indices\Config as IndicesConfig;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class IndexSettingsTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -134,22 +136,20 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
         $mockBuilder        = $this->getMockBuilder(IndexSettingsHelper::class);
         $indexSettingHelper = $mockBuilder->disableOriginalConstructor()->getMock();
 
-        $indexIdentifierMethodStub = $this->returnCallback(
-            function ($indexIdentifier, $store) {
-                return "{$indexIdentifier}_{$store}";
-            }
-        );
+        $indexIdentifierMethodStub = function ($indexIdentifier, $store) {
+            return "{$indexIdentifier}_{$store}";
+        };
 
         $getLanguageCodeStub = function ($store) {
             return "language_{$store}";
         };
 
-        $indexSettingHelper->method('getIndexAliasFromIdentifier')->will($indexIdentifierMethodStub);
-        $indexSettingHelper->method('createIndexNameFromIdentifier')->will($indexIdentifierMethodStub);
-        $indexSettingHelper->method('getBatchIndexingSize')->will($this->returnValue(100));
-        $indexSettingHelper->method('getNumberOfShards')->will($this->returnValue(1));
-        $indexSettingHelper->method('getNumberOfReplicas')->will($this->returnValue(1));
-        $indexSettingHelper->method('getLanguageCode')->will($this->returnCallback($getLanguageCodeStub));
+        $indexSettingHelper->method('getIndexAliasFromIdentifier')->willReturnCallback($indexIdentifierMethodStub);
+        $indexSettingHelper->method('createIndexNameFromIdentifier')->willReturnCallback($indexIdentifierMethodStub);
+        $indexSettingHelper->method('getBatchIndexingSize')->willReturn(100);
+        $indexSettingHelper->method('getNumberOfShards')->willReturn(1);
+        $indexSettingHelper->method('getNumberOfReplicas')->willReturn(1);
+        $indexSettingHelper->method('getLanguageCode')->willReturnCallback($getLanguageCodeStub);
 
         return $indexSettingHelper;
     }
@@ -162,7 +162,7 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
     private function getIndicesConfigMock()
     {
         $indicesConfig = $this->getMockBuilder(IndicesConfig::class)->disableOriginalConstructor()->getMock();
-        $indicesConfig->method('get')->will($this->returnValue(['index' => 'indexConfiguration']));
+        $indicesConfig->method('get')->willReturn(['index' => 'indexConfiguration']);
 
         return $indicesConfig;
     }
@@ -179,7 +179,7 @@ class IndexSettingsTest extends \PHPUnit\Framework\TestCase
             return "analysis_{$languageCode}";
         };
 
-        $analysisConfig->method('get')->will($this->returnCallback($getStub));
+        $analysisConfig->method('get')->willReturnCallback($getStub);
 
         return $analysisConfig;
     }

@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query\Fulltext;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
@@ -36,6 +37,7 @@ use Smile\ElasticsuiteCore\Index\Mapping;
  * @package   Smile\ElasticsuiteCore
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -51,20 +53,14 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    private $fields = [];
+    private static $fields = [];
 
     /**
-     * Constructor.
-     *
-     * @param string $name     Test case name.
-     * @param array  $data     Test case data.
-     * @param string $dataName Test case data name.
+     * {@inheritDoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-
-        $this->fields = [
+        self::$fields = [
             new Field('idField', Field::FIELD_TYPE_INTEGER),
             new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
             new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
@@ -149,7 +145,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $queryFactory    = $this->getQueryFactory($this->mockedQueryTypes);
         $fieldFilters    = $this->getFieldFilters();
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $textHelper      = $this->getTextHelperMock();
 
         $builder = new QueryBuilder($queryFactory, $textHelper, $fieldFilters);
@@ -173,10 +169,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 
         foreach ($queryTypes as $currentType) {
             $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
-            $queryMock->method('getType')->will($this->returnValue($currentType));
+            $queryMock->method('getType')->willReturn($currentType);
 
             $factory = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-            $factory->method('create')->will($this->returnValue($queryMock));
+            $factory->method('create')->willReturn($queryMock);
 
             $factories[$currentType] = $factory;
         }
@@ -197,10 +193,10 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $mapping         = new Mapping('idField', $fields);
-        $config->method('getMapping')->will($this->returnValue($mapping));
+        $config->method('getMapping')->willReturn($mapping);
 
         $relevanceConfig = $this->getRelevanceConfig();
-        $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
+        $config->method('getRelevanceConfig')->willReturn($relevanceConfig);
 
         return $config;
     }
@@ -227,9 +223,9 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)->getMock();
         $fuzzinessConfig = $this->getMockBuilder(FuzzinessConfigurationInterface::class)->getMock();
 
-        $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
-        $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
-        $relevanceConfig->method('getFuzzinessConfiguration')->will($this->returnValue($fuzzinessConfig));
+        $relevanceConfig->method('isFuzzinessEnabled')->willReturn(true);
+        $relevanceConfig->method('isPhoneticSearchEnabled')->willReturn(true);
+        $relevanceConfig->method('getFuzzinessConfiguration')->willReturn($fuzzinessConfig);
 
         return $relevanceConfig;
     }
@@ -243,7 +239,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
     {
         $fieldFilterMock = $this->getMockBuilder(FieldFilterInterface::class)->getMock();
 
-        $fieldFilterMock->method('filterField')->will($this->returnValue(true));
+        $fieldFilterMock->method('filterField')->willReturn(true);
 
         return [
             'searchableFieldFilter'       => $fieldFilterMock,

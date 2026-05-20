@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product\SpecialAttribute;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\StockQty;
 
 /**
@@ -21,6 +22,7 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  */
+#[AllowMockObjectsWithoutExpectations]
 class StockQtyTest extends AbstractSpecialAttribute
 {
     /**

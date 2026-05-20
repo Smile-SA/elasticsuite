@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Model;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCore\Model\Autocomplete\SuggestedTermsProvider;
 use Smile\ElasticsuiteCore\Helper\Autocomplete;
@@ -28,6 +29,7 @@ use Magento\Search\Model\Autocomplete\Item as TermItem;
  * @package   Smile\ElasticsuiteCore
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  */
+#[AllowMockObjectsWithoutExpectations]
 class SuggestedTermsProviderTest extends TestCase
 {
     /**

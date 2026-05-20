@@ -13,6 +13,7 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Error;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Error\Warning;
@@ -28,6 +29,7 @@ use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  */
+#[AllowMockObjectsWithoutExpectations]
 class SpecialAttributeProviderTest extends TestCase
 {
     /**
