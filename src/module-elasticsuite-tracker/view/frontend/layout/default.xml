@@ -17,7 +17,7 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <script src="Smile_ElasticsuiteTracker::js/tracking.js" />
+        <script src="Smile_ElasticsuiteTracker::js/tracking.js" defer="defer" />
     </head>
     <body>
         <referenceBlock name="head.additional">
