@@ -48,10 +48,13 @@ class QueryBuilder
         'gteq'     => 'gte',
         'to'       => 'lte',
         'lteq'     => 'lte',
-        'like'     => 'queryText',
-        'fulltext' => 'queryText',
-        'match'    => 'queryText',
-        'in_set'   => 'values',
+        'like'      => 'queryText',
+        'fulltext'  => 'queryText',
+        'match'     => 'queryText',
+        'in_set'    => 'values',
+        'not_match' => 'queryText',
+        'not_from'  => 'gte',
+        'not_to'    => 'lte',
         // Trick to silently ignore that condition if it slips along with a price range here from advanced search.
         'currency' => 'currency',
     ];
@@ -64,7 +67,7 @@ class QueryBuilder
     /**
      * @var array
      */
-    private $negativeConditions = ['neq', 'sneq', 'nin'];
+    private $negativeConditions = ['neq', 'sneq', 'nin', 'not_match', 'not_from', 'not_to'];
 
     /**
      * Constructor.
@@ -127,9 +130,16 @@ class QueryBuilder
         $queryType = QueryInterface::TYPE_TERMS;
         $condition = $this->prepareCondition($condition);
 
+        $isNegative = isset($condition['negative']);
+        unset($condition['negative']);
+
         if (count(array_intersect($this->rangeConditions, array_keys($condition))) >= 1) {
             $queryType = QueryInterface::TYPE_RANGE;
             $condition = ['bounds' => $condition];
+        }
+
+        if ($isNegative) {
+            $condition['negative'] = true;
         }
 
         $condition['field'] = $field->getMappingProperty(FieldInterface::ANALYZER_UNTOUCHED);

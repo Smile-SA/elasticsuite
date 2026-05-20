@@ -401,8 +401,8 @@ class Field implements FieldInterface
             $analyzers = [self::ANALYZER_KEYWORD];
         }
 
-        if ($this->isSearchable() || $this->isUsedForSortBy()) {
-            // Default search analyzer.
+        if ($this->isSearchable() || $this->isUsedForSortBy() || $this->isFilterable()) {
+            // Default search analyzer. Also needed for filterable text fields to support match queries.
             $analyzers[] = $this->getDefaultSearchAnalyzer();
         }
 
