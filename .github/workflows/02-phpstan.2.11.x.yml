@@ -5,12 +5,10 @@ on:
   push:
     branches:
       - 2.11.x
-      - master
 
   pull_request_target:
     branches:
       - 2.11.x
-      - master
     types: [labeled,synchronize]
 
 jobs:
