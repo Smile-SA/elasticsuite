@@ -780,7 +780,8 @@
                     <item name="source" xsi:type="string">optimizer</item>
                     <item name="validation" xsi:type="array">
                         <item name="required-entry" xsi:type="boolean">true</item>
-                        <item name="validate-number-range" xsi:type="string">-99-10000</item>
+                        <item name="greater-than-equals-to" xsi:type="number">-99</item>
+                        <item name="less-than-equals-to" xsi:type="number">10000</item>
                         <item name="not-zero" xsi:type="boolean">true</item>
                     </item>
                     <item name="tooltip" xsi:type="array">
