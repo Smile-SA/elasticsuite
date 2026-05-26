@@ -55,7 +55,7 @@ jobs:
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
-              run: composer install --prefer-dist --no-progress --no-suggest
+              run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
 
             - name: PHP Code Sniffer with Magento Extension Quality Program
               run: |
