@@ -68,6 +68,7 @@ jobs:
 
         strategy:
             fail-fast: false
+#            max-parallel: 5
             matrix:
                 include:
                   - php-versions: '7.4'
