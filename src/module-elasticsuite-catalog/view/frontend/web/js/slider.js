@@ -12,9 +12,8 @@
 define([
     'jquery',
     'mage/translate',
-    'jquery-ui-modules/core',
     'jquery-ui-modules/mouse'
-], function ($, $t, undefined) {
+], function ($, $t) {
 
 // number of pages in a slider
 // (how many times can you page up/down to go through the whole range)
