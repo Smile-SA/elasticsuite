@@ -35,6 +35,12 @@ jobs:
             - name: "Downgrade Composer"
               run: composer self-update --2.2
 
+            - name: Authorize composer plugins
+              run: |
+                composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                composer config allow-plugins.laminas/laminas-dependency-plugin true
+                composer config allow-plugins.magento/* true
+
             - name: Validate composer.json and composer.lock
               run: composer validate
 
@@ -52,12 +58,6 @@ jobs:
                 MAGENTO_USERNAME: ${{ secrets.MAGENTO_USERNAME }}
                 MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
               run: composer config -g http-basic.repo.magento.com "$MAGENTO_USERNAME" "$MAGENTO_PASSWORD"
-
-            - name: Authorize composer plugins
-              run: |
-                composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-                composer config allow-plugins.laminas/laminas-dependency-plugin true
-                composer config allow-plugins.magento/* true
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
