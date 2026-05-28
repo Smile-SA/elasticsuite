@@ -40,7 +40,13 @@ jobs:
                   ini-values: post_max_size=256M, max_execution_time=180
 
             - name: "Downgrade Composer"
-              run: composer self-update 2.1.14
+              run: composer self-update --2.2
+
+            - name: Authorize composer plugins
+              run: |
+                composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                composer config allow-plugins.laminas/laminas-dependency-plugin true
+                composer config allow-plugins.magento/* true
 
             - name: Validate composer.json and composer.lock
               run: composer validate
@@ -62,7 +68,7 @@ jobs:
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
-              run: composer install --prefer-dist --no-progress --no-suggest
+              run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
 
             - name: PHP Code Sniffer with Magento Extension Quality Program
               run: |
