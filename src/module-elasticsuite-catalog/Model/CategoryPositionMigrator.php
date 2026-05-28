@@ -23,7 +23,7 @@ use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use \Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\EntityManager\MetadataPool;
 
 /**
@@ -304,13 +304,23 @@ class CategoryPositionMigrator
             }
         }
 
+        $entityTable = $this->resource->getTableName('catalog_product_entity');
+
         do {
             // Fetch a batch of products with left join to visibility.
+            // Join through catalog_product_entity to resolve the correct link field
+            // (entity_id on CE, row_id on EE), since catalog_category_product.product_id
+            // always stores entity_id regardless of edition.
             $select = $this->connection->select()
                 ->from(['ccp' => $legacyTable], ['product_id', 'position'])
                 ->joinLeft(
+                    ['cpe' => $entityTable],
+                    'cpe.entity_id = ccp.product_id',
+                    []
+                )
+                ->joinLeft(
                     ['cpei' => $visibilityTable],
-                    'cpei.' . $linkField . ' = ccp.product_id'
+                    'cpei.' . $linkField . ' = cpe.' . $linkField
                     . ' AND cpei.attribute_id = ' . $visibilityAttributeId
                     . ' AND cpei.store_id = ' . $storeId,
                     ['']
