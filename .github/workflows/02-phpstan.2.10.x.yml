@@ -78,7 +78,7 @@ jobs:
           if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
             composer self-update --1
           else
-            composer self-update 2.1.14
+            composer self-update --2.2
           fi
 
       - name: "[Init] Optimize Composer"
