@@ -24,6 +24,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 use Smile\ElasticsuiteCatalog\Model\CategoryPositionMigrator;
 
 /**
@@ -158,7 +159,7 @@ class CategoryPositionMigrate extends Command
         }
 
         $output->writeln(sprintf(
-            '<info>Migration finished. Total categories: %d | Migrated: %d</info>',
+            '<info>Migration finished. Total categories: %d | Migrated positions: %d</info>',
             $result['categories'] ?? 0,
             $result['migrated'] ?? 0
         ));
@@ -168,6 +169,8 @@ class CategoryPositionMigrate extends Command
 
     /**
      * Ask interactive migration options from the CLI user.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * This method is responsible for collecting interactive answers about how
      * category product positions should be migrated. It presents a series of
@@ -176,6 +179,7 @@ class CategoryPositionMigrate extends Command
      * - Whether to migrate products with negative positions.
      * - Whether to migrate products with zero positions.
      * - Whether to migrate products with positive positions.
+     * - How many positions to migrate per category.
      * - How to handle conflicts (either by reordering or deleting).
      *
      * @param HelperInterface $helper The console helper responsible for handling interactive questions.
@@ -186,36 +190,98 @@ class CategoryPositionMigrate extends Command
      *     migrateNegative: bool,
      *     migrateZero: bool,
      *     migratePositive: bool,
+     *     migrateTopN: int,
      *     conflictStrategy: string
      * } An associative array containing the migration options:
      *     - 'migrateNegative': Whether to migrate negative positions.
      *     - 'migrateZero': Whether to migrate zero positions.
      *     - 'migratePositive': Whether to migrate positive positions.
+     *     - 'migrateTopN': Maximum number of positions to migrate per category.
      *     - 'conflictStrategy': Conflict handling mode ('reorder' or 'delete').
      */
     private function askMigrationOptions(HelperInterface $helper, InputInterface $input, OutputInterface $output): array
     {
-        $migrateNegative = $helper->ask(
+        $migrateNegative = (bool) $helper->ask(
             $input,
             $output,
-            new ConfirmationQuestion('Transfer negative positions to positive and contiguous ones (y/n) ', false)
+            new ConfirmationQuestion(
+                'Transfer negative positions to positive and contiguous ones? (y/n) [default: n] ',
+                false
+            )
         );
 
-        $migrateZero = $helper->ask(
+        $migrateZero = (bool) $helper->ask(
             $input,
             $output,
-            new ConfirmationQuestion('Transfer zero positions? (y/n) ', false)
+            new ConfirmationQuestion(
+                'Transfer zero positions? (y/n) [default: n] ',
+                false
+            )
+        );
+
+        $migratePositive = (bool) $helper->ask(
+            $input,
+            $output,
+            new ConfirmationQuestion(
+                'Transfer positive positions? (y/n) [default: y] ',
+                true
+            )
+        );
+
+        $output->writeln(
+            '<comment>It can be useful to set a limit on the number of positions to migrate per category, '
+            . 'since you probably want to only make sure that: ' . PHP_EOL
+            . ' - the first page of products is migrated as is ; ' . PHP_EOL
+            . ' - or even better, the first two rows of the first page' . PHP_EOL
+            . '   to let your optimizers merchandise the rest automatically.</comment>'
+        );
+        $output->writeln(
+            '<comment>Setting a low limit also avoids slowing down category pages in the BO</comment>'
+        );
+
+        $positionsDescription = '';
+        $positionTypes = [];
+        if ($migrateNegative) {
+            $positionTypes[] = 'negative';
+        }
+        if ($migrateZero) {
+            $positionTypes[] = 'zero';
+        }
+        if ($migratePositive) {
+            $positionTypes[] = 'positive';
+        }
+        if (!empty($positionTypes)) {
+            $positionsDescription = sprintf(" (%s)", implode(' then ', $positionTypes));
+        }
+
+        $migrateTopN = (int) $helper->ask(
+            $input,
+            $output,
+            new Question(
+                sprintf(
+                    'Maximum number of positions%s per category to migrate (leave blank for all matching positions): ',
+                    $positionsDescription
+                ),
+                0
+            )
         );
 
         // Show warning ONLY if user selected "Yes" for zero positions.
-        if ($migrateZero) {
+        if ($migrateZero && ($migrateTopN === 0 || $migrateTopN > 100)) {
             $output->writeln('');
-            $output->writeln(
-                '<error>WARNING:</error><comment> '
+            $warningMessage = '<error>WARNING:</error><comment> '
+                . 'You have decided to transfer zero positions while migrating more than 100 positions per category. '
                 . 'This may migrate a large number of unused positions, significantly slowing '
-                . 'down category pages in the BO and potentially impacting boost application.'
-                . '</comment>'
-            );
+                . 'down category pages in the BO and potentially impacting boosts/optimizers application.'
+                . '</comment>';
+            if ($migrateTopN === 0) {
+                $warningMessage = '<error>WARNING:</error><comment> '
+                    . 'You have decided to transfer zero positions while migrating all available positions per category. '
+                    . 'This may migrate an excessive number of unused positions, significantly slowing '
+                    . 'down category pages in the BO and potentially impacting boosts/optimizers application.'
+                    . '</comment>';
+            }
+            $output->writeln($warningMessage);
             $output->writeln(
                 '<comment>Enabling this option is generally not recommended.</comment>'
             );
@@ -225,7 +291,7 @@ class CategoryPositionMigrate extends Command
                 $input,
                 $output,
                 new ConfirmationQuestion(
-                    'Are you absolutely sure you want to continue? (y/n) ',
+                    'Are you absolutely sure you want to migrate zero positions? (y/n) [default: n] ',
                     false
                 )
             );
@@ -237,22 +303,21 @@ class CategoryPositionMigrate extends Command
             }
         }
 
-        $migratePositive = $helper->ask(
-            $input,
-            $output,
-            new ConfirmationQuestion('Transfer positive positions? (y/n) ', true)
-        );
-
         $conflict = $helper->ask(
             $input,
             $output,
-            new ChoiceQuestion('What to do with products sharing the same position?', ['reorder', 'delete'], 0)
+            new ChoiceQuestion(
+                'What to do with products sharing the same position?',
+                ['reorder (default)', 'delete'],
+                0
+            )
         );
 
         return [
-            'migrateNegative' => (bool) $migrateNegative,
-            'migrateZero' => (bool) $migrateZero,
-            'migratePositive' => (bool) $migratePositive,
+            'migrateNegative' => $migrateNegative,
+            'migrateZero' => $migrateZero,
+            'migratePositive' => $migratePositive,
+            'migrateTopN' => $migrateTopN,
             'conflictStrategy' => $conflict,
         ];
     }
