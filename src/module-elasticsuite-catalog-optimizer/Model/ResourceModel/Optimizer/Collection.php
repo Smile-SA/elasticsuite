@@ -131,8 +131,8 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         }
 
         $this->getSelect()
-            ->where('from_date is null or from_date <= ?', $date)
-            ->where('to_date is null or to_date >= ?', $date);
+            ->where('`from_date` is null or `from_date` <= ?', $date)
+            ->where('`to_date` is null or `to_date` >= ?', $date);
 
         return $this;
     }
