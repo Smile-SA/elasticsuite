@@ -130,9 +130,11 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
             $date = $this->date->date('Y-m-d');
         }
 
+        $fromDateCol = $this->getConnection()->quoteIdentifier('from_date');
+        $toDateCol = $this->getConnection()->quoteIdentifier('to_date');
         $this->getSelect()
-            ->where('`from_date` is null or `from_date` <= ?', $date)
-            ->where('`to_date` is null or `to_date` >= ?', $date);
+            ->where(sprintf("%s is null or %s <= ?", $fromDateCol, $fromDateCol), $date)
+            ->where(sprintf("%s is null or %s >= ?", $toDateCol, $toDateCol), $date);
 
         return $this;
     }
