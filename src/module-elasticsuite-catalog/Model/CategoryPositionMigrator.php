@@ -170,6 +170,7 @@ class CategoryPositionMigrator
                     $options['migrateNegative'],
                     $options['migrateZero'],
                     $options['migratePositive'],
+                    $options['migrateTopN'],
                     $options['conflictStrategy']
                 );
 
@@ -218,6 +219,7 @@ class CategoryPositionMigrator
             $options['migrateNegative'],
             $options['migrateZero'],
             $options['migratePositive'],
+            $options['migrateTopN'],
             $options['conflictStrategy']
         );
 
@@ -247,6 +249,7 @@ class CategoryPositionMigrator
      * @param bool   $migrateNegative  Include negative positions.
      * @param bool   $migrateZero      Include zero positions.
      * @param bool   $migratePositive  Include positive positions.
+     * @param int    $migrateTopN      Maximum number of position to migrate (0 for all).
      * @param string $conflictStrategy Conflict resolution mode ('reorder' or 'delete').
      *
      * @return array{migrated:int,deleted:int,normalized:array<int,int>,preview:array<int,array<int,mixed>>}
@@ -263,6 +266,7 @@ class CategoryPositionMigrator
         bool $migrateNegative,
         bool $migrateZero,
         bool $migratePositive,
+        int $migrateTopN,
         string $conflictStrategy
     ): array {
         $conflictStrategy = ($conflictStrategy === 'delete') ? 'delete' : 'reorder';
@@ -284,7 +288,7 @@ class CategoryPositionMigrator
         $processedOriginalPositions = [];
         $toDelete = [];
         $previewRows = [];
-        $batch = [];
+        $writeBatch = [];
 
         $nextPos = 1;
 
@@ -307,6 +311,11 @@ class CategoryPositionMigrator
         $entityTable = $this->resource->getTableName('catalog_product_entity');
 
         do {
+            $batchSize = self::BATCH_SIZE;
+            if ($migrateTopN > 0) {
+                $batchSize = min($migrateTopN - $migratedCount, self::BATCH_SIZE);
+            }
+
             // Fetch a batch of products with left join to visibility.
             // Join through catalog_product_entity to resolve the correct link field
             // (entity_id on CE, row_id on EE), since catalog_category_product.product_id
@@ -328,7 +337,7 @@ class CategoryPositionMigrator
                 ->where('ccp.category_id = ?', $categoryId)
                 // Treat NULL visibility as VISIBILITY_BOTH.
                 ->order('ccp.position ASC')
-                ->limit(self::BATCH_SIZE, $offset);
+                ->limit($batchSize, $offset);
 
             $rows     = $this->connection->fetchAll($select);
             $rowCount = count($rows);
@@ -383,28 +392,31 @@ class CategoryPositionMigrator
 
                 // Stream insert immediately (memory-safe).
                 if (!$dryRun) {
-                    $batch[] = [
+                    $writeBatch[] = [
                         'category_id' => $categoryId,
                         'product_id'  => $productId,
                         'store_id'    => $storeId,
                         'position'    => $newPosition,
                     ];
 
-                    if (count($batch) >= self::BATCH_SIZE) {
-                        $this->connection->insertMultiple($targetTable, $batch);
-                        $batch = []; // Free memory.
+                    if (count($writeBatch) >= self::BATCH_SIZE) {
+                        $this->connection->insertMultiple($targetTable, $writeBatch);
+                        $writeBatch = []; // Free memory.
                     }
                 }
             }
 
-            $offset += self::BATCH_SIZE;
-        } while ($rowCount === self::BATCH_SIZE);
+            $offset += $batchSize;
+            if (($migrateTopN > 0) && $migratedCount >= $migrateTopN) {
+                break;
+            }
+        } while ($rowCount === $batchSize);
 
         // Flush remaining batch.
         if (!$dryRun) {
             try {
-                if (!empty($batch)) {
-                    $this->connection->insertMultiple($targetTable, $batch);
+                if (!empty($writeBatch)) {
+                    $this->connection->insertMultiple($targetTable, $writeBatch);
                 }
                 $this->connection->commit();
             } catch (\Throwable $e) {
