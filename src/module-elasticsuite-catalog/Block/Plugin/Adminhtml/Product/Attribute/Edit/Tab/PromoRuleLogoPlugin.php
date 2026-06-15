@@ -38,8 +38,8 @@ class PromoRuleLogoPlugin
     /**
      * Modify element HTML after generation.
      *
-     * @param AbstractElement $subject
-     * @param string $html
+     * @param AbstractElement $subject Form element.
+     * @param string          $html    Original generated HTML.
      * @return string
      */
     public function afterGetHtml(AbstractElement $subject, string $html): string
@@ -55,7 +55,7 @@ class PromoRuleLogoPlugin
     /**
      * Inject ElasticSuite logo CSS class ONLY into admin__field wrapper.
      *
-     * @param string $html
+     * @param string $html Original generated HTML.
      * @return string
      */
     private function addClassToWrapperOnly(string $html): string
