@@ -26,9 +26,8 @@ use Magento\Framework\Setup\Patch\DataPatchInterface;
  *
  * Historically, ElasticSuite rule engines (Virtual Categories, Optimizers, etc.)
  * relied on attributes that were part of the search index.
- * These attributes were identified using the same conditions as those defined in:
- *
- * @see \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData
+ * These attributes were identified using the same conditions as those defined
+ * in: {@see \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData}
  *
  * Since rule engines will now exclusively rely on the "is_used_for_promo_rules" attribute flag,
  * this migration ensures that existing installations retain access to all attributes that
@@ -55,6 +54,8 @@ class MigratePromoRuleAttributes implements DataPatchInterface
 
     /**
      * Setup instance.
+     *
+     * @var ModuleDataSetupInterface
      */
     private ModuleDataSetupInterface $moduleDataSetup;
 
@@ -87,6 +88,22 @@ class MigratePromoRuleAttributes implements DataPatchInterface
         }
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static function getDependencies(): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAliases(): array
+    {
+        return [];
     }
 
     /**
@@ -151,21 +168,5 @@ class MigratePromoRuleAttributes implements DataPatchInterface
             ),
             implode(' OR ', $legacyConditions)
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getDependencies(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAliases(): array
-    {
-        return [];
     }
 }
