@@ -100,14 +100,21 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
         $form = $this->formFactory->create();
         $form->setHtmlId('rule_condition');
 
+        // Instantiate the renderer first to dynamically inherit the localized translation note.
+        $ruleConditionRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
+
         $ruleConditionField = $form->addField(
             'rule_condition',
             'text',
-            ['name' => 'rule_condition', 'label' => __('Apply to products'), 'container_id' => 'rule_condition']
+            [
+                'name' => 'rule_condition',
+                'label' => __('Apply to products'),
+                'container_id' => 'rule_condition',
+                'note' => $ruleConditionRenderer->getAttributeRequirementNote()
+            ]
         );
 
         $ruleConditionField->setValue($rule);
-        $ruleConditionRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
         $ruleConditionField->setRenderer($ruleConditionRenderer);
 
         return $form;

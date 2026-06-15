@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteCatalogRule\Block\Product;
 use Magento\Backend\Block\Template;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
+use Magento\Framework\Phrase;
 
 /**
  * Catalog search rule contribution form element renderer.
@@ -163,6 +164,19 @@ class Conditions extends Template implements RendererInterface
         }
 
         return $this->input->toHtml();
+    }
+
+    /**
+     * Retrieve the localized configuration note describing product attribute eligibility criteria for the rule engine.
+     *
+     * @return Phrase
+     */
+    public function getAttributeRequirementNote(): Phrase
+    {
+        return __(
+            "Attributes must have 'Use for Promo Rule Conditions' set to 'Yes' "
+            . "in their settings to be available in the rule engine."
+        );
     }
 
     /**
