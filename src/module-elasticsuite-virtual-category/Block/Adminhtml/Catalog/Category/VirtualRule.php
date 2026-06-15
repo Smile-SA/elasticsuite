@@ -102,7 +102,7 @@ class VirtualRule extends \Magento\Backend\Block\AbstractBlock
                 'name' => 'virtual_rule',
                 'label' => __('Virtual rule'),
                 'container_id' => 'virtual_rule',
-                'note' => $virtualRuleRenderer->getAttributeRequirementNote()
+                'note' => $virtualRuleRenderer->getAttributeRequirementNote(),
             ]
         );
 

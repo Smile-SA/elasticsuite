@@ -110,7 +110,7 @@ class RuleCondition extends \Magento\Backend\Block\AbstractBlock
                 'name' => 'rule_condition',
                 'label' => __('Apply to products'),
                 'container_id' => 'rule_condition',
-                'note' => $ruleConditionRenderer->getAttributeRequirementNote()
+                'note' => $ruleConditionRenderer->getAttributeRequirementNote(),
             ]
         );
 
