@@ -24,6 +24,13 @@
         />
     </type>
 
+    <type name="Magento\Framework\Data\Form\Element\AbstractElement">
+        <plugin name="es_promo_rule_logo"
+                type="Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\PromoRuleLogoPlugin"
+                sortOrder="10"
+        />
+    </type>
+
     <type name="Magento\Catalog\Model\Category\DataProvider">
         <plugin name="smile_elasticsuite_categories_form_data_provider" type="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin" />
     </type>
