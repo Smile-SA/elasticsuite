@@ -156,13 +156,8 @@ class Router implements RouterInterface
      */
     private function getCategoryRewrite($identifier, $appliedRoot)
     {
-        $categoryPath = $identifier;
-        $appliedRootUrlPath = $appliedRoot->getUrlPath();
-        if (!empty($appliedRootUrlPath) && (strpos($categoryPath, $appliedRootUrlPath) === 0)) {
-            // Current identifier path is expressed as /path/to/virtual/category/path/of/subcategory.
-            $categoryPath = str_replace($appliedRootUrlPath, '', $identifier);
-            $categoryPath = ltrim($categoryPath, '/');
-        }
+        $categoryPath = $this->urlModel->getOriginalCategoryRequestPath($identifier, $appliedRoot);
+
         $storeId = $this->storeManager->getStore()->getId();
 
         return $this->urlModel->getCategoryRewrite($categoryPath, $storeId);
