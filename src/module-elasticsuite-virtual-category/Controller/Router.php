@@ -159,8 +159,19 @@ class Router implements RouterInterface
         $categoryPath = $identifier;
         $appliedRootUrlPath = $appliedRoot->getUrlPath();
         if (!empty($appliedRootUrlPath) && (strpos($categoryPath, $appliedRootUrlPath) === 0)) {
-            // Current identifier path is expressed as /path/to/virtual/category/path/of/subcategory.
-            $categoryPath = str_replace($appliedRootUrlPath, '', $identifier);
+            /*
+             * Current identifier path is expressed as /path/to/virtual/category/path/of/subcategory.
+             * If the virtual root IS the root category, /path/to/virtual/category can be stripped
+             * to obtain the actual category URL rewrite path.
+             * On the other hand, if the virtual root IS NOT the root category, path/of/subcategory will not correspond
+             * to an actual category URL rewrite: it needs to be prepended with the virtual root URL path.
+             */
+            $replacement = '';
+            $appliedRootOrigin = $this->virtualCategoryRoot->getVirtualCategoryRoot($appliedRoot);
+            if ($appliedRootOrigin) {
+                $replacement = $appliedRootOrigin->getUrlPath() ?? '';
+            }
+            $categoryPath = str_replace($appliedRootUrlPath, $replacement, $identifier);
             $categoryPath = ltrim($categoryPath, '/');
         }
         $storeId = $this->storeManager->getStore()->getId();
