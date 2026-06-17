@@ -117,6 +117,8 @@ class Category extends \Smile\ElasticsuiteCatalog\Model\Layer\Filter\Category
     /**
      * Retrieve currently selected category children categories.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @return \Magento\Catalog\Model\ResourceModel\Category\Collection|\Magento\Catalog\Model\Category[]
      */
     protected function getChildrenCategories()
