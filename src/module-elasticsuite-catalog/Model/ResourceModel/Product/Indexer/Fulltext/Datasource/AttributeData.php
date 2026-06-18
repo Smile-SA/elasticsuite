@@ -15,9 +15,12 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\CatalogInventory\Model\Configuration;
 use Magento\Eav\Model\Config;
 use Magento\Catalog\Model\Product;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Store\Model\ScopeInterface;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -29,6 +32,8 @@ use Magento\Catalog\Model\Product\Type as ProductType;
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AttributeData extends AbstractAttributeData
 {
@@ -57,13 +62,21 @@ class AttributeData extends AbstractAttributeData
     private $eavConfig;
 
     /**
+     * Scope Config
+     *
+     * @var ScopeConfigInterface
+     */
+    private ScopeConfigInterface $scopeConfig;
+
+    /**
      * Constructor.
      *
-     * @param ResourceConnection    $resource           Database adpater.
+     * @param ResourceConnection    $resource           Database adapter.
      * @param StoreManagerInterface $storeManager       Store manager.
      * @param MetadataPool          $metadataPool       Metadata Pool.
      * @param ProductType           $catalogProductType Product type.
      * @param Config                $eavConfig          Eav config.
+     * @param ScopeConfigInterface  $scopeConfig        Scope Config.
      * @param string                $entityType         Product entity type.
      */
     public function __construct(
@@ -72,11 +85,13 @@ class AttributeData extends AbstractAttributeData
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
         Config $eavConfig,
+        ScopeConfigInterface $scopeConfig,
         $entityType = ProductInterface::class
     ) {
         parent::__construct($resource, $storeManager, $metadataPool, $entityType);
         $this->catalogProductType = $catalogProductType;
         $this->eavConfig = $eavConfig;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -212,6 +227,7 @@ class AttributeData extends AbstractAttributeData
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
         $entityTable     = $this->getTable($this->getEntityMetaData($this->getEntityTypeId())->getEntityTable());
         $relationTable   = $this->getTable($relation->getTable());
+        $inventoryTable  = $this->getTable('cataloginventory_stock_item');
         $parentFieldName = $relation->getParentFieldName();
         $childFieldName  = $relation->getChildFieldName();
 
@@ -228,6 +244,18 @@ class AttributeData extends AbstractAttributeData
                 ['child_id' => $entityIdField, 'sku' => 'sku']
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
+
+        /**
+         * If Catalog - Inventory - Stock Options - Display of Stock Products is set to NO,
+         * then exclude this children from the query results.
+         */
+        if (!$this->scopeConfig->getValue(Configuration::XML_PATH_SHOW_OUT_OF_STOCK)) {
+            $select->joinInner(
+                ['stock' => $inventoryTable],
+                new \Zend_Db_Expr("child.{$entityIdField} = stock.product_id AND stock.is_in_stock = 1"),
+                []
+            );
+        }
 
         if ($relation->getWhere() !== null) {
             $select->where($relation->getWhere());
