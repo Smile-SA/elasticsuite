@@ -32,7 +32,7 @@
                 <label>Elasticsearch Client</label>
                 <field id="servers" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Elasticsearch Servers List</label>
-                    <comment>List of servers in [host]:[port] format separated by a comma (e.g. : "es-node1.fqdn:9200, es-node2.fqdn:9200")</comment>
+                    <comment>List of servers in [host]:[port] format separated by a comma without space (e.g. : "es-node1.fqdn:9200,es-node2.fqdn:9200")</comment>
                 </field>
                 <field id="enable_https_mode" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Use HTTPS</label>
