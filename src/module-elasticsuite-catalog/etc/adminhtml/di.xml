@@ -24,11 +24,20 @@
         />
     </type>
 
-    <type name="Magento\Framework\Data\Form\Element\AbstractElement">
-        <plugin name="es_promo_rule_logo"
-                type="Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\PromoRuleLogoPlugin"
-                sortOrder="10"
-        />
+    <!-- Configures a WrapperCssClassDecorator instance that decorates the native fieldset element renderer to append the "es-esfeature__logo" CSS class to its field wrapper. -->
+    <virtualType name="Smile\ElasticsuiteCatalog\Block\Adminhtml\Product\Attribute\Edit\Renderer\PromoRuleFeatureLogoRenderer"
+                 type="Smile\ElasticsuiteCatalog\Block\Adminhtml\Product\Attribute\Edit\Renderer\WrapperCssClassDecorator">
+        <arguments>
+            <argument name="nativeRenderer" xsi:type="object">Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element</argument>
+            <argument name="cssClass" xsi:type="string">es-esfeature__logo</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Injects the custom field renderer into FrontPlugin so it can be applied to the native "is_used_for_promo_rules" field. -->
+    <type name="Smile\ElasticsuiteCatalog\Block\Plugin\Adminhtml\Product\Attribute\Edit\Tab\FrontPlugin">
+        <arguments>
+            <argument name="promoRuleFieldRenderer" xsi:type="object">Smile\ElasticsuiteCatalog\Block\Adminhtml\Product\Attribute\Edit\Renderer\PromoRuleFeatureLogoRenderer</argument>
+        </arguments>
     </type>
 
     <type name="Magento\Catalog\Model\Category\DataProvider">
