@@ -104,7 +104,7 @@ class ValidateModification extends Action
 
             return $resultJson->setData([
                 'allowed' => $allowed,
-                'message' => $message
+                'message' => $message,
             ]);
         } catch (\Exception $e) {
             return $resultJson->setData(['allowed' => true, 'message' => '']);

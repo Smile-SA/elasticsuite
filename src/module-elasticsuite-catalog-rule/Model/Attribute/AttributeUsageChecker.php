@@ -37,7 +37,10 @@ use Smile\ElasticsuiteCatalogRule\Api\AttributeUsageCheckerInterface;
 class AttributeUsageChecker implements AttributeUsageCheckerInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @param string $attributeCode Attribute code.
+     * @return bool
      */
     public function isAttributeUsedInRules(string $attributeCode): bool
     {
