@@ -12,35 +12,19 @@
  * @license   Open Software License ("OSL") v. 3.0
  */
 
-declare(strict_types = 1);
-
-namespace Smile\ElasticsuiteCatalogRule\Setup\Patch\Data;
+namespace Smile\ElasticsuiteCatalogRule\Setup;
 
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use Magento\Framework\Setup\Patch\DataPatchInterface;
 
 /**
- * Migrate legacy ElasticSuite rule attributes to the dedicated
- * "Use for Promo Rule Conditions" flag.
- *
- * Historically, ElasticSuite rule engines (Virtual Categories, Optimizers, etc.)
- * relied on attributes that were part of the search index.
- * These attributes were identified using the same conditions as those defined
- * in: {@see \Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData}
- *
- * Since rule engines will now exclusively rely on the "is_used_for_promo_rules" attribute flag,
- * this migration ensures that existing installations retain access to all attributes that
- * were previously available in rule conditions.
- *
- * The patch forcefully enables "is_used_for_promo_rules" for all product attributes
- * matching at least one of the historical indexing criteria.
+ * Generic Setup for ElasticsuiteCatalogRule module.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Vadym Honcharuk <vahonc@smile.fr>
  */
-class MigratePromoRuleAttributes implements DataPatchInterface
+class CatalogRuleSetup
 {
     /**
      * Catalog EAV attribute table name.
@@ -51,60 +35,6 @@ class MigratePromoRuleAttributes implements DataPatchInterface
      * Catalog product attribute flag used by Magento promo rule conditions.
      */
     private const TARGET_PROMO_COLUMN = 'is_used_for_promo_rules';
-
-    /**
-     * Setup instance.
-     *
-     * @var ModuleDataSetupInterface
-     */
-    private ModuleDataSetupInterface $moduleDataSetup;
-
-    /**
-     * Constructor.
-     *
-     * @param ModuleDataSetupInterface $moduleDataSetup Module setup instance.
-     */
-    public function __construct(
-        ModuleDataSetupInterface $moduleDataSetup
-    ) {
-        $this->moduleDataSetup = $moduleDataSetup;
-    }
-
-    /**
-     * Apply patch.
-     *
-     * @return $this
-     */
-    public function apply(): self
-    {
-        $this->moduleDataSetup->startSetup();
-
-        try {
-            $this->migrateAttributes(
-                $this->moduleDataSetup->getConnection()
-            );
-        } finally {
-            $this->moduleDataSetup->endSetup();
-        }
-
-        return $this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getDependencies(): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getAliases(): array
-    {
-        return [];
-    }
 
     /**
      * Enable "Use for Promo Rule Conditions" for all attributes
@@ -124,14 +54,15 @@ class MigratePromoRuleAttributes implements DataPatchInterface
      *         OR used_for_sort_by = 1
      *     );
      *
-     * @param AdapterInterface $connection Database connection.
-     *
+     * @param ModuleDataSetupInterface $setup Module setup.
      * @return void
      */
-    private function migrateAttributes(AdapterInterface $connection): void
+    public function migrateAttributes(ModuleDataSetupInterface $setup): void
     {
+        $connection = $setup->getConnection();
+
         $connection->update(
-            $this->moduleDataSetup->getTable(self::CATALOG_EAV_ATTRIBUTE_TABLE),
+            $setup->getTable(self::CATALOG_EAV_ATTRIBUTE_TABLE),
             [self::TARGET_PROMO_COLUMN => 1],
             $this->getMigrationWhereClause($connection)
         );
