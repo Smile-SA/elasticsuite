@@ -104,7 +104,7 @@ class ProductPlugin
             if ((bool) $category->getIsVirtualCategory() === true) {
                 return true;
             }
-        } catch (NoSuchEntityException|\Exception $e) {
+        } catch (NoSuchEntityException | \Exception $e) {
             $category = null;
         }
 
