@@ -99,16 +99,17 @@ class VirtualCategorySetup
             Category::ENTITY,
             'is_virtual_category',
             [
-                'type'       => 'int',
-                'label'      => 'Is virtual category',
-                'input'      => null,
-                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'required'   => false,
-                'default'    => 0,
-                'visible'    => true,
-                'note'       => "Is the category is virtual or not ?",
-                'sort_order' => 200,
-                'group'      => 'General Information',
+                'type'           => 'int',
+                'label'          => 'Is virtual category',
+                'input'          => null,
+                'global'         => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'       => false,
+                'default'        => 0,
+                'visible'        => true,
+                'note'           => "Is the category is virtual or not ?",
+                'sort_order'     => 200,
+                'group'          => 'General Information',
+                'frontend_input' => 'boolean'
             ]
         );
 
@@ -116,16 +117,17 @@ class VirtualCategorySetup
             Category::ENTITY,
             'virtual_category_root',
             [
-                'type'       => 'int',
-                'label'      => 'Virtual category root',
-                'input'      => null,
-                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'required'   => false,
-                'default'    => null,
-                'visible'    => true,
-                'note'       => "Root display of the virtual category (usefull to display a facet category on virtual).",
-                'sort_order' => 200,
-                'group'      => 'General Information',
+                'type'           => 'int',
+                'label'          => 'Virtual category root',
+                'input'          => null,
+                'global'         => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'       => false,
+                'default'        => null,
+                'visible'        => true,
+                'note'           => "Root display of the virtual category (usefull to display a facet category on virtual).",
+                'sort_order'     => 200,
+                'group'          => 'General Information',
+                'frontend_input' => 'select'
             ]
         );
 
@@ -133,15 +135,16 @@ class VirtualCategorySetup
             Category::ENTITY,
             'virtual_rule',
             [
-                'type'       => 'text',
-                'label'      => 'Virtual rule',
-                'global'     => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-                'required'   => false,
-                'default'    => null,
-                'visible'    => true,
-                'note'       => "Virtual category rule.",
-                'sort_order' => 210,
-                'group'      => 'General Information',
+                'type'          => 'text',
+                'label'         => 'Virtual rule',
+                'global'        => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                'required'      => false,
+                'default'       => null,
+                'visible'       => true,
+                'note'          => "Virtual category rule.",
+                'sort_order'     => 210,
+                'group'          => 'General Information',
+                'frontend_input' => 'textarea'
             ]
         );
 
