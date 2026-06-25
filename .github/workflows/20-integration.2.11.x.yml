@@ -243,9 +243,9 @@ jobs:
               env:
                   version: ${{ matrix.php-versions }}
               run: |
-                sudo apt-get -qq update
-                sudo apt-get install -y php$version-fpm
-                : # sudo service php$version-fpm start
+                : Assumes php-fpm is already installed.
+                : sudo apt-get -qq update
+                : sudo apt-get install -y php$version-fpm
                 sudo cp /usr/sbin/php-fpm$version /usr/bin/php-fpm
                 sudo service php$version-fpm start
                 sudo service php$version-fpm status
