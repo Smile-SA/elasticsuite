@@ -113,4 +113,6 @@
 
     <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocatorInterface" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Attribute\Locator" />
 
+    <!-- Attribute Usage Checker preference using ElasticSuite rule locator infrastructure -->
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\AttributeUsageCheckerInterface" type="Smile\ElasticsuiteCatalogRule\Model\Attribute\AttributeUsageChecker" />
 </config>

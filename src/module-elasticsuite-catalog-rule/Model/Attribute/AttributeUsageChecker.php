@@ -17,18 +17,24 @@ declare(strict_types = 1);
 namespace Smile\ElasticsuiteCatalogRule\Model\Attribute;
 
 use Smile\ElasticsuiteCatalogRule\Api\AttributeUsageCheckerInterface;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocatorInterface;
 
 /**
- * Temporary placeholder implementation for attribute usage validation.
+ * Attribute Usage Checker.
  *
- * Future versions will inspect:
- * - Virtual Category rules
- * - Optimizer rules
- * to determine whether an attribute is definitely referenced by one
- * or more ElasticSuite rule engines (Virtual Categories, Optimizers, etc.).
+ * This service acts as an adapter between the attribute protection
+ * subsystem and the existing rule attribute locator infrastructure.
  *
- * Note: For the time being, this returns `true` as a fail-safe to prevent
- * destructive modifications until explicit parsing logic is implemented.
+ * The actual rule detection logic is delegated to the Locator service,
+ * which aggregates all registered LocationProviderInterface
+ * implementations.
+ *
+ * Current providers:
+ * - Virtual Categories
+ * - Optimizers
+ *
+ * Additional providers can be registered through Dependency Injection
+ * without modifying this class.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
@@ -37,13 +43,30 @@ use Smile\ElasticsuiteCatalogRule\Api\AttributeUsageCheckerInterface;
 class AttributeUsageChecker implements AttributeUsageCheckerInterface
 {
     /**
-     * {@inheritdoc}
+     * @var LocatorInterface
+     */
+    private LocatorInterface $attributeLocator;
+
+    /**
+     * Constructor.
      *
-     * @param string $attributeCode Attribute code.
-     * @return bool
+     * @param LocatorInterface $attributeLocator Rule attribute locator.
+     */
+    public function __construct(
+        LocatorInterface $attributeLocator
+    ) {
+        $this->attributeLocator = $attributeLocator;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isAttributeUsedInRules(string $attributeCode): bool
     {
-        return true;
+        if ($attributeCode === '') {
+            return false;
+        }
+
+        return $this->attributeLocator->isUsedInRules($attributeCode);
     }
 }
