@@ -82,34 +82,35 @@ class DataProviderPlugin
         $data = $proceed();
 
         $currentCategory = $dataProvider->getCurrentCategory();
+        $currentCategoryId = $currentCategory->getId() ?? '';
 
-        if ($currentCategory->getId() === null || $currentCategory->getLevel() < 2) {
-            $data[$currentCategory->getId()]['use_default']['is_virtual_category'] = true;
+        if ($currentCategoryId === '' || $currentCategory->getLevel() < 2) {
+            $data[$currentCategoryId]['use_default']['is_virtual_category'] = true;
         }
 
-        if ($currentCategory->getLevel() >= 2 && !isset($data[$currentCategory->getId()]['virtual_category_root'])) {
-            $data[$currentCategory->getId()]['virtual_category_root'] = $currentCategory->getPathIds()[1];
+        if ($currentCategory->getLevel() >= 2 && !isset($data[$currentCategoryId]['virtual_category_root'])) {
+            $data[$currentCategoryId]['virtual_category_root'] = $currentCategory->getPathIds()[1];
         }
 
-        $data[$currentCategory->getId()]['use_default']['show_use_store_positions'] = true;
-        if (!$currentCategory->getStoreId() || $currentCategory->getId() === null) {
-            $data[$currentCategory->getId()]['use_default']['show_use_store_positions'] = false;
+        $data[$currentCategoryId]['use_default']['show_use_store_positions'] = true;
+        if (!$currentCategory->getStoreId() || $currentCategoryId === null) {
+            $data[$currentCategoryId]['use_default']['show_use_store_positions'] = false;
         }
 
         // To restore global/"All store views" positions/blacklist.
-        $data[$currentCategory->getId()]['default']['sorted_products'] = [];
-        $data[$currentCategory->getId()]['default']['blacklisted_products'] = [];
+        $data[$currentCategoryId]['default']['sorted_products'] = [];
+        $data[$currentCategoryId]['default']['blacklisted_products'] = [];
         if ($currentCategory->getStoreId()) {
             $globalCategory = clone $currentCategory;
             $globalCategory->setUseStorePositions(false);
-            $data[$currentCategory->getId()]['default']['sorted_products'] = $this->getProductSavedPositions($globalCategory);
-            $data[$currentCategory->getId()]['default']['blacklisted_products'] = $this->getBlacklistedProducts($globalCategory);
+            $data[$currentCategoryId]['default']['sorted_products'] = $this->getProductSavedPositions($globalCategory);
+            $data[$currentCategoryId]['default']['blacklisted_products'] = $this->getBlacklistedProducts($globalCategory);
         }
 
-        $data[$currentCategory->getId()]['sorted_products']         = $this->getProductSavedPositions($currentCategory);
-        $data[$currentCategory->getId()]['blacklisted_products']    = $this->getBlacklistedProducts($currentCategory);
-        $data[$currentCategory->getId()]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);
-        $data[$currentCategory->getId()]['price_format']            = $this->localeFormat->getPriceFormat();
+        $data[$currentCategoryId]['sorted_products']         = $this->getProductSavedPositions($currentCategory);
+        $data[$currentCategoryId]['blacklisted_products']    = $this->getBlacklistedProducts($currentCategory);
+        $data[$currentCategoryId]['product_sorter_load_url'] = $this->getProductSorterLoadUrl($currentCategory);
+        $data[$currentCategoryId]['price_format']            = $this->localeFormat->getPriceFormat();
 
         return $data;
     }
