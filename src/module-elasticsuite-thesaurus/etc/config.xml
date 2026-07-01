@@ -21,6 +21,7 @@
             <cache>
                 <always>1</always>
                 <min_rewrites>0</min_rewrites>
+                <ttl>7200</ttl>
             </cache>
             <analysis>
                 <use_stemming>0</use_stemming>
