@@ -117,13 +117,14 @@ class Index
     {
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
+        $cacheTTL  = $this->thesaurusCacheConfig->getCacheTtl($containerConfig);
 
         $queryRewrites = $this->cacheHelper->loadCache($cacheKey);
 
         if ($queryRewrites === false) {
             $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost);
             if ($this->thesaurusCacheConfig->isCacheStorageAllowed($containerConfig, count($queryRewrites))) {
-                $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
+                $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags, $cacheTTL);
             }
         }
 
