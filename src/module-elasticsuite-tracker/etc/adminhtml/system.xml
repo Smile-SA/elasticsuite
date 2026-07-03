@@ -103,6 +103,19 @@
                     <comment><![CDATA[You can click this button to immediately remove all the invalid tracker events from the indexing queue, regardless of the Delay setting above.]]></comment>
                 </field>
             </group>
+            <group id="sales" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Sales tracking</label>
+                <field id="bundle_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Bundle products supported</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If set to "Yes", sales of bundle products will be specifically tracked in addition of the simple products' they are composed of in orders.]]></comment>
+                </field>
+                <field id="grouped_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Grouped products supported</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If set to "Yes", sales of grouped products will be specifically tracked in addition of the simple products' they are composed of in orders.]]></comment>
+                </field>
+            </group>
         </section>
         <section id="smile_elasticsuite_telemetry" translate="label" type="text" sortOrder="911" showInDefault="1" showInWebsite="1" showInStore="0">
             <label>Telemetry</label>
