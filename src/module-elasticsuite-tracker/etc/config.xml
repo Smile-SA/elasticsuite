@@ -38,6 +38,10 @@
             <queue_cleanup>
                 <delay>7</delay>
             </queue_cleanup>
+            <sales>
+                <bundle_enabled>0</bundle_enabled>
+                <grouped_enabled>0</grouped_enabled>
+            </sales>
         </smile_elasticsuite_tracker>
         <smile_elasticsuite_telemetry>
             <telemetry>
