@@ -179,42 +179,6 @@ jobs:
                     db: 'mysql84'
                     engine: 'opensearch3'
                     experimental: false
-                  - php-versions: '8.4'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch3'
-                    experimental: false
-                  - php-versions: '8.5'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'community'
-                    db: 'mysql80'
-                    engine: 'opensearch3'
-                    experimental: false
-                  - php-versions: '8.4'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'enterprise'
-                    db: 'mysql80'
-                    engine: 'opensearch3'
-                    experimental: false
-                  - php-versions: '8.5'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'enterprise'
-                    db: 'mysql80'
-                    engine: 'opensearch3'
-                    experimental: false
-                  - php-versions: '8.4'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'enterprise'
-                    db: 'mysql84'
-                    engine: 'opensearch3'
-                    experimental: false
-                  - php-versions: '8.5'
-                    magento-versions: '2.4.9'
-                    magento-editions: 'enterprise'
-                    db: 'mysql84'
-                    engine: 'opensearch3'
-                    experimental: false
 
         continue-on-error: ${{ matrix.experimental }}
 
@@ -261,7 +225,7 @@ jobs:
                   MAGENTO_ROOT: ${{ env.magento-directory }}
                   version: ${{ matrix.php-versions }}
               run: |
-                sudo apt-get -qq update
+                sudo apt-get -qq update --allow-releaseinfo-change
                 sudo apt-get -qq install apache2
                 sudo a2enmod rewrite actions alias proxy proxy_fcgi
                 sudo usermod -a -G www-data $USER
