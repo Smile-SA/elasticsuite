@@ -91,7 +91,7 @@ class SuggestedTermsProvider
 
                 $hasAlreadyStoppedExtending = false;
                 if ($this->helper->isExtensionStoppedOnMatch()) {
-                    if (array_search(trim($this->getQueryString()), $terms) !== false) {
+                    if (array_search(mb_strtolower(trim($this->getQueryString())), array_map('mb_strtolower', $terms)) !== false) {
                         $terms                      = [$this->getQueryString()];
                         $hasAlreadyStoppedExtending = true;
                     }
