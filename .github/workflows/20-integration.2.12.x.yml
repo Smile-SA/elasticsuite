@@ -160,7 +160,7 @@ jobs:
                   MAGENTO_ROOT: ${{ env.magento-directory }}
                   version: ${{ matrix.php-versions }}
               run: |
-                sudo apt-get -qq update
+                sudo apt-get -qq update --allow-releaseinfo-change
                 sudo apt-get -qq install apache2
                 sudo a2enmod rewrite actions alias proxy proxy_fcgi
                 sudo usermod -a -G www-data $USER
