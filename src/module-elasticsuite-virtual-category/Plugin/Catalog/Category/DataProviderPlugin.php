@@ -93,7 +93,7 @@ class DataProviderPlugin
         }
 
         $data[$currentCategoryId]['use_default']['show_use_store_positions'] = true;
-        if (!$currentCategory->getStoreId() || $currentCategoryId === null) {
+        if (!$currentCategory->getStoreId() || $currentCategoryId === '') {
             $data[$currentCategoryId]['use_default']['show_use_store_positions'] = false;
         }
 
