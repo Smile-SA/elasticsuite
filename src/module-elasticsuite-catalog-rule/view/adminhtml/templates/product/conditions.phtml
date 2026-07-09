@@ -34,6 +34,11 @@ $fieldAttributes = $fieldId . ' class="' . $fieldClass . '" ' . $block->getUiId(
                 <?php echo $block->getInputHtml() ?>
             </div>
         </div>
+        <?php if ($element->getNote()): ?>
+        <div class="note admin__field-note" id="<?= $block->escapeHtmlAttr($element->getHtmlId()) ?>-note">
+            <span><?= $block->escapeHtml($element->getNote()) ?></span>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 

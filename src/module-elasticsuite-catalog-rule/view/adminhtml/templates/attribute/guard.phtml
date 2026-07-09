@@ -1,0 +1,29 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogRule
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2026 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+?>
+
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+?>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Smile_ElasticsuiteCatalogRule/js/attribute-protection-guard": {
+                "validationUrl": "<?= $block->getUrl('catalog_search_rule/attribute/validateModification') ?>",
+                "attributeId": "<?= (int) $block->getRequest()->getParam('attribute_id', 0) ?>"
+            }
+        }
+    }
+</script>
