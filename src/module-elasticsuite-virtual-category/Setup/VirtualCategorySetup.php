@@ -512,6 +512,31 @@ class VirtualCategorySetup
     }
 
     /**
+     * Replace the null frontend_input for legacy virtual categories related attributes
+     * 'is_virtual_category' (int/boolean), 'virtual_category_root' (int) and 'virtual_rule' (text)
+     * with a 'hidden' frontend_input.
+     * Those attributes are handled by UI components and not legacy input field logic, so 'hidden' fits.
+     * This prevents an error down the line in \Magento\Catalog\Model\Category\DataProvider in Magento 2.4.9 / PHP 8.5.
+     *
+     * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup
+     *
+     * @return $this
+     */
+    public function updateVirtualCategoriesAttrNullFrontendInput(\Magento\Eav\Setup\EavSetup $eavSetup)
+    {
+        foreach (['is_virtual_category', 'virtual_category_root', 'virtual_rule'] as $attributeCode) {
+            $eavSetup->updateAttribute(
+                Category::ENTITY,
+                $attributeCode,
+                'frontend_input',
+                'hidden'
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Process full reindexing of flat categories if enabled and not scheduled.
      */
     private function reindexFlatCategories()
