@@ -33,7 +33,7 @@ interface VirtualRuleInterface
      *
      * @return \Smile\ElasticsuiteCore\Search\Request\QueryInterface
      */
-    public function getCategorySearchQuery($category, $excludedCategories = []);
+    public function getCategorySearchQuery($category, &$excludedCategories = []);
 
     /**
      * Retrieve search queries of children categories.
