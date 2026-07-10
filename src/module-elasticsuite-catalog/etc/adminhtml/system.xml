@@ -80,6 +80,11 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[If enabled, child products SKUs of composite products will be indexed in a separate field and the "sku" field will only contain the parent product sku.]]></comment>
                 </field>
+                <field id="include_child_attributes" translate="label comment" type="select" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Include child attributes during indexing</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[If enabled, attributes of associated child products will be included with their parents when indexing. This will impact what filters are shown in category pages. For example, if a child of a bundle product has a particular colour then its parent will have this colour associated with it. <br><strong>Note when changing this setting</strong>, it is recommended to perform a full reindex of the <q>Catalog Search</q> indexer.]]></comment>
+                </field>
                 <field id="compute_child_product_discount" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
                     <label>Enable indexing discount on child products</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
