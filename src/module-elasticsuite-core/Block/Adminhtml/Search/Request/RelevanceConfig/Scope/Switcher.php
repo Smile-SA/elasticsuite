@@ -244,7 +244,6 @@ class Switcher extends Template
             [
                 '_current'                    => true,
                 $this->getStoreVarName()      => null,
-                $this->getStoreGroupVarName() => null,
                 $this->getContainerVarName()  => null,
             ]
         );
