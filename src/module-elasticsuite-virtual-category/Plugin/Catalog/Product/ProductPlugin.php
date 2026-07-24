@@ -95,13 +95,17 @@ class ProductPlugin
      */
     public function aroundCanBeShowInCategory(Product $product, ClosureAlias $proceed, $categoryId): bool
     {
-        try {
-            $category = $this->categoryRepository->get($categoryId);
-            if ((bool) $category->getIsVirtualCategory() === true) {
-                return true;
+        // get(null) uses null as an array offset in CategoryRepository, a fatal deprecation
+        // on PHP 8.5 that fires before the catch below can handle it. Null means "not shown".
+        if ($categoryId !== null) {
+            try {
+                $category = $this->categoryRepository->get($categoryId);
+                if ((bool) $category->getIsVirtualCategory() === true) {
+                    return true;
+                }
+            } catch (NoSuchEntityException $e) {
+                $category = null;
             }
-        } catch (NoSuchEntityException $e) {
-            $category = null;
         }
 
         return $proceed($categoryId);
