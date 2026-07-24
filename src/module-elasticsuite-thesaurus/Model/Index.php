@@ -132,7 +132,12 @@ class Index
     }
 
     /**
-     * Compute weigthed rewrites for the query.
+     * Provides the full, uncapped list of weighted rewrites for the query, ignoring the
+     * "max rewritten queries" configuration and bypassing the cache entirely.
+     *
+     * Intended for diagnostic/explain use only (showing which alternative queries would be cut
+     * off by the configured cap) -- not for the regular search request path, since it forces
+     * the full combinatorial computation regardless of the configured limit.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
@@ -140,17 +145,35 @@ class Index
      *
      * @return array
      */
-    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost)
+    public function getUncappedQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
+    {
+        return $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost, true);
+    }
+
+    /**
+     * Compute weigthed rewrites for the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container config.
+     * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
+     * @param bool                            $ignoreCap       Ignore the "max rewritten queries" configuration.
+     *
+     * @return array
+     */
+    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost, $ignoreCap = false)
     {
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
         $rewrites = [];
-        $maxRewrites = $config->getMaxRewrites();
+        $maxRewrites         = $config->getMaxRewrites();
+        $maxRewrittenQueries = $ignoreCap ? 0 : $config->getMaxRewrittenQueries();
 
         if ($config->isSynonymSearchEnabled()) {
             $thesaurusType   = ThesaurusInterface::TYPE_SYNONYM;
-            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites);
+            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites, $maxRewrittenQueries);
             $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider(), $originalBoost);
+            // Cap here so the set of source queries for the expansion loop below is already bounded.
+            $rewrites        = $this->capRewrites($rewrites, $maxRewrittenQueries);
         }
 
         if ($config->isExpansionSearchEnabled()) {
@@ -159,10 +182,17 @@ class Index
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
-                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
+                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites, $maxRewrittenQueries);
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
                 // Use + instead of array_merge because keys can be purely numeric and would be casted to 0 by array_merge.
                 $rewrites          = $rewrites + $expansionRewrites;
+
+                // Stop as soon as the cap is reached: further alternative queries would only get
+                // sliced away later anyway, so skip their analyze() calls entirely.
+                if ($maxRewrittenQueries > 0 && count($rewrites) >= $maxRewrittenQueries) {
+                    $rewrites = $this->capRewrites($rewrites, $maxRewrittenQueries);
+                    break;
+                }
             }
         }
 
@@ -229,14 +259,15 @@ class Index
     /**
      * Generates all possible synonym rewrites for a store and text query.
      *
-     * @param integer $storeId     Store id.
-     * @param string  $queryText   Text query.
-     * @param string  $type        Substitution type (synonym or expansion).
-     * @param integer $maxRewrites Max number of allowed rewrites.
+     * @param integer $storeId             Store id.
+     * @param string  $queryText           Text query.
+     * @param string  $type                Substitution type (synonym or expansion).
+     * @param integer $maxRewrites         Max number of allowed rewrites.
+     * @param integer $maxRewrittenQueries Max number of allowed rewritten queries (0 = unlimited).
      *
      * @return array
      */
-    private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
+    private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites, $maxRewrittenQueries)
     {
         $indexName        = $this->getIndexAlias($storeId);
         $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
@@ -267,6 +298,14 @@ class Index
             }
             // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
             $synonyms = $synonyms + $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites);
+
+            // Stop as soon as the cap is reached: further analyzed query variants (shingle
+            // combinations of the same query text) would only produce combinations that get
+            // sliced away by the caller anyway, so skip their analyze() calls entirely.
+            if ($maxRewrittenQueries > 0 && count($synonyms) >= $maxRewrittenQueries) {
+                $synonyms = $this->capRewrites($synonyms, $maxRewrittenQueries);
+                break;
+            }
         }
 
         return $synonyms;
@@ -376,5 +415,23 @@ class Index
         };
 
         return array_map($mapper, $queryRewrites);
+    }
+
+    /**
+     * Cap the number of rewrites to the "max rewritten queries" limit, if any is configured.
+     * A value of 0 (or less) for $maxRewrittenQueries means "no limit".
+     *
+     * @param array $rewrites            Current rewrites, keyed by rewritten query text.
+     * @param int   $maxRewrittenQueries Max number of allowed rewritten queries (0/negative = unlimited).
+     *
+     * @return array
+     */
+    private function capRewrites($rewrites, $maxRewrittenQueries)
+    {
+        if ($maxRewrittenQueries > 0) {
+            $rewrites = array_slice($rewrites, 0, $maxRewrittenQueries, true);
+        }
+
+        return $rewrites;
     }
 }
