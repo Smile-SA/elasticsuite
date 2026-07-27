@@ -15,7 +15,7 @@ on:
           - 2.11.x
           - 2.12.x
           - master
-        types: [labeled, synchronize]
+        types: [labeled]
 
 jobs:
     qualit:
