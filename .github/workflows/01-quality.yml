@@ -4,20 +4,22 @@ on:
     workflow_dispatch:
     push:
         branches:
-        - 2.10.x
-        - 2.11.x
-        - 2.12.x
-        - master
+          - 2.10.x
+          - 2.11.x
+          - 2.12.x
+          - master
 
     pull_request_target:
         branches:
-        - 2.10.x
-        - 2.11.x
-        - 2.12.x
-        - master
+          - 2.10.x
+          - 2.11.x
+          - 2.12.x
+          - master
+        types: [labeled, synchronize]
 
 jobs:
     qualit:
+        if: ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
         name: Code Quality
         runs-on: ubuntu-22.04
         strategy:
