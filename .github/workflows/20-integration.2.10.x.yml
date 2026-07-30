@@ -9,7 +9,7 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
-        types: [labeled]
+        types: [labeled,ready_for_review]
 
 env:
 # List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
