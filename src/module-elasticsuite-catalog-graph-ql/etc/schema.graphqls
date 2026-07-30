@@ -1,3 +1,17 @@
+input FilterEqualTypeInput {
+    nin: [String] @doc(description: "Exclude an array of values. Example: nin: [\"4\", \"5\"] returns products whose value is neither 4 nor 5.")
+    neq: String @doc(description: "Exclude a specific value. Example: neq: \"5\" returns products whose value is different from 5.")
+}
+
+input FilterMatchTypeInput {
+    not_match: String @doc(description: "Exclude products whose field contains this value.")
+}
+
+input FilterRangeTypeInput {
+    not_from: String @doc(description: "Exclude values greater than or equal to this bound.")
+    not_to: String @doc(description: "Exclude values lower than or equal to this bound.")
+}
+
 type Aggregation {
     has_more: Boolean @doc(description: "Whether the aggregation has more values to be displayed.")
     rel_nofollow: Boolean @doc(description: "Whether the aggregation has an html attribute rel=\"nofollow\" to be displayed at filter links of current attribute in Layered Navigation.")

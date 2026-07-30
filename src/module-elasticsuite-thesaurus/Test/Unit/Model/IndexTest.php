@@ -170,6 +170,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param bool   $expansionEnabled         Thesaurus config expansion enabled switch.
      * @param int    $expansionWeightDivider   Thesaurus config expansion weight divider.
      * @param int    $maxRewrites              Thesaurus config max rewrites.
+     * @param int    $maxRewrittenQueries      Thesaurus config max rewritten queries (alternative queries).
      * @param int    $timesClientCalled        Expected number of times the client 'analyze' method will be called.
      * @param array  $clientConsecutiveReturns Array of mocked returns from client 'analyze' method.
      * @param array  $expectedRewrites         Expected final array of rewritten queries.
@@ -189,6 +190,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $expansionEnabled,
         $expansionWeightDivider,
         $maxRewrites,
+        $maxRewrittenQueries,
         $timesClientCalled,
         $clientConsecutiveReturns,
         $expectedRewrites,
@@ -207,7 +209,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $synonymWeightDivider,
             $expansionEnabled,
             $expansionWeightDivider,
-            $maxRewrites
+            $maxRewrites,
+            $maxRewrittenQueries
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
         $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
@@ -270,16 +273,155 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     public static function singleLevelRewritesDataProvider()
     {
         /*
-         * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
+         * Results map for rules: synonyms 'foo,bat,baz' and expansion 'bar => pub,cafe'.
+         * Careful, the client is also called in getQueryCombinations.
+         */
+        $fooBarMappingResults = [
+            // Synonyms::getQueryCombinations call for 'foo bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'shingle',
+                        'token' => 'foo_bar',
+                        'start_offset' => 0,
+                        'end_offset' => 7,
+                        'position' => 0,
+                    ],
+                ],
+            ],
+            // Synonyms call for 'foo bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'bat',
+                        'start_offset' => 0,
+                        'end_offset' => 3,
+                        'position' => 0,
+                    ],
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'baz',
+                        'start_offset' => 0,
+                        'end_offset' => 3,
+                        'position' => 0,
+                    ],
+                ],
+            ],
+            // Synonyms call for 'foo_bar'.
+            ['tokens' => []],
+            // Expansion::getQueryCombinations call for 'foo bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'shingle',
+                        'token' => 'foo_bar',
+                        'start_offset' => 0,
+                        'end_offset' => 7,
+                        'position' => 0,
+                    ],
+                ],
+            ],
+            // Expansion call for '(foo) bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'pub',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'cafe',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                ],
+            ],
+            // Expansion call for 'foo_bar'.
+            ['tokens' => []],
+            // Expansion::getQueryCombinations call for 'bat bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'shingle',
+                        'token' => 'bat_bar',
+                        'start_offset' => 0,
+                        'end_offset' => 7,
+                        'position' => 0,
+                    ],
+                ],
+            ],
+            // Expansion call for '(bat) bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'pub',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'cafe',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                ],
+            ],
+            // Expansion call for 'bat_bar'.
+            ['tokens' => []],
+            // Expansion::getQueryCombinations call for 'baz bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'shingle',
+                        'token' => 'baz_bar',
+                        'start_offset' => 0,
+                        'end_offset' => 7,
+                        'position' => 0,
+                    ],
+                ],
+            ],
+            // Expansion call for '(baz) bar'.
+            [
+                'tokens' => [
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'pub',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                    [
+                        'type' => 'SYNONYM',
+                        'token' => 'cafe',
+                        'start_offset' => 4,
+                        'end_offset' => 7,
+                        'position' => 1,
+                    ],
+                ],
+            ],
+            // Expansion call for 'baz_bar'.
+            ['tokens' => []],
+        ];
+
+        /*
+         * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites, $maxRewrittenQueries,
          *      timesClientCall, clientConsecutiveReturns, expectedRewrites(, cacheStorageAllowed)].
          */
         return [
             // Both synonyms and expansions disabled.
-            ['foo', false, 10, false, 10, 2,
+            ['foo', false, 10, false, 10, 2, 0,
                 0, [], [],
             ],
             // Only synonyms enabled. Simulating 'foo,bar,baz'.
-            ['foo', true, 10, false, 10, 2,
+            ['foo', true, 10, false, 10, 2, 0,
                 1,
                 [
                     [
@@ -308,7 +450,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Only synonyms enabled. Simulating 'foo,bar,baz'.
             // Same test as before, but client->analyze returns expressed as a mapping.
-            ['foo', true, 10, false, 10, 2,
+            ['foo', true, 10, false, 10, 2, 0,
                 1,
                 [
                     'map' => [
@@ -341,7 +483,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             // Only expansions enabled. Simulating 'foo => bar,baz'.
-            ['foo', false, 10, true, 10, 2,
+            ['foo', false, 10, true, 10, 2, 0,
                 1,
                 [
                     [
@@ -369,7 +511,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             // Only expansions enabled. Simulating 'foo => bar,baz'.
-            ['foo', false, 10, true, 10, 2,
+            ['foo', false, 10, true, 10, 2, 0,
                 1,
                 [
                     [
@@ -397,7 +539,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             // Both synonyms and expansions enabled. Simulating 'foo,bar,baz' and 'bar => pub,cafe'.
-            ['foo', true, 10, true, 10, 2,
+            ['foo', true, 10, true, 10, 2, 0,
                 4,
                 [
                     // Synonyms call for 'foo'.
@@ -454,7 +596,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             ],
             // Both synonyms and expansions enabled. Simulating 'foo,bar,baz' and 'bar => pub,cafe'.
             // No cache storage allowed.
-            ['foo', true, 10, true, 10, 2,
+            ['foo', true, 10, true, 10, 2, 0,
                 4,
                 [
                     // Synonyms call for 'foo'.
@@ -513,8 +655,33 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions enabled, multi-words search.
             // Simulating 'foo,bat,baz' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
-            ['foo bar', true, 10, true, 10, 2,
+            ['foo bar', true, 10, true, 10, 2, 0,
                 12,
+                $fooBarMappingResults,
+                [
+                    // Synonyms only for 'foo (bar)'.
+                    'bat bar' => 0.1,
+                    'baz bar' => 0.1,
+                    // Expansions only for '(foo) bar'.
+                    'foo pub' => 0.1,
+                    'foo cafe' => 0.1,
+                    // Expansions for '(bat) bar'.
+                    'bat pub' => 0.01,
+                    'bat cafe' => 0.01,
+                    // Expansions for '(baz) bar'.
+                    'baz pub' => 0.01,
+                    'baz cafe' => 0.01,
+                ],
+            ],
+            // Same scenario, capped to 1 alternative query (max_rewritten_queries = 1).
+            // The cap is now also enforced inside getSynonymRewrites()'s own loop over shingle
+            // variants: both the synonym-phase call and the expansion-phase call for the
+            // original query text reach the cap after their first shingle variant and break
+            // before ever analyzing the 'foo_bar' variant. The outer loop over source queries then
+            // also breaks right after, skipping the 'bat bar' alternative query entirely.
+            // Only 4 calls happen in total (was 6 before this inner cap existed).
+            ['foo bar', true, 10, true, 10, 2, 1,
+                4,
                 [
                     // Synonyms::getQueryCombinations call for 'foo bar'.
                     [
@@ -528,7 +695,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
-                    // Synonyms call for 'foo bar'.
+                    // Synonyms call for 'foo bar': reaches the cap (2 candidates >= 1), breaks
+                    // before ever analyzing the 'foo_bar' shingle variant.
                     [
                         'tokens' => [
                             [
@@ -547,8 +715,6 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
-                    // Synonyms call for 'foo_bar'.
-                    ['tokens' => []],
                     // Expansion::getQueryCombinations call for 'foo bar'.
                     [
                         'tokens' => [
@@ -561,7 +727,9 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
-                    // Expansion call for '(foo) bar'.
+                    // Expansion call for '(foo) bar': reaches the cap (2 candidates >= 1),
+                    // breaks before analyzing 'foo_bar', and the outer loop over source queries
+                    // also breaks right after, skipping the 'bat bar' alternative query entirely.
                     [
                         'tokens' => [
                             [
@@ -580,88 +748,25 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                     ],
-                    // Expansion call for 'foo_bar'.
-                    ['tokens' => []],
-                    // Expansion::getQueryCombinations call for 'bat bar'.
-                    [
-                        'tokens' => [
-                            [
-                                'type' => 'shingle',
-                                'token' => 'bat_bar',
-                                'start_offset' => 0,
-                                'end_offset' => 7,
-                                'position' => 0,
-                            ],
-                        ],
-                    ],
-                    // Expansion call for '(bat) bar'.
-                    [
-                        'tokens' => [
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'pub',
-                                'start_offset' => 4,
-                                'end_offset' => 7,
-                                'position' => 1,
-                            ],
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'cafe',
-                                'start_offset' => 4,
-                                'end_offset' => 7,
-                                'position' => 1,
-                            ],
-                        ],
-                    ],
-                    // Expansion call for 'bat_bar'.
-                    ['tokens' => []],
-                    // Expansion::getQueryCombinations call for 'baz bar'.
-                    [
-                        'tokens' => [
-                            [
-                                'type' => 'shingle',
-                                'token' => 'baz_bar',
-                                'start_offset' => 0,
-                                'end_offset' => 7,
-                                'position' => 0,
-                            ],
-                        ],
-                    ],
-                    // Expansion call for '(baz) bar'.
-                    [
-                        'tokens' => [
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'pub',
-                                'start_offset' => 4,
-                                'end_offset' => 7,
-                                'position' => 1,
-                            ],
-                            [
-                                'type' => 'SYNONYM',
-                                'token' => 'cafe',
-                                'start_offset' => 4,
-                                'end_offset' => 7,
-                                'position' => 1,
-                            ],
-                        ],
-                    ],
-                    // Expansion call for 'baz_bar'.
-                    ['tokens' => []],
                 ],
                 [
-                    // Synonyms only for 'foo (bar)'.
+                    'bat bar' => 0.1,
+                ],
+            ],
+            // Same scenario, capped to 5 alternative queries (max_rewritten_queries = 5).
+            // The loop completes 2 of its 3 iterations over source queries (original query text,
+            // then the 'bat bar' alternative query) before the cap is reached, skipping the
+            // 'baz bar' alternative query (9 calls instead of 12) and trimming the merged result
+            // to the first 5 keys.
+            ['foo bar', true, 10, true, 10, 2, 5,
+                9,
+                $fooBarMappingResults,
+                [
                     'bat bar' => 0.1,
                     'baz bar' => 0.1,
-                    // Expansions only for '(foo) bar'.
                     'foo pub' => 0.1,
                     'foo cafe' => 0.1,
-                    // Expansions for '(bat) bar'.
                     'bat pub' => 0.01,
-                    'bat cafe' => 0.01,
-                    // Expansions for '(baz) bar'.
-                    'baz pub' => 0.01,
-                    'baz cafe' => 0.01,
                 ],
             ],
         ];
@@ -678,6 +783,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param bool   $expansionEnabled         Thesaurus config expansion enabled switch.
      * @param int    $expansionWeightDivider   Thesaurus config expansion weight divider.
      * @param int    $maxRewrites              Thesaurus config max rewrites.
+     * @param int    $maxRewrittenQueries      Thesaurus config max rewritten queries (alternative queries).
      * @param int    $timesClientCalled        Expected number of times the client 'analyze' method will be called.
      * @param array  $clientConsecutiveReturns Array of mocked returns from client 'analyze' method.
      * @param array  $expectedRewrites         Expected final array of rewritten queries.
@@ -697,6 +803,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $expansionEnabled,
         $expansionWeightDivider,
         $maxRewrites,
+        $maxRewrittenQueries,
         $timesClientCalled,
         $clientConsecutiveReturns,
         $expectedRewrites,
@@ -715,7 +822,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $synonymWeightDivider,
             $expansionEnabled,
             $expansionWeightDivider,
-            $maxRewrites
+            $maxRewrites,
+            $maxRewrittenQueries
         );
         $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
         $thesaurusCacheConfigMock = $this->getThesaurusCacheConfigMock($cacheStorageAllowed);
@@ -1335,16 +1443,16 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         ];
 
         /*
-         * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
+         * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites, $maxRewrittenQueries,
          *      timesClientCall, clientConsecutiveReturns, expectedRewrites].
          */
         return [
             // Both synonyms and expansions disabled.
-            ['foo', false, 10, false, 10, 2,
+            ['foo', false, 10, false, 10, 2, 0,
                 0, [], [],
             ],
             // Only synonyms enabled. Simulating 'foo,bar,baz' and 'bar,pub,cafe' and 'bar,pipe,tube'.
-            ['foo', true, 10, false, 10, 2,
+            ['foo', true, 10, false, 10, 2, 0,
                 1,
                 [
                     [
@@ -1380,7 +1488,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             // Only expansions enabled. Simulating 'foo => bar,baz' and 'bar => pub,cafe' and 'bar => pipe,tube'.
-            ['foo', false, 10, true, 10, 2,
+            ['foo', false, 10, true, 10, 2, 0,
                 1,
                 [
                     [
@@ -1418,7 +1526,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions enabled.
             // Simulating 'foo,bar,baz' and 'bar,pub,cafe' and 'bar,pipe,tube'.
             // and 'foo => bar,baz' and 'bar => pub,cafe' and 'bar => pipe,tube'.
-            ['foo', true, 10, true, 100, 2,
+            ['foo', true, 10, true, 100, 2, 0,
                 4,
                 [
                     // Synonyms call for 'foo'.
@@ -1573,7 +1681,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions enabled, multi-words search with cycle.
             // Simulating 'foo,bar' and 'foobar,foo bar', 'bar,pipe,tube' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
-            ['foo bar', true, 10, true, 10, 2,
+            ['foo bar', true, 10, true, 10, 2, 0,
                 28,
                 $cyclingMappingResults,
                 [
@@ -1618,7 +1726,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             // Both synonyms and expansions enabled, multi-words search with cycle with limiting max rewrites to 1.
             // Simulating 'foo,bar' and 'foobar,foo bar', 'bar,pipe,tube' and 'bar => pub,cafe'.
             // Carefull, the client is also called in getQueryCombinations.
-            ['foo bar', true, 10, true, 10, 1,
+            ['foo bar', true, 10, true, 10, 1, 0,
                 19,
                 $cyclingMappingResults,
                 [
@@ -1770,6 +1878,60 @@ class IndexTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test that getUncappedQueryRewrites() ignores the configured "max rewritten queries" cap
+     * and never reads from or writes to the cache.
+     *
+     * @return void
+     */
+    public function testGetUncappedQueryRewritesIgnoresCapAndCache()
+    {
+        $clientMock                 = $this->getClientMock();
+        $indexSettingsHelperMock    = $this->getIndexSettingsHelperMock();
+        $cacheHelperMock            = $this->getCacheHelperMock();
+        $textHelper                 = $this->getRealTextHelper();
+        // Setting max_rewritten_queries = 1.
+        $thesaurusConfigMock        = $this->getThesaurusConfigMock(true, 10, false, 10, 2, 1);
+        $thesaurusConfigFactoryMock = $this->getThesaurusConfigFactoryMock($thesaurusConfigMock);
+        $thesaurusCacheConfigMock   = $this->getThesaurusCacheConfigMock(true);
+
+        $indexSettingsHelperMock->method('getIndexAliasFromIdentifier')->willReturn('magento2_default_thesaurus');
+
+        $clientMock->expects($this->exactly(1))->method('analyze')->willReturn([
+            'tokens' => [
+                ['type' => 'SYNONYM', 'token' => 'bar', 'start_offset' => 0, 'end_offset' => 3, 'position' => 0],
+                ['type' => 'SYNONYM', 'token' => 'baz', 'start_offset' => 0, 'end_offset' => 3, 'position' => 0],
+            ],
+        ]);
+
+        // Must never touch the cache -- this path must not read/write the shared cached+capped entry.
+        $cacheHelperMock->expects($this->never())->method('loadCache');
+        $cacheHelperMock->expects($this->never())->method('saveCache');
+        $thesaurusCacheConfigMock->expects($this->never())->method('getCacheTtl');
+        $thesaurusCacheConfigMock->expects($this->never())->method('isCacheStorageAllowed');
+
+        $containerConfig = $this->getMockBuilder(ContainerConfigurationInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $containerConfig->method('getStoreId')->willReturn(1);
+        $containerConfig->method('getName')->willReturn('requestType');
+
+        $thesaurusIndex = new ThesaurusIndex(
+            $clientMock,
+            $indexSettingsHelperMock,
+            $cacheHelperMock,
+            $textHelper,
+            $thesaurusConfigFactoryMock,
+            $thesaurusCacheConfigMock
+        );
+
+        // Both entries survive despite max_rewritten_queries = 1 -- proves the cap is bypassed.
+        $this->assertEquals(
+            ['bar' => 0.1, 'baz' => 0.1],
+            $thesaurusIndex->getUncappedQueryRewrites($containerConfig, 'foo')
+        );
+    }
+
+    /**
      * Get client mock.
      *
      * @return MockObject|ClientInterface
@@ -1801,6 +1963,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      * @param bool $expansionEnabled       Whether expansions are enabled.
      * @param int  $expansionWeightDivider Expansion weight divider.
      * @param int  $maxRewrites            Max allowed rewrites.
+     * @param int  $maxRewrittenQueries    Max allowed rewritten queries (alternative queries).
      *
      * @return MockObject
      */
@@ -1809,7 +1972,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $synonymWeightDivider = 10,
         $expansionEnabled = true,
         $expansionWeightDivider = 10,
-        $maxRewrites = 2
+        $maxRewrites = 2,
+        $maxRewrittenQueries = 0
     ) {
         $thesaurusConfigMock = $this->getMockBuilder(ThesaurusConfig::class)
             ->disableOriginalConstructor()
@@ -1820,6 +1984,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $thesaurusConfigMock->method('isExpansionSearchEnabled')->willReturn($expansionEnabled);
         $thesaurusConfigMock->method('getExpansionWeightDivider')->willReturn($expansionWeightDivider);
         $thesaurusConfigMock->method('getMaxRewrites')->willReturn($maxRewrites);
+        $thesaurusConfigMock->method('getMaxRewrittenQueries')->willReturn($maxRewrittenQueries);
 
         return $thesaurusConfigMock;
     }
