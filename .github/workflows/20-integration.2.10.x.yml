@@ -9,7 +9,7 @@ on:
     pull_request_target:
         branches:
             - 2.10.x
-        types: [labeled,synchronize]
+        types: [labeled,ready_for_review]
 
 env:
 # List of http port for each search server flavour/version. Must be consistent with jobs.build.services definitions.
@@ -24,7 +24,7 @@ env:
 jobs:
     build:
         if: |
-          ( ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
+          ( ((github.event_name != 'pull_request_target') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
             && (github.event.pull_request.draft == false) )
         runs-on: ubuntu-22.04
         name: 'Integration'
@@ -193,6 +193,7 @@ jobs:
               with:
                 ref: ${{ github.event.pull_request.head.sha }}
                 persist-credentials: false
+                allow-unsafe-pr-checkout: true
 
             - name: "[Init] Setup PHP"
               uses: shivammathur/setup-php@v2

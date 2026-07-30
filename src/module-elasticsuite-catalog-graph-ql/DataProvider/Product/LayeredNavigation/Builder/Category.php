@@ -123,23 +123,33 @@ class Category implements LayerBuilderInterface
             return [];
         }
 
+        // The categories bucket is a "filters" aggregation (one query per category): unlike "terms"/"histogram"
+        // buckets it has no min_doc_count, so it always returns every declared category, even at 0 products.
         $categoryIds = \array_map(
             function (AggregationValueInterface $value) {
                 return (int) $value->getValue();
             },
-            $bucket->getValues()
+            \array_filter(
+                $bucket->getValues(),
+                function (AggregationValueInterface $value) {
+                    return ((int) ($value->getMetrics()['count'] ?? 0)) > 0;
+                }
+            )
         );
 
-        $categoryIds    = \array_diff($categoryIds, [$this->rootCategoryProvider->getRootCategory($storeId)]);
-        $categoryLabels = \array_column(
-            $this->attributesMapper->getAttributesValues(
-                $this->resourceConnection->getConnection()->fetchAll(
-                    $this->categoryAttributeQuery->getQuery($categoryIds, ['name'], $storeId)
-                )
-            ),
-            'name',
-            'entity_id'
+        $categoryIds = \array_diff($categoryIds, [$this->rootCategoryProvider->getRootCategory($storeId)]);
+
+        $categoryAttributesValues = $this->attributesMapper->getAttributesValues(
+            $this->resourceConnection->getConnection()->fetchAll(
+                $this->categoryAttributeQuery->getQuery($categoryIds, ['name', 'is_active'], $storeId)
+            )
         );
+        $categoryLabels = \array_column($categoryAttributesValues, 'name', 'entity_id');
+        $categoryActive = \array_column($categoryAttributesValues, 'is_active', 'entity_id');
+
+        $categoryIds = \array_filter($categoryIds, function ($categoryId) use ($categoryActive) {
+            return !empty($categoryActive[$categoryId] ?? null);
+        });
 
         if (!$categoryLabels) {
             return [];
