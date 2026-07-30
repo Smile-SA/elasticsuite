@@ -109,14 +109,16 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
 
         if (!empty($arr[$key]) && is_array($arr[$key])) {
             foreach ($arr[$key] as $conditionArr) {
-                try {
-                    $condition = $this->_conditionFactory->create($conditionArr['type']);
-                    $condition->setElementName($this->elementName);
-                    $condition->setRule($this->getRule());
-                    $this->addCondition($condition);
-                    $condition->loadArray($conditionArr, $key);
-                } catch (\Exception $exception) {
-                    $this->_logger->critical($exception);
+                if (!empty($conditionArr['type'])) {
+                    try {
+                        $condition = $this->_conditionFactory->create($conditionArr['type']);
+                        $condition->setElementName($this->elementName);
+                        $condition->setRule($this->getRule());
+                        $this->addCondition($condition);
+                        $condition->loadArray($conditionArr, $key);
+                    } catch (\Exception $exception) {
+                        $this->_logger->critical($exception);
+                    }
                 }
             }
         }
