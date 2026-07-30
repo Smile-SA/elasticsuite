@@ -9,7 +9,7 @@ on:
   pull_request_target:
     branches:
       - 2.11.x
-    types: [labeled]
+    types: [labeled,ready_for_review]
 
 jobs:
   build:
