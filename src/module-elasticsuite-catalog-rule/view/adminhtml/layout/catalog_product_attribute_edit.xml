@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smile_ElasticsuiteCatalogRule dependency injection configuration.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteCatalogRule
+ * @author    Vadym Honcharuk <vahonc@smile.fr>
+ * @copyright 2026 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Framework\View\Element\Template"
+                   name="elasticsuite.native.attribute.protection.guard"
+                   template="Smile_ElasticsuiteCatalogRule::attribute/guard.phtml"
+                   after="-"
+            />
+        </referenceContainer>
+    </body>
+</config>

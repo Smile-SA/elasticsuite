@@ -17,6 +17,7 @@ use Magento\Catalog\Block\Adminhtml\Product\Attribute\Edit\Tab\Front;
 use Magento\Config\Model\Config\Source\Yesno;
 use Magento\CatalogSearch\Model\Source\Weight;
 use Magento\Framework\Data\Form;
+use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\UrlInterface;
 use Smile\ElasticsuiteCatalog\Model\Attribute\Source\FilterBooleanLogic;
@@ -86,15 +87,21 @@ class FrontPlugin
     private $urlBuilder;
 
     /**
+     * @var RendererInterface
+     */
+    private $promoRuleFieldRenderer;
+
+    /**
      * Class constructor
      *
-     * @param Yesno                $booleanSource        The YesNo source.
-     * @param Weight               $weightSource         Weight source.
-     * @param Registry             $registry             Core registry.
-     * @param FilterSortOrder      $filterSortOrder      Filter Sort Order.
-     * @param FilterBooleanLogic   $filterBooleanLogic   Filter boolean logic source model.
-     * @param TextScoringAlgorithm $textScoringAlgorithm Text scoring algorithm source model.
-     * @param UrlInterface         $urlBuilder           Url Builder.
+     * @param Yesno                $booleanSource          The YesNo source.
+     * @param Weight               $weightSource           Weight source.
+     * @param Registry             $registry               Core registry.
+     * @param FilterSortOrder      $filterSortOrder        Filter Sort Order.
+     * @param FilterBooleanLogic   $filterBooleanLogic     Filter boolean logic source model.
+     * @param TextScoringAlgorithm $textScoringAlgorithm   Text scoring algorithm source model.
+     * @param UrlInterface         $urlBuilder             Url Builder.
+     * @param RendererInterface    $promoRuleFieldRenderer Field renderer.
      */
     public function __construct(
         Yesno $booleanSource,
@@ -103,7 +110,8 @@ class FrontPlugin
         FilterSortOrder $filterSortOrder,
         FilterBooleanLogic $filterBooleanLogic,
         TextScoringAlgorithm $textScoringAlgorithm,
-        UrlInterface $urlBuilder
+        UrlInterface $urlBuilder,
+        RendererInterface $promoRuleFieldRenderer
     ) {
         $this->weightSource    = $weightSource;
         $this->booleanSource   = $booleanSource;
@@ -112,6 +120,7 @@ class FrontPlugin
         $this->filterBooleanLogic   = $filterBooleanLogic;
         $this->textScoringAlgorithm = $textScoringAlgorithm;
         $this->urlBuilder       = $urlBuilder;
+        $this->promoRuleFieldRenderer = $promoRuleFieldRenderer;
     }
 
     /**
@@ -138,6 +147,7 @@ class FrontPlugin
         $this->addSortFields($searchFieldset);
         $this->addRelNofollowFields($layeredNavigationFieldset);
         $this->appendSliderDisplayRelatedFields($form, $subject);
+        $this->decorateUsedForPromoRulesField($form);
 
         if ($this->getAttribute()->getAttributeCode() == 'name') {
             $form->getElement('is_searchable')->setDisabled(1);
@@ -553,6 +563,26 @@ class FrontPlugin
         if ($isAttributeDecimal && ($attribute->getFrontendInput() !== 'price')) {
             $displayFieldset = $this->createDisplayFieldset($form, $subject);
             $this->addDisplayFields($displayFieldset);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Decorates the native "Use for Promo Rule Conditions" field
+     * with the ElasticSuite feature logo by swapping its renderer
+     * for a CSS-class-injecting decorator (see etc/adminhtml/di.xml).
+     *
+     * @param Form $form Target form.
+     *
+     * @return FrontPlugin
+     */
+    private function decorateUsedForPromoRulesField(Form $form)
+    {
+        $promoRuleField = $form->getElement('is_used_for_promo_rules');
+
+        if ($promoRuleField) {
+            $promoRuleField->setRenderer($this->promoRuleFieldRenderer);
         }
 
         return $this;

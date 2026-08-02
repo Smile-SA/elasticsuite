@@ -74,3 +74,22 @@ div.elasticsuite-upsell-content:before {
 .admin__field-control .rule-tree .x-tree-node-el.es-esfeature__logo > a:after {  /* Category picker in non-full page forms */
     margin-top: 7px;
 }
+
+/* Product attribute fields decoration */
+.catalog-product_attribute-edit .admin__field.es-esfeature__logo .admin__field-label span {
+    position: relative;
+    display: inline-block;
+    padding-left: 35px;
+}
+
+.catalog-product_attribute-edit .admin__field.es-esfeature__logo .admin__field-label span::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 25%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background: url('../images/es-logo.svg') no-repeat center center;
+    background-size: contain;
+}

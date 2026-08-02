@@ -136,8 +136,11 @@ class AttributeList
 
             $fieldNames = array_map($arrayNameCb, $this->getMapping()->getFields());
 
-            $this->attributeCollection->addFieldToFilter('attribute_code', $fieldNames)
-                 ->addFieldToFilter('backend_type', ['neq' => 'datetime']);
+            // New behavior: Only attributes with 'is_used_for_promo_rules = 1' are allowed in rule engines.
+            $this->attributeCollection
+                ->addFieldToFilter('attribute_code', $fieldNames)
+                ->addFieldToFilter('backend_type', ['neq' => 'datetime'])
+                ->addFieldToFilter('is_used_for_promo_rules', 1);
 
             if (!empty($this->layeredNavAttributesProvider->getList())) {
                 $this->attributeCollection->addFieldToFilter(

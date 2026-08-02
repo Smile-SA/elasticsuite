@@ -92,19 +92,24 @@ class VirtualRule extends \Magento\Backend\Block\AbstractBlock
         $form = $this->formFactory->create();
         $form->setHtmlId('virtual_rule');
 
-        $virtualRuleField    = $form->addField(
+        // Instantiate the renderer first to dynamically inherit the localized translation note.
+        $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
+
+        $virtualRuleField = $form->addField(
             'virtual_rule',
             'text',
-            ['name' => 'virtual_rule', 'label' => __('Virtual rule'), 'container_id' => 'virtual_rule']
+            [
+                'name' => 'virtual_rule',
+                'label' => __('Virtual rule'),
+                'container_id' => 'virtual_rule',
+                'note' => $virtualRuleRenderer->getAttributeRequirementNote(),
+            ]
         );
 
         $virtualRule = $this->getVirtualRule($this->getCategory());
-
         $virtualRuleField->setValue($virtualRule);
-        $virtualRuleRenderer = $this->getLayout()->createBlock('Smile\ElasticsuiteCatalogRule\Block\Product\Conditions');
 
         $urlParams = ['category_id' => $this->getCategory()->getId()];
-
         $virtualRuleRenderer->addData(['url_params' => $urlParams]);
         $virtualRuleField->setRenderer($virtualRuleRenderer);
 
