@@ -143,13 +143,10 @@ class Url
         if (!$this->virtualCategoryRoot->getAppliedRootCategory()) {
             $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
         } else {
-            $categoryUrlPath = $categoryRequestPath;
-            $appliedRoot = $this->virtualCategoryRoot->getAppliedRootCategory();
-            $appliedRootUrlPath = $appliedRoot->getUrlPath();
-            if (!empty($appliedRootUrlPath) && (strpos($categoryRequestPath, $appliedRootUrlPath) === 0)) {
-                $categoryUrlPath = str_replace($appliedRootUrlPath, '', $categoryRequestPath);
-                $categoryUrlPath = ltrim($categoryUrlPath, '/');
-            }
+            $categoryUrlPath = $this->getOriginalCategoryRequestPath(
+                $categoryRequestPath,
+                $this->virtualCategoryRoot->getAppliedRootCategory()
+            );
             $category = $this->loadCategoryByUrlPath($categoryUrlPath);
             $categoryId = $category->getId();
         }
@@ -166,6 +163,48 @@ class Url
         }
 
         return $productRewrite;
+    }
+
+    /**
+     * Extract the original URL request path of a category from its current URL request path that might be expressed
+     * as a (virtual) descendant category of a given applied (virtual) root category, like
+     * "/path/to/virtual/category/path/of/subcategory".
+     * For instance for "sales/dresses", where
+     * - "sales" is the URL of the virtual category
+     * - "dresses" is the URL of the subcategory which actually corresponds to category of URL "women/dresses",
+     *   because the virtual category root is the "women" category.
+     * the expected result is "women/dresses".
+     *
+     * @param string            $categoryRequestPath Category (virtual) request path.
+     * @param CategoryInterface $appliedRoot         Applied virtual root category.
+     *
+     * @return string
+     */
+    public function getOriginalCategoryRequestPath($categoryRequestPath, $appliedRoot): string
+    {
+        if ($appliedRoot) {
+            /** @var Category $appliedRoot */
+            $appliedRootUrlPath = $appliedRoot->getUrlPath();
+            if (!empty($appliedRootUrlPath) && (strpos($categoryRequestPath, $appliedRootUrlPath) === 0)) {
+                /*
+                 * Category request path is expressed as /path/to/virtual/category/path/of/subcategory.
+                 * If the virtual __root__ IS the root category, /path/to/virtual/category can be stripped
+                 * to obtain the actual category URL rewrite path.
+                 * On the other hand, if the virtual __root__ IS NOT the root category, path/of/subcategory will not correspond
+                 * to an actual category URL rewrite: it needs to be prepended with that virtual root URL path.
+                 */
+                $replacement = '';
+                $appliedRootOrigin = $this->virtualCategoryRoot->getVirtualCategoryRoot($appliedRoot);
+                if ($appliedRootOrigin) {
+                    /** @var Category $appliedRootOrigin */
+                    $replacement = $appliedRootOrigin->getUrlPath() ?? '';
+                }
+                $categoryRequestPath = str_replace($appliedRootUrlPath, $replacement, $categoryRequestPath);
+                $categoryRequestPath = ltrim($categoryRequestPath, '/');
+            }
+        }
+
+        return $categoryRequestPath;
     }
 
     /**
