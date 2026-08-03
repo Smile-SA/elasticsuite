@@ -36,10 +36,6 @@
         <plugin name="smile_elasticsuite_virtual_categories_flat"
                 type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Category\FlatPlugin" />
     </type>
-    <type name="Magento\Catalog\Model\Product">
-        <plugin name="smile_elasticsuite_virtual_categories_product"
-                type="Smile\ElasticsuiteVirtualCategory\Plugin\Catalog\Product\ProductPlugin"/>
-    </type>
 
     <type name="Magento\Framework\App\RouterList">
         <arguments>
