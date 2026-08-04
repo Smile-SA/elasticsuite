@@ -94,7 +94,7 @@ class ProductPlugin
      */
     public function aroundCanBeShowInCategory(Product $product, \Closure $proceed, $categoryId)
     {
-        if (!$categoryId) {
+        if ($categoryId) {
             try {
                 $category = $this->categoryRepository->get($categoryId);
                 if ((bool) $category->getIsVirtualCategory() === true) {
