@@ -13,3 +13,5 @@
 "Alphabetical sorting of attribute options in the rule engine","Alfabetische sortering van attribuutopties in de regelmotor"
 "If enabled, will forcefully sort select and multiselect attributes' option labels alphabetically when displaying them in the rule engine used by Optimizers and Virtual Categories. Useful if you have product attributes with very long list of options.","Indien ingeschakeld zullen de optie-labels van geselecteerde en multiselect attributen geforceerd gesorteerd worden in de regel-engine gebruikt door Optimizers en Virtual Categories. Handig als je product attributen hebt met een zeer lange lijst met opties."
 "Stock qty","Voorraad aantal"
+"Product creation date (X days ago)","Aanmaakdatum (X dagen geleden)"
+"Product update date (X days ago)","Bijwerkdatum (X dagen geleden)"
