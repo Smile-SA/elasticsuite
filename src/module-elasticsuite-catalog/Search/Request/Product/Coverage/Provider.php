@@ -119,15 +119,27 @@ class Provider
 
         if ($attributeSetIdBucket) {
             foreach ($attributeSetIdBucket->getValues() as $value) {
+                $attributeSetId = $value->getValue();
+
+                if ($attributeSetId === null) {
+                    continue;
+                }
+
                 $metrics = $value->getMetrics();
-                $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
+                $this->countByAttributeSet[$attributeSetId] = $metrics['count'];
             }
         }
 
         if ($attributeCodeBucket) {
             foreach ($attributeCodeBucket->getValues() as $value) {
+                $attributeCode = $value->getValue();
+
+                if ($attributeCode === null) {
+                    continue;
+                }
+
                 $metrics = $value->getMetrics();
-                $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
+                $this->countByAttributeCode[$attributeCode] = $metrics['count'];
             }
         }
     }
