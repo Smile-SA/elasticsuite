@@ -2,6 +2,11 @@ name: PHPStan Code Quality (2.10.x)
 
 on:
   workflow_dispatch:
+    inputs:
+      phpstan_level:
+        description: 'PHPStan Level (default: 0)'
+        required: false
+        default: '0'
   push:
     branches:
       - 2.10.x
@@ -10,6 +15,9 @@ on:
     branches:
         - 2.10.x
     types: [labeled,ready_for_review]
+
+env:
+  PHPSTAN_LEVEL: ${{ inputs.phpstan_level || '0' }}
 
 jobs:
   build:
@@ -200,7 +208,7 @@ jobs:
         working-directory: ${{ env.magento-directory }}
         run: |
           sudo chmod u+x vendor/bin/phpstan
-          vendor/bin/phpstan analyze --level=0 vendor/smile/elasticsuite
+          vendor/bin/phpstan analyze --level=${{ env.PHPSTAN_LEVEL }} vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
         env:
