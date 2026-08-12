@@ -1,7 +1,10 @@
 parameters:
     level: 6
     reportUnmatchedIgnoredErrors: false
-    checkMissingIterableValueType: false
+    ignoreErrors:
+        -
+            identifier: missingType.iterableValue
+            reportUnmatched: false
     paths:
         - src
 
