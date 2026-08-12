@@ -67,7 +67,7 @@ class CategoryPermissions implements DatasourceInterface
             }
         }
 
-        return $indexData ?? [];
+        return $indexData;
     }
 
     /**
