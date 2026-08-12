@@ -7,6 +7,14 @@ on:
         description: 'PHPStan Level (default: 0)'
         required: false
         default: '0'
+      smilelab_phpstan_version:
+        description: 'Smilelab PHPStan Version (default: 1.0.3)'
+        required: false
+        default: '1.0.3'
+      phpstan_version:
+        description: 'PHPStan Version (default: 1.12.34)'
+        required: false
+        default: '1.12.34'
   push:
     branches:
       - 2.11.x
@@ -18,6 +26,8 @@ on:
 
 env:
   PHPSTAN_LEVEL: ${{ inputs.phpstan_level || '0' }}
+  SMILELAB_PHPSTAN_VERSION: ${{ inputs.smilelab_phpstan_version || '1.0.3' }}
+  PHPSTAN_VERSION: ${{ inputs.phpstan_version || '1.12.34' }}
 
 jobs:
   build:
@@ -177,7 +187,7 @@ jobs:
 
       - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
-        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+        run: composer require --dev smile/magento2-smilelab-phpstan:${{ env.SMILELAB_PHPSTAN_VERSION }} phpstan/phpstan:${{ env.PHPSTAN_VERSION }}
 
       - name: "[Init] Fix Magento directory permissions"
         env:
