@@ -59,6 +59,7 @@ class ComposerInformationProvider
     {
         if (null === $this->composerInformation) {
             $this->composerInformation = new ComposerInformation(
+                // @phpstan-ignore constant.notFound
                 new ComposerFactory(new DirectoryList(BP), $this->composerJsonFinder),
                 $this->cache
             );

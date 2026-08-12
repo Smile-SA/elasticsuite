@@ -13,7 +13,6 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query;
 
-use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -39,8 +38,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $builder = new Builder(
             $this->getQueryFactory(),
             $this->getFulltextQueryBuilder(),
-            $this->getFilterQueryBuilder(),
-            $this->getSearchContext()
+            $this->getFilterQueryBuilder()
         );
 
         $query = $builder->createQuery(
@@ -58,16 +56,6 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(QueryInterface::class, $query->getFilter());
         $this->assertEquals('filterQuery', $query->getFilter()->getType());
-    }
-
-    /**
-     * Mocks the search context.
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getSearchContext()
-    {
-        return $this->getMockBuilder(ContextInterface::class)->getMock();
     }
 
     /**

@@ -68,6 +68,7 @@ class SearchResultApplier implements SearchResultApplierInterface
             $this->searchResult->getItems()
         );
 
+        // @phpstan-ignore empty.variable
         if (empty($docIds)) {
             $docIds[] = 0;
         }
