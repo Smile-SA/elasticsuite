@@ -38,6 +38,6 @@ class Product extends \Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Pr
         // Fix some js encoding error with operators.
         $this->setData('operator', htmlspecialchars_decode($this->getOperator()));
 
-        return parent::getSearchQuery($excludedCategories, $virtualCategoryRoot);
+        return parent::getSearchQuery($excludedCategories);
     }
 }
