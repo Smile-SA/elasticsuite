@@ -39,6 +39,9 @@
             <bulk_error_logging>
                 <enable>1</enable>
             </bulk_error_logging>
+            <healthcheck>
+                <menu_notification_severity_threshold>4</menu_notification_severity_threshold>
+            </healthcheck>
         </smile_elasticsuite_core_base_settings>
 
         <smile_elasticsuite_core_analysis_settings>

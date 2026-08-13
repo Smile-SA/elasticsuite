@@ -172,3 +172,6 @@ Autocomplete,Autocomplete
 "Count","Count"
 "Created At","Created At"
 "Updated At","Updated At"
+"Healthchecks","Healthchecks"
+"Minimum Severity for Menu Decoration","Minimum Severity for Menu Decoration"
+"Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks.","Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks."

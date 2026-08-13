@@ -124,6 +124,15 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+
+            <group id="healthcheck" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Healthchecks</label>
+                <field id="menu_notification_severity_threshold" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Minimum Severity for Menu Notification</label>
+                    <comment><![CDATA[Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks.]]></comment>
+                    <source_model>Smile\ElasticsuiteCore\Model\Config\Source\HealthcheckSeverity</source_model>
+                </field>
+            </group>
         </section>
 
         <section id="smile_elasticsuite_core_analysis_settings" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
