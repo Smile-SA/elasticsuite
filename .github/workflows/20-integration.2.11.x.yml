@@ -188,6 +188,12 @@ jobs:
             MAGENTO_PASSWORD: ${{ secrets.MAGENTO_PASSWORD }}
 
         steps:
+            - name: "[Init] Disable Elasticsearch/OpenSearch disk based shard allocation"
+              env:
+                SEARCH_ENGINE: ${{ matrix.engine }}
+              run: |
+                curl -H "Content-Type: application/json" -XPUT http://localhost:${{ env[env.SEARCH_ENGINE] }}/_cluster/settings -d'{"persistent": {"cluster.routing.allocation.disk.threshold_enabled": false}}'
+
             - name: "[Init] Checkout"
               uses: actions/checkout@v3
               with:
