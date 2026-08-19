@@ -82,6 +82,25 @@ class RuleTest extends TestCase
     }
 
     /**
+     * The local cache must preserve every dimension already used by the shared cache key.
+     *
+     * @return void
+     */
+    public function testLocalCacheIsScopedByStoreCustomerGroupAndDisabledCategoryConfig()
+    {
+        $defaultContext = $this->getRule();
+        $otherStore = $this->getRule([], 2);
+        $otherCustomerGroup = $this->getRule([], 1, 1);
+        $forceDisabledCategories = $this->getRule([], 1, 0, true);
+
+        $defaultQuery = $defaultContext->getCategorySearchQuery(42);
+
+        $this->assertNotSame($defaultQuery, $otherStore->getCategorySearchQuery(42));
+        $this->assertNotSame($defaultQuery, $otherCustomerGroup->getCategorySearchQuery(42));
+        $this->assertNotSame($defaultQuery, $forceDisabledCategories->getCategorySearchQuery(42));
+    }
+
+    /**
      * Only the context free query is shared across requests: a contextual one would be served later
      * under a key that does not describe it.
      *
@@ -212,11 +231,19 @@ class RuleTest extends TestCase
     /**
      * Build a rule with every collaborator stubbed, on a standard category.
      *
-     * @param array $descendants Virtual descendants returned by the children collection.
+     * @param array $descendants        Virtual descendants returned by the children collection.
+     * @param int   $storeId            Store identifier used to build the query.
+     * @param int   $customerGroupId    Customer group identifier used to build the query.
+     * @param bool  $forceZeroResults   Whether disabled categories must return zero results.
      *
      * @return Rule
      */
-    private function getRule(array $descendants = []): Rule
+    private function getRule(
+        array $descendants = [],
+        int $storeId = 1,
+        int $customerGroupId = 0,
+        bool $forceZeroResults = false
+    ): Rule
     {
         $this->sharedCache = $this->getMockBuilder(CacheInterface::class)->getMock();
         $this->sharedCache->method('load')->willReturn(false);
@@ -231,10 +258,10 @@ class RuleTest extends TestCase
         );
 
         $customerSession = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->getMock();
-        $customerSession->method('getCustomerGroupId')->willReturn(0);
+        $customerSession->method('getCustomerGroupId')->willReturn($customerGroupId);
 
         $config = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $config->method('isForceZeroResultsForDisabledCategoriesEnabled')->willReturn(false);
+        $config->method('isForceZeroResultsForDisabledCategoriesEnabled')->willReturn($forceZeroResults);
 
         $storeManager = $this->getMockBuilder(StoreManagerInterface::class)->getMock();
 
@@ -299,7 +326,7 @@ class RuleTest extends TestCase
 
         $data = new \ReflectionProperty(\Magento\Framework\DataObject::class, '_data');
         $data->setAccessible(true);
-        $data->setValue($rule, ['store_id' => 1]);
+        $data->setValue($rule, ['store_id' => $storeId]);
 
         return $rule;
     }

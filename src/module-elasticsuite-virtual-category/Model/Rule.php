@@ -201,7 +201,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             ]
         );
 
-        $query = $this->getFromLocalCache($categoryId, $excludedCategories);
+        $query = $this->getFromLocalCache($cacheKey, $excludedCategories);
 
         // Only a query built without any excluded category can be shared between requests: excluding
         // categories changes which children are skipped, so such a query describes that context alone.
@@ -229,7 +229,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         if (!in_array($categoryId, $excludedCategories)) {
-            $this->saveInLocalCache($categoryId, $query, $excludedCategories);
+            $this->saveInLocalCache($cacheKey, $query, $excludedCategories);
         }
 
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
@@ -620,48 +620,48 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Get category query from local cache.
      *
-     * @param int   $categoryId         In of the category.
-     * @param array $excludedCategories Categories excluded from the query building.
+     * @param string $cacheKey          Base cache key of the category query.
+     * @param array  $excludedCategories Categories excluded from the query building.
      *
      * @return QueryInterface|bool|null
      */
-    private function getFromLocalCache(int $categoryId, array $excludedCategories = [])
+    private function getFromLocalCache(string $cacheKey, array $excludedCategories = [])
     {
-        return self::$localCache[$this->getLocalCacheKey($categoryId, $excludedCategories)] ?? false;
+        return self::$localCache[$this->getLocalCacheKey($cacheKey, $excludedCategories)] ?? false;
     }
 
     /**
      * Save category query in local cache.
      *
-     * @param int                      $categoryId         Id of the category.
-     * @param QueryInterface|bool|null $query              Query of the category.
+     * @param string                   $cacheKey          Base cache key of the category query.
+     * @param QueryInterface|bool|null $query             Query of the category.
      * @param array                    $excludedCategories Categories excluded from the query building.
      */
-    private function saveInLocalCache(int $categoryId, $query, array $excludedCategories = []): void
+    private function saveInLocalCache(string $cacheKey, $query, array $excludedCategories = []): void
     {
         if ($query !== null) {
-            self::$localCache[$this->getLocalCacheKey($categoryId, $excludedCategories)] = $query;
+            self::$localCache[$this->getLocalCacheKey($cacheKey, $excludedCategories)] = $query;
         }
     }
 
     /**
      * Local cache key of a category query, including the building context it depends on.
      *
-     * @param int   $categoryId         Id of the category.
-     * @param array $excludedCategories Categories excluded from the query building.
+     * @param string $cacheKey          Base cache key of the category query.
+     * @param array  $excludedCategories Categories excluded from the query building.
      *
      * @return string
      */
-    private function getLocalCacheKey(int $categoryId, array $excludedCategories): string
+    private function getLocalCacheKey(string $cacheKey, array $excludedCategories): string
     {
         if (empty($excludedCategories)) {
-            return (string) $categoryId;
+            return $cacheKey;
         }
 
         $excludedCategories = array_map('intval', $excludedCategories);
         sort($excludedCategories);
 
-        return $categoryId . '|' . implode(',', $excludedCategories);
+        return $cacheKey . '|' . implode(',', $excludedCategories);
     }
 
     /**
