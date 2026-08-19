@@ -201,18 +201,19 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             ]
         );
 
-        $query = $this->getFromLocalCache($categoryId);
+        $query = $this->getFromLocalCache($categoryId, $excludedCategories);
 
+        // Only a query built without any excluded category can be shared between requests: excluding
+        // categories changes which children are skipped, so such a query describes that context alone.
         // If the category is not an object, it can't be in a "draft" mode.
-        if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
-            // If the category virtual root is one of the excluded categories, we must recalculate the query.
-            // We can't use the cached one in order to avoid loop and very big queries.
-            if (!is_object($category) || !$this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
-                // Due to the fact we serialize/unserialize completely pre-built queries as object.
-                // We cannot use any implementation of SerializerInterface.
-                $query = $this->sharedCache->load($cacheKey);
-                $query = $query ? unserialize($query) : false;
-            }
+        if ($query === false
+            && empty($excludedCategories)
+            && (!is_object($category) || !$category->getHasDraftVirtualRule())
+        ) {
+            // Due to the fact we serialize/unserialize completely pre-built queries as object.
+            // We cannot use any implementation of SerializerInterface.
+            $query = $this->sharedCache->load($cacheKey);
+            $query = $query ? unserialize($query) : false;
         }
 
         if ($query === false) {
@@ -221,14 +222,14 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
             $query = $this->buildCategorySearchQuery($category, $excludedCategories);
 
-            if (!$category->getHasDraftVirtualRule() && $query !== null && !in_array($categoryId, $excludedCategories)) {
+            if (!$category->getHasDraftVirtualRule() && $query !== null && empty($excludedCategories)) {
                 $cacheData   = serialize($query);
                 $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
             }
         }
 
         if (!in_array($categoryId, $excludedCategories)) {
-            $this->saveInLocalCache($categoryId, $query);
+            $this->saveInLocalCache($categoryId, $query, $excludedCategories);
         }
 
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
@@ -490,9 +491,16 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
+            $expandedCategoriesIds = [];
 
-            foreach ($childrenCategories as $childrenCategory) {
+            foreach ($this->sortByDepth($childrenCategories) as $childrenCategory) {
                 if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
+                    // A virtual category query already expands its own descendants. Adding them here as well
+                    // duplicates the whole subquery, once per virtual ancestor they have below this category.
+                    if (!empty(array_intersect($childrenCategory->getPathIds(), $expandedCategoriesIds))) {
+                        continue;
+                    }
+
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
                         $childrenQuery->setName(
@@ -504,6 +512,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                             )
                         );
                         $queryParams['should'][] = $childrenQuery;
+                        $expandedCategoriesIds[] = $childrenCategory->getId();
                     }
                 } else {
                     $childrenCategoriesIds[] = $childrenCategory->getId();
@@ -538,6 +547,27 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $query;
+    }
+
+    /**
+     * Sort categories by depth, so a category is always handled before its own descendants.
+     *
+     * @param Collection $categories Categories to sort.
+     *
+     * @return CategoryInterface[]
+     */
+    private function sortByDepth(Collection $categories): array
+    {
+        $sortedCategories = iterator_to_array($categories, false);
+
+        usort(
+            $sortedCategories,
+            function (CategoryInterface $first, CategoryInterface $second) {
+                return strlen((string) $first->getPath()) <=> strlen((string) $second->getPath());
+            }
+        );
+
+        return $sortedCategories;
     }
 
     /**
@@ -590,25 +620,48 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Get category query from local cache.
      *
-     * @param int $categoryId In of the category.
+     * @param int   $categoryId         In of the category.
+     * @param array $excludedCategories Categories excluded from the query building.
+     *
      * @return QueryInterface|bool|null
      */
-    private function getFromLocalCache(int $categoryId)
+    private function getFromLocalCache(int $categoryId, array $excludedCategories = [])
     {
-        return self::$localCache[$categoryId] ?? false;
+        return self::$localCache[$this->getLocalCacheKey($categoryId, $excludedCategories)] ?? false;
     }
 
     /**
      * Save category query in local cache.
      *
-     * @param int                      $categoryId Id of the category.
-     * @param QueryInterface|bool|null $query      Query of the category.
+     * @param int                      $categoryId         Id of the category.
+     * @param QueryInterface|bool|null $query              Query of the category.
+     * @param array                    $excludedCategories Categories excluded from the query building.
      */
-    private function saveInLocalCache(int $categoryId, $query): void
+    private function saveInLocalCache(int $categoryId, $query, array $excludedCategories = []): void
     {
         if ($query !== null) {
-            self::$localCache[$categoryId] = $query;
+            self::$localCache[$this->getLocalCacheKey($categoryId, $excludedCategories)] = $query;
         }
+    }
+
+    /**
+     * Local cache key of a category query, including the building context it depends on.
+     *
+     * @param int   $categoryId         Id of the category.
+     * @param array $excludedCategories Categories excluded from the query building.
+     *
+     * @return string
+     */
+    private function getLocalCacheKey(int $categoryId, array $excludedCategories): string
+    {
+        if (empty($excludedCategories)) {
+            return (string) $categoryId;
+        }
+
+        $excludedCategories = array_map('intval', $excludedCategories);
+        sort($excludedCategories);
+
+        return $categoryId . '|' . implode(',', $excludedCategories);
     }
 
     /**
