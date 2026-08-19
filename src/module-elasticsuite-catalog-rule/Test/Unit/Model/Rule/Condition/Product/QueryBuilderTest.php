@@ -306,13 +306,66 @@ class QueryBuilderTest extends TestCase
 
         $clause = current($searchQuery->getShould());
         $this->assertInstanceOf(QueryInterface::class, $clause);
-        $this->assertInstanceOf(MatchQuery::class, $clause);
-        $this->assertEquals(QueryInterface::TYPE_MATCH, $clause->getType());
+        $this->assertInstanceOf(Terms::class, $clause);
+        $this->assertEquals(QueryInterface::TYPE_TERMS, $clause->getType());
 
-        /** @var MatchQuery $clause */
+        /** @var Terms $clause */
         $this->assertEquals('sku.untouched', $clause->getField());
-        $this->assertEquals('ABC123', $clause->getQueryText());
-        $this->assertEquals('100%', $clause->getMinimumShouldMatch());
+        $this->assertEquals(['ABC123'], $clause->getValues());
+    }
+
+    /**
+     * Test query builder with several sku values through the "is one of" operator.
+     *
+     * @return void
+     */
+    public function testSpecialAttributesMultipleSkuIsOneOfQuery()
+    {
+        $fields = [
+            new Field('entity_id', FieldInterface::FIELD_TYPE_INTEGER),
+            new Field('category.category_id', FieldInterface::FIELD_TYPE_INTEGER, 'category'),
+            new Field('category.category_uid', FieldInterface::FIELD_TYPE_TEXT, 'category'),
+            new Field('category.position', FieldInterface::FIELD_TYPE_INTEGER, 'category'),
+            new Field('price.price', FieldInterface::FIELD_TYPE_DOUBLE, 'price'),
+            new Field('sku', FieldInterface::FIELD_TYPE_TEXT, null, ['is_searchable' => 1, 'default_analyzer' => 'reference']),
+            new Field('brand', FieldInterface::FIELD_TYPE_INTEGER),
+            new Field('option_text_brand', FieldInterface::FIELD_TYPE_TEXT),
+        ];
+
+        $attributeList = $this->getAdvancedAttributeList($fields);
+        $specialAttributesProvider = $this->getSpecialAttributesProvider();
+        $queryBuilder = new QueryBuilder(
+            $attributeList,
+            $this->getQueryFactory(),
+            $specialAttributesProvider,
+        );
+
+        $productCondition = $this->getProductConditionMock();
+        $productCondition->method('getValue')->willReturn("ABC123, DEF456");
+        $productCondition->method('__call')->willReturnMap([
+            ['getAttribute', [], 'sku'],
+            ['getOperator', [], '()'],
+        ]);
+
+        $searchQuery = $queryBuilder->getSearchQuery($productCondition);
+
+        $this->assertInstanceOf(QueryInterface::class, $searchQuery);
+        $this->assertInstanceOf(Boolean::class, $searchQuery);
+        $this->assertEquals(QueryInterface::TYPE_BOOL, $searchQuery->getType());
+
+        /** @var Boolean $searchQuery */
+        $this->assertEmpty($searchQuery->getMust());
+        $this->assertEmpty($searchQuery->getMustNot());
+        $this->assertCount(1, $searchQuery->getShould());
+
+        $clause = current($searchQuery->getShould());
+        $this->assertInstanceOf(QueryInterface::class, $clause);
+        $this->assertInstanceOf(Terms::class, $clause);
+        $this->assertEquals(QueryInterface::TYPE_TERMS, $clause->getType());
+
+        /** @var Terms $clause */
+        $this->assertEquals('sku.untouched', $clause->getField());
+        $this->assertEquals(['ABC123', 'DEF456'], $clause->getValues());
     }
 
     /**
@@ -370,29 +423,17 @@ class QueryBuilderTest extends TestCase
 
         /** @var Boolean $searchQuery */
         $this->assertEmpty($searchQuery->getMust());
-        $this->assertCount(2, $searchQuery->getMustNot());
+        $this->assertCount(1, $searchQuery->getMustNot());
         $this->assertEmpty($searchQuery->getShould());
 
-        $clauses = $searchQuery->getMustNot();
-        $clause = array_pop($clauses);
+        $clause = current($searchQuery->getMustNot());
         $this->assertInstanceOf(QueryInterface::class, $clause);
-        $this->assertInstanceOf(MatchQuery::class, $clause);
-        $this->assertEquals(QueryInterface::TYPE_MATCH, $clause->getType());
+        $this->assertInstanceOf(Terms::class, $clause);
+        $this->assertEquals(QueryInterface::TYPE_TERMS, $clause->getType());
 
-        /** @var MatchQuery $clause */
+        /** @var Terms $clause */
         $this->assertEquals('sku.untouched', $clause->getField());
-        $this->assertEquals('DEF456', $clause->getQueryText());
-        $this->assertEquals('100%', $clause->getMinimumShouldMatch());
-
-        $clause = array_pop($clauses);
-        $this->assertInstanceOf(QueryInterface::class, $clause);
-        $this->assertInstanceOf(MatchQuery::class, $clause);
-        $this->assertEquals(QueryInterface::TYPE_MATCH, $clause->getType());
-
-        /** @var MatchQuery $clause */
-        $this->assertEquals('sku.untouched', $clause->getField());
-        $this->assertEquals('ABC123', $clause->getQueryText());
-        $this->assertEquals('100%', $clause->getMinimumShouldMatch());
+        $this->assertEquals(['ABC123', 'DEF456'], $clause->getValues());
     }
 
     /**
