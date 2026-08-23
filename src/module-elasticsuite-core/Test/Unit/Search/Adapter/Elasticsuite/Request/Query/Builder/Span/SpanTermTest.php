@@ -72,6 +72,34 @@ class SpanTermTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a span term query named or renamed after creation.
+     */
+    public function testLaterNamedSpanTermQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $spanQuery = new SpanTermQuery('search text', 'searchField');
+        $spanQuery->setName('queryName');
+        $query = $builder->buildQuery($spanQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['span_term']);
+        $this->assertEquals('queryName', $query['span_term']['_name']);
+
+        $spanQuery = new SpanTermQuery(
+            'search text',
+            'searchField',
+            'originalQueryName'
+        );
+        $spanQuery->setName('queryName');
+        $query = $builder->buildQuery($spanQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['span_term']);
+        $this->assertEquals('queryName', $query['span_term']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

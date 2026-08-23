@@ -194,7 +194,8 @@ class Config extends \Magento\Framework\Config\Data
                 // Field also exists with dynamic providers.
                 // We merge the dynamic config and the config coming from configuration file.
                 // XML file has precedence.
-                $config = $fieldConfig['fieldConfig'] ?? [] + ['type' => $fieldConfig['type'] ?? null];
+                // phpcs:ignore Generic.Files.LineLength
+                $config = ($fieldConfig['fieldConfig'] ?? []) + (isset($fieldConfig['type']) ? ['type' => $fieldConfig['type']] : []);
                 $field  = $fields[$fieldName]->mergeConfig($config);
             }
 

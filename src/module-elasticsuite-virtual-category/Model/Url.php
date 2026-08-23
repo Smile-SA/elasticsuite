@@ -15,9 +15,12 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model;
 
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Model\Category;
+use Magento\Catalog\Model\Product;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -32,6 +35,7 @@ use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCateg
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Dmytro ANDROSHCHUK <dmand@smile.fr>
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Url
 {
@@ -139,9 +143,11 @@ class Url
         if (!$this->virtualCategoryRoot->getAppliedRootCategory()) {
             $categoryId = $this->getVirtualCategoryIdByPath($categoryRequestPath);
         } else {
-            $urlKeys = explode('/', $categoryRequestPath);
-            $urlKey  = array_pop($urlKeys);
-            $category = $this->loadCategoryByUrlKey($urlKey);
+            $categoryUrlPath = $this->getOriginalCategoryRequestPath(
+                $categoryRequestPath,
+                $this->virtualCategoryRoot->getAppliedRootCategory()
+            );
+            $category = $this->loadCategoryByUrlPath($categoryUrlPath);
             $categoryId = $category->getId();
         }
         if ($categoryId) {
@@ -157,6 +163,48 @@ class Url
         }
 
         return $productRewrite;
+    }
+
+    /**
+     * Extract the original URL request path of a category from its current URL request path that might be expressed
+     * as a (virtual) descendant category of a given applied (virtual) root category, like
+     * "/path/to/virtual/category/path/of/subcategory".
+     * For instance for "sales/dresses", where
+     * - "sales" is the URL of the virtual category
+     * - "dresses" is the URL of the subcategory which actually corresponds to category of URL "women/dresses",
+     *   because the virtual category root is the "women" category.
+     * the expected result is "women/dresses".
+     *
+     * @param string            $categoryRequestPath Category (virtual) request path.
+     * @param CategoryInterface $appliedRoot         Applied virtual root category.
+     *
+     * @return string
+     */
+    public function getOriginalCategoryRequestPath($categoryRequestPath, $appliedRoot): string
+    {
+        if ($appliedRoot) {
+            /** @var Category $appliedRoot */
+            $appliedRootUrlPath = $appliedRoot->getUrlPath();
+            if (!empty($appliedRootUrlPath) && (strpos($categoryRequestPath, $appliedRootUrlPath) === 0)) {
+                /*
+                 * Category request path is expressed as /path/to/virtual/category/path/of/subcategory.
+                 * If the virtual __root__ IS the root category, /path/to/virtual/category can be stripped
+                 * to obtain the actual category URL rewrite path.
+                 * On the other hand, if the virtual __root__ IS NOT the root category, path/of/subcategory will not correspond
+                 * to an actual category URL rewrite: it needs to be prepended with that virtual root URL path.
+                 */
+                $replacement = '';
+                $appliedRootOrigin = $this->virtualCategoryRoot->getVirtualCategoryRoot($appliedRoot);
+                if ($appliedRootOrigin) {
+                    /** @var Category $appliedRootOrigin */
+                    $replacement = $appliedRootOrigin->getUrlPath() ?? '';
+                }
+                $categoryRequestPath = str_replace($appliedRootUrlPath, $replacement, $categoryRequestPath);
+                $categoryRequestPath = ltrim($categoryRequestPath, '/');
+            }
+        }
+
+        return $categoryRequestPath;
     }
 
     /**
@@ -210,7 +258,7 @@ class Url
     /**
      * Retrieve Category Url Rewrite by path and Store.
      *
-     * @param string $categoryPath A category Path
+     * @param string $categoryPath A full category path (path/to/category))
      * @param int    $storeId      The Store Id
      *
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
@@ -218,7 +266,7 @@ class Url
     public function getCategoryRewrite($categoryPath, $storeId)
     {
         $categoryPath = str_replace($this->getCategoryUrlSuffix() ?? '', '', $categoryPath);
-        $category = $this->loadCategoryByUrlKey($categoryPath);
+        $category = $this->loadCategoryByUrlPath($categoryPath);
         $rewrite  = null;
 
         if ($category && $category->getId()) {
@@ -258,8 +306,10 @@ class Url
      *
      * @param string $requestPath The Request Path
      *
-     * @return \Magento\Framework\DataObject
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @return DataObject
+     * @throws LocalizedException
+     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
+     * @deprecated
      */
     private function loadCategoryByUrlKey($requestPath)
     {
@@ -268,6 +318,25 @@ class Url
         $collection->addIsActiveFilter()
             ->setStoreId($this->storeManager->getStore()->getId())
             ->addAttributeToFilter('url_key', ['eq' => $requestPath]);
+
+        return $collection->getFirstItem();
+    }
+
+    /**
+     * Load a category by its url path.
+     *
+     * @param string $requestPath The full request path
+     *
+     * @return DataObject
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function loadCategoryByUrlPath($requestPath)
+    {
+        $collection = $this->categoryCollectionFactory->create();
+
+        $collection->setStoreId($this->storeManager->getStore()->getId())
+            ->addAttributeToFilter('url_path', ['eq' => $requestPath]);
 
         return $collection->getFirstItem();
     }
@@ -304,7 +373,7 @@ class Url
     }
 
     /**
-     * Check if urls should be rendered by including the category path.
+     * Check if product urls should be rendered by including the category path.
      *
      * @return bool
      */

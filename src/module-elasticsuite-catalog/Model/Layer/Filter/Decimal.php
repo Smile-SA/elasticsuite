@@ -13,6 +13,7 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\Layer\Filter;
 
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 
 /**
@@ -110,15 +111,26 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
     /**
      * Retrieve ES filter field.
      *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
      * @return string
+     * @throws LocalizedException
      */
-    private function getFilterField()
+    protected function getFilterField()
     {
         return $this->requestFieldMapper->getMappedFieldName(
             $this->getAttributeModel()->getAttributeCode()
         );
+    }
+
+    /**
+     * Create the proper query filter for price, according to current customer group Id.
+     *
+     * @param array $bounds The price bounds to apply
+     *
+     * @return array
+     */
+    protected function getRangeCondition($bounds)
+    {
+        return $bounds;
     }
 
     /**
@@ -127,6 +139,7 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
      * @param mixed $value The value to format
      *
      * @return string
+     * @throws LocalizedException
      */
     private function formatValue($value)
     {
@@ -144,19 +157,5 @@ class Decimal extends \Magento\CatalogSearch\Model\Layer\Filter\Decimal
         }
 
         return $value;
-    }
-
-    /**
-     * Create the proper query filter for price, according to current customer group Id.
-     *
-     * @SuppressWarnings(PHPMD.UnusedPrivateMethod)
-     *
-     * @param array $bounds The price bounds to apply
-     *
-     * @return array
-     */
-    private function getRangeCondition($bounds)
-    {
-        return $bounds;
     }
 }

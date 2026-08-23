@@ -24,6 +24,11 @@
         />
     </type>
 
+    <!-- Disable native plugin preventing is_filterable_in_search=1 if is_searchable=0 -->
+    <type name="Magento\Catalog\Model\Product\Attribute\Frontend\Inputtype\Presentation">
+        <plugin name="adjust_searchable_attribute_values" type="Smile\ElasticsuiteCatalog\Plugin\LayeredNavigation\Save\AdjustAttributeSearchable" sortOrder="1" disabled="true" />
+    </type>
+
     <type name="Magento\Catalog\Model\Category\DataProvider">
         <plugin name="smile_elasticsuite_categories_form_data_provider" type="Smile\ElasticsuiteCatalog\Plugin\Ui\Category\Form\DataProviderPlugin" />
     </type>

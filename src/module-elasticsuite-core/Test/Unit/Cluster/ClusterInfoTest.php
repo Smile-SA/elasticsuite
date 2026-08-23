@@ -75,7 +75,7 @@ class ClusterInfoTest extends \PHPUnit\Framework\TestCase
             $info['version']['distribution'] = $distribution;
         }
 
-        $clientMock->method('info')->will($this->returnValue($info));
+        $clientMock->method('info')->willReturn($info);
 
         return $clientMock;
     }

@@ -79,6 +79,18 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     const CONFIG_IS_FILTERING_BOT_HITS_XPATH = 'smile_elasticsuite_tracker/general/filter_bot_hits';
 
     /**
+     * Whether to track specifically sales of bundle products configuration path
+     * @var string
+     */
+    const CONFIG_IS_TRACKING_BUNDLE_SALES_XPATH = 'smile_elasticsuite_tracker/sales/bundle_enabled';
+
+    /**
+     * Whether to track specifically sales of grouped products configuration path
+     * @var string
+     */
+    const CONFIG_IS_TRACKING_GROUPED_SALES_XPATH = 'smile_elasticsuite_tracker/sales/grouped_enabled';
+
+    /**
      * Anonymization status configuration path
      * @var string
      */
@@ -299,6 +311,26 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         return $visitorId;
+    }
+
+    /**
+     * Check if the tracker should track sales of bundle products.
+     *
+     * @return bool
+     */
+    public function isTrackingBundleSales()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_TRACKING_BUNDLE_SALES_XPATH);
+    }
+
+    /**
+     * Check if the tracker should track sales of grouped products.
+     *
+     * @return bool
+     */
+    public function isTrackingGroupedSales()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_IS_TRACKING_GROUPED_SALES_XPATH);
     }
 
     /**

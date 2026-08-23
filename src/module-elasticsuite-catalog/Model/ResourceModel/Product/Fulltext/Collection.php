@@ -13,9 +13,13 @@
  */
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Fulltext;
 
+use Magento\Customer\Model\Group as CustomerGroup;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalog\Api\Product\Collection\PriceStatsAggregationProviderInterface;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponse;
 use Smile\ElasticsuiteCore\Search\Request\BucketInterface;
+use Smile\ElasticsuiteCore\Search\Request\MetricInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\RequestInterface;
 
@@ -88,18 +92,14 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     private $originalPageSize = false;
 
     /**
-     * @var array
-     */
-    private $countByAttributeSet;
-    /**
-     * @var array
-     */
-    private $countByAttributeCode;
-
-    /**
      * @var RequestFieldMapper
      */
     private $requestFieldMapper;
+
+    /**
+     * @var PriceStatsAggregationProviderInterface
+     */
+    private $priceStatsAggProvider;
 
     /**
      * Constructor.
@@ -184,6 +184,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->searchEngine       = $searchEngine;
         $this->requestFieldMapper = $requestFieldMapper;
         $this->searchRequestName  = $searchRequestName;
+        $this->priceStatsAggProvider = ObjectManager::getInstance()->get(PriceStatsAggregationProviderInterface::class);
     }
 
     /**
@@ -239,9 +240,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
      */
     public function setCurPage($page)
     {
-        $this->_isFiltersRendered = false;
+        if ($page !== $this->_curPage) {
+            $this->_curPage = $page;
+            $this->_isFiltersRendered = false;
+        }
 
-        return parent::setCurPage($page);
+        return $this;
     }
 
     /**
@@ -254,8 +258,10 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
          * That is: no pagination, all items are expected.
          */
         $size = ($size === null) ? false : $size;
-        $this->_pageSize = $size;
-        $this->_isFiltersRendered = false;
+        if ($size !== $this->_pageSize) {
+            $this->_pageSize = $size;
+            $this->_isFiltersRendered = false;
+        }
 
         return $this;
     }
@@ -404,8 +410,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         if ($categoryId) {
             $this->addFieldToFilter('category_ids', $categoryId);
             $this->_productLimitationFilters['category_ids'] = $categoryId;
+            $this->_isFiltersRendered = false;
         }
-        $this->_isFiltersRendered = false;
 
         return $this;
     }
@@ -613,6 +619,58 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     *
+     * Prepares min and max price using Elasticsearch metric aggregation.
+     * Ensures compatibility with Magento Core's getMinPrice()/getMaxPrice().
+     *
+     * @return self
+     */
+    protected function _prepareStatisticsData()
+    {
+        $storeId = $this->getStoreId();
+        $requestName = $this->searchRequestName;
+        $customerGroupId = (int) ($this->_productLimitationFilters['customer_group_id'] ?? CustomerGroup::NOT_LOGGED_IN_ID);
+        $aggregationName = 'collection_price_stats';
+
+        $priceStatsAgg = $this->priceStatsAggProvider->getAggregationData(
+            $this,
+            $aggregationName,
+            $customerGroupId
+        );
+
+        $searchRequest = $this->requestBuilder->create(
+            $storeId,
+            $requestName,
+            0,
+            0,
+            $this->query,
+            [],
+            $this->filters,
+            $this->queryFilters,
+            [$priceStatsAgg],
+        );
+
+        $response     = $this->searchEngine->search($searchRequest);
+        $aggregations = $response->getAggregations();
+
+        $metrics = [];
+        $bucket = $aggregations->getBucket($aggregationName);
+        if (null !== $bucket) {
+            $metrics = current($bucket->getValues())->getMetrics();
+        }
+
+        $rate = $this->getCurrencyRate();
+
+        $this->_pricesCount            = (int) ($metrics['count'] ?? 0);
+        $this->_minPrice               = round(((float) ($metrics['min'] ?? 0)) * $rate, 2);
+        $this->_maxPrice               = round(((float) ($metrics['max'] ?? 0)) * $rate, 2);
+        $this->_priceStandardDeviation = round(((float) ($metrics['std_deviation'] ?? 0)) * $rate, 2);
+
+        return $this;
+    }
+
+    /**
      * Load product count :
      *  - collection size
      *  - number of products by attribute set (legacy)
@@ -624,10 +682,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     {
         $storeId     = $this->getStoreId();
         $requestName = $this->searchRequestName;
-        $facets = [
-            ['name' => 'attribute_set_id', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
-            ['name' => 'indexed_attributes', 'type' => BucketInterface::TYPE_TERM, 'size' => 0],
-        ];
         $searchRequest = $this->requestBuilder->create(
             $storeId,
             $requestName,
@@ -637,28 +691,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             [],
             $this->filters,
             $this->queryFilters,
-            $facets,
+            [],
             true
         );
         $searchResponse = $this->searchEngine->search($searchRequest);
-        $this->_totalRecords        = $searchResponse->count();
-        $this->countByAttributeSet  = [];
-        $this->countByAttributeCode = [];
-        $this->isSpellchecked       = $searchRequest->isSpellchecked();
-        $attributeSetIdBucket = $searchResponse->getAggregations()->getBucket('attribute_set_id');
-        $attributeCodeBucket  = $searchResponse->getAggregations()->getBucket('indexed_attributes');
-        if ($attributeSetIdBucket) {
-            foreach ($attributeSetIdBucket->getValues() as $value) {
-                $metrics = $value->getMetrics();
-                $this->countByAttributeSet[$value->getValue()] = $metrics['count'];
-            }
-        }
-        if ($attributeCodeBucket) {
-            foreach ($attributeCodeBucket->getValues() as $value) {
-                $metrics = $value->getMetrics();
-                $this->countByAttributeCode[$value->getValue()] = $metrics['count'];
-            }
-        }
+        $this->_totalRecords    = $searchResponse->count();
+        $this->isSpellchecked   = $searchRequest->isSpellchecked();
     }
 
     /**

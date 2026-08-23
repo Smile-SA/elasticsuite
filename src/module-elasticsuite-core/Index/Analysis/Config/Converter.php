@@ -235,7 +235,11 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
             foreach ($filterNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMElement) {
                     try {
-                        $filter[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                        // @codingStandardsIgnoreStart
+                        $decodedValue = (is_string($childNode->nodeValue) && ('' === $childNode->nodeValue))
+                            ? $childNode->nodeValue : $this->jsonDecoder->decode($childNode->nodeValue);
+                        // @codingStandardsIgnoreEnd
+                        $filter[$childNode->tagName] = $decodedValue;
                     } catch (\Exception $exception) {
                         $filter[$childNode->tagName] = $childNode->nodeValue;
                     }
@@ -457,7 +461,11 @@ class Converter implements \Magento\Framework\Config\ConverterInterface
                     }
 
                     try {
-                        $stemmer[$childNode->tagName] = $this->jsonDecoder->decode($childNode->nodeValue);
+                        // @codingStandardsIgnoreStart
+                        $decodedValue = (is_string($childNode->nodeValue) && ('' === $childNode->nodeValue))
+                            ? $childNode->nodeValue : $this->jsonDecoder->decode($childNode->nodeValue);
+                        // @codingStandardsIgnoreEnd
+                        $stemmer[$childNode->tagName] = $decodedValue;
                     } catch (\Exception $exception) {
                         $stemmer[$childNode->tagName] = $childNode->nodeValue;
                     }

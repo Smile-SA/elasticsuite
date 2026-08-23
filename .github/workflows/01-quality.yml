@@ -1,20 +1,25 @@
-name: PHP Code Quality
+name: PHP Code Quality (2.11.x)
 
 on:
+    workflow_dispatch:
     push:
         branches:
-        - 2.10.x
-        - 2.11.x
-        - master
+          - 2.10.x
+          - 2.11.x
+          - 2.12.x
+          - master
 
     pull_request_target:
         branches:
-        - 2.10.x
-        - 2.11.x
-        - master
+          - 2.10.x
+          - 2.11.x
+          - 2.12.x
+          - master
+        types: [labeled]
 
 jobs:
     qualit:
+        if: ((github.event_name != 'pull_request_target') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
         name: Code Quality
         runs-on: ubuntu-22.04
         strategy:
@@ -25,6 +30,7 @@ jobs:
               uses: actions/checkout@v3
               with:
                 ref: ${{ github.event.pull_request.head.sha }}
+                allow-unsafe-pr-checkout: true
 
             - name: Prepare directories
               run: mkdir -p app/etc var
@@ -37,7 +43,13 @@ jobs:
                   ini-values: post_max_size=256M, max_execution_time=180
 
             - name: "Downgrade Composer"
-              run: composer self-update 2.1.14
+              run: composer self-update --2.2
+
+            - name: Authorize composer plugins
+              run: |
+                composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+                composer config allow-plugins.laminas/laminas-dependency-plugin true
+                composer config allow-plugins.magento/* true
 
             - name: Validate composer.json and composer.lock
               run: composer validate
@@ -59,7 +71,7 @@ jobs:
 
             - name: Install dependencies
               if: steps.composer-cache.outputs.cache-hit != 'true'
-              run: composer install --prefer-dist --no-progress --no-suggest
+              run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
 
             - name: PHP Code Sniffer with Magento Extension Quality Program
               run: |

@@ -19,12 +19,15 @@ use Magento\ImportExport\Helper\Data as ImportHelper;
 use Magento\ImportExport\Model\Import;
 use Magento\ImportExport\Model\Import\Entity\AbstractEntity;
 use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingErrorAggregatorInterface;
+use Magento\ImportExport\Model\Import\ErrorProcessing\ProcessingError;
 use Magento\ImportExport\Model\ResourceModel\Helper;
 use Magento\ImportExport\Model\ResourceModel\Import\Data;
 use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 
 /**
- * Thesaurus import
+ * Thesaurus import.
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteThesaurus
@@ -37,25 +40,28 @@ class Thesaurus extends AbstractEntity
     const COL_STORES = 'stores';
 
     /**
-     * If we should check column names
+     * If we should check column names.
      * @var boolean
      */
     protected $needColumnCheck = true;
 
     /**
-     * Need to log in import history
+     * Need to log in import history.
+     *
      * @var boolean
      */
     protected $logInHistory = true;
 
     /**
-     * Import Provider
+     * Import Provider.
+     *
      * @var Provider
      */
     protected $importProvider;
 
     /**
-     * Valid column names
+     * Valid column names.
+     *
      * @var array
      */
     protected $validColumnNames = [
@@ -66,6 +72,14 @@ class Thesaurus extends AbstractEntity
         self::COL_STORES,
         ThesaurusInterface::IS_ACTIVE,
     ];
+
+    /**
+     * Whether import encountered a blocking row-level error
+     * that already explains why nothing was imported.
+     *
+     * @var boolean
+     */
+    private $hasRowLevelErrors = false;
 
     /**
      * Import constructor.
@@ -106,7 +120,7 @@ class Thesaurus extends AbstractEntity
     }
 
     /**
-     * Get available columns
+     * Get available columns.
      *
      * @return array
      */
@@ -116,7 +130,7 @@ class Thesaurus extends AbstractEntity
     }
 
     /**
-     * Row validation
+     * Row validation.
      *
      * @param array $rowData Data.
      * @param int   $rowNum  Row number.
@@ -156,7 +170,7 @@ class Thesaurus extends AbstractEntity
     }
 
     /**
-     * Import data
+     * Import data.
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
@@ -166,21 +180,271 @@ class Thesaurus extends AbstractEntity
      */
     protected function _importData(): bool
     {
+        $createdBefore = $this->countItemsCreated;
+        $updatedBefore = $this->countItemsUpdated;
+        $deletedBefore = $this->countItemsDeleted;
+
         switch ($this->getBehavior()) {
-            case Import::BEHAVIOR_DELETE:
-                $this->deleteThesaurus();
-                break;
-            case Import::BEHAVIOR_REPLACE:
             case Import::BEHAVIOR_APPEND:
-                $this->saveAndReplaceThesaurus();
+                $this->processThesaurusUpsert();
                 break;
+
+            case Import::BEHAVIOR_REPLACE:
+                $this->processThesaurusReplace();
+                break;
+
+            case Import::BEHAVIOR_DELETE:
+                $this->processThesaurusDelete();
+                break;
+        }
+
+        /**
+         * Global "no-op import" warning.
+         *
+         * Show ONLY when:
+         * - No create, update, or delete happened;
+         * - AND there were NO blocking thesaurus_id row-level errors.
+         *
+         * This ensures:
+         * - APPEND = global warning shown;
+         * - REPLACE / DELETE with invalid IDs = row warning ONLY.
+         */
+        if ($this->countItemsCreated === $createdBefore &&
+            $this->countItemsUpdated === $updatedBefore &&
+            $this->countItemsDeleted === $deletedBefore &&
+            !$this->hasRowLevelErrors
+        ) {
+            $this->getErrorAggregator()->addError(
+                'noThesaurusImported',
+                ProcessingError::ERROR_LEVEL_NOT_CRITICAL
+            );
         }
 
         return true;
     }
 
     /**
-     * Init Error Messages
+     * APPEND behavior:
+     *  - Create new thesauri (no ID);
+     *  - Update existing thesauri (existing ID);
+     *  - Existing thesauri data is never deleted.
+     *
+     * @return void
+     */
+    private function processThesaurusUpsert(): void
+    {
+        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
+            $thesaurusData = $this->collectThesaurusRows($bunch);
+
+            if (!$thesaurusData) {
+                continue;
+            }
+
+            $this->persistThesaurusData($thesaurusData, false);
+        }
+    }
+
+    /**
+     * REPLACE behavior:
+     *  - Delete existing thesauri referenced by valid thesaurus_id values;
+     *  - Recreate them from CSV rows;
+     *  - If no valid thesaurus exists, a row-level error is raised.
+     *
+     * @return void
+     */
+    private function processThesaurusReplace(): void
+    {
+        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
+            $thesaurusData = $this->collectThesaurusRows($bunch);
+
+            if (!$thesaurusData) {
+                continue;
+            }
+
+            // Filter out rows for non-existent thesauri.
+            $existingData = [];
+            foreach ($thesaurusData as $thesaurusId => $rows) {
+                $model = $this->importProvider->createThesaurus();
+                $model->load($thesaurusId);
+
+                if ($model->getThesaurusId()) {
+                    $existingData[$thesaurusId] = $rows;
+                }
+            }
+
+            // If NOTHING valid exists add row-level error explains no-op.
+            if (!$existingData) {
+                $this->hasRowLevelErrors = true;
+                $this->getErrorAggregator()->addError('thesaurusDoesNotExist');
+                continue;
+            }
+
+            // Delete existing thesauri that are actually present.
+            $this->deleteExistingThesauri(array_keys($existingData));
+            // Recreate them.
+            $this->persistThesaurusData($existingData, true);
+        }
+    }
+
+    /**
+     * DELETE behavior:
+     *  - Remove existing thesauri referenced by thesaurus_id;
+     *  - Raise a row-level error if no valid thesaurus can be deleted.
+     *
+     * @return void
+     */
+    private function processThesaurusDelete(): void
+    {
+        $idsToDelete = [];
+
+        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
+            foreach ($bunch as $rowNum => $rowData) {
+                if (!$this->validateRow($rowData, $rowNum)) {
+                    continue;
+                }
+
+                if (!empty($rowData[ThesaurusInterface::THESAURUS_ID])) {
+                    $idsToDelete[] = $rowData[ThesaurusInterface::THESAURUS_ID];
+                }
+            }
+        }
+
+        if (!$idsToDelete) {
+            $this->hasRowLevelErrors = true;
+            $this->getErrorAggregator()->addError('thesaurusDoesNotExist');
+
+            return;
+        }
+
+        $this->deleteExistingThesauri(array_unique($idsToDelete));
+    }
+
+    /**
+     * Collect, validate, normalize and group CSV rows by thesaurus_id.
+     *
+     * Null thesaurus_id means creation.
+     *
+     * @param array $bunch Raw CSV rows for the current import batch.
+     *
+     * @return array
+     */
+    private function collectThesaurusRows(array $bunch): array
+    {
+        $thesaurusData = [];
+
+        foreach ($bunch as $rowNum => $row) {
+            if (!$this->validateRow($row, $rowNum)) {
+                continue;
+            }
+
+            $rowId = $row[ThesaurusInterface::THESAURUS_ID] ?? null;
+            $thesaurusData[$rowId][] = $this->prepareRowData($row);
+        }
+
+        return $thesaurusData;
+    }
+
+    /**
+     * Normalize CSV row values (stores, terms).
+     *
+     * @param array $row Raw CSV row data after validation.
+     *
+     * @return array
+     */
+    private function prepareRowData(array $row): array
+    {
+        foreach ($this->validColumnNames as $columnKey) {
+            if ($columnKey === self::COL_STORES) {
+                $row[$columnKey] = $this->importProvider->processStoresData($row[$columnKey]);
+            }
+
+            if ($columnKey === self::COL_TERMS) {
+                $row[$columnKey] = $this->importProvider->processTermsData(
+                    $row[$columnKey],
+                    $row[ThesaurusInterface::TYPE]
+                );
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * Persist thesaurus data.
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param array $thesaurusData Thesaurus data.
+     * @param bool  $forceCreate   Whether to ignore thesaurus_id and recreate.
+     *
+     * @return void
+     */
+    private function persistThesaurusData(array $thesaurusData, bool $forceCreate = false): void
+    {
+        foreach ($thesaurusData as $thesaurusRows) {
+            foreach ($thesaurusRows as $row) {
+                $model = $this->importProvider->createThesaurus();
+
+                // In REPLACE mode, we only force-create rows for existing IDs.
+                if (!$forceCreate && isset($row[ThesaurusInterface::THESAURUS_ID])) {
+                    $model->load($row[ThesaurusInterface::THESAURUS_ID]);
+                    if (!$model->getThesaurusId()) {
+                        continue;
+                    }
+                    $this->countItemsUpdated++;
+                } else {
+                    unset($row[ThesaurusInterface::THESAURUS_ID]);
+                    $this->countItemsCreated++;
+                }
+
+                $model->setData($row);
+
+                if (!empty($row[self::COL_STORES])) {
+                    $model->setStoreIds($row[self::COL_STORES]);
+                }
+
+                try {
+                    $this->importProvider->saveThesaurus($model);
+                } catch (Exception $e) {
+                    // Magento import framework handles persistence errors.
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete existing thesauri by IDs.
+     *
+     * Adds a row-level error if a referenced thesaurus does not exist.
+     *
+     * @param array $thesaurusIds List of thesaurus entity IDs to delete.
+     *
+     * @return void
+     */
+    private function deleteExistingThesauri(array $thesaurusIds): void
+    {
+        foreach ($thesaurusIds as $thesaurusId) {
+            $model = $this->importProvider->createThesaurus();
+            $model->load($thesaurusId);
+
+            if (!$model->getThesaurusId()) {
+                $this->hasRowLevelErrors = true;
+                $this->getErrorAggregator()->addError('thesaurusDoesNotExist');
+                continue;
+            }
+
+            try {
+                $this->importProvider->removeThesaurus($model);
+                $this->countItemsDeleted++;
+            } catch (Exception $e) {
+                // Deletion failures are intentionally ignored.
+            }
+        }
+    }
+
+    /**
+     * Init Error Messages.
      */
     private function initMessageTemplates(): void
     {
@@ -194,7 +458,7 @@ class Thesaurus extends AbstractEntity
         );
         $this->addMessageTemplate(
             'typeMustBeValid',
-            __('The type must be ' . ThesaurusInterface::TYPE_SYNONYM . 'or' . ThesaurusInterface::TYPE_EXPANSION . '.')
+            __('The type must be ' . ThesaurusInterface::TYPE_SYNONYM . ' or ' . ThesaurusInterface::TYPE_EXPANSION . '.')
         );
         $this->addMessageTemplate(
             'termsIsRequired',
@@ -204,175 +468,20 @@ class Thesaurus extends AbstractEntity
             'statusMustBeZeroOrOne',
             __('The status must be zero or one.')
         );
-    }
-
-    /**
-     * Delete thesaurus
-     *
-     * @return bool
-     */
-    private function deleteThesaurus(): bool
-    {
-        $rows = [];
-        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
-            foreach ($bunch as $rowNum => $rowData) {
-                $this->validateRow($rowData, $rowNum);
-
-                if (!$this->getErrorAggregator()->isRowInvalid($rowNum)) {
-                    $rowId = $rowData[ThesaurusInterface::THESAURUS_ID];
-                    $rows[] = $rowId;
-                }
-
-                if ($this->getErrorAggregator()->hasToBeTerminated()) {
-                    $this->getErrorAggregator()->addRowToSkip($rowNum);
-                }
-            }
-        }
-
-        if ($rows) {
-            return $this->deleteThesaurusFinish(array_unique($rows));
-        }
-
-        return false;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
-     * Save and replace thesaurus
-     *
-     * @return void
-     */
-    private function saveAndReplaceThesaurus(): void
-    {
-        $behavior = $this->getBehavior();
-        $rows = [];
-        while ($bunch = $this->_dataSourceModel->getNextBunch()) {
-            $thesaurusList = [];
-
-            foreach ($bunch as $rowNum => $row) {
-                if (!$this->validateRow($row, $rowNum)) {
-                    continue;
-                }
-
-                if ($this->getErrorAggregator()->hasToBeTerminated()) {
-                    $this->getErrorAggregator()->addRowToSkip($rowNum);
-
-                    continue;
-                }
-
-                $rowId = $row[ThesaurusInterface::THESAURUS_ID];
-                $rows[] = $rowId;
-                $columnValues = [];
-
-                foreach ($this->getAvailableColumns() as $columnKey) {
-                    if ($columnKey === self::COL_STORES) {
-                        $row[$columnKey] = $this->importProvider->processStoresData($row[$columnKey]);
-                    }
-                    if ($columnKey === self::COL_TERMS) {
-                        $type = $columnValues[ThesaurusInterface::TYPE];
-                        $row[$columnKey] = $this->importProvider->processTermsData($row[$columnKey], $type);
-                    }
-                    $columnValues[$columnKey] = $row[$columnKey];
-                }
-
-                $thesaurusList[$rowId][] = $columnValues;
-            }
-
-            if ($thesaurusList) {
-                if (Import::BEHAVIOR_REPLACE === $behavior) {
-                    if ($rows && $this->deleteThesaurusFinish(array_unique($rows))) {
-                        $this->saveThesaurusFinish($thesaurusList);
-                    }
-                } elseif (Import::BEHAVIOR_APPEND === $behavior) {
-                    $this->saveThesaurusFinish($thesaurusList);
-                }
-            }
-        }
-    }
-
-    /**
-     * Save thesaurus
-     *
-     * @param array $thesaurusData Data.
-     *
-     * @return bool
-     */
-    private function saveThesaurusFinish(array $thesaurusData): bool
-    {
-        foreach ($thesaurusData as $thesaurusRows) {
-            foreach ($thesaurusRows as $row) {
-                $model = $this->importProvider->createThesaurus();
-                if (Import::BEHAVIOR_REPLACE === $this->getBehavior()) {
-                    unset($row[ThesaurusInterface::THESAURUS_ID]);
-                }
-                if (isset($row[ThesaurusInterface::THESAURUS_ID])) {
-                    $model->load($row[ThesaurusInterface::THESAURUS_ID]);
-                    if (!$model->getThesaurusId()) {
-                        continue;
-                    }
-                    $this->countItemsUpdated++;
-                }
-
-                $model->setData($row);
-                $storeIds = $row[self::COL_STORES];
-
-                if ($storeIds) {
-                    $model->setStoreIds($storeIds);
-                }
-
-                try {
-                    $this->importProvider->saveThesaurus($model);
-
-                    if (!isset($row[ThesaurusInterface::THESAURUS_ID])) {
-                        $this->countItemsCreated++;
-                    }
-                } catch (Exception $exception) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Delete thesaurus
-     *
-     * @param array $thesaurusIds Thesaurus Ids.
-     *
-     * @return bool
-     */
-    private function deleteThesaurusFinish(array $thesaurusIds): bool
-    {
-        if ($thesaurusIds) {
-            try {
-                foreach ($thesaurusIds as $thesaurusId) {
-                    $model = $this->importProvider->createThesaurus();
-                    $model->load($thesaurusId);
-                    if (!$model->getThesaurusId()) {
-                        continue;
-                    }
-                    $this->countItemsDeleted++;
-                    $this->importProvider->removeThesaurus($model);
-                }
-
-                return true;
-            } catch (Exception $e) {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get available columns
-     *
-     * @return array
-     */
-    private function getAvailableColumns(): array
-    {
-        return $this->validColumnNames;
+        $this->addMessageTemplate(
+            'thesaurusDoesNotExist',
+            __(
+                'Thesaurus with provided ID does not exist. ' .
+                'If your CSV file contains a "thesaurus_id" value, ensure that thesaurus with this ID exists.'
+            )
+        );
+        $this->addMessageTemplate(
+            'noThesaurusImported',
+            __(
+                'Import completed but no thesaurus was created or updated. ' .
+                'If your CSV file contains a "thesaurus_id" value, ensure that thesaurus with this ID exists. ' .
+                'To create a new thesaurus, leave the "thesaurus_id" column empty.'
+            )
+        );
     }
 }

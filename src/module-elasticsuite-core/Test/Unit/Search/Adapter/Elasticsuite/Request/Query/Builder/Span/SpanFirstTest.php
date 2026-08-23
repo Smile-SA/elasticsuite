@@ -72,6 +72,37 @@ class SpanFirstTest extends AbstractComplexSpanQueryBuilder
     }
 
     /**
+     * Test the builder with a span first query named or renamed after creation.
+     */
+    public function testLaterNamedSpanFirstQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $spanQuery = new SpanFirstQuery(
+            $this->getSubQueryMock('matchSpanQuery'),
+            '3'
+        );
+        $spanQuery->setName('queryName');
+        $query = $builder->buildQuery($spanQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['span_first']);
+        $this->assertEquals('queryName', $query['span_first']['_name']);
+
+        $spanQuery = new SpanFirstQuery(
+            $this->getSubQueryMock('matchSpanQuery'),
+            '3',
+            'originalQueryName'
+        );
+        $spanQuery->setName('queryName');
+        $query = $builder->buildQuery($spanQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['span_first']);
+        $this->assertEquals('queryName', $query['span_first']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

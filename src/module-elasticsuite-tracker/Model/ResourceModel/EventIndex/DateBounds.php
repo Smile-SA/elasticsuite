@@ -131,7 +131,8 @@ class DateBounds
             [],
             [],
             [],
-            $aggregations
+            $aggregations,
+            false
         );
     }
 

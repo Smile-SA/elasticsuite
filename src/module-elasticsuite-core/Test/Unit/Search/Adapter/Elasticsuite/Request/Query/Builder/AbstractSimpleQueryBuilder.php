@@ -35,7 +35,7 @@ abstract class AbstractSimpleQueryBuilder extends \PHPUnit\Framework\TestCase
         $builder = $this->getQueryBuilder();
 
         $query = $this->getMockBuilder(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue('invalid_type'));
+        $query->method('getType')->willReturn('invalid_type');
 
         $builder->buildQuery($query);
     }

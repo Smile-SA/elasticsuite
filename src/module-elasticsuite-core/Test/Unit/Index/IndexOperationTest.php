@@ -76,7 +76,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
      */
     public function testIsAvailable()
     {
-        $this->clientMock->method('ping')->will($this->returnValue(true));
+        $this->clientMock->method('ping')->willReturn(true);
         $this->assertEquals(true, $this->indexOperation->isAvailable());
     }
 
@@ -133,16 +133,16 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteBulk()
     {
-        $this->clientMock->method('bulk')->will($this->returnValue([
+        $this->clientMock->method('bulk')->willReturn([
             'errors' => true,
             'items'  => [
                 ['index' => ['_index' => 'index', '_id' => 'doc1']],
                 ['index' => ['_index' => 'index', '_id' => 'doc2']],
             ],
-        ]));
+        ]);
 
         $bulkMock = $this->indexOperation->createBulk();
-        $bulkMock->method('getOperations')->will($this->returnValue([]));
+        $bulkMock->method('getOperations')->willReturn([]);
 
         $this->indexOperation->executeBulk($bulkMock);
 
@@ -158,7 +158,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
     {
         $error1 = ['type' => 'reason1', 'reason' => 'Reason 1'];
         $error2 = ['type' => 'reason2', 'reason' => 'Reason 2'];
-        $this->clientMock->method('bulk')->will($this->returnValue([
+        $this->clientMock->method('bulk')->willReturn([
             'errors' => true,
             'items'  => [
                 ['index' => ['_index' => 'index', '_id' => 'doc1']],
@@ -168,10 +168,10 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
                 ['index' => ['_index' => 'index', '_id' => 'doc5', 'error' => $error2]],
                 ['index' => ['_index' => 'index', '_id' => 'doc6', 'error' => $error2]],
             ],
-        ]));
+        ]);
 
         $bulkMock = $this->indexOperation->createBulk();
-        $bulkMock->method('getOperations')->will($this->returnValue([]));
+        $bulkMock->method('getOperations')->willReturn([]);
 
         $this->indexOperation->executeBulk($bulkMock);
 
@@ -236,7 +236,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
             return $instance;
         };
 
-        $objectManagerMock->method('create')->will($this->returnCallback($createObjectStub));
+        $objectManagerMock->method('create')->willReturnCallback($createObjectStub);
 
         return $objectManagerMock;
     }
@@ -255,7 +255,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
         $indicesExistsMethodStub = function ($indexName) {
             return $indexName === 'index_identifier_store_code';
         };
-        $this->clientMock->method('indexExists')->will($this->returnCallback($indicesExistsMethodStub));
+        $this->clientMock->method('indexExists')->willReturnCallback($indicesExistsMethodStub);
     }
 
     /**
@@ -270,9 +270,9 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
             return "{$indexIdentifier}_{$store}";
         };
 
-        $indexSettingsMock->method('getIndexAliasFromIdentifier')->will($this->returnCallback($getIndexIdentiferMethodStub));
-        $indexSettingsMock->method('getIndicesConfig')->will($this->returnValue(['index_identifier' => []]));
-        $indexSettingsMock->method('getBatchIndexingSize')->will($this->returnValue(100));
+        $indexSettingsMock->method('getIndexAliasFromIdentifier')->willReturnCallback($getIndexIdentiferMethodStub);
+        $indexSettingsMock->method('getIndicesConfig')->willReturn(['index_identifier' => []]);
+        $indexSettingsMock->method('getBatchIndexingSize')->willReturn(100);
 
         return $indexSettingsMock;
     }
@@ -294,7 +294,7 @@ class IndexOperationTest extends \PHPUnit\Framework\TestCase
 
             $this->logRows['errors'][] = $message;
         };
-        $loggerMock->method('error')->will($this->returnCallback($errorLoggerStub));
+        $loggerMock->method('error')->willReturnCallback($errorLoggerStub);
 
         return $loggerMock;
     }

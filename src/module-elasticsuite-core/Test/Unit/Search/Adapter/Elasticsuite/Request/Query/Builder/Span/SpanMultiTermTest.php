@@ -60,11 +60,38 @@ class SpanMultiTermTest extends AbstractComplexSpanQueryBuilder
         $query = $builder->buildQuery($spanQuery);
 
         $this->checkDefaultStructure($query);
-        // Name not supported yet.
+        // Name not supported yet by the builder.
         $this->assertArrayNotHasKey('_name', $query['span_multi']);
 
         $this->assertEquals('matchSpanQuery', $query['span_multi']['match']);
         $this->assertEquals(17, $query['span_multi']['boost']);
+    }
+
+    /**
+     * Test the name setter and getter of the query model.
+     */
+    public function testNamedSpanMultiTermQuery(): void
+    {
+        // Check that by default, the name is null.
+        $spanQuery = new SpanMultiTermQuery(
+            $this->getSubQueryMock('matchSpanQuery')
+        );
+        $this->assertNull($spanQuery->getName());
+
+        // Check that getName returns the value set through setName.
+        $spanQuery->setName('queryName');
+        $this->assertEquals('queryName', $spanQuery->getName());
+
+        // Check that the name parameter is correctly assigned via constructor.
+        $spanQuery = new SpanMultiTermQuery(
+            $this->getSubQueryMock('matchSpanQuery'),
+            'myQueryName'
+        );
+        $this->assertEquals('myQueryName', $spanQuery->getName());
+
+        // Check renaming an existing name.
+        $spanQuery->setName('newQueryName');
+        $this->assertEquals('newQueryName', $spanQuery->getName());
     }
 
     /**

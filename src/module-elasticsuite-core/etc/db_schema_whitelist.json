@@ -1,0 +1,46 @@
+{
+    "smile_elasticsuite_relevance_config_data": {
+        "column": {
+            "config_id": true,
+            "scope": true,
+            "scope_code": true,
+            "path": true,
+            "value": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_RELEVANCE_CONFIG_DATA_SCOPE_SCOPE_CODE_PATH": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "smile_elasticsuite_index_bulk_error": {
+        "column": {
+            "entity_id": true,
+            "store_code": true,
+            "error_type": true,
+            "index_identifier": true,
+            "operation": true,
+            "reason_simple": true,
+            "reason": true,
+            "sample_ids": true,
+            "count": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_STORE_CODE": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_INDEX_IDENTIFIER": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_ERROR_TYPE": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_REASON": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_SAMPLE_IDS": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_COUNT": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_CREATED_AT": true,
+            "SMILE_ELASTICSUITE_INDEX_BULK_ERROR_UPDATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UNQ_CBE440F95B68A558E4E96F64EDDA8FB4": true
+        }
+    }
+}

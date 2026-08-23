@@ -39,6 +39,11 @@ class Document extends \Magento\Framework\Api\Search\Document
     const INDEX_DOC_FIELD_NAME = "_index";
 
     /**
+     * @var string
+     */
+    const HIGHLIGHT_FIELD_NAME = 'highlight';
+
+    /**
      * Return the exact index name containing the document.
      *
      * @return string
@@ -66,5 +71,15 @@ class Document extends \Magento\Framework\Api\Search\Document
     public function getSource()
     {
         return $this->_get(self::SOURCE_DOC_FIELD_NAME);
+    }
+
+    /**
+     * Return highlighted fields data.
+     *
+     * @return array
+     */
+    public function getHighlight()
+    {
+        return $this->_get(self::HIGHLIGHT_FIELD_NAME) ?? [];
     }
 }

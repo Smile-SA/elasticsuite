@@ -61,6 +61,28 @@ class MissingTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with mandatory + boost params.
+     *
+     * @return void
+     */
+    public function testBoostedMissingQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $missingQuery = new MissingQuery('field');
+        $this->assertEquals(MissingQuery::DEFAULT_BOOST_VALUE, $missingQuery->getBoost());
+
+        $boost = 2.0;
+        $missingQuery = new MissingQuery('field', null, $boost);
+        $query = $builder->buildQuery($missingQuery);
+
+        $this->assertEquals($boost, $missingQuery->getBoost());
+
+        $this->assertArrayHasKey('bool', $query);
+        $this->assertArrayHasKey('must_not', $query['bool']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

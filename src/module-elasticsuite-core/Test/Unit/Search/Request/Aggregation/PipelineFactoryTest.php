@@ -67,7 +67,7 @@ class PipelineFactoryTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $pipelineFactoryMock->method('create')
-            ->will($this->returnValue($pipelineMock));
+            ->willReturn($pipelineMock);
 
         $factories = ['pipelineType' => $pipelineFactoryMock];
 

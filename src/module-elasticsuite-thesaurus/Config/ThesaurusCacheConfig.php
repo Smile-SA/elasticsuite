@@ -26,11 +26,20 @@ use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
  */
 class ThesaurusCacheConfig
 {
+    /** @var integer */
+    const MINIMUM_LIFETIME = 300;
+
+    /** @var integer */
+    const DEFAULT_LIFETIME = 7200;
+
     /** @var string */
     const ALWAYS_CACHE_RESULTS_XML_PATH = 'smile_elasticsuite_thesaurus_settings/cache/always';
 
     /** @var string */
     const MIN_REWRITES_FOR_CACHING_XML_PATH = 'smile_elasticsuite_thesaurus_settings/cache/min_rewites';
+
+    /** @var string */
+    const CACHE_TTL_XML_PATH = 'smile_elasticsuite_thesaurus_settings/cache/ttl';
 
     /**
      * @var ScopeConfigInterface
@@ -74,5 +83,27 @@ class ThesaurusCacheConfig
         }
 
         return true;
+    }
+
+    /**
+     * Returns the cache TTL (in seconds) for thesaurus rewrites.
+     *
+     * @param ContainerConfigurationInterface $config Container configuration.
+     *
+     * @return int
+     */
+    public function getCacheTtl(ContainerConfigurationInterface $config)
+    {
+        $cacheTtl = (int) $this->scopeConfig->getValue(
+            self::CACHE_TTL_XML_PATH,
+            ScopeInterface::SCOPE_STORES,
+            $config->getStoreId()
+        );
+
+        if ($cacheTtl < self::MINIMUM_LIFETIME) {
+            return self::DEFAULT_LIFETIME;
+        }
+
+        return $cacheTtl;
     }
 }

@@ -13,7 +13,6 @@
  */
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Request\Query;
 
-use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -39,8 +38,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $builder = new Builder(
             $this->getQueryFactory(),
             $this->getFulltextQueryBuilder(),
-            $this->getFilterQueryBuilder(),
-            $this->getSearchContext()
+            $this->getFilterQueryBuilder()
         );
 
         $query = $builder->createQuery(
@@ -61,16 +59,6 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Mocks the search context.
-     *
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getSearchContext()
-    {
-        return $this->getMockBuilder(ContextInterface::class)->getMock();
-    }
-
-    /**
      * Mocks the container configration.
      *
      * @return \PHPUnit\Framework\MockObject\MockObject
@@ -79,7 +67,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $containerConfiguration = $this->getMockBuilder(ContainerConfigurationInterface::class)->getMock();
 
-        $containerConfiguration->method('getFilters')->will($this->returnValue([]));
+        $containerConfiguration->method('getFilters')->willReturn([]);
 
         return $containerConfiguration;
     }
@@ -102,7 +90,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
             return $queryClass->newInstanceArgs($params);
         };
 
-        $queryFactory->method('create')->will($this->returnCallback($createQueryCallback));
+        $queryFactory->method('create')->willReturnCallback($createQueryCallback);
 
         return $queryFactory;
     }
@@ -138,10 +126,10 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     private function getQueryBuilder($class, $name)
     {
         $query = $this->getMockBuilder(QueryInterface::class)->getMock();
-        $query->method('getType')->will($this->returnValue($name));
+        $query->method('getType')->willReturn($name);
 
         $queryBuilder = $this->getMockBuilder($class)->disableOriginalConstructor()->getMock();
-        $queryBuilder->method('create')->will($this->returnValue($query));
+        $queryBuilder->method('create')->willReturn($query);
 
         return $queryBuilder;
     }

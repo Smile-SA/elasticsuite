@@ -35,7 +35,7 @@ abstract class AbstractComplexSpanQueryBuilder extends AbstractComplexQueryBuild
     protected function getSubQueryMock($queryName)
     {
         $mock = $this->getMockBuilder(SpanQueryInterface::class)->getMock();
-        $mock->method('getName')->will($this->returnValue($queryName));
+        $mock->method('getName')->willReturn($queryName);
 
         return $mock;
     }

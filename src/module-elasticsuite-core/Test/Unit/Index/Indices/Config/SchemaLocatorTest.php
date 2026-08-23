@@ -36,7 +36,7 @@ class SchemaLocatorTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $moduleReader->method('getModuleDir')
-            ->will($this->returnValue('moduleDirectory'));
+            ->willReturn('moduleDirectory');
 
         $schemaLocator = new SchemaLocator($moduleReader);
 

@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart;
 
 use Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\ChartInterface;
+use Smile\ElasticsuiteAnalytics\Model\ReportInterface;
 
 /**
  * Sessions graph block.
@@ -25,9 +26,9 @@ use Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\ChartInterface;
 class Sessions extends \Magento\Backend\Block\Template implements ChartInterface
 {
     /**
-     * @var \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report
+     * @var ReportInterface[]
      */
-    private $report;
+    private $reports;
 
     /**
      * @var \Magento\Framework\Serialize\Serializer\Json
@@ -37,20 +38,20 @@ class Sessions extends \Magento\Backend\Block\Template implements ChartInterface
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\Block\Template\Context                    $context    Context.
-     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report     KPI report model.
-     * @param \Magento\Framework\Serialize\Serializer\Json               $serializer Json serializer.
-     * @param array                                                      $data       Data.
+     * @param \Magento\Backend\Block\Template\Context              $context    Context.
+     * @param \Magento\Framework\Serialize\Serializer\Json         $serializer Json serializer.
+     * @param \Smile\ElasticsuiteAnalytics\Model\ReportInterface[] $reports    KPI report models to aggregate.
+     * @param array                                                $data       Data.
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report,
         \Magento\Framework\Serialize\Serializer\Json $serializer,
+        array $reports = [],
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->report = $report;
         $this->serializer = $serializer;
+        $this->reports = $reports;
     }
 
     /**
@@ -79,7 +80,10 @@ class Sessions extends \Magento\Backend\Block\Template implements ChartInterface
         ];
 
         try {
-            $reportData = $this->report->getData();
+            $reportData = [];
+            foreach ($this->reports as $report) {
+                $reportData += $report->getData();
+            }
             if (array_key_exists('sessions_count', $reportData)
                 && array_key_exists('search_sessions_count', $reportData)
             ) {

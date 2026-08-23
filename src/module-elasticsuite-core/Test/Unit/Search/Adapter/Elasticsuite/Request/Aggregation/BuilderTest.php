@@ -157,13 +157,13 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
         $buildBucketCallback = function (BucketInterface $bucket) {
             return ['type' => $bucket->getType()];
         };
-        $aggregationBuilderMock->method('buildBucket')->will($this->returnCallback($buildBucketCallback));
+        $aggregationBuilderMock->method('buildBucket')->willReturnCallback($buildBucketCallback);
 
         $pipelineBuilderMock = $this->getMockBuilder(PipelineBuilderInterface::class)->getMock();
         $buildPipelineCallback = function (PipelineInterface $pipeline) {
             return ['type' => $pipeline->getType()];
         };
-        $pipelineBuilderMock->method('buildPipeline')->will($this->returnCallback($buildPipelineCallback));
+        $pipelineBuilderMock->method('buildPipeline')->willReturnCallback($buildPipelineCallback);
 
         return new AggregationBuilder(
             $queryBuilder,
@@ -186,10 +186,10 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $bucket = $this->getMockBuilder(BucketInterface::class)->getMock();
 
-        $bucket->method('getName')->will($this->returnValue($name));
-        $bucket->method('getType')->will($this->returnValue($type));
-        $bucket->method('getMetrics')->will($this->returnValue($metrics));
-        $bucket->method('getPipelines')->will($this->returnValue($pipelines));
+        $bucket->method('getName')->willReturn($name);
+        $bucket->method('getType')->willReturn($type);
+        $bucket->method('getMetrics')->willReturn($metrics);
+        $bucket->method('getPipelines')->willReturn($pipelines);
 
         return $bucket;
     }
@@ -205,8 +205,8 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     private function createNestedBucket($name, $type)
     {
         $bucket = $this->createBucket($name, $type);
-        $bucket->method('isNested')->will($this->returnValue(true));
-        $bucket->method('getNestedPath')->will($this->returnValue('parent'));
+        $bucket->method('isNested')->willReturn(true);
+        $bucket->method('getNestedPath')->willReturn('parent');
 
         return $bucket;
     }
@@ -223,9 +223,9 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $filter = $this->getMockBuilder(QueryInterface::class)->getMock();
         $bucket = $this->createBucket($name, $type);
-        $bucket->method('isNested')->will($this->returnValue(true));
-        $bucket->method('getNestedPath')->will($this->returnValue('parent'));
-        $bucket->method('getNestedFilter')->will($this->returnValue($filter));
+        $bucket->method('isNested')->willReturn(true);
+        $bucket->method('getNestedPath')->willReturn('parent');
+        $bucket->method('getNestedFilter')->willReturn($filter);
 
         return $bucket;
     }
@@ -242,7 +242,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $filter = $this->getMockBuilder(QueryInterface::class)->getMock();
         $bucket = $this->createBucket($name, $type);
-        $bucket->method('getFilter')->will($this->returnValue($filter));
+        $bucket->method('getFilter')->willReturn($filter);
 
         return $bucket;
     }
@@ -277,8 +277,8 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     {
         $pipeline = $this->getMockBuilder(PipelineInterface::class)->getMock();
 
-        $pipeline->method('getName')->will($this->returnValue($name));
-        $pipeline->method('getType')->will($this->returnValue($type));
+        $pipeline->method('getName')->willReturn($name);
+        $pipeline->method('getType')->willReturn($type);
 
         return $pipeline;
     }
@@ -291,7 +291,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     private function getQueryBuilder()
     {
         $queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->getMock();
-        $queryBuilderMock->method('buildQuery')->will($this->returnValue('query'));
+        $queryBuilderMock->method('buildQuery')->willReturn('query');
 
         return $queryBuilderMock;
     }

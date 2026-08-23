@@ -83,6 +83,50 @@ class FunctionScoreTest extends AbstractComplexQueryBuilder
     }
 
     /**
+     * Test the builder with a function score query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedFunctionScoreQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $functionScoreQuery = new FunctionScoreQuery($this->getSubQueryMock('baseQuery'), []);
+        $functionScoreQuery->setName('queryName');
+        $query = $builder->buildQuery($functionScoreQuery);
+
+        $this->assertArrayHasKey('_name', $query['function_score']);
+        $this->assertEquals('queryName', $query['function_score']['_name']);
+
+        $functionScoreQuery = new FunctionScoreQuery(
+            $this->getSubQueryMock('baseQuery'),
+            [],
+            'originalQueryName'
+        );
+        $functionScoreQuery->setName('queryName');
+        $query = $builder->buildQuery($functionScoreQuery);
+
+        $this->assertArrayHasKey('_name', $query['function_score']);
+        $this->assertEquals('queryName', $query['function_score']['_name']);
+    }
+
+    /**
+     * Test that the builder does not include boost for function_score query.
+     *
+     * @return void
+     */
+    public function testNoBoostFunctionScoreQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $functionScoreQuery = new FunctionScoreQuery($this->getSubQueryMock('baseQuery'), []);
+        $query = $builder->buildQuery($functionScoreQuery);
+
+        $this->assertNull($functionScoreQuery->getBoost());
+        $this->assertArrayNotHasKey('boost', $query['function_score']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

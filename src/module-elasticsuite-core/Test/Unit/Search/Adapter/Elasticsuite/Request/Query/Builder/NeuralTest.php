@@ -48,7 +48,7 @@ class NeuralTest extends AbstractSimpleQueryBuilder
      *
      * @return iterable
      */
-    public function neuralQueryAssemblerDataProvider(): iterable
+    public static function neuralQueryAssemblerDataProvider(): iterable
     {
         yield [
             ['search text', 100],

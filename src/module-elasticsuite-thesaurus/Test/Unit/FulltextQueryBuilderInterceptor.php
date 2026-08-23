@@ -33,13 +33,17 @@ class FulltextQueryBuilderInterceptor extends \Smile\ElasticsuiteCore\Search\Req
      * Constructor
      *
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory Query factory
+     * @param \Smile\ElasticsuiteCore\Helper\Text                       $textHelper   Text helper
      * @param array                                                     $fieldFilters Field filters
      */
-    public function __construct(\Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory, array $fieldFilters = [])
-    {
+    public function __construct(
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        \Smile\ElasticsuiteCore\Helper\Text $textHelper,
+        array $fieldFilters = []
+    ) {
         $this->___init();
 
-        parent::__construct($queryFactory, $fieldFilters);
+        parent::__construct($queryFactory, $textHelper, $fieldFilters);
     }
 
     /**

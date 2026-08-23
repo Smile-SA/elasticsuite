@@ -71,6 +71,35 @@ class MatchPhrasePrefixTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the assembler with a match phrase prefix query named or renamed after creation.
+     */
+    public function testLaterNamedMatchPhrasePrefixQueryAssembler(): void
+    {
+        $assembler = $this->getQueryBuilder();
+
+        $matchPhrasePrefixQuery = new MatchPhrasePrefixQuery('search text', 'searchField');
+        $matchPhrasePrefixQuery->setName('queryName');
+        $query = $assembler->buildQuery($matchPhrasePrefixQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['match_phrase_prefix']);
+        $this->assertEquals('queryName', $query['match_phrase_prefix']['_name']);
+
+        $matchPhrasePrefixQuery = new MatchPhrasePrefixQuery(
+            'search text',
+            'searchField',
+            10,
+            'originalQueryName'
+        );
+        $matchPhrasePrefixQuery->setName('queryName');
+        $query = $assembler->buildQuery($matchPhrasePrefixQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['match_phrase_prefix']);
+        $this->assertEquals('queryName', $query['match_phrase_prefix']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

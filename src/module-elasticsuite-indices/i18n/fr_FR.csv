@@ -32,6 +32,7 @@
 "Position","Position"
 "Start Offset","Début de la chaîne"
 "End Offset","Fin de la chaîne"
+"Token Type","Type de Token"
 "Show all indices","Voir tous les index"
 "Hide external indices","Cacher les index externes"
 "The number of shards is properly configured for the Elasticsearch cluster. No action is required at this time.","Le nombre de shards est correctement configuré pour le cluster Elasticsearch. Aucune action n’est requise pour le moment."

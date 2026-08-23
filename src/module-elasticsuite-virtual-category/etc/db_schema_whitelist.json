@@ -1,0 +1,20 @@
+{
+    "smile_virtualcategory_catalog_category_product_position": {
+        "column": {
+            "category_id": true,
+            "product_id": true,
+            "store_id": true,
+            "position": true,
+            "is_blacklisted": true
+        },
+        "index": {
+            "SMILE_VIRTUALCTGR_CAT_CTGR_PRD_POSITION_PRD_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9A80162E8ADF9FB814AC79D709D977F3": true,
+            "FK_D8ED66CF4B5DA2EE349B79458FFC6587": true,
+            "SMILE_VIRTUALCTGR_CAT_CTGR_PRD_POSITION_STORE_ID_STORE_STORE_ID": true
+        }
+    }
+}

@@ -15,16 +15,40 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- Generic Events based report search request builder -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Generic Sessions based report search request builder -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Report\SessionsBasedSearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+        <arguments>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
+                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
+                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
+            </argument>
+            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Search usage KPI report config -->
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder">
         <arguments>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\AggregationProvider</item>
             </argument>
             <argument name="queryProviders" xsi:type="array">
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
-                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
-                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
+                <item name="searchEventFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\SearchEventFilterQueryProvider</item>
             </argument>
         </arguments>
     </virtualType>
@@ -35,18 +59,88 @@
         </arguments>
     </type>
 
+    <!-- Search usage event details KPI report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\AggregationProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
+
+    <!-- Search usage unique sessions and unique visitors KPI report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\SessionsBasedSearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\AggregationProvider</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
+
+    <!-- Search usage spellcheck rate KPI report config -->
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder">
+        <arguments>
+            <argument name="aggregationProviders" xsi:type="array">
+                <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\AggregationProvider</item>
+            </argument>
+            <argument name="queryProviders" xsi:type="array">
+                <item name="searchEventFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\SearchEventFilterQueryProvider</item>
+            </argument>
+            <!-- total count of docs not needed in report -->
+            <argument name="trackTotalHits" xsi:type="boolean">false</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report">
+        <arguments>
+            <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\SearchRequestBuilder</argument>
+        </arguments>
+    </type>
+
+    <!-- KPI report block configuration -->
+    <type name="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Kpi">
+        <arguments>
+            <argument name="reports" xsi:type="array">
+                <item name="search_usage" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report</item>
+                <item name="event_details" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\Report</item>
+                <item name="sessions_visitors" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\Report</item>
+                <item name="spellcheck" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Sessions with or without search chart block configuration -->
+    <type name="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\Chart\Sessions">
+        <arguments>
+            <argument name="reports" xsi:type="array">
+                <item name="search_usage" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report</item>
+                <item name="sessions_visitors" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\Report</item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- Search usage and conversion rates report config -->
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\SessionsBasedSearchRequestBuilder">
         <arguments>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\AggregationProvider</item>
             </argument>
-            <argument name="queryProviders" xsi:type="array">
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
-                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
-                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
-            </argument>
-            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
         </arguments>
     </virtualType>
 
@@ -57,20 +151,19 @@
     </type>
 
     <!-- Popular search terms report config -->
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder">
         <arguments>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\AggregationProvider</item>
             </argument>
-            <argument name="queryProviders" xsi:type="array">
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
-                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
-                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
-            </argument>
+            <!-- total count of docs not needed in report -->
+            <argument name="trackTotalHits" xsi:type="boolean">false</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report"
+                 type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\SearchRequestBuilder</argument>
             <argument name="postProcessors" xsi:type="array">
@@ -80,21 +173,22 @@
     </virtualType>
 
     <!-- Spellchecked search terms DI config. -->
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\EventsBasedSearchRequestBuilder">
         <arguments>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\AggregationProvider</item>
             </argument>
             <argument name="queryProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\QueryProvider</item>
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\DateFilterQueryProvider</item>
-                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerGroupIdFilterQueryProvider</item>
-                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Event\CustomerCompanyIdFilterQueryProvider</item>
             </argument>
+            <!-- total count of docs not needed in report -->
+            <argument name="trackTotalHits" xsi:type="boolean">false</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report"
+                 type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\SearchRequestBuilder</argument>
             <argument name="postProcessors" xsi:type="array">
@@ -104,21 +198,19 @@
     </virtualType>
 
     <!-- No result search terms DI config. -->
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder" type="Smile\ElasticsuiteAnalytics\Model\Report\SearchRequestBuilder">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder"
+                 type="Smile\ElasticsuiteAnalytics\Model\Report\SessionsBasedSearchRequestBuilder">
         <arguments>
-            <argument name="containerName" xsi:type="string">tracking_log_session</argument>
             <argument name="aggregationProviders" xsi:type="array">
                 <item name="data" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\AggregationProvider</item>
             </argument>
-            <argument name="queryProviders" xsi:type="array">
-                <item name="dateFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\DateFilterQueryProvider</item>
-                <item name="customerGroupIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerGroupIdFilterQueryProvider</item>
-                <item name="customerCompanyIdFilter" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Report\Session\CustomerCompanyIdFilterQueryProvider</item>
-            </argument>
+            <!-- total count of docs not needed in report -->
+            <argument name="trackTotalHits" xsi:type="boolean">false</argument>
         </arguments>
     </virtualType>
 
-    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report" type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
+    <virtualType name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report"
+                 type="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\Report">
         <arguments>
             <argument name="searchRequestBuilder" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\SearchRequestBuilder</argument>
             <argument name="postProcessors" xsi:type="array">

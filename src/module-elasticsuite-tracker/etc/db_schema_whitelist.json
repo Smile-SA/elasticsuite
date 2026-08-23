@@ -1,0 +1,39 @@
+{
+    "elasticsuite_tracker_log_event": {
+        "column": {
+            "event_id": true,
+            "created_at": true,
+            "data": true,
+            "is_invalid": true
+        },
+        "index": {
+            "ELASTICSUITE_TRACKER_LOG_EVENT_IS_INVALID": true,
+            "ELASTICSUITE_TRACKER_LOG_EVENT_CREATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "elasticsuite_tracker_log_customer_link": {
+        "column": {
+            "customer_id": true,
+            "session_id": true,
+            "visitor_id": true,
+            "delete_after": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "ELASTICSUITE_TRACKER_LOG_CSTR_LNK_CSTR_ID_CSTR_ENTT_ENTT_ID": true
+        }
+    },
+    "smile_elasticsuite_notification_log": {
+        "column": {
+            "id": true,
+            "notification_code": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "SMILE_ELASTICSUITE_NOTIFICATION_LOG_NOTIFICATION_CODE": true
+        }
+    }
+}

@@ -69,6 +69,34 @@ class PrefixTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a prefix query named or renamed after creation.
+     */
+    public function testLaterNamedPrefixQueryBuilder(): void
+    {
+        $builder = $this->getQueryBuilder();
+
+        $prefixQuery = new PrefixQuery('search text', 'searchField');
+        $prefixQuery->setName('queryName');
+        $query = $builder->buildQuery($prefixQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['prefix']);
+        $this->assertEquals('queryName', $query['prefix']['_name']);
+
+        $prefixQuery = new PrefixQuery(
+            'search text',
+            'searchField',
+            'originalQueryName'
+        );
+        $prefixQuery->setName('queryName');
+        $query = $builder->buildQuery($prefixQuery);
+
+        $this->checkDefaultStructure($query);
+        $this->assertArrayHasKey('_name', $query['prefix']);
+        $this->assertEquals('queryName', $query['prefix']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

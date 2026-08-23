@@ -17,6 +17,7 @@ namespace Smile\ElasticsuiteThesaurus\Model;
 use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
@@ -68,6 +69,11 @@ class Index
     private $cacheHelper;
 
     /**
+     * @var Text
+     */
+    private $textHelper;
+
+    /**
      * @var ThesaurusConfig
      */
     private $thesaurusCacheConfig;
@@ -78,6 +84,7 @@ class Index
      * @param ClientInterface        $client                 ES client.
      * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
      * @param CacheHelper            $cacheHelper            ES caching helper.
+     * @param Text                   $textHelper             Helper text explaining multibyte string handling.
      * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
      * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
      */
@@ -85,6 +92,7 @@ class Index
         ClientInterface $client,
         IndexSettingsHelper $indexSettingsHelper,
         CacheHelper $cacheHelper,
+        Text $textHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
         ThesaurusCacheConfig $thesaurusCacheConfig
     ) {
@@ -92,6 +100,7 @@ class Index
         $this->indexSettingsHelper    = $indexSettingsHelper;
         $this->thesaurusConfigFactory = $thesaurusConfigFactory;
         $this->cacheHelper            = $cacheHelper;
+        $this->textHelper             = $textHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
     }
 
@@ -108,13 +117,14 @@ class Index
     {
         $cacheKey  = $this->getCacheKey($containerConfig, $queryText);
         $cacheTags = $this->getCacheTags($containerConfig);
+        $cacheTTL  = $this->thesaurusCacheConfig->getCacheTtl($containerConfig);
 
         $queryRewrites = $this->cacheHelper->loadCache($cacheKey);
 
         if ($queryRewrites === false) {
             $queryRewrites = $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost);
             if ($this->thesaurusCacheConfig->isCacheStorageAllowed($containerConfig, count($queryRewrites))) {
-                $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags);
+                $this->cacheHelper->saveCache($cacheKey, $queryRewrites, $cacheTags, $cacheTTL);
             }
         }
 
@@ -122,7 +132,12 @@ class Index
     }
 
     /**
-     * Compute weigthed rewrites for the query.
+     * Provides the full, uncapped list of weighted rewrites for the query, ignoring the
+     * "max rewritten queries" configuration and bypassing the cache entirely.
+     *
+     * Intended for diagnostic/explain use only (showing which alternative queries would be cut
+     * off by the configured cap) -- not for the regular search request path, since it forces
+     * the full combinatorial computation regardless of the configured limit.
      *
      * @param ContainerConfigurationInterface $containerConfig Search request container config.
      * @param string                          $queryText       Fulltext query.
@@ -130,17 +145,36 @@ class Index
      *
      * @return array
      */
-    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost)
+    public function getUncappedQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost = 1)
+    {
+        return $this->computeQueryRewrites($containerConfig, $queryText, $originalBoost, true);
+    }
+
+    /**
+     * Compute weighted rewrites for the query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Search request container config.
+     * @param string                          $queryText       Fulltext query.
+     * @param float                           $originalBoost   Original boost of the query
+     * @param bool                            $ignoreCap       Ignore the "max rewritten queries" configuration.
+     *
+     * @return array
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
+    private function computeQueryRewrites(ContainerConfigurationInterface $containerConfig, $queryText, $originalBoost, $ignoreCap = false)
     {
         $config   = $this->getConfig($containerConfig);
         $storeId  = $containerConfig->getStoreId();
         $rewrites = [];
-        $maxRewrites = $config->getMaxRewrites();
+        $maxRewrites         = $config->getMaxRewrites();
+        $maxRewrittenQueries = $ignoreCap ? 0 : $config->getMaxRewrittenQueries();
 
         if ($config->isSynonymSearchEnabled()) {
             $thesaurusType   = ThesaurusInterface::TYPE_SYNONYM;
-            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites);
+            $synonymRewrites = $this->getSynonymRewrites($storeId, $queryText, $thesaurusType, $maxRewrites, $maxRewrittenQueries);
             $rewrites        = $this->getWeightedRewrites($synonymRewrites, $config->getSynonymWeightDivider(), $originalBoost);
+            // Cap here so the set of source queries for the expansion loop below is already bounded.
+            $rewrites        = $this->capRewrites($rewrites, $maxRewrittenQueries);
         }
 
         if ($config->isExpansionSearchEnabled()) {
@@ -149,10 +183,23 @@ class Index
 
             foreach ($synonymRewrites as $currentQueryText => $currentWeight) {
                 $thesaurusType     = ThesaurusInterface::TYPE_EXPANSION;
-                $expansions        = $this->getSynonymRewrites($storeId, $currentQueryText, $thesaurusType, $maxRewrites);
+                $expansions        = $this->getSynonymRewrites(
+                    $storeId,
+                    $currentQueryText,
+                    $thesaurusType,
+                    $maxRewrites,
+                    $maxRewrittenQueries
+                );
                 $expansionRewrites = $this->getWeightedRewrites($expansions, $config->getExpansionWeightDivider(), $currentWeight);
                 // Use + instead of array_merge because keys can be purely numeric and would be casted to 0 by array_merge.
                 $rewrites          = $rewrites + $expansionRewrites;
+
+                // Stop as soon as the cap is reached: further alternative queries would only get
+                // sliced away later anyway, so skip their analyze() calls entirely.
+                if ($maxRewrittenQueries > 0 && count($rewrites) >= $maxRewrittenQueries) {
+                    $rewrites = $this->capRewrites($rewrites, $maxRewrittenQueries);
+                    break;
+                }
             }
         }
 
@@ -219,14 +266,15 @@ class Index
     /**
      * Generates all possible synonym rewrites for a store and text query.
      *
-     * @param integer $storeId     Store id.
-     * @param string  $queryText   Text query.
-     * @param string  $type        Substitution type (synonym or expansion).
-     * @param integer $maxRewrites Max number of allowed rewrites.
+     * @param integer $storeId             Store id.
+     * @param string  $queryText           Text query.
+     * @param string  $type                Substitution type (synonym or expansion).
+     * @param integer $maxRewrites         Max number of allowed rewrites.
+     * @param integer $maxRewrittenQueries Max number of allowed rewritten queries (0 = unlimited).
      *
      * @return array
      */
-    private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites)
+    private function getSynonymRewrites($storeId, $queryText, $type, $maxRewrites, $maxRewrittenQueries)
     {
         $indexName        = $this->getIndexAlias($storeId);
         $analyzedQueries  = $this->getQueryCombinations($storeId, str_replace('-', ' ', $queryText));
@@ -257,6 +305,14 @@ class Index
             }
             // Use + instead of array_merge because keys of the array can be purely numeric and would be casted to 0 by array_merge.
             $synonyms = $synonyms + $this->combineSynonyms(str_replace('_', ' ', $query), $synonymByPositions, $maxRewrites);
+
+            // Stop as soon as the cap is reached: further analyzed query variants (shingle
+            // combinations of the same query text) would only produce combinations that get
+            // sliced away by the caller anyway, so skip their analyze() calls entirely.
+            if ($maxRewrittenQueries > 0 && count($synonyms) >= $maxRewrittenQueries) {
+                $synonyms = $this->capRewrites($synonyms, $maxRewrittenQueries);
+                break;
+            }
         }
 
         return $synonyms;
@@ -275,7 +331,7 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        if (str_word_count($queryText) < 2) {
+        if ($this->textHelper->mbWordCount($queryText) < 2) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
@@ -297,7 +353,7 @@ class Index
         foreach ($analysis['tokens'] ?? [] as $token) {
             $startOffset        = $token['start_offset'];
             $length             = $token['end_offset'] - $token['start_offset'];
-            $rewrittenQueryText = $this->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
+            $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
             $queries[]          = $rewrittenQueryText;
         }
         $queries = array_unique($queries);
@@ -327,7 +383,7 @@ class Index
             foreach ($currentPositionSynonyms as $synonym) {
                 $startOffset = $synonym['start_offset'] + $offset;
                 $length      = $synonym['end_offset'] - $synonym['start_offset'];
-                $rewrittenQueryText = $this->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
+                $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $synonym['token'], $startOffset, $length);
                 $newOffset = mb_strlen($rewrittenQueryText) - mb_strlen($queryText) + $offset;
                 $combinations[$rewrittenQueryText] = $substitutions + 1;
 
@@ -369,27 +425,20 @@ class Index
     }
 
     /**
-     * Partial implementation of a multi-byte aware version of substr_replace.
-     * Required because the tokens offsets used as for parameters start and length
-     * are expressed as a number of (UTF-8) characters, independently of the number of bytes.
-     * Does not accept arrays as first and second parameters.
-     * Source: https://github.com/fluxbb/utf8/blob/master/functions/substr_replace.php
-     * Alternative: https://gist.github.com/bantya/563d7d070c286ba1b5a83b9036f0561a
+     * Cap the number of rewrites to the "max rewritten queries" limit, if any is configured.
+     * A value of 0 (or less) for $maxRewrittenQueries means "no limit".
      *
-     * @param string $string      Input string
-     * @param string $replacement Replacement string
-     * @param mixed  $start       Start offset
-     * @param mixed  $length      Length of replacement
+     * @param array $rewrites            Current rewrites, keyed by rewritten query text.
+     * @param int   $maxRewrittenQueries Max number of allowed rewritten queries (0/negative = unlimited).
      *
-     * @return mixed
+     * @return array
      */
-    private function mbSubstrReplace($string, $replacement, $start, $length = null)
+    private function capRewrites($rewrites, $maxRewrittenQueries)
     {
-        preg_match_all('/./us', $string, $stringChars);
-        preg_match_all('/./us', $replacement, $replacementChars);
-        $length = is_int($length) ? $length : mb_strlen($string);
-        array_splice($stringChars[0], $start, $length, $replacementChars[0]);
+        if ($maxRewrittenQueries > 0) {
+            $rewrites = array_slice($rewrites, 0, $maxRewrittenQueries, true);
+        }
 
-        return implode($stringChars[0]);
+        return $rewrites;
     }
 }

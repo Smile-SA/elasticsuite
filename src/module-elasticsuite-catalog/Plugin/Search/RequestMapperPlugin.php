@@ -19,6 +19,8 @@ use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper as RequestFieldMapper;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Model\Search\RequestMapper;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
+use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\SortOrderInterface;
 
 /**
@@ -66,6 +68,11 @@ class RequestMapperPlugin
     private $categoryRepository;
 
     /**
+     * @var QueryFactory
+     */
+    private $queryFactory;
+
+    /**
      * @var RequestFieldMapper
      */
     private $requestFieldMapper;
@@ -83,6 +90,7 @@ class RequestMapperPlugin
      * @param \Smile\ElasticsuiteCore\Helper\Mapping              $mappingHelper                Mapping helper.
      * @param \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext                Search context.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterface    $categoryRepository           Category Repository.
+     * @param QueryFactory                                        $queryFactory                 Query Factory.
      * @param RequestFieldMapper                                  $requestFieldMapper           Search request field mapper.
      * @param LayeredNavAttributesProvider                        $layeredNavAttributesProvider Layered navigation Attributes Provider.
      * @param array                                               $productSearchContainers      Product Search containers.
@@ -93,6 +101,7 @@ class RequestMapperPlugin
         \Smile\ElasticsuiteCore\Helper\Mapping $mappingHelper,
         \Smile\ElasticsuiteCore\Api\Search\ContextInterface $searchContext,
         \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
+        QueryFactory $queryFactory,
         RequestFieldMapper $requestFieldMapper,
         LayeredNavAttributesProvider $layeredNavAttributesProvider,
         $productSearchContainers = []
@@ -102,6 +111,7 @@ class RequestMapperPlugin
         $this->mappingHelper             = $mappingHelper;
         $this->searchContext             = $searchContext;
         $this->categoryRepository        = $categoryRepository;
+        $this->queryFactory              = $queryFactory;
         $this->requestFieldMapper        = $requestFieldMapper;
         $this->layeredNavAttributesProvider = $layeredNavAttributesProvider;
         if (is_array($productSearchContainers) && !empty($productSearchContainers)) {
@@ -181,6 +191,11 @@ class RequestMapperPlugin
                     $fieldName = $this->getMappingField($containerConfiguration, $fieldName);
                     $filters[$fieldName] = $this->getFieldValue($containerConfiguration, $fieldName, $filterValue);
                 }
+
+                // Add customer group condition for price filtering.
+                if ($fieldName === 'price.price') {
+                    $filters[$fieldName] = $this->getPriceFilterQuery($filterValue);
+                }
             }
 
             $result = $filters;
@@ -198,6 +213,59 @@ class RequestMapperPlugin
         unset($result['category_permissions_value']);
 
         return $result;
+    }
+
+    /**
+     * Build customer-group-aware price filter.
+     *
+     * @param array $filterValue Array of price filter values.
+     *
+     * @return QueryInterface
+     */
+    private function getPriceFilterQuery($filterValue)
+    {
+        $customerGroupId = $this->customerSession->getCustomerGroupId();
+        $fromValue       = $filterValue['from'] ?? null;
+        $toValue         = $filterValue['to'] ?? null;
+
+        // Build bounds safely: allow "0", ignore nulls.
+        $bounds = [];
+        if ($fromValue !== null) {
+            $bounds['gte'] = $fromValue;
+        }
+        if ($toValue !== null) {
+            $bounds['lt'] = $toValue;
+        }
+
+        // Special case: exact value (from == to).
+        if ($fromValue !== null && $fromValue === $toValue) {
+            $bounds = [
+                'gte' => $fromValue,
+                'lte' => $toValue,
+            ];
+        }
+
+        return $this->queryFactory->create(
+            QueryInterface::TYPE_NESTED,
+            [
+                'path'  => 'price',
+                'query' => $this->queryFactory->create(
+                    QueryInterface::TYPE_BOOL,
+                    [
+                        'must' => [
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_TERM,
+                                ['field' => 'price.customer_group_id', 'value' => $customerGroupId]
+                            ),
+                            $this->queryFactory->create(
+                                QueryInterface::TYPE_RANGE,
+                                ['field' => 'price.price', 'bounds' => $bounds]
+                            ),
+                        ],
+                    ]
+                ),
+            ]
+        );
     }
 
     /**

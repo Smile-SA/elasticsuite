@@ -72,7 +72,7 @@ class CheckData extends Command
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $progressIndicator = new ProgressIndicator($output, 'verbose', 100, ['⠏', '⠛', '⠹', '⢸', '⣰', '⣤', '⣆', '⡇']);
         $progressIndicator->start('Processing...');

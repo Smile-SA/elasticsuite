@@ -63,12 +63,41 @@ class SpanWithinTest extends AbstractComplexSpanQueryBuilder
         $query = $builder->buildQuery($spanQuery);
 
         $this->checkDefaultStructure($query);
-        // Name not supported yet.
+        // Name not supported yet by the builder.
         $this->assertArrayNotHasKey('_name', $query['span_within']);
 
         $this->assertEquals('bigQuery', $query['span_within']['big']);
         $this->assertEquals('littleQuery', $query['span_within']['little']);
         $this->assertEquals(17, $query['span_within']['boost']);
+    }
+
+    /**
+     * Test the name setter and getter of the query model.
+     */
+    public function testNamedSpanWithinQuery(): void
+    {
+        // Check that by default, the name is null.
+        $spanQuery = new SpanWithinQuery(
+            $this->getSubQueryMock('bigQuery'),
+            $this->getSubQueryMock('littleQuery')
+        );
+        $this->assertNull($spanQuery->getName());
+
+        // Check that getName returns the value set through setName.
+        $spanQuery->setName('queryName');
+        $this->assertEquals('queryName', $spanQuery->getName());
+
+        // Check that the name parameter is correctly assigned via constructor.
+        $spanQuery = new SpanWithinQuery(
+            $this->getSubQueryMock('bigQuery'),
+            $this->getSubQueryMock('littleQuery'),
+            'myQueryName'
+        );
+        $this->assertEquals('myQueryName', $spanQuery->getName());
+
+        // Check renaming an existing name.
+        $spanQuery->setName('newQueryName');
+        $this->assertEquals('newQueryName', $spanQuery->getName());
     }
 
     /**

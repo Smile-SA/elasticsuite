@@ -62,6 +62,30 @@ class NotTest extends AbstractComplexQueryBuilder
     }
 
     /**
+     * Test the builder with a not query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedNotQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $notQuery = new NotQuery($this->getSubQueryMock('subquery'));
+        $notQuery->setName('queryName');
+        $query = $builder->buildQuery($notQuery);
+
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
+
+        $notQuery = new NotQuery($this->getSubQueryMock('subquery'), 'originalQueryName');
+        $notQuery->setName('queryName');
+        $query = $builder->buildQuery($notQuery);
+
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function getQueryBuilder()

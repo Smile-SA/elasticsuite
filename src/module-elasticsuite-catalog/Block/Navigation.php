@@ -115,7 +115,10 @@ class Navigation extends \Magento\LayeredNavigation\Block\Navigation
         if (!$this->isInline()) {
             $requestParams    = array_keys($this->getRequest()->getParams());
             $displayedFilters = $this->getDisplayedFilters();
-            $expandedFacets   = $this->_scopeConfig->getValue(self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH);
+            $expandedFacets = (int) $this->_scopeConfig->getValue(
+                self::DEFAULT_EXPANDED_FACETS_COUNT_CONFIG_XML_PATH,
+                \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+            );
             $activeFilters    = [];
             if ($expandedFacets > 0) {
                 $activeFilters = range(0, min(count($displayedFilters), $expandedFacets) - 1);

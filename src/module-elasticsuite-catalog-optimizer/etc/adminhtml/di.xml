@@ -17,6 +17,14 @@
  -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <type name="Smile\ElasticsuiteCatalogRule\Controller\Adminhtml\Product\Rule\Conditions">
+        <arguments>
+            <argument name="acls" xsi:type="array">
+                <item name="manage_optimizers" xsi:type="string">Smile_ElasticsuiteCatalogOptimizer::manage</item>
+            </argument>
+        </arguments>
+    </type>
+
     <virtualType name="Smile\ElasticsuiteCatalogOptimizer\Ui\Component\Optimizer\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
         <arguments>
             <argument name="modifiers" xsi:type="array">

@@ -15,6 +15,7 @@ namespace Smile\ElasticsuiteCore\Block\Adminhtml\Healthcheck;
 
 use Magento\Backend\Block\Template;
 use Magento\Directory\Helper\Data as DirectoryHelper;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Healthcheck\CheckInterface;
@@ -29,11 +30,18 @@ use Smile\ElasticsuiteCore\Model\Healthcheck\HealthcheckList;
  */
 class MenuDecorator extends Template
 {
+    /** @var string */
+    // phpcs:ignore Generic.Files.LineLength
+    const XML_PATH_MENU_NOTIFICATION_SEVERITY_THRESHOLD = 'smile_elasticsuite_core_base_settings/healthcheck/menu_notification_severity_threshold';
+
     /** @var HealthcheckList */
     private $healthcheckList;
 
     /** @var ClientConfigurationInterface */
     private $clientConfiguration;
+
+    /** @var ScopeConfigInterface */
+    private $scopeConfig;
 
     /** @var integer */
     private $issuesCount;
@@ -43,6 +51,7 @@ class MenuDecorator extends Template
      *
      * @param HealthcheckList              $healthcheckList     Healthchecks list.
      * @param ClientConfigurationInterface $clientConfiguration Client configuration.
+     * @param ScopeConfigInterface         $scopeConfig         Scope configuration.
      * @param Template\Context             $context             Template context.
      * @param array                        $data                Data.
      * @param JsonHelper|null              $jsonHelper          Json helper.
@@ -51,6 +60,7 @@ class MenuDecorator extends Template
     public function __construct(
         HealthcheckList $healthcheckList,
         ClientConfigurationInterface $clientConfiguration,
+        ScopeConfigInterface $scopeConfig,
         Template\Context $context,
         array $data = [],
         ?JsonHelper $jsonHelper = null,
@@ -59,6 +69,7 @@ class MenuDecorator extends Template
         parent::__construct($context, $data, $jsonHelper, $directoryHelper);
         $this->healthcheckList = $healthcheckList;
         $this->clientConfiguration = $clientConfiguration;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -70,7 +81,7 @@ class MenuDecorator extends Template
     public function isEnabled()
     {
         if (false === $this->clientConfiguration->isDebugModeEnabled()) {
-            return ($this->getIssuesCount() > 0);
+            return ($this->getFilteredIssuesCount() > 0);
         }
 
         return false;
@@ -111,5 +122,24 @@ class MenuDecorator extends Template
     protected function getCacheTags()
     {
         return array_merge(parent::getCacheTags(), [HealthcheckList::CACHE_TAG]);
+    }
+
+    /**
+     * Retrieve the number of failed healthchecks filtered by severity threshold.
+     *
+     * @return int
+     */
+    private function getFilteredIssuesCount()
+    {
+        $threshold = (int) $this->scopeConfig->getValue(self::XML_PATH_MENU_NOTIFICATION_SEVERITY_THRESHOLD);
+        $count = 0;
+
+        foreach ($this->healthcheckList->getCheckResults() as $check) {
+            if ($check->getStatus() === CheckInterface::STATUS_FAILED && $check->getSeverity() <= $threshold) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 }

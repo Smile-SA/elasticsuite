@@ -123,4 +123,27 @@ interface RequestInterface extends \Magento\Framework\Search\RequestInterface
      * @return array
      */
     public function getSourceConfig();
+
+    /**
+     * Set the highlight configuration of the request.
+     *
+     * @param array $highlightConfig Highlight config.
+     *
+     * @return RequestInterface
+     */
+    public function setHighlightConfig($highlightConfig);
+
+    /**
+     * Return true if the request has specific highlight configuration.
+     *
+     * @return bool
+     */
+    public function hasHighlightConfig();
+
+    /**
+     * Return the specific highlight configuration which might be empty.
+     *
+     * @return array
+     */
+    public function getHighlightConfig();
 }

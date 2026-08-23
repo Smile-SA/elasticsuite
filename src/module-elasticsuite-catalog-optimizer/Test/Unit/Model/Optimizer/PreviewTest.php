@@ -168,7 +168,7 @@ class PreviewTest extends TestCase
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         $data = [
             [['quick_search_container'], 'catalog_product_autocomplete', null, null, null, null, null, false],
@@ -498,9 +498,8 @@ class PreviewTest extends TestCase
     private function getOptimizerMock(): \PHPUnit\Framework\MockObject\MockObject
     {
         return $this
-            ->getMockBuilder(Optimizer::class)
+            ->getMockBuilder(MockableOptimizer::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getSearchContainer', 'getQuickSearchContainer', 'getCatalogViewContainer'])
             ->getMock();
     }
 

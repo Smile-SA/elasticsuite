@@ -1,0 +1,14 @@
+query productPriceFilter($fromValue: String!, $toValue: String!) {
+  products(
+    filter: {
+      price: {from: $fromValue, to: $toValue}
+    }
+  ) {
+    total_count
+    items {
+        name
+        sku
+        stock_status
+    }
+  }
+}

@@ -19,10 +19,12 @@ namespace Smile\ElasticsuiteThesaurus\Test\Unit\Plugin;
 use Magento\Framework\Interception\DefinitionInterface;
 use Magento\Framework\Interception\PluginList\PluginList;
 use Magento\Framework\ObjectManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
+use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
@@ -58,20 +60,14 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     /**
      * @var array
      */
-    private $fields = [];
+    private static $fields = [];
 
     /**
-     * Constructor.
-     *
-     * @param string $name     Test case name.
-     * @param array  $data     Test case data.
-     * @param string $dataName Test case data name.
+     * {@inheritDoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public static function setUpBeforeClass(): void
     {
-        parent::__construct($name, $data, $dataName);
-
-        $this->fields = [
+        self::$fields = [
             new Field('idField', Field::FIELD_TYPE_INTEGER),
             new Field('fulltextSearch1', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true]),
             new Field('fulltextSearch2', Field::FIELD_TYPE_TEXT, null, ['is_searchable' => true, 'is_filterable' => false]),
@@ -88,17 +84,17 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     public function testMultipleSearchQueryDepthBuilder()
     {
         $queryFactory = $this->getQueryFactory($this->mockedQueryTypes);
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 0;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -155,17 +151,17 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     public function testMultipleSearchQueryDepthBuilderWithRewrites()
     {
         $queryFactory = $this->getQueryFactory($this->mockedQueryTypes);
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 0;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex);
+        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -217,18 +213,18 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $queryFactoryFullMock = $this->getMockBuilder(QueryFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $containerConfig = $this->getContainerConfigMock($this->fields);
+        $containerConfig = $this->getContainerConfigMock(self::$fields);
         $spellingType = SpellcheckerInterface::SPELLING_TYPE_EXACT;
         $maxRewrittenQueries = 1;
 
         $thesaurusConfigFactory = $this->getThesaurusConfigFactoryMock($maxRewrittenQueries);
-
         $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $textHelper = $this->getRealTextHelper();
 
-        // Passing the mock Query Factory to the plugin to count the occurrence of calls to 'create'.
-        $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex);
+        // Passing the mock Query Factory to the plugin to count the occurence of calls to 'create'.
+        $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
         // But passing the real Query Factory (with mocked factories) to the query builder itself.
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
@@ -284,24 +280,25 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     private function getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin)
     {
         $fieldFilters = $this->getFieldFilters();
+        $textHelper   = $this->getRealTextHelper();
 
         $pluginList = $this->getMockBuilder(Pluginlist::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $pluginList->method('getNext')->will($this->returnValueMap(
+        $pluginList->method('getNext')->willReturnMap(
             [
                 [Builder::class, 'create', '__self', [DefinitionInterface::LISTENER_AROUND => 'queryRewriteSynonyms']],
                 [Builder::class, 'create', 'queryRewriteSynonyms', null],
             ]
-        ));
-        $pluginList->method('getPlugin')->will($this->returnValueMap(
+        );
+        $pluginList->method('getPlugin')->willReturnMap(
             [
                 [Builder::class, 'queryRewriteSynonyms', $queryRewritePlugin],
             ]
-        ));
+        );
 
         $queryBuilderInterceptor = $this->getMockBuilder(FulltextQueryBuilderInterceptor::class)
-            ->setConstructorArgs([$queryFactory, $fieldFilters])
+            ->setConstructorArgs([$queryFactory, $textHelper, $fieldFilters])
             ->onlyMethods(['___init'])
             ->getMock();
 
@@ -330,10 +327,10 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
 
         foreach ($queryTypes as $currentType) {
             $queryMock = $this->getMockBuilder(QueryInterface::class)->getMock();
-            $queryMock->method('getType')->will($this->returnValue($currentType));
+            $queryMock->method('getType')->willReturn($currentType);
 
             $factory = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
-            $factory->method('create')->will($this->returnValue($queryMock));
+            $factory->method('create')->willReturn($queryMock);
 
             $factories[$currentType] = $factory;
         }
@@ -353,12 +350,12 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $thesaurusConfig = $this->getMockBuilder(ThesaurusConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $thesaurusConfig->method('getMaxRewrittenQueries')->will($this->returnValue($maxRewrittenQueries));
+        $thesaurusConfig->method('getMaxRewrittenQueries')->willReturn($maxRewrittenQueries);
 
         $thesaurusConfigFactory = $this->getMockBuilder(ThesaurusConfigFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $thesaurusConfigFactory->method('create')->will($this->returnValue($thesaurusConfig));
+        $thesaurusConfigFactory->method('create')->willReturn($thesaurusConfig);
 
         return $thesaurusConfigFactory;
     }
@@ -376,12 +373,22 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $mapping = new Mapping('idField', $fields);
-        $config->method('getMapping')->will($this->returnValue($mapping));
+        $config->method('getMapping')->willReturn($mapping);
 
         $relevanceConfig = $this->getRelevanceConfig();
-        $config->method('getRelevanceConfig')->will($this->returnValue($relevanceConfig));
+        $config->method('getRelevanceConfig')->willReturn($relevanceConfig);
 
         return $config;
+    }
+
+    /**
+     * Get Elasticsuite text helper mock.
+     *
+     * @return Text
+     */
+    private function getRealTextHelper()
+    {
+        return new Text();
     }
 
     /**
@@ -394,8 +401,8 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $relevanceConfig = $this->getMockBuilder(RelevanceConfigurationInterface::class)
             ->getMock();
 
-        $relevanceConfig->method('isFuzzinessEnabled')->will($this->returnValue(true));
-        $relevanceConfig->method('isPhoneticSearchEnabled')->will($this->returnValue(true));
+        $relevanceConfig->method('isFuzzinessEnabled')->willReturn(true);
+        $relevanceConfig->method('isPhoneticSearchEnabled')->willReturn(true);
 
         return $relevanceConfig;
     }
@@ -409,7 +416,7 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
     {
         $fieldFilterMock = $this->getMockBuilder(FieldFilterInterface::class)->getMock();
 
-        $fieldFilterMock->method('filterField')->will($this->returnValue(true));
+        $fieldFilterMock->method('filterField')->willReturn(true);
 
         return [
             'searchableFieldFilter'       => $fieldFilterMock,

@@ -163,7 +163,7 @@ class Slider extends AbstractRenderer
 
         $attribute = $this->getFilter()->getAttributeModel();
 
-        $format['pattern']           = (string) $attribute->getDisplayPattern();
+        $format['pattern']           = str_replace('%%', '%', (string) $attribute->getDisplayPattern());
         $format['precision']         = (int) $attribute->getDisplayPrecision();
         $format['requiredPrecision'] = (int) $attribute->getDisplayPrecision();
         $format['integerRequired']   = (int) $attribute->getDisplayPrecision() > 0;

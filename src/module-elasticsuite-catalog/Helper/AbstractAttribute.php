@@ -155,6 +155,10 @@ abstract class AbstractAttribute extends Mapping
             $options['default_search_analyzer'] = $attribute->getDefaultAnalyzer();
         }
 
+        if ($attribute->getScoringAlgorithm()) {
+            $options['similarity'] = $attribute->getScoringAlgorithm();
+        }
+
         return $options;
     }
 
@@ -247,7 +251,7 @@ abstract class AbstractAttribute extends Mapping
         }
 
         if ($this->usesSource($attributeId) && !is_array($value)) {
-            $value = explode(',', $value);
+            $value = explode(',', (string) $value);
         }
 
         if (!is_array($value)) {

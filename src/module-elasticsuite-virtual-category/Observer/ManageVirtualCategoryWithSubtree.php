@@ -12,19 +12,21 @@
  */
 namespace Smile\ElasticsuiteVirtualCategory\Observer;
 
+use Magento\Catalog\Model\Category;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCategoryRoot;
 use Magento\Framework\Registry;
 
 /**
- * Observer that handle proper category display when rendered under subtree of a virtual category root.
+ * Observer that handle to set the virtual category root
+ * and define proper category display when rendered under subtree of a virtual category root.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class DisplaySubtreeCategoryAsProductOnly implements ObserverInterface
+class ManageVirtualCategoryWithSubtree implements ObserverInterface
 {
     /**
      * @var VirtualCategoryRoot
@@ -55,13 +57,21 @@ class DisplaySubtreeCategoryAsProductOnly implements ObserverInterface
      *
      * @return void
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
+        $category = $observer->getCategory();
+
+        if ($category->getData('is_virtual_category')) {
+            $action = $observer->getControllerAction();
+            if ($action->getRequest()->getParam('cat')) {
+                 $this->virtualCategoryRoot->setAppliedRootCategory($category);
+            }
+        }
+
         if ($this->virtualCategoryRoot->getAppliedRootCategory()) {
-            $category = $observer->getCategory();
-            $category->setDisplayMode(\Magento\Catalog\Model\Category::DM_PRODUCT);
+            $category->setDisplayMode(Category::DM_PRODUCT);
             if ($this->registry->registry('current_category')) {
-                $this->registry->registry('current_category')->setDisplayMode(\Magento\Catalog\Model\Category::DM_PRODUCT);
+                $this->registry->registry('current_category')->setDisplayMode(Category::DM_PRODUCT);
             }
         }
     }

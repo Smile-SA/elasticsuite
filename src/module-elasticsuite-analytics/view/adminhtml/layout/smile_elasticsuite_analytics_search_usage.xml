@@ -50,7 +50,7 @@
                         </arguments>
                     </block>
 
-                    <block name="elasticsuite.analytics.search_usage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml">
+                    <block name="elasticsuite.analytics.search_usage.spellchecked_terms" class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage\SearchTerms" template="Smile_ElasticsuiteAnalytics::search/usage/terms.phtml" after="elasticsuite.analytics.search_usage.no_result_terms">
                         <arguments>
                             <argument name="report" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</argument>
                             <argument name="show_conversion_rate" xsi:type="boolean">true</argument>

@@ -32,6 +32,7 @@
 "Position","Positie"
 "Start Offset","Start Compensatie"
 "End Offset","Offset eindigen"
+"Token Type","Tokentype"
 "Show all indices","Toon alle indexen"
 "Hide external indices","Externe indexen verbergen"
 "The number of shards is properly configured for the Elasticsearch cluster. No action is required at this time.","Het aantal Scherven is correct geconfigureerd voor het Elasticsearch-cluster. Er is op dit moment geen actie vereist."

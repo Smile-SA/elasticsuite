@@ -1,21 +1,38 @@
-name: PHPStan Code Quality
+name: PHPStan Code Quality (2.10.x)
 
 on:
+  workflow_dispatch:
+    inputs:
+      phpstan_level:
+        description: 'PHPStan Level (default: 0)'
+        required: false
+        default: '0'
+      smilelab_phpstan_version:
+        description: 'Smilelab PHPStan Version (default: 1.0.3)'
+        required: false
+        default: '1.0.3'
+      phpstan_version:
+        description: 'PHPStan Version (default: 1.12.34)'
+        required: false
+        default: '1.12.34'
   push:
     branches:
-      - 2.11.x
-      - master
+      - 2.10.x
 
   pull_request_target:
     branches:
-      - 2.11.x
-      - master
-    types: [labeled,synchronize]
+        - 2.10.x
+    types: [labeled,ready_for_review]
+
+env:
+  PHPSTAN_LEVEL: ${{ inputs.phpstan_level || '0' }}
+  SMILELAB_PHPSTAN_VERSION: ${{ inputs.smilelab_phpstan_version || '1.0.3' }}
+  PHPSTAN_VERSION: ${{ inputs.phpstan_version || '1.12.34' }}
 
 jobs:
   build:
     if: |
-      ( ((github.event_name != 'pull_request') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
+      ( ((github.event_name != 'pull_request_target') || contains(github.event.pull_request.labels.*.name, 'safe to test'))
         && (github.event.pull_request.draft == false) )
     runs-on: ubuntu-22.04
     name: PHPStan Quality
@@ -24,30 +41,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - php-versions: '7.4'
+            magento-versions: '2.4.2-p2'
+            magento-editions: 'enterprise'
+            experimental: true
+          - php-versions: '7.4'
+            magento-versions: '2.4.3-p3'
+            magento-editions: 'enterprise'
+            experimental: false
           - php-versions: '8.1'
-            magento-versions: '2.4.6-p10'
+            magento-versions: '2.4.4-p16'
             magento-editions: 'enterprise'
             experimental: false
-          - php-versions: '8.2'
-            magento-versions: '2.4.6-p10'
+          - php-versions: '8.1'
+            magento-versions: '2.4.5-p15'
             magento-editions: 'enterprise'
             experimental: false
-          - php-versions: '8.2'
-            magento-versions: '2.4.7-p5'
-            magento-editions: 'enterprise'
-            experimental: false
-          - php-versions: '8.3'
-            magento-versions: '2.4.7-p5'
-            magento-editions: 'enterprise'
-            experimental: true
-          - php-versions: '8.3'
-            magento-versions: '2.4.8'
-            magento-editions: 'enterprise'
-            experimental: true
-          - php-versions: '8.4'
-            magento-versions: '2.4.8'
-            magento-editions: 'enterprise'
-            experimental: true
 
     continue-on-error: ${{ matrix.experimental }}
 
@@ -62,6 +71,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
+          allow-unsafe-pr-checkout: true
 
       - name: "[Init] Setup PHP"
         uses: shivammathur/setup-php@v2
@@ -86,10 +96,28 @@ jobs:
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
           if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
             composer self-update --1
-          elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
-            composer self-update --2.2
           else
-            composer self-update 2.7.9
+            composer self-update --2.2
+          fi
+
+      - name: "[Init] Authorize composer plugins manually if needed"
+        env:
+          MAGENTO_VERSION: ${{ matrix.magento-versions }}
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.4") ]; then
+            composer config --global allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+            composer config --global allow-plugins.laminas/laminas-dependency-plugin true
+            composer config --global allow-plugins.magento/* true
+          fi
+
+      - name: "[Init] Optimize Composer"
+        env:
+          MAGENTO_VERSION: ${{ matrix.magento-versions }}
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
+            composer global require hirak/prestissimo:0.3.10
           fi
 
       - name: "[Init] Determine composer cache directory"
@@ -145,23 +173,27 @@ jobs:
           sudo chown -R $USER:www-data $MAGENTO_ROOT
           composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
 
-      - name: "[Init] Add current build of Elasticsuite"
+      - name: "[Init] Fix symfony/console and symfony string version"
+        working-directory: ${{ env.magento-directory }}
         env:
           MAGENTO_VERSION: ${{ matrix.magento-versions }}
-        working-directory: ${{ env.magento-directory }}
         run: |
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
-          OPTS="--update-with-all-dependencies --minimal-changes"
-          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
-            OPTS=""
+          if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.4") ]; then
+            composer require symfony/console:4.4.26 --ignore-platform-reqs
+            composer require symfony/string:5.4.2 --ignore-platform-reqs
           fi
-          composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs $OPTS
+
+      - name: "[Init] Add current build of Elasticsuite"
+        working-directory: ${{ env.magento-directory }}
+        run: |
+          composer require --dev "smile/elasticsuite:${GITHUB_BASE_REF:-${GITHUB_REF##*/}}-dev" --ignore-platform-reqs
           rm -rf vendor/smile/elasticsuite/**
           cp -Rf $GITHUB_WORKSPACE/* vendor/smile/elasticsuite/
 
       - name: "[Init] Unconditionally add phpstan/phpstan"
         working-directory: ${{ env.magento-directory }}
-        run: composer require --dev smile/magento2-smilelab-phpstan ^1.0
+        run: composer require --dev smile/magento2-smilelab-phpstan:${{ env.SMILELAB_PHPSTAN_VERSION }} phpstan/phpstan:${{ env.PHPSTAN_VERSION }}
 
       - name: "[Init] Fix Magento directory permissions"
         env:
@@ -189,7 +221,7 @@ jobs:
           vendor/bin/phpstan -V
           vendor/bin/phpstan clear-result-cache
           cp -a vendor/smile/elasticsuite/phpstan.neon.dist elastan.neon.dist
-          vendor/bin/phpstan analyze -c elastan.neon.dist --level=0 vendor/smile/elasticsuite
+          vendor/bin/phpstan analyze -c elastan.neon.dist --level=${{ env.PHPSTAN_LEVEL }} vendor/smile/elasticsuite
 
       - name: "[Test] PHPUnit"
         env:
@@ -201,6 +233,10 @@ jobs:
             sudo chmod u+x vendor/bin/phpunit
             vendor/bin/phpunit -c vendor/smile/elasticsuite/Resources/tests/unit/phpunit.xml
           fi
+
+      - name: "[Test] Collect i18n phrases"
+        working-directory: ${{ env.magento-directory }}
+        run: php bin/magento i18n:collect-phrases vendor/smile/elasticsuite 1>/dev/null
 
       - name: "[End] Job failed, gathering logs"
         env:

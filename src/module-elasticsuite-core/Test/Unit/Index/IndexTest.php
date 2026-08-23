@@ -42,7 +42,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $fieldMock   = $this->getMockBuilder(FieldInterface::class)->getMock();
 
         $mappingMock = $this->getMockBuilder(MappingInterface::class)->getMock();
-        $mappingMock->method('getIdField')->will($this->returnValue($fieldMock));
+        $mappingMock->method('getIdField')->willReturn($fieldMock);
 
 
         $this->index = new Index('identifier', 'name', 'type', $mappingMock);

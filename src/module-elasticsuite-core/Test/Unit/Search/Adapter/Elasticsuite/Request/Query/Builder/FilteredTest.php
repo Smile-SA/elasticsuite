@@ -74,6 +74,37 @@ class FilteredTest extends AbstractComplexQueryBuilder
     }
 
     /**
+     * Test the builder with a filtered query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedFilteredQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $filteredQuery = new FilteredQuery(
+            $this->getSubQueryMock('baseQuery'),
+            $this->getSubQueryMock('filterQuery')
+        );
+        $filteredQuery->setName('queryName');
+        $query = $builder->buildQuery($filteredQuery);
+
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
+
+        $filteredQuery = new FilteredQuery(
+            $this->getSubQueryMock('baseQuery'),
+            $this->getSubQueryMock('filterQuery'),
+            'originalQueryName'
+        );
+        $filteredQuery->setName('queryName');
+        $query = $builder->buildQuery($filteredQuery);
+
+        $this->assertArrayHasKey('_name', $query['bool']);
+        $this->assertEquals('queryName', $query['bool']['_name']);
+    }
+
+    /**
      * Test the builder with a filter query but an empty base query.
      *
      * @return void

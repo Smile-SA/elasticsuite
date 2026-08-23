@@ -333,6 +333,32 @@ class CatalogSetup
 
 
     /**
+     * Add "scoring_algorithm" field to catalog_eav_attribute table.
+     *
+     * @param \Magento\Framework\Setup\SchemaSetupInterface $setup Schema Setup
+     *
+     * @return void
+     */
+    public function addScoringAlgorithm(\Magento\Framework\Setup\SchemaSetupInterface $setup)
+    {
+        $connection = $setup->getConnection();
+        $table      = $setup->getTable('catalog_eav_attribute');
+
+        // Append a column 'scoring_algorithm' into the db.
+        $connection->addColumn(
+            $table,
+            'scoring_algorithm',
+            [
+                'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'nullable' => false,
+                'default'  => (string) FieldInterface::SIMILARITY_DEFAULT,
+                'length'   => 30,
+                'comment'  => 'Text scoring algorithm for this field',
+            ]
+        );
+    }
+
+    /**
      * Update 'created_at' and 'updated_at' attributes and set them to editable in the back-office.
      *
      * @param \Magento\Eav\Setup\EavSetup $eavSetup EAV module Setup

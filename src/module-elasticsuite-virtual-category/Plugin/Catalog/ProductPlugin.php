@@ -94,13 +94,15 @@ class ProductPlugin
      */
     public function aroundCanBeShowInCategory(Product $product, \Closure $proceed, $categoryId)
     {
-        try {
-            $category = $this->categoryRepository->get($categoryId);
-            if ((bool) $category->getIsVirtualCategory() === true) {
-                return true;
+        if ($categoryId) {
+            try {
+                $category = $this->categoryRepository->get($categoryId);
+                if ((bool) $category->getIsVirtualCategory() === true) {
+                    return true;
+                }
+            } catch (NoSuchEntityException | \Exception $e) {
+                $category = null;
             }
-        } catch (NoSuchEntityException $e) {
-            $category = null;
         }
 
         return $proceed($categoryId);

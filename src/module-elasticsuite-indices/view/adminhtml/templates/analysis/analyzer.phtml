@@ -88,6 +88,7 @@ $formId = 'form-' . $blockId;
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Position') ?></th>
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Start Offset') ?></th>
                         <th class="data-grid-th"><?= /* @escapeNotVerified */ __('End Offset') ?></th>
+                        <th class="data-grid-th"><?= /* @escapeNotVerified */ __('Token Type') ?></th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -173,16 +174,24 @@ $formId = 'form-' . $blockId;
                                 $('#error-message').remove();
                                 $('#admin__es-analysis-tokens tbody tr').remove();
 
-                                let results = '';
+                                let results = [];
                                 $.each(responseData.output['tokens'], function (idx, row) {
-                                    // token	position	start offset	end offset
-                                    results += '<tr class="data-row">' +
-                                        '<td>' + row.token + '</td>' +
-                                        '<td>' + row.position + '</td>' +
-                                        '<td>' + row.start_offset + '</td>' +
-                                        '<td>' + row.end_offset + '</td></tr>';
+                                    // token	position	start_offset	end_offset
+                                    let resultRow = document.createElement('tr')
+                                    resultRow.setAttribute('class', 'data-row');
+                                    let tokenCell = document.createElement('td');
+                                    tokenCell.innerText = row.token;
+                                    let positionCell = document.createElement('td');
+                                    positionCell.innerText = row.position;
+                                    let startOffsetCell = document.createElement('td');
+                                    startOffsetCell.innerText = row.start_offset;
+                                    let endOffsetCell = document.createElement('td');
+                                    endOffsetCell.innerText = row.end_offset;
+                                    let tokenTypeCell = document.createElement('td');
+                                    tokenTypeCell.innerText = row.type;
+                                    resultRow.append(tokenCell, positionCell, startOffsetCell, endOffsetCell, tokenTypeCell);
+                                    results.push(resultRow);
                                 });
-
                                 $('#admin__es-analysis-tokens').show();
                                 $('#admin__es-analysis-tokens tbody').append(results).slideDown(1000);
                             }

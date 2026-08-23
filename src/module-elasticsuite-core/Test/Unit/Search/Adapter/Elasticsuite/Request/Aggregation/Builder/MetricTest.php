@@ -118,7 +118,7 @@ class MetricTest extends \PHPUnit\Framework\TestCase
         $this->expectExceptionMessage("Query builder : invalid aggregation type invalidType.");
         $this->expectException(\InvalidArgumentException::class);
         $metricBucket = $this->getMockBuilder(BucketInterface::class)->getMock();
-        $metricBucket->method('getType')->will($this->returnValue('invalidType'));
+        $metricBucket->method('getType')->willReturn('invalidType');
 
         $this->getAggregationBuilder()->buildBucket($metricBucket);
     }

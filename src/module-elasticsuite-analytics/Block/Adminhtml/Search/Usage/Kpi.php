@@ -13,6 +13,9 @@
  */
 namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage;
 
+use Magento\Backend\Block\Template\Context;
+use Smile\ElasticsuiteAnalytics\Model\ReportInterface;
+
 /**
  * Block used to display KPIs in the search usage dashboard.
  *
@@ -23,24 +26,24 @@ namespace Smile\ElasticsuiteAnalytics\Block\Adminhtml\Search\Usage;
 class Kpi extends \Magento\Backend\Block\Template
 {
     /**
-     * @var \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report
+     * @var ReportInterface[]
      */
-    private $report;
+    private $reports = [];
 
     /**
      * Constructor.
      *
-     * @param \Magento\Backend\Block\Template\Context                    $context Context.
-     * @param \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report  Report model.
-     * @param array                                                      $data    Data.
+     * @param Context           $context Context.
+     * @param ReportInterface[] $reports Report model whose results will be aggregated.
+     * @param array             $data    Data.
      */
     public function __construct(
-        \Magento\Backend\Block\Template\Context $context,
-        \Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report $report,
+        Context $context,
+        array $reports = [],
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->report = $report;
+        $this->reports = $reports;
     }
 
     /**
@@ -53,7 +56,9 @@ class Kpi extends \Magento\Backend\Block\Template
         $data = [];
 
         try {
-            $data = $this->report->getData();
+            foreach ($this->reports as $report) {
+                $data += $report->getData();
+            }
         } catch (\LogicException $e) {
             ;
         }

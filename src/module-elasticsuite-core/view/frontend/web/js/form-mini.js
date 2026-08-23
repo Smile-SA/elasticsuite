@@ -301,7 +301,7 @@ define([
                                 self._resetResponseList(false);
                             })
                             .on('mouseout', function () {
-                                if (!self._getLastElement() && self._getLastElement().hasClass(self.options.selectClass)) {
+                                if (self._getLastElement() && self._getLastElement().hasClass(self.options.selectClass)) {
                                     $(this).removeClass(self.options.selectClass);
                                     self._resetResponseList(false);
                                 }

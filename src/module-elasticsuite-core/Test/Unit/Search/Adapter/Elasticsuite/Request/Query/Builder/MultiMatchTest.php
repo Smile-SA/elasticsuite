@@ -77,6 +77,36 @@ class MultiMatchTest extends AbstractSimpleQueryBuilder
     }
 
     /**
+     * Test the builder with a multi match query named or renamed after creation.
+     *
+     * @return void
+     */
+    public function testLaterNamedMultiMatchQueryBuilder()
+    {
+        $builder = $this->getQueryBuilder();
+
+        $matchQuery = new MultiMatchQuery('search text', ['searchField' => 1]);
+        $matchQuery->setName('queryName');
+        $query = $builder->buildQuery($matchQuery);
+
+        $this->assertArrayHasKey('_name', $query['multi_match']);
+        $this->assertEquals('queryName', $query['multi_match']['_name']);
+
+        $matchQuery = new MultiMatchQuery(
+            'search text',
+            ['searchField' => 1],
+            MultiMatchQuery::DEFAULT_MINIMUM_SHOULD_MATCH,
+            MultiMatchQuery::DEFAULT_TIE_BREAKER,
+            'originalQueryName'
+        );
+        $matchQuery->setName('queryName');
+        $query = $builder->buildQuery($matchQuery);
+
+        $this->assertArrayHasKey('_name', $query['multi_match']);
+        $this->assertEquals('queryName', $query['multi_match']['_name']);
+    }
+
+    /**
      * Test the builder with mandatory + cutoff_frequency params.
      *
      * @return void
@@ -110,9 +140,9 @@ class MultiMatchTest extends AbstractSimpleQueryBuilder
     public function testFuzzyMultiMatchQueryBuilder()
     {
         $fuzzyConfiguration = $this->getMockBuilder(FuzzinessConfigurationInterface::class)->getMock();
-        $fuzzyConfiguration->method('getValue')->will($this->returnValue('AUTO'));
-        $fuzzyConfiguration->method('getPrefixLength')->will($this->returnValue(1));
-        $fuzzyConfiguration->method('getMaxExpansion')->will($this->returnValue(10));
+        $fuzzyConfiguration->method('getValue')->willReturn('AUTO');
+        $fuzzyConfiguration->method('getPrefixLength')->willReturn(1);
+        $fuzzyConfiguration->method('getMaxExpansion')->willReturn(10);
 
         $builder = $this->getQueryBuilder();
 

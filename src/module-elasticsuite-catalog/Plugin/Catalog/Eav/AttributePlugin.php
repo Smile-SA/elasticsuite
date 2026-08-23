@@ -32,6 +32,11 @@ use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 class AttributePlugin
 {
     /**
+     * List of _mapping field properties_ for which we want to detect changes.
+     * Sometimes the mapping field property name differs from the attribute configuration property name.
+     * For instance attribute[search_analyzer] => field[default_search_analyzer]
+     *         or attribute[scoring_algorithm] => field[similarity].
+     *
      * @var array
      */
     private $updateMappingFields = [
@@ -43,9 +48,15 @@ class AttributePlugin
         'include_zero_false_values',
         'disable_norms',
         'default_search_analyzer',
+        'similarity',
     ];
 
     /**
+     * List of _attribute properties_ for which we went to detect changes.
+     * Sometimes the attribute configuration property name differs from the mapping field property name.
+     * For instance attribute[search_analyzer] => field[default_search_analyzer]
+     *         or attribute[scoring_algorithm] => field[similarity].
+     *
      * @var string[]
      */
     private $cleanCacheFields = [
@@ -59,6 +70,7 @@ class AttributePlugin
         'disable_norms',
         'is_spannable',
         'default_analyzer',
+        'scoring_algorithm',
     ];
 
     /**
@@ -215,6 +227,14 @@ class AttributePlugin
                         $updateMapping   = true;
                         $invalidateIndex = true;
                     }
+                    continue;
+                }
+
+                if ($field === 'similarity') {
+                    $cleanCache = true;
+                    // Updating the similarity is not possible on a field with shingles.
+                    $updateMapping   = false;
+                    $invalidateIndex = true;
                     continue;
                 }
 

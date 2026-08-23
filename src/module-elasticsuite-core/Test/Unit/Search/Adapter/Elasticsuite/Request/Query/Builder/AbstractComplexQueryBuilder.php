@@ -37,7 +37,7 @@ abstract class AbstractComplexQueryBuilder extends AbstractSimpleQueryBuilder
             return $query->getName();
         };
 
-        $mock->method('buildQuery')->will($this->returnCallback($buildQueryCallback));
+        $mock->method('buildQuery')->willReturnCallback($buildQueryCallback);
 
         return $mock;
     }
@@ -52,7 +52,7 @@ abstract class AbstractComplexQueryBuilder extends AbstractSimpleQueryBuilder
     protected function getSubQueryMock($queryName)
     {
         $mock = $this->getMockBuilder(\Smile\ElasticsuiteCore\Search\Request\QueryInterface::class)->getMock();
-        $mock->method('getName')->will($this->returnValue($queryName));
+        $mock->method('getName')->willReturn($queryName);
 
         return $mock;
     }

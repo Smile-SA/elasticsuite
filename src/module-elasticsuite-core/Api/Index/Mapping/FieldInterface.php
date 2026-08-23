@@ -54,10 +54,28 @@ interface FieldInterface
     const ANALYZER_EDGE_NGRAM = 'standard_edge_ngram';
 
     /**
+     * Token filter types declarations.
+     */
+    const TOKEN_FILTER_TYPE_WORD_DELIMITER = 'word_delimiter_graph';
+    const TOKEN_FILTER_TYPE_REMOVE_DUPLICATES = 'remove_duplicates';
+
+    /**
+     * Tokenizer declarations.
+     */
+    const TOKENIZER_WHITESPACE = 'whitespace';
+
+    /**
      * Field filter logical operators.
      */
     const FILTER_LOGICAL_OPERATOR_OR   = 0;
     const FILTER_LOGICAL_OPERATOR_AND  = 1;
+
+    /**
+     * Similarities / Text scoring models.
+     */
+    const SIMILARITY_DEFAULT = 'default';
+    const SIMILARITY_BM25    = 'BM25';
+    const SIMILARITY_BOOLEAN = 'boolean';
 
     /**
      * Field name.
@@ -186,6 +204,20 @@ interface FieldInterface
      * @return int
      */
     public function getFilterLogicalOperator();
+
+    /**
+     * Returns true if the field as a non-default scoring model/similarity.
+     *
+     * @return bool
+     */
+    public function hasSpecificSimilarity();
+
+    /**
+     * Retrieve the field scoring model/similarity.
+     *
+     * @return string
+     */
+    public function getSimilarity();
 
     /**
      * @return array
