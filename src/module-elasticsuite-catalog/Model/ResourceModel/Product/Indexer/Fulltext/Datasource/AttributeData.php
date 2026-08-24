@@ -15,12 +15,10 @@
 namespace Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\CatalogInventory\Model\Configuration;
 use Magento\Eav\Model\Config;
 use Magento\Catalog\Model\Product;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\EntityManager\MetadataPool;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -62,22 +60,22 @@ class AttributeData extends AbstractAttributeData
     private $eavConfig;
 
     /**
-     * Scope Config
+     * Children stock filter.
      *
-     * @var ScopeConfigInterface
+     * @var ChildrenStockFilterInterface
      */
-    private ScopeConfigInterface $scopeConfig;
+    private ChildrenStockFilterInterface $childrenStockFilter;
 
     /**
      * Constructor.
      *
-     * @param ResourceConnection    $resource           Database adapter.
-     * @param StoreManagerInterface $storeManager       Store manager.
-     * @param MetadataPool          $metadataPool       Metadata Pool.
-     * @param ProductType           $catalogProductType Product type.
-     * @param Config                $eavConfig          Eav config.
-     * @param ScopeConfigInterface  $scopeConfig        Scope Config.
-     * @param string                $entityType         Product entity type.
+     * @param ResourceConnection           $resource            Database adapter.
+     * @param StoreManagerInterface        $storeManager        Store manager.
+     * @param MetadataPool                 $metadataPool        Metadata Pool.
+     * @param ProductType                  $catalogProductType  Product type.
+     * @param Config                       $eavConfig           Eav config.
+     * @param ChildrenStockFilterInterface $childrenStockFilter Children stock filter.
+     * @param string                       $entityType          Product entity type.
      */
     public function __construct(
         ResourceConnection $resource,
@@ -85,13 +83,13 @@ class AttributeData extends AbstractAttributeData
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
         Config $eavConfig,
-        ScopeConfigInterface $scopeConfig,
+        ChildrenStockFilterInterface $childrenStockFilter,
         $entityType = ProductInterface::class
     ) {
         parent::__construct($resource, $storeManager, $metadataPool, $entityType);
         $this->catalogProductType = $catalogProductType;
         $this->eavConfig = $eavConfig;
-        $this->scopeConfig = $scopeConfig;
+        $this->childrenStockFilter = $childrenStockFilter;
     }
 
     /**
@@ -151,6 +149,7 @@ class AttributeData extends AbstractAttributeData
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection Attribute Collection
      *
      * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     * @throws LocalizedException
      */
     public function addIndexedFilterToAttributeCollection(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection
@@ -227,7 +226,6 @@ class AttributeData extends AbstractAttributeData
         $entityIdField   = $this->getEntityMetaData($this->getEntityTypeId())->getIdentifierField();
         $entityTable     = $this->getTable($this->getEntityMetaData($this->getEntityTypeId())->getEntityTable());
         $relationTable   = $this->getTable($relation->getTable());
-        $inventoryTable  = $this->getTable('cataloginventory_stock_item');
         $parentFieldName = $relation->getParentFieldName();
         $childFieldName  = $relation->getChildFieldName();
 
@@ -246,16 +244,10 @@ class AttributeData extends AbstractAttributeData
             ->where("parent.{$entityIdField} in (?)", $parentIds);
 
         /**
-         * If Catalog - Inventory - Stock Options - Display of Stock Products is set to NO,
-         * then exclude this children from the query results.
+         * If Catalog - Inventory - Stock Options - Display Out of Stock Products is set to NO,
+         * then exclude the non salable children from the query results.
          */
-        if (!$this->scopeConfig->getValue(Configuration::XML_PATH_SHOW_OUT_OF_STOCK)) {
-            $select->joinInner(
-                ['stock' => $inventoryTable],
-                new \Zend_Db_Expr("child.{$entityIdField} = stock.product_id AND stock.is_in_stock = 1"),
-                []
-            );
-        }
+        $select = $this->childrenStockFilter->addSalableFilter($select, 'child', (int) $storeId);
 
         if ($relation->getWhere() !== null) {
             $select->where($relation->getWhere());
