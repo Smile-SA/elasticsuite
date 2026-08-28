@@ -131,6 +131,7 @@ class QueryBuilder
 
     /**
      * Create a query for special attribute.
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param ProductCondition $productCondition Product condition.
      *
