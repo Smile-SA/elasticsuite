@@ -132,13 +132,57 @@
     .customer-company-selector {
         color: #41362f;
         float: left;
-        font-size: 1.3rem;
+        font-size: 1.4rem; // select text only - the label below sets its own font-size
         margin-top: .59rem;
     }
 
-    .customer-company-selector label {
-        margin-right: 1rem;
-        font-weight: 700;
+    // Reused (via the fieldset's additionalClasses) to collapse the ui_component's standard
+    // vertical-form wrapper divs into the same compact inline layout as the rule above.
+    .customer-company-selector.fieldset-wrapper {
+        display: inline-block;
+        vertical-align: middle;
+
+        .admin__fieldset-wrapper-content,
+        .admin__fieldset {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .admin__field {
+            display: flex;
+            align-items: center;
+            margin: 0;
+        }
+
+        .admin__field-label {
+            margin: 0;
+            width: auto; // core's 25%-width rule clips "Company:" under our auto-sized layout
+            margin-left: 0;
+            white-space: nowrap;
+            flex-shrink: 0; // flex items shrink by default, which was wrapping the label text
+
+            label {
+                margin: 0 1rem 0 0; // matches .customer-group-selector label's spacing
+                font-weight: 700;
+                font-size: 1.3rem;
+
+                span {
+                    white-space: nowrap; // core's span rule otherwise wraps "Company:"
+                }
+            }
+        }
+
+        .admin__field-control {
+            width: auto;
+            min-width: 28rem; // the dropdown panel's width tracks this
+            margin-left: 0; // core's 30px gutter, unwanted in this inline layout
+
+            .admin__action-multiselect-text {
+                line-height: 1.9rem; // matches the arrow button's fixed 32px height
+            }
+        }
     }
 
     .page-actions-inner {
