@@ -6,14 +6,14 @@
  *
  * @category  Smile
  * @package   Smile\ElasticsuiteAnalytics
- * @author    Vadym Honcharuk <vahonc@smile.fr>
- * @copyright 2024 Smile
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2026 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
-var config = {
-    map: {
-        '*': {
-            'customerGroupSelector': 'Smile_ElasticsuiteAnalytics/js/report/customer-group-selector'
-        }
-    }
-};
+define([
+    'Magento_Ui/js/form/provider'
+], function (Provider) {
+    'use strict';
+
+    return Provider.extend({});
+});

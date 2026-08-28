@@ -34,6 +34,13 @@ use Smile\ElasticsuiteTracker\Api\SessionIndexInterface;
 class Usage extends Action
 {
     /**
+     * Also required by the ajax siblings under Search\Usage\*.php.
+     *
+     * @var string
+     */
+    const ADMIN_RESOURCE = 'Smile_ElasticsuiteAnalytics::search_usage';
+
+    /**
      * @var IndexOperationInterface
      */
     private $indexOperation;
