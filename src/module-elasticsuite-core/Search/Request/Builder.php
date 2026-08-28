@@ -231,6 +231,7 @@ class Builder
             'isUsingAllTokens'  => $containerConfig->getRelevanceConfig()->isUsingAllTokens(),
             'isUsingReference'  => $containerConfig->getRelevanceConfig()->isUsingReferenceAnalyzer(),
             'isUsingEdgeNgram'  => $containerConfig->getRelevanceConfig()->isUsingEdgeNgramAnalyzer(),
+            'isExcludingConcatenationFalseNegatives' => $containerConfig->getRelevanceConfig()->isExcludingConcatenationFalseNegatives(),
         ];
 
         $spellcheckRequest = $this->spellcheckRequestFactory->create($spellcheckRequestParams);
