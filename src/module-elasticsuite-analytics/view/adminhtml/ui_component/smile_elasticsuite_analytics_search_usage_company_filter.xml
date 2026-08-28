@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteAnalytics
+ * @author    Richard BAYET <richard.bayet@smile.fr>
+ * @copyright 2026 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">smile_elasticsuite_analytics_search_usage_company_filter.smile_elasticsuite_analytics_search_usage_company_filter_data_source</item>
+            <item name="deps" xsi:type="string">smile_elasticsuite_analytics_search_usage_company_filter.smile_elasticsuite_analytics_search_usage_company_filter_data_source</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <namespace>smile_elasticsuite_analytics_search_usage_company_filter</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>smile_elasticsuite_analytics_search_usage_company_filter.smile_elasticsuite_analytics_search_usage_company_filter_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="smile_elasticsuite_analytics_search_usage_company_filter_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Smile_ElasticsuiteAnalytics/js/dashboard/provider</item>
+            </item>
+        </argument>
+        <!-- Never a real request param here - keeps Form::getDataSourceData()'s record lookup
+             deterministically null, so CompanyFilterDataProvider can key on a fixed ''. -->
+        <dataProvider class="Smile\ElasticsuiteAnalytics\Model\Search\Usage\CompanyFilterDataProvider" name="smile_elasticsuite_analytics_search_usage_company_filter_data_source">
+            <settings>
+                <requestFieldName>company_filter_record_id</requestFieldName>
+                <primaryFieldName>company_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="company_filter">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string"/>
+                <!-- Reuses the customer-company-selector styling from the old static <select> block -
+                     see _module.less. -->
+                <item name="additionalClasses" xsi:type="string">customer-company-selector</item>
+            </item>
+        </argument>
+        <field name="company_id">
+            <argument name="data" xsi:type="array">
+                <item name="options" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\CompanyFilterOptions</item>
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Company:</item>
+                    <item name="componentType" xsi:type="string">field</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="component" xsi:type="string">Smile_ElasticsuiteAnalytics/js/dashboard/company-filter</item>
+                    <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="dataScope" xsi:type="string">company_id</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="disableLabel" xsi:type="boolean">true</item>
+                    <item name="multiple" xsi:type="boolean">false</item>
+                    <!-- filterOptions renders the search box/empty-state; searchOptions makes typing
+                         trigger ajax search (loadOptions()) rather than filtering preloaded options. -->
+                    <item name="filterOptions" xsi:type="boolean">true</item>
+                    <item name="searchOptions" xsi:type="boolean">true</item>
+                    <item name="searchUrl" xsi:type="url" path="smile_elasticsuite_analytics/search_usage/companySearch"/>
+                    <!-- Companies are flat, not a tree - showPath's default crashes on ajax results
+                         (getPath() reads option.path, only ever set on static options). -->
+                    <item name="showPath" xsi:type="boolean">false</item>
+                    <!-- Shows the "x" remove-selected icon so "All Companies" (synthetic, never
+                         returned by the ajax search) stays reachable after picking a real company. -->
+                    <item name="isRemoveSelectedIcon" xsi:type="boolean">true</item>
+                    <item name="filterRateLimit" xsi:type="number">300</item>
+                    <item name="filterRateLimitMethod" xsi:type="string">notifyWhenChangesStop</item>
+                    <!-- Also caps the initial preload triggered on open - see company-filter.js. -->
+                    <item name="pageLimit" xsi:type="number">10</item>
+                    <item name="emptyOptionsHtml" xsi:type="string" translate="true">Start typing to find a company</item>
+                    <!-- Native input placeholder, unlike emptyOptionsHtml above stays visible once
+                         the preloaded options are showing - only clears while text is typed. -->
+                    <item name="filterPlaceholder" xsi:type="string" translate="true">Start typing to find a company</item>
+                    <item name="selectedPlaceholders" xsi:type="array">
+                        <item name="defaultPlaceholder" xsi:type="string" translate="true">All Companies</item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>
