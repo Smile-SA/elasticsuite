@@ -94,6 +94,11 @@ class Factory
     const TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH = 'spellchecking/term_vectors/use_edge_ngram_analyzer';
 
     /**
+     * XML node for excluding reference analyzer word-concatenation artifacts in term vectors configuration.
+     */
+    const TERM_VECTORS_EXCLUDE_CONCAT_FALSE_NEGATIVES_CONFIG_XML_PATH = 'spellchecking/term_vectors/exclude_concatenation_false_negatives';
+
+    /**
      * @var RelevanceConfigurationInterface[]
      */
     private $cachedConfig = [];
@@ -171,6 +176,7 @@ class Factory
             'useAllTokens'                      => $this->isUsingAllTokensConfiguration($scopeCode),
             'useReferenceAnalyzer'              => $this->isUsingReferenceAnalyzerConfiguration($scopeCode),
             'useEdgeNgramAnalyzer'              => $this->isUsingEdgeNgramAnalyzerConfiguration($scopeCode),
+            'excludeConcatenationFalseNegatives' => $this->isExcludingConcatenationFalseNegativesConfiguration($scopeCode),
             'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
             'exactMatchSingleTermBoostsCustomized'  => $this->areExactMatchCustomBoostValuesEnabled($scopeCode),
             'exactMatchSingleTermPhraseMatchBoost'  => $this->getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode),
@@ -432,6 +438,21 @@ class Factory
     private function isUsingEdgeNgramAnalyzerConfiguration($scopeCode)
     {
         return (bool) $this->getConfigValue(self::TERM_VECTORS_USE_EDGE_NGRAM_CONFIG_XML_PATH, $scopeCode);
+    }
+
+    /**
+     * Retrieve term vectors reference analyzer concatenation exclusion configuration for a container.
+     *
+     * @param string $scopeCode The scope code
+     *
+     * @return bool
+     */
+    private function isExcludingConcatenationFalseNegativesConfiguration($scopeCode)
+    {
+        return (bool) $this->getConfigValue(
+            self::TERM_VECTORS_EXCLUDE_CONCAT_FALSE_NEGATIVES_CONFIG_XML_PATH,
+            $scopeCode
+        );
     }
 
     /**

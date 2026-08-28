@@ -212,6 +212,15 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment><![CDATA[Experimental: Include the 'edge_ngram' collector field which contains all searchable fields using an analyzer containing an edge ngram component (like 'standard_edge_ngram') when performing the term vectors request. Useful for triggering exact matching on partial search terms that are only present in fields using an edge ngram component.]]></comment>
                 </field>
+                <field id="exclude_concatenation_false_negatives" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInContainer="1" showInStore="1">
+                    <label>[Experimental] Exclude reference analyzer concatenation false negatives</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="use_all_tokens">1</field>
+                        <field id="use_reference_analyzer">1</field>
+                    </depends>
+                    <comment><![CDATA[Experimental: When using both "all tokens" and the "reference" analyzer, exclude synthetic multi-word concatenations produced only by the reference analyzer (e.g. "beachball" from "beach ball") from term vector stats when every constituent word is otherwise found, to avoid falsely triggering a fuzzy/approximate search for correctly-spelled multi-word queries.]]></comment>
+                </field>
             </group>
         </section>
     </system>
