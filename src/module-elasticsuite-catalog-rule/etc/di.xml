@@ -22,6 +22,7 @@
         <arguments>
             <argument name="attributes" xsi:type="array">
                 <item name="has_image" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\HasImage</item>
+                <item name="is_saleable" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsSaleable</item>
                 <item name="stock.is_in_stock" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsInStock</item>
                 <item name="price.is_discount" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount</item>
                 <item name="is_bundle" xsi:type="object">isBundleProduct</item>
