@@ -180,6 +180,13 @@ interface FieldInterface
     public function getDefaultSearchAnalyzer();
 
     /**
+     * Return custom search analyzers used for fulltext searches.
+     *
+     * @return array
+     */
+    public function getCustomSearchAnalyzers();
+
+    /**
      * Merge field config and return a new instance with the updated config.
      *
      * @param array $config field configuration to merge with existing.
