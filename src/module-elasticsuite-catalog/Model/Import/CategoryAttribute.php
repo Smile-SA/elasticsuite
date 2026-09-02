@@ -109,13 +109,14 @@ class CategoryAttribute extends AbstractEntity
     /**
      * Import constructor.
      *
-     * @param JsonHelper                         $jsonHelper       Json Helper.
-     * @param ImportHelper                       $importExportData Import Helper.
-     * @param Data                               $importData       Import Data.
-     * @param Config                             $eavConfig        EAV Config.
-     * @param Helper                             $resourceHelper   Resource Helper.
-     * @param ProcessingErrorAggregatorInterface $errorAggregator  Error Aggregator.
-     * @param IndexerRegistry                    $indexerRegistry  Indexer Registry.
+     * @param JsonHelper                         $jsonHelper             Json Helper.
+     * @param ImportHelper                       $importExportData       Import Helper.
+     * @param Data                               $importData             Import Data.
+     * @param Config                             $eavConfig              EAV Config.
+     * @param Helper                             $resourceHelper         Resource Helper.
+     * @param ProcessingErrorAggregatorInterface $errorAggregator        Error Aggregator.
+     * @param IndexerRegistry                    $indexerRegistry        Indexer Registry.
+     * @param array                              $additionalColumnNames  Additional Column Names.
      */
     public function __construct(
         JsonHelper $jsonHelper,
@@ -124,7 +125,8 @@ class CategoryAttribute extends AbstractEntity
         Config $eavConfig,
         Helper $resourceHelper,
         ProcessingErrorAggregatorInterface $errorAggregator,
-        IndexerRegistry $indexerRegistry
+        IndexerRegistry $indexerRegistry,
+        array $additionalColumnNames = []
     ) {
         $this->jsonHelper          = $jsonHelper;
         $this->_importExportData   = $importExportData;
@@ -133,6 +135,7 @@ class CategoryAttribute extends AbstractEntity
         $this->_resourceHelper     = $resourceHelper;
         $this->errorAggregator     = $errorAggregator;
         $this->indexerRegistry     = $indexerRegistry;
+        $this->validColumnNames    = array_unique(array_merge($this->validColumnNames, $additionalColumnNames));
     }
 
     /**
