@@ -22,5 +22,12 @@
             behaviorModel="Smile\ElasticsuiteCatalog\Model\Source\Import\Behavior\Custom"
     />
 
+    <entity name="elasticsuite_category_attribute"
+            label="ElasticSuite Category Attributes"
+            model="Smile\ElasticsuiteCatalog\Model\Import\CategoryAttribute"
+            behaviorModel="Smile\ElasticsuiteCatalog\Model\Source\Import\Behavior\Custom"
+    />
+
     <relatedIndexer entity="elasticsuite_product_attribute" name="catalogsearch_fulltext" />
+    <relatedIndexer entity="elasticsuite_category_attribute" name="elasticsuite_categories_fulltext" />
 </config>
