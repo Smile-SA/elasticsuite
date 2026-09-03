@@ -153,6 +153,10 @@ class AttributePlugin
     public function beforeSave(
         \Magento\Catalog\Api\Data\ProductAttributeInterface $subject
     ) {
+        if (!$this->isProductAttribute($subject)) {
+            return;
+        }
+
         $this->saveIsNew = $subject->isObjectNew();
     }
 
@@ -168,6 +172,10 @@ class AttributePlugin
         \Magento\Catalog\Api\Data\ProductAttributeInterface $subject,
         \Magento\Catalog\Api\Data\ProductAttributeInterface $result
     ) {
+        if (!$this->isProductAttribute($subject)) {
+            return $result;
+        }
+
         list($cleanCache, $updateMapping, $invalidateIndex) = $this->checkUpdateNeeded($subject);
 
         if ($cleanCache || $updateMapping) {
@@ -184,6 +192,24 @@ class AttributePlugin
         }
 
         return $result;
+    }
+
+    /**
+     * Check whether the attribute being saved belongs to the catalog_product entity type.
+     *
+     * This plugin only knows how to update the product ES mapping/index, so it must stay
+     * inert for attributes of any other entity type (e.g. catalog_category) sharing the
+     * same attribute resource model.
+     *
+     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $subject Attribute being saved.
+     *
+     * @return bool
+     */
+    private function isProductAttribute($subject)
+    {
+        $entityType = $subject->getEntityType();
+
+        return $entityType !== null && $entityType->getEntityTypeCode() === \Magento\Catalog\Model\Product::ENTITY;
     }
 
     /**

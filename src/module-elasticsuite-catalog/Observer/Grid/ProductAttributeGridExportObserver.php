@@ -40,7 +40,11 @@ class ProductAttributeGridExportObserver implements ObserverInterface
         $grid = $observer->getGrid();
 
         if ($grid instanceof \Magento\Catalog\Block\Adminhtml\Product\Attribute\Grid) {
-            $grid->addExportType('*/*/exportProductAttributeCsv', __('CSV'));
+            $grid->addExportType('*/*/exportProductAttributeCsv', __('CSV Product attributes properties'));
+            $grid->addExportType(
+                'catalog/category_attribute/exportCategoryAttributeCsv',
+                __('CSV Category attribute properties')
+            );
         }
     }
 }
