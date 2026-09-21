@@ -14,6 +14,8 @@
 namespace Smile\ElasticsuiteCatalog\Controller\Navigation\Filter;
 
 use Magento\Catalog\Model\Layer\Resolver;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCore\Api\Search\ContextInterface;
 
 /**
  * Navigation layer filters AJAX loading.
@@ -53,6 +55,11 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private $logger;
 
     /**
+     * @var ContextInterface
+     */
+    private $searchContext;
+
+    /**
      * Constructor.
      *
      * @param \Magento\Framework\App\Action\Context                   $context            Controller action context.
@@ -61,6 +68,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
      * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
      * @param \Psr\Log\LoggerInterface                                $logger             Logger.
      * @param \Magento\Catalog\Model\Layer\FilterList[]               $filterListPool     Filter list pool.
+     * @param ContextInterface|null                                   $searchContext      Search context.
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -68,7 +76,8 @@ class Ajax extends \Magento\Framework\App\Action\Action
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository,
         \Psr\Log\LoggerInterface $logger,
-        $filterListPool = []
+        $filterListPool = [],
+        ?ContextInterface $searchContext = null
     ) {
         parent::__construct($context);
 
@@ -77,6 +86,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
         $this->filterListPool    = $filterListPool;
         $this->categoryRepository = $categoryRepository;
         $this->logger             = $logger;
+        $this->searchContext      = $searchContext ?: ObjectManager::getInstance()->get(ContextInterface::class);
     }
 
     /**
@@ -125,6 +135,8 @@ class Ajax extends \Magento\Framework\App\Action\Action
                 );
 
                 $this->layerResolver->get()->setCurrentCategory($category);
+                // Layer::setCurrentCategory() may have stored the root category in the search context.
+                $this->searchContext->setCurrentCategory($category);
             } catch (\Magento\Framework\Exception\NoSuchEntityException $exception) {
                 $this->logger->critical($exception->getMessage());
             }
