@@ -31,7 +31,9 @@
             <!-- Adding the customer group and company selector blocks at the top of the page -->
             <container name="page-customer-actions" htmlTag="div" htmlClass="page-customer-actions">
                 <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerGroupSelector" name="report.customerGroup.selector" template="Smile_ElasticsuiteAnalytics::report/customer_group_selector.phtml" after="report.store.switcher" />
-                <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\CustomerCompanySelector" name="report.companyId.selector" ifconfig="btob/website_configuration/company_active" template="Smile_ElasticsuiteAnalytics::report/customer_company_selector.phtml" after="report.customerGroup.selector" />
+                <uiComponent name="smile_elasticsuite_analytics_search_usage_company_filter" ifconfig="btob/website_configuration/company_active" after="report.customerGroup.selector">
+                    <visibilityCondition name="company_filter_enabled" className="Smile\ElasticsuiteAnalytics\Model\Layout\Condition\CompanyFilterEnabled" />
+                </uiComponent>
             </container>
 
             <block class="Smile\ElasticsuiteAnalytics\Block\Adminhtml\Report\DateRangeSwitcher" name="report.dateRange.switcher"/>

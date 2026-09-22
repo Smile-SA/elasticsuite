@@ -131,6 +131,7 @@ class QueryBuilder
 
     /**
      * Create a query for special attribute.
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param ProductCondition $productCondition Product condition.
      *
@@ -146,12 +147,24 @@ class QueryBuilder
 
             $clause = (substr($productCondition->getOperator(), 0, 1) === '!') ? 'mustNot' : 'should';
             // SKU values can be an array of value, due to the picker.
-            foreach (explode(',', $productCondition->getValue()) as $value) {
-                // Instead of just a "should" clause, we will have "should" or "must_not" depending on the rule operator.
+            $values = array_map('trim', explode(',', $productCondition->getValue()));
+
+            if (in_array($productCondition->getOperator(), ['()', '!()'])) {
+                // Those operators run on the untouched (keyword) field, where a single terms clause is
+                // equivalent to one match clause per value, but counts as a single clause in Lucene.
                 $queryParams[$clause][] = $this->prepareQuery(
-                    QueryInterface::TYPE_MATCH,
-                    ['field' => $fieldName, 'queryText' => trim($value), 'minimumShouldMatch' => "100%"]
+                    QueryInterface::TYPE_TERMS,
+                    ['field' => $fieldName, 'values' => $values]
                 );
+            } else {
+                foreach ($values as $value) {
+                    // Instead of just a "should" clause, we will have "should" or "must_not"
+                    // depending on the rule operator.
+                    $queryParams[$clause][] = $this->prepareQuery(
+                        QueryInterface::TYPE_MATCH,
+                        ['field' => $fieldName, 'queryText' => $value, 'minimumShouldMatch' => "100%"]
+                    );
+                }
             }
 
             // One clause must match between all.

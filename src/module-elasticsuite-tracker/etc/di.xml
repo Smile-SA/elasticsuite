@@ -76,6 +76,11 @@
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
         </arguments>
     </type>
+    <type name="Smile\ElasticsuiteTracker\Helper\Company">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>

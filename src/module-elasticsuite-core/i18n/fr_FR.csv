@@ -172,3 +172,5 @@ General,Général
 "Count","Nombre"
 "Created At","Date de création"
 "Updated At","Date de mise-à-jour"
+"Minimum Severity for Menu Decoration","Sévérité minimale pour la décoration du menu"
+"Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks.","N'afficher le compteur de healthchecks en échec à côté de l'entrée du menu ElasticSuite que lorsqu'au moins un healthcheck en échec atteint cette sévérité ou une sévérité supérieure. Le compteur affiché n'est pas affecté par ce paramètre et reflète toujours l'ensemble des healthchecks en échec."

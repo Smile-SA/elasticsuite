@@ -162,3 +162,5 @@
 "Count","Zähler"
 "Created At","Erstellt am"
 "Updated At","Aktualisiert am"
+"Minimum Severity for Menu Decoration","Mindest Schweregrad für Menü Dekoration"
+"Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks.","Den Zähler für fehlgeschlagene Healthchecks neben dem ElasticSuite-Menüeintrag nur anzeigen, wenn mindestens ein fehlgeschlagener Healthcheck diesen Schweregrad oder höher aufweist. Der angezeigte Zähler wird durch diese Einstellung nicht beeinflusst und spiegelt immer alle fehlgeschlagenen Healthchecks wider."

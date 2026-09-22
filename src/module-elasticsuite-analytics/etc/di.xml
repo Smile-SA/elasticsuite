@@ -219,6 +219,24 @@
         </arguments>
     </virtualType>
 
+    <!-- Search usage dashboard ajax data provider configuration -->
+    <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\DashboardDataProvider">
+        <arguments>
+            <argument name="kpiReports" xsi:type="array">
+                <item name="search_usage" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Report</item>
+                <item name="event_details" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\EventsDetail\Report</item>
+                <item name="sessions_visitors" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\UniqueUsers\Report</item>
+                <item name="spellcheck" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\Spellcheck\Report</item>
+            </argument>
+            <argument name="termsReports" xsi:type="array">
+                <item name="popular" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\PopularTerms\Report</item>
+                <item name="spellchecked" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\SpellcheckedTerms\Report</item>
+                <item name="no_result" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\NoResultTerms\Report</item>
+            </argument>
+            <argument name="conversionRatesReport" xsi:type="object">Smile\ElasticsuiteAnalytics\Model\Search\Usage\Kpi\ConversionRates\Report</argument>
+        </arguments>
+    </type>
+
     <!-- Search terms reports post-processors -->
     <type name="Smile\ElasticsuiteAnalytics\Model\Search\Usage\Terms\ConversionRatePostProcessor">
         <arguments>

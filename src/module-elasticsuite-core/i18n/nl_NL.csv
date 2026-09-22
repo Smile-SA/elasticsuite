@@ -162,3 +162,5 @@
 "Count","Tellen"
 "Created At","Gemaakt op"
 "Updated At","Bijgewerkt op"
+"Minimum Severity for Menu Decoration","Minimale ernst voor menu decoratie"
+"Only display the failed healthchecks counter next to the ElasticSuite menu entry when at least one failed healthcheck has this severity or higher. The displayed count is not affected by this setting and always reflects all failed healthchecks.","Toon de teller voor mislukte healthchecks naast het ElasticSuite-menu-item alleen wanneer minstens één mislukte healthcheck deze ernst of hoger heeft. Het weergegeven aantal wordt niet beïnvloed door deze instelling en weerspiegelt altijd alle mislukte healthchecks."
