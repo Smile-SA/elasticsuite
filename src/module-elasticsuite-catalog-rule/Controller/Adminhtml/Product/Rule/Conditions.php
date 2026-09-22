@@ -16,6 +16,7 @@ namespace Smile\ElasticsuiteCatalogRule\Controller\Adminhtml\Product\Rule;
 
 use Magento\Backend\App\Action;
 use Magento\Rule\Model\Condition\AbstractCondition;
+use Magento\Rule\Model\Condition\ConditionInterface;
 
 /**
  * Catalog search rule contribution controller action used to generate new children rules.
@@ -59,8 +60,22 @@ class Conditions extends Action
     public function execute()
     {
         $conditionId = $this->getRequest()->getParam('id');
-        $typeData = explode('|', str_replace('-', '/', $this->getRequest()->getParam('type')));
+        $typeParam   = $this->getRequest()->getParam('type');
+
+        if (!is_string($typeParam) || $typeParam === '') {
+            return $this->getResponse()->setBody('');
+        }
+
+        $typeData  = explode('|', str_replace('-', '/', $typeParam));
         $className = $typeData[0];
+
+        if (!$className || !class_exists($className)) {
+            return $this->getResponse()->setBody('');
+        }
+
+        if (!in_array(ConditionInterface::class, class_implements($className))) {
+            return $this->getResponse()->setBody('');
+        }
 
         $rule = $this->ruleFactory->create();
 
