@@ -207,16 +207,25 @@ define([
             this.countTotalProducts(parseInt(loadedData.size, 10));
             this.currentSize(Math.max(this.currentSize(), this.products().length));
 
-            var productIds = products.map(function (product) { return product.getId() });
-            var editPositions = this.editPositions();
+            /*
+             * When the backend flags the response with 'is_manual_sort = true', the returned product
+             * list contains every manually positioned product. Otherwise only the (unapplied)
+             * positions of products on the current preview page are provided.
+             * So only prune editPositions to eliminate obsolete positions when 'is_manual_sort = true'.
+             */
+            if (loadedData.is_manual_sort !== false) {
+                var productIds = products.map(function (product) { return product.getId() });
+                var editPositions = this.editPositions();
 
-            for (var productId in editPositions) {
-                if ($.inArray(parseInt(productId, 10), productIds) < 0) {
-                    delete editPositions[productId];
+                for (var productId in editPositions) {
+                    if ($.inArray(parseInt(productId, 10), productIds) < 0) {
+                        delete editPositions[productId];
+                    }
                 }
+
+                this.editPositions(editPositions);
             }
 
-            this.editPositions(editPositions);
             this.loading(false);
         },
 

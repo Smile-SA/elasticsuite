@@ -105,6 +105,22 @@ class Preview extends AbstractPreview
     /**
      * {@inheritDoc}
      */
+    public function getData(): array
+    {
+        $data = parent::getData();
+        /*
+         * Only sort_by "position" guarantees getSortedProducts() returned every manually positioned
+         * product (see getSortedProductIds() below). Any other sort only returns the current page,
+         * so the frontend layer must not use it to decide which manual positions are still valid.
+         */
+        $data['is_manual_sort'] = ($this->getSortBy() === 'position');
+
+        return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function prepareProductCollection(Collection $collection) : Collection
     {
         $this->searchContext->setIsBlacklistingApplied(false);
