@@ -24,6 +24,10 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Smile\ElasticsuiteCatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\ContextUpdater;
 use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
+use Magento\CatalogGraphQl\DataProvider\Product\SearchCriteriaBuilder as MagentoSearchCriteriaBuilder;
+use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Deferred\Product as ProductDataProvider;
+use Magento\CatalogGraphQl\Model\Resolver\Product\ProductFieldsSelector;
+use Magento\CatalogGraphQl\Model\AttributesJoiner;
 
 /**
  * Elasticsuite custom implementation of GraphQL Products Resolver
@@ -32,7 +36,7 @@ use Smile\ElasticsuiteCatalogGraphQl\Model\Resolver\Products\Query\Search;
  * @package  Smile\ElasticsuiteCatalogGraphQl
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class Products implements ResolverInterface
+class Products extends \Magento\CatalogGraphQl\Model\Resolver\Products  implements ResolverInterface
 {
     /**
      * @var ProductQueryInterface
@@ -50,15 +54,34 @@ class Products implements ResolverInterface
     private $argsProcessor;
 
     /**
-     * @param ProductQueryInterface            $searchQuery       Search Query
-     * @param ContextUpdater                   $contextUpdater    Context Updater
-     * @param ArgumentsProcessorInterface|null $argumentProcessor Args Processor
+     * @var ProductDataProvider
+     */
+    private $productDataProvider;
+
+    /**
+     * @var AttributesJoiner
+     */
+    private $attributesJoiner;
+
+    /**
+     * @param ProductQueryInterface                         $searchQuery                Search Query
+     * @param ContextUpdater                                $contextUpdater             Context Updater
+     * @param ArgumentsProcessorInterface|null              $argumentProcessor          Args Processor
+     * @param MagentoSearchCriteriaBuilder|null             $searchApiCriteriaBuilder   Core SearchCriteria Builder 
+     * @param ProductDataProvider|null                      $productDataProvider        Product Data Provicer
+     * @param AttributesJoiner|null                         $attributesJoiner           Attributes Joiner
      */
     public function __construct(
         ProductQueryInterface $searchQuery,
         ContextUpdater $contextUpdater,
-        ?ArgumentsProcessorInterface $argumentProcessor = null
+        ?ArgumentsProcessorInterface $argumentProcessor = null,
+        ?MagentoSearchCriteriaBuilder $searchApiCriteriaBuilder = null,
+	?ProductDataProvider $productDataProvider = null,
+	?AttributesJoiner $attributesJoiner = null
     ) {
+        parent::__construct($searchQuery, $searchApiCriteriaBuilder);
+	$this->productDataProvider = $productDataProvider ?? \Magento\Framework\App\ObjectManager::getInstance()->get(ProductDataProvider::class);
+        $this->attributesJoiner = $attributesJoiner ?? \Magento\Framework\App\ObjectManager::getInstance()->get(AttributesJoiner::class);
         $this->searchQuery    = $searchQuery;
         $this->contextUpdater = $contextUpdater;
         $this->argsProcessor  = $argumentProcessor ?: ObjectManager::getInstance()->get(ArgumentsProcessorInterface::class);
@@ -71,6 +94,66 @@ class Products implements ResolverInterface
     {
         $args = $this->getProcessedArgs($info, $args);
         $this->validateArgs($args);
+        if (isset($args['filter']['sku'])) {
+            if (isset($args['filter']['sku']['eq'])) {
+                $sku = $args['filter']['sku']['eq'];
+                // Add product SKU and required fields to the data provider
+                $this->productDataProvider->addProductSku($sku);
+                $fields = $this->attributesJoiner->getQueryFields($info->fieldNodes[0]->selectionSet->selections[0], $info);
+                $this->productDataProvider->addEavAttributes($fields);
+
+                // Get product data synchronously
+                $productData = $this->productDataProvider->getProductBySku($sku);
+
+                if (empty($productData)) {
+                    return [
+                        'total_count'   => 0,
+                        'items'         => [],
+                        'suggestions'   => [],
+                        'page_info'     => [
+                            'page_size'    => 1,
+                            'current_page' => 1,
+                            'total_pages'  => 1,
+                            'is_spellchecked' => false,
+                            'query_id'     => 0
+                        ],
+                        'search_result' => null,
+                        'layer_type'    => Resolver::CATALOG_LAYER_CATEGORY,
+                    ];
+                }
+
+                // Format product data similar to how Products resolver returns it
+                /** @var \Magento\Catalog\Model\Product $productModel */
+                $productModel = $productData['model'];
+                $formattedProduct = $productModel->getData();
+                $formattedProduct['model'] = $productModel;
+
+                // Add custom attributes
+                if (!empty($productModel->getCustomAttributes())) {
+                    foreach ($productModel->getCustomAttributes() as $customAttribute) {
+                        if (!isset($formattedProduct[$customAttribute->getAttributeCode()])) {
+                            $formattedProduct[$customAttribute->getAttributeCode()] = $customAttribute->getValue();
+                        }
+                    }
+                }
+
+                return [
+                    'total_count'   => 1,
+                    'items'         => [$formattedProduct],
+                    'suggestions'   => [],
+                    'page_info'     => [
+                        'page_size'    => 1,
+                        'current_page' => 1,
+                        'total_pages'  => 1,
+                        'is_spellchecked' => false,
+                        'query_id'     => 0
+                    ],
+                    'search_result' => null,
+                    'layer_type'    => Resolver::CATALOG_LAYER_CATEGORY,
+                ];
+            }
+            return parent::resolve($field, $context, $info, $value, $args);
+        }
         $this->contextUpdater->updateSearchContext($args);
 
         $searchResult = $this->searchQuery->getResult($args, $info, $context);
@@ -78,7 +161,7 @@ class Products implements ResolverInterface
 
         if (isset($args['search']) && (!empty($args['search']))) {
             $layerType = Resolver::CATALOG_LAYER_SEARCH;
-        }
+        } 
 
         return [
             'total_count'   => $searchResult->getTotalCount(),
