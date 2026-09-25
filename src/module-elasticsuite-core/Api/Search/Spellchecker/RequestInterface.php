@@ -64,4 +64,12 @@ interface RequestInterface
      * @return boolean
      */
     public function isUsingEdgeNgram();
+
+    /**
+     * Should reference-analyzer-produced multi-word concatenation false negatives be excluded from
+     * term vector stats.
+     *
+     * @return boolean
+     */
+    public function isExcludingConcatenationFalseNegatives();
 }

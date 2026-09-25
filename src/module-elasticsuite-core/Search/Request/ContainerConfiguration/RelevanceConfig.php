@@ -100,6 +100,11 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     /**
      * @var boolean
      */
+    private $excludeConcatenationFalseNegatives;
+
+    /**
+     * @var boolean
+     */
     private $exactMatchSingleTermBoostsCustomized;
 
     /**
@@ -139,6 +144,8 @@ class RelevanceConfig implements RelevanceConfigurationInterface
      * @param boolean                              $useEdgeNgramAnalyzer                 Whether to include the collector field associated
      *                                                                                   with the edge ngram analyzer(s) in the term vectors
      *                                                                                   request
+     * @param boolean                              $excludeConcatenationFalseNegatives   Whether to exclude reference analyzer
+     *                                                                                   word-concatenation artifacts from term vector stats
      * @param boolean                              $exactMatchSingleTermBoostsCustomized Are the exact match boost values on whitespace
      *                                                                                   and sortable fields customized.
      * @param int|null                             $exactMatchSingleTermPhraseMatchBoost The whitespace boost value for exact match,
@@ -163,6 +170,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $useAllTokens = false,
         $useReferenceAnalyzer = false,
         $useEdgeNgramAnalyzer = false,
+        $excludeConcatenationFalseNegatives = false,
         $exactMatchSingleTermBoostsCustomized = false,
         $exactMatchSingleTermPhraseMatchBoost = null,
         $exactMatchSingleTermSortableBoost = null
@@ -180,6 +188,7 @@ class RelevanceConfig implements RelevanceConfigurationInterface
         $this->useAllTokens           = $useAllTokens;
         $this->useReferenceAnalyzer   = $useReferenceAnalyzer;
         $this->useEdgeNgramAnalyzer   = $useEdgeNgramAnalyzer;
+        $this->excludeConcatenationFalseNegatives = $excludeConcatenationFalseNegatives;
         $this->useDefaultAnalyzerInExactMatchFilter = $useDefaultAnalyzerInExactMatchFilter;
         $this->exactMatchSingleTermBoostsCustomized = $exactMatchSingleTermBoostsCustomized;
         $this->exactMatchSingleTermPhraseMatchBoost = $exactMatchSingleTermPhraseMatchBoost;
@@ -310,6 +319,14 @@ class RelevanceConfig implements RelevanceConfigurationInterface
     public function isUsingEdgeNgramAnalyzer()
     {
         return (bool) $this->useEdgeNgramAnalyzer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isExcludingConcatenationFalseNegatives()
+    {
+        return (bool) $this->excludeConcatenationFalseNegatives;
     }
 
     /**

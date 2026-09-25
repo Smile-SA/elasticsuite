@@ -58,16 +58,23 @@ class Request implements RequestInterface
     private $isUsingEdgeNgram;
 
     /**
+     * @var boolean
+     */
+    private $isExcludingConcatenationFalseNegatives;
+
+    /**
      * Constructor.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param string  $index            Spellcheck request index name.
-     * @param string  $queryText        Spellcheck fulltext query.
-     * @param float   $cutoffFrequency  Spellcheck cutoff frequency (used to detect stopwords).
-     * @param boolean $isUsingAllTokens Is spellcheck using all tokens returned by term vectors.
-     * @param boolean $isUsingReference Should the reference analyzer be included in the spellcheck request.
-     * @param boolean $isUsingEdgeNgram Should the edge ngram based analyzers be included in the spellcheck request.
+     * @param string  $index                                  Spellcheck request index name.
+     * @param string  $queryText                              Spellcheck fulltext query.
+     * @param float   $cutoffFrequency                        Spellcheck cutoff frequency (used to detect stopwords).
+     * @param boolean $isUsingAllTokens                       Is spellcheck using all tokens returned by term vectors.
+     * @param boolean $isUsingReference                       Should the reference analyzer be included in the spellcheck request.
+     * @param boolean $isUsingEdgeNgram                       Should the edge ngram based analyzers be included in the spellcheck request.
+     * @param boolean $isExcludingConcatenationFalseNegatives Should reference analyzer word-concatenation artifacts be excluded.
      */
     public function __construct(
         $index,
@@ -75,7 +82,8 @@ class Request implements RequestInterface
         $cutoffFrequency,
         $isUsingAllTokens,
         $isUsingReference,
-        $isUsingEdgeNgram
+        $isUsingEdgeNgram,
+        $isExcludingConcatenationFalseNegatives = false
     ) {
         $this->index           = $index;
         $this->queryText       = $queryText;
@@ -83,6 +91,7 @@ class Request implements RequestInterface
         $this->isUsingAllTokens = $isUsingAllTokens;
         $this->isUsingReference = $isUsingReference;
         $this->isUsingEdgeNgram = $isUsingEdgeNgram;
+        $this->isExcludingConcatenationFalseNegatives = $isExcludingConcatenationFalseNegatives;
     }
 
     /**
@@ -131,5 +140,13 @@ class Request implements RequestInterface
     public function isUsingEdgeNgram()
     {
         return $this->isUsingEdgeNgram;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isExcludingConcatenationFalseNegatives()
+    {
+        return $this->isExcludingConcatenationFalseNegatives;
     }
 }
