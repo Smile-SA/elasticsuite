@@ -16,7 +16,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_ImportExport:etc/export.xsd">
     <entity name="elasticsuite_category_attribute"
-            label="ElasticSuite Category Attributes"
+            label="ElasticSuite Category Attributes properties"
             model="Smile\ElasticsuiteCatalog\Model\Export\CategoryAttribute"
             entityAttributeFilterType="elasticsuite_category_attribute"
     />
