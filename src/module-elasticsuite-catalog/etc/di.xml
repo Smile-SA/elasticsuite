@@ -424,6 +424,7 @@
         <arguments>
             <argument name="samples" xsi:type="array">
                 <item name="elasticsuite_product_attribute" xsi:type="string">Smile_ElasticsuiteCatalog</item>
+                <item name="elasticsuite_category_attribute" xsi:type="string">Smile_ElasticsuiteCatalog</item>
             </argument>
         </arguments>
     </type>

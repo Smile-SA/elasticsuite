@@ -1,0 +1,3 @@
+attribute_code,attribute_label,is_searchable,search_weight,is_used_in_spellcheck,used_for_sort_by,default_analyzer,norms_disabled,is_spannable,include_zero_false_values
+name,Name,1,3,1,0,standard,0,0,0
+description,Description,1,1,1,0,standard,0,0,0
