@@ -50,7 +50,6 @@ class AttributeList implements AttributeListInterface
         $collection->setItemObjectClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
             ->setOrder('position', 'ASC');
 
-        $collection->addSetInfo(true);
         $collection->addIsFilterableInSearchFilter()
             ->addVisibleFilter();
         $collection->setOrder('attribute_id', 'ASC');
