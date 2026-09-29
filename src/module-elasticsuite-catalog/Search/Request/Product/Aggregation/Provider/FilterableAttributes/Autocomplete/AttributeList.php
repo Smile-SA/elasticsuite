@@ -85,7 +85,6 @@ class AttributeList implements AttributeListInterface
                 $collection->setItemObjectClass(\Magento\Catalog\Model\ResourceModel\Eav\Attribute::class)
                     ->setOrder('position', 'ASC');
 
-                $collection->addSetInfo(true);
                 $collection->addFieldToFilter('additional_table.is_displayed_in_autocomplete', ['eq' => 1]);
                 $collection->setOrder('attribute_id', 'ASC');
 
