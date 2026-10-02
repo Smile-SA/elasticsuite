@@ -163,6 +163,7 @@ jobs:
           MAGENTO_EDITION: ${{ matrix.magento-editions }}
           MAGENTO_ROOT: ${{ env.magento-directory }}
           EXPERIMENTAL: ${{ matrix.experimental }}
+          ADVISORIES: ${{ env[format('advisories-{0}', matrix.magento-versions)] }}
         run: |
           STABILITY="--stability=stable"
           if [ $EXPERIMENTAL = true ]; then
