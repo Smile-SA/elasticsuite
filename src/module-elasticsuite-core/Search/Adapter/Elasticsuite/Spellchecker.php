@@ -25,6 +25,7 @@ use Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool;
 /**
  * Spellchecker Elasticsearch implementation.
  * This implementation rely on the ES term vectors API.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
@@ -32,6 +33,19 @@ use Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config\ScopePool;
  */
 class Spellchecker implements SpellcheckerInterface
 {
+    /**
+     * Max number of characters allowed as a gap between two reference-analyzer-produced sibling tokens
+     * when reconstructing a synthetic concatenation, to account for a single stripped separator
+     * character (space, hyphen, ...).
+     */
+    private const CONCATENATION_GAP_TOLERANCE = 2;
+
+    /**
+     * Separator-like characters a reference-analyzer concatenation may have stripped between two words:
+     * whitespace (space, tab, ...), hyphen (-), underscore (_), comma (,), period/dot (.), forward slash (/).
+     */
+    private const CONCATENATION_GAP_SEPARATOR_PATTERN = '/^[\s\-_,.\/]+$/u';
+
     /**
      * @var ClientInterface
      */
@@ -90,7 +104,16 @@ class Spellchecker implements SpellcheckerInterface
         try {
             $cutoffFrequencyLimit = $this->getCutoffrequencyLimit($request);
             $termVectors          = $this->getTermVectors($request);
-            $queryTermStats       = $this->parseTermVectors($termVectors, $cutoffFrequencyLimit, $request->isUsingAllTokens());
+            $excludeConcatenationFalseNegatives = $request->isUsingAllTokens()
+                && $request->isUsingReference()
+                && $request->isExcludingConcatenationFalseNegatives();
+            $queryTermStats       = $this->parseTermVectors(
+                $termVectors,
+                $cutoffFrequencyLimit,
+                $request->isUsingAllTokens(),
+                $excludeConcatenationFalseNegatives,
+                $request->getQueryText()
+            );
 
             if ($queryTermStats['total'] == $queryTermStats['stop']) {
                 $spellingType = self::SPELLING_TYPE_PURE_STOPWORDS;
@@ -209,17 +232,29 @@ class Spellchecker implements SpellcheckerInterface
      * - standard : number of terms of the query found using the standard analyzer.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      *
-     * @param array   $termVectors          The term vector query response.
-     * @param int     $cutoffFrequencyLimit Cutoff freq (max absolute number of docs to consider term as a stopword).
-     * @param boolean $useAllTokens         Whether to use all tokens or not
+     * @param array   $termVectors                        The term vector query response.
+     * @param int     $cutoffFrequencyLimit               Cutoff freq (max absolute number of docs to consider term as a stopword).
+     * @param boolean $useAllTokens                       Whether to use all tokens or not
+     * @param boolean $excludeConcatenationFalseNegatives Whether to exclude reference analyzer word-concatenation artifacts.
+     * @param string  $queryText                          The original query text (used by the exclusion check above).
      *
      * @return array
      */
-    private function parseTermVectors($termVectors, $cutoffFrequencyLimit, $useAllTokens = false)
-    {
+    private function parseTermVectors(
+        $termVectors,
+        $cutoffFrequencyLimit,
+        $useAllTokens = false,
+        $excludeConcatenationFalseNegatives = false,
+        $queryText = ''
+    ) {
         $queryTermStats = ['stop' => 0, 'exact' => 0, 'standard' => 0, 'missing' => 0];
         $statByPosition = $this->extractTermStatsByPosition($termVectors, $useAllTokens);
+
+        if ($useAllTokens && $excludeConcatenationFalseNegatives) {
+            $statByPosition = $this->excludeConcatenationFalseNegatives($statByPosition, (string) $queryText);
+        }
 
         foreach ($statByPosition as $positionStat) {
             $type = 'missing';
@@ -284,10 +319,22 @@ class Spellchecker implements SpellcheckerInterface
                                 if (!isset($statByPosition[$positionKey])) {
                                     $statByPosition[$positionKey]['term']     = $term;
                                     $statByPosition[$positionKey]['doc_freq'] = $termStats['doc_freq'];
+                                    // Raw positional metadata, only meaningful when $useAllTokens is
+                                    // true (otherwise several distinct spans collapse into this key).
+                                    $statByPosition[$positionKey]['position']     = $token['position'];
+                                    $statByPosition[$positionKey]['start_offset'] = $token['start_offset'];
+                                    $statByPosition[$positionKey]['end_offset']   = $token['end_offset'];
+                                    $statByPosition[$positionKey]['producing_analyzers'] = [];
                                 }
 
                                 if ($termStats['doc_freq']) {
                                     $statByPosition[$positionKey]['analyzers'][] = $analyzer;
+                                }
+
+                                // Unlike 'analyzers' above, this tracks every analyzer that ever
+                                // tokenized this exact entry, regardless of whether it matched.
+                                if (!in_array($analyzer, $statByPosition[$positionKey]['producing_analyzers'], true)) {
+                                    $statByPosition[$positionKey]['producing_analyzers'][] = $analyzer;
                                 }
 
                                 $statByPosition[$positionKey]['doc_freq'] = max(
@@ -302,6 +349,118 @@ class Spellchecker implements SpellcheckerInterface
         }
 
         return $statByPosition;
+    }
+
+    /**
+     * Exclude "missing" term vector entries that are actually false negatives: artifacts of the reference
+     * analyzer concatenating adjacent, independently existing query words (e.g. "leather"+"bag" -> "leatherbag").
+     *
+     * Only entries produced exclusively by the reference analyzer, and fully reconstructible from at
+     * least two sibling entries (each already found, at strictly increasing positions, separated from
+     * each other by a genuine stripped-separator gap) are removed. This intentionally does not match
+     * same-word fragment decomposition (e.g. SKU "AN328CZ127" -> "AN"+"328"+...), because such fragments
+     * are always offset-adjacent with a zero-character gap between them (no separator was ever stripped).
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @param array  $statByPosition Term vector stats, keyed by "{position}_{start_offset}_{end_offset}".
+     * @param string $queryText      Original query text, used to validate stripped-separator characters.
+     *
+     * @return array
+     */
+    private function excludeConcatenationFalseNegatives(array $statByPosition, $queryText)
+    {
+        $goodEntries = [];
+        foreach ($statByPosition as $entry) {
+            if (!empty($entry['doc_freq']) && isset($entry['position'], $entry['start_offset'], $entry['end_offset'])) {
+                $goodEntries[] = $entry;
+            }
+        }
+
+        usort($goodEntries, function ($entryA, $entryB) {
+            return $entryA['start_offset'] <=> $entryB['start_offset'];
+        });
+
+        foreach ($statByPosition as $key => $entry) {
+            if (!isset($entry['position'], $entry['start_offset'], $entry['end_offset'])) {
+                continue;
+            }
+            if (!empty($entry['doc_freq'])) {
+                continue;
+            }
+            if ($entry['end_offset'] <= $entry['start_offset']) {
+                continue;
+            }
+
+            $producingAnalyzers = array_values(array_unique($entry['producing_analyzers'] ?? []));
+            if ($producingAnalyzers !== [FieldInterface::ANALYZER_REFERENCE]) {
+                continue;
+            }
+
+            if ($this->coversSpan($goodEntries, $entry['start_offset'], $entry['end_offset'], -1, 0, $queryText)) {
+                unset($statByPosition[$key]);
+            }
+        }
+
+        return $statByPosition;
+    }
+
+    /**
+     * Recursively check whether [$start, $end) can be fully reconstructed by chaining sibling entries
+     * that are each already found, at strictly increasing positions, with a zero-character gap before
+     * the very first piece and a non-zero, separator-only gap before every subsequent piece.
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param array  $goodEntries          Candidate sibling entries (doc_freq > 0), sorted by start_offset.
+     * @param int    $start                Remaining span start offset.
+     * @param int    $end                  Remaining span end offset (exclusive).
+     * @param int    $minPositionExclusive Minimum (exclusive) token position the next piece must have.
+     * @param int    $depth                Number of pieces already chained.
+     * @param string $queryText            Original query text.
+     *
+     * @return bool
+     */
+    private function coversSpan(array $goodEntries, $start, $end, $minPositionExclusive, $depth, $queryText)
+    {
+        if ($start === $end) {
+            return $depth >= 2;
+        }
+
+        foreach ($goodEntries as $piece) {
+            if ($piece['position'] <= $minPositionExclusive) {
+                continue;
+            }
+            if ($piece['start_offset'] < $start || $piece['end_offset'] > $end) {
+                continue;
+            }
+
+            $gap = $piece['start_offset'] - $start;
+
+            if ($depth === 0) {
+                if ($gap !== 0) {
+                    continue;
+                }
+            } else {
+                if ($gap < 1 || $gap > self::CONCATENATION_GAP_TOLERANCE) {
+                    continue;
+                }
+                if ($queryText !== '') {
+                    $gapText = mb_substr($queryText, $start, $gap);
+                    if (!preg_match(self::CONCATENATION_GAP_SEPARATOR_PATTERN, $gapText)) {
+                        continue;
+                    }
+                }
+            }
+
+            if ($this->coversSpan($goodEntries, $piece['end_offset'], $end, $piece['position'], $depth + 1, $queryText)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
