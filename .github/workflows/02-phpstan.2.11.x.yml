@@ -28,6 +28,10 @@ env:
   PHPSTAN_LEVEL: ${{ inputs.phpstan_level || '0' }}
   SMILELAB_PHPSTAN_VERSION: ${{ inputs.smilelab_phpstan_version || '1.0.3' }}
   PHPSTAN_VERSION: ${{ inputs.phpstan_version || '1.12.34' }}
+  # Composer security advisories to ignore for each Magento version (composer config policy.advisories.ignore-id).
+  # Key must be "advisories-" + the exact matrix.magento-versions value. No key = nothing ignored.
+  advisories-2.4.6-p15: '["PKSA-qv5y-crcz-9nxw", "PKSA-kbc7-dq62-pt7d", "PKSA-w9tt-7782-78jx"]'
+  advisories-2.4.7-p10: '["PKSA-w9tt-7782-78jx"]'
 
 jobs:
   build:
@@ -42,27 +46,27 @@ jobs:
       matrix:
         include:
           - php-versions: '8.1'
-            magento-versions: '2.4.6-p13'
+            magento-versions: '2.4.6-p15'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.2'
-            magento-versions: '2.4.6-p13'
+            magento-versions: '2.4.6-p15'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.2'
-            magento-versions: '2.4.7-p8'
+            magento-versions: '2.4.7-p10'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.3'
-            magento-versions: '2.4.7-p8'
+            magento-versions: '2.4.7-p10'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.3'
-            magento-versions: '2.4.8-p3'
+            magento-versions: '2.4.8-p5'
             magento-editions: 'enterprise'
             experimental: false
           - php-versions: '8.4'
-            magento-versions: '2.4.8-p3'
+            magento-versions: '2.4.8-p5'
             magento-editions: 'enterprise'
             experimental: false
 #          - php-versions: '8.4'
@@ -112,8 +116,6 @@ jobs:
           function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
           if [ $(version $MAGENTO_VERSION) -lt $(version "2.4.2") ]; then
             composer self-update --1
-          elif [ $(version $MAGENTO_VERSION) -lt $(version "2.4.7") ]; then
-            composer self-update --2.2
           else
             composer self-update --2
           fi
@@ -169,7 +171,15 @@ jobs:
           sudo rm -rf $MAGENTO_ROOT
           sudo mkdir -p $MAGENTO_ROOT
           sudo chown -R $USER:www-data $MAGENTO_ROOT
-          composer create-project --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
+          composer create-project --no-install --repository-url=https://repo.magento.com magento/project-$MAGENTO_EDITION-edition=$MAGENTO_VERSION $STABILITY $MAGENTO_ROOT --quiet
+          cd $MAGENTO_ROOT
+          composer config allow-plugins.magento/* true
+          composer config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer config allow-plugins.laminas/laminas-dependency-plugin true
+          if [ "$ADVISORIES" != "" ]; then
+            composer config --json policy.advisories.ignore-id "$ADVISORIES"
+          fi
+          composer install
 
       - name: "[Init] Add current build of Elasticsuite"
         env:
