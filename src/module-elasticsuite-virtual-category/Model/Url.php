@@ -338,7 +338,6 @@ class Url
         // The url_path is only unique within a category tree: restrict the lookup to the current store root,
         // otherwise a category of another tree sharing the same url_path can be returned (no rewrite, 404).
         $collection->setStoreId($store->getId())
-            ->addIsActiveFilter()
             ->addAttributeToFilter('url_path', ['eq' => $requestPath])
             ->addAttributeToFilter('path', ['like' => sprintf('1/%s/%%', $store->getRootCategoryId())]);
 
