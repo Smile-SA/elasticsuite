@@ -29,7 +29,7 @@
                         <argument name="id" xsi:type="string">elasticsuiteIndicesGrid</argument>
                         <argument name="dataSource" xsi:type="object">Smile\ElasticsuiteIndices\Model\Index\Collection</argument>
                         <argument name="use_ajax" xsi:type="boolean">0</argument>
-                        <argument name="save_parameters_in_session" xsi:type="boolean">0</argument>
+                        <argument name="save_parameters_in_session" xsi:type="boolean">1</argument>
                         <argument name="pager_visibility" xsi:type="boolean">0</argument>
                     </arguments>
 
