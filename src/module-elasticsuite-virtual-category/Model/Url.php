@@ -333,10 +333,14 @@ class Url
      */
     private function loadCategoryByUrlPath($requestPath)
     {
+        $store      = $this->storeManager->getStore();
         $collection = $this->categoryCollectionFactory->create();
 
-        $collection->setStoreId($this->storeManager->getStore()->getId())
-            ->addAttributeToFilter('url_path', ['eq' => $requestPath]);
+        // The url_path is only unique within a category tree: restrict the lookup to the current store root,
+        // otherwise a category of another tree sharing the same url_path can be returned (no rewrite, 404).
+        $collection->setStoreId($store->getId())
+            ->addAttributeToFilter('url_path', ['eq' => $requestPath])
+            ->addAttributeToFilter('path', ['like' => sprintf('1/%s/%%', $store->getRootCategoryId())]);
 
         return $collection->getFirstItem();
     }
