@@ -62,6 +62,7 @@ interface FieldInterface
      * Tokenizer declarations.
      */
     const TOKENIZER_WHITESPACE = 'whitespace';
+    const TOKENIZER_STANDARD   = 'standard';
 
     /**
      * Field filter logical operators.

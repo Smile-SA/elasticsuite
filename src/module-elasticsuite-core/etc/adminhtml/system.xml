@@ -160,6 +160,15 @@
                 </field>
             </group>
 
+            <group id="shingle_analyzer" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Shingle analyzer (phrase matching) configuration</label>
+                <field id="tokenizer" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Tokenizer</label>
+                    <source_model>Smile\ElasticsuiteCore\Model\Config\Source\ShingleTokenizer</source_model>
+                    <comment><![CDATA[Tokenizer used by the "shingle" analyzer which is in charge of phrase matching. The legacy "whitespace" tokenizer only splits text on whitespaces and keeps punctuation attached to words: when indexing a product named "Crouching Tiger, Hidden Dragon", the first generated shingle is "crouching tiger," and searching for "crouching tiger" will not trigger a phrase match. The "standard" tokenizer also splits text on punctuation, allowing the phrase match to occur. A full reindex is required for this setting to be applied.]]></comment>
+                </field>
+            </group>
+
             <group id="stemmer" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Language stemmer configuration</label>
                 <field id="info" translate="label comment" type="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0" >

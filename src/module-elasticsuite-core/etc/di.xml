@@ -536,6 +536,10 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
+        <plugin name="shingleAnalyzerTokenizer" type="Smile\ElasticsuiteCore\Plugin\Index\IndexSettings\ShingleTokenizerPlugin" />
+    </type>
+
     <!-- ElasticSearch <7 deprecation plugins -->
     <type name="Smile\ElasticsuiteCore\Index\Mapping">
         <plugin name="mappingBackwardCompatibility" type="Smile\ElasticsuiteCore\Plugin\Deprecation\Index\MappingPlugin"/>
