@@ -50,6 +50,9 @@
                 <trim_trailing_zeroes>0</trim_trailing_zeroes>
                 <reduce_zeroes>0</reduce_zeroes>
             </reference_analyzer>
+            <shingle_analyzer>
+                <tokenizer>whitespace</tokenizer>
+            </shingle_analyzer>
             <stemmer>
                 <use_default>1</use_default>
             </stemmer>
