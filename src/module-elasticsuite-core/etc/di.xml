@@ -565,6 +565,10 @@
         </arguments>
     </type>
 
+    <type name="Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface">
+        <plugin name="shingleAnalyzerTokenizer" type="Smile\ElasticsuiteCore\Plugin\Index\IndexSettings\ShingleTokenizerPlugin" />
+    </type>
+
     <!-- ElasticSearch >= 7.3.0 plugins -->
     <!-- Cutoff Frequency plugins are diabled for now : this feature is still supported by ES 7 and still very valuable for relevance. -->
     <!-- This will cause a deprecation message about cutoff_frequency to be shown in Elasticsearch logs. -->
