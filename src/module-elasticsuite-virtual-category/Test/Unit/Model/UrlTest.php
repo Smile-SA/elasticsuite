@@ -16,13 +16,16 @@ namespace Smile\ElasticsuiteVirtualCategory\Test\Unit\Model;
 
 use Magento\Catalog\Model\Category;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\UrlInterface;
+use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\Collection as CategoryCollection;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory as CategoryCollectionFactory;
 use Smile\ElasticsuiteVirtualCategory\Model\Url;
 use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCategoryRoot;
@@ -31,7 +34,7 @@ use Smile\ElasticsuiteVirtualCategory\Model\VirtualCategory\Root as VirtualCateg
  * Unit test for {@see Url}.
  *
  * Covers the extraction of the original category request path from a request path expressed under
- * a virtual category subtree.
+ * a virtual category subtree, and the stripping of the category URL suffix.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -105,6 +108,71 @@ class UrlTest extends TestCase
     }
 
     /**
+     * Test that only the trailing category URL suffix is stripped before looking up the category.
+     *
+     * @dataProvider categoryUrlSuffixDataProvider
+     *
+     * @param string      $categoryPath       Category request path.
+     * @param string|null $suffix             Category URL suffix configuration.
+     * @param string      $expectedLookupPath Expected url_path used to load the category.
+     *
+     * @return void
+     */
+    #[DataProvider('categoryUrlSuffixDataProvider')]
+    public function testGetCategoryRewriteStripsTrailingSuffixOnly(
+        string $categoryPath,
+        ?string $suffix,
+        string $expectedLookupPath
+    ): void {
+        $lookupPath = null;
+
+        $collection = $this->createMock(CategoryCollection::class);
+        $collection->method('setStoreId')->willReturnSelf();
+        $collection->method('addAttributeToFilter')->willReturnCallback(
+            function ($attribute, $condition) use ($collection, &$lookupPath) {
+                if ($attribute === 'url_path') {
+                    $lookupPath = $condition['eq'];
+                }
+
+                return $collection;
+            }
+        );
+        $collection->method('getFirstItem')->willReturn(new DataObject());
+
+        $collectionFactory = $this->createMock(CategoryCollectionFactory::class);
+        $collectionFactory->method('create')->willReturn($collection);
+
+        $scopeConfig = $this->createMock(ScopeConfigInterface::class);
+        $scopeConfig->method('getValue')->with(Url::XML_PATH_CATEGORY_URL_SUFFIX)->willReturn($suffix);
+
+        $urlModel = $this->getUrlModel(
+            $this->createMock(VirtualCategoryRoot::class),
+            $scopeConfig,
+            $collectionFactory
+        );
+
+        $this->assertNull($urlModel->getCategoryRewrite($categoryPath, 1));
+        $this->assertSame($expectedLookupPath, $lookupPath);
+    }
+
+    /**
+     * Data provider for testGetCategoryRewriteStripsTrailingSuffixOnly.
+     *
+     * @return array
+     */
+    public static function categoryUrlSuffixDataProvider(): array
+    {
+        return [
+            'html suffix' => ['gear/bags/sales.html', '.html', 'gear/bags/sales'],
+            'no suffix configured' => ['gear/bags/sales', null, 'gear/bags/sales'],
+            'empty suffix' => ['gear/bags/sales', '', 'gear/bags/sales'],
+            'slash suffix already trimmed' => ['gear/bags/sales', '/', 'gear/bags/sales'],
+            'suffix also present inside the path' => ['gear/bags-x/sales-x', '-x', 'gear/bags-x/sales'],
+            'suffix absent from the path' => ['gear/bags/sales', '.html', 'gear/bags/sales'],
+        ];
+    }
+
+    /**
      * Build a category mock with a given URL path.
      *
      * @param string $urlPath Category URL path.
@@ -122,16 +190,26 @@ class UrlTest extends TestCase
     /**
      * Build the tested URL model.
      *
-     * @param VirtualCategoryRoot $virtualCategoryRoot Virtual category root model.
+     * @param VirtualCategoryRoot            $virtualCategoryRoot Virtual category root model.
+     * @param ScopeConfigInterface|null      $scopeConfig         Scope config.
+     * @param CategoryCollectionFactory|null $collectionFactory   Category collection factory.
      *
      * @return Url
      */
-    private function getUrlModel(VirtualCategoryRoot $virtualCategoryRoot): Url
-    {
+    private function getUrlModel(
+        VirtualCategoryRoot $virtualCategoryRoot,
+        ?ScopeConfigInterface $scopeConfig = null,
+        ?CategoryCollectionFactory $collectionFactory = null
+    ): Url {
+        $store = $this->createMock(Store::class);
+        $store->method('getId')->willReturn(1);
+        $storeManager = $this->createMock(StoreManagerInterface::class);
+        $storeManager->method('getStore')->willReturn($store);
+
         return new Url(
-            $this->createMock(ScopeConfigInterface::class),
-            $this->createMock(StoreManagerInterface::class),
-            $this->createMock(CategoryCollectionFactory::class),
+            $scopeConfig ?? $this->createMock(ScopeConfigInterface::class),
+            $storeManager,
+            $collectionFactory ?? $this->createMock(CategoryCollectionFactory::class),
             $this->createMock(UrlFinderInterface::class),
             $this->createMock(UrlInterface::class),
             $virtualCategoryRoot
