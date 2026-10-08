@@ -213,7 +213,7 @@ class QueryBuilder
 
         $conditionKeys = array_keys($condition);
 
-        if (is_integer(current($conditionKeys))) {
+        if (is_int(current($conditionKeys))) {
             $condition = ['in' => $condition];
         }
 
