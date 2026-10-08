@@ -184,8 +184,9 @@ class Url
     {
         if ($appliedRoot) {
             /** @var Category $appliedRoot */
-            $appliedRootUrlPath = $appliedRoot->getUrlPath();
-            if (!empty($appliedRootUrlPath) && (strpos($categoryRequestPath, $appliedRootUrlPath) === 0)) {
+            // Trailing slash ensures only whole leading path segments match ("sales/" vs "sales-archive/...").
+            $appliedRootPrefix = trim((string) $appliedRoot->getUrlPath(), '/') . '/';
+            if (($appliedRootPrefix !== '/') && str_starts_with($categoryRequestPath, $appliedRootPrefix)) {
                 /*
                  * Category request path is expressed as /path/to/virtual/category/path/of/subcategory.
                  * If the virtual __root__ IS the root category, /path/to/virtual/category can be stripped
@@ -193,14 +194,15 @@ class Url
                  * On the other hand, if the virtual __root__ IS NOT the root category, path/of/subcategory will not correspond
                  * to an actual category URL rewrite: it needs to be prepended with that virtual root URL path.
                  */
-                $replacement = '';
+                $categoryRequestPath = substr($categoryRequestPath, strlen($appliedRootPrefix));
                 $appliedRootOrigin = $this->virtualCategoryRoot->getVirtualCategoryRoot($appliedRoot);
                 if ($appliedRootOrigin) {
                     /** @var Category $appliedRootOrigin */
-                    $replacement = $appliedRootOrigin->getUrlPath() ?? '';
+                    $appliedRootOriginUrlPath = trim((string) $appliedRootOrigin->getUrlPath(), '/');
+                    if ($appliedRootOriginUrlPath !== '') {
+                        $categoryRequestPath = $appliedRootOriginUrlPath . '/' . $categoryRequestPath;
+                    }
                 }
-                $categoryRequestPath = str_replace($appliedRootUrlPath, $replacement, $categoryRequestPath);
-                $categoryRequestPath = ltrim($categoryRequestPath, '/');
             }
         }
 
