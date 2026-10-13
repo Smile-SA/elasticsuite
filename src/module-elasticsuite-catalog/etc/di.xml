@@ -305,6 +305,9 @@
     <preference for="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryDataInterface"
                 type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\InventoryData" />
 
+    <preference for="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ChildrenStockFilterInterface"
+                type="Smile\ElasticsuiteCatalog\Model\ResourceModel\Product\Indexer\Fulltext\Datasource\ChildrenStockFilterResolver" />
+
     <virtualType name="Smile\ElasticsuiteCatalog\Search\Request\Product\Coverage\Builder"
         type="\Smile\ElasticsuiteCore\Search\Request\Builder">
         <arguments>

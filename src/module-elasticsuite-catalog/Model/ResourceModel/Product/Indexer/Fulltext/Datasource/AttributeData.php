@@ -18,6 +18,7 @@ use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Eav\Model\Config;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\EntityManager\MetadataPool;
+use Magento\Framework\Exception\LocalizedException;
 use Smile\ElasticsuiteCatalog\Model\ResourceModel\Eav\Indexer\Fulltext\Datasource\AbstractAttributeData;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Store\Model\StoreManagerInterface;
@@ -29,6 +30,8 @@ use Magento\Catalog\Model\Product\Type as ProductType;
  * @category  Smile
  * @package   Smile\ElasticsuiteCatalog
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class AttributeData extends AbstractAttributeData
 {
@@ -57,14 +60,22 @@ class AttributeData extends AbstractAttributeData
     private $eavConfig;
 
     /**
+     * Children stock filter.
+     *
+     * @var ChildrenStockFilterInterface
+     */
+    private ChildrenStockFilterInterface $childrenStockFilter;
+
+    /**
      * Constructor.
      *
-     * @param ResourceConnection    $resource           Database adpater.
-     * @param StoreManagerInterface $storeManager       Store manager.
-     * @param MetadataPool          $metadataPool       Metadata Pool.
-     * @param ProductType           $catalogProductType Product type.
-     * @param Config                $eavConfig          Eav config.
-     * @param string                $entityType         Product entity type.
+     * @param ResourceConnection           $resource            Database adapter.
+     * @param StoreManagerInterface        $storeManager        Store manager.
+     * @param MetadataPool                 $metadataPool        Metadata Pool.
+     * @param ProductType                  $catalogProductType  Product type.
+     * @param Config                       $eavConfig           Eav config.
+     * @param ChildrenStockFilterInterface $childrenStockFilter Children stock filter.
+     * @param string                       $entityType          Product entity type.
      */
     public function __construct(
         ResourceConnection $resource,
@@ -72,11 +83,13 @@ class AttributeData extends AbstractAttributeData
         MetadataPool $metadataPool,
         ProductType $catalogProductType,
         Config $eavConfig,
+        ChildrenStockFilterInterface $childrenStockFilter,
         $entityType = ProductInterface::class
     ) {
         parent::__construct($resource, $storeManager, $metadataPool, $entityType);
         $this->catalogProductType = $catalogProductType;
         $this->eavConfig = $eavConfig;
+        $this->childrenStockFilter = $childrenStockFilter;
     }
 
     /**
@@ -136,6 +149,7 @@ class AttributeData extends AbstractAttributeData
      * @param \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection Attribute Collection
      *
      * @return \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection
+     * @throws LocalizedException
      */
     public function addIndexedFilterToAttributeCollection(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Collection $attributeCollection
@@ -228,6 +242,12 @@ class AttributeData extends AbstractAttributeData
                 ['child_id' => $entityIdField, 'sku' => 'sku']
             )
             ->where("parent.{$entityIdField} in (?)", $parentIds);
+
+        /**
+         * If Catalog - Inventory - Stock Options - Display Out of Stock Products is set to NO,
+         * then exclude the non salable children from the query results.
+         */
+        $select = $this->childrenStockFilter->addSalableFilter($select, 'child', (int) $storeId);
 
         if ($relation->getWhere() !== null) {
             $select->where($relation->getWhere());
