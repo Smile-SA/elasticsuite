@@ -14,10 +14,10 @@
 
 namespace Smile\ElasticsuiteCore\Search\Request\ContainerConfiguration\RelevanceConfig;
 
-use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Magento\Framework\ObjectManagerInterface;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfiguration\FuzzinessConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Request\ContainerScopeInterface;
 
 /**
  * Search relevance configuration factory.
@@ -121,7 +121,7 @@ class Factory
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
-        $instanceName = 'Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface'
+        string $instanceName = 'Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface'
     ) {
         $this->scopeConfig   = $objectManager->get('Smile\ElasticsuiteCore\Search\Request\RelevanceConfig\App\Config');
         $this->objectManager = $objectManager;
@@ -174,7 +174,7 @@ class Factory
             'useDefaultAnalyzerInExactMatchFilter' => $this->isUsingDefaultAnalyzerInExactMatchFilter($scopeCode),
             'exactMatchSingleTermBoostsCustomized'  => $this->areExactMatchCustomBoostValuesEnabled($scopeCode),
             'exactMatchSingleTermPhraseMatchBoost'  => $this->getExactMatchSingleTermPhraseMatchBoostConfiguration($scopeCode),
-            'exactMatchSingleTermSortableBoost'     => $this->getExactMatchSortableBoostConfiguration($scopeCode),
+            'exactMatchSingleTermSortableBoost'     => $this->getExactMatchSingleTermSortableBoostConfiguration($scopeCode),
         ];
 
         return $configurationParams;
@@ -484,11 +484,11 @@ class Factory
      *
      * @return int
      */
-    private function getExactMatchSortableBoostConfiguration($scopeCode)
+    private function getExactMatchSingleTermSortableBoostConfiguration($scopeCode)
     {
         $path = self::BASE_RELEVANCE_CONFIG_XML_PREFIX . "/" . self::EXACT_MATCH_CONFIG_XML_PREFIX;
 
-        return (int) $this->getConfigValue($path . "/sortable_boost_value", $scopeCode);
+        return (int) $this->getConfigValue($path . "/single_term_sortable_boost_value", $scopeCode);
     }
 
     /**
