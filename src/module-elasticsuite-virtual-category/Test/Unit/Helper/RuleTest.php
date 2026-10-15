@@ -26,6 +26,7 @@ use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Helper\Rule as RuleHelper;
 use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
  * Unit test for {@see RuleHelper::loadUsingCache()}.
@@ -102,7 +103,8 @@ class RuleTest extends TestCase
             $this->createMock(ReadHandler::class),
             $this->createMock(CategoryRepositoryInterfaceFactory::class),
             $this->createMock(Config::class),
-            $queryCache
+            $queryCache,
+            new DependencyCollector()
         );
     }
 

@@ -20,6 +20,7 @@ use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\ObjectManager;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
  * Smile Elasticsuite virtual category cache helper.
@@ -61,16 +62,22 @@ class Rule
     private $config;
 
     /**
+     * @var DependencyCollector
+     */
+    private $dependencyCollector;
+
+    /**
      * Provider constructor.
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param CacheInterface                                          $cache              Deprecated, unused: the data is
-     *                                                                                    cached by the query cache.
-     * @param \Magento\Customer\Model\Session                         $customerSession    Customer session.
-     * @param ReadHandler                                             $readHandler        Rule read handler.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
-     * @param Config                                                  $config             Virtual category configuration.
-     * @param QueryCache|null                                         $queryCache         Virtual rules query cache.
+     * @param CacheInterface                                          $cache               Deprecated, unused: the data is
+     *                                                                                     cached by the query cache.
+     * @param \Magento\Customer\Model\Session                         $customerSession     Customer session.
+     * @param ReadHandler                                             $readHandler         Rule read handler.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository  Category factory.
+     * @param Config                                                  $config              Virtual category configuration.
+     * @param QueryCache|null                                         $queryCache          Virtual rules query cache.
+     * @param DependencyCollector|null                                $dependencyCollector Virtual rules dependency collector.
      */
     public function __construct(
         CacheInterface $cache,
@@ -78,13 +85,15 @@ class Rule
         ReadHandler $readHandler,
         CategoryRepositoryInterfaceFactory $categoryRepository,
         Config $config,
-        ?QueryCache $queryCache = null
+        ?QueryCache $queryCache = null,
+        ?DependencyCollector $dependencyCollector = null
     ) {
         $this->customerSession = $customerSession;
         $this->readHandler = $readHandler;
         $this->categoryRepository = $categoryRepository;
         $this->config = $config;
         $this->queryCache = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
+        $this->dependencyCollector = $dependencyCollector ?: ObjectManager::getInstance()->get(DependencyCollector::class);
     }
 
     /**
@@ -128,8 +137,16 @@ class Rule
 
         if ($cacheData === false) {
             $category = $this->getCategoryWithVirtualRule($category);
-            $data     = call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
-            $this->queryCache->save($cacheKey, $data, $category->getCacheTags());
+
+            // Every category read while computing the data is recorded as a dependency (and so a cache tag) of it.
+            $this->dependencyCollector->start();
+            try {
+                $data = call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
+            } finally {
+                $cacheTags = $this->dependencyCollector->stop();
+            }
+
+            $this->queryCache->save($cacheKey, $data, $cacheTags);
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 

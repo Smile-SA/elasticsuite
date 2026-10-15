@@ -14,7 +14,6 @@ namespace Smile\ElasticsuiteVirtualCategory\Plugin;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category as ResourceCategory;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\App\ObjectManager;
@@ -22,7 +21,10 @@ use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\Collec
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\CacheCleaner;
 
 /**
- * Clean rule cache on category save.
+ * Clean the virtual rules cache when a category is saved, deleted or moved.
+ *
+ * Only the cache entries depending on the category or on one of its ancestors are cleaned:
+ * any category query embeds the queries of its virtual descendants.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -30,11 +32,6 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\CacheCleaner;
  */
 class CleanRuleCacheAfterSave
 {
-    /**
-     * @var CollectionFactory
-     */
-    private $categoryCollectionFactory;
-
     /**
      * @var CacheCleaner
      */
@@ -45,7 +42,8 @@ class CleanRuleCacheAfterSave
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param CacheInterface    $cache                     Deprecated, unused: the cache is cleaned by the cache cleaner.
-     * @param CollectionFactory $categoryCollectionFactory Category collection factory.
+     * @param CollectionFactory $categoryCollectionFactory Deprecated, unused: the cache entries are tagged with
+     *                                                     the categories they depend on.
      * @param CacheCleaner|null $cacheCleaner              Virtual rules cache cleaner.
      */
     public function __construct(
@@ -53,7 +51,6 @@ class CleanRuleCacheAfterSave
         CollectionFactory $categoryCollectionFactory,
         ?CacheCleaner $cacheCleaner = null
     ) {
-        $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->cacheCleaner = $cacheCleaner ?: ObjectManager::getInstance()->get(CacheCleaner::class);
     }
 
@@ -70,11 +67,66 @@ class CleanRuleCacheAfterSave
     public function afterSave(ResourceCategory $subject, ResourceCategory $resourceCategory, AbstractModel $category)
     {
         if ($this->hasVirtualDataChange($category)) {
-            $tagsToClean = $this->getAffectedCategories([$category]);
-            $this->cacheCleaner->clean(array_keys($tagsToClean));
+            $this->cacheCleaner->cleanAfterCommit($category->getPathIds());
         }
 
         return $resourceCategory;
+    }
+
+    /**
+     * Clean category search rule cache on category deletion.
+     * The deleted category descendants, deleted along with it, are cleaned too.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param ResourceCategory $subject  Category resource model.
+     * @param callable         $proceed  Original method.
+     * @param mixed            $category Deleted category.
+     * @return ResourceCategory
+     */
+    public function aroundDelete(ResourceCategory $subject, callable $proceed, $category)
+    {
+        // Descendants must be retrieved before they are deleted.
+        $categoryIds = [];
+        if ($category instanceof Category) {
+            $categoryIds = array_merge($category->getPathIds(), $category->getAllChildren(true));
+        }
+
+        $result = $proceed($category);
+
+        $this->cacheCleaner->cleanAfterCommit($categoryIds);
+
+        return $result;
+    }
+
+    /**
+     * Clean category search rule cache on category move.
+     * Both the former and the new ancestors are cleaned, as well as the moved category descendants.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param ResourceCategory $subject         Category resource model.
+     * @param callable         $proceed         Original method.
+     * @param Category         $category        Moved category.
+     * @param Category         $newParent       New parent category.
+     * @param int|null         $afterCategoryId Category after which the moved category is positioned.
+     * @return ResourceCategory
+     */
+    public function aroundChangeParent(
+        ResourceCategory $subject,
+        callable $proceed,
+        Category $category,
+        Category $newParent,
+        $afterCategoryId = null
+    ) {
+        // Former ancestors and descendants must be retrieved before the category paths are updated.
+        $categoryIds = array_merge($category->getPathIds(), $category->getAllChildren(true));
+
+        $result = $proceed($category, $newParent, $afterCategoryId);
+
+        $this->cacheCleaner->cleanAfterCommit(array_merge($categoryIds, $newParent->getPathIds()));
+
+        return $result;
     }
 
     /**
@@ -86,58 +138,18 @@ class CleanRuleCacheAfterSave
     private function hasVirtualDataChange(AbstractModel $category): bool
     {
         $originalData = [
+            'is_active' => $category->getOrigData('is_active'),
             'is_virtual_category' => $category->getOrigData('is_virtual_category'),
             'virtual_rule' => "{$category->getOrigData('virtual_rule')}",
             'virtual_category_root' => $category->getOrigData('virtual_category_root'),
         ];
         $newData = [
+            'is_active' => $category->getData('is_active'),
             'is_virtual_category' => $category->getData('is_virtual_category'),
             'virtual_rule' => "{$category->getData('virtual_rule')}",
             'virtual_category_root' => $category->getData('virtual_category_root'),
         ];
 
-        return !empty(array_diff($originalData, $newData));
-    }
-
-    /**
-     * Get all category ids affected by the given category rules.
-     *
-     * @param array $categories Category list to check.
-     * @param array $tagList    Current calculated tag list to clean.
-     * @return array
-     * @throws LocalizedException
-     */
-    private function getAffectedCategories(array $categories, array $tagList = [])
-    {
-        $parentCategoryIds = [];
-        /** @var Category $category */
-        foreach ($categories as $category) {
-            // We need the root and the category of level 1 as they are the root of the website.
-            $parentCategoryIds = array_merge($parentCategoryIds, array_slice($category->getPathIds(), 2));
-        }
-
-        // Add the parent category in the list of the category rule to flush.
-        foreach ($parentCategoryIds as $categoryId) {
-            $tagList[$categoryId] = Category::CACHE_TAG . '_' . $categoryId;
-        }
-
-        // Search for virtual category that use the cleaned category as root category.
-        $affectedCategories = $this->categoryCollectionFactory
-            ->create()
-            ->addAttributeToFilter('level', ['gt' => 1])
-            ->addAttributeToFilter('is_virtual_category', ['eq' => true])
-            ->addAttributeToFilter('virtual_category_root', ['in' => $parentCategoryIds])
-            ->addAttributeToFilter('entity_id', ['nin' => array_keys($tagList)]);
-
-        foreach ($affectedCategories as $category) {
-            $tagList[$category->getId()] = Category::CACHE_TAG . '_' . $category->getId();
-        }
-
-        // If cleaned categories are used as virtual category root, re-run this algo with these categories.
-        if ($affectedCategories->count()) {
-            $tagList = $this->getAffectedCategories($affectedCategories->getItems(), $tagList);
-        }
-
-        return $tagList;
+        return !empty(array_diff_assoc($originalData, $newData));
     }
 }

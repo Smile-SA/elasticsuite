@@ -23,12 +23,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory as ProductConditionFactory;
-use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
@@ -59,6 +59,11 @@ class RuleTest extends TestCase
      * @var QueryInterface
      */
     private $standardQuery;
+
+    /**
+     * @var DependencyCollector|MockObject
+     */
+    private $dependencyCollector;
 
     /**
      * {@inheritDoc}
@@ -118,6 +123,19 @@ class RuleTest extends TestCase
         $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
 
         $this->assertSame($this->standardQuery, $rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]));
+    }
+
+    /**
+     * An expansion boundary used by another category is a dependency of the query embedding it.
+     *
+     * @return void
+     */
+    public function testEmbeddedBoundaryIsADependency(): void
+    {
+        $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
+        $this->dependencyCollector->expects($this->once())->method('addCategoryIds')->with([self::BOUNDARY_ID]);
+
+        $rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]);
     }
 
     /**
@@ -201,8 +219,9 @@ class RuleTest extends TestCase
         $queryFactory->method('create')->willReturn($this->createMock(QueryInterface::class));
 
         // Reached when a category is fully expanded (the store root and boundary queries are built before it).
-        $queryCache = $this->createMock(QueryCache::class);
-        $queryCache->method('load')->willThrowException(new \LogicException(self::EXPANDED));
+        $dependencyCollector = $this->createMock(DependencyCollector::class);
+        $dependencyCollector->method('start')->willThrowException(new \LogicException(self::EXPANDED));
+        $this->dependencyCollector = $dependencyCollector;
 
         $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
         $rootCategoryProvider->method('get')->willReturn($category);
@@ -218,7 +237,7 @@ class RuleTest extends TestCase
             'queryBuilder'             => $queryBuilder,
             'queryFactory'             => $queryFactory,
             'customerSession'          => $this->createMock(Session::class),
-            'queryCache'               => $queryCache,
+            'dependencyCollector'      => $dependencyCollector,
             'rootCategoryProvider'     => $rootCategoryProvider,
         ];
         foreach ($properties as $property => $value) {
