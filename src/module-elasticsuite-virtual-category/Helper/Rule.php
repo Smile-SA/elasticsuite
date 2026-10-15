@@ -16,6 +16,9 @@ namespace Smile\ElasticsuiteVirtualCategory\Helper;
 
 use Magento\Catalog\Api\CategoryRepositoryInterfaceFactory;
 use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler;
 
 /**
@@ -28,14 +31,19 @@ use Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadH
 class Rule
 {
     /**
-     * @var \Magento\Framework\App\CacheInterface
+     * Virtual rule methods managing their own cache, which must not be cached a second time by this helper.
      */
-    private $cache;
+    private const SELF_CACHED_CALLBACKS = ['getCategorySearchQuery'];
 
     /**
      * @var \Magento\Customer\Model\Session
      */
     private $customerSession;
+
+    /**
+     * @var QueryCache
+     */
+    private $queryCache;
 
     /**
      * @var \Smile\ElasticsuiteVirtualCategory\Model\Category\Attribute\VirtualRule\ReadHandler
@@ -54,25 +62,29 @@ class Rule
 
     /**
      * Provider constructor.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param \Magento\Framework\App\CacheInterface                   $cache              Cache.
+     * @param CacheInterface                                          $cache              Deprecated, unused: the data is
+     *                                                                                    cached by the query cache.
      * @param \Magento\Customer\Model\Session                         $customerSession    Customer session.
      * @param ReadHandler                                             $readHandler        Rule read handler.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
      * @param Config                                                  $config             Virtual category configuration.
+     * @param QueryCache|null                                         $queryCache         Virtual rules query cache.
      */
     public function __construct(
-        \Magento\Framework\App\CacheInterface $cache,
+        CacheInterface $cache,
         \Magento\Customer\Model\Session $customerSession,
         ReadHandler $readHandler,
         CategoryRepositoryInterfaceFactory $categoryRepository,
-        Config $config
+        Config $config,
+        ?QueryCache $queryCache = null
     ) {
-        $this->cache = $cache;
         $this->customerSession = $customerSession;
         $this->readHandler = $readHandler;
         $this->categoryRepository = $categoryRepository;
         $this->config = $config;
+        $this->queryCache = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
     }
 
     /**
@@ -86,6 +98,12 @@ class Rule
      */
     public function loadUsingCache(CategoryInterface $category, $callback)
     {
+        if (in_array($callback, self::SELF_CACHED_CALLBACKS, true)) {
+            $category = $this->getCategoryWithVirtualRule($category);
+
+            return call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
+        }
+
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
         $cacheKey = implode(
             '|',
@@ -105,38 +123,43 @@ class Rule
             )
         );
 
-        $data = $this->cache->load($cacheKey);
+        $cacheData = $this->queryCache->load($cacheKey);
+        $data      = ($cacheData !== false) ? $cacheData['data'] : false;
 
-        // Due to the fact we serialize/unserialize completely pre-built queries as object.
-        // We cannot use any implementation of SerializerInterface.
-        if ($data !== false) {
-            $data = unserialize($data);
-        }
-
-        if ($data === false) {
-            $virtualRule = $category->getVirtualRule();
-
-            if (null === $virtualRule) {
-                // If virtual rule is null, probably the category himself was not properly loaded.
-                // So we load it through the repository and we ensure the readhandler will be called properly.
-                $repository  = $this->categoryRepository->create();
-                $category    = $repository->get($category->getId(), $category->getStoreId());
-                $category    = $this->readHandler->execute($category);
-                $virtualRule = $category->getVirtualRule();
-            } elseif (!is_object($virtualRule)) {
-                // If virtual rule is not an object, probably the rule was not properly loaded.
-                // @see https://github.com/Smile-SA/elasticsuite/issues/1985.
-                // In such cases, we go through the readHandler once again.
-                $category    = $this->readHandler->execute($category);
-                $virtualRule = $category->getVirtualRule();
-            }
-
-            $data        = call_user_func_array([$virtualRule, $callback], [$category]);
-            $cacheData   = serialize($data);
-            $this->cache->save($cacheData, $cacheKey, $category->getCacheTags());
+        if ($cacheData === false) {
+            $category = $this->getCategoryWithVirtualRule($category);
+            $data     = call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
+            $this->queryCache->save($cacheKey, $data, $category->getCacheTags());
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 
         return $data;
+    }
+
+    /**
+     * Ensure the category virtual rule is loaded as an object, reloading the category if needed.
+     *
+     * @param CategoryInterface $category Category
+     *
+     * @return CategoryInterface
+     */
+    private function getCategoryWithVirtualRule(CategoryInterface $category): CategoryInterface
+    {
+        $virtualRule = $category->getVirtualRule();
+
+        if (null === $virtualRule) {
+            // If virtual rule is null, probably the category himself was not properly loaded.
+            // So we load it through the repository and we ensure the readhandler will be called properly.
+            $repository = $this->categoryRepository->create();
+            $category   = $repository->get($category->getId(), $category->getStoreId());
+            $category   = $this->readHandler->execute($category);
+        } elseif (!is_object($virtualRule)) {
+            // If virtual rule is not an object, probably the rule was not properly loaded.
+            // @see https://github.com/Smile-SA/elasticsuite/issues/1985.
+            // In such cases, we go through the readHandler once again.
+            $category = $this->readHandler->execute($category);
+        }
+
+        return $category;
     }
 }

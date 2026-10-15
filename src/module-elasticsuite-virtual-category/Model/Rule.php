@@ -20,6 +20,7 @@ use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Data\ConditionFactory as ConditionDataFactory ;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
@@ -86,9 +87,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $customerSession;
 
     /**
-     * @var CacheInterface
+     * @var QueryCache
      */
-    private $sharedCache;
+    private $queryCache;
 
     /**
      * @var Config
@@ -109,13 +110,17 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     protected $instances = [];
 
     /**
+     * Deprecated, unused: the in-process cache of the queries is held by the virtual rules query cache.
+     *
      * @var array
+     * @see QueryCache
      */
     protected static $localCache = [];
 
     /**
      * Constructor.
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param Context                   $context                   Context.
      * @param Registry                  $registry                  Registry.
@@ -130,10 +135,12 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param QueryBuilder              $queryBuilder              Search rule query builder.
      * @param StoreManagerInterface     $storeManagerInterface     Store Manager
      * @param Session                   $customerSession           Customer session.
-     * @param CacheInterface            $cache                     Cache.
+     * @param CacheInterface            $cache                     Deprecated, unused: the queries are cached by the
+     *                                                             query cache.
      * @param Config                    $config                    Virtual category configuration.
      * @param array                     $data                      Additional data.
      * @param RootCategoryProvider|null $rootCategoryProvider      Virtual root categories provider.
+     * @param QueryCache|null           $queryCache                Virtual rules query cache.
      */
     public function __construct(
         Context $context,
@@ -152,7 +159,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CacheInterface          $cache,
         Config                  $config,
         array                   $data = [],
-        ?RootCategoryProvider   $rootCategoryProvider = null
+        ?RootCategoryProvider   $rootCategoryProvider = null,
+        ?QueryCache             $queryCache = null
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
@@ -161,11 +169,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->queryBuilder              = $queryBuilder;
         $this->storeManager              = $storeManagerInterface;
         $this->customerSession           = $customerSession;
-        $this->sharedCache               = $cache;
         $this->config                    = $config;
         $this->rootCategoryProvider      = $rootCategoryProvider ?: ObjectManager::getInstance()->get(
             RootCategoryProvider::class
         );
+        $this->queryCache                = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -196,6 +204,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @codingStandardsIgnoreEnd
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @return QueryInterface|null
      */
@@ -241,34 +250,30 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             )
         );
 
-        $query = $this->getFromLocalCache($categoryId);
+        $cacheData = $this->queryCache->load($cacheKey, false);
 
         // If the category is not an object, it can't be in a "draft" mode.
-        if ($query === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
+        if ($cacheData === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
             // If the category virtual root is one of the excluded categories, we must recalculate the query.
             // We can't use the cached one in order to avoid loop and very big queries.
             if (!is_object($category) || !$this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
-                // Due to the fact we serialize/unserialize completely pre-built queries as object.
-                // We cannot use any implementation of SerializerInterface.
-                $query = $this->sharedCache->load($cacheKey);
-                $query = $query ? unserialize($query) : false;
+                $cacheData = $this->queryCache->load($cacheKey);
             }
         }
 
-        if ($query === false) {
+        if ($cacheData !== false) {
+            $query = $cacheData['data'];
+        } else {
             if (!is_object($category)) {
                 $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
             }
             $query = $this->buildCategorySearchQuery($category, $excludedCategories);
-
-            if (!$category->getHasDraftVirtualRule() && $query !== null && !in_array($categoryId, $excludedCategories)) {
-                $cacheData   = serialize($query);
-                $this->sharedCache->save($cacheData, $cacheKey, $category->getCacheTags());
-            }
         }
 
-        if (!in_array($categoryId, $excludedCategories)) {
-            $this->saveInLocalCache($categoryId, $query);
+        if ($cacheData === false && $query !== null && !in_array($categoryId, $excludedCategories)) {
+            // Draft rules (eg. previewed ones) are only kept for the current process.
+            $useSharedCache = !$category->getHasDraftVirtualRule();
+            $this->queryCache->save($cacheKey, $query, $category->getCacheTags(), $useSharedCache);
         }
 
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
@@ -689,30 +694,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Get category query from local cache.
-     *
-     * @param int $categoryId In of the category.
-     * @return QueryInterface|bool|null
-     */
-    private function getFromLocalCache(int $categoryId)
-    {
-        return self::$localCache[$categoryId] ?? false;
-    }
-
-    /**
-     * Save category query in local cache.
-     *
-     * @param int                      $categoryId Id of the category.
-     * @param QueryInterface|bool|null $query      Query of the category.
-     */
-    private function saveInLocalCache(int $categoryId, $query): void
-    {
-        if ($query !== null) {
-            self::$localCache[$categoryId] = $query;
-        }
-    }
-
-    /**
      * Build a query that return zero products.
      *
      * @return QueryInterface
@@ -743,6 +724,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function isVirtualCategoryRootInExcludeCategories(CategoryInterface $category, array $excludedCategories): bool
     {
+        // Nothing is being built (eg. a top-level query served from the cache): no need to load the root category.
+        if (empty($excludedCategories)) {
+            return false;
+        }
+
         $rootCategory = $this->getVirtualRootCategory($category);
 
         return $category->getIsVirtualCategory()

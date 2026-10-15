@@ -17,13 +17,13 @@ namespace Smile\ElasticsuiteVirtualCategory\Test\Unit\Model;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
 use Magento\Customer\Model\Session;
-use Magento\Framework\App\CacheInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory as ProductConditionFactory;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
@@ -50,14 +50,15 @@ class RuleTest extends TestCase
     private const BOUNDARY_ID = 3181;
 
     /**
-     * @var QueryInterface
+     * Message of the exception thrown when the normal build path of a category query is reached, ie. when the
+     * category is fully expanded instead of being reduced to its standard query.
      */
-    private $standardQuery;
+    private const EXPANDED = 'Expanded';
 
     /**
      * @var QueryInterface
      */
-    private $fullQuery;
+    private $standardQuery;
 
     /**
      * {@inheritDoc}
@@ -65,21 +66,6 @@ class RuleTest extends TestCase
     protected function setUp(): void
     {
         $this->standardQuery = $this->createMock(QueryInterface::class);
-        $this->fullQuery     = $this->createMock(QueryInterface::class);
-        // Full queries, as built with all the virtual categories under them (eg. for the page of the boundary).
-        $this->setLocalCache([
-            self::STORE_ROOT_ID => $this->fullQuery,
-            self::OTHER_ROOT_ID => $this->fullQuery,
-            self::BOUNDARY_ID   => $this->fullQuery,
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        $this->setLocalCache([]);
     }
 
     /**
@@ -105,7 +91,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::STORE_ROOT_ID, false, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]);
     }
 
     /**
@@ -117,7 +104,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::OTHER_ROOT_ID, true, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]);
     }
 
     /**
@@ -141,7 +129,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::BOUNDARY_ID));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::BOUNDARY_ID);
     }
 
     /**
@@ -211,9 +200,9 @@ class RuleTest extends TestCase
         $queryFactory = $this->createMock(QueryFactory::class);
         $queryFactory->method('create')->willReturn($this->createMock(QueryInterface::class));
 
-        // The store root and boundary queries are never cached.
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->expects($this->never())->method('save');
+        // Reached when a category is fully expanded (the store root and boundary queries are built before it).
+        $queryCache = $this->createMock(QueryCache::class);
+        $queryCache->method('load')->willThrowException(new \LogicException(self::EXPANDED));
 
         $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
         $rootCategoryProvider->method('get')->willReturn($category);
@@ -229,7 +218,7 @@ class RuleTest extends TestCase
             'queryBuilder'             => $queryBuilder,
             'queryFactory'             => $queryFactory,
             'customerSession'          => $this->createMock(Session::class),
-            'sharedCache'              => $cache,
+            'queryCache'               => $queryCache,
             'rootCategoryProvider'     => $rootCategoryProvider,
         ];
         foreach ($properties as $property => $value) {
@@ -239,19 +228,5 @@ class RuleTest extends TestCase
         }
 
         return $rule;
-    }
-
-    /**
-     * Set the in-process cache of the category queries.
-     *
-     * @param array $queries Queries, by category id.
-     *
-     * @return void
-     */
-    private function setLocalCache(array $queries): void
-    {
-        $reflection = new \ReflectionProperty(Rule::class, 'localCache');
-        $reflection->setAccessible(true);
-        $reflection->setValue(null, $queries);
     }
 }

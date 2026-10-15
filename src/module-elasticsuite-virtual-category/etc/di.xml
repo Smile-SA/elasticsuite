@@ -233,9 +233,15 @@
         </arguments>
     </type>
 
-    <!-- Clean rule cache on category save -->
+    <!-- Clean rule cache on category save, delete and move -->
     <type name="Magento\Catalog\Model\ResourceModel\Category">
         <plugin name="cleanRuleCacheAfterSave" type="Smile\ElasticsuiteVirtualCategory\Plugin\CleanRuleCacheAfterSave"/>
+    </type>
+
+    <!-- Clean rule cache when category scheduled updates are applied -->
+    <type name="Magento\CatalogStaging\Model\CategoryApplier">
+        <plugin name="smile_elasticsuite_virtual_category_clean_rule_cache"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Staging\Catalog\CategoryApplierPlugin"/>
     </type>
 
     <!-- Register Virtual Category Location Provider -->
