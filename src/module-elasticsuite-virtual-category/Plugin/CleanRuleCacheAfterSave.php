@@ -14,10 +14,12 @@ namespace Smile\ElasticsuiteVirtualCategory\Plugin;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category as ResourceCategory;
-use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ObjectManager;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\CacheCleaner;
 
 /**
  * Clean rule cache on category save.
@@ -29,27 +31,30 @@ use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\Collec
 class CleanRuleCacheAfterSave
 {
     /**
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
      * @var CollectionFactory
      */
     private $categoryCollectionFactory;
 
     /**
+     * @var CacheCleaner
+     */
+    private $cacheCleaner;
+
+    /**
      * Constructor.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param CacheInterface    $cache                     Cache.
+     * @param CacheInterface    $cache                     Deprecated, unused: the cache is cleaned by the cache cleaner.
      * @param CollectionFactory $categoryCollectionFactory Category collection factory.
+     * @param CacheCleaner|null $cacheCleaner              Virtual rules cache cleaner.
      */
     public function __construct(
         CacheInterface $cache,
-        CollectionFactory $categoryCollectionFactory
+        CollectionFactory $categoryCollectionFactory,
+        ?CacheCleaner $cacheCleaner = null
     ) {
-        $this->cache = $cache;
         $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->cacheCleaner = $cacheCleaner ?: ObjectManager::getInstance()->get(CacheCleaner::class);
     }
 
     /**
@@ -66,7 +71,7 @@ class CleanRuleCacheAfterSave
     {
         if ($this->hasVirtualDataChange($category)) {
             $tagsToClean = $this->getAffectedCategories([$category]);
-            $this->cache->clean($tagsToClean);
+            $this->cacheCleaner->clean(array_keys($tagsToClean));
         }
 
         return $resourceCategory;
