@@ -45,11 +45,13 @@ class QueryCacheTest extends TestCase
      */
     public function testSharedEntry(): void
     {
-        $this->createQueryCache()->save('key', 'query', ['cat_c_3']);
+        $this->createQueryCache()->save('key', 'query', ['ES_VCAT_3']);
 
         $this->assertSame(['key'], array_keys($this->storage));
-        $this->assertSame(['cat_c_3'], $this->storage['key']['tags']);
-        $this->assertSame('query', $this->createQueryCache()->load('key')['data']);
+        $this->assertSame(['ES_VCAT_3'], $this->storage['key']['tags']);
+        $cacheData = $this->createQueryCache()->load('key');
+        $this->assertSame('query', $cacheData['data']);
+        $this->assertSame(['ES_VCAT_3'], $cacheData['tags']);
         $this->assertFalse($this->createQueryCache()->load('other key'));
     }
 
@@ -61,7 +63,7 @@ class QueryCacheTest extends TestCase
     public function testInProcessOnly(): void
     {
         $queryCache = $this->createQueryCache();
-        $queryCache->save('key', 'draft query', ['cat_c_3'], false);
+        $queryCache->save('key', 'draft query', ['ES_VCAT_3'], false);
 
         $this->assertSame([], $this->storage);
         $this->assertSame('draft query', $queryCache->load('key', false)['data']);
@@ -76,8 +78,8 @@ class QueryCacheTest extends TestCase
     public function testReset(): void
     {
         $queryCache = $this->createQueryCache();
-        $queryCache->save('draft', 'draft query', ['cat_c_3'], false);
-        $queryCache->save('key', 'query', ['cat_c_3']);
+        $queryCache->save('draft', 'draft query', ['ES_VCAT_3'], false);
+        $queryCache->save('key', 'query', ['ES_VCAT_3']);
         $queryCache->reset();
 
         $this->assertFalse($queryCache->load('draft', false), 'In-process entries are forgotten.');
@@ -91,7 +93,7 @@ class QueryCacheTest extends TestCase
      */
     public function testInvalidEntry(): void
     {
-        $this->storage['key'] = ['data' => serialize('query'), 'tags' => []];
+        $this->storage['key'] = ['data' => serialize(['data' => 'query']), 'tags' => []];
 
         $this->assertFalse($this->createQueryCache()->load('key'));
     }

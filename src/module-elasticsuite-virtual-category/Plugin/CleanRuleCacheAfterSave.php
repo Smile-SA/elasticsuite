@@ -23,8 +23,8 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\CacheCleaner;
 /**
  * Clean the virtual rules cache when a category is saved, deleted or moved.
  *
- * The cache entries of the category and of its ancestors are cleaned (any category query embeds the queries of its
- * virtual descendants), as well as the ones of the virtual categories using them as virtual root.
+ * Only the cache entries depending on the category or on one of its ancestors are cleaned:
+ * any category query embeds the queries of its virtual descendants.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -42,8 +42,8 @@ class CleanRuleCacheAfterSave
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param CacheInterface    $cache                     Deprecated, unused: the cache is cleaned by the cache cleaner.
-     * @param CollectionFactory $categoryCollectionFactory Deprecated, unused: the virtual categories using a cleaned
-     *                                                     category as root are looked up by the cache cleaner.
+     * @param CollectionFactory $categoryCollectionFactory Deprecated, unused: the cache entries are tagged with
+     *                                                     the categories they depend on.
      * @param CacheCleaner|null $cacheCleaner              Virtual rules cache cleaner.
      */
     public function __construct(
@@ -67,7 +67,7 @@ class CleanRuleCacheAfterSave
     public function afterSave(ResourceCategory $subject, ResourceCategory $resourceCategory, AbstractModel $category)
     {
         if ($this->hasVirtualDataChange($category)) {
-            $this->cacheCleaner->clean($category->getPathIds());
+            $this->cacheCleaner->cleanAfterCommit($category->getPathIds());
         }
 
         return $resourceCategory;
@@ -94,7 +94,7 @@ class CleanRuleCacheAfterSave
 
         $result = $proceed($category);
 
-        $this->cacheCleaner->clean($categoryIds);
+        $this->cacheCleaner->cleanAfterCommit($categoryIds);
 
         return $result;
     }
@@ -124,7 +124,7 @@ class CleanRuleCacheAfterSave
 
         $result = $proceed($category, $newParent, $afterCategoryId);
 
-        $this->cacheCleaner->clean(array_merge($categoryIds, $newParent->getPathIds()));
+        $this->cacheCleaner->cleanAfterCommit(array_merge($categoryIds, $newParent->getPathIds()));
 
         return $result;
     }

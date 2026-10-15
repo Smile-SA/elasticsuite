@@ -19,6 +19,8 @@ use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
 /**
  * Two-level (in-process and shared) cache of the data built from rules (eg. virtual category search queries).
  *
+ * Each entry holds the data along with its cache tags.
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Richard Bayet <richard.bayet@smile.fr>
@@ -53,7 +55,7 @@ class QueryCache
      * @param string $cacheKey       Cache key.
      * @param bool   $useSharedCache Whether to look into the shared cache, and not only into the in-process one.
      *
-     * @return array|false Entry (data) or false if missing.
+     * @return array|false Entry (data, tags) or false if missing.
      */
     public function load(string $cacheKey, bool $useSharedCache = true)
     {
@@ -74,7 +76,7 @@ class QueryCache
      */
     public function save(string $cacheKey, $data, array $cacheTags, bool $useSharedCache = true): void
     {
-        $this->set($cacheKey, ['data' => $data], $cacheTags, $useSharedCache);
+        $this->set($cacheKey, ['data' => $data, 'tags' => $cacheTags], $useSharedCache);
     }
 
     /**
@@ -118,19 +120,18 @@ class QueryCache
     /**
      * Save an entry into the in-process cache, and into the shared cache.
      *
-     * @param string   $cacheKey       Cache key.
-     * @param array    $cacheData      Entry.
-     * @param string[] $cacheTags      Cache tags.
-     * @param bool     $useSharedCache Whether to save into the shared cache.
+     * @param string $cacheKey       Cache key.
+     * @param array  $cacheData      Entry.
+     * @param bool   $useSharedCache Whether to save into the shared cache.
      *
      * @return void
      */
-    private function set(string $cacheKey, array $cacheData, array $cacheTags, bool $useSharedCache): void
+    private function set(string $cacheKey, array $cacheData, bool $useSharedCache): void
     {
         $this->localCache[$cacheKey] = $cacheData;
 
         if ($useSharedCache) {
-            $this->sharedCache->save(serialize($cacheData), $cacheKey, $cacheTags);
+            $this->sharedCache->save(serialize($cacheData), $cacheKey, $cacheData['tags']);
         }
     }
 
@@ -143,6 +144,6 @@ class QueryCache
      */
     private function isValid($cacheData): bool
     {
-        return is_array($cacheData) && array_key_exists('data', $cacheData);
+        return is_array($cacheData) && array_key_exists('data', $cacheData) && isset($cacheData['tags']);
     }
 }

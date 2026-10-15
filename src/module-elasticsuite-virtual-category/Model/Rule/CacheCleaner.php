@@ -14,15 +14,15 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Model\Rule;
 
-use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category as CategoryResource;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
-use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 
 /**
- * Cleans the virtual rules cache entries of some categories, and of the virtual categories using one of them as
- * virtual root, recursively: their queries embed the query of their root.
+ * Cleans the virtual rules cache entries depending on some categories.
+ *
+ * A change on a category impacts the queries depending on it, but also the queries depending on any of its ancestors,
+ * since the query of a category embeds the queries of its virtual descendants.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -36,9 +36,9 @@ class CacheCleaner
     private $cache;
 
     /**
-     * @var QueryCache
+     * @var DependencyCollector
      */
-    private $queryCache;
+    private $dependencyCollector;
 
     /**
      * @var CategoryResource
@@ -46,9 +46,9 @@ class CacheCleaner
     private $categoryResource;
 
     /**
-     * @var CollectionFactory
+     * @var QueryCache
      */
-    private $categoryCollectionFactory;
+    private $queryCache;
 
     /**
      * @var RootCategoryProvider
@@ -58,52 +58,49 @@ class CacheCleaner
     /**
      * Constructor.
      *
-     * @param ElasticsuiteCache    $cache                     Elasticsuite cache.
-     * @param QueryCache           $queryCache                Virtual rules query cache.
-     * @param CategoryResource     $categoryResource          Category resource model.
-     * @param CollectionFactory    $categoryCollectionFactory Virtual categories collection factory.
-     * @param RootCategoryProvider $rootCategoryProvider      Virtual root categories provider.
+     * @param ElasticsuiteCache    $cache                Elasticsuite cache.
+     * @param DependencyCollector  $dependencyCollector  Virtual rules dependency collector.
+     * @param CategoryResource     $categoryResource     Category resource model.
+     * @param QueryCache           $queryCache           Virtual rules query cache.
+     * @param RootCategoryProvider $rootCategoryProvider Virtual root categories provider.
      */
     public function __construct(
         ElasticsuiteCache $cache,
-        QueryCache $queryCache,
+        DependencyCollector $dependencyCollector,
         CategoryResource $categoryResource,
-        CollectionFactory $categoryCollectionFactory,
+        QueryCache $queryCache,
         RootCategoryProvider $rootCategoryProvider
     ) {
-        $this->cache                     = $cache;
-        $this->queryCache                = $queryCache;
-        $this->categoryResource          = $categoryResource;
-        $this->categoryCollectionFactory = $categoryCollectionFactory;
-        $this->rootCategoryProvider      = $rootCategoryProvider;
+        $this->cache                = $cache;
+        $this->dependencyCollector  = $dependencyCollector;
+        $this->categoryResource     = $categoryResource;
+        $this->queryCache           = $queryCache;
+        $this->rootCategoryProvider = $rootCategoryProvider;
     }
 
     /**
-     * Clean the cache entries of the given categories, and of the virtual categories using one of them as root.
+     * Clean the cache entries depending on the given categories, once the current transaction (if any) is committed.
+     * Cleaning before the commit would allow a concurrent request to cache again a query built from outdated data.
      *
      * @param int[] $categoryIds Category ids, which must include the changed categories ancestors.
      *
      * @return void
      */
-    public function clean(array $categoryIds): void
+    public function cleanAfterCommit(array $categoryIds): void
     {
-        $cacheTags = array_map(
-            function ($categoryId) {
-                return Category::CACHE_TAG . '_' . $categoryId;
-            },
-            $this->addVirtualRootUsers(array_map('intval', $categoryIds))
-        );
+        if ($this->categoryResource->getConnection()->getTransactionLevel() > 0) {
+            $this->categoryResource->addCommitCallback(function () use ($categoryIds) {
+                $this->clean($categoryIds);
+            });
 
-        if (!empty($cacheTags)) {
-            $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, $cacheTags);
-            // Queries and root categories kept by the current process may be outdated as well.
-            $this->queryCache->reset();
-            $this->rootCategoryProvider->reset();
+            return;
         }
+
+        $this->clean($categoryIds);
     }
 
     /**
-     * Clean the cache entries of the given categories or of any of their ancestors.
+     * Clean the cache entries depending on the given categories or on any of their ancestors.
      *
      * @param int[] $categoryIds Category ids.
      *
@@ -111,7 +108,26 @@ class CacheCleaner
      */
     public function cleanWithAncestors(array $categoryIds): void
     {
-        $this->clean($this->getPathIds($categoryIds));
+        $this->cleanAfterCommit($this->getPathIds($categoryIds));
+    }
+
+    /**
+     * Clean the cache entries depending on the given categories.
+     *
+     * @param int[] $categoryIds Category ids.
+     *
+     * @return void
+     */
+    public function clean(array $categoryIds): void
+    {
+        $cacheTags = $this->dependencyCollector->getCacheTags($categoryIds);
+
+        if (!empty($cacheTags)) {
+            $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, $cacheTags);
+            // Queries and root categories kept by the current process may be outdated as well.
+            $this->queryCache->reset();
+            $this->rootCategoryProvider->reset();
+        }
     }
 
     /**
@@ -139,37 +155,5 @@ class CacheCleaner
         }
 
         return array_values(array_unique(array_map('intval', $pathIds)));
-    }
-
-    /**
-     * Add to the given categories the virtual categories using one of them as virtual root, with their ancestors,
-     * and so on with the categories added.
-     * For example, with V (path 1/2/30/31) using 12 as root, cleaning [1, 2, 3, 12] also cleans 30 and 31.
-     *
-     * @param int[] $categoryIds Category ids.
-     *
-     * @return int[]
-     */
-    private function addVirtualRootUsers(array $categoryIds): array
-    {
-        $categoryIds = array_values(array_unique($categoryIds));
-        $rootIds     = $categoryIds;
-
-        while (!empty($rootIds)) {
-            $collection = $this->categoryCollectionFactory->create()
-                ->addAttributeToFilter('level', ['gt' => 1])
-                ->addAttributeToFilter('is_virtual_category', ['eq' => true])
-                ->addAttributeToFilter('virtual_category_root', ['in' => $rootIds])
-                ->addAttributeToFilter('entity_id', ['nin' => $categoryIds]);
-
-            $rootIds = [];
-            foreach ($collection as $category) {
-                $newIds      = array_diff(array_map('intval', $category->getPathIds()), $categoryIds);
-                $categoryIds = array_merge($categoryIds, $newIds);
-                $rootIds     = array_merge($rootIds, $newIds);
-            }
-        }
-
-        return $categoryIds;
     }
 }

@@ -56,7 +56,7 @@ class CleanRuleCacheAfterSaveTest extends TestCase
     public function testSaveWithoutVirtualDataChange(): void
     {
         $cacheCleaner = $this->createMock(CacheCleaner::class);
-        $cacheCleaner->expects($this->never())->method('clean');
+        $cacheCleaner->expects($this->never())->method('cleanAfterCommit');
         $category = $this->getCategory('1/2/3/12', self::ORIGINAL_DATA, ['name' => 'Renamed'] + self::ORIGINAL_DATA);
 
         $resource = $this->createMock(CategoryResource::class);
@@ -75,7 +75,7 @@ class CleanRuleCacheAfterSaveTest extends TestCase
     public function testSaveWithVirtualDataChange(array $newData): void
     {
         $cacheCleaner = $this->createMock(CacheCleaner::class);
-        $cacheCleaner->expects($this->once())->method('clean')->with([1, 2, 3, 12]);
+        $cacheCleaner->expects($this->once())->method('cleanAfterCommit')->with([1, 2, 3, 12]);
         $category = $this->getCategory('1/2/3/12', self::ORIGINAL_DATA, $newData);
 
         $resource = $this->createMock(CategoryResource::class);
@@ -118,7 +118,7 @@ class CleanRuleCacheAfterSaveTest extends TestCase
             }
         );
         $cacheCleaner = $this->createMock(CacheCleaner::class);
-        $cacheCleaner->expects($this->once())->method('clean')->with([1, 2, 3, 12, 13, 14]);
+        $cacheCleaner->expects($this->once())->method('cleanAfterCommit')->with([1, 2, 3, 12, 13, 14]);
 
         $resource = $this->createMock(CategoryResource::class);
         $result   = $this->getPlugin($cacheCleaner)->aroundDelete(
@@ -147,7 +147,7 @@ class CleanRuleCacheAfterSaveTest extends TestCase
         $category->method('getAllChildren')->with(true)->willReturn([13]);
         $newParent = $this->getCategory('1/2/40', self::ORIGINAL_DATA, self::ORIGINAL_DATA);
         $cacheCleaner = $this->createMock(CacheCleaner::class);
-        $cacheCleaner->expects($this->once())->method('clean')->with([1, 2, 3, 12, 13, 1, 2, 40]);
+        $cacheCleaner->expects($this->once())->method('cleanAfterCommit')->with([1, 2, 3, 12, 13, 1, 2, 40]);
 
         $resource = $this->createMock(CategoryResource::class);
         $this->getPlugin($cacheCleaner)->aroundChangeParent(
