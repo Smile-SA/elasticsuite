@@ -89,13 +89,40 @@ class RuleTest extends TestCase
     }
 
     /**
+     * Test that data which left out a category still being built (eg. if the helper were called while building
+     * another category query) is not cached.
+     *
+     * @return void
+     */
+    public function testTruncatedDataIsNotCached(): void
+    {
+        $dependencyCollector = new DependencyCollector();
+        $virtualRule         = $this->createMock(Rule::class);
+        $category            = $this->getCategory($virtualRule);
+        $virtualRule->method('getSearchQueriesByChildren')->willReturnCallback(
+            function () use ($dependencyCollector) {
+                $dependencyCollector->addTruncation([40]);
+
+                return [];
+            }
+        );
+
+        $queryCache = $this->createMock(QueryCache::class);
+        $queryCache->method('load')->willReturn(false);
+        $queryCache->expects($this->never())->method('save');
+
+        $this->getHelper($queryCache, $dependencyCollector)->loadUsingCache($category, 'getSearchQueriesByChildren');
+    }
+
+    /**
      * Helper under test.
      *
-     * @param QueryCache $queryCache Query cache mock.
+     * @param QueryCache               $queryCache          Query cache mock.
+     * @param DependencyCollector|null $dependencyCollector Dependency collector.
      *
      * @return RuleHelper
      */
-    private function getHelper(QueryCache $queryCache): RuleHelper
+    private function getHelper(QueryCache $queryCache, ?DependencyCollector $dependencyCollector = null): RuleHelper
     {
         return new RuleHelper(
             $this->createMock(CacheInterface::class),
@@ -104,7 +131,7 @@ class RuleTest extends TestCase
             $this->createMock(CategoryRepositoryInterfaceFactory::class),
             $this->createMock(Config::class),
             $queryCache,
-            new DependencyCollector()
+            $dependencyCollector ?: new DependencyCollector()
         );
     }
 

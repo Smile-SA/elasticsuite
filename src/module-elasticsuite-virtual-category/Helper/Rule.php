@@ -140,12 +140,16 @@ class Rule
             try {
                 $data = call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
             } finally {
+                // Data which left out categories still being built only makes sense in the current context.
+                $isCacheable         = $this->dependencyCollector->isCacheable();
                 $expiresAt           = $this->dependencyCollector->getExpiration();
                 $contextDependencies = $this->dependencyCollector->getContextDependencies();
                 $cacheTags           = $this->dependencyCollector->stop();
             }
 
-            $this->queryCache->save($cacheKey, $data, $cacheTags, $expiresAt, $contextDependencies);
+            if ($isCacheable) {
+                $this->queryCache->save($cacheKey, $data, $cacheTags, $expiresAt, $contextDependencies);
+            }
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 

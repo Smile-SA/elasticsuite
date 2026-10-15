@@ -211,6 +211,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ElseExpression)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @return QueryInterface|null
      */
@@ -263,20 +264,21 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->dependencyCollector->start();
         $this->dependencyCollector->addCategoryIds([$categoryId]);
 
+        $query       = null;
+        $rootPathIds = [];
+
         try {
-            $cacheData = $this->queryCache->load($cacheKey, false);
+            // If the category is not an object, it can't be in a "draft" mode. Draft rules are not shared.
+            $useSharedCache = !is_object($category) || !$category->getHasDraftVirtualRule();
+            $cacheData      = $this->getFromCache($cacheKey, $useSharedCache);
+            $isBuilt        = false;
 
-            // If the category is not an object, it can't be in a "draft" mode.
-            if ($cacheData === false && (!is_object($category) || !$category->getHasDraftVirtualRule())) {
-                // If the category virtual root is one of the excluded categories, we must recalculate the query.
-                // We can't use the cached one in order to avoid loop and very big queries.
-                if (!is_object($category) || !$this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
-                    $cacheData = $this->queryCache->load($cacheKey);
-                }
-            }
-
-            if ($cacheData !== false) {
-                $query = $cacheData['data'];
+            if ($cacheData !== false && $this->leaveOutForRoot($cacheData['data']['rootPathIds'], $excludedCategories)) {
+                // Same outcome as building it: left out since the query of its virtual root is being built.
+                $query = null;
+            } elseif ($cacheData !== false && $this->isReusableInContext($cacheData['data']['embedded'], $excludedCategories)) {
+                $query = $cacheData['data']['query'];
+                $this->dependencyCollector->addEmbedded($cacheData['data']['embedded']);
                 $this->dependencyCollector->addCacheTags($cacheData['tags']);
                 $this->dependencyCollector->setExpiration($cacheData['expiresAt']);
                 $this->dependencyCollector->addContextDependencies($cacheData['context']);
@@ -284,18 +286,36 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 if (!is_object($category)) {
                     $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
                 }
-                $query = $this->buildCategorySearchQuery($category, $excludedCategories);
+                $query   = $this->buildCategorySearchQuery($category, $excludedCategories);
+                $isBuilt = true;
+                if ($query !== null) {
+                    // Embedding it only depends on its virtual root not being built (see leaveOutForRoot()).
+                    $rootPathIds = $this->getVirtualRootPathIds($category);
+                    $this->dependencyCollector->addEmbedded(array_merge([$categoryId], $rootPathIds));
+                }
             }
         } finally {
+            if ($query === null) {
+                // Left out: nothing of it is embedded in the query being built.
+                $this->dependencyCollector->discardEmbedded();
+            }
+            $embedded   = $this->dependencyCollector->getEmbedded();
+            $isExcluded = in_array($categoryId, $excludedCategories);
+            if (!$isExcluded) {
+                // The category may have been left out of the sub-queries built meanwhile: it is now complete.
+                $this->dependencyCollector->resolveTruncation([$categoryId]);
+            }
+            // A query which left out categories still being built only makes sense in the current context.
+            $isCacheable         = !$isExcluded && $this->dependencyCollector->isCacheable();
             $expiresAt           = $this->dependencyCollector->getExpiration();
             $contextDependencies = $this->dependencyCollector->getContextDependencies();
             $cacheTags           = $this->dependencyCollector->stop();
         }
 
-        if ($cacheData === false && $query !== null && !in_array($categoryId, $excludedCategories)) {
-            // Draft rules (eg. previewed ones) are only kept for the current process.
-            $useSharedCache = !$category->getHasDraftVirtualRule();
-            $this->queryCache->save($cacheKey, $query, $cacheTags, $expiresAt, $contextDependencies, $useSharedCache);
+        if ($isCacheable && $isBuilt && $query !== null) {
+            // The virtual root path is kept along with the query: it is needed to leave it out when served from the cache.
+            $cacheData = ['query' => $query, 'rootPathIds' => $rootPathIds, 'embedded' => $embedded];
+            $this->queryCache->save($cacheKey, $cacheData, $cacheTags, $expiresAt, $contextDependencies, $useSharedCache);
         }
 
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
@@ -378,6 +398,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Build search query by category.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @param CategoryInterface|int $category           Search category.
      * @param array                 $excludedCategories Categories that should not be used into search query building.
      *
@@ -403,6 +425,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             if ($query && $category->hasChildren()) {
                 $query = $this->addChildrenQueries($query, $category, $excludedCategories);
             }
+        } else {
+            $this->dependencyCollector->addTruncation([$category->getId()]);
         }
 
         return $query;
@@ -577,7 +601,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CategoryInterface $category,
         $excludedCategories = []
     ): ?QueryInterface {
-        if ($this->isVirtualCategoryRootInExcludeCategories($category, $excludedCategories)) {
+        if ($this->leaveOutForRoot($this->getVirtualRootPathIds($category), $excludedCategories)) {
             return null;
         }
 
@@ -618,14 +642,21 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function addChildrenQueries($query, CategoryInterface $category, $excludedCategories = []): QueryInterface
     {
-        $childrenCategories    = $this->getChildrenCategories($category, $excludedCategories);
+        $childrenCategories    = $this->getChildrenCategories($category);
         $childrenCategoriesIds = [];
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
 
             foreach ($childrenCategories as $childrenCategory) {
-                if (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
+                if (in_array($childrenCategory->getId(), $excludedCategories)) {
+                    // Category whose query is being built: left out to avoid infinite recursion. If its virtual root
+                    // is being built as well, the truncation is recorded against the root instead (see
+                    // leaveOutForRoot()).
+                    if (!$this->leaveOutForRoot($this->getVirtualRootPathIds($childrenCategory), $excludedCategories)) {
+                        $this->dependencyCollector->addTruncation([$childrenCategory->getId()]);
+                    }
+                } elseif (((bool) $childrenCategory->getIsVirtualCategory()) === true) {
                     $childrenQuery = $this->getCategorySearchQuery($childrenCategory, $excludedCategories);
                     if ($childrenQuery !== null) {
                         $childrenQuery->setName(
@@ -644,6 +675,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             }
 
             if (!empty($childrenCategoriesIds)) {
+                $this->dependencyCollector->addEmbedded($childrenCategoriesIds);
                 $standardChildrenQuery = $this->getStandardCategoriesQuery($childrenCategoriesIds, $excludedCategories);
                 $standardChildrenQuery->setName(
                     sprintf(
@@ -676,12 +708,11 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     /**
      * Returns the list of the virtual categories available under a category.
      *
-     * @param CategoryInterface $category           Category.
-     * @param array             $excludedCategories Category already used into the building stack. Avoid short circuit.
+     * @param CategoryInterface $category Category.
      *
      * @return Collection
      */
-    private function getChildrenCategories(CategoryInterface $category, $excludedCategories = []): Collection
+    private function getChildrenCategories(CategoryInterface $category): Collection
     {
         $storeId            = $category->getStoreId();
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
@@ -690,10 +721,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if (((bool) $category->getIsVirtualCategory()) === false) {
             $categoryCollection->addFieldToFilter('is_virtual_category', '1');
-        }
-
-        if (!empty($excludedCategories)) {
-            $categoryCollection->addAttributeToFilter('entity_id', ['nin' => $excludedCategories]);
         }
 
         $categoryCollection->addAttributeToSelect(['name', 'is_active', 'virtual_category_root', 'is_virtual_category', 'virtual_rule']);
@@ -721,6 +748,93 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Get a category query entry from the cache. Entries not matching the expected format are considered as missing.
+     *
+     * @param string $cacheKey       Cache key.
+     * @param bool   $useSharedCache Whether to look into the shared cache, and not only into the in-process one.
+     *
+     * @return array|false
+     */
+    private function getFromCache(string $cacheKey, bool $useSharedCache)
+    {
+        $cacheData = $this->queryCache->load($cacheKey, $useSharedCache);
+
+        if ($cacheData !== false
+            && (!is_array($cacheData['data'])
+                || !isset($cacheData['data']['query'], $cacheData['data']['rootPathIds'], $cacheData['data']['embedded']))
+        ) {
+            $cacheData = false;
+        }
+
+        return $cacheData;
+    }
+
+    /**
+     * Ids of the path of the virtual root of a category (the root included), if its query is built on top of it.
+     *
+     * @param CategoryInterface $category Category.
+     *
+     * @return int[]
+     */
+    private function getVirtualRootPathIds(CategoryInterface $category): array
+    {
+        $rootPathIds = [];
+
+        if ($category->getIsVirtualCategory() && $category->getIsActive()) {
+            $rootCategory = $this->getVirtualRootCategory($category);
+            if ($rootCategory && $rootCategory->getPath()) {
+                $rootPathIds = array_map('intval', explode('/', (string) $rootCategory->getPath()));
+            }
+        }
+
+        return $rootPathIds;
+    }
+
+    /**
+     * Leave out a category if its virtual root, or one of the root ancestors, is being built: all its products are
+     * already part of the query being built.
+     * For example, with the following category tree:
+     * - Category A (static)
+     * -   - Category B (static)
+     * -       - Category C (virtual with category B as root)
+     * When building the query of the category A, the category C does not need to be built.
+     *
+     * The left out categories are recorded as a truncation of the query being built, as well as the virtual root
+     * as a dependency, the same way whether the category query is built or served from the cache.
+     *
+     * @param int[] $rootPathIds        Ids of the path of the category virtual root.
+     * @param array $excludedCategories Categories being built.
+     *
+     * @return bool Whether the category is left out.
+     */
+    private function leaveOutForRoot(array $rootPathIds, array $excludedCategories): bool
+    {
+        $leftOutBy = array_intersect($excludedCategories, $rootPathIds);
+
+        if (!empty($leftOutBy)) {
+            $this->dependencyCollector->addCategoryIds([end($rootPathIds)]);
+            $this->dependencyCollector->addTruncation($leftOutBy);
+        }
+
+        return !empty($leftOutBy);
+    }
+
+    /**
+     * Whether a cached query can be reused while building the queries of the excluded categories.
+     * It cannot if it embeds a category being built: that category would be left out of it in the current context.
+     * Merely depending on such a category (eg. a virtual child left out of it) does not prevent reusing it.
+     *
+     * @param int[] $embedded           Categories embedded in the cached query.
+     * @param array $excludedCategories Categories being built.
+     *
+     * @return bool
+     */
+    private function isReusableInContext(array $embedded, array $excludedCategories): bool
+    {
+        return empty($excludedCategories) || empty(array_intersect($embedded, $excludedCategories));
+    }
+
+    /**
      * Build a query that return zero products.
      *
      * @return QueryInterface
@@ -731,36 +845,5 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             QueryInterface::TYPE_TERMS,
             ['field' => 'entity_id', 'values' => [0]]
         );
-    }
-
-    /**
-     * If the root category of the current virtual category has already been computed (exist in $excludedCategories)
-     * or if a parent of the root category of the current category has already been computed we don't need
-     * to compute the rule. All the product will already been present.
-     * For example, if you have the following category tree:
-     * - Category A (static)
-     * -   - Category B (static)
-     * -       - Category C (virtual with category B as root)
-     * When you compute the rule of the category A you do not need to compute the rule of the category C
-     * as all the product will be there.
-     *
-     * @param CategoryInterface $category           category to check
-     * @param array             $excludedCategories list of actual excluded categories
-     * @return bool
-     * @throws NoSuchEntityException
-     */
-    private function isVirtualCategoryRootInExcludeCategories(CategoryInterface $category, array $excludedCategories): bool
-    {
-        // Nothing is being built (eg. a top-level query served from the cache): no need to load the root category.
-        if (empty($excludedCategories)) {
-            return false;
-        }
-
-        $rootCategory = $this->getVirtualRootCategory($category);
-
-        return $category->getIsVirtualCategory()
-            && $rootCategory
-            && $rootCategory->getPath()
-            && !empty(array_intersect(explode('/', (string) $rootCategory->getPath()), $excludedCategories));
     }
 }

@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config as VirtualCategoryConfig;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
  * Unit test for the category conditions of {@see Product}: categories being built are left out, except the
@@ -77,6 +78,7 @@ class ProductTest extends TestCase
         $condition->setData('rule', $rule);
         $this->setPrivateProperty($condition, 'queryFactory', $queryFactory);
         $this->setPrivateProperty($condition, 'virtualCategoryConfig', $config);
+        $this->setPrivateProperty($condition, 'dependencyCollector', $this->createMock(DependencyCollector::class));
 
         $method = new \ReflectionMethod(Product::class, 'getCategorySearchQuery');
         $method->setAccessible(true);
