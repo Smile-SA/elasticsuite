@@ -23,6 +23,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Smile\ElasticsuiteCore\Api\Client\OpaqueIdPartProviderInterface;
 use Smile\ElasticsuiteCore\Client\OpaqueIdProvider;
 
 /**
@@ -31,6 +32,7 @@ use Smile\ElasticsuiteCore\Client\OpaqueIdProvider;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Richard Bayet <richard.bayet@smile.fr>
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OpaqueIdProviderTest extends TestCase
 {
@@ -189,6 +191,57 @@ class OpaqueIdProviderTest extends TestCase
         $this->assertEquals(
             'area=adminhtml;cli=indexer:reindex;str=de;cnt=catalog_view_container',
             $this->getProvider('cli')->getOpaqueId(['cnt' => 'catalog_view_container', 'str' => 'de'])
+        );
+    }
+
+    /**
+     * Test that the parts of the part providers come after the built-in parts and before the caller details.
+     *
+     * @return void
+     */
+    public function testPartProviders(): void
+    {
+        $this->appState->method('getAreaCode')->willReturn('frontend');
+        $this->request->method('getRouteName')->willReturn('catalog');
+        $this->request->method('getFullActionName')->willReturn('catalog_category_view');
+        $this->mockStoreCode('de');
+
+        $categoryPart = $this->createMock(OpaqueIdPartProviderInterface::class);
+        $categoryPart->method('getParts')->willReturn(['cat' => 4]);
+        $emptyPart = $this->createMock(OpaqueIdPartProviderInterface::class);
+        $emptyPart->method('getParts')->willReturn(['foo' => null]);
+
+        $provider = new OpaqueIdProvider(
+            $this->scopeConfig,
+            $this->appState,
+            $this->request,
+            $this->storeManager,
+            'fpm-fcgi',
+            ['category' => $categoryPart, 'empty' => $emptyPart]
+        );
+
+        $this->assertEquals(
+            'area=frontend;act=catalog_category_view;str=de;cat=4;cnt=catalog_view_container',
+            $provider->getOpaqueId(['cnt' => 'catalog_view_container'])
+        );
+    }
+
+    /**
+     * Test that a part provider not implementing the expected interface is rejected.
+     *
+     * @return void
+     */
+    public function testInvalidPartProvider(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new OpaqueIdProvider(
+            $this->scopeConfig,
+            $this->appState,
+            $this->request,
+            $this->storeManager,
+            'cli',
+            ['invalid' => new \stdClass()]
         );
     }
 

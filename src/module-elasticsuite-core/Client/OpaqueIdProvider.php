@@ -18,6 +18,7 @@ use Magento\Framework\App\Request\Http as HttpRequest;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Api\Client\OpaqueIdPartProviderInterface;
 use Smile\ElasticsuiteCore\Api\Client\OpaqueIdProviderInterface;
 
 /**
@@ -66,6 +67,11 @@ class OpaqueIdProvider implements OpaqueIdProviderInterface
     private $sapi;
 
     /**
+     * @var OpaqueIdPartProviderInterface[]
+     */
+    private $partProviders;
+
+    /**
      * @var string|null
      */
     private $cronJob = null;
@@ -73,28 +79,44 @@ class OpaqueIdProvider implements OpaqueIdProviderInterface
     /**
      * Constructor.
      *
-     * @param ScopeConfigInterface  $scopeConfig  Scope config.
-     * @param State                 $appState     Application state.
-     * @param HttpRequest           $request      Request.
-     * @param StoreManagerInterface $storeManager Store manager.
-     * @param string                $sapi         PHP SAPI name.
+     * @param ScopeConfigInterface            $scopeConfig   Scope config.
+     * @param State                           $appState      Application state.
+     * @param HttpRequest                     $request       Request.
+     * @param StoreManagerInterface           $storeManager  Store manager.
+     * @param string                          $sapi          PHP SAPI name.
+     * @param OpaqueIdPartProviderInterface[] $partProviders Additional context part providers.
+     *
+     * @throws \InvalidArgumentException When a part provider does not implement OpaqueIdPartProviderInterface.
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
         State $appState,
         HttpRequest $request,
         StoreManagerInterface $storeManager,
-        string $sapi = PHP_SAPI
+        string $sapi = PHP_SAPI,
+        array $partProviders = []
     ) {
-        $this->scopeConfig  = $scopeConfig;
-        $this->appState     = $appState;
-        $this->request      = $request;
-        $this->storeManager = $storeManager;
-        $this->sapi         = $sapi;
+        foreach ($partProviders as $name => $partProvider) {
+            if (!$partProvider instanceof OpaqueIdPartProviderInterface) {
+                throw new \InvalidArgumentException(
+                    sprintf('X-Opaque-Id part provider "%s" must implement %s.', $name, OpaqueIdPartProviderInterface::class)
+                );
+            }
+        }
+
+        $this->scopeConfig   = $scopeConfig;
+        $this->appState      = $appState;
+        $this->request       = $request;
+        $this->storeManager  = $storeManager;
+        $this->sapi          = $sapi;
+        $this->partProviders = $partProviders;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getOpaqueId(array $details = []): ?string
     {
@@ -103,18 +125,21 @@ class OpaqueIdProvider implements OpaqueIdProviderInterface
         }
 
         $isCli = ($this->sapi === 'cli');
-        $parts = array_merge(
-            [
-                'area' => $this->getAreaCode(),
-                'act'  => $isCli ? null : $this->getFullActionName(),
-                'cli'  => $isCli ? $this->getCliCommand() : null,
-                'cron' => $this->cronJob,
-                // In CLI, the current store is not the one being worked on (e.g. a reindex goes through every store):
-                // callers knowing it pass it in the details.
-                'str'  => $isCli ? null : $this->getStoreCode(),
-            ],
-            $details
-        );
+        $parts = [
+            'area' => $this->getAreaCode(),
+            'act'  => $isCli ? null : $this->getFullActionName(),
+            'cli'  => $isCli ? $this->getCliCommand() : null,
+            'cron' => $this->cronJob,
+            // In CLI, the current store is not the one being worked on (e.g. a reindex goes through every store):
+            // callers knowing it pass it in the details.
+            'str'  => $isCli ? null : $this->getStoreCode(),
+        ];
+
+        foreach ($this->partProviders as $partProvider) {
+            $parts = array_merge($parts, $partProvider->getParts());
+        }
+
+        $parts = array_merge($parts, $details);
 
         $pairs = [];
         foreach ($parts as $key => $value) {
