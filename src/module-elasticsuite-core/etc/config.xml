@@ -21,6 +21,7 @@
             <es_client>
                 <enable_error_request_logging>0</enable_error_request_logging>
                 <enable_debug_mode>0</enable_debug_mode>
+                <enable_opaque_id>1</enable_opaque_id>
                 <servers>localhost:9200</servers>
                 <connection_timeout>1</connection_timeout>
                 <timeout>30</timeout>
