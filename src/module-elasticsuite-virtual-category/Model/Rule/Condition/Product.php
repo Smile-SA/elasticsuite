@@ -17,6 +17,8 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule as VirtualCategoryRule;
+use Smile\ElasticsuiteVirtualCategory\Model\RuleFactory;
 
 /**
  * Product search rule condition.
@@ -32,6 +34,16 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
+
+    /**
+     * @var RuleFactory
+     */
+    private $ruleFactory;
+
+    /**
+     * @var VirtualCategoryRule|null
+     */
+    private $categoryQueryRule = null;
 
     /**
      * Constructor.
@@ -54,6 +66,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @param ScopeConfigInterface                                                      $scopeConfig               Scope configuration.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory              Search query factory.
      * @param array                                                                     $data                      Additional data.
+     * @param RuleFactory|null                                                          $ruleFactory               Virtual category rule
+     *                                                                                                             factory.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
@@ -69,7 +83,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         SpecialAttributesProvider $specialAttributesProvider,
         ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        array $data = []
+        array $data = [],
+        ?RuleFactory $ruleFactory = null
     ) {
         parent::__construct(
             $context,
@@ -87,6 +102,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $data
         );
         $this->queryFactory = $queryFactory;
+        $this->ruleFactory  = $ruleFactory ?? \Magento\Framework\App\ObjectManager::getInstance()->get(RuleFactory::class);
     }
 
     /**
@@ -124,6 +140,28 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
     }
 
     /**
+     * Rule instance used to build category sub-queries.
+     *
+     * In the catalog widget / PageBuilder context, the rule attached to the condition is
+     * \Magento\CatalogWidget\Model\Rule, which does not implement getCategorySearchQuery :
+     * the magic getter silently returns null for every category and the category condition
+     * is dropped from the search query. Fall back to a lazily created virtual category rule
+     * in that case.
+     *
+     * @return VirtualCategoryRule
+     */
+    private function getCategoryQueryRule(): VirtualCategoryRule
+    {
+        $rule = $this->getRule();
+
+        if (!$rule instanceof VirtualCategoryRule) {
+            $rule = $this->categoryQueryRule = $this->categoryQueryRule ?? $this->ruleFactory->create();
+        }
+
+        return $rule;
+    }
+
+    /**
      * Retrieve a query used to apply category filter rule.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -150,7 +188,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         }
 
         foreach ($categoryIds as $categoryId) {
-            $subQuery = $this->getRule()->getCategorySearchQuery($categoryId, $excludedCategories);
+            $subQuery = $this->getCategoryQueryRule()->getCategorySearchQuery($categoryId, $excludedCategories);
             if ($subQuery !== null) {
                 $subQueries[] = $subQuery;
             }
