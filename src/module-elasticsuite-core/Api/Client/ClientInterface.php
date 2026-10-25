@@ -17,6 +17,11 @@ namespace Smile\ElasticsuiteCore\Api\Client;
 /**
  * ElasticSearch injectable client.
  *
+ * Requests sent by these methods carry an X-Opaque-Id identifying their origin (see OpaqueIdProviderInterface),
+ * except the ones made on the namespaces returned by nodes() and cluster(), and unless the params already contain one
+ * (['client' => ['opaqueId' => ...]]): a caller-provided value is sent as is, without being sanitized or truncated,
+ * and even when the feature is disabled.
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  * @author   Aurelien FOUCRET <aurelien.foucret@smile.fr>
