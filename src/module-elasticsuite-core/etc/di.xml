@@ -23,6 +23,9 @@
     <preference for="Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface"
                 type="Smile\ElasticsuiteCore\Client\ClientConfiguration" />
 
+    <preference for="Smile\ElasticsuiteCore\Api\Client\OpaqueIdProviderInterface"
+                type="Smile\ElasticsuiteCore\Client\OpaqueIdProvider" />
+
     <!-- Cluster namespace related DI -->
     <preference for="Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface"
                 type="Smile\ElasticsuiteCore\Cluster\ClusterInfo" />

@@ -247,4 +247,13 @@
         </arguments>
     </type>
 
+    <!-- Add the applied virtual root category to the X-Opaque-Id of the requests sent to the search engine -->
+    <type name="Smile\ElasticsuiteCore\Client\OpaqueIdProvider">
+        <arguments>
+            <argument name="partProviders" xsi:type="array">
+                <item name="virtual_root_category" xsi:type="object">Smile\ElasticsuiteVirtualCategory\Model\Search\OpaqueId\AppliedRootCategory</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

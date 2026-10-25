@@ -14,10 +14,12 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
+use Magento\Framework\App\ObjectManager;
 use OpenSearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
+use Smile\ElasticsuiteCore\Api\Client\OpaqueIdProviderInterface;
 
 /**
  * ElasticSearch client implementation.
@@ -51,20 +53,28 @@ class Client implements ClientInterface
     private $logger;
 
     /**
+     * @var OpaqueIdProviderInterface
+     */
+    private $opaqueIdProvider;
+
+    /**
      * Constructor.
      *
-     * @param ClientConfigurationInterface $clientConfiguration Client configuration factory.
-     * @param ClientBuilder                $clientBuilder       ES client builder.
-     * @param LoggerInterface              $logger              Logger.
+     * @param ClientConfigurationInterface   $clientConfiguration Client configuration factory.
+     * @param ClientBuilder                  $clientBuilder       ES client builder.
+     * @param LoggerInterface                $logger              Logger.
+     * @param OpaqueIdProviderInterface|null $opaqueIdProvider    X-Opaque-Id provider.
      */
     public function __construct(
         ClientConfigurationInterface $clientConfiguration,
         ClientBuilder $clientBuilder,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ?OpaqueIdProviderInterface $opaqueIdProvider = null
     ) {
         $this->clientConfiguration = $clientConfiguration;
         $this->clientBuilder = $clientBuilder;
         $this->logger = $logger;
+        $this->opaqueIdProvider = $opaqueIdProvider ?? ObjectManager::getInstance()->get(OpaqueIdProviderInterface::class);
     }
 
     /**
@@ -72,7 +82,7 @@ class Client implements ClientInterface
      */
     public function info()
     {
-        return $this->getEsClient()->info();
+        return $this->getEsClient()->info($this->addOpaqueId([]));
     }
 
     /**
@@ -96,7 +106,7 @@ class Client implements ClientInterface
      */
     public function ping()
     {
-        return $this->getEsClient()->ping();
+        return $this->getEsClient()->ping($this->addOpaqueId([]));
     }
 
     /**
@@ -104,7 +114,7 @@ class Client implements ClientInterface
      */
     public function createIndex($indexName, $indexSettings)
     {
-        $this->getEsClient()->indices()->create(['index' => $indexName, 'body' => $indexSettings]);
+        $this->getEsClient()->indices()->create($this->addOpaqueId(['index' => $indexName, 'body' => $indexSettings]));
     }
 
     /**
@@ -112,7 +122,7 @@ class Client implements ClientInterface
      */
     public function deleteIndex($indexName)
     {
-        $this->getEsClient()->indices()->delete(['index' => $indexName]);
+        $this->getEsClient()->indices()->delete($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -120,7 +130,7 @@ class Client implements ClientInterface
      */
     public function indexExists($indexName)
     {
-        return $this->getEsClient()->indices()->exists(['index' => $indexName]);
+        return $this->getEsClient()->indices()->exists($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -128,7 +138,7 @@ class Client implements ClientInterface
      */
     public function putIndexSettings($indexName, $indexSettings)
     {
-        $this->getEsClient()->indices()->putSettings(['index' => $indexName, 'body' => $indexSettings]);
+        $this->getEsClient()->indices()->putSettings($this->addOpaqueId(['index' => $indexName, 'body' => $indexSettings]));
     }
 
     /**
@@ -136,7 +146,7 @@ class Client implements ClientInterface
      */
     public function putMapping($indexName, $mapping)
     {
-        $this->getEsClient()->indices()->putMapping(['index' => $indexName, 'body'  => $mapping]);
+        $this->getEsClient()->indices()->putMapping($this->addOpaqueId(['index' => $indexName, 'body'  => $mapping]));
     }
 
     /**
@@ -144,7 +154,7 @@ class Client implements ClientInterface
      */
     public function getMapping($indexName)
     {
-        return $this->getEsClient()->indices()->getMapping(['index' => $indexName]);
+        return $this->getEsClient()->indices()->getMapping($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -152,7 +162,7 @@ class Client implements ClientInterface
      */
     public function getSettings($indexName)
     {
-        return $this->getEsClient()->indices()->getSettings(['index' => $indexName]);
+        return $this->getEsClient()->indices()->getSettings($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -160,7 +170,7 @@ class Client implements ClientInterface
      */
     public function getSpecificSettings($indexName, $settings)
     {
-        return $this->getEsClient()->indices()->getSettings(['index' => $indexName, 'name' => $settings]);
+        return $this->getEsClient()->indices()->getSettings($this->addOpaqueId(['index' => $indexName, 'name' => $settings]));
     }
 
     /**
@@ -168,7 +178,7 @@ class Client implements ClientInterface
      */
     public function forceMerge($indexName)
     {
-        $this->getEsClient()->indices()->forceMerge(['index' => $indexName]);
+        $this->getEsClient()->indices()->forceMerge($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -176,7 +186,7 @@ class Client implements ClientInterface
      */
     public function refreshIndex($indexName)
     {
-        $this->getEsClient()->indices()->refresh(['index' => $indexName]);
+        $this->getEsClient()->indices()->refresh($this->addOpaqueId(['index' => $indexName]));
     }
 
     /**
@@ -186,7 +196,7 @@ class Client implements ClientInterface
     {
         $indices = [];
         try {
-            $indices = $this->getEsClient()->indices()->getMapping(['index' => $indexAlias]);
+            $indices = $this->getEsClient()->indices()->getMapping($this->addOpaqueId(['index' => $indexAlias]));
         } catch (\OpenSearch\Common\Exceptions\Missing404Exception $e) {
             ;
         }
@@ -199,7 +209,7 @@ class Client implements ClientInterface
      */
     public function getIndexAliases($params = []): array
     {
-        return $this->getEsClient()->indices()->getAliases($params);
+        return $this->getEsClient()->indices()->getAliases($this->addOpaqueId($params));
     }
 
     /**
@@ -207,7 +217,7 @@ class Client implements ClientInterface
      */
     public function updateAliases($aliasActions)
     {
-        $this->getEsClient()->indices()->updateAliases(['body' => ['actions' => $aliasActions]]);
+        $this->getEsClient()->indices()->updateAliases($this->addOpaqueId(['body' => ['actions' => $aliasActions]]));
     }
 
     /**
@@ -215,7 +225,7 @@ class Client implements ClientInterface
      */
     public function bulk($bulkParams)
     {
-        return $this->getEsClient()->bulk($bulkParams);
+        return $this->getEsClient()->bulk($this->addOpaqueId($bulkParams));
     }
 
     /**
@@ -224,6 +234,8 @@ class Client implements ClientInterface
      */
     public function search($params)
     {
+        $params = $this->addOpaqueId($params);
+
         try {
             $response = $this->getEsClient()->search($params);
         } catch (\Exception $e) {
@@ -243,7 +255,7 @@ class Client implements ClientInterface
      */
     public function analyze($params)
     {
-        return $this->getEsClient()->indices()->analyze($params);
+        return $this->getEsClient()->indices()->analyze($this->addOpaqueId($params));
     }
 
     /**
@@ -252,7 +264,7 @@ class Client implements ClientInterface
     public function indexStats($indexName): array
     {
         try {
-            $stats = $this->getEsClient()->indices()->stats(['index' => $indexName]);
+            $stats = $this->getEsClient()->indices()->stats($this->addOpaqueId(['index' => $indexName]));
         } catch (\Exception $e) {
             throw new Missing404Exception($e->getMessage());
         }
@@ -265,7 +277,7 @@ class Client implements ClientInterface
      */
     public function termvectors($params)
     {
-        return $this->getEsClient()->termvectors($params);
+        return $this->getEsClient()->termvectors($this->addOpaqueId($params));
     }
 
     /**
@@ -273,7 +285,7 @@ class Client implements ClientInterface
      */
     public function mtermvectors($params)
     {
-        return $this->getEsClient()->mtermvectors($params);
+        return $this->getEsClient()->mtermvectors($this->addOpaqueId($params));
     }
 
     /**
@@ -281,7 +293,7 @@ class Client implements ClientInterface
      */
     public function reindex(array $params): array
     {
-        return $this->getEsClient()->reindex($params);
+        return $this->getEsClient()->reindex($this->addOpaqueId($params));
     }
 
     /**
@@ -289,7 +301,7 @@ class Client implements ClientInterface
      */
     public function deleteByQuery(array $params): array
     {
-        return $this->getEsClient()->deleteByQuery($params);
+        return $this->getEsClient()->deleteByQuery($this->addOpaqueId($params));
     }
 
     /**
@@ -297,7 +309,7 @@ class Client implements ClientInterface
      */
     public function updateByQuery(array $params): array
     {
-        return $this->getEsClient()->updateByQuery($params);
+        return $this->getEsClient()->updateByQuery($this->addOpaqueId($params));
     }
 
     /**
@@ -305,7 +317,7 @@ class Client implements ClientInterface
      */
     public function putPipeline(array $params): array
     {
-        return $this->getEsClient()->ingest()->putPipeline($params);
+        return $this->getEsClient()->ingest()->putPipeline($this->addOpaqueId($params));
     }
 
     /**
@@ -313,7 +325,27 @@ class Client implements ClientInterface
      */
     public function getPipeline(string $name): array
     {
-        return $this->getEsClient()->ingest()->getPipeline(['id' => $name]);
+        return $this->getEsClient()->ingest()->getPipeline($this->addOpaqueId(['id' => $name]));
+    }
+
+    /**
+     * Add the X-Opaque-Id identifying the origin of the request to the request params,
+     * unless it has already been set by the caller or the feature is disabled.
+     *
+     * @param array $params Request params.
+     *
+     * @return array
+     */
+    private function addOpaqueId(array $params): array
+    {
+        if (!isset($params['client']['opaqueId'])) {
+            $opaqueId = $this->opaqueIdProvider->getOpaqueId();
+            if ($opaqueId !== null) {
+                $params['client']['opaqueId'] = $opaqueId;
+            }
+        }
+
+        return $params;
     }
 
     /**

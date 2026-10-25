@@ -282,6 +282,15 @@
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
 
+    <!-- Add the current category to the X-Opaque-Id of the requests sent to the search engine -->
+    <type name="Smile\ElasticsuiteCore\Client\OpaqueIdProvider">
+        <arguments>
+            <argument name="partProviders" xsi:type="array">
+                <item name="category" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Search\OpaqueId\CurrentCategory</item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- Cleanup popular searches tag after fulltext reindex -->
     <type name="Magento\CatalogSearch\Model\Indexer\Fulltext">
         <plugin name="smile_elasticsuite_cleanup_popular_searches_cache"
