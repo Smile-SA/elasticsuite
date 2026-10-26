@@ -14,9 +14,16 @@
 namespace Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav;
 
 use Magento\Catalog\Api\Data\EavAttributeInterface;
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Catalog\Model\ResourceModel\Attribute as AttributeResource;
 use Magento\CatalogSearch\Model\Indexer\Fulltext;
+use Magento\Framework\App\Area;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\Model\AbstractModel;
 use Magento\Store\Model\StoreManagerInterface;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCatalog\Helper\ProductAttribute as AttributeHelper;
@@ -24,6 +31,11 @@ use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 
 /**
  * Catalog EAV Attribute plugin.
+ *
+ * Plugged on the attribute resource model rather than on the attribute model, so that attributes saved through
+ * the product attribute repository (REST/SOAP API, imports) are handled too: they do not go through
+ * AbstractModel::save().
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalog
@@ -109,6 +121,11 @@ class AttributePlugin
     private $logger;
 
     /**
+     * @var \Magento\Framework\App\State
+     */
+    private $appState;
+
+    /**
      * @var boolean
      */
     private $saveIsNew;
@@ -123,6 +140,7 @@ class AttributePlugin
      * @param AttributeHelper                              $attributeHelper Attribute Helper.
      * @param ManagerInterface                             $messageManager  Message Manager.
      * @param LoggerInterface                              $logger          Logger.
+     * @param State|null                                   $appState        Application state.
      */
     public function __construct(
         \Smile\ElasticsuiteCore\Index\Indices\Config $indicesConfig,
@@ -131,7 +149,8 @@ class AttributePlugin
         IndexOperationInterface $indexOperation,
         AttributeHelper $attributeHelper,
         ManagerInterface $messageManager,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ?State $appState = null
     ) {
         $this->indicesConfig   = $indicesConfig;
         $this->indexerRegistry = $indexerRegistry;
@@ -140,55 +159,58 @@ class AttributePlugin
         $this->attributeHelper = $attributeHelper;
         $this->messageManager  = $messageManager;
         $this->logger          = $logger;
+        $this->appState        = $appState ?: ObjectManager::getInstance()->get(State::class);
     }
 
     /**
      * Check if indexer invalidation is needed on attribute save (searchable flag change)
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $subject Attribute resource model
+     * @param AttributeResource $subject   Attribute resource model
+     * @param AbstractModel     $attribute Attribute being saved
      *
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function beforeSave(
-        \Magento\Catalog\Api\Data\ProductAttributeInterface $subject
-    ) {
-        if (!$this->isProductAttribute($subject)) {
+    public function beforeSave(AttributeResource $subject, AbstractModel $attribute)
+    {
+        if (!($attribute instanceof ProductAttributeInterface) || !$this->isProductAttribute($attribute)) {
             return;
         }
 
-        $this->saveIsNew = $subject->isObjectNew();
+        $this->saveIsNew = $attribute->isObjectNew();
     }
 
     /**
      * Invalidate indices config after attribute is modified.
      *
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $subject The attribute being saved
-     * @param \Magento\Catalog\Api\Data\ProductAttributeInterface $result  The attribute being saved
+     * @param AttributeResource $subject   Attribute resource model
+     * @param AttributeResource $result    Attribute resource model
+     * @param AbstractModel     $attribute Attribute being saved
      *
-     * @return \Magento\Catalog\Api\Data\ProductAttributeInterface
+     * @return AttributeResource
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterSave(
-        \Magento\Catalog\Api\Data\ProductAttributeInterface $subject,
-        \Magento\Catalog\Api\Data\ProductAttributeInterface $result
-    ) {
-        if (!$this->isProductAttribute($subject)) {
+    public function afterSave(AttributeResource $subject, AttributeResource $result, AbstractModel $attribute)
+    {
+        if (!($attribute instanceof ProductAttributeInterface) || !$this->isProductAttribute($attribute)) {
             return $result;
         }
 
-        list($cleanCache, $updateMapping, $invalidateIndex) = $this->checkUpdateNeeded($subject);
+        list($cleanCache, $updateMapping, $invalidateIndex) = $this->checkUpdateNeeded($attribute);
 
         if ($cleanCache || $updateMapping) {
             $this->indicesConfig->reset();
         }
 
         if ($updateMapping) {
-            $this->updateMapping($subject);
+            $this->updateMapping($attribute);
         }
 
         if ($invalidateIndex) {
             $this->indexerRegistry->get(Fulltext::INDEXER_ID)->invalidate();
-            $this->messageManager->addNoticeMessage(__('Catalogsearch fulltext index has been invalidated.'));
+            if ($this->isAdminArea()) {
+                $this->messageManager->addNoticeMessage(__('Catalogsearch fulltext index has been invalidated.'));
+            }
         }
 
         return $result;
@@ -307,14 +329,33 @@ class AttributePlugin
             foreach ($stores as $store) {
                 $this->indexOperation->updateMapping('catalog_product', $store, $fields);
             }
-            // @codingStandardsIgnoreStart
-            $this->messageManager->addNoticeMessage(__('Elasticsuite mapping has been updated real-time. However, your modifications might not be visible until the Catalogsearch Fulltext index is completely rebuilt.'));
-            // @codingStandardsIgnoreEnd
+            if ($this->isAdminArea()) {
+                // @codingStandardsIgnoreStart
+                $this->messageManager->addNoticeMessage(__('Elasticsuite mapping has been updated real-time. However, your modifications might not be visible until the Catalogsearch Fulltext index is completely rebuilt.'));
+                // @codingStandardsIgnoreEnd
+            }
         } catch (\Exception $exception) {
-            // @codingStandardsIgnoreStart
-            $this->messageManager->addErrorMessage(__('Elasticsuite mapping could not be updated real-time. Please wait for the complete reindexing of Catalogsearch Fulltext index.'));
-            // @codingStandardsIgnoreEnd
+            if ($this->isAdminArea()) {
+                // @codingStandardsIgnoreStart
+                $this->messageManager->addErrorMessage(__('Elasticsuite mapping could not be updated real-time. Please wait for the complete reindexing of Catalogsearch Fulltext index.'));
+                // @codingStandardsIgnoreEnd
+            }
             $this->logger->error($exception);
+        }
+    }
+
+    /**
+     * Admin messages only make sense in the admin. Adding one elsewhere (e.g. in a REST API call) would start
+     * a session that nobody reads.
+     *
+     * @return bool
+     */
+    private function isAdminArea()
+    {
+        try {
+            return $this->appState->getAreaCode() === Area::AREA_ADMINHTML;
+        } catch (LocalizedException $exception) {
+            return false;
         }
     }
 
