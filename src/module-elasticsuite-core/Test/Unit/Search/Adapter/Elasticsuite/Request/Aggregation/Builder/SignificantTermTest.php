@@ -13,6 +13,9 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Search\Adapter\Elasticsuite\Request\Aggregation\Builder;
 
+use Magento\Framework\ObjectManager\Config\Config as ObjectManagerConfig;
+use Magento\Framework\ObjectManager\Factory\Dynamic\Developer as ObjectManagerFactory;
+use Magento\Framework\ObjectManager\ObjectManager;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Aggregation\Builder\SignificantTerm as SignificantTermBuilder;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Request\Query\Builder as QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Aggregation\Bucket\SignificantTerm;
@@ -107,6 +110,27 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayNotHasKey('gnd', $aggregation['significant_terms']);
         $this->assertArrayHasKey('chi_square', $aggregation['significant_terms']);
+    }
+
+    /**
+     * Build a significant term aggregation from a bucket created with a named algorithm argument.
+     */
+    public function testNamedAlgorithmAggregationBuild(): void
+    {
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $aggBuilder = new SignificantTermBuilder($queryBuilder);
+        $objectManagerConfig = new ObjectManagerConfig();
+        $objectManagerFactory = new ObjectManagerFactory($objectManagerConfig);
+        $objectManagerFactory->setObjectManager(new ObjectManager($objectManagerFactory, $objectManagerConfig));
+        $bucket = $objectManagerFactory->create(
+            SignificantTerm::class,
+            ['name' => 'aggregationName', 'field' => 'fieldName', 'algorithm' => SignificantTerm::ALGORITHM_JLH]
+        );
+
+        $aggregation = $aggBuilder->buildBucket($bucket);
+
+        $this->assertArrayNotHasKey('gnd', $aggregation['significant_terms']);
+        $this->assertArrayHasKey('jlh', $aggregation['significant_terms']);
     }
 
     /**
