@@ -30,7 +30,7 @@ class SignificantTerm extends AbstractBucket
 {
     const ALGORITHM_GND = 'gnd';
 
-    const ALGORITHM_CHI_SQUARE = 'chi_sqare';
+    const ALGORITHM_CHI_SQUARE = 'chi_square';
 
     const ALGORITHM_JLH = 'jlh';
 

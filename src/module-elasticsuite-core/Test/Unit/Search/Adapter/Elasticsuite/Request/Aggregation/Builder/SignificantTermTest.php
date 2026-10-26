@@ -83,6 +83,33 @@ class SignificantTermTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Build a significant term aggregation using the chi square algorithm.
+     */
+    public function testChiSquareAggregationBuild(): void
+    {
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $aggBuilder = new SignificantTermBuilder($queryBuilder);
+        $bucket = new SignificantTerm(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            0,
+            5,
+            SignificantTerm::ALGORITHM_CHI_SQUARE
+        );
+
+        $aggregation = $aggBuilder->buildBucket($bucket);
+
+        $this->assertArrayNotHasKey('gnd', $aggregation['significant_terms']);
+        $this->assertArrayHasKey('chi_square', $aggregation['significant_terms']);
+    }
+
+    /**
      * Test an exception is thrown when using the term aggs builder with another bucket type.
      */
     public function testInvalidBucketAggregationBuild(): void
