@@ -86,10 +86,23 @@ class Config
      */
     public function getVirtualRulesExpansionBoundaries(): array
     {
-        $categoryIds = [];
-        $value       = (string) $this->scopeConfig->getValue(self::XML_PATH_RULES_EXPANSION_BOUNDARIES);
+        return $this->parseVirtualRulesExpansionBoundaries(
+            $this->scopeConfig->getValue(self::XML_PATH_RULES_EXPANSION_BOUNDARIES)
+        );
+    }
 
-        foreach (explode(',', $value) as $categoryId) {
+    /**
+     * Category ids of an expansion boundaries setting value: comma-separated ids, invalid values being ignored.
+     *
+     * @param string|null $value Setting value.
+     *
+     * @return int[] Sorted category ids.
+     */
+    public function parseVirtualRulesExpansionBoundaries(?string $value): array
+    {
+        $categoryIds = [];
+
+        foreach (explode(',', (string) $value) as $categoryId) {
             $categoryId = trim($categoryId);
             if (ctype_digit($categoryId) && (int) $categoryId > 0) {
                 $categoryIds[] = (int) $categoryId;
