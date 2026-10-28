@@ -1,6 +1,8 @@
 "Add/Remove Products","Producten toevoegen/verwijderen"
 "Force zero results for disabled categories","Forceer nulresultaten voor uitgeschakelde categorieën"
 "If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.","Indien ja is ingesteld zal elke virtuele categorie die verwijst naar een uitgeschakelde categorie in hun regel of als hoofdcategorie een leeg resultaat opleveren. Wees voorzichtig met het wijzigen van deze optie verwijdert al uw categorie query cache."
+"Treat the store root category as a purely physical category in rules","De hoofdcategorie van de winkel in regels als puur fysieke categorie behandelen"
+"When a category condition of a rule (virtual categories, optimizers, widgets) or a GraphQL category filter uses the store root category, only the products assigned to the physical categories of the store tree are used, without expanding every virtual category of the store. Set to No to restore the legacy behaviour, which can produce very large queries.","Wanneer een categorievoorwaarde van een regel (virtuele categorieën, optimizers, widgets) of een GraphQL-categoriefilter de hoofdcategorie van de winkel gebruikt, worden alleen de producten gebruikt die aan de fysieke categorieën van de winkelboom zijn toegewezen, zonder alle virtuele categorieën van de winkel uit te breiden. Kies Nee om het oorspronkelijke gedrag te herstellen, dat zeer grote queries kan opleveren."
 "Virtual rule","Virtuele regel"
 "Virtual Category","Virtuele categorie"
 "Virtual Category Root","Virtuele Categorie Root"
