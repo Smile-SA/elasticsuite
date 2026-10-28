@@ -25,13 +25,15 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\ProductFactory as ProductConditionFactory;
+use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
 
 /**
- * Unit test for the store root category handling of {@see Rule::getCategorySearchQuery()}.
+ * Unit test for the store root category and the expansion boundaries handling of
+ * {@see Rule::getCategorySearchQuery()}.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  *
@@ -45,6 +47,8 @@ class RuleTest extends TestCase
     private const STORE_ROOT_ID = 2;
 
     private const OTHER_ROOT_ID = 58;
+
+    private const BOUNDARY_ID = 3181;
 
     /**
      * @var QueryInterface
@@ -63,8 +67,12 @@ class RuleTest extends TestCase
     {
         $this->standardQuery = $this->createMock(QueryInterface::class);
         $this->fullQuery     = $this->createMock(QueryInterface::class);
-        // Full queries, as built with all the virtual categories under them.
-        $this->setLocalCache([self::STORE_ROOT_ID => $this->fullQuery, self::OTHER_ROOT_ID => $this->fullQuery]);
+        // Full queries, as built with all the virtual categories under them (eg. for the page of the boundary).
+        $this->setLocalCache([
+            self::STORE_ROOT_ID => $this->fullQuery,
+            self::OTHER_ROOT_ID => $this->fullQuery,
+            self::BOUNDARY_ID   => $this->fullQuery,
+        ]);
     }
 
     /**
@@ -83,7 +91,7 @@ class RuleTest extends TestCase
      */
     public function testStoreRootIsStandardCategory(): void
     {
-        $rule = $this->getRule(true);
+        $rule = $this->getRule(self::STORE_ROOT_ID, true, true, true);
 
         $this->assertSame($this->standardQuery, $rule->getCategorySearchQuery(self::STORE_ROOT_ID));
         $this->assertSame($this->standardQuery, $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]));
@@ -96,7 +104,9 @@ class RuleTest extends TestCase
      */
     public function testStoreRootIsExpandedWhenDisabled(): void
     {
-        $this->assertSame($this->fullQuery, $this->getRule(false)->getCategorySearchQuery(self::STORE_ROOT_ID, [12]));
+        $rule = $this->getRule(self::STORE_ROOT_ID, false, true, true);
+
+        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]));
     }
 
     /**
@@ -106,20 +116,73 @@ class RuleTest extends TestCase
      */
     public function testOtherStoreRootIsExpanded(): void
     {
-        $this->assertSame($this->fullQuery, $this->getRule(true)->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]));
+        $rule = $this->getRule(self::OTHER_ROOT_ID, true, true, true);
+
+        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]));
     }
 
     /**
-     * Rule whose dependencies are mocked, in a store whose root category is 2.
+     * An expansion boundary used by another category is reduced to its standard query, without any cache.
      *
+     * @return void
+     */
+    public function testEmbeddedBoundaryIsNotExpanded(): void
+    {
+        $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
+
+        $this->assertSame($this->standardQuery, $rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]));
+    }
+
+    /**
+     * The query of an expansion boundary for its own page is unchanged.
+     *
+     * @return void
+     */
+    public function testTopLevelBoundaryIsExpanded(): void
+    {
+        $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
+
+        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::BOUNDARY_ID));
+    }
+
+    /**
+     * A disabled expansion boundary used by another category is handled as any disabled category.
+     *
+     * @return void
+     */
+    public function testEmbeddedDisabledBoundary(): void
+    {
+        $rule = $this->getRule(self::BOUNDARY_ID, true, false, false);
+        $this->assertNull($rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]));
+
+        $rule           = $this->getRule(self::BOUNDARY_ID, true, false, true);
+        $noResultsQuery = $rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]);
+        $this->assertNotNull($noResultsQuery);
+        $this->assertNotSame($this->standardQuery, $noResultsQuery);
+    }
+
+    /**
+     * Rule whose dependencies are mocked, in a store whose root category is 2, with the category 3181 configured as an
+     * expansion boundary.
+     *
+     * @param int  $categoryId                  Id of the category loaded by the rule.
      * @param bool $storeRootAsStandardCategory Whether the store root category is used as a standard category.
+     * @param bool $isActive                    Whether the loaded category is enabled.
+     * @param bool $forceZero                   Whether disabled categories force zero results.
      *
      * @return Rule
      */
-    private function getRule(bool $storeRootAsStandardCategory): Rule
-    {
+    private function getRule(
+        int $categoryId,
+        bool $storeRootAsStandardCategory,
+        bool $isActive,
+        bool $forceZero
+    ): Rule {
         $config = $this->createMock(Config::class);
         $config->method('isStoreRootUsedAsStandardCategory')->willReturn($storeRootAsStandardCategory);
+        $config->method('getVirtualRulesExpansionBoundaries')->willReturn([self::BOUNDARY_ID]);
+        $config->method('getVirtualRulesExpansionBoundariesCacheKey')->willReturn('b1');
+        $config->method('isForceZeroResultsForDisabledCategoriesEnabled')->willReturn($forceZero);
 
         $store = $this->createMock(Store::class);
         $store->method('getRootCategoryId')->willReturn(self::STORE_ROOT_ID);
@@ -132,8 +195,12 @@ class RuleTest extends TestCase
             ->getMock();
         $category->method('load')->willReturnSelf();
         $category->method('setStoreId')->willReturnSelf();
-        $category->method('getId')->willReturn(self::STORE_ROOT_ID);
-        $category->setData(['path' => '1/' . self::STORE_ROOT_ID, 'name' => 'Default Category']);
+        $category->method('getId')->willReturn($categoryId);
+        $category->setData([
+            'is_active' => $isActive,
+            'path'      => $categoryId === self::STORE_ROOT_ID ? '1/2' : '1/2/' . $categoryId,
+            'name'      => 'Category ' . $categoryId,
+        ]);
         $categoryFactory = $this->createMock(CategoryFactory::class);
         $categoryFactory->method('create')->willReturn($category);
 
@@ -142,7 +209,10 @@ class RuleTest extends TestCase
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->method('getSearchQuery')->willReturn($this->standardQuery);
 
-        // The store root query is never cached.
+        $queryFactory = $this->createMock(QueryFactory::class);
+        $queryFactory->method('create')->willReturn($this->createMock(QueryInterface::class));
+
+        // The store root and boundary queries are never cached.
         $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->never())->method('save');
 
@@ -155,6 +225,7 @@ class RuleTest extends TestCase
             'categoryFactory'          => $categoryFactory,
             'productConditionsFactory' => $productConditionFactory,
             'queryBuilder'             => $queryBuilder,
+            'queryFactory'             => $queryFactory,
             'customerSession'          => $this->createMock(Session::class),
             'sharedCache'              => $cache,
         ];
