@@ -199,16 +199,31 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             return $query;
         }
 
+        // Used by another category (as its virtual root or in its rule): an expansion boundary is never expanded.
+        // Checked before the local cache, which may hold its full query (eg. built for its own page).
+        if (!empty($excludedCategories) && $this->isExpansionBoundary($categoryId)) {
+            $query = $this->getExpansionBoundaryQuery($category);
+            \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
+
+            return $query;
+        }
+
         $cacheKey = implode(
             '|',
-            [
-                __FUNCTION__,
-                $storeId,
-                $categoryId,
-                $this->customerSession->getCustomerGroupId(),
-                (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
-                (int) $this->config->isStoreRootUsedAsStandardCategory(),
-            ]
+            array_filter(
+                [
+                    __FUNCTION__,
+                    $storeId,
+                    $categoryId,
+                    $this->customerSession->getCustomerGroupId(),
+                    (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
+                    (int) $this->config->isStoreRootUsedAsStandardCategory(),
+                    $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
+                ],
+                function ($keyPart) {
+                    return $keyPart !== null;
+                }
+            )
         );
 
         $query = $this->getFromLocalCache($categoryId);
@@ -443,6 +458,48 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $this->getStandardCategoryQuery($category);
+    }
+
+    /**
+     * Whether a category is an expansion boundary.
+     *
+     * @param int $categoryId Category id.
+     *
+     * @return bool
+     */
+    private function isExpansionBoundary(int $categoryId): bool
+    {
+        return in_array($categoryId, $this->config->getVirtualRulesExpansionBoundaries(), true);
+    }
+
+    /**
+     * Query of an expansion boundary used by another category: its own products only (and the ones of its
+     * subcategories for an anchor), without the products added by its virtual subcategories.
+     * Disabled categories are handled as in buildCategorySearchQuery().
+     *
+     * @param CategoryInterface|int $category Expansion boundary category.
+     *
+     * @return QueryInterface|null
+     */
+    private function getExpansionBoundaryQuery($category): ?QueryInterface
+    {
+        $query = null;
+
+        if (!is_object($category)) {
+            try {
+                $category = $this->getRootCategory((int) $category, $this->getStoreId());
+            } catch (NoSuchEntityException $e) {
+                return null;
+            }
+        }
+
+        if ($category->getIsActive()) {
+            $query = $this->getStandardCategoryQuery($category);
+        } elseif ($this->config->isForceZeroResultsForDisabledCategoriesEnabled($this->getStoreId())) {
+            $query = $this->getNoResultsQuery();
+        }
+
+        return $query;
     }
 
     /**
