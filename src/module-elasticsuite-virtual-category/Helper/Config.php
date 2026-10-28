@@ -29,6 +29,9 @@ class Config
     const XML_PATH_FORCE_ZERO_RESULTS_FOR_DISABLED_CATEGORIES = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/' .
     'force_zero_results_for_disabled_categories';
 
+    const XML_PATH_STORE_ROOT_AS_STANDARD_CATEGORY = 'smile_elasticsuite_catalogsearch_settings/catalogrule/' .
+    'store_root_as_standard_category';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -58,5 +61,16 @@ class Config
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Returns true if the store root category is used as a standard category in rules (only the products assigned to
+     * the categories of the store tree), instead of being expanded with all the virtual categories of the store.
+     *
+     * @return bool
+     */
+    public function isStoreRootUsedAsStandardCategory(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_STORE_ROOT_AS_STANDARD_CATEGORY);
     }
 }

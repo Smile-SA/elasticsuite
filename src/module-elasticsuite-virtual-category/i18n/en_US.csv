@@ -1,6 +1,8 @@
 "Add/Remove Products","Add/Remove Products"
 "Force zero results for disabled categories","Force zero results for disabled categories"
 "If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.","If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache."
+"Treat the store root category as a purely physical category in rules","Treat the store root category as a purely physical category in rules"
+"When a category condition of a rule (virtual categories, optimizers, widgets) or a GraphQL category filter uses the store root category, only the products assigned to the physical categories of the store tree are used, without expanding every virtual category of the store. Set to No to restore the legacy behaviour, which can produce very large queries.","When a category condition of a rule (virtual categories, optimizers, widgets) or a GraphQL category filter uses the store root category, only the products assigned to the physical categories of the store tree are used, without expanding every virtual category of the store. Set to No to restore the legacy behaviour, which can produce very large queries."
 "Virtual rule","Virtual rule"
 "Virtual Category","Virtual Category"
 "Virtual Category Root","Virtual Category Root"
