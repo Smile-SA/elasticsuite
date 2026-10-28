@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\System\Config\Field;
 
+use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
@@ -62,7 +63,7 @@ class ExpansionBoundaries extends Field
     }
 
     /**
-     * Input field followed by the configured categories.
+     * Input field with a category chooser, followed by the configured categories.
      *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      *
@@ -72,13 +73,46 @@ class ExpansionBoundaries extends Field
      */
     protected function _getElementHtml(AbstractElement $element)
     {
-        $html = parent::_getElementHtml($element);
+        $html = $this->getChooserHtml($element, parent::_getElementHtml($element));
 
         foreach ($this->getLines((string) $element->getValue()) as $line) {
             $html .= '<p class="note"><span>' . $line . '</span></p>';
         }
 
         return $html;
+    }
+
+    /**
+     * Input field with a category chooser, as in the rule conditions: a folder icon opening a checkbox category tree
+     * built from the ids in the input field, which writes the ids of the checked categories back into it, and an apply
+     * icon closing it.
+     *
+     * @param AbstractElement $element     Form element.
+     * @param string          $elementHtml Input field HTML.
+     *
+     * @return string
+     */
+    private function getChooserHtml(AbstractElement $element, string $elementHtml): string
+    {
+        $jsFormObject = 'rulesBoundaryCategoriesChooser';
+        $chooser      = $this->getLayout()->createBlock(
+            Template::class,
+            '',
+            [
+                'data' => [
+                    'template'       => 'Smile_ElasticsuiteVirtualCategory::system/config/field/boundary-categories-chooser.phtml',
+                    'input_id'       => $element->getHtmlId(),
+                    'element_html'   => $elementHtml,
+                    'js_form_object' => $jsFormObject,
+                    'chooser_url'    => $this->getUrl(
+                        'catalog_rule/promo_widget/chooser',
+                        ['attribute' => 'category_ids', 'form' => $jsFormObject]
+                    ),
+                ],
+            ]
+        );
+
+        return $chooser->toHtml();
     }
 
     /**

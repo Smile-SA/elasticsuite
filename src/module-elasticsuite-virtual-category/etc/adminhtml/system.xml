@@ -38,7 +38,7 @@
                 <field id="rules_boundary_categories" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
                     <label>Boundary categories for virtual rules</label>
                     <frontend_model>Smile\ElasticsuiteVirtualCategory\Block\Adminhtml\System\Config\Field\ExpansionBoundaries</frontend_model>
-                    <comment><![CDATA[Comma-separated ids of large/top categories (eg. a category holding a significant portion of the catalog) whose virtual subcategories must not be expanded when any virtual category relies on them. When a virtual category uses one of them as its virtual root, or in a category condition in its rules, the boundary category is treated as a physical category without any virtual subcategory. This keeps the queries of virtual categories referencing the boundary category small. The page and the layered navigation of the boundary category itself are unchanged. These boundary categories should be anchor categories.]]></comment>
+                    <comment><![CDATA[Large/top categories (eg. a category holding a significant portion of the catalog) whose virtual subcategories must not be expanded when any virtual category relies on them. When a virtual category uses one of them as its virtual root, or in a category condition in its rules, the boundary category is treated as a physical category without any virtual subcategory. This keeps the queries of virtual categories referencing the boundary category small. The page and the layered navigation of the boundary category itself are unchanged. These boundary categories should be anchor categories.]]></comment>
                 </field>
             </group>
         </section>
