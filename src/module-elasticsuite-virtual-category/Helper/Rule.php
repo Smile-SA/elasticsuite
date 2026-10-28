@@ -95,6 +95,7 @@ class Rule
                 $category->getId(),
                 $this->customerSession->getCustomerGroupId(),
                 (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($category->getStoreId()),
+                (int) $this->config->isStoreRootUsedAsStandardCategory(),
             ]
         );
 

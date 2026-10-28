@@ -29,6 +29,13 @@
                     <comment><![CDATA[If set to yes, any virtual category that references a disabled category in their rule or as their root category will return an empty result. Be careful modifying this option will remove all your category query cache.]]></comment>
                 </field>
             </group>
+            <group id="catalogrule">
+                <field id="store_root_as_standard_category" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+                    <label>Treat the store root category as a purely physical category in rules</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[When a category condition of a rule (virtual categories, optimizers, widgets) or a GraphQL category filter uses the store root category, only the products assigned to the physical categories of the store tree are used, without expanding every virtual category of the store. Set to No to restore the legacy behaviour, which can produce very large queries.]]></comment>
+                </field>
+            </group>
         </section>
     </system>
 </config>

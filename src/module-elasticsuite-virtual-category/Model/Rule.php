@@ -190,6 +190,15 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $categoryId = (int) (!is_object($category) ? $category : $category->getId());
         $storeId = !is_object($category) ? $this->getStoreId() : $category->getStoreId();
         $storeId = $storeId ?: $this->storeManager->getStore()->getId();
+
+        // The store root category has no page of its own: wherever it is used, it stands for the store tree products.
+        if ($this->isStoreRootUsedAsStandardCategory($categoryId, (int) $storeId)) {
+            $query = $this->getStoreRootQuery($category);
+            \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);
+
+            return $query;
+        }
+
         $cacheKey = implode(
             '|',
             [
@@ -198,6 +207,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 $categoryId,
                 $this->customerSession->getCustomerGroupId(),
                 (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
+                (int) $this->config->isStoreRootUsedAsStandardCategory(),
             ]
         );
 
@@ -398,6 +408,41 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         }
 
         return $this->instances[$rootCategoryId][$cacheKey];
+    }
+
+    /**
+     * Whether a category is the root category of a store, to be used as a standard category.
+     *
+     * @param int $categoryId Category id.
+     * @param int $storeId    Store id.
+     *
+     * @return bool
+     */
+    private function isStoreRootUsedAsStandardCategory(int $categoryId, int $storeId): bool
+    {
+        return $this->config->isStoreRootUsedAsStandardCategory()
+            && $categoryId === (int) $this->storeManager->getStore($storeId)->getRootCategoryId();
+    }
+
+    /**
+     * Query of the store root category: the products assigned to the categories of the store tree, without expanding
+     * the virtual categories of the store.
+     *
+     * @param CategoryInterface|int $category Store root category.
+     *
+     * @return QueryInterface|null
+     */
+    private function getStoreRootQuery($category): ?QueryInterface
+    {
+        if (!is_object($category)) {
+            try {
+                $category = $this->getRootCategory((int) $category, $this->getStoreId());
+            } catch (NoSuchEntityException $e) {
+                return null;
+            }
+        }
+
+        return $this->getStandardCategoryQuery($category);
     }
 
     /**
