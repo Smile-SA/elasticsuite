@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -59,9 +60,9 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      *                                                                                                             provider.
      * @param ScopeConfigInterface                                                      $scopeConfig               Scope configuration.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory              Search query factory.
-     * @param VirtualCategoryConfig                                                     $virtualCategoryConfig     Virtual category
-     *                                                                                                             configuration.
      * @param array                                                                     $data                      Additional data.
+     * @param VirtualCategoryConfig|null                                                $virtualCategoryConfig     Virtual category
+     *                                                                                                             configuration.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
@@ -77,8 +78,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         SpecialAttributesProvider $specialAttributesProvider,
         ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
-        VirtualCategoryConfig $virtualCategoryConfig,
-        array $data = []
+        array $data = [],
+        ?VirtualCategoryConfig $virtualCategoryConfig = null
     ) {
         parent::__construct(
             $context,
@@ -96,7 +97,9 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $data
         );
         $this->queryFactory = $queryFactory;
-        $this->virtualCategoryConfig = $virtualCategoryConfig;
+        $this->virtualCategoryConfig = $virtualCategoryConfig ?: ObjectManager::getInstance()->get(
+            VirtualCategoryConfig::class
+        );
     }
 
     /**
