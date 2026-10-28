@@ -1,0 +1,44 @@
+<?php
+/**
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Smile ElasticSuite to newer
+ * versions in the future.
+ *
+ * @category  Smile
+ * @package   Smile\ElasticsuiteVirtualCategory
+ * @author    Richard Bayet <richard.bayet@smile.fr>
+ * @copyright 2026 Smile
+ * @license   Open Software License ("OSL") v. 3.0
+ */
+
+/** @var \Magento\Backend\Block\Template $block */
+/** @var \Magento\Framework\Escaper $escaper */
+$inputId     = (string) $block->getInputId();
+$containerId = $inputId . '_chooser';
+$config      = [
+    'Smile_ElasticsuiteVirtualCategory/js/system/config/boundary-categories-chooser' => [
+        'inputId'      => $inputId,
+        'containerId'  => $containerId,
+        'url'          => $block->getChooserUrl(),
+        'jsFormObject' => $block->getJsFormObject(),
+    ],
+];
+?>
+<?php /* Same layout as the rule conditions: compact input followed by the chooser and apply icons. */ ?>
+<span class="rule-param rule-param-edit" data-mage-init="<?= $escaper->escapeHtmlAttr(json_encode($config)) ?>">
+    <span class="element">
+        <?= /* @noEscape */ $block->getElementHtml() ?>
+        <a href="#" class="rule-chooser-trigger">
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl('images/rule_chooser_trigger.gif')) ?>"
+                 alt="" class="v-middle rule-chooser-trigger"
+                 title="<?= $escaper->escapeHtmlAttr(__('Open Chooser')) ?>"/>
+        </a>
+        <a href="#" class="rule-param-apply">
+            <img src="<?= $escaper->escapeUrl($block->getViewFileUrl('images/rule_component_apply.gif')) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr(__('Apply')) ?>" class="v-middle"
+                 title="<?= $escaper->escapeHtmlAttr(__('Apply')) ?>"/>
+        </a>
+    </span>
+</span>
+<div id="<?= $escaper->escapeHtmlAttr($containerId) ?>" class="rule-chooser"></div>

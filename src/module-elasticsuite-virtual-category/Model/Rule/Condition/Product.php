@@ -17,6 +17,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
+use Smile\ElasticsuiteVirtualCategory\Helper\Config as VirtualCategoryConfig;
 
 /**
  * Product search rule condition.
@@ -32,6 +33,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @var \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory
      */
     private $queryFactory;
+
+    /**
+     * @var VirtualCategoryConfig
+     */
+    private $virtualCategoryConfig;
 
     /**
      * Constructor.
@@ -53,6 +59,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      *                                                                                                             provider.
      * @param ScopeConfigInterface                                                      $scopeConfig               Scope configuration.
      * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory                 $queryFactory              Search query factory.
+     * @param VirtualCategoryConfig                                                     $virtualCategoryConfig     Virtual category
+     *                                                                                                             configuration.
      * @param array                                                                     $data                      Additional data.
      */
     public function __construct(
@@ -69,6 +77,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         SpecialAttributesProvider $specialAttributesProvider,
         ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        VirtualCategoryConfig $virtualCategoryConfig,
         array $data = []
     ) {
         parent::__construct(
@@ -87,6 +96,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $data
         );
         $this->queryFactory = $queryFactory;
+        $this->virtualCategoryConfig = $virtualCategoryConfig;
     }
 
     /**
@@ -146,7 +156,9 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         $categoryIds = $valueArray;
 
         if ($this->getOperator() !== '!()') {
-            $categoryIds = array_diff($valueArray, $excludedCategories);
+            // Expansion boundaries are kept: never expanded when used here, they can't cause an infinite recursion.
+            $boundaryIds = $this->virtualCategoryConfig->getVirtualRulesExpansionBoundaries();
+            $categoryIds = array_diff($valueArray, array_diff($excludedCategories, $boundaryIds));
         }
 
         foreach ($categoryIds as $categoryId) {
