@@ -29,6 +29,12 @@ class Config
     const XML_PATH_FORCE_ZERO_RESULTS_FOR_DISABLED_CATEGORIES = 'smile_elasticsuite_catalogsearch_settings/catalogsearch/' .
     'force_zero_results_for_disabled_categories';
 
+    const XML_PATH_STORE_ROOT_AS_STANDARD_CATEGORY = 'smile_elasticsuite_catalogsearch_settings/catalogrule/' .
+    'store_root_as_standard_category';
+
+    const XML_PATH_RULES_EXPANSION_BOUNDARIES = 'smile_elasticsuite_catalogsearch_settings/catalogrule/' .
+    'rules_boundary_categories';
+
     /**
      * @var ScopeConfigInterface
      */
@@ -58,5 +64,67 @@ class Config
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
+    }
+
+    /**
+     * Returns true if the store root category is used as a standard category in rules (only the products assigned to
+     * the categories of the store tree), instead of being expanded with all the virtual categories of the store.
+     *
+     * @return bool
+     */
+    public function isStoreRootUsedAsStandardCategory(): bool
+    {
+        return $this->scopeConfig->isSetFlag(self::XML_PATH_STORE_ROOT_AS_STANDARD_CATEGORY);
+    }
+
+    /**
+     * Ids of the categories used as expansion boundaries: when used by another category, as its virtual root or in a
+     * category condition of its rule, only their own products (and the ones of their subcategories for an anchor) are
+     * used, not the ones added by their virtual subcategories.
+     *
+     * @return int[] Sorted category ids.
+     */
+    public function getVirtualRulesExpansionBoundaries(): array
+    {
+        return $this->parseVirtualRulesExpansionBoundaries(
+            $this->scopeConfig->getValue(self::XML_PATH_RULES_EXPANSION_BOUNDARIES)
+        );
+    }
+
+    /**
+     * Category ids of an expansion boundaries setting value: comma-separated ids, invalid values being ignored.
+     *
+     * @param string|null $value Setting value.
+     *
+     * @return int[] Sorted category ids.
+     */
+    public function parseVirtualRulesExpansionBoundaries(?string $value): array
+    {
+        $categoryIds = [];
+
+        foreach (explode(',', (string) $value) as $categoryId) {
+            $categoryId = trim($categoryId);
+            if (ctype_digit($categoryId) && (int) $categoryId > 0) {
+                $categoryIds[] = (int) $categoryId;
+            }
+        }
+
+        $categoryIds = array_values(array_unique($categoryIds));
+        sort($categoryIds);
+
+        return $categoryIds;
+    }
+
+    /**
+     * Part of the virtual rules queries cache keys depending on the expansion boundaries, so that changing them does
+     * not reuse queries built with other boundaries. Null when there is none, keeping the keys used without them.
+     *
+     * @return string|null
+     */
+    public function getVirtualRulesExpansionBoundariesCacheKey(): ?string
+    {
+        $categoryIds = $this->getVirtualRulesExpansionBoundaries();
+
+        return empty($categoryIds) ? null : 'b' . sprintf('%u', crc32(implode(',', $categoryIds)));
     }
 }

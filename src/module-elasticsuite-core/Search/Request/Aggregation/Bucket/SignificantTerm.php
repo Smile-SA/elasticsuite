@@ -30,7 +30,7 @@ class SignificantTerm extends AbstractBucket
 {
     const ALGORITHM_GND = 'gnd';
 
-    const ALGORITHM_CHI_SQUARE = 'chi_sqare';
+    const ALGORITHM_CHI_SQUARE = 'chi_square';
 
     const ALGORITHM_JLH = 'jlh';
 
@@ -71,7 +71,7 @@ class SignificantTerm extends AbstractBucket
      * @param QueryInterface|null $nestedFilter     Nested filter for the bucket.
      * @param integer             $size             Bucket size.
      * @param integer             $minDocCount      Min doc count.
-     * @param string              $algotithm        Algorithm used
+     * @param string              $algorithm        Algorithm used
      * @param QueryInterface|null $backgroundFilter Background filter.
      */
     public function __construct(
@@ -85,13 +85,13 @@ class SignificantTerm extends AbstractBucket
         ?QueryInterface $nestedFilter = null,
         $size = 0,
         $minDocCount = 5,
-        $algotithm = self::ALGORITHM_GND,
+        $algorithm = self::ALGORITHM_GND,
         ?QueryInterface $backgroundFilter = null
     ) {
         parent::__construct($name, $field, $metrics, $childBuckets, $pipelines, $nestedPath, $filter, $nestedFilter);
 
         $this->minDocCount = $minDocCount;
-        $this->algorithm   = $algotithm;
+        $this->algorithm   = $algorithm;
         $this->size        = $size > 0 && $size < self::MAX_BUCKET_SIZE ? $size : self::MAX_BUCKET_SIZE;
         $this->backgroundFilter = $backgroundFilter;
     }

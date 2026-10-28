@@ -21,6 +21,9 @@
             <catalogsearch>
                 <force_zero_results_for_disabled_categories>1</force_zero_results_for_disabled_categories>
             </catalogsearch>
+            <catalogrule>
+                <store_root_as_standard_category>1</store_root_as_standard_category>
+            </catalogrule>
         </smile_elasticsuite_catalogsearch_settings>
     </default>
 </config>

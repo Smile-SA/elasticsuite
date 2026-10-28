@@ -14,8 +14,11 @@
 
 namespace Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Search\AdapterInterface;
 use Magento\Framework\Search\RequestInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use Smile\ElasticsuiteCore\Api\Client\OpaqueIdProviderInterface;
 use Smile\ElasticsuiteCore\Search\Adapter\Elasticsuite\Response\QueryResponseFactory;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
@@ -50,23 +53,39 @@ class Adapter implements AdapterInterface
     private $requestMapper;
 
     /**
+     * @var OpaqueIdProviderInterface
+     */
+    private $opaqueIdProvider;
+
+    /**
+     * @var StoreManagerInterface
+     */
+    private $storeManager;
+
+    /**
      * Constructor.
      *
-     * @param QueryResponseFactory $responseFactory Search response factory.
-     * @param Request\Mapper       $requestMapper   Search request mapper.
-     * @param ClientInterface      $client          ES Client Factory.
-     * @param LoggerInterface      $logger          Logger.
+     * @param QueryResponseFactory           $responseFactory  Search response factory.
+     * @param Request\Mapper                 $requestMapper    Search request mapper.
+     * @param ClientInterface                $client           ES Client Factory.
+     * @param LoggerInterface                $logger           Logger.
+     * @param OpaqueIdProviderInterface|null $opaqueIdProvider X-Opaque-Id provider.
+     * @param StoreManagerInterface|null     $storeManager     Store manager.
      */
     public function __construct(
         QueryResponseFactory $responseFactory,
         Request\Mapper $requestMapper,
         ClientInterface $client,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ?OpaqueIdProviderInterface $opaqueIdProvider = null,
+        ?StoreManagerInterface $storeManager = null
     ) {
-        $this->responseFactory = $responseFactory;
-        $this->logger          = $logger;
-        $this->client          = $client;
-        $this->requestMapper   = $requestMapper;
+        $this->responseFactory  = $responseFactory;
+        $this->logger           = $logger;
+        $this->client           = $client;
+        $this->requestMapper    = $requestMapper;
+        $this->opaqueIdProvider = $opaqueIdProvider ?? ObjectManager::getInstance()->get(OpaqueIdProviderInterface::class);
+        $this->storeManager     = $storeManager ?? ObjectManager::getInstance()->get(StoreManagerInterface::class);
     }
 
     /**
@@ -104,6 +123,41 @@ class Adapter implements AdapterInterface
             'body'  => $this->requestMapper->buildSearchRequest($request),
         ];
 
+        $details = ['cnt' => $request->getName()];
+        // The store actually searched, rather than the current one (which differs in CLI or for the admin store).
+        $storeCode = $this->getStoreCode($request);
+        if ($storeCode !== null) {
+            $details['str'] = $storeCode;
+        }
+
+        $opaqueId = $this->opaqueIdProvider->getOpaqueId($details);
+        if ($opaqueId !== null) {
+            $searchRequest['client'] = ['opaqueId' => $opaqueId];
+        }
+
         return $this->client->search($searchRequest);
+    }
+
+    /**
+     * Return the code of the store the search request applies to (its "scope" dimension), if known.
+     *
+     * @param RequestInterface $request Search request.
+     *
+     * @return string|null
+     */
+    private function getStoreCode(RequestInterface $request): ?string
+    {
+        $scope   = $request->getDimensions()['scope'] ?? null;
+        $storeId = $scope ? $scope->getValue() : null;
+        // No store, e.g. a search through the indices of all stores (StoreManager would return the current one).
+        if ($storeId === null || $storeId === '') {
+            return null;
+        }
+
+        try {
+            return $this->storeManager->getStore($storeId)->getCode();
+        } catch (\Exception $exception) {
+            return null;
+        }
     }
 }

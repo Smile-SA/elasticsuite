@@ -282,6 +282,15 @@
         <plugin name="catalogProductRequestMapper" type="Smile\ElasticsuiteCatalog\Plugin\Search\RequestMapperPlugin" sortOrder="10"/>
     </type>
 
+    <!-- Add the current category to the X-Opaque-Id of the requests sent to the search engine -->
+    <type name="Smile\ElasticsuiteCore\Client\OpaqueIdProvider">
+        <arguments>
+            <argument name="partProviders" xsi:type="array">
+                <item name="category" xsi:type="object">Smile\ElasticsuiteCatalog\Model\Search\OpaqueId\CurrentCategory</item>
+            </argument>
+        </arguments>
+    </type>
+
     <!-- Cleanup popular searches tag after fulltext reindex -->
     <type name="Magento\CatalogSearch\Model\Indexer\Fulltext">
         <plugin name="smile_elasticsuite_cleanup_popular_searches_cache"
@@ -368,10 +377,12 @@
     <type name="Magento\Catalog\Model\ResourceModel\Attribute">
         <!-- Disable the legacy plugin, we'll do nearly the same thing in our own plugin -->
         <plugin name="catalogsearchFulltextIndexerAttribute" disabled="true"/>
-    </type>
-
-    <!-- Plugin to deal with index invalidation, mapping update and config flush when editing an attribute -->
-    <type name="\Magento\Catalog\Api\Data\ProductAttributeInterface">
+        <!--
+            Plugin to deal with index invalidation, mapping update and config flush when editing an attribute.
+            Plugged on the resource model (like the legacy plugin) so that attributes saved through the
+            product attribute repository (REST/SOAP API, imports) are handled too, and not only those saved
+            through the attribute model (admin).
+        -->
         <plugin name="resetIndexConfigAfterAttributeSave" type="\Smile\ElasticsuiteCatalog\Plugin\Catalog\Eav\AttributePlugin" />
     </type>
 

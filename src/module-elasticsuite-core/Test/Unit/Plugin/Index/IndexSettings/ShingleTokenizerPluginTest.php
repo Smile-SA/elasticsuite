@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCore\Test\Unit\Plugin\Index\IndexSettings;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
 use Smile\ElasticsuiteCore\Plugin\Index\IndexSettings\ShingleTokenizerPlugin;
@@ -25,6 +26,7 @@ use Smile\ElasticsuiteCore\Plugin\Index\IndexSettings\ShingleTokenizerPlugin;
  * @category Smile
  * @package  Smile\ElasticsuiteCore
  */
+#[AllowMockObjectsWithoutExpectations]
 class ShingleTokenizerPluginTest extends TestCase
 {
     /**

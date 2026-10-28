@@ -89,13 +89,20 @@ class Rule
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
         $cacheKey = implode(
             '|',
-            [
-                $callback,
-                $category->getStoreId(),
-                $category->getId(),
-                $this->customerSession->getCustomerGroupId(),
-                (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($category->getStoreId()),
-            ]
+            array_filter(
+                [
+                    $callback,
+                    $category->getStoreId(),
+                    $category->getId(),
+                    $this->customerSession->getCustomerGroupId(),
+                    (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($category->getStoreId()),
+                    (int) $this->config->isStoreRootUsedAsStandardCategory(),
+                    $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
+                ],
+                function ($keyPart) {
+                    return $keyPart !== null;
+                }
+            )
         );
 
         $data = $this->cache->load($cacheKey);
