@@ -20,6 +20,7 @@ use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
 use Smile\ElasticsuiteThesaurus\Model\Index;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Helper\Text as TextHelper;
@@ -54,6 +55,16 @@ class QueryRewrite
     private $textHelper;
 
     /**
+     * @var SpellcheckRequestFactory
+     */
+    private $spellcheckRequestFactory;
+
+    /**
+     * @var SpellcheckerInterface
+     */
+    private $spellchecker;
+
+    /**
      * @var array
      */
     private $rewritesCache = [];
@@ -61,21 +72,27 @@ class QueryRewrite
     /**
      * Constructor.
      *
-     * @param QueryFactory           $queryFactory           Search request query factory.
-     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
-     * @param Index                  $index                  Synonym index.
-     * @param TextHelper             $textHelper             Text helper.
+     * @param QueryFactory             $queryFactory             Search request query factory.
+     * @param ThesaurusConfigFactory   $thesaurusConfigFactory   Thesaurus configuration factory.
+     * @param Index                    $index                    Synonym index.
+     * @param TextHelper               $textHelper               Text helper.
+     * @param SpellcheckRequestFactory $spellcheckRequestFactory Spellchecking request factory.
+     * @param SpellcheckerInterface    $spellchecker             Spellchecker.
      */
     public function __construct(
         QueryFactory $queryFactory,
         ThesaurusConfigFactory $thesaurusConfigFactory,
         Index $index,
-        TextHelper $textHelper
+        TextHelper $textHelper,
+        SpellcheckRequestFactory $spellcheckRequestFactory,
+        SpellcheckerInterface $spellchecker
     ) {
-        $this->queryFactory           = $queryFactory;
-        $this->thesaurusConfigFactory = $thesaurusConfigFactory;
-        $this->index                  = $index;
-        $this->textHelper             = $textHelper;
+        $this->queryFactory             = $queryFactory;
+        $this->thesaurusConfigFactory   = $thesaurusConfigFactory;
+        $this->index                    = $index;
+        $this->textHelper               = $textHelper;
+        $this->spellcheckRequestFactory = $spellcheckRequestFactory;
+        $this->spellchecker             = $spellchecker;
     }
 
     /**
@@ -119,10 +136,11 @@ class QueryRewrite
                 $rewrites = $this->getWeightedRewrites($queryText, $containerConfig, $boost);
             }
             $originalSpellingType = $spellingType;
-            // Set base query as SPELLING_TYPE_EXACT if synonyms/expansions are found.
-            // This is to prevent possible fuzzy matches on that original query's terms and doing so, prioritize the rewritten queries.
-            $spellingType = empty($rewrites) ? $spellingType : SpellcheckerInterface::SPELLING_TYPE_EXACT;
-            $query        = $proceed($containerConfig, $queryText, $spellingType, $boost, $depth);
+            if (!empty($rewrites)) {
+                // All rewrites replace the same term, so the first one is enough to probe the spelling of the original query.
+                $spellingType = $this->getOriginalSpellingType($containerConfig, $queryText, $originalSpellingType, key($rewrites));
+            }
+            $query = $proceed($containerConfig, $queryText, $spellingType, $boost, $depth);
 
             if (!empty($rewrites)) {
                 $synonymQueries           = [$query];
@@ -171,6 +189,62 @@ class QueryRewrite
         }
 
         return $rewrites;
+    }
+
+    /**
+     * Returns the spelling type to use for the original query when rewrites are found.
+     * It is set to SPELLING_TYPE_EXACT, to prevent fuzzy matches that would outrank the rewritten queries, when its unknown
+     * terms are explained by the thesaurus: the first rewrite, in which the replaced term is changed, is better spelled.
+     * Otherwise it keeps its spelling type, since the unknown terms are real typos that are not related to the thesaurus.
+     *
+     * @param ContainerConfigurationInterface $containerConfig      Container configuration.
+     * @param string|array                    $queryText            The original query text.
+     * @param int                             $originalSpellingType The original spelling type.
+     * @param string|int                      $firstRewrittenQuery  The first rewritten query.
+     *
+     * @return int
+     */
+    private function getOriginalSpellingType($containerConfig, $queryText, $originalSpellingType, $firstRewrittenQuery)
+    {
+        $exact = SpellcheckerInterface::SPELLING_TYPE_EXACT;
+
+        if (is_array($queryText)) {
+            return $exact;
+        }
+
+        if (in_array($originalSpellingType, [$exact, SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS], true)) {
+            return $originalSpellingType;
+        }
+
+        $rewriteSpellingType = $this->getSpellingType($containerConfig, (string) $firstRewrittenQuery);
+
+        return $rewriteSpellingType < $originalSpellingType ? $exact : $originalSpellingType;
+    }
+
+    /**
+     * Spellcheck a query text, the same way the search request builder does for the original query.
+     *
+     * @param ContainerConfigurationInterface $containerConfig Container configuration.
+     * @param string                          $queryText       Query text.
+     *
+     * @return int
+     */
+    private function getSpellingType(ContainerConfigurationInterface $containerConfig, $queryText)
+    {
+        $relevanceConfig = $containerConfig->getRelevanceConfig();
+
+        $spellcheckRequest = $this->spellcheckRequestFactory->create(
+            [
+                'index'            => $containerConfig->getIndexName(),
+                'queryText'        => $queryText,
+                'cutoffFrequency'  => $relevanceConfig->getCutOffFrequency(),
+                'isUsingAllTokens' => $relevanceConfig->isUsingAllTokens(),
+                'isUsingReference' => $relevanceConfig->isUsingReferenceAnalyzer(),
+                'isUsingEdgeNgram' => $relevanceConfig->isUsingEdgeNgramAnalyzer(),
+            ]
+        );
+
+        return $this->spellchecker->getSpellingType($spellcheckRequest);
     }
 
     /**

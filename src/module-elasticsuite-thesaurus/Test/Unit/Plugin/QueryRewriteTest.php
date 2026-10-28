@@ -23,11 +23,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldFilterInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\Container\RelevanceConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterface as SpellcheckRequestInterface;
+use Smile\ElasticsuiteCore\Api\Search\Spellchecker\RequestInterfaceFactory as SpellcheckRequestFactory;
 use Smile\ElasticsuiteCore\Api\Search\SpellcheckerInterface;
 use Smile\ElasticsuiteCore\Helper\Text;
 use Smile\ElasticsuiteCore\Index\Mapping;
 use Smile\ElasticsuiteCore\Index\Mapping\Field;
 use Smile\ElasticsuiteCore\Search\Request\Query\Builder;
+use Smile\ElasticsuiteCore\Search\Request\Query\Fulltext\QueryBuilder;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
@@ -94,7 +97,14 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
+        $queryRewritePlugin = new QueryRewrite(
+            $queryFactory,
+            $thesaurusConfigFactory,
+            $thesaurusIndex,
+            $textHelper,
+            $this->getSpellcheckRequestFactoryMock(),
+            $this->getMockBuilder(SpellcheckerInterface::class)->getMock()
+        );
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -161,7 +171,14 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $textHelper = $this->getRealTextHelper();
 
-        $queryRewritePlugin = new QueryRewrite($queryFactory, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
+        $queryRewritePlugin = new QueryRewrite(
+            $queryFactory,
+            $thesaurusConfigFactory,
+            $thesaurusIndex,
+            $textHelper,
+            $this->getSpellcheckRequestFactoryMock(),
+            $this->getMockBuilder(SpellcheckerInterface::class)->getMock()
+        );
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
         /*
@@ -224,7 +241,14 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
         $textHelper = $this->getRealTextHelper();
 
         // Passing the mock Query Factory to the plugin to count the occurence of calls to 'create'.
-        $queryRewritePlugin = new QueryRewrite($queryFactoryFullMock, $thesaurusConfigFactory, $thesaurusIndex, $textHelper);
+        $queryRewritePlugin = new QueryRewrite(
+            $queryFactoryFullMock,
+            $thesaurusConfigFactory,
+            $thesaurusIndex,
+            $textHelper,
+            $this->getSpellcheckRequestFactoryMock(),
+            $this->getMockBuilder(SpellcheckerInterface::class)->getMock()
+        );
         // But passing the real Query Factory (with mocked factories) to the query builder itself.
         $queryBuilderInterceptor = $this->getQueryBuilderWithPlugin($queryFactory, $queryRewritePlugin);
 
@@ -267,6 +291,145 @@ class QueryRewriteTest extends \PHPUnit\Framework\TestCase
 
         /** @var \Smile\ElasticsuiteCore\Search\Request\Query\Boolean $query */
         $query = $queryBuilderInterceptor->create($containerConfig, 'foo', $spellingType);
+    }
+
+    /**
+     * Test the spelling types used for the original query and for the rewrites.
+     *
+     * @dataProvider spellingTypesDataProvider
+     *
+     * @param string|array $queryText                 Query text.
+     * @param int          $spellingType              Spelling type of the original query.
+     * @param array        $rewrites                  Rewrites as ['rewritten query' => spelling type returned by the spellchecker].
+     * @param int          $expectedOriginalSpelling  Expected spelling type of the original query.
+     * @param int[]        $expectedRewritesSpellings Expected spelling types of the rewrites, in order.
+     * @param int          $expectedSpellcheckCount   Expected number of spellcheck calls.
+     *
+     * @return void
+     */
+    public function testSpellingTypes(
+        $queryText,
+        $spellingType,
+        $rewrites,
+        $expectedOriginalSpelling,
+        $expectedRewritesSpellings,
+        $expectedSpellcheckCount
+    ) {
+        $spellchecker = $this->getMockBuilder(SpellcheckerInterface::class)->getMock();
+        $spellchecker->expects($this->exactly($expectedSpellcheckCount))
+            ->method('getSpellingType')
+            ->willReturnCallback(
+                function ($request) use ($rewrites) {
+                    return $rewrites[$request->getQueryText()];
+                }
+            );
+
+        $spellingTypes = $this->getSpellingTypesUsedByPlugin($queryText, $spellingType, array_keys($rewrites), $spellchecker);
+
+        // First call is the original query, the next ones are the rewrites.
+        $this->assertSame($expectedOriginalSpelling, array_shift($spellingTypes));
+        $this->assertSame($expectedRewritesSpellings, $spellingTypes);
+    }
+
+    /**
+     * Spelling types data provider.
+     *
+     * @return array
+     */
+    public static function spellingTypesDataProvider()
+    {
+        $exact     = SpellcheckerInterface::SPELLING_TYPE_EXACT;
+        $mostExact = SpellcheckerInterface::SPELLING_TYPE_MOST_EXACT;
+        $mostFuzzy = SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY;
+        $fuzzy     = SpellcheckerInterface::SPELLING_TYPE_FUZZY;
+        $stopwords = SpellcheckerInterface::SPELLING_TYPE_PURE_STOPWORDS;
+
+        return [
+            // [queryText, spellingType, rewrites, expected original spelling, expected rewrites spellings, spellcheck calls].
+            'better rewrite'            => ['fitness shirts', $mostFuzzy, ['fitness tee' => $exact], $exact, [$mostFuzzy], 1],
+            'better rewrite, fuzzy'     => ['finess shirts', $fuzzy, ['finess tee' => $mostFuzzy], $exact, [$mostFuzzy], 1],
+            'better rewrite, one word'  => ['shirts', $mostFuzzy, ['tee' => $exact], $exact, [$exact], 1],
+            'only first rewrite probed' => [
+                'fitness shirts',
+                $fuzzy,
+                ['fitness tee' => $exact, 'fitness top' => $fuzzy, 'fitness tank' => $fuzzy],
+                $exact,
+                [$mostFuzzy, $mostFuzzy, $mostFuzzy],
+                1,
+            ],
+            'same spelling'             => ['finess tank', $mostFuzzy, ['finess tee' => $mostFuzzy], $mostFuzzy, [$mostFuzzy], 1],
+            'worse rewrite'             => ['sliders now', $mostExact, ['slides now' => $fuzzy], $mostExact, [$mostExact], 1],
+            'original exact'            => ['fitness shirts', $exact, ['fitness tee' => $fuzzy], $exact, [$exact], 0],
+            'original pure stopwords'   => ['the of', $stopwords, ['a of' => $fuzzy], $stopwords, [$mostExact], 0],
+            'array of queries'          => [['foo', 'bar'], $exact, ['foo bar' => $fuzzy], $exact, [$exact], 0],
+        ];
+    }
+
+    /**
+     * Run the plugin and get the spelling types it passes to the query builder: original query first, then the rewrites.
+     *
+     * @param string|array          $queryText    Query text.
+     * @param int                   $spellingType Spelling type of the original query.
+     * @param string[]              $rewrites     Rewritten queries.
+     * @param SpellcheckerInterface $spellchecker Spellchecker.
+     *
+     * @return int[]
+     */
+    private function getSpellingTypesUsedByPlugin($queryText, $spellingType, $rewrites, $spellchecker)
+    {
+        $thesaurusIndex = $this->getMockBuilder(ThesaurusIndex::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $thesaurusIndex->method('getQueryRewrites')->willReturn(array_fill_keys($rewrites, 0.1));
+
+        $queryRewritePlugin = new QueryRewrite(
+            $this->getQueryFactory($this->mockedQueryTypes),
+            $this->getThesaurusConfigFactoryMock(0),
+            $thesaurusIndex,
+            $this->getRealTextHelper(),
+            $this->getSpellcheckRequestFactoryMock(),
+            $spellchecker
+        );
+
+        $spellingTypes = [];
+        $proceed       = function ($containerConfig, $queryText, $spellingType) use (&$spellingTypes) {
+            $spellingTypes[] = $spellingType;
+
+            return $this->getMockBuilder(QueryInterface::class)->getMock();
+        };
+
+        $queryRewritePlugin->aroundCreate(
+            $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock(),
+            $proceed,
+            $this->getContainerConfigMock(self::$fields),
+            $queryText,
+            $spellingType
+        );
+
+        return $spellingTypes;
+    }
+
+    /**
+     * Mock the spellcheck request factory: the created request only exposes the query text.
+     *
+     * @return MockObject
+     */
+    private function getSpellcheckRequestFactoryMock()
+    {
+        $factory = $this->getMockBuilder(SpellcheckRequestFactory::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['create'])
+            ->getMock();
+        $factory->method('create')->willReturnCallback(
+            function (array $data) {
+                $request = $this->getMockBuilder(SpellcheckRequestInterface::class)->getMock();
+                $request->method('getQueryText')->willReturn($data['queryText']);
+
+                return $request;
+            }
+        );
+
+        return $factory;
     }
 
     /**
