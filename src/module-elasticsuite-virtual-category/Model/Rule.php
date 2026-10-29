@@ -26,6 +26,7 @@ use Magento\Catalog\Api\Data\CategoryInterface;
 use Smile\ElasticsuiteVirtualCategory\Api\Data\VirtualRuleInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 use Smile\ElasticsuiteVirtualCategory\Model\ResourceModel\VirtualCategory\CollectionFactory;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Magento\Catalog\Model\CategoryFactory;
@@ -96,7 +97,15 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $config;
 
     /**
+     * @var RootCategoryProvider
+     */
+    private $rootCategoryProvider;
+
+    /**
+     * Deprecated, unused: virtual root categories are loaded once per process by the root categories provider.
+     *
      * @var Category[]
+     * @see RootCategoryProvider
      */
     protected $instances = [];
 
@@ -113,24 +122,25 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param Context                 $context                   Context.
-     * @param Registry                $registry                  Registry.
-     * @param FormFactory             $formFactory               Form factory.
-     * @param TimezoneInterface       $localeDate                Locale date.
-     * @param CombineConditionFactory $combineConditionsFactory  Search engine rule (combine) condition factory.
-     * @param ConditionDataFactory    $conditionDataFactory      Condition Data factory.
-     * @param ProductConditionFactory $productConditionsFactory  Search engine rule (product) condition factory.
-     * @param QueryFactory            $queryFactory              Search query factory.
-     * @param CategoryFactory         $categoryFactory           Product category factorty.
-     * @param CollectionFactory       $categoryCollectionFactory Virtual categories collection factory.
-     * @param QueryBuilder            $queryBuilder              Search rule query builder.
-     * @param StoreManagerInterface   $storeManagerInterface     Store Manager
-     * @param Session                 $customerSession           Customer session.
-     * @param CacheInterface          $cache                     Deprecated, unused: the queries are cached by the
-     *                                                           query cache.
-     * @param Config                  $config                    Virtual category configuration.
-     * @param array                   $data                      Additional data.
-     * @param QueryCache|null         $queryCache                Virtual rules query cache.
+     * @param Context                   $context                   Context.
+     * @param Registry                  $registry                  Registry.
+     * @param FormFactory               $formFactory               Form factory.
+     * @param TimezoneInterface         $localeDate                Locale date.
+     * @param CombineConditionFactory   $combineConditionsFactory  Search engine rule (combine) condition factory.
+     * @param ConditionDataFactory      $conditionDataFactory      Condition Data factory.
+     * @param ProductConditionFactory   $productConditionsFactory  Search engine rule (product) condition factory.
+     * @param QueryFactory              $queryFactory              Search query factory.
+     * @param CategoryFactory           $categoryFactory           Product category factorty.
+     * @param CollectionFactory         $categoryCollectionFactory Virtual categories collection factory.
+     * @param QueryBuilder              $queryBuilder              Search rule query builder.
+     * @param StoreManagerInterface     $storeManagerInterface     Store Manager
+     * @param Session                   $customerSession           Customer session.
+     * @param CacheInterface            $cache                     Deprecated, unused: the queries are cached by the
+     *                                                             query cache.
+     * @param Config                    $config                    Virtual category configuration.
+     * @param array                     $data                      Additional data.
+     * @param QueryCache|null           $queryCache                Virtual rules query cache.
+     * @param RootCategoryProvider|null $rootCategoryProvider      Virtual root categories provider.
      */
     public function __construct(
         Context $context,
@@ -149,7 +159,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         CacheInterface          $cache,
         Config                  $config,
         array                   $data = [],
-        ?QueryCache             $queryCache = null
+        ?QueryCache             $queryCache = null,
+        ?RootCategoryProvider   $rootCategoryProvider = null
     ) {
         $this->queryFactory              = $queryFactory;
         $this->productConditionsFactory  = $productConditionsFactory;
@@ -160,6 +171,9 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->customerSession           = $customerSession;
         $this->config                    = $config;
         $this->queryCache                = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
+        $this->rootCategoryProvider      = $rootCategoryProvider ?: ObjectManager::getInstance()->get(
+            RootCategoryProvider::class
+        );
 
         parent::__construct($context, $registry, $formFactory, $localeDate, $combineConditionsFactory, $conditionDataFactory, $data);
     }
@@ -403,10 +417,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Get info about category by category id.
-     * This code uses a local cache for better performance.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * Get a virtual root category, loaded once for all the virtual rules using it.
      *
      * @param int      $rootCategoryId Root category id.
      * @param int|null $storeId        Store id.
@@ -415,20 +426,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     private function getRootCategory(int $rootCategoryId, ?int $storeId = null)
     {
-        $cacheKey = $storeId ?? 'all';
-        if (!isset($this->instances[$rootCategoryId][$cacheKey])) {
-            $rootCategory = $this->categoryFactory->create();
-            if (null !== $storeId) {
-                $rootCategory->setStoreId($storeId);
-            }
-            $rootCategory->load($rootCategoryId);
-            if (!$rootCategory->getId()) {
-                throw NoSuchEntityException::singleField('id', $rootCategoryId);
-            }
-            $this->instances[$rootCategoryId][$cacheKey] = $rootCategory;
-        }
-
-        return $this->instances[$rootCategoryId][$cacheKey];
+        return $this->rootCategoryProvider->get($rootCategoryId, $storeId);
     }
 
     /**

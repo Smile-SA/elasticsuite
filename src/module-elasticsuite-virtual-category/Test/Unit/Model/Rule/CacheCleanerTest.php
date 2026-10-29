@@ -18,12 +18,13 @@ use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
 use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\CacheCleaner;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
  * Unit test for {@see CacheCleaner::clean()}.
  *
  * Covered scenarios:
- * - The shared cache entries of the categories are cleaned, and the in-process layer is reset
+ * - The shared cache entries of the categories are cleaned, and the in-process layers are reset
  * - Nothing happens when there is no category to clean
  *
  * @category Smile
@@ -44,8 +45,10 @@ class CacheCleanerTest extends TestCase
             ->with(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, ['cat_c_2', 'cat_c_3']);
         $queryCache = $this->createMock(QueryCache::class);
         $queryCache->expects($this->once())->method('reset');
+        $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
+        $rootCategoryProvider->expects($this->once())->method('reset');
 
-        (new CacheCleaner($sharedCache, $queryCache))->clean([2, 3]);
+        (new CacheCleaner($sharedCache, $queryCache, $rootCategoryProvider))->clean([2, 3]);
     }
 
     /**
@@ -59,7 +62,9 @@ class CacheCleanerTest extends TestCase
         $sharedCache->expects($this->never())->method('clean');
         $queryCache = $this->createMock(QueryCache::class);
         $queryCache->expects($this->never())->method('reset');
+        $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
+        $rootCategoryProvider->expects($this->never())->method('reset');
 
-        (new CacheCleaner($sharedCache, $queryCache))->clean([]);
+        (new CacheCleaner($sharedCache, $queryCache, $rootCategoryProvider))->clean([]);
     }
 }

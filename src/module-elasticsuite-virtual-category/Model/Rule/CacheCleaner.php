@@ -38,15 +38,25 @@ class CacheCleaner
     private $queryCache;
 
     /**
+     * @var RootCategoryProvider
+     */
+    private $rootCategoryProvider;
+
+    /**
      * Constructor.
      *
-     * @param ElasticsuiteCache $cache      Elasticsuite cache.
-     * @param QueryCache        $queryCache Virtual rules query cache.
+     * @param ElasticsuiteCache    $cache                Elasticsuite cache.
+     * @param QueryCache           $queryCache           Virtual rules query cache.
+     * @param RootCategoryProvider $rootCategoryProvider Virtual root categories provider.
      */
-    public function __construct(ElasticsuiteCache $cache, QueryCache $queryCache)
-    {
-        $this->cache      = $cache;
-        $this->queryCache = $queryCache;
+    public function __construct(
+        ElasticsuiteCache $cache,
+        QueryCache $queryCache,
+        RootCategoryProvider $rootCategoryProvider
+    ) {
+        $this->cache                = $cache;
+        $this->queryCache           = $queryCache;
+        $this->rootCategoryProvider = $rootCategoryProvider;
     }
 
     /**
@@ -67,8 +77,9 @@ class CacheCleaner
 
         if (!empty($cacheTags)) {
             $this->cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG, $cacheTags);
-            // Queries kept by the current process may be outdated as well.
+            // Queries and root categories kept by the current process may be outdated as well.
             $this->queryCache->reset();
+            $this->rootCategoryProvider->reset();
         }
     }
 }
