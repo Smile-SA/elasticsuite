@@ -422,7 +422,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             } elseif ($category->getId() && $category->getIsActive()) {
                 $query = $this->getStandardCategoryQuery($category, $excludedCategories);
             }
-            if ($query && $category->hasChildren()) {
+            // Using getChildrenCount() instead of hasChildren(): the children count includes the children of any store,
+            // active or not, while hasChildren() only counts the active children of the current store, which may not be
+            // the category store. The children collection, built in the category store, then keeps the active ones.
+            if ($query && $category->getChildrenCount() > 0) {
                 $query = $this->addChildrenQueries($query, $category, $excludedCategories);
             }
         } else {
@@ -647,8 +650,17 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
+            $expandedIds = [];
 
             foreach ($childrenCategories as $childrenCategory) {
+                // Build the child in the store of the category being built, not in the current store (collection items
+                // have no store id): the query of a virtual child then includes its descendants as the category sees
+                // them, which is what allows skipping them below.
+                $childrenCategory->setData('store_id', $category->getStoreId());
+                if (!empty(array_intersect($childrenCategory->getPathIds(), $expandedIds))) {
+                    // Already embedded by the query of a virtual ancestor, which expands its own descendants.
+                    continue;
+                }
                 if (in_array($childrenCategory->getId(), $excludedCategories)) {
                     // Category whose query is being built: left out to avoid infinite recursion. If its virtual root
                     // is being built as well, the truncation is recorded against the root instead (see
@@ -668,6 +680,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                             )
                         );
                         $queryParams['should'][] = $childrenQuery;
+                        // An expansion boundary query does not expand its descendants.
+                        if (!$this->isExpansionBoundary((int) $childrenCategory->getId())) {
+                            $expandedIds[] = $childrenCategory->getId();
+                        }
                     }
                 } else {
                     $childrenCategoriesIds[] = $childrenCategory->getId();
@@ -718,6 +734,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
         $categoryCollection->addIsActiveFilter()->addPathFilter(sprintf('%s/.*', $category->getPath()));
+        // Shallowest first: a virtual category is handled before its own descendants.
+        $categoryCollection->setOrder('level', 'ASC');
 
         if (((bool) $category->getIsVirtualCategory()) === false) {
             $categoryCollection->addFieldToFilter('is_virtual_category', '1');

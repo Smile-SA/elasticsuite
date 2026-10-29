@@ -355,10 +355,9 @@ class RuleBuildContextTest extends TestCase
     {
         $category = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'hasChildren'])
+            ->onlyMethods(['getId'])
             ->getMock();
         $category->method('getId')->willReturn($categoryId);
-        $category->method('hasChildren')->willReturn($childrenCount > 0);
         $category->setData(
             [
                 'store_id'            => 1,
