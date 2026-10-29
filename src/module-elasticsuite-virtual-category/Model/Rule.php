@@ -647,8 +647,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
 
         if ($query !== null && $childrenCategories->getSize() > 0) {
             $queryParams = ['should' => [$query], 'cached' => empty($excludedCategories)];
+            $expandedIds = [];
 
             foreach ($childrenCategories as $childrenCategory) {
+                if (!empty(array_intersect($childrenCategory->getPathIds(), $expandedIds))) {
+                    // Already embedded by the query of a virtual ancestor, which expands its own descendants.
+                    continue;
+                }
                 if (in_array($childrenCategory->getId(), $excludedCategories)) {
                     // Category whose query is being built: left out to avoid infinite recursion. If its virtual root
                     // is being built as well, the truncation is recorded against the root instead (see
@@ -668,6 +673,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                             )
                         );
                         $queryParams['should'][] = $childrenQuery;
+                        // An expansion boundary query does not expand its descendants.
+                        if (!$this->isExpansionBoundary((int) $childrenCategory->getId())) {
+                            $expandedIds[] = $childrenCategory->getId();
+                        }
                     }
                 } else {
                     $childrenCategoriesIds[] = $childrenCategory->getId();
@@ -718,6 +727,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $categoryCollection = $this->categoryCollectionFactory->create()->setStoreId($storeId);
 
         $categoryCollection->addIsActiveFilter()->addPathFilter(sprintf('%s/.*', $category->getPath()));
+        // Shallowest first: a virtual category is handled before its own descendants.
+        $categoryCollection->setOrder('level', 'ASC');
 
         if (((bool) $category->getIsVirtualCategory()) === false) {
             $categoryCollection->addFieldToFilter('is_virtual_category', '1');
