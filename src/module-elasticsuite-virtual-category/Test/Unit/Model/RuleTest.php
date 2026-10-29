@@ -29,6 +29,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
  * Unit test for the store root category and the expansion boundaries handling of
@@ -214,6 +215,9 @@ class RuleTest extends TestCase
         $cache = $this->createMock(CacheInterface::class);
         $cache->expects($this->never())->method('save');
 
+        $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
+        $rootCategoryProvider->method('get')->willReturn($category);
+
         /** @var Rule|MockObject $rule */
         $rule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
         $rule->setData('store_id', 1);
@@ -226,6 +230,7 @@ class RuleTest extends TestCase
             'queryFactory'             => $queryFactory,
             'customerSession'          => $this->createMock(Session::class),
             'sharedCache'              => $cache,
+            'rootCategoryProvider'     => $rootCategoryProvider,
         ];
         foreach ($properties as $property => $value) {
             $reflection = new \ReflectionProperty(Rule::class, $property);
