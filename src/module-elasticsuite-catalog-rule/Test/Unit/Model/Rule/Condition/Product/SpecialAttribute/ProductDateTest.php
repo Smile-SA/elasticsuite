@@ -14,6 +14,7 @@
 namespace Smile\ElasticsuiteCatalogRule\Test\Unit\Model\Rule\Condition\Product\SpecialAttribute;
 
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\ProductDate;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryDependencyCollector;
 use Smile\ElasticsuiteCore\Search\Request\Query\Not;
 use Smile\ElasticsuiteCore\Search\Request\Query\Range;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -41,7 +42,8 @@ class ProductDateTest extends AbstractSpecialAttribute
             $attributeCode,
             $attributeLabel,
             $fieldName,
-            $this->getQueryFactory()
+            $this->getQueryFactory(),
+            new QueryDependencyCollector()
         );
 
         $this->assertEquals($attributeCode, $productDate->getAttributeCode());
@@ -79,7 +81,8 @@ class ProductDateTest extends AbstractSpecialAttribute
             $attributeCode,
             $attributeLabel,
             $fieldName,
-            $this->getQueryFactory()
+            $this->getQueryFactory(),
+            new QueryDependencyCollector()
         );
 
         $productCondition = $this->getProductConditionMock();
@@ -106,7 +109,8 @@ class ProductDateTest extends AbstractSpecialAttribute
             $attributeCode,
             $attributeLabel,
             $fieldName,
-            $this->getQueryFactory()
+            $this->getQueryFactory(),
+            new QueryDependencyCollector()
         );
 
         $daysAgo = 3;
@@ -181,7 +185,8 @@ class ProductDateTest extends AbstractSpecialAttribute
             $attributeCode,
             $attributeLabel,
             $fieldName,
-            $this->getQueryFactory()
+            $this->getQueryFactory(),
+            new QueryDependencyCollector()
         );
 
         $daysAgo = 3;
@@ -246,7 +251,8 @@ class ProductDateTest extends AbstractSpecialAttribute
             $attributeCode,
             $attributeLabel,
             $fieldName,
-            $this->getQueryFactory()
+            $this->getQueryFactory(),
+            new QueryDependencyCollector()
         );
 
         $daysAgo = 3;
@@ -294,5 +300,25 @@ class ProductDateTest extends AbstractSpecialAttribute
         $this->assertArrayHasKey('gte', $searchQuery->getBounds());
         $bounds = $searchQuery->getBounds();
         $this->assertEquals($referenceDate->format('Y-m-d'), $bounds['gte']);
+    }
+
+    /**
+     * Test that the query expires at the next midnight, its date bound being computed from the current date.
+     *
+     * @return void
+     */
+    public function testSearchQueryExpiresAtNextMidnight()
+    {
+        $collector   = new QueryDependencyCollector();
+        $productDate = new ProductDate('code', 'label', 'fieldName', $this->getQueryFactory(), $collector);
+
+        $productCondition = $this->getProductConditionMock();
+        $productCondition->method('getValue')->willReturn(3);
+        $productCondition->method('__call')->with('getOperator', [])->willReturn('>=');
+
+        $collector->start();
+        $productDate->getSearchQuery($productCondition);
+        $this->assertSame((new \DateTime('tomorrow'))->getTimestamp(), $collector->getExpiration());
+        $collector->stop();
     }
 }

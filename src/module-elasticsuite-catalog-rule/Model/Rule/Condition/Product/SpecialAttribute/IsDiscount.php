@@ -13,8 +13,12 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\ContextAwareInterface;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryContextResolverInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContext\CustomerGroupProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -24,7 +28,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class IsDiscount implements SpecialAttributeInterface
+class IsDiscount implements SpecialAttributeInterface, ContextAwareInterface
 {
     /**
      * @var \Magento\Config\Model\Config\Source\Yesno
@@ -42,20 +46,30 @@ class IsDiscount implements SpecialAttributeInterface
     protected $queryFactory;
 
     /**
+     * @var QueryContextResolverInterface
+     */
+    private $queryContextResolver;
+
+    /**
      * IsDiscount constructor.
      *
-     * @param \Magento\Config\Model\Config\Source\Yesno                 $booleanSource   Boolean Source.
-     * @param \Magento\Customer\Model\Session                           $customerSession Customer session.
-     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory    Query factory.
+     * @param \Magento\Config\Model\Config\Source\Yesno                 $booleanSource        Boolean Source.
+     * @param \Magento\Customer\Model\Session                           $customerSession      Deprecated, unused.
+     * @param \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory         Query factory.
+     * @param QueryContextResolverInterface|null                        $queryContextResolver Query context resolver.
      */
     public function __construct(
         \Magento\Config\Model\Config\Source\Yesno $booleanSource,
         \Magento\Customer\Model\Session $customerSession,
-        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory
+        \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
+        ?QueryContextResolverInterface $queryContextResolver = null
     ) {
-        $this->booleanSource    = $booleanSource;
-        $this->customerSession  = $customerSession;
-        $this->queryFactory     = $queryFactory;
+        $this->booleanSource        = $booleanSource;
+        $this->customerSession      = $customerSession;
+        $this->queryFactory         = $queryFactory;
+        $this->queryContextResolver = $queryContextResolver ?: ObjectManager::getInstance()->get(
+            QueryContextResolverInterface::class
+        );
     }
 
     /**
@@ -86,7 +100,7 @@ class IsDiscount implements SpecialAttributeInterface
                         'must' => [
                             $this->queryFactory->create(
                                 QueryInterface::TYPE_TERM,
-                                ['field' => 'price.customer_group_id', 'value' => $this->customerSession->getCustomerGroupId()]
+                                ['field' => 'price.customer_group_id', 'value' => $this->getCustomerGroupId()]
                             ),
                             $this->queryFactory->create(
                                 QueryInterface::TYPE_TERM,
@@ -97,6 +111,15 @@ class IsDiscount implements SpecialAttributeInterface
                 ),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContextDependencies(): array
+    {
+        // The discounted price could be a tier price, which depends on the customer group.
+        return [CustomerGroupProvider::CODE];
     }
 
     /**
@@ -155,5 +178,18 @@ class IsDiscount implements SpecialAttributeInterface
     public function getLabel()
     {
         return __('Only discounted products');
+    }
+
+    /**
+     * Customer group the query is built for, given by the same context as the cache keys of the queries embedding
+     * the condition.
+     *
+     * @return int
+     */
+    private function getCustomerGroupId(): int
+    {
+        $values = $this->queryContextResolver->getValues([CustomerGroupProvider::CODE]);
+
+        return (int) $values[CustomerGroupProvider::CODE];
     }
 }
