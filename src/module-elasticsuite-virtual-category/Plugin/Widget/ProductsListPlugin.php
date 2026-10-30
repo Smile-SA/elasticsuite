@@ -193,6 +193,39 @@ class ProductsListPlugin
     }
 
     /**
+     * Size the search request of the widget collection from the limit of its SQL select.
+     *
+     * Since Magento 2.4.9, ProductsList::getBaseCollection() limits the collection with
+     * getSelect()->limit($count, $offset) and no longer calls setPageSize(). The fulltext collection
+     * sizes its search request from its page size and falls back to getSize() without one, so every
+     * widget fetched all the documents matching its conditions to display a handful of them.
+     *
+     * The SQL limit is kept: the fulltext collection loads the returned documents with their
+     * LIMIT/OFFSET, in the search engine order. The search page therefore starts at the first match
+     * and covers offset + count documents, which are the documents the offset was read from before.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param ProductsList $subject    Widget product list.
+     * @param mixed        $collection Widget base product collection.
+     * @return mixed
+     */
+    public function afterGetBaseCollection(ProductsList $subject, $collection)
+    {
+        if ($collection instanceof Collection) {
+            $select = $collection->getSelect();
+            $count  = (int) $select->getPart($select::LIMIT_COUNT);
+
+            // No limit, or a pager page beyond the widget total: keep the legacy behavior.
+            if ($count > 0) {
+                $collection->setPageSize((int) $select->getPart($select::LIMIT_OFFSET) + $count);
+                $collection->setCurPage(1);
+            }
+        }
+
+        return $collection;
+    }
+
+    /**
      * Get the current store ID from the widget's data or default store.
      *
      * @param ProductsList $subject Widget product list.
