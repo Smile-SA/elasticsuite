@@ -13,7 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
+use Magento\Framework\App\ObjectManager;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
@@ -48,23 +50,33 @@ class ProductDate implements SpecialAttributeInterface
     protected $queryFactory;
 
     /**
+     * @var QueryDependencyRecorderInterface
+     */
+    private $dependencyRecorder;
+
+    /**
      * ProductDate constructor.
      *
-     * @param string       $attributeCode  Attribute Code.
-     * @param string       $attributeLabel Attribute Label.
-     * @param string       $fieldName      Field Name.
-     * @param QueryFactory $queryFactory   Query factory.
+     * @param string                                $attributeCode      Attribute Code.
+     * @param string                                $attributeLabel     Attribute Label.
+     * @param string                                $fieldName          Field Name.
+     * @param QueryFactory                          $queryFactory       Query factory.
+     * @param QueryDependencyRecorderInterface|null $dependencyRecorder Search query dependency recorder.
      */
     public function __construct(
         string $attributeCode,
         string $attributeLabel,
         string $fieldName,
-        QueryFactory $queryFactory
+        QueryFactory $queryFactory,
+        ?QueryDependencyRecorderInterface $dependencyRecorder = null
     ) {
-        $this->attributeCode  = $attributeCode;
-        $this->attributeLabel = $attributeLabel;
-        $this->fieldName      = $fieldName;
-        $this->queryFactory   = $queryFactory;
+        $this->attributeCode      = $attributeCode;
+        $this->attributeLabel     = $attributeLabel;
+        $this->fieldName          = $fieldName;
+        $this->queryFactory       = $queryFactory;
+        $this->dependencyRecorder = $dependencyRecorder ?: ObjectManager::getInstance()->get(
+            QueryDependencyRecorderInterface::class
+        );
     }
 
     /**
@@ -120,6 +132,9 @@ class ProductDate implements SpecialAttributeInterface
         if (substr($operator, 0, 1) === '!') {
             $query = $this->applyNegation($query);
         }
+
+        // The date bound depends on the current date: the query expires at the next midnight, in the same timezone.
+        $this->dependencyRecorder->setExpiration((new \DateTime('tomorrow'))->getTimestamp());
 
         return $query;
     }
