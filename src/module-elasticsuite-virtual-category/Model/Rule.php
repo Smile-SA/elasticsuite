@@ -83,11 +83,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     private $storeManager;
 
     /**
-     * @var Session
-     */
-    private $customerSession;
-
-    /**
      * @var QueryCache
      */
     private $queryCache;
@@ -140,7 +135,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      * @param CollectionFactory         $categoryCollectionFactory Virtual categories collection factory.
      * @param QueryBuilder              $queryBuilder              Search rule query builder.
      * @param StoreManagerInterface     $storeManagerInterface     Store Manager
-     * @param Session                   $customerSession           Customer session.
+     * @param Session                   $customerSession           Deprecated, unused: the customer group is handled
+     *                                                             by the query cache.
      * @param CacheInterface            $cache                     Deprecated, unused: the queries are cached by the
      *                                                             query cache.
      * @param Config                    $config                    Virtual category configuration.
@@ -176,7 +172,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
         $this->categoryCollectionFactory = $categoryCollectionFactory;
         $this->queryBuilder              = $queryBuilder;
         $this->storeManager              = $storeManagerInterface;
-        $this->customerSession           = $customerSession;
         $this->config                    = $config;
         $this->queryCache                = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
         $this->dependencyCollector       = $dependencyCollector ?: ObjectManager::getInstance()->get(
@@ -245,6 +240,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             return $query;
         }
 
+        // The contexts (eg. the customer group) are only added to the key of the queries depending on them, by the
+        // query cache.
         $cacheKey = implode(
             '|',
             array_filter(
@@ -252,7 +249,6 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                     __FUNCTION__,
                     $storeId,
                     $categoryId,
-                    $this->customerSession->getCustomerGroupId(),
                     (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($storeId),
                     (int) $this->config->isStoreRootUsedAsStandardCategory(),
                     $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
@@ -282,6 +278,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
             if ($cacheData !== false) {
                 $query = $cacheData['data'];
                 $this->dependencyCollector->addCacheTags($cacheData['tags']);
+                $this->dependencyCollector->setExpiration($cacheData['expiresAt']);
+                $this->dependencyCollector->addContextDependencies($cacheData['context']);
             } else {
                 if (!is_object($category)) {
                     $category = $this->categoryFactory->create()->setStoreId($this->getStoreId())->load($category);
@@ -289,13 +287,15 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
                 $query = $this->buildCategorySearchQuery($category, $excludedCategories);
             }
         } finally {
-            $cacheTags = $this->dependencyCollector->stop();
+            $expiresAt           = $this->dependencyCollector->getExpiration();
+            $contextDependencies = $this->dependencyCollector->getContextDependencies();
+            $cacheTags           = $this->dependencyCollector->stop();
         }
 
         if ($cacheData === false && $query !== null && !in_array($categoryId, $excludedCategories)) {
             // Draft rules (eg. previewed ones) are only kept for the current process.
             $useSharedCache = !$category->getHasDraftVirtualRule();
-            $this->queryCache->save($cacheKey, $query, $cacheTags, $useSharedCache);
+            $this->queryCache->save($cacheKey, $query, $cacheTags, $expiresAt, $contextDependencies, $useSharedCache);
         }
 
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . __FUNCTION__);

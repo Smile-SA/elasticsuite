@@ -14,12 +14,16 @@
 
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule;
 
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryContextResolverInterface;
 use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
 
 /**
  * Two-level (in-process and shared) cache of the data built from rules (eg. virtual category search queries).
  *
- * Each entry holds the data along with its cache tags.
+ * Each entry holds the data along with its cache tags, expiration date and the contexts it depends on.
+ * Data depending on some contexts (eg. the customer group, for a "is discount" condition) is stored per value of these
+ * contexts, the entry stored under the context-less cache key being then a marker redirecting to it. Any other data is
+ * shared by all contexts.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
@@ -33,6 +37,11 @@ class QueryCache
     private $sharedCache;
 
     /**
+     * @var QueryContextResolverInterface
+     */
+    private $queryContextResolver;
+
+    /**
      * @var array[]
      */
     private $localCache = [];
@@ -40,43 +49,73 @@ class QueryCache
     /**
      * Constructor.
      *
-     * @param ElasticsuiteCache $sharedCache Elasticsuite cache.
+     * @param ElasticsuiteCache             $sharedCache          Elasticsuite cache.
+     * @param QueryContextResolverInterface $queryContextResolver Values of the contexts rule queries can depend on.
      */
-    public function __construct(ElasticsuiteCache $sharedCache)
+    public function __construct(ElasticsuiteCache $sharedCache, QueryContextResolverInterface $queryContextResolver)
     {
-        $this->sharedCache = $sharedCache;
+        $this->sharedCache          = $sharedCache;
+        $this->queryContextResolver = $queryContextResolver;
     }
 
     /**
-     * Load an entry.
+     * Load an entry for the current values of the contexts it depends on.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @param string $cacheKey       Cache key.
+     * @param string $cacheKey       Cache key, not including any context.
      * @param bool   $useSharedCache Whether to look into the shared cache, and not only into the in-process one.
      *
-     * @return array|false Entry (data, tags) or false if missing.
+     * @return array|false Entry (data, tags, expiresAt, context) or false if missing.
      */
     public function load(string $cacheKey, bool $useSharedCache = true)
     {
-        return $this->get($cacheKey, $useSharedCache);
+        $cacheData = $this->get($cacheKey, $useSharedCache);
+
+        if ($cacheData !== false && !empty($cacheData['context'])) {
+            $cacheData = $this->get($this->getContextCacheKey($cacheKey, $cacheData['context']), $useSharedCache);
+        }
+
+        return $cacheData;
     }
 
     /**
-     * Save an entry.
+     * Save an entry, for the current values of the contexts the data depends on, if any.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
-     * @param string   $cacheKey       Cache key.
-     * @param mixed    $data           Data.
-     * @param string[] $cacheTags      Cache tags.
-     * @param bool     $useSharedCache Whether to save into the shared cache, and not only into the in-process one.
+     * @param string   $cacheKey            Cache key, not including any context.
+     * @param mixed    $data                Data.
+     * @param string[] $cacheTags           Cache tags.
+     * @param int|null $expiresAt           Expiration date as a Unix timestamp. Null if the data does not expire.
+     * @param string[] $contextDependencies Codes of the contexts the data depends on.
+     * @param bool     $useSharedCache      Whether to save into the shared cache, and not only into the in-process one.
      *
      * @return void
      */
-    public function save(string $cacheKey, $data, array $cacheTags, bool $useSharedCache = true): void
-    {
-        $this->set($cacheKey, ['data' => $data, 'tags' => $cacheTags], $useSharedCache);
+    public function save(
+        string $cacheKey,
+        $data,
+        array $cacheTags,
+        ?int $expiresAt,
+        array $contextDependencies,
+        bool $useSharedCache = true
+    ): void {
+        sort($contextDependencies);
+        $cacheData = [
+            'data'      => $data,
+            'tags'      => $cacheTags,
+            'expiresAt' => $expiresAt,
+            'context'   => $contextDependencies,
+        ];
+
+        if (!empty($contextDependencies)) {
+            // The marker shares the data tags and expiration: it is invalidated whenever the data could be.
+            $this->set($cacheKey, ['data' => null] + $cacheData, $useSharedCache);
+            $cacheKey = $this->getContextCacheKey($cacheKey, $contextDependencies);
+        }
+
+        $this->set($cacheKey, $cacheData, $useSharedCache);
     }
 
     /**
@@ -114,6 +153,12 @@ class QueryCache
             }
         }
 
+        // Long-running processes (eg. queue consumers) may outlive the entry expiration date.
+        if ($cacheData !== false && $cacheData['expiresAt'] !== null && $cacheData['expiresAt'] <= time()) {
+            unset($this->localCache[$cacheKey]);
+            $cacheData = false;
+        }
+
         return $cacheData;
     }
 
@@ -131,7 +176,8 @@ class QueryCache
         $this->localCache[$cacheKey] = $cacheData;
 
         if ($useSharedCache) {
-            $this->sharedCache->save(serialize($cacheData), $cacheKey, $cacheData['tags']);
+            $lifetime = ($cacheData['expiresAt'] === null) ? null : max(1, $cacheData['expiresAt'] - time());
+            $this->sharedCache->save(serialize($cacheData), $cacheKey, $cacheData['tags'], $lifetime);
         }
     }
 
@@ -144,6 +190,26 @@ class QueryCache
      */
     private function isValid($cacheData): bool
     {
-        return is_array($cacheData) && array_key_exists('data', $cacheData) && isset($cacheData['tags']);
+        return is_array($cacheData)
+            && array_key_exists('data', $cacheData)
+            && isset($cacheData['tags'], $cacheData['context'])
+            && array_key_exists('expiresAt', $cacheData);
+    }
+
+    /**
+     * Cache key of an entry for the current values of the contexts it depends on (eg. "<key>|customer_group=1").
+     *
+     * @param string   $cacheKey Cache key, not including any context.
+     * @param string[] $codes    Codes of the contexts the entry depends on, sorted.
+     *
+     * @return string
+     */
+    private function getContextCacheKey(string $cacheKey, array $codes): string
+    {
+        foreach ($this->queryContextResolver->getValues($codes) as $code => $value) {
+            $cacheKey .= '|' . $code . '=' . $value;
+        }
+
+        return $cacheKey;
     }
 }
