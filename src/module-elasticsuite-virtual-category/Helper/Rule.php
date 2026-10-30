@@ -37,11 +37,6 @@ class Rule
     private const SELF_CACHED_CALLBACKS = ['getCategorySearchQuery'];
 
     /**
-     * @var \Magento\Customer\Model\Session
-     */
-    private $customerSession;
-
-    /**
      * @var QueryCache
      */
     private $queryCache;
@@ -72,7 +67,9 @@ class Rule
      *
      * @param CacheInterface                                          $cache               Deprecated, unused: the data is
      *                                                                                     cached by the query cache.
-     * @param \Magento\Customer\Model\Session                         $customerSession     Customer session.
+     * @param \Magento\Customer\Model\Session                         $customerSession     Deprecated, unused: the customer
+     *                                                                                     group is handled by the query
+     *                                                                                     cache.
      * @param ReadHandler                                             $readHandler         Rule read handler.
      * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository  Category factory.
      * @param Config                                                  $config              Virtual category configuration.
@@ -88,7 +85,6 @@ class Rule
         ?QueryCache $queryCache = null,
         ?DependencyCollector $dependencyCollector = null
     ) {
-        $this->customerSession = $customerSession;
         $this->readHandler = $readHandler;
         $this->categoryRepository = $categoryRepository;
         $this->config = $config;
@@ -114,6 +110,8 @@ class Rule
         }
 
         \Magento\Framework\Profiler::start('ES:Virtual Rule ' . $callback);
+        // The contexts (eg. the customer group) are only added to the key of the data depending on them, by the query
+        // cache.
         $cacheKey = implode(
             '|',
             array_filter(
@@ -121,7 +119,6 @@ class Rule
                     $callback,
                     $category->getStoreId(),
                     $category->getId(),
-                    $this->customerSession->getCustomerGroupId(),
                     (int) $this->config->isForceZeroResultsForDisabledCategoriesEnabled($category->getStoreId()),
                     (int) $this->config->isStoreRootUsedAsStandardCategory(),
                     $this->config->getVirtualRulesExpansionBoundariesCacheKey(),
@@ -143,10 +140,12 @@ class Rule
             try {
                 $data = call_user_func_array([$category->getVirtualRule(), $callback], [$category]);
             } finally {
-                $cacheTags = $this->dependencyCollector->stop();
+                $expiresAt           = $this->dependencyCollector->getExpiration();
+                $contextDependencies = $this->dependencyCollector->getContextDependencies();
+                $cacheTags           = $this->dependencyCollector->stop();
             }
 
-            $this->queryCache->save($cacheKey, $data, $cacheTags);
+            $this->queryCache->save($cacheKey, $data, $cacheTags, $expiresAt, $contextDependencies);
         }
         \Magento\Framework\Profiler::stop('ES:Virtual Rule ' . $callback);
 
