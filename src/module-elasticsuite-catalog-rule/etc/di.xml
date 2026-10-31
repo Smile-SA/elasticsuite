@@ -113,4 +113,22 @@
 
     <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\Attribute\LocatorInterface" type="Smile\ElasticsuiteCatalogRule\Model\Rule\Attribute\Locator" />
 
+    <!-- Recording of the dependencies of rule search queries -->
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface" type="Smile\ElasticsuiteCatalogRule\Model\Rule\QueryDependencyCollector" />
+
+    <!-- Contexts rule search queries can depend on -->
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\QueryContextResolverInterface" type="Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContextResolver" />
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContextResolver">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="customer_group" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContext\CustomerGroupProvider</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContext\CustomerGroupProvider">
+        <arguments>
+            <argument name="customerSession" xsi:type="object">Magento\Customer\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+
 </config>
