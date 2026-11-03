@@ -233,9 +233,21 @@
         </arguments>
     </type>
 
-    <!-- Clean rule cache on category save -->
+    <!-- One dependency collector, recording the categories and the rule conditions dependencies in the same builds -->
+    <preference for="Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface"
+                type="Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector"/>
+    <preference for="Smile\ElasticsuiteCatalogRule\Model\Rule\QueryDependencyCollector"
+                type="Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector"/>
+
+    <!-- Clean rule cache on category save, delete and move -->
     <type name="Magento\Catalog\Model\ResourceModel\Category">
         <plugin name="cleanRuleCacheAfterSave" type="Smile\ElasticsuiteVirtualCategory\Plugin\CleanRuleCacheAfterSave"/>
+    </type>
+
+    <!-- Clean rule cache when category scheduled updates are applied -->
+    <type name="Magento\CatalogStaging\Model\CategoryApplier">
+        <plugin name="smile_elasticsuite_virtual_category_clean_rule_cache"
+                type="Smile\ElasticsuiteVirtualCategory\Plugin\Staging\Catalog\CategoryApplierPlugin"/>
     </type>
 
     <!-- Register Virtual Category Location Provider -->

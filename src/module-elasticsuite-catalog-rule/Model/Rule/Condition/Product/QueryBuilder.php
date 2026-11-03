@@ -13,6 +13,9 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 
+use Magento\Framework\App\ObjectManager;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\ContextAwareInterface;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
 use Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory;
 use Smile\ElasticsuiteCore\Api\Index\Mapping\FieldInterface;
@@ -48,23 +51,34 @@ class QueryBuilder
     private $nestedFilters;
 
     /**
+     * @var QueryDependencyRecorderInterface
+     */
+    private $dependencyRecorder;
+
+    /**
      * Constructor.
      *
-     * @param AttributeList             $attributeList             Search rule product attributes list
-     * @param QueryFactory              $queryFactory              Search query factory.
-     * @param SpecialAttributesProvider $specialAttributesProvider Special Attributes Provider.
-     * @param NestedFilterInterface[]   $nestedFilters             Filters applied to nested fields during query building.
+     * @param AttributeList                         $attributeList             Search rule product attributes list
+     * @param QueryFactory                          $queryFactory              Search query factory.
+     * @param SpecialAttributesProvider             $specialAttributesProvider Special Attributes Provider.
+     * @param NestedFilterInterface[]               $nestedFilters             Filters applied to nested fields during
+     *                                                                         query building.
+     * @param QueryDependencyRecorderInterface|null $dependencyRecorder        Search query dependency recorder.
      */
     public function __construct(
         AttributeList $attributeList,
         QueryFactory $queryFactory,
         SpecialAttributesProvider $specialAttributesProvider,
-        $nestedFilters = []
+        $nestedFilters = [],
+        ?QueryDependencyRecorderInterface $dependencyRecorder = null
     ) {
         $this->queryFactory              = $queryFactory;
         $this->attributeList             = $attributeList;
         $this->specialAttributesProvider = $specialAttributesProvider;
         $this->nestedFilters             = $nestedFilters;
+        $this->dependencyRecorder        = $dependencyRecorder ?: ObjectManager::getInstance()->get(
+            QueryDependencyRecorderInterface::class
+        );
     }
 
     /**
@@ -174,7 +188,10 @@ class QueryBuilder
 
         if (in_array($productCondition->getAttribute(), array_keys($this->specialAttributesProvider->getList()))) {
             $specialAttribute = $this->specialAttributesProvider->getAttribute($productCondition->getAttribute());
-            $query            = $specialAttribute->getSearchQuery($productCondition);
+            if ($specialAttribute instanceof ContextAwareInterface) {
+                $this->dependencyRecorder->addContextDependencies($specialAttribute->getContextDependencies());
+            }
+            $query = $specialAttribute->getSearchQuery($productCondition);
         }
 
         return $query;
