@@ -16,8 +16,6 @@ namespace Smile\ElasticsuiteVirtualCategory\Test\Unit\Model;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\CategoryFactory;
-use Magento\Customer\Model\Session;
-use Magento\Framework\App\CacheInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,6 +27,8 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
 
 /**
  * Unit test for the store root category and the expansion boundaries handling of
@@ -49,14 +49,20 @@ class RuleTest extends TestCase
     private const BOUNDARY_ID = 3181;
 
     /**
+     * Message of the exception thrown when the normal build path of a category query is reached, ie. when the
+     * category is fully expanded instead of being reduced to its standard query.
+     */
+    private const EXPANDED = 'Expanded';
+
+    /**
      * @var QueryInterface
      */
     private $standardQuery;
 
     /**
-     * @var QueryInterface
+     * @var DependencyCollector|MockObject
      */
-    private $fullQuery;
+    private $dependencyCollector;
 
     /**
      * {@inheritDoc}
@@ -64,21 +70,6 @@ class RuleTest extends TestCase
     protected function setUp(): void
     {
         $this->standardQuery = $this->createMock(QueryInterface::class);
-        $this->fullQuery     = $this->createMock(QueryInterface::class);
-        // Full queries, as built with all the virtual categories under them (eg. for the page of the boundary).
-        $this->setLocalCache([
-            self::STORE_ROOT_ID => $this->fullQuery,
-            self::OTHER_ROOT_ID => $this->fullQuery,
-            self::BOUNDARY_ID   => $this->fullQuery,
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown(): void
-    {
-        $this->setLocalCache([]);
     }
 
     /**
@@ -104,7 +95,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::STORE_ROOT_ID, false, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::STORE_ROOT_ID, [12]);
     }
 
     /**
@@ -116,7 +108,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::OTHER_ROOT_ID, true, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::OTHER_ROOT_ID, [12]);
     }
 
     /**
@@ -132,6 +125,19 @@ class RuleTest extends TestCase
     }
 
     /**
+     * An expansion boundary used by another category is a dependency of the query embedding it.
+     *
+     * @return void
+     */
+    public function testEmbeddedBoundaryIsADependency(): void
+    {
+        $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
+        $this->dependencyCollector->expects($this->once())->method('addCategoryIds')->with([self::BOUNDARY_ID]);
+
+        $rule->getCategorySearchQuery(self::BOUNDARY_ID, [12]);
+    }
+
+    /**
      * The query of an expansion boundary for its own page is unchanged.
      *
      * @return void
@@ -140,7 +146,8 @@ class RuleTest extends TestCase
     {
         $rule = $this->getRule(self::BOUNDARY_ID, true, true, true);
 
-        $this->assertSame($this->fullQuery, $rule->getCategorySearchQuery(self::BOUNDARY_ID));
+        $this->expectExceptionMessage(self::EXPANDED);
+        $rule->getCategorySearchQuery(self::BOUNDARY_ID);
     }
 
     /**
@@ -210,9 +217,13 @@ class RuleTest extends TestCase
         $queryFactory = $this->createMock(QueryFactory::class);
         $queryFactory->method('create')->willReturn($this->createMock(QueryInterface::class));
 
-        // The store root and boundary queries are never cached.
-        $cache = $this->createMock(CacheInterface::class);
-        $cache->expects($this->never())->method('save');
+        // Reached when a category is fully expanded (the store root and boundary queries are built before it).
+        $dependencyCollector = $this->createMock(DependencyCollector::class);
+        $dependencyCollector->method('start')->willThrowException(new \LogicException(self::EXPANDED));
+        $this->dependencyCollector = $dependencyCollector;
+
+        $rootCategoryProvider = $this->createMock(RootCategoryProvider::class);
+        $rootCategoryProvider->method('get')->willReturn($category);
 
         /** @var Rule|MockObject $rule */
         $rule = $this->getMockBuilder(Rule::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
@@ -224,8 +235,8 @@ class RuleTest extends TestCase
             'productConditionsFactory' => $productConditionFactory,
             'queryBuilder'             => $queryBuilder,
             'queryFactory'             => $queryFactory,
-            'customerSession'          => $this->createMock(Session::class),
-            'sharedCache'              => $cache,
+            'dependencyCollector'      => $dependencyCollector,
+            'rootCategoryProvider'     => $rootCategoryProvider,
         ];
         foreach ($properties as $property => $value) {
             $reflection = new \ReflectionProperty(Rule::class, $property);
@@ -234,19 +245,5 @@ class RuleTest extends TestCase
         }
 
         return $rule;
-    }
-
-    /**
-     * Set the in-process cache of the category queries.
-     *
-     * @param array $queries Queries, by category id.
-     *
-     * @return void
-     */
-    private function setLocalCache(array $queries): void
-    {
-        $reflection = new \ReflectionProperty(Rule::class, 'localCache');
-        $reflection->setAccessible(true);
-        $reflection->setValue(null, $queries);
     }
 }

@@ -15,6 +15,7 @@
 namespace Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\Provider;
 
 use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ObjectManager;
 use Smile\ElasticsuiteCatalogOptimizer\Api\Data\OptimizerInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer;
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Collection\ProviderFactory as CollectionProviderFactory;
@@ -22,11 +23,17 @@ use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\ProviderInterfa
 use Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\Collection;
 use Smile\ElasticsuiteCatalogOptimizer\Model\ResourceModel\Optimizer\CollectionFactory;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryDependencyCollector;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Optimizer functions provider.
  * Default provider : returns the fuctions of all active optimizers for a given Search Container.
+ *
+ * The functions are cached along with the dependencies of the rule queries they embed: they are stored per value of
+ * the contexts these queries depend on (eg. the customer group, for a "is discount" condition), expire with them, and
+ * are tagged with their cache tags (eg. the virtual categories they embed).
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogOptimizer
@@ -45,11 +52,6 @@ class DefaultProvider implements ProviderInterface
     private $providerFactory;
 
     /**
-     * @var \Magento\Framework\App\CacheInterface
-     */
-    private $cache;
-
-    /**
      * @var \Smile\ElasticsuiteCatalogOptimizer\Model\Optimizer\Functions\CacheKeyProviderInterface
      */
     private $cacheKeyProvider;
@@ -65,31 +67,45 @@ class DefaultProvider implements ProviderInterface
     private $cacheLifeTime;
 
     /**
-     * @var array
+     * @var QueryCache
      */
-    private $functions;
+    private $queryCache;
+
+    /**
+     * @var QueryDependencyCollector
+     */
+    private $dependencyCollector;
 
     /**
      * Provider constructor.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param CollectionProviderFactory $collectionProviderFactory Optimizer Collection Provider Factory
-     * @param CacheInterface            $cache                     Cache Interface
-     * @param CacheKeyProviderInterface $cacheKeyProvider          Cache Key Provider
-     * @param array                     $appliers                  Optimizers appliers
-     * @param int                       $cacheLifetime             Cache Lifetime of computed Optimizers functions
+     * @param CollectionProviderFactory     $collectionProviderFactory Optimizer Collection Provider Factory
+     * @param CacheInterface                $cache                     Deprecated, unused: the functions are cached by
+     *                                                                 the rule queries cache.
+     * @param CacheKeyProviderInterface     $cacheKeyProvider          Cache Key Provider
+     * @param array                         $appliers                  Optimizers appliers
+     * @param int                           $cacheLifetime             Cache Lifetime of computed Optimizers functions
+     * @param QueryCache|null               $queryCache                Rule queries cache.
+     * @param QueryDependencyCollector|null $dependencyCollector       Rule queries dependency collector.
      */
     public function __construct(
         CollectionProviderFactory $collectionProviderFactory,
         CacheInterface $cache,
         CacheKeyProviderInterface $cacheKeyProvider,
         array $appliers = [],
-        $cacheLifetime = self::DEFAULT_CACHE_LIFETIME
+        $cacheLifetime = self::DEFAULT_CACHE_LIFETIME,
+        ?QueryCache $queryCache = null,
+        ?QueryDependencyCollector $dependencyCollector = null
     ) {
-        $this->providerFactory  = $collectionProviderFactory;
-        $this->cache            = $cache;
-        $this->cacheKeyProvider = $cacheKeyProvider;
-        $this->appliers         = $appliers;
-        $this->cacheLifeTime    = $cacheLifetime;
+        $this->providerFactory     = $collectionProviderFactory;
+        $this->cacheKeyProvider    = $cacheKeyProvider;
+        $this->appliers            = $appliers;
+        $this->cacheLifeTime       = $cacheLifetime;
+        $this->queryCache          = $queryCache ?: ObjectManager::getInstance()->get(QueryCache::class);
+        $this->dependencyCollector = $dependencyCollector ?: ObjectManager::getInstance()->get(
+            QueryDependencyCollector::class
+        );
     }
 
     /**
@@ -102,7 +118,6 @@ class DefaultProvider implements ProviderInterface
 
     /**
      * Returns functions applied to the container.
-     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param ContainerConfigurationInterface $containerConfiguration Container configuration.
      *
@@ -110,21 +125,42 @@ class DefaultProvider implements ProviderInterface
      */
     public function getFunctions(ContainerConfigurationInterface $containerConfiguration)
     {
-        $cacheKey = $this->cacheKeyProvider->getCacheKey($containerConfiguration);
+        // The contexts (eg. the customer group) are only added to the key of the functions depending on them, by the
+        // query cache.
+        $cacheKey  = $this->cacheKeyProvider->getCacheKey($containerConfiguration);
+        $cacheData = $this->queryCache->load($cacheKey);
 
-        if (!isset($this->functions[$cacheKey])) {
-            if ($functions = $this->cache->load($cacheKey)) {
-                $functions = unserialize($functions);
-            } else {
-                $optimizers = $this->getCollection($containerConfiguration);
-                $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
-                $this->cache->save(serialize($functions), $cacheKey, [Optimizer::CACHE_TAG], $this->cacheLifeTime);
-            }
+        if ($cacheData !== false) {
+            // Data embedding these functions depends on what they depend on.
+            $this->dependencyCollector->addCacheTags($cacheData['tags']);
+            $this->dependencyCollector->setExpiration($cacheData['expiresAt']);
+            $this->dependencyCollector->addContextDependencies($cacheData['context']);
 
-            $this->functions[$cacheKey] = $functions;
+            return $cacheData['data'];
         }
 
-        return $this->functions[$cacheKey];
+        // Every dependency of the rule queries built meanwhile (eg. the virtual categories they embed) is recorded.
+        $this->dependencyCollector->start();
+        try {
+            $this->dependencyCollector->addCacheTags([Optimizer::CACHE_TAG]);
+            if ($this->cacheLifeTime) {
+                // The optimizers applying to the container (eg. according to their dates) can change meanwhile.
+                $this->dependencyCollector->setExpiration(time() + (int) $this->cacheLifeTime);
+            }
+            $optimizers = $this->getCollection($containerConfiguration);
+            $functions  = $this->getOptimizersFunctions($containerConfiguration, $optimizers);
+        } finally {
+            $isCacheable         = $this->dependencyCollector->isCacheable();
+            $expiresAt           = $this->dependencyCollector->getExpiration();
+            $contextDependencies = $this->dependencyCollector->getContextDependencies();
+            $cacheTags           = $this->dependencyCollector->stop();
+        }
+
+        if ($isCacheable) {
+            $this->queryCache->save($cacheKey, $functions, $cacheTags, $expiresAt, $contextDependencies);
+        }
+
+        return $functions;
     }
 
     /**
