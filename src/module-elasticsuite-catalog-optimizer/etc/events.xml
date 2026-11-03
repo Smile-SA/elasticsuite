@@ -32,4 +32,9 @@
     <event name="smile_elasticsuitecatalogoptimizer_api_data_optimizerinterface_load_after">
         <observer name="legacy_optimizer_load" instance="Magento\Framework\EntityManager\Observer\AfterEntityLoad" />
     </event>
+
+    <!-- Clean the optimizer functions cached in the Elasticsuite cache type on optimizer save and delete -->
+    <event name="clean_cache_by_tags">
+        <observer name="smile_elasticsuite_optimizer_clean_functions_cache" instance="Smile\ElasticsuiteCatalogOptimizer\Observer\CleanFunctionsCache" />
+    </event>
 </config>
