@@ -19,6 +19,7 @@ use Magento\Framework\Exception\NoSuchEntityException;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttributesProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteVirtualCategory\Helper\Config as VirtualCategoryConfig;
+use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
  * Product search rule condition.
@@ -39,6 +40,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @var VirtualCategoryConfig
      */
     private $virtualCategoryConfig;
+
+    /**
+     * @var DependencyCollector
+     */
+    private $dependencyCollector;
 
     /**
      * Constructor.
@@ -63,6 +69,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
      * @param array                                                                     $data                      Additional data.
      * @param VirtualCategoryConfig|null                                                $virtualCategoryConfig     Virtual category
      *                                                                                                             configuration.
+     * @param DependencyCollector|null                                                  $dependencyCollector       Virtual rules dependency
+     *                                                                                                             collector.
      */
     public function __construct(
         \Magento\Rule\Model\Condition\Context $context,
@@ -79,7 +87,8 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         ScopeConfigInterface $scopeConfig,
         \Smile\ElasticsuiteCore\Search\Request\Query\QueryFactory $queryFactory,
         array $data = [],
-        ?VirtualCategoryConfig $virtualCategoryConfig = null
+        ?VirtualCategoryConfig $virtualCategoryConfig = null,
+        ?DependencyCollector $dependencyCollector = null
     ) {
         parent::__construct(
             $context,
@@ -99,6 +108,9 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         $this->queryFactory = $queryFactory;
         $this->virtualCategoryConfig = $virtualCategoryConfig ?: ObjectManager::getInstance()->get(
             VirtualCategoryConfig::class
+        );
+        $this->dependencyCollector = $dependencyCollector ?: ObjectManager::getInstance()->get(
+            DependencyCollector::class
         );
     }
 
@@ -161,7 +173,10 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         if ($this->getOperator() !== '!()') {
             // Expansion boundaries are kept: never expanded when used here, they can't cause an infinite recursion.
             $boundaryIds = $this->virtualCategoryConfig->getVirtualRulesExpansionBoundaries();
-            $categoryIds = array_diff($valueArray, array_diff($excludedCategories, $boundaryIds));
+            $leftOutIds  = array_diff(array_intersect($valueArray, $excludedCategories), $boundaryIds);
+            $categoryIds = array_diff($valueArray, $leftOutIds);
+            // Categories whose query is being built are left out to avoid infinite recursion.
+            $this->dependencyCollector->addTruncation($leftOutIds);
         }
 
         foreach ($categoryIds as $categoryId) {

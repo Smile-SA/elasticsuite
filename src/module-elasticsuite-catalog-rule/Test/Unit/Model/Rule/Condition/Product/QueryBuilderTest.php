@@ -23,6 +23,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
@@ -105,6 +106,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -144,6 +147,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -183,6 +188,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -210,6 +217,45 @@ class QueryBuilderTest extends TestCase
     }
 
     /**
+     * Test that the contexts a special attribute depends on are recorded, its search query being still built.
+     *
+     * @return void
+     */
+    public function testSpecialAttributesContextDependencies()
+    {
+        $specialAttributesProvider = $this->getSpecialAttributesProvider();
+        $dependencyRecorder        = $this->createMock(QueryDependencyRecorderInterface::class);
+        $queryBuilder = new QueryBuilder(
+            $this->getAttributeList(),
+            $this->getQueryFactory(),
+            $specialAttributesProvider,
+            [],
+            $dependencyRecorder
+        );
+
+        /** @var MockObject $isDiscount */
+        $isDiscount = $specialAttributesProvider->getAttribute('price.is_discount');
+        $isDiscount->method('getContextDependencies')->willReturn(['customer_group']);
+        $isDiscount->expects($this->once())->method('getSearchQuery')
+            ->willReturn($this->getMockBuilder(QueryInterface::class)->getMock());
+        $dependencyRecorder->expects($this->once())->method('addContextDependencies')->with(['customer_group']);
+
+        $productCondition = $this->getProductConditionMock();
+        $productCondition->method('getValue')->willReturn("1");
+        $productCondition->method('__call')->willReturnMap([['getAttribute', [], 'price.is_discount']]);
+        $queryBuilder->getSearchQuery($productCondition);
+
+        // A special attribute not depending on any context records nothing.
+        /** @var MockObject $hasImage */
+        $hasImage = $specialAttributesProvider->getAttribute('has_image');
+        $hasImage->method('getSearchQuery')->willReturn($this->getMockBuilder(QueryInterface::class)->getMock());
+        $productCondition = $this->getProductConditionMock();
+        $productCondition->method('getValue')->willReturn("1");
+        $productCondition->method('__call')->willReturnMap([['getAttribute', [], 'has_image']]);
+        $queryBuilder->getSearchQuery($productCondition);
+    }
+
+    /**
      * Test query builder with special attributes for stock.qty.
      *
      * @return void
@@ -222,6 +268,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -272,6 +320,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -340,6 +390,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         $productCondition = $this->getProductConditionMock();
@@ -394,6 +446,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -462,6 +516,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -554,6 +610,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -625,6 +683,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -708,6 +768,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -783,6 +845,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -864,6 +928,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -946,6 +1012,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -1030,6 +1098,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -1157,6 +1227,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -1234,6 +1306,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -1352,6 +1426,8 @@ class QueryBuilderTest extends TestCase
             $attributeList,
             $this->getQueryFactory(),
             $specialAttributesProvider,
+            [],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */
@@ -1450,6 +1526,7 @@ class QueryBuilderTest extends TestCase
             $queryFactory,
             $specialAttributesProvider,
             ['category' => $nestedFilterMock],
+            $this->createMock(QueryDependencyRecorderInterface::class)
         );
 
         /** @var MockObject $hasImage */

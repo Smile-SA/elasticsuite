@@ -18,6 +18,7 @@ use Magento\Config\Model\Config\Source\Yesno;
 use Magento\Customer\Model\Session;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContext\CustomerGroupProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 use Smile\ElasticsuiteCore\Search\Request\Query\Boolean;
 use Smile\ElasticsuiteCore\Search\Request\Query\Nested;
@@ -89,6 +90,26 @@ class IsDiscountTest extends AbstractSpecialAttribute
         /** @var Term $clause */
         $this->assertEquals('price.is_discount', $clause->getField());
         $this->assertEquals(true, $clause->getValue());
+    }
+
+    /**
+     * Test that the query is built for the customer group of the session, and that it depends on the customer group
+     * context (the queries embedding it are cached per customer group).
+     *
+     * @return void
+     */
+    public function testGetSearchQueryCustomerGroup()
+    {
+        $isDiscount = new IsDiscount(new Yesno(), $this->getCustomerSessionMock(3), $this->getQueryFactory());
+
+        $searchQuery = $isDiscount->getSearchQuery($this->getProductConditionMock());
+
+        /** @var Nested $searchQuery */
+        $clause = $searchQuery->getQuery()->getMust()[0];
+        /** @var Term $clause */
+        $this->assertEquals('price.customer_group_id', $clause->getField());
+        $this->assertSame(3, $clause->getValue());
+        $this->assertSame([CustomerGroupProvider::CODE], $isDiscount->getContextDependencies());
     }
 
     /**

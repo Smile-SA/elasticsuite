@@ -13,8 +13,10 @@
  */
 namespace Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute;
 
+use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\ContextAwareInterface;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\Condition\Product\SpecialAttributeInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product as ProductCondition;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\QueryContext\CustomerGroupProvider;
 use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
 
 /**
@@ -24,7 +26,7 @@ use Smile\ElasticsuiteCore\Search\Request\QueryInterface;
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Romain Ruaud <romain.ruaud@smile.fr>
  */
-class IsDiscount implements SpecialAttributeInterface
+class IsDiscount implements SpecialAttributeInterface, ContextAwareInterface
 {
     /**
      * @var \Magento\Config\Model\Config\Source\Yesno
@@ -97,6 +99,16 @@ class IsDiscount implements SpecialAttributeInterface
                 ),
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContextDependencies(): array
+    {
+        // The discount flag is indexed per customer group (tier and group prices, catalog price rules): the query
+        // depends on the customer group.
+        return [CustomerGroupProvider::CODE];
     }
 
     /**
