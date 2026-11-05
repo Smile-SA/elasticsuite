@@ -170,6 +170,7 @@ class BuilderTest extends TestCase
         $relevanceConfiguration->method('isUsingAllTokens')->willReturn(false);
         $relevanceConfiguration->method('isUsingReferenceAnalyzer')->willReturn(false);
         $relevanceConfiguration->method('isUsingEdgeNgramAnalyzer')->willReturn(false);
+        $relevanceConfiguration->method('isExcludingConcatenationFalseNegatives')->willReturn(false);
 
         return $relevanceConfiguration;
     }

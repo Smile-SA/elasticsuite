@@ -117,6 +117,15 @@ interface RelevanceConfigurationInterface
     public function isUsingEdgeNgramAnalyzer();
 
     /**
+     * Check if reference-analyzer-produced concatenation false negatives should be excluded when
+     * computing term vector stats, to avoid falsely triggering fuzziness for legitimate multi-word
+     * queries whose words individually exist in the index.
+     *
+     * @return bool
+     */
+    public function isExcludingConcatenationFalseNegatives();
+
+    /**
      * If we should use the default analyzer of each field when building the exact match filter query.
      *
      * @return bool

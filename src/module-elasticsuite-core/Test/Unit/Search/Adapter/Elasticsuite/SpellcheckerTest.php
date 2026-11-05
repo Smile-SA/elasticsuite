@@ -2023,6 +2023,564 @@ class SpellcheckerTest extends TestCase
     }
 
     /**
+     * Test that a reference analyzer word concatenation ("leather"+"bag" -> "leatherbag") is excluded
+     * away when the constituent words individually exist, so the spelling type is not falsely downgraded
+     * to fuzzy when the exclusion flag is enabled.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeExactWithConcatenationFalseNegativeExcluded()
+    {
+        $indexName = 'index';
+        $queryText = 'leather bag';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $client->method('mtermvectors')->willReturn($this->getReferenceConcatenationTermVectors());
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_EXACT, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * Regression companion of the above: with the exclusion flag left disabled, the exact same
+     * fixture must keep producing today's (undesired but pre-existing) fuzzy result, proving the fix is
+     * opt-in and does not change default behavior.
+     *
+     * @return void
+     */
+    public function testInvalidSpellingTypeMostFuzzyWithConcatenationFalseNegativeNotExcluded()
+    {
+        $indexName = 'index';
+        $queryText = 'leather bag';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(false);
+
+        $client->method('mtermvectors')->willReturn($this->getReferenceConcatenationTermVectors());
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * Test that a diacritic-containing reference analyzer concatenation ("épée"+"longue" -> "epeelongue",
+     * reported by the analyzed fields in their lowercased/ASCII-folded form "epee"/"epeelongue") is still
+     * correctly excluded. The diacritic word is placed first so that computing the gap between the two
+     * matched siblings only succeeds if the gap text is extracted using character-aware (not byte-based)
+     * offsets: "épée" is 4 characters but 6 bytes in UTF-8, so a byte-based slice at character-offset 4
+     * would land mid-way through the second "é" and fail the separator check.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeExactWithDiacriticConcatenationFalseNegativeExcluded()
+    {
+        $indexName = 'index';
+        $queryText = 'épée longue';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $wordTerms = [
+            'epee' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 4]],
+                'doc_freq' => 500,
+                'ttf' => 1200,
+                'term_freq' => 1,
+            ],
+            'longue' => [
+                'tokens' => [['position' => 1, 'start_offset' => 5, 'end_offset' => 11]],
+                'doc_freq' => 400,
+                'ttf' => 900,
+                'term_freq' => 1,
+            ],
+        ];
+        $referenceTerms = $wordTerms + [
+            'epeelongue' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 11]],
+                'term_freq' => 1,
+            ],
+        ];
+
+        $termVectorsResponse = [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => ['terms' => $referenceTerms],
+                        'spelling.whitespace'  => ['terms' => $wordTerms],
+                        'spelling'             => ['terms' => $wordTerms],
+                        'search.whitespace'    => ['terms' => $wordTerms],
+                    ],
+                ],
+            ],
+        ];
+
+        $client->method('mtermvectors')->willReturn($termVectorsResponse);
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_EXACT, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * No-regression test: the exclusion flag must not touch the SKU fragmentation fixture, since
+     * the fragments share a zero-character gap (no separator was ever stripped) and must keep triggering
+     * fuzziness as before.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeMostFuzzyWithConcatenationFalseNegativeExclusionNoRegressionOnSku()
+    {
+        $indexName  = 'index';
+        $queryText  = 'AN328CZ127';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $termVectorsResponse = [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => [
+                            'terms' => [
+                                '127' => [
+                                    'tokens' => [
+                                        ['position' => 3, 'start_offset' => 7, 'end_offset' => 10],
+                                    ],
+                                    'doc_freq' => 798,
+                                    'ttf' => 2144,
+                                    'term_freq' => 1,
+                                ],
+                                '328' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 5],
+                                    ],
+                                    'doc_freq' => 356,
+                                    'ttf' => 1017,
+                                    'term_freq' => 1,
+                                ],
+                                '328cz' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 7],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                '328cz127' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'an' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 2],
+                                    ],
+                                    'doc_freq' => 3616,
+                                    'ttf' => 10050,
+                                    'term_freq' => 1,
+                                ],
+                                'an328' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 5],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'an328cz' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 7],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'an328cz127' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'cz' => [
+                                    'tokens' => [
+                                        ['position' => 2, 'start_offset' => 5, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 297,
+                                    'ttf' => 891,
+                                    'term_freq' => 1,
+                                ],
+                                'cz127' => [
+                                    'tokens' => [
+                                        ['position' => 2, 'start_offset' => 5, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'spelling.whitespace' => [
+                            'terms' => [
+                                '127' => [
+                                    'tokens' => [
+                                        ['position' => 3, 'start_offset' => 7, 'end_offset' => 10],
+                                    ],
+                                    'doc_freq' => 629,
+                                    'ttf' => 2725,
+                                    'term_freq' => 1,
+                                ],
+                                '328' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 5],
+                                    ],
+                                    'doc_freq' => 251,
+                                    'ttf' => 1155,
+                                    'term_freq' => 1,
+                                ],
+                                'an' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 2],
+                                    ],
+                                    'doc_freq' => 3399,
+                                    'ttf' => 16921,
+                                    'term_freq' => 1,
+                                ],
+                                'an328cz127' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'cz' => [
+                                    'tokens' => [
+                                        ['position' => 2, 'start_offset' => 5, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 253,
+                                    'ttf' => 1265,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'spelling' => [
+                            'terms' => [
+                                '127' => [
+                                    'tokens' => [
+                                        ['position' => 3, 'start_offset' => 7, 'end_offset' => 10],
+                                    ],
+                                    'doc_freq' => 629,
+                                    'ttf' => 2725,
+                                    'term_freq' => 1,
+                                ],
+                                '328' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 5],
+                                    ],
+                                    'doc_freq' => 251,
+                                    'ttf' => 1165,
+                                    'term_freq' => 1,
+                                ],
+                                'an' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 2],
+                                    ],
+                                    'doc_freq' => 3501,
+                                    'ttf' => 17432,
+                                    'term_freq' => 1,
+                                ],
+                                'an328cz127' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'cz' => [
+                                    'tokens' => [
+                                        ['position' => 2, 'start_offset' => 5, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 253,
+                                    'ttf' => 1265,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'search.whitespace' => [
+                            'terms' => [
+                                '127' => [
+                                    'tokens' => [
+                                        ['position' => 3, 'start_offset' => 7, 'end_offset' => 10],
+                                    ],
+                                    'doc_freq' => 629,
+                                    'ttf' => 2725,
+                                    'term_freq' => 1,
+                                ],
+                                '328' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 2, 'end_offset' => 5],
+                                    ],
+                                    'doc_freq' => 251,
+                                    'ttf' => 1155,
+                                    'term_freq' => 1,
+                                ],
+                                'an' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 2],
+                                    ],
+                                    'doc_freq' => 3399,
+                                    'ttf' => 16921,
+                                    'term_freq' => 1,
+                                ],
+                                'an328cz127' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 10],
+                                    ],
+                                    'term_freq' => 2,
+                                ],
+                                'cz' => [
+                                    'tokens' => [
+                                        ['position' => 2, 'start_offset' => 5, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 253,
+                                    'ttf' => 1265,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $client->method('mtermvectors')->willReturn($termVectorsResponse);
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * Test that a chained 3-word reference analyzer concatenation ("aaa"+"bbb"+"ccc" -> "aaabbb",
+     * "bbbccc", "aaabbbccc") is fully excluded when all three constituent words exist.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeExactWithThreeWordConcatenationFalseNegativeExcluded()
+    {
+        $indexName = 'index';
+        $queryText = 'aaa bbb ccc';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $wordTerms = [
+            'aaa' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 3]],
+                'doc_freq' => 100,
+                'ttf' => 300,
+                'term_freq' => 1,
+            ],
+            'bbb' => [
+                'tokens' => [['position' => 1, 'start_offset' => 4, 'end_offset' => 7]],
+                'doc_freq' => 90,
+                'ttf' => 270,
+                'term_freq' => 1,
+            ],
+            'ccc' => [
+                'tokens' => [['position' => 2, 'start_offset' => 8, 'end_offset' => 11]],
+                'doc_freq' => 80,
+                'ttf' => 240,
+                'term_freq' => 1,
+            ],
+        ];
+        $referenceTerms = $wordTerms + [
+            'aaabbb' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 7]],
+                'term_freq' => 1,
+            ],
+            'aaabbbccc' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 11]],
+                'term_freq' => 1,
+            ],
+            'bbbccc' => [
+                'tokens' => [['position' => 1, 'start_offset' => 4, 'end_offset' => 11]],
+                'term_freq' => 1,
+            ],
+        ];
+
+        $termVectorsResponse = [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => ['terms' => $referenceTerms],
+                        'spelling.whitespace'  => ['terms' => $wordTerms],
+                        'spelling'             => ['terms' => $wordTerms],
+                        'search.whitespace'    => ['terms' => $wordTerms],
+                    ],
+                ],
+            ],
+        ];
+
+        $client->method('mtermvectors')->willReturn($termVectorsResponse);
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_EXACT, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * Test that a genuine typo ("bag" mistyped as "ba") is never masked by the exclusion, even
+     * though it happens to sit right next to a reference analyzer concatenation attempt.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeMostFuzzyWithGenuinelyMissingWordAmongReferenceConcatenation()
+    {
+        $indexName = 'index';
+        $queryText = 'leather ba';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $wordTerms = [
+            'leather' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 7]],
+                'doc_freq' => 500,
+                'ttf' => 1200,
+                'term_freq' => 1,
+            ],
+            'ba' => [
+                'tokens' => [['position' => 1, 'start_offset' => 8, 'end_offset' => 10]],
+                'term_freq' => 1,
+            ],
+        ];
+        $referenceTerms = $wordTerms + [
+            'leatherba' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 10]],
+                'term_freq' => 1,
+            ],
+        ];
+
+        $termVectorsResponse = [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => ['terms' => $referenceTerms],
+                        'spelling.whitespace'  => ['terms' => $wordTerms],
+                        'spelling'             => ['terms' => $wordTerms],
+                        'search.whitespace'    => ['terms' => $wordTerms],
+                    ],
+                ],
+            ],
+        ];
+
+        $client->method('mtermvectors')->willReturn($termVectorsResponse);
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_MOST_FUZZY, $spellchecker->getSpellingType($request));
+    }
+
+    /**
+     * Test that a hyphen-separated reference analyzer concatenation ("plug"+"in" -> "plugin") is
+     * excluded, validating the separator-character check accepts hyphens, not just spaces.
+     *
+     * @return void
+     */
+    public function testValidSpellingTypeExactWithHyphenatedConcatenationFalseNegativeExcluded()
+    {
+        $indexName = 'index';
+        $queryText = 'plug-in';
+        $indexStats = $this->getSingleShardStats($indexName);
+        $indexStats['indices'][$indexName]['total']['docs']['count'] = 15000000;
+
+        $client = $this->getClientMock();
+        $client->method('indexStats')->willReturn($indexStats);
+
+        $request = $this->getRequestMock($indexName, $queryText);
+        $request->method('isUsingAllTokens')->willReturn(true);
+        $request->method('isUsingReference')->willReturn(true);
+        $request->method('isUsingEdgeNgram')->willReturn(false);
+        $request->method('isExcludingConcatenationFalseNegatives')->willReturn(true);
+
+        $wordTerms = [
+            'plug' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 4]],
+                'doc_freq' => 600,
+                'ttf' => 1500,
+                'term_freq' => 1,
+            ],
+            'in' => [
+                'tokens' => [['position' => 1, 'start_offset' => 5, 'end_offset' => 7]],
+                'doc_freq' => 200,
+                'ttf' => 500,
+                'term_freq' => 1,
+            ],
+        ];
+        $referenceTerms = $wordTerms + [
+            'plugin' => [
+                'tokens' => [['position' => 0, 'start_offset' => 0, 'end_offset' => 7]],
+                'term_freq' => 1,
+            ],
+        ];
+
+        $termVectorsResponse = [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => ['terms' => $referenceTerms],
+                        'spelling.whitespace'  => ['terms' => $wordTerms],
+                        'spelling'             => ['terms' => $wordTerms],
+                        'search.whitespace'    => ['terms' => $wordTerms],
+                    ],
+                ],
+            ],
+        ];
+
+        $client->method('mtermvectors')->willReturn($termVectorsResponse);
+
+        $spellchecker = new Spellchecker($client, $this->getCacheMock());
+        $this->assertEquals(SpellcheckerInterface::SPELLING_TYPE_EXACT, $spellchecker->getSpellingType($request));
+    }
+
+    /**
      * Test that the spelling type is determined stop when the search term is found in the index
      * for the default fields/analyzers but above the default cut-off frequency threshold.
      *
@@ -2446,6 +3004,112 @@ class SpellcheckerTest extends TestCase
             ],
             '_shards' => [
                 'successful' => 1,
+            ],
+        ];
+    }
+
+
+    /**
+     * Build the "leather bag" term vector fixture shared by the two test methods
+     * - @see testValidSpellingTypeExactWithConcatenationFalseNegativeExcluded
+     * - @see testInvalidSpellingTypeMostFuzzyWithConcatenationFalseNegativeNotExcluded
+     *
+     * @return array
+     */
+    private function getReferenceConcatenationTermVectors()
+    {
+        return [
+            'docs' => [
+                [
+                    'term_vectors' => [
+                        'reference.reference' => [
+                            'terms' => [
+                                'leather' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 500,
+                                    'ttf' => 1200,
+                                    'term_freq' => 1,
+                                ],
+                                'leatherbag' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 11],
+                                    ],
+                                    'term_freq' => 1,
+                                ],
+                                'bag' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 8, 'end_offset' => 11],
+                                    ],
+                                    'doc_freq' => 400,
+                                    'ttf' => 900,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'spelling.whitespace' => [
+                            'terms' => [
+                                'leather' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 500,
+                                    'ttf' => 1200,
+                                    'term_freq' => 1,
+                                ],
+                                'bag' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 8, 'end_offset' => 11],
+                                    ],
+                                    'doc_freq' => 400,
+                                    'ttf' => 900,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'spelling' => [
+                            'terms' => [
+                                'leather' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 500,
+                                    'ttf' => 1200,
+                                    'term_freq' => 1,
+                                ],
+                                'bag' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 8, 'end_offset' => 11],
+                                    ],
+                                    'doc_freq' => 400,
+                                    'ttf' => 900,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                        'search.whitespace' => [
+                            'terms' => [
+                                'leather' => [
+                                    'tokens' => [
+                                        ['position' => 0, 'start_offset' => 0, 'end_offset' => 7],
+                                    ],
+                                    'doc_freq' => 500,
+                                    'ttf' => 1200,
+                                    'term_freq' => 1,
+                                ],
+                                'bag' => [
+                                    'tokens' => [
+                                        ['position' => 1, 'start_offset' => 8, 'end_offset' => 11],
+                                    ],
+                                    'doc_freq' => 400,
+                                    'ttf' => 900,
+                                    'term_freq' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ];
     }

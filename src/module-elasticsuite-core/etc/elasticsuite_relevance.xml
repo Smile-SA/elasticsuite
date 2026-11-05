@@ -62,6 +62,7 @@
                 <use_all_tokens>0</use_all_tokens>
                 <use_reference_analyzer>0</use_reference_analyzer>
                 <use_edge_ngram_analyzer>0</use_edge_ngram_analyzer>
+                <exclude_concatenation_false_negatives>1</exclude_concatenation_false_negatives>
             </term_vectors>
         </spellchecking>
     </default>
