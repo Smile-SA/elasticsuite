@@ -14,8 +14,8 @@
 
 namespace Smile\ElasticsuiteCore\Client;
 
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Magento\Framework\App\ObjectManager;
+use OpenSearch\Common\Exceptions\Missing404Exception;
 use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientConfigurationInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
@@ -33,7 +33,7 @@ use Smile\ElasticsuiteCore\Api\Client\OpaqueIdProviderInterface;
 class Client implements ClientInterface
 {
     /**
-     * @var \Elasticsearch\Client
+     * @var \OpenSearch\Client
      */
     private $esClient = null;
 
@@ -197,7 +197,7 @@ class Client implements ClientInterface
         $indices = [];
         try {
             $indices = $this->getEsClient()->indices()->getMapping($this->addOpaqueId(['index' => $indexAlias]));
-        } catch (\Elasticsearch\Common\Exceptions\Missing404Exception $e) {
+        } catch (\OpenSearch\Common\Exceptions\Missing404Exception $e) {
             ;
         }
 
@@ -313,6 +313,22 @@ class Client implements ClientInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function putPipeline(array $params): array
+    {
+        return $this->getEsClient()->ingest()->putPipeline($this->addOpaqueId($params));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPipeline(string $name): array
+    {
+        return $this->getEsClient()->ingest()->getPipeline($this->addOpaqueId(['id' => $name]));
+    }
+
+    /**
      * Add the X-Opaque-Id identifying the origin of the request to the request params,
      * unless it has already been set by the caller or the feature is disabled.
      *
@@ -333,9 +349,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @return \Elasticsearch\Client
+     * @return \OpenSearch\Client
      */
-    private function getEsClient(): \Elasticsearch\Client
+    private function getEsClient(): \OpenSearch\Client
     {
         if ($this->esClient === null) {
             $this->esClient = $this->clientBuilder->build($this->clientConfiguration->getOptions());

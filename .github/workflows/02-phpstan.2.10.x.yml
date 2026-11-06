@@ -22,7 +22,7 @@ on:
   pull_request_target:
     branches:
         - 2.10.x
-    types: [labeled, ready_for_review]
+    types: [labeled,ready_for_review]
 
 env:
   PHPSTAN_LEVEL: ${{ inputs.phpstan_level || '0' }}

@@ -100,7 +100,6 @@ class BulkResponse implements BulkResponseInterface
             $operationType = current(array_keys($item));
             $itemData      = $item[$operationType];
             $index         = $itemData['_index'];
-            $documentType  = $itemData['_type'] ?? '_doc';
             $errorData     = $itemData['error'];
             $simpleReason  = $errorData['reason'];
             if ($operationType === BulkRequestInterface::ACTION_INDEX) {
@@ -108,12 +107,11 @@ class BulkResponse implements BulkResponseInterface
                 $simpleReason  = preg_replace("#in document with id '[^']+'#", "in document", $simpleReason, 1);
                 $simpleReason  = preg_replace("#Preview of field's value: '[^']+'#", "", $simpleReason, 1);
             }
-            $errorKey      = $operationType . $errorData['type'] . $simpleReason . $index . $documentType;
+            $errorKey      = $operationType . $errorData['type'] . $simpleReason . $index;
 
             if (!isset($errorByReason[$errorKey])) {
                 $errorByReason[$errorKey] = [
                     'index'         => $itemData['_index'],
-                    'document_type' => $itemData['_type'] ?? '_doc',
                     'operation'     => $operationType,
                     'count'         => 0,
                     'error'         => [

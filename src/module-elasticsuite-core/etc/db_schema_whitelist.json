@@ -1,4 +1,19 @@
 {
+    "smile_elasticsuite_relevance_config_data": {
+        "column": {
+            "config_id": true,
+            "scope": true,
+            "scope_code": true,
+            "path": true,
+            "value": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_RELEVANCE_CONFIG_DATA_SCOPE_SCOPE_CODE_PATH": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
     "smile_elasticsuite_index_bulk_error": {
         "column": {
             "entity_id": true,

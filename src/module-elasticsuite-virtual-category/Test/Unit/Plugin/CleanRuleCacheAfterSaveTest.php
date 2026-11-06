@@ -87,7 +87,7 @@ class CleanRuleCacheAfterSaveTest extends TestCase
      *
      * @return array
      */
-    public function virtualDataChangeDataProvider(): array
+    public static function virtualDataChangeDataProvider(): array
     {
         return [
             'rule changed'                  => [['virtual_rule' => '{"type":"other"}'] + self::ORIGINAL_DATA],

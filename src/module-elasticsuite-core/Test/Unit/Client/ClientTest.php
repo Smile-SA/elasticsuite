@@ -13,8 +13,9 @@
 
 namespace Smile\ElasticsuiteCore\Test\Unit\Client;
 
-use Elasticsearch\Client as EsClient;
-use Elasticsearch\Namespaces\IndicesNamespace;
+use OpenSearch\Client as EsClient;
+use OpenSearch\Namespaces\IndicesNamespace;
+use OpenSearch\Namespaces\IngestNamespace;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -122,10 +123,17 @@ class ClientTest extends TestCase
             ->method('ping')
             ->with(['client' => ['opaqueId' => self::OPAQUE_ID]])
             ->willReturn(true);
+        $ingest = $this->createMock(IngestNamespace::class);
+        $this->esClient->method('ingest')->willReturn($ingest);
+        $ingest->expects($this->once())
+            ->method('getPipeline')
+            ->with(['id' => 'pipeline', 'client' => ['opaqueId' => self::OPAQUE_ID]])
+            ->willReturn([]);
 
         $client = $this->getClient();
         $client->createIndex('idx', ['settings' => []]);
         $client->ping();
+        $client->getPipeline('pipeline');
     }
 
     /**
@@ -135,11 +143,13 @@ class ClientTest extends TestCase
      */
     private function getClient(): Client
     {
+        $clientConfiguration = $this->createMock(ClientConfigurationInterface::class);
+        $clientConfiguration->method('getOptions')->willReturn([]);
         $clientBuilder = $this->createMock(ClientBuilder::class);
         $clientBuilder->method('build')->willReturn($this->esClient);
 
         return new Client(
-            $this->createMock(ClientConfigurationInterface::class),
+            $clientConfiguration,
             $clientBuilder,
             $this->createMock(LoggerInterface::class),
             $this->opaqueIdProvider

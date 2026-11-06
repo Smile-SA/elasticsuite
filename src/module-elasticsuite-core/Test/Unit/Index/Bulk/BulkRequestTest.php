@@ -39,7 +39,7 @@ class BulkRequestTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->index = $this->getMockBuilder(IndexInterface::class)->getMock();
-        $this->index->method('getName')->will($this->returnValue('indexName'));
+        $this->index->method('getName')->willReturn('indexName');
     }
 
     /**

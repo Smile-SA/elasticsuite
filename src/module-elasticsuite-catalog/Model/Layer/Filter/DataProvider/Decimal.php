@@ -46,7 +46,7 @@ class Decimal extends \Magento\Catalog\Model\Layer\Filter\DataProvider\Price
 
         // Legacy check for >=0 is also removed here.
         foreach ($filter as $v) {
-            if ($v === false || is_infinite((double) $v)) {
+            if ($v === false || is_infinite((float) $v)) {
                 return false;
             }
         }

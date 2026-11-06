@@ -91,7 +91,7 @@ class ProductTest extends TestCase
      *
      * @return array
      */
-    public function categoryConditionDataProvider(): array
+    public static function categoryConditionDataProvider(): array
     {
         return [
             'nothing being built'          => ['()', '10,20', [], [10], [10, 20]],

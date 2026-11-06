@@ -176,6 +176,7 @@ class Conditions extends Template implements RendererInterface
     private function setConditionFormName(\Magento\Rule\Model\Condition\AbstractCondition $conditions, $formName)
     {
         $conditions->setJsFormObject($formName);
+        $conditions->setData('form_name', $formName);
 
         if ($conditions->getConditions() && is_array($conditions->getConditions())) {
             foreach ($conditions->getConditions() as $condition) {

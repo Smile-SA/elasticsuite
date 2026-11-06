@@ -14,7 +14,7 @@
 
 namespace Smile\ElasticsuiteCatalog\Plugin\Index;
 
-use Smile\ElasticsuiteCore\Index\Mapping;
+use Smile\ElasticsuiteCore\Api\Index\MappingInterface;
 
 /**
  * Mapping Plugin.
@@ -35,14 +35,14 @@ class MappingPlugin
      * Add a copy_to from "category.name" to "_category_name".
      * This is due to the fact that "category.name" being nested cannot be use directly in fulltext queries.
      *
-     * @param Mapping $subject Index Mapping
-     * @param array   $result  Mapping properties
+     * @param MappingInterface $subject Index Mapping
+     * @param array            $result  Mapping properties
      *
      * @return array
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function afterGetProperties(Mapping $subject, array $result): array
+    public function afterGetProperties(MappingInterface $subject, array $result): array
     {
         if (isset($result['category']['properties']['name']['copy_to'])) {
             $result['category']['properties']['name']['copy_to'][] = self::CATEGORY_NAME_FIELD;

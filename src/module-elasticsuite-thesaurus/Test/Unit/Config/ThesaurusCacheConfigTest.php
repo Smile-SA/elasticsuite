@@ -66,7 +66,7 @@ class ThesaurusCacheConfigTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function cacheStorageLimitationDataProvider()
+    public static function cacheStorageLimitationDataProvider()
     {
         $isSetFlagReturnsMap = [
             [ThesaurusCacheConfig::ALWAYS_CACHE_RESULTS_XML_PATH, ScopeInterface::SCOPE_STORES, 1, true],

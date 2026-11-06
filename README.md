@@ -1,6 +1,6 @@
 [![PHP Code Quality](https://github.com/Smile-Sa/elasticsuite/workflows/PHP%20Code%20Quality/badge.svg?branch=2.10.x)](https://github.com/Smile-SA/elasticsuite/actions) [![Integration](https://github.com/Smile-Sa/elasticsuite/workflows/Integration/badge.svg?branch=2.10.x)](https://github.com/Smile-SA/elasticsuite/actions)  ![Packagist](https://img.shields.io/packagist/dt/smile/elasticsuite.svg?style=square)
-[![star this repo](http://githubbadges.com/star.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite)
- [![fork this repo](http://githubbadges.com/fork.svg?user=smile-sa&repo=elasticsuite&style=default)](https://github.com/smile-sa/elasticsuite/fork) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
+[![GitHub stars](https://img.shields.io/github/stars/smile-sa/elasticsuite.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/Naereen/StrapDown.js/stargazers/)
+[![GitHub forks](https://img.shields.io/github/forks/smile-sa/elasticsuite.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/smile-sa/elasticsuite/network/) ![GitHub contributors](https://img.shields.io/github/contributors/smile-sa/elasticsuite.svg?style=square)   [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=square)](https://github.com/Smile-SA/elasticsuite/pulls) ![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.png?v=103)
 
 <p align="center">
     <a href="https://elasticsuite.io/elastic-suite-pricing/"><img alt="Smile" src="doc/static/elasticsuite-banner-github.png" /></a>
@@ -8,34 +8,40 @@
 
 ## News
 
+### ⚠️ Magento versions compatibility :
+
+Due to several changes in Magento 2.4.6, especially **the introduction of Elasticsearch 8 and Opensearch 2** we cannot ensure compatibility between ElasticSuite <2.11 and Magento >=2.4.6 versions.
+
+So : 
+- if your project is based on **Magento >= 2.4.6**, you can start working with ElasticSuite today using the latest **2.11.x release**
+- if your project is based on **Magento < 2.4.6**, the latest Elasticsuite release you can use is the **2.10.x** 
+
 ### 🎉 Hyvä compatibility
 
 Elasticsuite is compatible with Hyvä theme. Please checkout [their blog article](https://hyva.io/blog/news/elasticsuite-hyva-partnership.html) to find out more about that.
 
 If you want to use Elasticsuite with Hyvä theme, you'll need to install the [compatibility module](https://gitlab.hyva.io/hyva-themes/hyva-compat/magento2-smile-elasticsuite/)
 
-### ⚠️ Magento versions compatibility :
+### Breezefront compatibility
 
-Due to several changes in Magento 2.4.0, we cannot ensure compatibility between ElasticSuite <2.10 and Magento >=2.4.0 versions.
-
-Moreover, a breaking change was introduced between **2.4.0 and 2.4.1** : 
-- if your project is based on **Magento >= 2.4.1**, you can start working with ElasticSuite today using the latest **2.10.x release**
-- if your project is based on **Magento = 2.4.0**, the latest Elasticsuite release you can use is the **2.10.1** 
+If you want to use Elasticsuite with the [Breezefront themes](https://breezefront.com), you will need to install their [module](https://github.com/breezefront/module-breeze-smile-elasticsuite)
 
 **Which version should I use ?**
 
-Magento Version                                     | ElasticSuite Latest Version                                            | Supported Elasticsearch Version | Actively maintained
-----------------------------------------------------|------------------------------------------------------------------------|---------------------------------|---
-Magento **2.0.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.1.x** : ```composer require smile/elasticsuite ~2.1.0``` | 2.x | No
-Magento **2.1.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.3.x** : ```composer require smile/elasticsuite ~2.3.0``` | 2.x & 5.x | No
-Magento **2.2.x** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | No
-Magento **<2.3.2** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.4** : ```composer require smile/elasticsuite 2.8.4``` | 5.x & 6.x | No
-Magento **<2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | No
-Magento **>=2.3.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | No
-Magento **2.4.0** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | No
-Magento **>=2.4.1** Opensource (CE) / Commerce (EE)   |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.0``` | 6.x & 7.x | **Yes**
-Magento **>=2.4.4** Opensource (CE) / Commerce (EE)   |ElasticSuite **>=2.10.10** : ```composer require smile/elasticsuite ~2.10.10``` | 6.x & 7.x **and OpenSearch** | **Yes**
-Magento **>=2.4.5** Opensource (CE) / Commerce (EE)   |ElasticSuite **>=2.10.12** : ```composer require smile/elasticsuite ~2.10.12``` | 6.x & 7.x **and OpenSearch** | **Yes**
+Magento Version (Open Source/Commerce)                                     | ElasticSuite Latest Version                                            | Elasticsearch | OpenSearch | Actively maintained
+----------------------------------------------------|------------------------------------------------------------------------|-----------------------------------|------------------------------|---------------
+**2.0.x**   |ElasticSuite **2.1.x** : ```composer require smile/elasticsuite ~2.1.0``` | 2.x | - | No
+**2.1.x**   |ElasticSuite **2.3.x** : ```composer require smile/elasticsuite ~2.3.0``` | 2.x & 5.x | - | No
+**2.2.x**   |ElasticSuite **2.6.x** : ```composer require smile/elasticsuite ~2.6.0``` | 5.x & 6.x | - | No
+**<2.3.2**  |ElasticSuite **2.8.4** : ```composer require smile/elasticsuite 2.8.4``` | 5.x & 6.x | - | No
+**<2.3.5**  |ElasticSuite **2.8.x** : ```composer require smile/elasticsuite ~2.8.0``` | 5.x & 6.x | - | No
+**>=2.3.5** |ElasticSuite **2.9.x** : ```composer require smile/elasticsuite ~2.9.0``` | 6.x & 7.x | - | No
+**2.4.0**   |ElasticSuite **2.10.1** : ```composer require smile/elasticsuite 2.10.1``` | 6.x & 7.x | - | No 
+**>=2.4.1 && < 2.4.6** |ElasticSuite **2.10.x** : ```composer require smile/elasticsuite ~2.10.13``` | 6.x & 7.x | 1.x | **Yes**
+**>=2.4.4 && < 2.4.6** |ElasticSuite **2.10.x** **(OpenSearch 2 support)** : ```composer require smile/elasticsuite ~2.10.27``` | 6.x & 7.x | 1.x **& 2.x** | **Yes**
+**>=2.4.6 && < 2.4.8** |ElasticSuite **2.11.x** : ```composer require smile/elasticsuite ~2.11.0``` | 7.x & 8.x | 1.x & 2.x | **Yes**
+**>=2.4.8 && < 2.4.9** |ElasticSuite **2.11.x >= 2.11.13** : ```composer require smile/elasticsuite ~2.11.13``` | 7.x & 8.x | 1.x & 2.x **& 3.x** | **Yes**
+**>=2.4.9** |ElasticSuite **2.12.x** : ```composer require smile/elasticsuite ~2.12.0``` | 7.x & 8.x | 1.x & 2.x **& 3.x** | **Yes**
 
 ### Magento2 B2B Compatibility
 
@@ -128,7 +134,7 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Recommendations engine :**
+* **Recommendations engine (premium version only) :**
 
     On top of the behavioral analysis part will come our recommendations engine. It allows you to propose **custom recommendations to your customers, based on their previous visits on your websites**, and on other customer behaviors.
 
@@ -154,7 +160,7 @@ Actually, there are the features actually included :
 
 <br/>
 
-* **Behavioral Optimizers :**
+* **Behavioral Optimizers (premium version only) :**
 
     This allows you to build **rules matching your customer's behavior**.
     Thanks to this feature, optimization rules like "Apply a boost for most viewed products" or "Boost the top sales products" are now possible to create.

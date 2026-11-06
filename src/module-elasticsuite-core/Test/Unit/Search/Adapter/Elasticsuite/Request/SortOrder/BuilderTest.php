@@ -191,7 +191,7 @@ class BuilderTest extends \PHPUnit\Framework\TestCase
     private function getSortOrderBuilder()
     {
         $queryBuilder = $this->getMockBuilder(QueryBuilder::class)->getMock();
-        $queryBuilder->method('buildQuery')->will($this->returnValue('query'));
+        $queryBuilder->method('buildQuery')->willReturn('query');
 
         return new SortOrderBuilder($queryBuilder);
     }

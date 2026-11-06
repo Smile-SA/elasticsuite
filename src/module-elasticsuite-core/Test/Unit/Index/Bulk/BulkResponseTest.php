@@ -39,12 +39,12 @@ class BulkResponseTest extends \PHPUnit\Framework\TestCase
         $error1 = ['type' => 'reason1', 'reason' => 'Reason 1'];
         $error2 = ['type' => 'reason2', 'reason' => 'Reason 2'];
         $items = [
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc1']],
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc2']],
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc3', 'error' => $error1]],
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc4', 'error' => $error1]],
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc5', 'error' => $error2]],
-            ['index' => ['_index' => 'index', '_type' => 'type', '_id' => 'doc6', 'error' => $error2]],
+            ['index' => ['_index' => 'index', '_id' => 'doc1']],
+            ['index' => ['_index' => 'index', '_id' => 'doc2']],
+            ['index' => ['_index' => 'index', '_id' => 'doc3', 'error' => $error1]],
+            ['index' => ['_index' => 'index', '_id' => 'doc4', 'error' => $error1]],
+            ['index' => ['_index' => 'index', '_id' => 'doc5', 'error' => $error2]],
+            ['index' => ['_index' => 'index', '_id' => 'doc6', 'error' => $error2]],
         ];
         $this->bulkResponse = new BulkResponse(['errors' => true, 'items'  => $items]);
     }
@@ -91,7 +91,6 @@ class BulkResponseTest extends \PHPUnit\Framework\TestCase
 
         foreach ($aggregatedErrors as $currentError) {
             $this->assertEquals('index', $currentError['index']);
-            $this->assertEquals('type', $currentError['document_type']);
             $this->assertEquals('index', $currentError['operation']);
             $this->assertEquals(2, $currentError['count']);
             $this->assertCount(2, $currentError['document_ids']);

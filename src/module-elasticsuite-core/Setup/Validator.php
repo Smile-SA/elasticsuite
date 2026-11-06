@@ -35,7 +35,7 @@ class Validator implements ValidatorInterface
     /**
      * Validator constructor.
      *
-     * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client ES Client (injected as proxy in DI).
+     * @param ClientInterface $client ES Client (injected as proxy in DI).
      */
     public function __construct(ClientInterface $client)
     {

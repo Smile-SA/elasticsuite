@@ -404,10 +404,10 @@ class IndexSettings extends AbstractConfiguration
         // 1. Remove prefix
         // magento2_default_catalog_product_20250716_153832 => default_catalog_product_20250716_153832
         $alias = $this->getIndexAlias();
-        if (!str_starts_with($indexName, "${alias}_")) {
+        if (!str_starts_with($indexName, "{$alias}_")) {
             return false;
         }
-        $indexName = str_replace("${alias}_", '', $indexName);
+        $indexName = str_replace("{$alias}_", '', $indexName);
 
         // 2. Get date and remove suffix
         // default_catalog_product_20250716_153832 => default_catalog_product

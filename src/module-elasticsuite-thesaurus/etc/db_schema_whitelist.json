@@ -1,0 +1,49 @@
+{
+    "smile_elasticsuite_thesaurus": {
+        "column": {
+            "thesaurus_id": true,
+            "name": true,
+            "type": true,
+            "is_active": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "smile_elasticsuite_thesaurus_store": {
+        "column": {
+            "thesaurus_id": true,
+            "store_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_63B974533C5D31F477D220BDD0870DBE": true,
+            "SMILE_ELASTICSUITE_THESAURUS_STORE_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "smile_elasticsuite_thesaurus_expanded_terms": {
+        "column": {
+            "thesaurus_id": true,
+            "term_id": true,
+            "term": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_THESAURUS_EXPANDED_TERMS_TERM_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_9209E40A220DC2E4BE81B9A68B9B966D": true
+        }
+    },
+    "smile_elasticsuite_thesaurus_reference_terms": {
+        "column": {
+            "thesaurus_id": true,
+            "term_id": true,
+            "term": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_F32473FFBA5C398A18CD364D37976CB5": true
+        }
+    }
+}

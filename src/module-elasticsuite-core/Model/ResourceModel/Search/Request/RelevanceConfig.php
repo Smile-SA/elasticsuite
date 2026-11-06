@@ -91,11 +91,15 @@ class RelevanceConfig extends \Magento\Config\Model\ResourceModel\Config
 
     /**
      * Define main table.
+     *
+     * @param ?\Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface $pillPut PillPut Interface
+     *
      * @SuppressWarnings(PHPMD.CamelCaseMethodName)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @return void
      */
-    protected function _construct()
+    protected function _construct(?\Magento\Framework\MessageQueue\PoisonPill\PoisonPillPutInterface $pillPut = null)
     {
         $this->_init('smile_elasticsuite_relevance_config_data', 'config_id');
     }

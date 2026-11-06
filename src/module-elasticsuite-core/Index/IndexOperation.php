@@ -17,7 +17,7 @@ namespace Smile\ElasticsuiteCore\Index;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface;
 use Smile\ElasticsuiteCore\Api\Index\Bulk\BulkResponseInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
-use Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface;
+use Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface;
 
 /**
  * Default implementation of operation on indices (\Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface).
@@ -54,14 +54,9 @@ class IndexOperation implements IndexOperationInterface
     private $client;
 
     /**
-     * @var \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface
+     * @var \Smile\ElasticsuiteCore\Api\Index\Ingest\PipelineManagerInterface
      */
-    private $clusterInfo;
-
-    /**
-     * @var boolean
-     */
-    private $useDeprecatedBulk;
+    private $pipelineManager;
 
     /**
      * @var \Psr\Log\LoggerInterface
@@ -79,7 +74,7 @@ class IndexOperation implements IndexOperationInterface
      * @param \Magento\Framework\ObjectManagerInterface                $objectManager    Object manager.
      * @param \Smile\ElasticsuiteCore\Api\Client\ClientInterface       $client           ES client.
      * @param \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings    ES settings.
-     * @param \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo      ES cluster information.
+     * @param PipelineManagerInterface                                 $pipelineManager  Ingest Pipeline Manager.
      * @param \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager    $bulkErrorManager Bulk error manager.
      * @param \Psr\Log\LoggerInterface                                 $logger           Logger access.
      */
@@ -87,7 +82,7 @@ class IndexOperation implements IndexOperationInterface
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Smile\ElasticsuiteCore\Api\Client\ClientInterface $client,
         \Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface $indexSettings,
-        \Smile\ElasticsuiteCore\Api\Cluster\ClusterInfoInterface $clusterInfo,
+        PipelineManagerInterface $pipelineManager,
         \Smile\ElasticsuiteCore\Model\Index\BulkError\Manager $bulkErrorManager,
         \Psr\Log\LoggerInterface $logger
     ) {
@@ -95,7 +90,7 @@ class IndexOperation implements IndexOperationInterface
         $this->client               = $client;
         $this->indexSettings        = $indexSettings;
         $this->indicesConfiguration = $indexSettings->getIndicesConfig();
-        $this->clusterInfo          = $clusterInfo;
+        $this->pipelineManager      = $pipelineManager;
         $this->logger               = $logger;
         $this->bulkErrorManager     = $bulkErrorManager;
     }
@@ -160,6 +155,16 @@ class IndexOperation implements IndexOperationInterface
         ];
         // @codingStandardsIgnoreEnd
         $indexSettings['settings']['analysis'] = $this->indexSettings->getAnalysisSettings($store);
+
+        // Add (and create, if needed) default pipeline.
+        $pipeline = $this->pipelineManager->createByIndexIdentifier($indexIdentifier);
+        if ($pipeline !== null) {
+            $indexSettings['settings']['default_pipeline'] = $pipeline->getName();
+        }
+
+        if ($index->useKnn()) {
+            $indexSettings['settings']['index.knn'] = true;
+        }
 
         $this->client->createIndex($index->getName(), $indexSettings);
 
@@ -227,10 +232,6 @@ class IndexOperation implements IndexOperationInterface
      */
     public function createBulk()
     {
-        if ($this->useDeprecatedBulk()) {
-            return $this->objectManager->create(\Smile\ElasticsuiteCore\Index\Bulk\Deprecation\BulkRequest::class);
-        }
-
         return $this->objectManager->create('Smile\ElasticsuiteCore\Api\Index\Bulk\BulkRequestInterface');
     }
 
@@ -336,11 +337,10 @@ class IndexOperation implements IndexOperationInterface
                 $sampleDocumentIds = implode(', ', array_slice($error['document_ids'], 0, 10));
                 $errorMessages = [
                     sprintf(
-                        "Bulk %s operation failed %d times in index %s for type %s.",
+                        "Bulk %s operation failed %d times in index %s.",
                         $error['operation'],
                         $error['count'],
-                        $error['index'],
-                        $error['document_type']
+                        $error['index']
                     ),
                     sprintf(
                         "Error (%s) : %s.",
@@ -405,25 +405,5 @@ class IndexOperation implements IndexOperationInterface
         $this->indicesByIdentifier[$indexAlias] = $index;
 
         return $this->indicesByIdentifier[$indexAlias];
-    }
-
-    /**
-     * Returns true if the deprecated version of the bulk request object should be used
-     * for compatibility with Elasticsearch < 7.0
-     *
-     * @return bool
-     */
-    private function useDeprecatedBulk()
-    {
-        if ($this->useDeprecatedBulk === null) {
-            $this->useDeprecatedBulk = false;
-            if ($this->clusterInfo->getServerDistribution() === ClusterInfoInterface::DISTRO_ES) {
-                if (version_compare($this->clusterInfo->getServerVersion(), '7.0', '<')) {
-                    $this->useDeprecatedBulk = true;
-                }
-            }
-        }
-
-        return $this->useDeprecatedBulk;
     }
 }

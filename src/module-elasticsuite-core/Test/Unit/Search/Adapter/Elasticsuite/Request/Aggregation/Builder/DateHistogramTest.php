@@ -38,7 +38,9 @@ class DateHistogramTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('date_histogram', $aggregation);
         $this->assertEquals('fieldName', $aggregation['date_histogram']['field']);
-        $this->assertEquals('1d', $aggregation['date_histogram']['interval']);
+        $this->assertArrayNotHasKey('interval', $aggregation['date_histogram']);
+        $this->assertEquals('1d', $aggregation['date_histogram']['fixed_interval']);
+        $this->assertArrayNotHasKey('calendar_interval', $aggregation['date_histogram']);
         $this->assertEquals(0, $aggregation['date_histogram']['min_doc_count']);
     }
 
@@ -57,6 +59,8 @@ class DateHistogramTest extends \PHPUnit\Framework\TestCase
             null,
             null,
             null,
+            '1d', // Deprecated.
+            null,
             '2y',
             10,
             ['min' => 2008, 'max' => 2050]
@@ -66,9 +70,32 @@ class DateHistogramTest extends \PHPUnit\Framework\TestCase
 
         $this->assertArrayHasKey('date_histogram', $aggregation);
         $this->assertEquals('fieldName', $aggregation['date_histogram']['field']);
-        $this->assertEquals('2y', $aggregation['date_histogram']['interval']);
+        $this->assertEquals('2y', $aggregation['date_histogram']['fixed_interval']);
+        $this->assertArrayNotHasKey('calendar_interval', $aggregation['date_histogram']);
         $this->assertEquals(10, $aggregation['date_histogram']['min_doc_count']);
         $this->assertEquals(['min' => 2008, 'max' => 2050], $aggregation['date_histogram']['extended_bounds']);
+
+        $bucket = new HistogramBucket(
+            'aggregationName',
+            'fieldName',
+            [],
+            [],
+            [],
+            null,
+            null,
+            null,
+            '1d', // Deprecated.
+            '1y'
+        );
+
+        $aggregation = $aggBuilder->buildBucket($bucket);
+
+        $this->assertArrayHasKey('date_histogram', $aggregation);
+        $this->assertEquals('fieldName', $aggregation['date_histogram']['field']);
+        $this->assertArrayNotHasKey('fixed_interval', $aggregation['date_histogram']);
+        $this->assertEquals('1y', $aggregation['date_histogram']['calendar_interval']);
+        $this->assertEquals(0, $aggregation['date_histogram']['min_doc_count']);
+        $this->assertArrayNotHasKey('extended_bounds', $aggregation['date_histogram']);
     }
 
     /**

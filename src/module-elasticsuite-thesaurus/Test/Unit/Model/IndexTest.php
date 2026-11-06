@@ -15,7 +15,7 @@ declare(strict_types = 1);
 
 namespace Smile\ElasticsuiteThesaurus\Test\Unit\Model;
 
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use OpenSearch\Common\Exceptions\BadRequest400Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
@@ -133,7 +133,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function noRewriteDataProvider()
+    public static function noRewriteDataProvider()
     {
         /*
          * [queryText, synonymsEnabled, $synonymWeightDivider, expansionEnabled, expansionWeightDivider, $maxRewrites,
@@ -265,7 +265,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function singleLevelRewritesDataProvider()
+    public static function singleLevelRewritesDataProvider()
     {
         /*
          * Results map for rules: synonyms 'foo,bat,baz' and expansion 'bar => pub,cafe'.
@@ -877,7 +877,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function multiLevelRewritesDataProvider()
+    public static function multiLevelRewritesDataProvider()
     {
         /*
          * Results map for rules:
@@ -1848,7 +1848,7 @@ class IndexTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function withAnalysisFailureDataProvider()
+    public static function withAnalysisFailureDataProvider()
     {
         return [
             /*

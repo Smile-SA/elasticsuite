@@ -1,0 +1,48 @@
+{
+    "smile_elasticsuite_optimizer": {
+        "column": {
+            "optimizer_id": true,
+            "store_id": true,
+            "is_active": true,
+            "from_date": true,
+            "to_date": true,
+            "name": true,
+            "model": true,
+            "config": true,
+            "rule_condition": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "smile_elasticsuite_optimizer_search_container": {
+        "column": {
+            "optimizer_id": true,
+            "search_container": true,
+            "apply_to": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_OPTIMIZER_SEARCH_CONTAINER_SEARCH_CONTAINER": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_19A755216ED198194BA7339E2AB30596": true
+        }
+    },
+    "smile_elasticsuite_optimizer_limitation": {
+        "column": {
+            "optimizer_id": true,
+            "category_id": true,
+            "query_id": true
+        },
+        "index": {
+            "SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_QUERY_ID": true,
+            "IDX_0FB126492F65ADDBD7F9CE0585EE7691": true
+        },
+        "constraint": {
+            "FK_29EE1ECD41B422FDFF017973D0039789": true,
+            "FK_DECB3B36711079998CA4D3DB38F2E0EB": true,
+            "SMILE_ELASTICSUITE_OPTIMIZER_LIMITATION_QR_ID_SRCH_QR_QR_ID": true
+        }
+    }
+}

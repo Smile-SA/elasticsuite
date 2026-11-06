@@ -45,7 +45,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
     private $filterListPool;
 
     /**
-     * @var \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory
+     * @var \Magento\Catalog\Api\CategoryRepositoryInterface
      */
     private $categoryRepository;
 
@@ -62,19 +62,19 @@ class Ajax extends \Magento\Framework\App\Action\Action
     /**
      * Constructor.
      *
-     * @param \Magento\Framework\App\Action\Context                   $context            Controller action context.
-     * @param \Magento\Framework\Controller\Result\JsonFactory        $jsonResultFactory  JSON result factory.
-     * @param \Magento\Catalog\Model\Layer\Resolver                   $layerResolver      Layer resolver.
-     * @param \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository Category factory.
-     * @param \Psr\Log\LoggerInterface                                $logger             Logger.
-     * @param \Magento\Catalog\Model\Layer\FilterList[]               $filterListPool     Filter list pool.
-     * @param ContextInterface|null                                   $searchContext      Search context.
+     * @param \Magento\Framework\App\Action\Context            $context            Controller action context.
+     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory  JSON result factory.
+     * @param \Magento\Catalog\Model\Layer\Resolver            $layerResolver      Layer resolver.
+     * @param \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository Category Repository.
+     * @param \Psr\Log\LoggerInterface                         $logger             Logger.
+     * @param \Magento\Catalog\Model\Layer\FilterList[]        $filterListPool     Filter list pool.
+     * @param ContextInterface|null                            $searchContext      Search context.
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
-        \Magento\Catalog\Api\CategoryRepositoryInterfaceFactory $categoryRepository,
+        \Magento\Catalog\Api\CategoryRepositoryInterface $categoryRepository,
         \Psr\Log\LoggerInterface $logger,
         $filterListPool = [],
         ?ContextInterface $searchContext = null
@@ -96,10 +96,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
     {
         $this->initLayer();
 
-        $items  = $this->getItems();
-        $result = $this->jsonResultFactory->create()->setData($items);
-
-        return $result;
+        return $this->jsonResultFactory->create()->setData($this->getItems());
     }
 
     /**
@@ -109,13 +106,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
      */
     private function getLayerType()
     {
-        $layerType = Resolver::CATALOG_LAYER_CATEGORY;
-
-        if ($this->isSearch()) {
-            $layerType  = Resolver::CATALOG_LAYER_SEARCH;
-        }
-
-        return $layerType;
+        return $this->isSearch() ? Resolver::CATALOG_LAYER_SEARCH : Resolver::CATALOG_LAYER_CATEGORY;
     }
 
     /**
@@ -129,7 +120,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
 
         if ($this->getRequest()->getParam('cat')) {
             try {
-                $category = $this->categoryRepository->create()->get(
+                $category = $this->categoryRepository->get(
                     $this->getRequest()->getParam('cat'),
                     $this->layerResolver->get()->getCurrentStore()->getId()
                 );
@@ -189,11 +180,13 @@ class Ajax extends \Magento\Framework\App\Action\Action
 
         $layer = $this->layerResolver->get();
         $filterList = $this->getFilterList();
+        $filterName = (string) $this->getFilterName();
+        $baseUrl = $this->_redirect->getRedirectUrl();
 
         foreach ($filterList->getFilters($layer) as $filter) {
-            if ($filter->getRequestVar() == $this->getFilterName()) {
+            if ($filter->getRequestVar() === $filterName) {
                 foreach ($filter->getItems() as $item) {
-                    $item->setBaseUrl($this->_redirect->getRedirectUrl());
+                    $item->setBaseUrl($baseUrl);
                     $items[] = $item->toArray(['url', 'count', 'is_selected', 'label']);
                 }
             }
@@ -209,7 +202,7 @@ class Ajax extends \Magento\Framework\App\Action\Action
      */
     private function isSearch()
     {
-        return (bool) ($this->getRequest()->getParam('q') !== null);
+        return $this->getRequest()->getParam('q') !== null;
     }
 
     /**

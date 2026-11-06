@@ -73,7 +73,7 @@ class UrlTest extends TestCase
      *
      * @return array
      */
-    public function originalCategoryRequestPathDataProvider(): array
+    public static function originalCategoryRequestPathDataProvider(): array
     {
         return [
             'no applied root' => ['gear/bags.html', null, null, 'gear/bags.html'],
@@ -155,7 +155,7 @@ class UrlTest extends TestCase
      *
      * @return array
      */
-    public function categoryUrlSuffixDataProvider(): array
+    public static function categoryUrlSuffixDataProvider(): array
     {
         return [
             'html suffix' => ['gear/bags/sales.html', '.html', 'gear/bags/sales'],
@@ -176,11 +176,8 @@ class UrlTest extends TestCase
      */
     private function getCategoryMock(string $urlPath)
     {
-        $category = $this->getMockBuilder(Category::class)
-            ->disableOriginalConstructor()
-            ->addMethods(['getUrlPath'])
-            ->getMock();
-        $category->method('getUrlPath')->willReturn($urlPath);
+        $category = $this->getMockBuilder(Category::class)->disableOriginalConstructor()->getMock();
+        $category->method('__call')->with('getUrlPath', [])->willReturn($urlPath);
 
         return $category;
     }

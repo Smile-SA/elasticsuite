@@ -526,9 +526,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
         $this->queryResponse = $this->searchEngine->search($searchRequest);
 
-        // Update the product count.
-        $this->_totalRecords = $this->queryResponse->count();
-
         // Filter search results. The pagination has to be resetted since it is managed by the engine itself.
         $docIds = array_map(
             function (\Magento\Framework\Api\Search\Document $doc) {
@@ -693,11 +690,13 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $this->query,
             [],
             $this->filters,
-            $this->queryFilters
+            $this->queryFilters,
+            [],
+            true
         );
         $searchResponse = $this->searchEngine->search($searchRequest);
-        $this->_totalRecords        = $searchResponse->count();
-        $this->isSpellchecked       = $searchRequest->isSpellchecked();
+        $this->_totalRecords    = $searchResponse->count();
+        $this->isSpellchecked   = $searchRequest->isSpellchecked();
     }
 
     /**
@@ -727,7 +726,8 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
             $sortOrders,
             $this->filters,
             $this->queryFilters,
-            $this->facets
+            $this->facets,
+            false
         );
 
         return $searchRequest;

@@ -67,7 +67,7 @@ class AggregationFactoryTest extends \PHPUnit\Framework\TestCase
             ->getMock();
 
         $aggregationFactoryMock->method('create')
-            ->will($this->returnValue($aggregationMock));
+            ->willReturn($aggregationMock);
 
         $factories = ['aggregationType' => $aggregationFactoryMock];
 

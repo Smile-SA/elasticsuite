@@ -64,7 +64,7 @@ class ConfigTest extends TestCase
      *
      * @return array
      */
-    public function expansionBoundariesDataProvider(): array
+    public static function expansionBoundariesDataProvider(): array
     {
         return [
             'not set'               => [null, []],

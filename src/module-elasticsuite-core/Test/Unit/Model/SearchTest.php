@@ -44,7 +44,7 @@ class SearchTest extends \PHPUnit\Framework\TestCase
 
         $searchApi = new \Smile\ElasticsuiteCore\Model\Search($searchEngine, $searchRequestBuilder, $searchResponseBuilder, $searchContext);
 
-        $searchCriteria = $this->createMock(\Magento\Framework\Api\Search\SearchCriteriaInterface::class);
+        $searchCriteria = $this->createMock(\Smile\ElasticsuiteCore\Api\Search\SearchCriteriaInterface::class);
         $searchResponse = $searchApi->search($searchCriteria);
 
         $this->assertEquals($docCount, $searchResponse->getTotalCount());
@@ -58,7 +58,7 @@ class SearchTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function dataProvider()
+    public static function dataProvider()
     {
         $data = [[[], 0], [['doc1'], 1], [['doc1'], 2], [['doc1', 'doc2'], 2]];
 

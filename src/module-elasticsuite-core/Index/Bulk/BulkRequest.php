@@ -32,7 +32,7 @@ class BulkRequest implements BulkRequestInterface
      *
      * @var array
      */
-    protected $bulkData = [];
+    private $bulkData = [];
 
     /**
      * {@inheritdoc}
