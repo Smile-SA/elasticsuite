@@ -5,10 +5,14 @@ on:
     push:
         branches:
           - 2.11.x
+          - '2.11.[0-9]+-patches'
+          - '2.11.[0-9]+.[0-9]+-patches'
 
     pull_request_target:
         branches:
           - 2.11.x
+          - '2.11.[0-9]+-patches'
+          - '2.11.[0-9]+.[0-9]+-patches'
         types: [labeled,ready_for_review]
 
 env:
