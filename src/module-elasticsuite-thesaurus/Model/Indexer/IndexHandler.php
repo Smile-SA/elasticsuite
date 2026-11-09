@@ -14,6 +14,7 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model\Indexer;
 
+use Psr\Log\LoggerInterface;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexOperationInterface;
 use Smile\ElasticsuiteCore\Api\Index\IndexSettingsInterface;
@@ -53,6 +54,14 @@ class IndexHandler
     const STEMMER_OVERRIDE_FILTER = 'stemmer_override';
 
     /**
+     * Max number of words sent in a single _analyze call when stemming the thesaurus rows
+     * (stays well below the default index.analyze.max_token_count of 10000).
+     *
+     * @var integer
+     */
+    const ANALYZE_MAX_WORDS = 5000;
+
+    /**
      * @var ClientInterface
      */
     private $client;
@@ -88,15 +97,28 @@ class IndexHandler
     private $textHelper;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var string|null
+     */
+    private $analyzeIndexIdentifier;
+
+    /**
      * Constructor.
      *
-     * @param ClientInterface         $client              ES client.
-     * @param IndexOperationInterface $indexManager        ES index management tool
-     * @param IndexSettingsHelper     $indexSettingsHelper Index settings helper.
-     * @param IndexSettingsInterface  $indexSettings       Index settings provider.
-     * @param ThesaurusStemmingConfig $stemmingConfig      Stemming configuration.
-     * @param CacheHelper             $cacheHelper         ES caching helper.
-     * @param TextHelper              $textHelper          Text manipulation helper.
+     * @param ClientInterface         $client                 ES client.
+     * @param IndexOperationInterface $indexManager           ES index management tool
+     * @param IndexSettingsHelper     $indexSettingsHelper    Index settings helper.
+     * @param IndexSettingsInterface  $indexSettings          Index settings provider.
+     * @param ThesaurusStemmingConfig $stemmingConfig         Stemming configuration.
+     * @param CacheHelper             $cacheHelper            ES caching helper.
+     * @param TextHelper              $textHelper             Text manipulation helper.
+     * @param LoggerInterface         $logger                 Logger.
+     * @param string|null             $analyzeIndexIdentifier Identifier of the index used to stem the thesaurus rows
+     *                                                        (null: cluster-level _analyze).
      */
     public function __construct(
         ClientInterface $client,
@@ -105,7 +127,9 @@ class IndexHandler
         IndexSettingsInterface $indexSettings,
         ThesaurusStemmingConfig $stemmingConfig,
         CacheHelper $cacheHelper,
-        TextHelper $textHelper
+        TextHelper $textHelper,
+        LoggerInterface $logger,
+        $analyzeIndexIdentifier = null
     ) {
         $this->client              = $client;
         $this->indexSettingsHelper = $indexSettingsHelper;
@@ -114,6 +138,8 @@ class IndexHandler
         $this->stemmingConfig      = $stemmingConfig;
         $this->cacheHelper         = $cacheHelper;
         $this->textHelper          = $textHelper;
+        $this->logger              = $logger;
+        $this->analyzeIndexIdentifier = $analyzeIndexIdentifier;
     }
 
     /**
@@ -187,8 +213,15 @@ class IndexHandler
         $settings = $this->addCleanAnalyzer($settings, array_keys($stemmingFilters));
         $settings = $this->addShinglesAnalyzer($settings, array_keys($stemmingFilters));
 
-        $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms, $stemmingFilters);
-        $settings = $this->addAnalyzerSettings($settings, 'expansion', $expansions, $stemmingFilters);
+        // Some clusters refuse the cluster-level _analyze (no indices:admin/analyze permission on the cluster).
+        // An index can then be set through the analyzeIndexIdentifier constructor argument (di.xml).
+        $analyzeIndex = null;
+        if (!empty($stemmingFilters) && $this->analyzeIndexIdentifier !== null) {
+            $analyzeIndex = $this->indexSettingsHelper->getIndexAliasFromIdentifier($this->analyzeIndexIdentifier, $storeId);
+        }
+
+        $settings = $this->addAnalyzerSettings($settings, 'synonym', $synonyms, $stemmingFilters, $analyzeIndex);
+        $settings = $this->addAnalyzerSettings($settings, 'expansion', $expansions, $stemmingFilters, $analyzeIndex);
 
         return $settings;
     }
@@ -277,14 +310,15 @@ class IndexHandler
     /**
      * Append an analyzer for a thesaurus to existing settings.
      *
-     * @param array    $settings        Original settings.
-     * @param string   $type            Thesaurus type.
-     * @param string[] $values          Thesaurus entries in Lucene format.
-     * @param array    $stemmingFilters Stemming token filters to add in the analysis chain _before_ the synonym/expansion filter.
+     * @param array       $settings        Original settings.
+     * @param string      $type            Thesaurus type.
+     * @param string[]    $values          Thesaurus entries in Lucene format.
+     * @param array       $stemmingFilters Stemming token filters applied to the thesaurus entries.
+     * @param string|null $analyzeIndex    Index used to stem the entries (null: cluster-level _analyze).
      *
      * @return array
      */
-    private function addAnalyzerSettings($settings, $type, $values, $stemmingFilters)
+    private function addAnalyzerSettings($settings, $type, $values, $stemmingFilters, $analyzeIndex = null)
     {
         $settings['analysis']['analyzer'][$type] = [
             'tokenizer' => 'whitespace',
@@ -292,7 +326,7 @@ class IndexHandler
         ];
 
         if (!empty($values)) {
-            $values = $this->prepareSynonymFilterData($values, $stemmingFilters);
+            $values = $this->prepareSynonymFilterData($values, $stemmingFilters, $analyzeIndex);
             $settings['analysis']['filter'][$type] = ['type' => 'synonym', 'synonyms' => $values, 'lenient' => true];
             $settings['analysis']['analyzer'][$type]['filter'][] = $type;
         }
@@ -308,70 +342,191 @@ class IndexHandler
      * Spaces and hyphens are replaced with "_" into multiwords expression (ex foo bar => foo_bar).
      * Applies stemming filters if provided.
      *
-     * @param string[] $rows            Original thesaurus text rows.
-     * @param array    $stemmingFilters Stemming token filters to apply before synonym processing.
+     * @param string[]    $rows            Original thesaurus text rows.
+     * @param array       $stemmingFilters Stemming token filters to apply before synonym processing.
+     * @param string|null $analyzeIndex    Index used to stem the rows (null: cluster-level _analyze).
      *
      * @return string[]
      */
-    private function prepareSynonymFilterData($rows, $stemmingFilters)
+    private function prepareSynonymFilterData($rows, $stemmingFilters, $analyzeIndex = null)
     {
-        if (empty($rows)) {
-            return $rows;
+        $rows = array_values($rows);
+
+        if (!empty($rows) && !empty($stemmingFilters)) {
+            $maskedRows  = array_map(function ($row) {
+                return $this->maskRow($row);
+            }, $rows);
+            $stemmedRows = [];
+            foreach ($this->getAnalyzeBatches($maskedRows) as [$offset, $length]) {
+                $stemmedRows[] = $this->extractStemsFromThesaurusRows(
+                    array_slice($rows, $offset, $length),
+                    array_slice($maskedRows, $offset, $length),
+                    $stemmingFilters,
+                    $analyzeIndex
+                );
+            }
+            $rows = array_merge(...$stemmedRows);
         }
 
-        return array_map(function ($row) use ($stemmingFilters) {
-            if (!empty($stemmingFilters)) {
-                $row = $this->extractStemsFromThesaurusRow($row, $stemmingFilters);
-            }
-
+        return array_map(function ($row) {
             return preg_replace('/([^\s-])[\s-]+(?=[^\s-])/u', '\1_', $row);
         }, $rows);
     }
 
     /**
-     * Analyze an entire thesaurus row using Elasticsearch analyze API to extract stems.
+     * Split the masked thesaurus rows into batches of at most ANALYZE_MAX_WORDS whitespace-separated words.
      *
-     * @param string $row             Row to analyze.
-     * @param array  $stemmingFilters Stemming token filters configuration.
+     * @param string[] $maskedRows Masked thesaurus rows (list).
      *
-     * @return string Analyzed row with stemmed terms.
+     * @return array List of [offset, length] of each batch in the rows.
      */
-    private function extractStemsFromThesaurusRow($row, $stemmingFilters)
+    private function getAnalyzeBatches($maskedRows)
     {
-        // Build an analysis query with stemming filters.
+        $batches   = [];
+        $start     = 0;
+        $wordCount = 0;
+
+        foreach ($maskedRows as $index => $maskedRow) {
+            $rowWordCount = count(preg_split('/\s+/u', $maskedRow, -1, PREG_SPLIT_NO_EMPTY));
+            if ($index > $start && $wordCount + $rowWordCount > self::ANALYZE_MAX_WORDS) {
+                $batches[] = [$start, $index - $start];
+                $start     = $index;
+                $wordCount = 0;
+            }
+            $wordCount += $rowWordCount;
+        }
+        $batches[] = [$start, count($maskedRows) - $start];
+
+        return $batches;
+    }
+
+    /**
+     * Mask the thesaurus syntax ("=>", ",") and the hyphens with spaces, so that the whitespace tokenizer
+     * splits every word, the same way as the query, and the offsets still point into the original row.
+     *
+     * @param string $row Thesaurus row.
+     *
+     * @return string
+     */
+    private function maskRow($row)
+    {
+        return strtr($row, ['=>' => '  ', ',' => ' ', '-' => ' ']);
+    }
+
+    /**
+     * Stem a batch of thesaurus rows with a single _analyze call.
+     * The rows are joined with line breaks, then each token is replaced in its own row.
+     * The analysis offsets are UTF-16 code units: they are converted to characters before the replacement.
+     * If the analysis fails, the rows are returned unstemmed so that the thesaurus index can still be built.
+     *
+     * @param string[]    $rows            Thesaurus rows.
+     * @param string[]    $maskedRows      The same rows, masked.
+     * @param array       $stemmingFilters Stemming token filters configuration.
+     * @param string|null $analyzeIndex    Index used for the _analyze call (null: cluster-level _analyze).
+     *
+     * @return string[] Rows with stemmed terms.
+     */
+    private function extractStemsFromThesaurusRows($rows, $maskedRows, $stemmingFilters, $analyzeIndex)
+    {
+        $rowStarts = [];
+        $cursor    = 0;
+        foreach ($rows as $index => $row) {
+            $rowStarts[$index] = $cursor;
+            $cursor           += $this->getUtf16Length($row) + 1;
+        }
+
         $analyzeParams = [
             'body' => [
-                'tokenizer' => 'whitespace',
-                'filter' => array_merge(['lowercase', 'asciifolding'], array_values($stemmingFilters)),
+                'tokenizer'   => 'whitespace',
+                'filter'      => array_merge(['lowercase', 'asciifolding'], array_values($stemmingFilters)),
                 'char_filter' => [],
-                'text' => str_replace(',', ' ', str_replace('=>', '  ', $row)),
+                'text'        => implode("\n", $maskedRows),
             ],
         ];
 
-        $response = $this->client->analyze($analyzeParams);
-
-        // Replace original terms with their stemmed counterparts in the thesaurus row.
-        if (isset($response['tokens']) && !empty($response['tokens'])) {
-            $rewrittenRow = $row;
-            $offset = 0;
-
-            foreach ($response['tokens'] as $token) {
-                $startOffset = $token['start_offset'];
-                $length = $token['end_offset'] - $token['start_offset'];
-
-                $rewrittenRow = $this->textHelper->mbSubstrReplace(
-                    $rewrittenRow,
-                    $token['token'],
-                    $startOffset + $offset,
-                    $length
-                );
-
-                $offset += mb_strlen($token['token']) - $length;
-            }
-
-            return $rewrittenRow;
+        if ($analyzeIndex !== null) {
+            $analyzeParams['index'] = $analyzeIndex;
         }
 
-        return $row;
+        try {
+            $response = $this->client->analyze($analyzeParams);
+        } catch (\Exception $e) {
+            $this->logger->warning(
+                sprintf('Thesaurus rules indexed without stemming, the _analyze call failed: %s', $e->getMessage())
+            );
+
+            return $rows;
+        }
+
+        // Replace the terms from the end of each row, so that the offsets of the remaining terms stay valid.
+        foreach ($this->getTokensByRow($response['tokens'] ?? [], $rowStarts) as $index => $tokens) {
+            krsort($tokens);
+            foreach ($tokens as $startOffset => $token) {
+                $endOffset    = $startOffset + $token['end_offset'] - $token['start_offset'];
+                $start        = $this->getCharOffset($rows[$index], $startOffset);
+                $length       = $this->getCharOffset($rows[$index], $endOffset) - $start;
+                $rows[$index] = $this->textHelper->mbSubstrReplace($rows[$index], $token['token'], $start, $length);
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Dispatch the tokens of a batch to their row, keyed by their offset in the row.
+     * If several tokens share a position, the last one is kept (keyword_repeat emits the word, then its stem).
+     *
+     * @param array $tokens    Analysis tokens of the batch.
+     * @param int[] $rowStarts Offset of each row in the batch text.
+     *
+     * @return array
+     */
+    private function getTokensByRow($tokens, $rowStarts)
+    {
+        $tokensByRow = [];
+        $rowIndex    = 0;
+        $lastIndex   = count($rowStarts) - 1;
+
+        foreach ($tokens as $token) {
+            while ($rowIndex < $lastIndex && $token['start_offset'] >= $rowStarts[$rowIndex + 1]) {
+                $rowIndex++;
+            }
+            $startOffset = $token['start_offset'] - $rowStarts[$rowIndex];
+            $tokensByRow[$rowIndex][$startOffset] = $token;
+        }
+
+        return $tokensByRow;
+    }
+
+    /**
+     * Length of a text in UTF-16 code units, the unit of the analysis offsets.
+     *
+     * @param string $text Text.
+     *
+     * @return int
+     */
+    private function getUtf16Length($text)
+    {
+        return (int) (strlen(mb_convert_encoding($text, 'UTF-16LE', 'UTF-8')) / 2);
+    }
+
+    /**
+     * Convert an offset in UTF-16 code units into an offset in characters.
+     * Both are the same unless the text has characters outside the BMP (emoji).
+     *
+     * @param string $text        Text.
+     * @param int    $utf16Offset Offset in UTF-16 code units.
+     *
+     * @return int
+     */
+    private function getCharOffset($text, $utf16Offset)
+    {
+        if ($this->getUtf16Length($text) === mb_strlen($text)) {
+            return $utf16Offset;
+        }
+
+        $utf16Text = mb_convert_encoding($text, 'UTF-16LE', 'UTF-8');
+
+        return mb_strlen(mb_convert_encoding(substr($utf16Text, 0, 2 * $utf16Offset), 'UTF-8', 'UTF-16LE'));
     }
 }

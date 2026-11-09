@@ -27,6 +27,7 @@ use Smile\ElasticsuiteCore\Helper\IndexSettings;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
 use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
 use Smile\ElasticsuiteThesaurus\Model\Index as ThesaurusIndex;
 
 /**
@@ -114,7 +115,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $cacheHelperMock,
             $textHelper,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            $this->getStemmingConfigMock(false)
         );
 
         $cacheKey = implode('|', [$indexAlias, $containerName, $queryText]);
@@ -247,7 +249,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $cacheHelperMock,
             $textHelper,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            $this->getStemmingConfigMock(false)
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -860,7 +863,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $cacheHelperMock,
             $textHelper,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            $this->getStemmingConfigMock(false)
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -1832,7 +1836,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $cacheHelperMock,
             $textHelper,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            $this->getStemmingConfigMock(false)
         );
 
         $cacheKey = implode('|', array_merge([$indexAlias, $containerName], [$queryText]));
@@ -1921,7 +1926,8 @@ class IndexTest extends \PHPUnit\Framework\TestCase
             $cacheHelperMock,
             $textHelper,
             $thesaurusConfigFactoryMock,
-            $thesaurusCacheConfigMock
+            $thesaurusCacheConfigMock,
+            $this->getStemmingConfigMock(false)
         );
 
         // Both entries survive despite max_rewritten_queries = 1 -- proves the cap is bypassed.
@@ -2023,6 +2029,24 @@ class IndexTest extends \PHPUnit\Framework\TestCase
         $thesaurusCacheConfig->method('isCacheStorageAllowed')->willReturn($cacheStorageAllowed);
 
         return $thesaurusCacheConfig;
+    }
+
+    /**
+     * Get Thesaurus stemming config mock.
+     *
+     * @param bool $useStemming Whether stemming is enabled.
+     *
+     * @return MockObject|ThesaurusStemmingConfig
+     */
+    private function getStemmingConfigMock($useStemming)
+    {
+        $stemmingConfig = $this->getMockBuilder(ThesaurusStemmingConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stemmingConfig->method('useStemming')->willReturn($useStemming);
+
+        return $stemmingConfig;
     }
 
     /**

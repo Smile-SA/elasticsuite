@@ -87,13 +87,13 @@ class Index
     /**
      * Constructor.
      *
-     * @param ClientInterface        $client                 ES client.
-     * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
-     * @param CacheHelper            $cacheHelper            ES caching helper.
-     * @param Text                   $textHelper             Helper text explaining multibyte string handling.
-     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
-     * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
-     * @param ThesaurusStemmingConfig $stemmingConfig        Stemming configuration.
+     * @param ClientInterface         $client                 ES client.
+     * @param IndexSettingsHelper     $indexSettingsHelper    Index Settings Helper.
+     * @param CacheHelper             $cacheHelper            ES caching helper.
+     * @param Text                    $textHelper             Helper text explaining multibyte string handling.
+     * @param ThesaurusConfigFactory  $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param ThesaurusCacheConfig    $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param ThesaurusStemmingConfig $stemmingConfig         Stemming configuration.
      */
     public function __construct(
         ClientInterface $client,
@@ -340,38 +340,29 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        // No need to compute variations of shingles with a one-word-query but we need to extract the stem if enabled.
-        if (!$this->stemmingConfig->useStemming($storeId) && $this->textHelper->mbWordCount($queryText) < 2) {
+        $useStemming = $this->stemmingConfig->useStemming($storeId);
+        $isMultiWord = $this->textHelper->mbWordCount($queryText) >= 2;
+
+        if (!$useStemming && !$isMultiWord) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
         }
 
         $indexName = $this->getIndexAlias($storeId);
+        $tokens    = [];
 
-        // Get the stem of the search term
-        try {
-            $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'clean']]
-            );
-        } catch (\Exception $e) {
-            $analysis = ['tokens' => []];
+        // Get the stem of each word of the search term ("dresses" will give "dress").
+        // Only when stemming is enabled, so that the behavior without stemming is unchanged.
+        if ($useStemming) {
+            $tokens = $this->analyzeText($indexName, $queryText, 'clean');
         }
-        $tokens = $analysis['tokens'] ?? [];
 
         // Generate the shingles.
         // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
-        // If stemming is enabled, analysis of "dresses" will give "dress"
-        // and analysis of "long sleeves" will give "long_sleev"
+        // If stemming is enabled, analysis of "long sleeves" will give "long_sleev".
         // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
-        if ($this->textHelper->mbWordCount($queryText) < 2) {
-            try {
-                $analysis = $this->client->analyze(
-                    ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
-                );
-            } catch (\Exception $e) {
-                $analysis = ['tokens' => []];
-            }
-
-            $tokens = array_merge($tokens, $analysis['tokens'] ?? []);
+        // The shingle filter has no unigram output: a one-word query gives no shingle.
+        if ($isMultiWord) {
+            $tokens = array_merge($tokens, $this->analyzeText($indexName, $queryText, 'shingles'));
         }
 
         // Get all variations of the query text by injecting the shingles inside.
@@ -383,9 +374,32 @@ class Index
             $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
             $queries[]          = $rewrittenQueryText;
         }
+
         $queries = array_unique($queries);
 
         return $queries;
+    }
+
+    /**
+     * Run an analyzer of the thesaurus index on a text.
+     *
+     * @param string $indexName Thesaurus index alias.
+     * @param string $text      Text to analyze.
+     * @param string $analyzer  Analyzer name.
+     *
+     * @return array Tokens, or an empty array if the analysis fails.
+     */
+    private function analyzeText($indexName, $text, $analyzer)
+    {
+        try {
+            $analysis = $this->client->analyze(
+                ['index' => $indexName, 'body' => ['text' => $text, 'analyzer' => $analyzer]]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
+        }
+
+        return $analysis['tokens'] ?? [];
     }
 
     /**

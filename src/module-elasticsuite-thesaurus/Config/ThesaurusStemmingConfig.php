@@ -15,7 +15,6 @@ namespace Smile\ElasticsuiteThesaurus\Config;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 
 /**
  * Thesaurus stemming configuration helper.
