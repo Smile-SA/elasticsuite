@@ -174,7 +174,7 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         $categoryIds   = array_diff($valueArray, $beingBuiltIds);
 
         foreach ($categoryIds as $categoryId) {
-            $subQuery = $this->getRule()->getCategorySearchQuery($categoryId, $excludedCategories);
+            $subQuery = $this->getRule()->getEmbeddedCategorySearchQuery($categoryId, $excludedCategories);
             if ($subQuery !== null) {
                 $subQueries[] = $subQuery;
             }

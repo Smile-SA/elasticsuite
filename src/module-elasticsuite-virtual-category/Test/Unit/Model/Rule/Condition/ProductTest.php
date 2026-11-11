@@ -64,7 +64,7 @@ class ProductTest extends TestCase
                 return $this->createMock(QueryInterface::class);
             }
         );
-        $rule->method('getCategorySearchQuery')->willReturnCallback(
+        $rule->method('getEmbeddedCategorySearchQuery')->willReturnCallback(
             function ($categoryId, $excluded) use (&$queriedIds, $excludedCategories) {
                 $this->assertSame($excludedCategories, $excluded);
                 $queriedIds[] = (int) $categoryId;
