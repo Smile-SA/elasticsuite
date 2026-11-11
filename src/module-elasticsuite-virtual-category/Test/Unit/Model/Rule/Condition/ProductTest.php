@@ -23,8 +23,8 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
- * Unit test for the category conditions of {@see Product}: categories being built are left out, except the
- * expansion boundaries.
+ * Unit test for the category conditions of {@see Product}: categories being built are replaced by their own products,
+ * except the expansion boundaries.
  *
  * @category Smile
  * @package  Smile\ElasticsuiteVirtualCategory
@@ -42,6 +42,7 @@ class ProductTest extends TestCase
      * @param int[]  $excludedCategories Categories being built.
      * @param int[]  $boundaryIds        Expansion boundaries.
      * @param int[]  $expectedIds        Categories expected to be queried.
+     * @param int[]  $expectedOwnIds     Categories expected to be replaced by their own products.
      *
      * @return void
      */
@@ -50,11 +51,20 @@ class ProductTest extends TestCase
         string $value,
         array $excludedCategories,
         array $boundaryIds,
-        array $expectedIds
+        array $expectedIds,
+        array $expectedOwnIds
     ): void {
         $queriedIds = [];
+        $ownIds     = null;
         $rule = $this->createMock(Rule::class);
-        $rule->method('getCategorySearchQuery')->willReturnCallback(
+        $rule->method('getCategoriesOwnProductsQuery')->willReturnCallback(
+            function ($categoryIds) use (&$ownIds) {
+                $ownIds = array_map('intval', array_values($categoryIds));
+
+                return $this->createMock(QueryInterface::class);
+            }
+        );
+        $rule->method('getEmbeddedCategorySearchQuery')->willReturnCallback(
             function ($categoryId, $excluded) use (&$queriedIds, $excludedCategories) {
                 $this->assertSame($excludedCategories, $excluded);
                 $queriedIds[] = (int) $categoryId;
@@ -78,12 +88,19 @@ class ProductTest extends TestCase
         $condition->setData('rule', $rule);
         $this->setPrivateProperty($condition, 'queryFactory', $queryFactory);
         $this->setPrivateProperty($condition, 'virtualCategoryConfig', $config);
-        $this->setPrivateProperty($condition, 'dependencyCollector', $this->createMock(DependencyCollector::class));
+        // Replacing categories by their own products makes the query depend on the build in progress.
+        $dependencyCollector = $this->createMock(DependencyCollector::class);
+        $dependencyCollector->expects(empty($expectedOwnIds) ? $this->never() : $this->once())->method('addTruncation')
+            ->with($this->callback(function ($categoryIds) use ($expectedOwnIds) {
+                return array_map('intval', array_values($categoryIds)) === $expectedOwnIds;
+            }));
+        $this->setPrivateProperty($condition, 'dependencyCollector', $dependencyCollector);
 
         $method = new \ReflectionMethod(Product::class, 'getCategorySearchQuery');
         $method->setAccessible(true);
         $this->assertNotNull($method->invoke($condition, $excludedCategories));
         $this->assertSame($expectedIds, $queriedIds);
+        $this->assertSame(empty($expectedOwnIds) ? null : $expectedOwnIds, $ownIds);
     }
 
     /**
@@ -94,10 +111,10 @@ class ProductTest extends TestCase
     public function categoryConditionDataProvider(): array
     {
         return [
-            'nothing being built'          => ['()', '10,20', [], [10], [10, 20]],
-            'category being built left out' => ['()', '10,20', [20], [], [10]],
-            'boundary being built kept'     => ['()', '10,20', [10, 20], [10], [10]],
-            'negation keeps everything'     => ['!()', '10,20', [10, 20], [], [10, 20]],
+            'nothing being built'                => ['()', '10,20', [], [10], [10, 20], []],
+            'category being built replaced'      => ['()', '10,20', [20], [], [10], [20]],
+            'boundary being built kept'          => ['()', '10,20', [10, 20], [10], [10], [20]],
+            'negation of categories being built' => ['!()', '10,20', [10, 20], [], [], [10, 20]],
         ];
     }
 

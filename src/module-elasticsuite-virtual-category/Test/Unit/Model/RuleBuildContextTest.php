@@ -47,6 +47,9 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\RootCategoryProvider;
  * - R (30), virtual: category_ids [V]
  * - V (40), virtual: discount, with R as virtual root
  * - P (60), standard, with the virtual child C (61): category_ids [P] AND discount
+ * - Q (70), virtual: category_ids [Z]
+ * - W (80), virtual: brand acme, with Q as virtual root
+ * - Z (90), virtual: discount, with W as virtual root
  *
  * Each "process" has its own rule model, dependency collector and query cache, sharing the same cache storage.
  *
@@ -72,6 +75,12 @@ class RuleBuildContextTest extends TestCase
 
     private const C = 61;
 
+    private const Q = 70;
+
+    private const W = 80;
+
+    private const Z = 90;
+
     /**
      * @var array Shared cache storage: cache key => ['data' => serialized entry, 'tags' => tags].
      */
@@ -94,7 +103,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The query of a category does not depend on the order categories are built in: a query built while another
-     * category was being built (and so left out of it) is neither cached nor reused.
+     * category was being built (and so only using its own products) is neither cached nor reused.
      *
      * @return void
      */
@@ -124,23 +133,23 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The queries of X and Y, built on their own: each leaves the other out of the query it embeds (eg. X is
-     * "category 3 AND discount" whatever was built before, as expected in #3910).
+     * The queries of X and Y, built on their own: the query each one embeds only uses the own products of the other
+     * one (eg. X is "(own products of X OR category 3) AND discount" whatever was built before, as expected in #3910).
      *
      * @return void
      */
     public function testQueriesBuiltAlone(): void
     {
-        // X = (Y = X left out OR 3) AND discount.
-        $this->assertSame('must(should(3), discount)', $this->describe($this->buildAlone(self::X)));
-        // Y = (X = Y left out AND discount) OR 3.
-        $this->assertSame('should(must(discount), 3)', $this->describe($this->buildAlone(self::Y)));
+        // X = (Y = own products of X OR 3) AND discount.
+        $this->assertSame('must(should(10, 3), discount)', $this->describe($this->buildAlone(self::X)));
+        // Y = (X = own products of Y AND discount) OR 3.
+        $this->assertSame('should(must(20, discount), 3)', $this->describe($this->buildAlone(self::Y)));
     }
 
     /**
-     * A virtual child relying on its parent is built while its parent is being built: the parent is left out of the
-     * child query, which is not cached. Built on its own, the child embeds its parent, itself built without the child,
-     * which is not cached either.
+     * A virtual child relying on its parent is built while its parent is being built: the child query only uses the
+     * own products of the parent (instead of matching every discounted product), and is not cached. Built on its own,
+     * the child embeds its parent, itself built with the own products of the child, which is not cached either.
      *
      * @return void
      */
@@ -150,9 +159,9 @@ class RuleBuildContextTest extends TestCase
         $this->assertNotEmpty($this->getCacheKeys(self::P));
         $this->assertEmpty($this->getCacheKeys(self::C), 'The child query built within its parent is not cached.');
 
-        // P = 60 OR (C = P left out AND discount).
-        $this->assertSame('should(60, must(discount))', $this->describe($this->buildAlone(self::P)));
-        // C = (P = 60, C left out) AND discount.
+        // P = 60 OR (C = own products of P AND discount).
+        $this->assertSame('should(60, must(60, discount))', $this->describe($this->buildAlone(self::P)));
+        // C = (P = 60, C left out of its children) AND discount.
         $this->assertSame('must(60, discount)', $this->describe($this->buildAlone(self::C)));
 
         $this->createRule()->getCategorySearchQuery(self::C);
@@ -161,7 +170,8 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The query of Y built while X is being built leaves X out: it is not cached, unlike the query of X itself.
+     * The query of Y built while X is being built only uses the own products of X: it is not cached, unlike the query
+     * of X itself.
      *
      * @return void
      */
@@ -175,7 +185,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The cached query of Y embeds the query of X: it is rebuilt while building X instead of being reused, since X
-     * has to be left out of it.
+     * has to be replaced by its own products in it.
      *
      * @return void
      */
@@ -191,15 +201,17 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * V is left out of the query of its virtual root R the same way whether its query is built or served from the
-     * cache, and in the latter case without loading V.
+     * V, whose virtual root R is being built, is used physical only in the rule of R (instead of being left out, which
+     * would make R match the whole catalog), the same way whether its query is built or served from the cache, and in
+     * the latter case without loading V.
      *
      * @return void
      */
     public function testCachedQueryLeftOutForItsVirtualRoot(): void
     {
         $expectedR = $this->buildAlone(self::R);
-        $this->assertSame([], $expectedR->getShould(), 'V is left out of R.');
+        // R = (V = own products of V).
+        $this->assertSame('should(40)', $this->describe($expectedR), 'V is physical only in R.');
 
         $this->createRule()->getCategorySearchQuery(self::V);
         $this->assertNotEmpty($this->getCacheKeys(self::V));
@@ -207,6 +219,22 @@ class RuleBuildContextTest extends TestCase
         $this->categoryLoads = [];
         $this->assertEquals($expectedR, $this->createRule()->getCategorySearchQuery(self::R));
         $this->assertSame(0, $this->categoryLoads[self::V] ?? 0, 'V is left out from its cached query.');
+    }
+
+    /**
+     * Z, used by Q, is built while Q is being built: its virtual root W, whose virtual root is Q, is used physical only
+     * (instead of being left out, which would make Z, and so Q, match every discounted product).
+     *
+     * @return void
+     */
+    public function testVirtualRootLeftOutForItsOwnVirtualRoot(): void
+    {
+        $query = $this->createRule()->getCategorySearchQuery(self::Q);
+
+        // Q = (Z = (discount) AND (W = own products of W)).
+        $this->assertSame('should(must(must(discount), 80))', $this->describe($query));
+        $this->assertNotEmpty($this->getCacheKeys(self::Q));
+        $this->assertEmpty($this->getCacheKeys(self::Z), 'Z built within Q is not cached.');
     }
 
     /**
@@ -307,7 +335,7 @@ class RuleBuildContextTest extends TestCase
         $rule->setData('store_id', 1);
 
         $this->categories = [];
-        foreach ([self::X, self::Y, self::STANDARD, self::R, self::V] as $categoryId) {
+        foreach ([self::X, self::Y, self::STANDARD, self::R, self::V, self::Q, self::W, self::Z] as $categoryId) {
             $this->categories[$categoryId] = $this->getCategory($categoryId);
         }
         $this->categories[self::P] = $this->getCategory(self::P, '1/2/' . self::P, 1);
@@ -319,6 +347,11 @@ class RuleBuildContextTest extends TestCase
         $this->setVirtualRule(self::V, $rule, $dependencyCollector, $queryFactory, 'must', [], [$discount]);
         $this->setVirtualRule(self::C, $rule, $dependencyCollector, $queryFactory, 'must', [self::P], [$discount]);
         $this->categories[self::V]->setData('virtual_category_root', self::R);
+        $this->setVirtualRule(self::Q, $rule, $dependencyCollector, $queryFactory, 'should', [self::Z]);
+        $this->setVirtualRule(self::W, $rule, $dependencyCollector, $queryFactory, 'must', [], [new Term('acme', 'brand')]);
+        $this->setVirtualRule(self::Z, $rule, $dependencyCollector, $queryFactory, 'must', [], [$discount]);
+        $this->categories[self::W]->setData('virtual_category_root', self::Q);
+        $this->categories[self::Z]->setData('virtual_category_root', self::W);
 
         $properties = [
             'config'                    => $config,
