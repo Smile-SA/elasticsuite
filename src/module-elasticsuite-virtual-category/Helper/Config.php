@@ -79,8 +79,8 @@ class Config
 
     /**
      * Ids of the categories used as expansion boundaries: when used by another category, as its virtual root or in a
-     * category condition of its rule, only their own products (and the ones of their subcategories for an anchor) are
-     * used, not the ones added by their virtual subcategories.
+     * category condition of its rule, they are used physical only: the products assigned to them (and to their
+     * subcategories for an anchor), not the ones added by their virtual subcategories.
      *
      * @return int[] Sorted category ids.
      */
