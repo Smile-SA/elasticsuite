@@ -23,7 +23,7 @@ use Smile\ElasticsuiteVirtualCategory\Model\Rule\Condition\Product;
 use Smile\ElasticsuiteVirtualCategory\Model\Rule\DependencyCollector;
 
 /**
- * Unit test for the category conditions of {@see Product}: categories being built are replaced by their own products,
+ * Unit test for the category conditions of {@see Product}: categories being built are used physical only,
  * except the expansion boundaries.
  *
  * @category Smile
@@ -37,12 +37,12 @@ class ProductTest extends TestCase
      *
      * @dataProvider categoryConditionDataProvider
      *
-     * @param string $operator           Condition operator.
-     * @param string $value              Condition value.
-     * @param int[]  $excludedCategories Categories being built.
-     * @param int[]  $boundaryIds        Expansion boundaries.
-     * @param int[]  $expectedIds        Categories expected to be queried.
-     * @param int[]  $expectedOwnIds     Categories expected to be replaced by their own products.
+     * @param string $operator            Condition operator.
+     * @param string $value               Condition value.
+     * @param int[]  $excludedCategories  Categories being built.
+     * @param int[]  $boundaryIds         Expansion boundaries.
+     * @param int[]  $expectedIds         Categories expected to be queried.
+     * @param int[]  $expectedPhysicalIds Categories expected to be used physical only.
      *
      * @return void
      */
@@ -52,14 +52,14 @@ class ProductTest extends TestCase
         array $excludedCategories,
         array $boundaryIds,
         array $expectedIds,
-        array $expectedOwnIds
+        array $expectedPhysicalIds
     ): void {
-        $queriedIds = [];
-        $ownIds     = null;
+        $queriedIds  = [];
+        $physicalIds = null;
         $rule = $this->createMock(Rule::class);
-        $rule->method('getCategoriesOwnProductsQuery')->willReturnCallback(
-            function ($categoryIds) use (&$ownIds) {
-                $ownIds = array_map('intval', array_values($categoryIds));
+        $rule->method('getCategoriesPhysicalQuery')->willReturnCallback(
+            function ($categoryIds) use (&$physicalIds) {
+                $physicalIds = array_map('intval', array_values($categoryIds));
 
                 return $this->createMock(QueryInterface::class);
             }
@@ -88,11 +88,11 @@ class ProductTest extends TestCase
         $condition->setData('rule', $rule);
         $this->setPrivateProperty($condition, 'queryFactory', $queryFactory);
         $this->setPrivateProperty($condition, 'virtualCategoryConfig', $config);
-        // Replacing categories by their own products makes the query depend on the build in progress.
+        // Using categories physical only makes the query depend on the build in progress.
         $dependencyCollector = $this->createMock(DependencyCollector::class);
-        $dependencyCollector->expects(empty($expectedOwnIds) ? $this->never() : $this->once())->method('addTruncation')
-            ->with($this->callback(function ($categoryIds) use ($expectedOwnIds) {
-                return array_map('intval', array_values($categoryIds)) === $expectedOwnIds;
+        $dependencyCollector->expects(empty($expectedPhysicalIds) ? $this->never() : $this->once())->method('addTruncation')
+            ->with($this->callback(function ($categoryIds) use ($expectedPhysicalIds) {
+                return array_map('intval', array_values($categoryIds)) === $expectedPhysicalIds;
             }));
         $this->setPrivateProperty($condition, 'dependencyCollector', $dependencyCollector);
 
@@ -100,7 +100,7 @@ class ProductTest extends TestCase
         $method->setAccessible(true);
         $this->assertNotNull($method->invoke($condition, $excludedCategories));
         $this->assertSame($expectedIds, $queriedIds);
-        $this->assertSame(empty($expectedOwnIds) ? null : $expectedOwnIds, $ownIds);
+        $this->assertSame(empty($expectedPhysicalIds) ? null : $expectedPhysicalIds, $physicalIds);
     }
 
     /**

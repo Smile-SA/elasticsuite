@@ -409,16 +409,19 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Query of the own products of some categories: the products assigned to them (and to their subcategories for an
+     * Physical only query of some categories: the products assigned to them (and to their subcategories for an
      * anchor), without expanding any virtual rule, virtual root or virtual subcategory.
      *
      * @param int[] $categoryIds Category ids.
      *
      * @return QueryInterface
      */
-    public function getCategoriesOwnProductsQuery(array $categoryIds): QueryInterface
+    public function getCategoriesPhysicalQuery(array $categoryIds): QueryInterface
     {
-        return $this->getStandardCategoriesQuery(array_values($categoryIds), []);
+        $query = $this->getStandardCategoriesQuery(array_values($categoryIds), []);
+        $query->setName(sprintf('physical only categories [%s]', implode(', ', $categoryIds)));
+
+        return $query;
     }
 
     /**
@@ -435,11 +438,13 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     public function getEmbeddedCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
+        // Reset here too: a plugin may return a query without calling getCategorySearchQuery() itself.
+        $this->leftOutForRoot = false;
         $query = $this->getCategorySearchQuery($category, $excludedCategories);
 
         if ($query === null && $this->leftOutForRoot) {
             $categoryId = (int) (!is_object($category) ? $category : $category->getId());
-            $query      = $this->getCategoriesOwnProductsQuery([$categoryId]);
+            $query      = $this->getCategoriesPhysicalQuery([$categoryId]);
         }
 
         return $query;
@@ -581,7 +586,7 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
-     * Query of an expansion boundary used by another category: its own products only (and the ones of its
+     * Query of an expansion boundary used by another category, physical only: the products assigned to it (and to its
      * subcategories for an anchor), without the products added by its virtual subcategories.
      * Disabled categories are handled as in buildCategorySearchQuery().
      *
