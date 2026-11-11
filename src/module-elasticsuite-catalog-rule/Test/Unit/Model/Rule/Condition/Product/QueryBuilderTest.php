@@ -23,9 +23,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Smile\ElasticsuiteCatalog\Model\Attribute\LayeredNavAttributesProvider;
 use Smile\ElasticsuiteCatalog\Model\Search\Request\Field\Mapper;
+use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryContextResolverInterface;
 use Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\AttributeList;
+use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\PriceNestedFilter;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\HasImage;
 use Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\SpecialAttribute\IsDiscount;
@@ -1008,12 +1010,17 @@ class QueryBuilderTest extends TestCase
 
         $attributeList = $this->getAdvancedAttributeList($fields);
         $specialAttributesProvider = $this->getSpecialAttributesProvider();
+        $queryFactory         = $this->getQueryFactory();
+        $queryContextResolver = $this->createMock(QueryContextResolverInterface::class);
+        $queryContextResolver->method('getValues')->with(['customer_group'])->willReturn(['customer_group' => '2']);
+        $dependencyRecorder = $this->createMock(QueryDependencyRecorderInterface::class);
+        $dependencyRecorder->expects($this->once())->method('addContextDependencies')->with(['customer_group']);
         $queryBuilder = new QueryBuilder(
             $attributeList,
-            $this->getQueryFactory(),
+            $queryFactory,
             $specialAttributesProvider,
-            [],
-            $this->createMock(QueryDependencyRecorderInterface::class)
+            ['price' => new PriceNestedFilter($queryFactory, $queryContextResolver)],
+            $dependencyRecorder
         );
 
         /** @var MockObject $hasImage */
@@ -1045,15 +1052,25 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals(QueryInterface::TYPE_NESTED, $searchQuery->getType());
 
         /** @var Nested $searchQuery */
-        $this->assertInstanceOf(QueryInterface::class, $searchQuery->getQuery());
-        $this->assertInstanceOf(Range::class, $searchQuery->getQuery());
-        $this->assertEquals(QueryInterface::TYPE_RANGE, $searchQuery->getQuery()->getType());
+        $this->assertInstanceOf(Boolean::class, $searchQuery->getQuery());
         $this->assertEquals('price', $searchQuery->getPath());
 
+        // Only the prices of the current customer group are matched.
+        /** @var Boolean $innerQuery */
         $innerQuery = $searchQuery->getQuery();
-        /** @var Range $innerQuery */
-        $this->assertEquals('price.price', $innerQuery->getField());
-        $this->assertEquals(['gte' => 203.50], $innerQuery->getBounds());
+        $this->assertEmpty($innerQuery->getShould());
+        $this->assertEmpty($innerQuery->getMustNot());
+        [$filterQuery, $rangeQuery] = $innerQuery->getMust();
+
+        /** @var Term $filterQuery */
+        $this->assertInstanceOf(Term::class, $filterQuery);
+        $this->assertEquals('price.customer_group_id', $filterQuery->getField());
+        $this->assertSame(2, $filterQuery->getValue());
+
+        /** @var Range $rangeQuery */
+        $this->assertInstanceOf(Range::class, $rangeQuery);
+        $this->assertEquals('price.price', $rangeQuery->getField());
+        $this->assertEquals(['gte' => 203.50], $rangeQuery->getBounds());
     }
 
     /**
@@ -1519,6 +1536,10 @@ class QueryBuilderTest extends TestCase
             ->getMock();
         $nestedFilterMock->method('getFilter')->willReturn($nestedFilterQuery);
 
+        // A nested filter not depending on any context records nothing.
+        $dependencyRecorder = $this->createMock(QueryDependencyRecorderInterface::class);
+        $dependencyRecorder->expects($this->never())->method('addContextDependencies');
+
         $attributeList = $this->getAdvancedAttributeList($fields);
         $specialAttributesProvider = $this->getSpecialAttributesProvider();
         $queryBuilder = new QueryBuilder(
@@ -1526,7 +1547,7 @@ class QueryBuilderTest extends TestCase
             $queryFactory,
             $specialAttributesProvider,
             ['category' => $nestedFilterMock],
-            $this->createMock(QueryDependencyRecorderInterface::class)
+            $dependencyRecorder
         );
 
         /** @var MockObject $hasImage */
