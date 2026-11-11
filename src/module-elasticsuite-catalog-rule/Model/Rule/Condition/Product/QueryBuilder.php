@@ -126,6 +126,11 @@ class QueryBuilder
                 $nestedQueryParams = ['query' => $query, 'path' => $nestedPath];
 
                 if (isset($this->nestedFilters[$nestedPath])) {
+                    if ($this->nestedFilters[$nestedPath] instanceof ContextAwareInterface) {
+                        $this->dependencyRecorder->addContextDependencies(
+                            $this->nestedFilters[$nestedPath]->getContextDependencies()
+                        );
+                    }
                     $nestedFilterClauses           = [];
                     $nestedFilterClauses['must'][] = $this->nestedFilters[$nestedPath]->getFilter();
                     $nestedFilterClauses['must'][] = $nestedQueryParams['query'];
