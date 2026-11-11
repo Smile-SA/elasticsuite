@@ -23,6 +23,9 @@ namespace Smile\ElasticsuiteCatalogRule\Api\Rule;
  * applying to all the products (eg. only the products of that store/retailer) does not belong in rule queries: it is a
  * filter of the search request container.
  *
+ * Code which cannot record it while the query is built (eg. a plugin changing every rule query afterwards) can declare
+ * the context as unconditional instead (see {@see \Smile\ElasticsuiteCatalogRule\Model\Rule\QueryCache}).
+ *
  * @api
  *
  * @category Smile

@@ -102,6 +102,15 @@
         </arguments>
     </virtualType>
 
+    <!-- Conditions on the prices only match the prices of the current customer group. -->
+    <type name="Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\QueryBuilder">
+        <arguments>
+            <argument name="nestedFilters" xsi:type="array">
+                <item name="price" xsi:type="object">Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Product\PriceNestedFilter</item>
+            </argument>
+        </arguments>
+    </type>
+
     <preference for="Smile\ElasticsuiteCatalogRule\Api\Data\ConditionInterface" type="Smile\ElasticsuiteCatalogRule\Model\Data\Condition"/>
 
     <!-- Session proxies -->
