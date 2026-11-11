@@ -418,7 +418,10 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     public function getCategoriesPhysicalQuery(array $categoryIds): QueryInterface
     {
-        return $this->getStandardCategoriesQuery(array_values($categoryIds), []);
+        $query = $this->getStandardCategoriesQuery(array_values($categoryIds), []);
+        $query->setName(sprintf('physical only categories [%s]', implode(', ', $categoryIds)));
+
+        return $query;
     }
 
     /**
@@ -435,6 +438,8 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
      */
     public function getEmbeddedCategorySearchQuery($category, $excludedCategories = []): ?QueryInterface
     {
+        // Reset here too: a plugin may return a query without calling getCategorySearchQuery() itself.
+        $this->leftOutForRoot = false;
         $query = $this->getCategorySearchQuery($category, $excludedCategories);
 
         if ($query === null && $this->leftOutForRoot) {
