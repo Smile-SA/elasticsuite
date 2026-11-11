@@ -25,6 +25,15 @@ use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
  * contexts, the entry stored under the context-less cache key being then a marker redirecting to it. Any other data is
  * shared by all contexts.
  *
+ * Some contexts can be declared as unconditional: every entry then depends on them, whether the data was built
+ * according to them or not. This is meant for code changing every rule query according to a context without recording
+ * that dependency (eg. a plugin adding a filter on the current retailer to every virtual category query). Declare the
+ * context provider in the {@see QueryContextResolver} providers, then the context code in the unconditionalContexts
+ * argument of this class (di.xml, keyed by code), never of a virtual type of it: the in-process entries of this class
+ * are the ones reset when the cache is cleaned. Each entry is then stored once per context value: when only some rule
+ * queries depend on a context, record that dependency while they are built instead
+ * (see {@see \Smile\ElasticsuiteCatalogRule\Api\Rule\QueryDependencyRecorderInterface}).
+ *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
  * @author   Richard Bayet <richard.bayet@smile.fr>
@@ -42,6 +51,11 @@ class QueryCache
     private $queryContextResolver;
 
     /**
+     * @var string[]
+     */
+    private $unconditionalContexts;
+
+    /**
      * @var array[]
      */
     private $localCache = [];
@@ -49,19 +63,25 @@ class QueryCache
     /**
      * Constructor.
      *
-     * @param ElasticsuiteCache             $sharedCache          Elasticsuite cache.
-     * @param QueryContextResolverInterface $queryContextResolver Values of the contexts rule queries can depend on.
+     * @param ElasticsuiteCache             $sharedCache           Elasticsuite cache.
+     * @param QueryContextResolverInterface $queryContextResolver  Values of the contexts rule queries can depend on.
+     * @param string[]                      $unconditionalContexts Codes of the contexts every entry depends on.
      */
-    public function __construct(ElasticsuiteCache $sharedCache, QueryContextResolverInterface $queryContextResolver)
-    {
-        $this->sharedCache          = $sharedCache;
-        $this->queryContextResolver = $queryContextResolver;
+    public function __construct(
+        ElasticsuiteCache $sharedCache,
+        QueryContextResolverInterface $queryContextResolver,
+        array $unconditionalContexts = []
+    ) {
+        $this->sharedCache           = $sharedCache;
+        $this->queryContextResolver  = $queryContextResolver;
+        $this->unconditionalContexts = array_values($unconditionalContexts);
     }
 
     /**
      * Load an entry for the current values of the contexts it depends on.
-     * An entry depending on a context no longer declared (eg. saved by another version of the code sharing the cache)
-     * is considered as missing: it is built and saved again.
+     * An entry depending on a context no longer declared (eg. saved by another version of the code sharing the cache),
+     * or not depending on all the unconditional contexts (eg. saved before one was declared), is considered as missing:
+     * it is built and saved again.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
@@ -73,6 +93,10 @@ class QueryCache
     public function load(string $cacheKey, bool $useSharedCache = true)
     {
         $cacheData = $this->get($cacheKey, $useSharedCache);
+
+        if ($cacheData !== false && !empty(array_diff($this->unconditionalContexts, $cacheData['context']))) {
+            return false;
+        }
 
         if ($cacheData !== false && !empty($cacheData['context'])) {
             try {
@@ -87,7 +111,8 @@ class QueryCache
     }
 
     /**
-     * Save an entry, for the current values of the contexts the data depends on, if any.
+     * Save an entry, for the current values of the contexts the data depends on, if any, and of the unconditional
+     * contexts.
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
@@ -108,6 +133,7 @@ class QueryCache
         array $contextDependencies,
         bool $useSharedCache = true
     ): void {
+        $contextDependencies = array_values(array_unique(array_merge($contextDependencies, $this->unconditionalContexts)));
         sort($contextDependencies);
         $cacheData = [
             'data'      => $data,
