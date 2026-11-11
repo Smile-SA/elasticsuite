@@ -103,7 +103,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The query of a category does not depend on the order categories are built in: a query built while another
-     * category was being built (and so only using its own products) is neither cached nor reused.
+     * category was being built (and so using it physical only) is neither cached nor reused.
      *
      * @return void
      */
@@ -133,23 +133,23 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The queries of X and Y, built on their own: the query each one embeds only uses the own products of the other
-     * one (eg. X is "(own products of X OR category 3) AND discount" whatever was built before, as expected in #3910).
+     * The queries of X and Y, built on their own: the query each one embeds uses the other one
+     * physical only (eg. X is "(X physical only OR category 3) AND discount" whatever was built before, as expected in #3910).
      *
      * @return void
      */
     public function testQueriesBuiltAlone(): void
     {
-        // X = (Y = own products of X OR 3) AND discount.
+        // X = (Y = X physical only OR 3) AND discount.
         $this->assertSame('must(should(10, 3), discount)', $this->describe($this->buildAlone(self::X)));
-        // Y = (X = own products of Y AND discount) OR 3.
+        // Y = (X = Y physical only AND discount) OR 3.
         $this->assertSame('should(must(20, discount), 3)', $this->describe($this->buildAlone(self::Y)));
     }
 
     /**
-     * A virtual child relying on its parent is built while its parent is being built: the child query only uses the
-     * own products of the parent (instead of matching every discounted product), and is not cached. Built on its own,
-     * the child embeds its parent, itself built with the own products of the child, which is not cached either.
+     * A virtual child relying on its parent is built while its parent is being built: the child query uses the
+     * parent physical only (instead of matching every discounted product), and is not cached. Built on its own,
+     * the child embeds its parent, itself built with the child physical only, which is not cached either.
      *
      * @return void
      */
@@ -159,7 +159,7 @@ class RuleBuildContextTest extends TestCase
         $this->assertNotEmpty($this->getCacheKeys(self::P));
         $this->assertEmpty($this->getCacheKeys(self::C), 'The child query built within its parent is not cached.');
 
-        // P = 60 OR (C = own products of P AND discount).
+        // P = 60 OR (C = P physical only AND discount).
         $this->assertSame('should(60, must(60, discount))', $this->describe($this->buildAlone(self::P)));
         // C = (P = 60, C left out of its children) AND discount.
         $this->assertSame('must(60, discount)', $this->describe($this->buildAlone(self::C)));
@@ -170,7 +170,7 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The query of Y built while X is being built only uses the own products of X: it is not cached, unlike the query
+     * The query of Y built while X is being built uses X physical only: it is not cached, unlike the query
      * of X itself.
      *
      * @return void
@@ -185,7 +185,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The cached query of Y embeds the query of X: it is rebuilt while building X instead of being reused, since X
-     * has to be replaced by its own products in it.
+     * has to be used physical only in it.
      *
      * @return void
      */
@@ -210,7 +210,7 @@ class RuleBuildContextTest extends TestCase
     public function testCachedQueryLeftOutForItsVirtualRoot(): void
     {
         $expectedR = $this->buildAlone(self::R);
-        // R = (V = own products of V).
+        // R = (V = V physical only).
         $this->assertSame('should(40)', $this->describe($expectedR), 'V is physical only in R.');
 
         $this->createRule()->getCategorySearchQuery(self::V);
@@ -231,7 +231,7 @@ class RuleBuildContextTest extends TestCase
     {
         $query = $this->createRule()->getCategorySearchQuery(self::Q);
 
-        // Q = (Z = (discount) AND (W = own products of W)).
+        // Q = (Z = (discount) AND (W = W physical only)).
         $this->assertSame('should(must(must(discount), 80))', $this->describe($query));
         $this->assertNotEmpty($this->getCacheKeys(self::Q));
         $this->assertEmpty($this->getCacheKeys(self::Z), 'Z built within Q is not cached.');

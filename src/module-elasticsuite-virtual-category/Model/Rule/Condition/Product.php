@@ -181,11 +181,11 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
         }
 
         if (!empty($beingBuiltIds)) {
-            // Categories whose query is being built can't be expanded (infinite recursion): their own products are used
+            // Categories whose query is being built can't be expanded (infinite recursion): they are used physical only
             // instead. Leaving them out would widen the rule (eg. "category X and discounted" becoming "discounted").
             // The query then depends on the build in progress.
             $this->dependencyCollector->addTruncation($beingBuiltIds);
-            $subQueries[] = $this->getRule()->getCategoriesOwnProductsQuery($beingBuiltIds);
+            $subQueries[] = $this->getRule()->getCategoriesPhysicalQuery($beingBuiltIds);
         }
 
         $query = null;
