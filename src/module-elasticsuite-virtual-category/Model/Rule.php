@@ -396,6 +396,19 @@ class Rule extends \Smile\ElasticsuiteCatalogRule\Model\Rule implements VirtualR
     }
 
     /**
+     * Query of the own products of some categories: the products assigned to them (and to their subcategories for an
+     * anchor), without expanding any virtual rule, virtual root or virtual subcategory.
+     *
+     * @param int[] $categoryIds Category ids.
+     *
+     * @return QueryInterface
+     */
+    public function getCategoriesOwnProductsQuery(array $categoryIds): QueryInterface
+    {
+        return $this->getStandardCategoriesQuery(array_values($categoryIds), []);
+    }
+
+    /**
      * Build search query by category.
      *
      * @SuppressWarnings(PHPMD.ElseExpression)

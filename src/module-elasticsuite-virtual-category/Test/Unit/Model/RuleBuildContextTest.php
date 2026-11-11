@@ -94,7 +94,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The query of a category does not depend on the order categories are built in: a query built while another
-     * category was being built (and so left out of it) is neither cached nor reused.
+     * category was being built (and so only using its own products) is neither cached nor reused.
      *
      * @return void
      */
@@ -124,23 +124,23 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The queries of X and Y, built on their own: each leaves the other out of the query it embeds (eg. X is
-     * "category 3 AND discount" whatever was built before, as expected in #3910).
+     * The queries of X and Y, built on their own: the query each one embeds only uses the own products of the other
+     * one (eg. X is "(own products of X OR category 3) AND discount" whatever was built before, as expected in #3910).
      *
      * @return void
      */
     public function testQueriesBuiltAlone(): void
     {
-        // X = (Y = X left out OR 3) AND discount.
-        $this->assertSame('must(should(3), discount)', $this->describe($this->buildAlone(self::X)));
-        // Y = (X = Y left out AND discount) OR 3.
-        $this->assertSame('should(must(discount), 3)', $this->describe($this->buildAlone(self::Y)));
+        // X = (Y = own products of X OR 3) AND discount.
+        $this->assertSame('must(should(10, 3), discount)', $this->describe($this->buildAlone(self::X)));
+        // Y = (X = own products of Y AND discount) OR 3.
+        $this->assertSame('should(must(20, discount), 3)', $this->describe($this->buildAlone(self::Y)));
     }
 
     /**
-     * A virtual child relying on its parent is built while its parent is being built: the parent is left out of the
-     * child query, which is not cached. Built on its own, the child embeds its parent, itself built without the child,
-     * which is not cached either.
+     * A virtual child relying on its parent is built while its parent is being built: the child query only uses the
+     * own products of the parent (instead of matching every discounted product), and is not cached. Built on its own,
+     * the child embeds its parent, itself built with the own products of the child, which is not cached either.
      *
      * @return void
      */
@@ -150,9 +150,9 @@ class RuleBuildContextTest extends TestCase
         $this->assertNotEmpty($this->getCacheKeys(self::P));
         $this->assertEmpty($this->getCacheKeys(self::C), 'The child query built within its parent is not cached.');
 
-        // P = 60 OR (C = P left out AND discount).
-        $this->assertSame('should(60, must(discount))', $this->describe($this->buildAlone(self::P)));
-        // C = (P = 60, C left out) AND discount.
+        // P = 60 OR (C = own products of P AND discount).
+        $this->assertSame('should(60, must(60, discount))', $this->describe($this->buildAlone(self::P)));
+        // C = (P = 60, C left out of its children) AND discount.
         $this->assertSame('must(60, discount)', $this->describe($this->buildAlone(self::C)));
 
         $this->createRule()->getCategorySearchQuery(self::C);
@@ -161,7 +161,8 @@ class RuleBuildContextTest extends TestCase
     }
 
     /**
-     * The query of Y built while X is being built leaves X out: it is not cached, unlike the query of X itself.
+     * The query of Y built while X is being built only uses the own products of X: it is not cached, unlike the query
+     * of X itself.
      *
      * @return void
      */
@@ -175,7 +176,7 @@ class RuleBuildContextTest extends TestCase
 
     /**
      * The cached query of Y embeds the query of X: it is rebuilt while building X instead of being reused, since X
-     * has to be left out of it.
+     * has to be replaced by its own products in it.
      *
      * @return void
      */

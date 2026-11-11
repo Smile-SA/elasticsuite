@@ -168,22 +168,24 @@ class Product extends \Smile\ElasticsuiteCatalogRule\Model\Rule\Condition\Produc
             $valueArray = explode(',', str_replace(' ', '', $valueArray));
         }
 
-        $categoryIds = $valueArray;
-
-        if ($this->getOperator() !== '!()') {
-            // Expansion boundaries are kept: never expanded when used here, they can't cause an infinite recursion.
-            $boundaryIds = $this->virtualCategoryConfig->getVirtualRulesExpansionBoundaries();
-            $leftOutIds  = array_diff(array_intersect($valueArray, $excludedCategories), $boundaryIds);
-            $categoryIds = array_diff($valueArray, $leftOutIds);
-            // Categories whose query is being built are left out to avoid infinite recursion.
-            $this->dependencyCollector->addTruncation($leftOutIds);
-        }
+        // Expansion boundaries are kept: never expanded when used here, they can't cause an infinite recursion.
+        $boundaryIds   = $this->virtualCategoryConfig->getVirtualRulesExpansionBoundaries();
+        $beingBuiltIds = array_diff(array_intersect($valueArray, $excludedCategories), $boundaryIds);
+        $categoryIds   = array_diff($valueArray, $beingBuiltIds);
 
         foreach ($categoryIds as $categoryId) {
             $subQuery = $this->getRule()->getCategorySearchQuery($categoryId, $excludedCategories);
             if ($subQuery !== null) {
                 $subQueries[] = $subQuery;
             }
+        }
+
+        if (!empty($beingBuiltIds)) {
+            // Categories whose query is being built can't be expanded (infinite recursion): their own products are used
+            // instead. Leaving them out would widen the rule (eg. "category X and discounted" becoming "discounted").
+            // The query then depends on the build in progress.
+            $this->dependencyCollector->addTruncation($beingBuiltIds);
+            $subQueries[] = $this->getRule()->getCategoriesOwnProductsQuery($beingBuiltIds);
         }
 
         $query = null;
