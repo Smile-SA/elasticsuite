@@ -30,7 +30,11 @@ use Smile\ElasticsuiteCore\Cache\Type\Elasticsuite as ElasticsuiteCache;
  * - Expiration date is turned into a cache lifetime, and expired entries are ignored
  * - Entries not matching the expected format are considered as missing
  * - Entries depending on a context no longer declared are considered as missing
+ * - Every entry depends on the unconditional contexts, along with the contexts its data depends on
+ * - Entries not depending on all the unconditional contexts (saved before one was declared) are considered as missing
  * - Reset forgets the in-process entries
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  *
  * @category Smile
  * @package  Smile\ElasticsuiteCatalogRule
@@ -187,11 +191,69 @@ class QueryCacheTest extends TestCase
     }
 
     /**
+     * Test that context independent data is stored per value of the unconditional contexts, behind a marker.
+     *
+     * @return void
+     */
+    public function testUnconditionalContext(): void
+    {
+        $this->createQueryCache(['retailer' => 'retailer'])->save('key', 'query for retailer 12', ['ES_VCAT_3'], null, []);
+
+        $this->assertSame(['key', 'key|retailer=12'], array_keys($this->storage));
+        $cacheData = $this->createQueryCache(['retailer' => 'retailer'])->load('key');
+        $this->assertSame('query for retailer 12', $cacheData['data']);
+        $this->assertSame(['retailer'], $cacheData['context'], 'Data embedding it depends on the retailer too.');
+
+        $this->context['retailer'] = '31';
+        $this->assertFalse(
+            $this->createQueryCache(['retailer' => 'retailer'])->load('key'),
+            'Another retailer has its own entry.'
+        );
+    }
+
+    /**
+     * Test that the unconditional contexts are merged with the contexts the data depends on, without duplicates.
+     *
+     * @return void
+     */
+    public function testUnconditionalAndDeclaredContexts(): void
+    {
+        $unconditionalContexts = ['retailer' => 'retailer', 'customer_group' => 'customer_group'];
+        $this->createQueryCache($unconditionalContexts)->save('key', 'query', [], null, ['customer_group']);
+
+        $this->assertSame(['key', 'key|customer_group=0|retailer=12'], array_keys($this->storage));
+        $cacheData = $this->createQueryCache($unconditionalContexts)->load('key');
+        $this->assertSame('query', $cacheData['data']);
+        $this->assertSame(['customer_group', 'retailer'], $cacheData['context']);
+    }
+
+    /**
+     * Test that an entry saved before an unconditional context was declared is considered as missing, and saved again
+     * for that context.
+     *
+     * @return void
+     */
+    public function testEntryMissingUnconditionalContext(): void
+    {
+        $this->createQueryCache()->save('key', 'query for any retailer', [], null, []);
+        $this->createQueryCache()->save('other', 'query for group 0', [], null, ['customer_group']);
+
+        $queryCache = $this->createQueryCache(['retailer' => 'retailer']);
+        $this->assertFalse($queryCache->load('key'));
+        $this->assertFalse($queryCache->load('other'));
+
+        $queryCache->save('key', 'query for retailer 12', [], null, []);
+        $this->assertSame('query for retailer 12', $this->createQueryCache(['retailer' => 'retailer'])->load('key')['data']);
+    }
+
+    /**
      * Create a query cache, as a new process would, sharing the cache storage of the test.
+     *
+     * @param string[] $unconditionalContexts Codes of the contexts every entry depends on.
      *
      * @return QueryCache
      */
-    private function createQueryCache(): QueryCache
+    private function createQueryCache(array $unconditionalContexts = []): QueryCache
     {
         $sharedCache = $this->createMock(ElasticsuiteCache::class);
         $sharedCache->method('load')->willReturnCallback(
@@ -219,6 +281,6 @@ class QueryCacheTest extends TestCase
             }
         );
 
-        return new QueryCache($sharedCache, $queryContextResolver);
+        return new QueryCache($sharedCache, $queryContextResolver, $unconditionalContexts);
     }
 }
