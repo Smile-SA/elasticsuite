@@ -14,15 +14,16 @@
 
 namespace Smile\ElasticsuiteThesaurus\Model;
 
-use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
 use Smile\ElasticsuiteCore\Api\Client\ClientInterface;
 use Smile\ElasticsuiteCore\Api\Search\Request\ContainerConfigurationInterface;
 use Smile\ElasticsuiteCore\Helper\Text;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
-use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
-use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
 use Smile\ElasticsuiteCore\Helper\Cache as CacheHelper;
+use Smile\ElasticsuiteCore\Helper\IndexSettings as IndexSettingsHelper;
+use Smile\ElasticsuiteThesaurus\Api\Data\ThesaurusInterface;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusCacheConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfig;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusConfigFactory;
+use Smile\ElasticsuiteThesaurus\Config\ThesaurusStemmingConfig;
 
 /**
  * Thesaurus index.
@@ -79,14 +80,20 @@ class Index
     private $thesaurusCacheConfig;
 
     /**
+     * @var ThesaurusStemmingConfig
+     */
+    private $stemmingConfig;
+
+    /**
      * Constructor.
      *
-     * @param ClientInterface        $client                 ES client.
-     * @param IndexSettingsHelper    $indexSettingsHelper    Index Settings Helper.
-     * @param CacheHelper            $cacheHelper            ES caching helper.
-     * @param Text                   $textHelper             Helper text explaining multibyte string handling.
-     * @param ThesaurusConfigFactory $thesaurusConfigFactory Thesaurus configuration factory.
-     * @param ThesaurusCacheConfig   $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param ClientInterface         $client                 ES client.
+     * @param IndexSettingsHelper     $indexSettingsHelper    Index Settings Helper.
+     * @param CacheHelper             $cacheHelper            ES caching helper.
+     * @param Text                    $textHelper             Helper text explaining multibyte string handling.
+     * @param ThesaurusConfigFactory  $thesaurusConfigFactory Thesaurus configuration factory.
+     * @param ThesaurusCacheConfig    $thesaurusCacheConfig   Thesaurus cache configuration helper.
+     * @param ThesaurusStemmingConfig $stemmingConfig         Stemming configuration.
      */
     public function __construct(
         ClientInterface $client,
@@ -94,7 +101,8 @@ class Index
         CacheHelper $cacheHelper,
         Text $textHelper,
         ThesaurusConfigFactory $thesaurusConfigFactory,
-        ThesaurusCacheConfig $thesaurusCacheConfig
+        ThesaurusCacheConfig $thesaurusCacheConfig,
+        ThesaurusStemmingConfig $stemmingConfig
     ) {
         $this->client                 = $client;
         $this->indexSettingsHelper    = $indexSettingsHelper;
@@ -102,6 +110,7 @@ class Index
         $this->cacheHelper            = $cacheHelper;
         $this->textHelper             = $textHelper;
         $this->thesaurusCacheConfig   = $thesaurusCacheConfig;
+        $this->stemmingConfig         = $stemmingConfig;
     }
 
     /**
@@ -331,34 +340,66 @@ class Index
      */
     private function getQueryCombinations($storeId, $queryText)
     {
-        if ($this->textHelper->mbWordCount($queryText) < 2) {
+        $useStemming = $this->stemmingConfig->useStemming($storeId);
+        $isMultiWord = $this->textHelper->mbWordCount($queryText) >= 2;
+
+        if (!$useStemming && !$isMultiWord) {
             return [$queryText]; // No need to compute variations of shingles with a one-word-query.
+        }
+
+        $indexName = $this->getIndexAlias($storeId);
+        $tokens    = [];
+
+        // Get the stem of each word of the search term ("dresses" will give "dress").
+        // Only when stemming is enabled, so that the behavior without stemming is unchanged.
+        if ($useStemming) {
+            $tokens = $this->analyzeText($indexName, $queryText, 'clean');
         }
 
         // Generate the shingles.
         // If we analyze "long sleeve dress", we'll obtain "long_sleeve", and "sleeve_dress".
+        // If stemming is enabled, analysis of "long sleeves" will give "long_sleev".
         // We'll also obtain the position (start_offset and end_offset) of those shingles in the original string.
-        $indexName = $this->getIndexAlias($storeId);
-        try {
-            $analysis = $this->client->analyze(
-                ['index' => $indexName, 'body' => ['text' => $queryText, 'analyzer' => 'shingles']]
-            );
-        } catch (\Exception $e) {
-            $analysis = ['tokens' => []];
+        // The shingle filter has no unigram output: a one-word query gives no shingle.
+        if ($isMultiWord) {
+            $tokens = array_merge($tokens, $this->analyzeText($indexName, $queryText, 'shingles'));
         }
 
         // Get all variations of the query text by injecting the shingles inside.
         // $tokens = ['long sleeve dress', 'long_sleeve dress', 'long sleeve_dress'];.
         $queries[] = $queryText;
-        foreach ($analysis['tokens'] ?? [] as $token) {
+        foreach ($tokens as $token) {
             $startOffset        = $token['start_offset'];
             $length             = $token['end_offset'] - $token['start_offset'];
             $rewrittenQueryText = $this->textHelper->mbSubstrReplace($queryText, $token['token'], $startOffset, $length);
             $queries[]          = $rewrittenQueryText;
         }
+
         $queries = array_unique($queries);
 
         return $queries;
+    }
+
+    /**
+     * Run an analyzer of the thesaurus index on a text.
+     *
+     * @param string $indexName Thesaurus index alias.
+     * @param string $text      Text to analyze.
+     * @param string $analyzer  Analyzer name.
+     *
+     * @return array Tokens, or an empty array if the analysis fails.
+     */
+    private function analyzeText($indexName, $text, $analyzer)
+    {
+        try {
+            $analysis = $this->client->analyze(
+                ['index' => $indexName, 'body' => ['text' => $text, 'analyzer' => $analyzer]]
+            );
+        } catch (\Exception $e) {
+            $analysis = ['tokens' => []];
+        }
+
+        return $analysis['tokens'] ?? [];
     }
 
     /**
