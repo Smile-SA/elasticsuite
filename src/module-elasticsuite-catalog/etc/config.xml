@@ -42,6 +42,7 @@
                 <expanded_facets>3</expanded_facets>
                 <adaptive_slider_enabled>0</adaptive_slider_enabled>
                 <index_child_product_sku>0</index_child_product_sku>
+                <include_child_attributes>1</include_child_attributes>
                 <compute_child_product_discount>0</compute_child_product_discount>
                 <collector_fields_scoring_algorithm>default</collector_fields_scoring_algorithm>
             </catalogsearch>
