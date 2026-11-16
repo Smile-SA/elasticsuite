@@ -91,21 +91,25 @@ class Builder
      */
     private function getProductIds($skus)
     {
+        $skus = array_values(array_filter(array_map('strval', $skus), 'strlen'));
+        if (empty($skus)) {
+            return [];
+        }
+
         $productMetadata = $this->getEntityMetaData(ProductInterface::class);
 
         // The legacy entity_id field.
         $entityIdField = $productMetadata->getIdentifierField();
 
-        $select = $this->resource->getConnection()
-                      ->select()
-                      ->from(['e' => $productMetadata->getEntityTable()], [$entityIdField])
-                      ->where('e.sku IN (?)', ['in' => $skus]);
+        $connection = $this->resource->getConnection();
+        $select     = $connection->select()
+            ->from(['e' => $productMetadata->getEntityTable()], [$entityIdField])
+            ->where('e.sku IN (?)', $skus);
 
-        $orderList = "'" . join("','", array_filter($skus)) . "'";
         $select->reset(\Magento\Framework\DB\Select::ORDER);
-        $select->order(new \Zend_Db_Expr("FIELD(e.sku,$orderList)"));
+        $select->order(new \Zend_Db_Expr($connection->quoteInto('FIELD(e.sku, ?)', $skus)));
 
-        $productIds = $this->resource->getConnection()->fetchCol($select);
+        $productIds = $connection->fetchCol($select);
         $products   = [];
         $position   = 1;
 
