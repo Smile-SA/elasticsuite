@@ -85,9 +85,25 @@ define([
                 min: this.minValue,
                 max: this.maxValue,
                 values: [ this.from, this.to ],
-                slide: this._onSliderChange.bind(this),
+                slide: this._onSlide.bind(this),
                 step: this.options.step
             });
+        },
+
+        /*
+         * Reject any drag that would bring the two handles to the same (or a crossed) position.
+         * Returning false from jQuery UI's own "slide" callback cancels that move, so the handle
+         * simply stops one unit short instead of touching the other one. This works unmodified in
+         * both slider modes because "from"/"to" always live on the same uniformly-spaced integer
+         * scale in either mode (real price units in non-adaptive mode, bucket indexes in adaptive
+         * mode), so a minimum gap of 1 unit is never mode-specific.
+         */
+        _onSlide : function (ev, ui) {
+            if (ui.values[1] - ui.values[0] < 1) {
+                return false;
+            }
+
+            return this._onSliderChange(ev, ui);
         },
 
         _onSliderChange : function (ev, ui) {
@@ -105,7 +121,7 @@ define([
 
             if (this.element.find('[data-role=to-label]')) {
                 var to = this._getOriginalValue(this.to) - this.options.maxLabelOffset;
-                if (this.showAdaptiveSlider && to < this._getOriginalValue(this.minValue)) {
+                if (to <= this._getOriginalValue(this.from)) {
                     to = this._getOriginalValue(this.to);
                 }
                 this.element.find('[data-role=to-label]').html(this._formatLabel(to));
